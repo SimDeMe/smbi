@@ -108,6 +108,8 @@ img{display:block;max-width:100%}
 .top-nav a:nth-child(4):hover{background:#D6EFC4;border-color:var(--ink)}
 .top-nav a:nth-child(5):hover{background:#E2D6F8;border-color:var(--ink)}
 .top-nav a:nth-child(6):hover{background:#FFD9C9;border-color:var(--ink)}
+.top-nav a:nth-child(7):hover{background:#D7F1EC;border-color:var(--ink)}
+.top-nav a:nth-child(8):hover{background:#FFE9DC;border-color:var(--ink)}
 
 /* ── Hero ──────────────────────────────────────────────── */
 .hero{position:relative;padding:56px 0 52px;overflow:hidden}
@@ -423,8 +425,10 @@ img{display:block;max-width:100%}
 
 /* ── Simuleringer (hovedsektionen) ─────────────────────── */
 .lede{font-size:1.04rem;color:#3E4E4C;max-width:58ch;margin:-14px 0 20px}
-/* samme brødtekst, men efter kortene i stedet for før dem */
-.lede.efter-sims{margin:26px 0 0}
+/* vejen videre til det halvfærdige — står efter kortene, ikke før dem */
+.efter-sims{margin:30px 0 0}
+.efter-sims .lede{margin:0 0 14px}
+.efter-sims-cta{display:flex;flex-wrap:wrap;gap:12px}
 
 .grp{display:flex;align-items:center;gap:12px;margin:32px 0 16px;scroll-margin-top:88px}
 .grp-mark{width:16px;height:16px;border-radius:5px;border:2px solid var(--ink);background:var(--c)}
@@ -613,6 +617,10 @@ img{display:block;max-width:100%}
 .foot-links a:nth-child(4n+4):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
 
 /* ── Responsivt ────────────────────────────────────────── */
+/* otte punkter i bjælken: lidt strammere, før den skal rulles */
+@media (max-width:1100px){
+  .top-nav a{padding:7px 10px;font-size:0.82rem}
+}
 @media (max-width:980px){
   .hero-in{grid-template-columns:1fr;gap:44px}
   .videos{grid-template-columns:1fr}
