@@ -34,10 +34,15 @@
   var grupper = Array.prototype.map.call(
     document.querySelectorAll('.sims, .stack'),
     function (boks) {
+      /* Overskriftsrækken til et .sims-gitter ligger lige før gitteret.
+         Har gruppen en note imellem (fx "under opbygning"), hører den til
+         gruppen og skal skjules sammen med den. */
+      var foer = boks.classList.contains('sims') ? boks.previousElementSibling : null;
+      var note = foer && foer.classList.contains('grp-note') ? foer : null;
       return {
         boks: boks,
-        // overskriftsrækken til et .sims-gitter ligger lige før gitteret
-        titel: boks.classList.contains('sims') ? boks.previousElementSibling : null,
+        note: note,
+        titel: note ? note.previousElementSibling : foer,
         kort: boks.querySelectorAll('[data-sog]')
       };
     }
@@ -61,6 +66,7 @@
     grupper.forEach(function (g) {
       var nogen = Array.prototype.some.call(g.kort, function (el) { return !el.hidden; });
       g.boks.hidden = !nogen;
+      if (g.note) g.note.hidden = !nogen;
       if (g.titel && g.titel.classList.contains('grp')) g.titel.hidden = !nogen;
     });
 

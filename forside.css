@@ -423,6 +423,8 @@ img{display:block;max-width:100%}
 
 /* ── Simuleringer (hovedsektionen) ─────────────────────── */
 .lede{font-size:1.04rem;color:#3E4E4C;max-width:58ch;margin:-14px 0 20px}
+/* samme brødtekst, men efter kortene i stedet for før dem */
+.lede.efter-sims{margin:26px 0 0}
 
 .grp{display:flex;align-items:center;gap:12px;margin:32px 0 16px;scroll-margin-top:88px}
 .grp-mark{width:16px;height:16px;border-radius:5px;border:2px solid var(--ink);background:var(--c)}
@@ -480,6 +482,29 @@ img{display:block;max-width:100%}
   transition:background .15s,color .15s;
 }
 .sub a:hover{background:var(--c);color:#fff}
+
+/* ── Under opbygning ───────────────────────────────────── *
+ * Simuleringer, der virker, men ikke er færdige. De skal kunne
+ * findes og prøves — de skal bare ikke se færdige ud. Stiplet
+ * ramme og mærkat, ikke bare en gråtone: status må ikke hænge
+ * på farven alene.                                            */
+.grp.wip{--c:var(--slate);--t:#E9EDEC}
+.grp-note{
+  font-size:0.92rem;color:#3E4E4C;max-width:62ch;margin:-6px 0 16px;
+}
+.sims.wip .sim{
+  --c:var(--slate);--t:#E9EDEC;
+  border-style:dashed;
+  box-shadow:3px 3px 0 rgba(23,33,31,.38);
+}
+.sims.wip .sim:hover{box-shadow:6px 6px 0 rgba(23,33,31,.38)}
+.sims.wip .sim-fig{position:relative}
+.wip-mark{
+  position:absolute;top:9px;right:10px;z-index:2;
+  font-family:var(--mono);font-size:0.5rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;
+  background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 8px;
+}
 
 /* ── Øvrigt materiale: hver type sin stak ──────────────── */
 .other{
