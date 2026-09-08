@@ -6,7 +6,7 @@ import {
 import { compressImage, addPhoto, removePhoto } from "./photos.js";
 import { importFiles } from "./import.js";
 import { buildSession, getDistractors, pickStimulus, checkAnswer, processResult, saveSession } from "./quiz.js";
-import { el, showToast, renderProgressBar, spinner, renderStudentCard, viewHead, backLink } from "./ui.js";
+import { el, showToast, renderProgressBar, spinner, renderStudentCard, viewHead, backLink, fokuserUdenGenklik } from "./ui.js";
 import { visningsnavne, visningsnavn } from "./navne.js";
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
@@ -439,7 +439,7 @@ async function showLevel1(app, student, stimulus, stimulusEl, allClassStudents, 
     // videre — det er navnet, man skal nå at læse.
     const videreBtn = el('button', { class: 'btn btn-primary', onclick: afslut }, 'Videre');
     videreRow.appendChild(videreBtn);
-    videreBtn.focus();
+    fokuserUdenGenklik(videreBtn);
   }
 
   const quitBtn = onQuit ? el('button', { class: 'btn btn-ghost-sm quiz-quit', onclick: onQuit }, 'Afslut') : null;
@@ -514,10 +514,16 @@ async function showLevel2(app, student, stimulus, stimulusEl, navne, hintBtn, st
         el('button', { class: 'btn btn-sm', onclick: () => afslut(true, skrevet) }, 'Jeg havde det rigtigt')
       )
     );
-    videreBtn.focus();
+    fokuserUdenGenklik(videreBtn);
   }
 
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  // preventDefault stopper tastetrykkets egen keypress ved kilden; uden den
+  // klikker Enter den Videre-knap, svaret lige har skabt.
+  input.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    submit();
+  });
   submitBtn.addEventListener('click', submit);
 
   const quitBtn = onQuit ? el('button', { class: 'btn btn-ghost-sm quiz-quit', onclick: onQuit }, 'Afslut') : null;
@@ -1112,5 +1118,17 @@ async function doLogout() {
 // ── Register SW ───────────────────────────────────────────────────────────────
 
 if ('serviceWorker' in navigator) {
+  // Havde siden allerede en service worker, da den blev åbnet? Så er et skift
+  // af styring en ny udgave af appen — og siden hentes igen én gang, så markup,
+  // stilark og moduler kommer fra samme udgave. Uden det ville en netop
+  // udrullet rettelse først slå igennem ved næste besøg.
+  const havdeStyring = !!navigator.serviceWorker.controller;
+  let genindlaeser = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!havdeStyring || genindlaeser) return;
+    genindlaeser = true;
+    window.location.reload();
+  });
+
   navigator.serviceWorker.register('/navneApp/service-worker.js').catch(() => {});
 }

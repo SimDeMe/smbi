@@ -145,6 +145,11 @@ Derfor:
   stavefejl på et navn, man godt kunne sige, rettes til et rigtigt svar og
   tæller som sådan i spaced repetition. Knappen findes ikke i valglisten —
   der har man peget på den forkerte elev, og det er ikke en stavefejl.
+* **Enter må kun tælle én gang.** "Videre" får fokus, så man kan gå videre med
+  tastaturet, men den tager først imod, når tasten er sluppet igen. Ellers
+  aktiverer selve svarets Enter-tryk den nye knap (dens keypress lander på
+  knappen, der lige har fået fokus), og facit smutter forbi på et splitsekund
+  — netop dét, nedtællingen blev fjernet for at undgå.
 
 Resultatet skrives først til Firestore, når man går videre, så en rettelse
 tæller som det ene rigtige svar, den er — ikke som et forkert efterfulgt af
@@ -277,6 +282,15 @@ siddende og køre flere sæt i træk:
 ### Service Worker (service-worker.js)
 
 Cacher app-skallen (HTML, CSS, JS — inkl. `/forside.css`) så appen indlæses hurtigt. Billeder fra Firebase Storage caches **ikke** — de hentes altid fra nettet.
+
+**Versionsnavnet skal tælles op, hver gang en fil i skallen ændres.** Alt
+serveres fra cachen, så en telefon med appen installeret bliver ellers siddende
+med den udgave, den allerede har — uanset hvad der er lagt på serveren. Nye
+udgaver kommer ind ved, at browseren henter `service-worker.js` igen, opdager
+et nyt versionsnavn, fylder sin egen cache (med `cache:'reload'`, uden om
+browserens HTTP-cache) og overtager styringen; `app.js` lytter på
+`controllerchange` og henter siden igen én gang, så markup, stilark og moduler
+altid stammer fra samme udgave.
 
 ```javascript
 const CACHE_NAME = 'navne-app-v1';
