@@ -1,0 +1,46 @@
+{
+  "navn": "dyreplankton",
+  "dansk": "Dyreplankton",
+  "art": "Daphnia longispina",
+  "vender": "hoejre",
+  "tempo": 2.6,
+  "billeder": 8,
+  "celle": {
+    "bredde": 800,
+    "hoejde": 580
+  },
+  "filer": [
+    "dyreplankton-01.svg",
+    "dyreplankton-02.svg",
+    "dyreplankton-03.svg",
+    "dyreplankton-04.svg",
+    "dyreplankton-05.svg",
+    "dyreplankton-06.svg",
+    "dyreplankton-07.svg",
+    "dyreplankton-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0775,
+    "y": 0.1554,
+    "bredde": 0.6625,
+    "hoejde": 0.7377
+  },
+  "anker": {
+    "x": 0.44,
+    "y": 0.6966
+  },
+  "punkter": {
+    "oeje": {
+      "x": 0.6775,
+      "y": 0.6172
+    },
+    "rugehule": {
+      "x": 0.39,
+      "y": 0.6103
+    },
+    "halepig": {
+      "x": 0.0825,
+      "y": 0.8241
+    }
+  }
+}

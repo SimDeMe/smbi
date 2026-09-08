@@ -1,0 +1,46 @@
+{
+  "navn": "aakande",
+  "dansk": "Åkande",
+  "art": "Nymphaea alba",
+  "vender": "hoejre",
+  "tempo": 0.3,
+  "billeder": 8,
+  "celle": {
+    "bredde": 760,
+    "hoejde": 1000
+  },
+  "filer": [
+    "aakande-01.svg",
+    "aakande-02.svg",
+    "aakande-03.svg",
+    "aakande-04.svg",
+    "aakande-05.svg",
+    "aakande-06.svg",
+    "aakande-07.svg",
+    "aakande-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0545,
+    "y": 0.0437,
+    "bredde": 0.7285,
+    "hoejde": 0.9223
+  },
+  "anker": {
+    "x": 0.4474,
+    "y": 0.962
+  },
+  "punkter": {
+    "overflade": {
+      "x": 0.4474,
+      "y": 0.132
+    },
+    "blomst": {
+      "x": 0.6316,
+      "y": 0.117
+    },
+    "blad": {
+      "x": 0.4474,
+      "y": 0.132
+    }
+  }
+}

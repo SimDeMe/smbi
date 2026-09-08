@@ -1,0 +1,38 @@
+{
+  "navn": "planteplankton",
+  "dansk": "Planteplankton",
+  "art": "Asterionella formosa",
+  "vender": "hoejre",
+  "tempo": 0.25,
+  "billeder": 8,
+  "celle": {
+    "bredde": 820,
+    "hoejde": 820
+  },
+  "filer": [
+    "planteplankton-01.svg",
+    "planteplankton-02.svg",
+    "planteplankton-03.svg",
+    "planteplankton-04.svg",
+    "planteplankton-05.svg",
+    "planteplankton-06.svg",
+    "planteplankton-07.svg",
+    "planteplankton-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0759,
+    "y": 0.0759,
+    "bredde": 0.8481,
+    "hoejde": 0.8481
+  },
+  "anker": {
+    "x": 0.5,
+    "y": 0.5
+  },
+  "punkter": {
+    "nav": {
+      "x": 0.5,
+      "y": 0.5
+    }
+  }
+}

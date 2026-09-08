@@ -1,0 +1,38 @@
+{
+  "navn": "hornblad",
+  "dansk": "Hornblad",
+  "art": "Ceratophyllum demersum",
+  "vender": "hoejre",
+  "tempo": 0.4,
+  "billeder": 8,
+  "celle": {
+    "bredde": 560,
+    "hoejde": 1000
+  },
+  "filer": [
+    "hornblad-01.svg",
+    "hornblad-02.svg",
+    "hornblad-03.svg",
+    "hornblad-04.svg",
+    "hornblad-05.svg",
+    "hornblad-06.svg",
+    "hornblad-07.svg",
+    "hornblad-08.svg"
+  ],
+  "kasse": {
+    "x": 0.2726,
+    "y": 0.0388,
+    "bredde": 0.4644,
+    "hoejde": 0.9272
+  },
+  "anker": {
+    "x": 0.5,
+    "y": 0.962
+  },
+  "punkter": {
+    "top": {
+      "x": 0.5,
+      "y": 0.092
+    }
+  }
+}

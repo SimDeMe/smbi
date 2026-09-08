@@ -1,0 +1,46 @@
+{
+  "navn": "skalle",
+  "dansk": "Skalle",
+  "art": "Rutilus rutilus",
+  "vender": "hoejre",
+  "tempo": 2.2,
+  "billeder": 8,
+  "celle": {
+    "bredde": 1120,
+    "hoejde": 560
+  },
+  "filer": [
+    "skalle-01.svg",
+    "skalle-02.svg",
+    "skalle-03.svg",
+    "skalle-04.svg",
+    "skalle-05.svg",
+    "skalle-06.svg",
+    "skalle-07.svg",
+    "skalle-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0946,
+    "y": 0.0916,
+    "bredde": 0.8696,
+    "hoejde": 0.7968
+  },
+  "punkter": {
+    "mund": {
+      "x": 0.9554,
+      "y": 0.525
+    },
+    "oeje": {
+      "x": 0.8911,
+      "y": 0.425
+    },
+    "ryg": {
+      "x": 0.6339,
+      "y": 0.275
+    },
+    "halerod": {
+      "x": 0.2768,
+      "y": 0.5107
+    }
+  }
+}

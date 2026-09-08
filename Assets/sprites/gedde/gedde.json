@@ -1,0 +1,46 @@
+{
+  "navn": "gedde",
+  "dansk": "Gedde",
+  "art": "Esox lucius",
+  "vender": "hoejre",
+  "tempo": 1.1,
+  "billeder": 8,
+  "celle": {
+    "bredde": 1120,
+    "hoejde": 440
+  },
+  "filer": [
+    "gedde-01.svg",
+    "gedde-02.svg",
+    "gedde-03.svg",
+    "gedde-04.svg",
+    "gedde-05.svg",
+    "gedde-06.svg",
+    "gedde-07.svg",
+    "gedde-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0607,
+    "y": 0.0531,
+    "bredde": 0.9036,
+    "hoejde": 0.8364
+  },
+  "punkter": {
+    "mund": {
+      "x": 0.9589,
+      "y": 0.5273
+    },
+    "oeje": {
+      "x": 0.7839,
+      "y": 0.3955
+    },
+    "ryg": {
+      "x": 0.4554,
+      "y": 0.2909
+    },
+    "halerod": {
+      "x": 0.1982,
+      "y": 0.4932
+    }
+  }
+}

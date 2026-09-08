@@ -1,9 +1,10 @@
 {
   "navn": "aborre",
+  "dansk": "Aborre",
   "art": "Perca fluviatilis",
   "vender": "hoejre",
-  "billeder": 8,
   "tempo": 1.8,
+  "billeder": 8,
   "celle": {
     "bredde": 1120,
     "hoejde": 640
@@ -34,7 +35,7 @@
       "y": 0.425
     },
     "ryg": {
-      "x": 0.6696,
+      "x": 0.6518,
       "y": 0.2625
     },
     "halerod": {

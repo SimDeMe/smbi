@@ -1,0 +1,42 @@
+{
+  "navn": "tagroer",
+  "dansk": "Tagrør",
+  "art": "Phragmites australis",
+  "vender": "hoejre",
+  "tempo": 0.55,
+  "billeder": 8,
+  "celle": {
+    "bredde": 660,
+    "hoejde": 1120
+  },
+  "filer": [
+    "tagroer-01.svg",
+    "tagroer-02.svg",
+    "tagroer-03.svg",
+    "tagroer-04.svg",
+    "tagroer-05.svg",
+    "tagroer-06.svg",
+    "tagroer-07.svg",
+    "tagroer-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0844,
+    "y": 0.0663,
+    "bredde": 0.8493,
+    "hoejde": 0.8998
+  },
+  "anker": {
+    "x": 0.5,
+    "y": 0.9625
+  },
+  "punkter": {
+    "top": {
+      "x": 0.5,
+      "y": 0.2661
+    },
+    "dusk": {
+      "x": 0.5,
+      "y": 0.1589
+    }
+  }
+}

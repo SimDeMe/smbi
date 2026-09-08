@@ -1,0 +1,38 @@
+{
+  "navn": "vandpest",
+  "dansk": "Vandpest",
+  "art": "Elodea canadensis",
+  "vender": "hoejre",
+  "tempo": 0.45,
+  "billeder": 8,
+  "celle": {
+    "bredde": 460,
+    "hoejde": 1000
+  },
+  "filer": [
+    "vandpest-01.svg",
+    "vandpest-02.svg",
+    "vandpest-03.svg",
+    "vandpest-04.svg",
+    "vandpest-05.svg",
+    "vandpest-06.svg",
+    "vandpest-07.svg",
+    "vandpest-08.svg"
+  ],
+  "kasse": {
+    "x": 0.2987,
+    "y": 0.0569,
+    "bredde": 0.4171,
+    "hoejde": 0.9091
+  },
+  "anker": {
+    "x": 0.5,
+    "y": 0.962
+  },
+  "punkter": {
+    "top": {
+      "x": 0.5,
+      "y": 0.082
+    }
+  }
+}

@@ -56,12 +56,25 @@ export class Sprite {
 
   /** Figurens højde i px, når den tegnes med denne længde. */
   hoejdeAf(laengde) {
-    return this.#celle(laengde).hoejde * this.data.kasse.hoejde;
+    return this.#celle({laengde}).hoejde * this.data.kasse.hoejde;
+  }
+
+  /** Figurens længde i px, når den tegnes med denne højde. */
+  laengdeAf(hoejde) {
+    return this.#celle({hoejde}).bredde * this.data.kasse.bredde;
+  }
+
+  /** Figurens anker i cellen: sprite'ens eget, ellers midten af den. */
+  get anker() {
+    const k = this.data.kasse;
+    return this.data.anker || {x: k.x + k.bredde/2, y: k.y + k.hoejde/2};
   }
 
   /**
-   * Tegner sprite'en med midten af figuren i (x, y).
-   *   laengde  figurens længde i px, snude til halespids
+   * Tegner sprite'en med dens anker i (x, y) — for de fleste figurer midten,
+   * for en plante roden.
+   *   laengde  figurens længde i px, fx snude til halespids
+   *   hoejde   figurens højde i px — brug den i stedet for laengde
    *   tid      sekunder — vælger billedet i svømmetaget
    *   tempo    svømmetag pr. sekund (standard: sprite'ens eget)
    *   billede  vælg billedet selv i stedet for tid
@@ -70,14 +83,14 @@ export class Sprite {
    *   daekning 0–1
    */
   tegn(ctx, o) {
-    const laengde = o.laengde;
-    if (!(laengde > 0)) return;
+    const maal = this.#celle(o);
+    if (!maal) return;
     const nr = o.billede != null
       ? ((o.billede % this.data.billeder) + this.data.billeder) % this.data.billeder
       : this.billedeAf(o.tid || 0, o.tempo);
 
-    const {bredde, hoejde} = this.#celle(laengde);
-    const k = this.data.kasse;
+    const {bredde, hoejde} = maal;
+    const a = this.anker;
     const retning = o.retning < 0 ? -1 : 1;
     const haeld = (o.haeld || 0) * retning;
 
@@ -87,7 +100,7 @@ export class Sprite {
     if (retning < 0) ctx.scale(-1, 1);
     if (o.daekning != null) ctx.globalAlpha *= o.daekning;
     ctx.drawImage(this.#raster(ctx, bredde)[nr],
-      -(k.x + k.bredde / 2) * bredde, -(k.y + k.hoejde / 2) * hoejde, bredde, hoejde);
+      -a.x * bredde, -a.y * hoejde, bredde, hoejde);
     ctx.restore();
   }
 
@@ -97,21 +110,25 @@ export class Sprite {
    * hvilende figur, så det følger ikke halens udsving.
    */
   punkt(navn, o) {
-    const p = this.data.punkter[navn];
+    const p = (this.data.punkter || {})[navn];
     if (!p) throw new Error(`Sprite'en ${this.data.navn} har intet punkt "${navn}"`);
-    const {bredde, hoejde} = this.#celle(o.laengde);
-    const k = this.data.kasse;
+    const {bredde, hoejde} = this.#celle(o);
+    const a = this.anker;
     const retning = o.retning < 0 ? -1 : 1;
     const haeld = (o.haeld || 0) * retning;
-    const dx = (p.x - (k.x + k.bredde / 2)) * bredde * retning;
-    const dy = (p.y - (k.y + k.hoejde / 2)) * hoejde;
+    const dx = (p.x - a.x) * bredde * retning;
+    const dy = (p.y - a.y) * hoejde;
     const c = Math.cos(haeld), s = Math.sin(haeld);
     return {x: o.x + dx * c - dy * s, y: o.y + dx * s + dy * c};
   }
 
-  /** Cellens mål i px, når figuren skal være så lang. */
-  #celle(laengde) {
-    const c = this.data.celle, bredde = laengde / this.data.kasse.bredde;
+  /** Cellens mål i px, når figuren skal være så lang — eller så høj. */
+  #celle(o) {
+    const c = this.data.celle, k = this.data.kasse;
+    let bredde;
+    if (o.laengde > 0)     bredde = o.laengde / k.bredde;
+    else if (o.hoejde > 0) bredde = (o.hoejde / k.hoejde) * (c.bredde / c.hoejde);
+    else return null;
     return {bredde, hoejde: bredde * c.hoejde / c.bredde};
   }
 
