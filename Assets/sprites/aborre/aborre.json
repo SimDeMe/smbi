@@ -1,0 +1,45 @@
+{
+  "navn": "aborre",
+  "art": "Perca fluviatilis",
+  "vender": "hoejre",
+  "billeder": 8,
+  "tempo": 1.8,
+  "celle": {
+    "bredde": 1120,
+    "hoejde": 640
+  },
+  "filer": [
+    "aborre-01.svg",
+    "aborre-02.svg",
+    "aborre-03.svg",
+    "aborre-04.svg",
+    "aborre-05.svg",
+    "aborre-06.svg",
+    "aborre-07.svg",
+    "aborre-08.svg"
+  ],
+  "kasse": {
+    "x": 0.0964,
+    "y": 0.0764,
+    "bredde": 0.8679,
+    "hoejde": 0.7916
+  },
+  "punkter": {
+    "mund": {
+      "x": 0.9571,
+      "y": 0.5312
+    },
+    "oeje": {
+      "x": 0.8768,
+      "y": 0.425
+    },
+    "ryg": {
+      "x": 0.6696,
+      "y": 0.2625
+    },
+    "halerod": {
+      "x": 0.2839,
+      "y": 0.5062
+    }
+  }
+}

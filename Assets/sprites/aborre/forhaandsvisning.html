@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aborren som sprite — smbi.dk</title>
+<meta name="description" content="Forhåndsvisning af sprite-mappens svømmende aborre: otte billeder i ét svømmetag, tegnet på et 2D-lærred.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Forhåndsvisning af sprite-mappen — samme formsprog som
+   resten af sitet, se design_rules.md.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);   --geo:var(--blue);
+  --accent:var(--bio);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --fig:420px;          /* figurens højde — sættes af scriptet "Højdebudget" */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+.enhed{text-transform:none}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#FBD3E1;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#FBD3E1;filter:blur(70px);opacity:.6;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:58ch}
+
+/* ── Signaturpanel ─────────────────────────────────────── */
+.rig{
+  position:relative;background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);background:#FDECF2;
+}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+}
+.rig-head .who{
+  margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;
+}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--accent);color:#fff;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+
+.stage{
+  /* Højdebudget: figuren må ikke blive højere end --fig. */
+  max-width:calc(var(--fig)*2 + 20px);margin-inline:auto;
+  padding:10px 10px 0;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+canvas{
+  display:block;width:100%;height:auto;aspect-ratio:2/1;
+  border:2px solid var(--ink);border-radius:12px;background:#C7E6F6;
+}
+
+/* ── Billederne ét for ét ──────────────────────────────── */
+.rammer{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:14px 15px;display:flex;gap:10px;overflow-x:auto;
+}
+.ramme{flex:0 0 auto;text-align:center}
+.ramme img{
+  display:block;width:132px;height:auto;background:#fff;
+  border:2px solid var(--ink);border-radius:10px;
+}
+.ramme span{
+  display:block;margin-top:5px;font-family:var(--mono);font-size:0.58rem;
+  font-weight:600;letter-spacing:0.12em;color:#5A6C69;
+}
+
+/* ── Skydere ───────────────────────────────────────────── */
+.knobs{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:18px 15px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px 26px;
+}
+.knob{display:flex;flex-direction:column;gap:7px}
+.knob-top{display:flex;align-items:baseline;gap:10px}
+.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-val{
+  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;white-space:nowrap;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range]::-moz-range-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+#inp-antal{--track:linear-gradient(90deg,#FFF,#D6EFC4);--kc:var(--lime)}
+#inp-laengde{--track:linear-gradient(90deg,#FFF,#C7E6F6);--kc:var(--blue)}
+#inp-tempo{--track:linear-gradient(90deg,#FFF,#FBD3E1);--kc:var(--pink)}
+
+/* ── Fakta-fod ─────────────────────────────────────────── */
+.facts{
+  border-top:2px solid var(--ink);background:#fff;
+  padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+}
+.fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
+.fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0}
+.fact i{font-style:italic;text-transform:none;letter-spacing:0.02em}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--pink);border-color:var(--pink)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+/* ── Projektortilstand ─────────────────────────────────── */
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
+body[data-projektor="1"] .knob-val{font-size:1.05rem}
+body[data-projektor="1"] .fact{font-size:0.74rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:820px){.knobs{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding:24px 0 18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .knobs{grid-template-columns:1fr}
+  .ramme img{width:104px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{.top,.foot,.knobs,.btn-mini{display:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Sprites · aborre</span>
+      <h1>Aborren som <span class="hi" style="--hc:#FBD3E1">sprite</span></h1>
+      <p class="lead">Otte billeder i ét svømmetag. Siden her er kun til at se dem efter i sømmene — selve fisken hører hjemme i simuleringerne, som henter den fra <code>/Assets/sprites/aborre/</code>.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="rig-live"><span class="dot"></span><span class="mono">Levende sprite</span></span>
+        <span class="who" id="who">8 billeder · SVG</span>
+        <button type="button" class="btn-mini" id="btn-pause" aria-pressed="false">Pause</button>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
+                title="Skjul sidens krom">Projektor</button>
+      </div>
+
+      <div class="stage">
+        <canvas id="laerred" aria-label="Aborrer, der svømmer hen over lærredet"></canvas>
+      </div>
+
+      <div class="rammer" id="rammer"></div>
+
+      <div class="knobs">
+        <div class="knob">
+          <div class="knob-top"><span class="mono">Antal fisk</span>
+            <span class="knob-val" id="val-antal" aria-live="polite">5</span></div>
+          <input type="range" id="inp-antal" min="1" max="14" step="1" value="5">
+        </div>
+        <div class="knob">
+          <div class="knob-top"><span class="mono">Længde</span>
+            <span class="knob-val"><span id="val-laengde" aria-live="polite">170</span> <span class="enhed">px</span></span></div>
+          <input type="range" id="inp-laengde" min="50" max="420" step="5" value="170">
+        </div>
+        <div class="knob">
+          <div class="knob-top"><span class="mono">Tempo</span>
+            <span class="knob-val"><span id="val-tempo" aria-live="polite">1,8</span> <span class="enhed">tag/s</span></span></div>
+          <input type="range" id="inp-tempo" min="0.3" max="3.6" step="0.1" value="1.8">
+        </div>
+      </div>
+
+      <div class="facts">
+        <span class="fact" style="--fc:#5FB030">Art <b><i>Perca fluviatilis</i></b></span>
+        <span class="fact" style="--fc:#0E86C8">Billeder <b>8</b></span>
+        <span class="fact" style="--fc:#E8336D">Ramme <b>1120 × 640</b></span>
+        <span class="fact" style="--fc:#FFB300">Vender <b>mod højre</b></span>
+      </div>
+      <p class="sr" id="sr" aria-live="polite"></p>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Sprites · aborre</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
+<script type="module">
+import {indlaesAborre} from './aborre.js';
+
+const laerred = document.getElementById('laerred');
+const ctx = laerred.getContext('2d');
+const roligt = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+const skydere = {
+  antal:   document.getElementById('inp-antal'),
+  laengde: document.getElementById('inp-laengde'),
+  tempo:   document.getElementById('inp-tempo'),
+};
+let pause = roligt;
+
+const aborre = await indlaesAborre();
+document.getElementById('who').textContent =
+  aborre.billeder + ' billeder · SVG · ' + aborre.data.art;
+
+// billederne ét for ét
+const rammer = document.getElementById('rammer');
+aborre.data.filer.forEach((fil, i) => {
+  const boks = document.createElement('div');
+  boks.className = 'ramme';
+  boks.innerHTML = '<img src="' + fil + '" alt="Billede ' + (i+1) +
+    ' af svømmetaget"><span>' + String(i+1).padStart(2,'0') + '</span>';
+  rammer.append(boks);
+});
+
+// ── stimen ────────────────────────────────────────────────
+let stime = [];
+function byg(){
+  const n = +skydere.antal.value;
+  while (stime.length > n) stime.pop();
+  while (stime.length < n) stime.push({
+    y: 0.12 + Math.random()*0.76,          // andel af lærredets højde
+    x: Math.random(),                       // andel af bredden
+    fart: 0.055 + Math.random()*0.07,       // kropslængder pr. sekund … ganges op
+    retning: Math.random() < 0.5 ? 1 : -1,
+    stoerrelse: 0.72 + Math.random()*0.5,
+    fase: Math.random(),
+    svaj: Math.random()*Math.PI*2,
+  });
+  document.getElementById('val-antal').textContent = n;
+}
+
+let bredde = 0, hoejde = 0;
+function tilpasFigur(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  bredde = laerred.clientWidth || 640;
+  hoejde = Math.round(bredde/2);
+  laerred.width  = Math.round(bredde*dpr);
+  laerred.height = Math.round(hoejde*dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.tilpasFigur = tilpasFigur;
+
+function bund(){
+  ctx.clearRect(0, 0, bredde, hoejde);
+  const vand = ctx.createLinearGradient(0, 0, 0, hoejde);
+  vand.addColorStop(0, '#D9F0FB');
+  vand.addColorStop(1, '#8CC7E6');
+  ctx.fillStyle = vand;
+  ctx.fillRect(0, 0, bredde, hoejde);
+}
+
+function tegn(tid){
+  bund();
+  const grund = +skydere.laengde.value;
+  const tempo = +skydere.tempo.value;
+  for (const f of stime){
+    const laengde = grund * f.stoerrelse;
+    const x = (f.x*(bredde + laengde*2) ) - laengde;
+    const y = f.y*hoejde + Math.sin(tid*0.7 + f.svaj)*hoejde*0.03;
+    const haeld = Math.sin(tid*0.7 + f.svaj)*0.10;
+    aborre.tegn(ctx, {
+      x, y, laengde, retning: f.retning, haeld,
+      tid: tid + f.fase*10, tempo,
+    });
+  }
+}
+
+let sidst = 0, ur = 0;
+function billede(nu){
+  const dt = sidst ? Math.min((nu - sidst)/1000, 0.1) : 0;
+  sidst = nu;
+  if (!pause){
+    ur += dt;
+    const fart = +skydere.tempo.value;
+    for (const f of stime){
+      f.x += f.retning * f.fart * fart * dt * 0.5;
+      if (f.x > 1.15) f.x = -0.15;
+      if (f.x < -0.15) f.x = 1.15;
+    }
+  }
+  tegn(ur);
+  requestAnimationFrame(billede);
+}
+
+// ── betjening ─────────────────────────────────────────────
+skydere.antal.addEventListener('input', byg);
+skydere.laengde.addEventListener('input', () => {
+  document.getElementById('val-laengde').textContent = skydere.laengde.value;
+});
+skydere.tempo.addEventListener('input', () => {
+  document.getElementById('val-tempo').textContent =
+    (+skydere.tempo.value).toFixed(1).replace('.', ',');
+});
+
+const knapPause = document.getElementById('btn-pause');
+function saetPause(til){
+  pause = til;
+  knapPause.setAttribute('aria-pressed', til ? 'true' : 'false');
+  knapPause.textContent = til ? 'Kør' : 'Pause';
+  document.getElementById('sr').textContent = til ? 'Stimen står stille.' : 'Stimen svømmer.';
+}
+knapPause.addEventListener('click', () => saetPause(!pause));
+
+const knapProjektor = document.getElementById('btn-projektor');
+function saetProjektor(til){
+  document.body.dataset.projektor = til ? '1' : '';
+  knapProjektor.setAttribute('aria-pressed', til ? 'true' : 'false');
+  requestAnimationFrame(tilpasFigur);
+}
+knapProjektor.addEventListener('click',
+  () => saetProjektor(document.body.dataset.projektor !== '1'));
+if (/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
+
+addEventListener('resize', tilpasFigur);
+tilpasFigur();
+byg();
+if (roligt) saetPause(true);
+requestAnimationFrame(billede);
+</script>
+
+<!-- ── Højdebudget ──────────────────────────────────────
+     Panelet måler, hvad det bruger til alt andet end lærredet, og
+     lægger resten af skærmhøjden i --fig. Budgettet kan kun gøre
+     figuren mindre, og giver op, hvis panelet alligevel ikke kan
+     komme til at passe. Se design_rules.md.                       -->
+<script>
+(function(){
+  const rig = document.querySelector('.rig');
+  const fig = document.querySelector('#laerred');
+  if(!rig || !fig) return;
+  const bjaelke = document.querySelector('.top');
+  const MIN = 180, MAKS = 520, LUFT = 16;
+  let sidst = 0, panel = 0, ventende = false;
+
+  function saet(h){
+    if(h === sidst) return;
+    sidst = h;
+    rig.style.setProperty('--fig', h + 'px');
+    if(window.tilpasFigur) window.tilpasFigur();
+  }
+
+  function maal(){
+    saet(MAKS);
+    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
+               ? bjaelke.getBoundingClientRect().height : 0;
+    const rum  = innerHeight - krom - LUFT;
+    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    const h    = Math.round(rum - fast);
+    if(h < MAKS){
+      saet(Math.max(MIN, h));
+      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    }
+    panel = rig.getBoundingClientRect().height;
+  }
+
+  function planlaeg(){
+    if(ventende) return;
+    ventende = true;
+    requestAnimationFrame(function(){ ventende = false; maal(); });
+  }
+
+  maal();
+  addEventListener('resize', planlaeg);
+  addEventListener('load', planlaeg);
+  if(document.fonts) document.fonts.ready.then(planlaeg);
+  new ResizeObserver(function(){
+    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+  }).observe(rig);
+})();
+</script>
+</body>
+</html>
