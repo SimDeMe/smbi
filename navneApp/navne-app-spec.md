@@ -292,6 +292,13 @@ browserens HTTP-cache) og overtager styringen; `app.js` lytter på
 `controllerchange` og henter siden igen én gang, så markup, stilark og moduler
 altid stammer fra samme udgave.
 
+**Udgavemærket** yderst i topbjælken (`v8`) viser, hvilken udgave man kører.
+Nummeret står som `UDGAVE` i `js/app.js` og tælles op sammen med `CACHE` i
+service workeren. Mærket sættes fra JavaScript og ikke i HTML, så det følger
+koden: står der intet i topbjælken, er det ikke den nye kode, der kører.
+Bunden er skjult i den installerede app, og derfor bor mærket i topbjælken —
+det er netop på telefonen, spørgsmålet melder sig.
+
 ```javascript
 const CACHE_NAME = 'navne-app-v1';
 const ASSETS = ['/', '/index.html', '/css/style.css', '/js/app.js' /* osv. */];

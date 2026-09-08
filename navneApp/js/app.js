@@ -11,6 +11,18 @@ import { visningsnavne, visningsnavn } from "./navne.js";
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
 
+// ── Udgave ──────────────────────────────────────────────────────────────────
+//
+// Nummeret vises i topbjælken, så man på telefonen kan se, hvilken kode der
+// kører — en installeret app kan sidde med en gammel udgave i sin cache.
+// Tælles op sammen med CACHE i service-worker.js, hver gang der lægges en ny
+// udgave op. Mærket sættes herfra og ikke i HTML, så det følger koden: viser
+// topbjælken intet, er det gammel JavaScript, der stadig er i gang.
+export const UDGAVE = 8;
+
+const udgaveMaerke = document.getElementById('udgave');
+if (udgaveMaerke) udgaveMaerke.textContent = `v${UDGAVE}`;
+
 let state = { uid: null, view: null, classId: null, studentId: null };
 
 // ── Router ──────────────────────────────────────────────────────────────────

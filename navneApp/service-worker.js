@@ -4,10 +4,11 @@
 // fylder sin egen cache under install, overtager styringen — og app.js henter
 // så siden igen én gang (se controllerchange dér).
 //
-// BEMÆRK: versionsnavnet skal tælles op, hver gang en fil i SHELL ændres.
-// Ellers bliver telefonen siddende med den udgave, den allerede har — sådan
-// blev en rettelse af quizzen hængende i flere uger.
-const CACHE = 'navne-app-v7';
+// BEMÆRK: versionsnavnet skal tælles op, hver gang en fil i SHELL ændres —
+// sammen med UDGAVE i js/app.js, som viser nummeret i topbjælken. Ellers
+// bliver telefonen siddende med den udgave, den allerede har; sådan blev en
+// rettelse af quizzen hængende i flere uger.
+const CACHE = 'navne-app-v8';
 const SHELL = [
   '/navneApp/',
   '/navneApp/index.html',
