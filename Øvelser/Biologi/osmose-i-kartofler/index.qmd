@@ -1,0 +1,53 @@
+---
+title: "Osmose i kartofler"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge osmose i kartoffelceller. Osmose er transport af vand gennem cellemembranen, drevet af forskelle i koncentrationen af opløste stoffer som salt. I skal lægge kartoffelskiver i saltvandsopløsninger med forskellig koncentration og måle, hvordan deres vægt ændrer sig undervejs.
+
+## Fremgangsmåde
+
+1. Skær seks ens skiver af kartoflen, ca. 3 mm tykke. Skiverne skal have samme dimensioner.
+2. Dup skiverne forsigtigt tørre, og læg den sjette skive til side som reference.
+3. Vej de fem skiver enkeltvis med 0,01 g nøjagtighed, og skriv startvægten i skemaet.
+4. Læg én skive i hver petriskål (1–5).
+5. Hæld opløsningerne i skålene, så skiverne akkurat er dækket: skål 1 = 0 %, skål 2 = 1 %, skål 3 = 3 %, skål 4 = 6 % og skål 5 = 12 %. Læg låg på, og notér tidspunktet.
+6. Efter 1 time tages skiverne op. Dup dem forsigtigt tørre, vej dem igen, og notér konsistensen sammenlignet med referenceskiven.
+
+::: {.callout-tip}
+## Tip
+
+Skær skiverne så ens i størrelse og tykkelse som muligt — det gør det lettere at sammenligne vægtændringerne bagefter.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Kartoffel, skærebræt og kniv
+- Vægt (0,01 g nøjagtighed)
+- 5 petriskåle med låg, nummereret 1–5
+- NaCl-opløsninger: 0 % (destilleret vand), 1 %, 3 %, 6 % og 12 %
+- Køkkenrulle, ur, papir og blyant
+:::
+
+## Registrering af målinger
+
+| NaCl-koncentration | Startvægt (g) | Slutvægt (g) | Ændring (g) | Ændring (%) | Konsistens efter |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| 0 % (dest. vand) | | | | | |
+| 1 % | | | | | |
+| 3 % | | | | | |
+| 6 % | | | | | |
+| 12 % | | | | | |
+
+: Vægtændring hos kartoffelskiver i NaCl-opløsninger med forskellig koncentration.

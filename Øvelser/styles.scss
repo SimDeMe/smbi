@@ -1,0 +1,129 @@
+/*-- scss:defaults --*/
+
+// Palette (matches the Word / Typst versions of this template)
+$ink:        #26332B;
+$accent:     #3F5F3A;
+$accent-dark:#2C4527;
+$muted:      #6B7A66;
+$rule:       #D8E0D2;
+$bg:         #FFFFFF;
+
+$font-family-sans-serif: "Calibri", "Carlito", "Lato", "Helvetica Neue", Arial, sans-serif !default;
+$font-family-monospace:  "SFMono-Regular", Consolas, monospace !default;
+
+$body-color: $ink;
+$body-bg: $bg;
+$link-color: #1F5F8B;
+
+$h1-font-size: 2.1rem;
+$h2-font-size: 1.35rem;
+$h3-font-size: 1.15rem;
+$headings-font-weight: 700;
+$headings-color: $accent-dark;
+
+$table-border-color: #C7D0C0;
+$table-striped-bg: #F5F7F2;
+
+$callout-color-tip: $accent;
+
+// disable the theme's default Google Fonts import — Calibri/Carlito are
+// already installed locally and render identically without a network fetch
+$web-font-path: null;
+
+/*-- scss:rules --*/
+
+body {
+  font-family: $font-family-sans-serif;
+}
+
+#title-block-header {
+  border-bottom: 2px solid $rule;
+  padding-bottom: .6rem;
+  margin-bottom: 1.4rem;
+}
+
+.quarto-title h1.title {
+  color: $accent-dark;
+  font-weight: 800;
+}
+
+.quarto-title .subtitle {
+  color: $accent;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+h2 {
+  border-left: 4px solid $accent;
+  padding-left: .6rem;
+  margin-top: 2.2rem;
+}
+
+h3 { color: $accent; }
+
+.doc-banner {
+  display: flex;
+  justify-content: space-between;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  color: $muted;
+  font-weight: 700;
+  border-bottom: 1px solid $rule;
+  padding-bottom: .5rem;
+  margin-bottom: 1rem;
+}
+
+.doc-banner-fag { text-transform: uppercase; }
+
+figcaption, .figure-caption {
+  color: $muted;
+  font-style: italic;
+  font-size: .85rem;
+  text-align: center;
+}
+
+table {
+  font-size: .95rem;
+  border-collapse: collapse;
+}
+
+// Full grid lines, so each cell reads as its own box — matters for
+// fill-in-by-hand result tables, not just visually separated rows.
+table th,
+table td {
+  border: 1px solid $table-border-color;
+}
+
+// Horizontal scroll is a screen-only convenience for wide tables — on
+// screen it makes the table `display: block`, which is fine there but
+// would stop @media print below from keeping the table on one page, so
+// it's scoped to screen only.
+@media screen {
+  table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+
+thead {
+  background: $accent;
+  color: white;
+}
+
+thead th {
+  color: white !important;
+}
+
+.callout {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+@media print {
+  .doc-banner { display: flex !important; }
+  a[href]::after { content: ""; }
+  table, tr { break-inside: avoid; page-break-inside: avoid; }
+}

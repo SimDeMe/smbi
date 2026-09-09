@@ -1,0 +1,52 @@
+---
+title: "Konvektionskammer"
+subtitle: "Laboratorieøvelse"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I bruge et konvektionskammer til at undersøge, hvordan termisk højtryk og lavtryk opstår, når luft opvarmes forskelligt.
+
+## Fremgangsmåde
+
+1. Stil metalpladen på et koldt underlag — gerne udendørs eller et andet køligt sted.
+2. Sæt fyrfadslyset ned i den ene af pladens to cirkler, og tænd det.
+3. Sæt plexiglaskassen ovenpå metalpladen, så kassens to skorstene passer med pladens to cirkler.
+4. Vent ca. 5 minutter, mens luften over lyset opvarmes, og luften i den anden skorsten forbliver kold.
+5. Tænd røgelsespinden, og pust flammen ud, så den ryger. Hold den rygende røgelsespind hen over den *kolde* skorsten (uden lys under).
+6. Observér, hvordan røgen bevæger sig gennem kammeret.
+
+## Dokumentation
+
+Tag et billede af røgens bevægelse gennem kammeret, eller tegn en skitse af det. Marker røgens retning med pile, og sæt H og L ud for de steder i kammeret, hvor I vurderer, at der er henholdsvis højtryk og lavtryk.
+
+::: {.callout-tip}
+## Tip
+
+Hold en mørk baggrund (fx en jakke eller et bærbar-cover) op bag kammeret, mens I kigger — det gør røgen meget lettere at se. Jo koldere metalpladen er, inden I starter, jo tydeligere bliver temperaturforskellen i kammeret.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Konvektionskammer (metalplade med plexiglaskasse)
+- Fyrfadslys
+- Tændstikker
+- Røgelsespind (eller andet der kan afgive røg, fx et stykke smøldrende papir)
+- Mørk baggrund, fx en jakke eller et bærbar-cover
+- Stopur eller mobiltelefon
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Der arbejdes med åben ild (fyrfadslys, tændstikker og en rygende røgelsespind). Brug en fast, ikke-brandbar overflade, og hold brandbare materialer på afstand.
+- Sluk fyrfadslyset og røgelsespinden helt efter brug, og lad metalpladen køle af, før den røres eller ryddes væk.
+- Bøj jer ikke ind over den åbne flamme, og undgå at indånde røgen direkte.
+:::

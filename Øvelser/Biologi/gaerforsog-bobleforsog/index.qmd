@@ -1,0 +1,83 @@
+---
+title: "Gærforsøg — bobleforsøg"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge, hvordan temperatur påvirker gærens gæring. Gærceller omsætter sukker til alkohol og kuldioxid (CO₂), når der ikke er ilt til stede — det er denne gæring, der får brøddej til at hæve. I skal tælle, hvor mange CO₂-bobler der siver ud af gærrørene pr. minut ved forskellige betingelser, og bruge indikatoren bromthymolblåt (BTB) til at følge, hvordan CO₂ gør vandet i gærrøret surt.
+
+## Fremgangsmåde
+
+### A. Klargøring af gærrør
+
+1. Fyld de fire gærrør med vand tilsat et par dråber bromthymolblåt (BTB). Notér farven i skemaet.
+
+### B. Fire kolber med gær og sukker
+
+1. **Kolbe 1:** Kom 20 g gær og 25 g sukker i en konisk kolbe, og rør rundt med en spatel — uden at tilsætte vand endnu. Notér jeres iagttagelser.
+2. **Kolbe 2-4:** Opløs 25 g sukker i 100 mL vand i hver af de tre andre koniske kolber. Brug varmepladerne til at give vandet tre forskellige temperaturer, fx stuetemperatur (ca. 20 °C), håndvarmt (ca. 37 °C) og varmt (ca. 60 °C). Mål og notér temperaturerne.
+3. Tilsæt 20 g gær til hver af de tre sukkeropløsninger, og rør rundt.
+4. Tilsæt nu 100 mL vand ved stuetemperatur til kolbe 1.
+5. Sæt en prop med et klargjort gærrør på alle fire kolber, og start stopuret samtidig for alle fire.
+
+### C. Observation af gæringen
+
+1. Notér, hvornår den første boble forlader hvert gærrør.
+2. Tæl antallet af bobler, der forlader hvert gærrør i løbet af ét minut. Gør det 3-4 gange i løbet af forsøget, fx efter 5, 15 og 30 minutter, og notér det præcise tidspunkt hver gang.
+3. Hold øje med farven af BTB i gærrørene undervejs, og notér hvornår og hvordan den ændrer sig.
+
+### D. Oprydning
+
+1. Kolberne tømmes, og udstyret skylles og rengøres.
+
+::: {.callout-tip}
+## Tip
+
+Bromthymolblåt skifter farve med pH: blåt ved pH over 7,6, grønt ved pH 6,0-7,6, og gult under pH 6,0. Jo mere CO₂, der opløses i vandet, jo surere bliver det.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Tørgær (i alt ca. 80 g)
+- Sukker (i alt ca. 100 g)
+- Vand
+- Bromthymolblåt (BTB)
+- 4 × 250 mL konisk kolbe med prop og gærrør
+- Spatel
+- Termometer
+- Vægt
+- 2 varmeplader
+- Stopur
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Varmepladerne og det opvarmede vand kan give forbrændinger — pas på ved håndtering, og lad varmepladerne køle af efter brug.
+- Bromthymolblåt (BTB) kan irritere hud og øjne. Undgå kontakt, og skyl straks med vand ved spild.
+- Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
+:::
+
+## Registrering af resultater
+
+| | Kolbe 1 (gær + sukker tørt) | Kolbe 2 (stuetemp.) | Kolbe 3 (håndvarmt) | Kolbe 4 (varmt) |
+|:---|:---:|:---:|:---:|:---:|
+| Vandets temperatur | | | | |
+| BTB-farve ved start | | | | |
+| Tid for første boble (min) | | | | |
+| Antal bobler/min efter 5 min | | | | |
+| Antal bobler/min efter 15 min | | | | |
+| Antal bobler/min efter 30 min | | | | |
+| BTB-farve og tidspunkt for ændring | | | | |
+
+: Iagttagelser fra de fire gærrør.

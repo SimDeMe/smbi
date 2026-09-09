@@ -1,0 +1,75 @@
+---
+title: "Porøsitet og permeabilitet i jord"
+subtitle: "Laboratorieøvelse"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge, hvordan jordbundens sammensætning har betydning for dannelse af grundvand og for jordens egnethed til dyrkning af afgrøder. I skal sammenligne fire jordtyper — sand, podsoljord, brunjord og rødjord — ved at måle, hvor hurtigt vand siver igennem dem (permeabilitet), og hvor stor en del af jordens volumen der består af hulrum, som kan rumme vand (porøsitet).
+
+## Fremgangsmåde
+
+### A. Nedsivning (permeabilitet)
+
+1. Knus en portion af den første sedimentprøve, så den er nogenlunde ensartet.
+2. Læg et kaffefilter i tragten, og stil tragten oven på et måleglas.
+3. Afvej 50 g af den knuste sedimentprøve, og hæld den i filteret.
+4. Hæld 100 mL vand ned i tragten i én jævn bevægelse, og start stopuret samtidig.
+5. Aflæs og notér vandmængden i måleglasset for hvert 10. sekund, indtil vandet er holdt op med at sive igennem.
+6. Gentag punkt 1–5 for hver af de øvrige tre jordtyper.
+
+### B. Porøsitet
+
+1. Hæld 50 mL af den (uknuste) sedimentprøve i et måleglas.
+2. Tilsæt 50 mL vand, og rør rundt, så jordprøven fordeler sig jævnt i vandet.
+3. Lad blandingen stå og bundfælde sig i ca. 30 minutter.
+4. Aflæs og notér volumen af det klare vandlag, der har lagt sig ovenpå den bundfældede jord.
+5. Gentag punkt 1–4 for hver af de øvrige tre jordtyper.
+
+::: {.callout-tip}
+## Tip
+
+Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sammenlignes retfærdigt mellem jordtyperne. Brug samme tragt og samme type filter til alle fire prøver.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- 4 sedimentprøver: sand, podsoljord, brunjord og rødjord
+- Måleglas
+- Kaffetragt og kaffefiltre
+- Vægt og vejeskål
+- Stopur eller mobiltelefon
+- Rørepind
+- Vand
+- Evt. morter/støder til at knuse prøverne
+:::
+
+## Registrering af resultater
+
+### Nedsivning
+
+| Tid (sek.) | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| 10 | | | | |
+| 20 | | | | |
+| 30 | | | | |
+| 40 | | | | |
+| 50 | | | | |
+| 60 | | | | |
+
+: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder.
+
+### Porøsitet
+
+| | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| Volumen klart vand efter 30 min. (mL) | | | | |
+
+: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype.

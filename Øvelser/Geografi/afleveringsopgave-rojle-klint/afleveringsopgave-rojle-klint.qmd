@@ -1,0 +1,61 @@
+---
+title: "Stranden ved Røjle Klint"
+subtitle: "Afleveringsopgave"
+doc-type: "Afleveringsopgave"
+
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+
+## Om opgaven
+
+Hver gruppe afleverer en samlet skriftlig opgave om feltarbejdet ved Røjle Klint. Opgaven skal vise, hvordan I har udført jeres undersøgelser, hvad I fandt ud af, og hvad det fortæller om kysten ved Røjle Klint — og I skal inddrage den teori om kyster, vi har arbejdet med i forløbet, til at forklare og perspektivere jeres resultater.
+
+## Forside
+
+Forsiden må meget gerne have et foto fra stranden ved Røjle Klint. Den skal desuden indeholde:
+
+- Fag: Naturgeografi B
+- Opgavens titel
+- For- og efternavn på alle elever i gruppen
+- Hold: 3g Ng1
+- Middelfart Gymnasium og HF
+- Afleveringsdato
+
+Forsiden skal ikke have sidehoved eller sidetal — men den tæller stadig som side 1.
+
+## Indledning (side 2)
+
+Skriv en kort indledning, der vækker læserens interesse og giver et hurtigt overblik over opgavens indhold og opbygning. 
+
+## Indholdsafsnit — ét pr. aktivitet
+
+Herefter følger ét afsnit pr. aktivitet, jeres gruppe har udført. Første afsnit begynder på samme side som indledningen; de næste fortsætter på siderne efter. Giv hvert afsnit en overskrift, der fortæller, hvilken aktivitet det handler om (fx "Opmåling af tværprofil").
+
+I hvert afsnit skal I:
+
+1. Beskrive, hvordan I udførte aktiviteten. I må gerne støtte jer til de udleverede vejledninger og dataark, men det er vigtigt, at I taler sammen om, hvordan I *faktisk* gjorde det, og får det skrevet ned i egne ord.
+2. Renskrive/rentegne jeres resultater, og lave de beregninger eller grafer, det giver mening at tage med.
+3. Runde af med en kort delkonklusion, hvor I inddrager den teori om kyster, vi har arbejdet med i forløbet: Hvad fandt I ud af om stranden/kysten ved netop denne undersøgelse, og hvordan spiller det sammen med teorien fra NaturgeografiGrundbogen B? Det er op til jer selv at vurdere, hvad der er relevant teori at inddrage ud fra jeres egne data — det kan fx være en beregning af det frie stræk, en vurdering af om I har målt et sommer- eller vinterprofil, eller hvilken kysttype, der er tale om. Der skal stadig ikke være et selvstændigt teoriafsnit — teorien skal bruges til at forklare og perspektivere jeres egne resultater, ikke stå for sig selv.
+
+::: {.callout-note}
+## Har I observationer, der ikke hører hjemme i et af aktivitetsafsnittene?
+
+Fx fotos eller observationer af bølger. Så giv dem deres eget lille afsnit, inden konklusionen — konklusionen må ikke indeholde noget, der ikke allerede er beskrevet tidligere i opgaven.
+:::
+
+## Konklusion
+
+Når alle gruppens aktiviteter er grundigt beskrevet (både metode og resultater), afslutter I opgaven med en samlet konklusion. Saml op på, hvilken viden I har fået om kystens former, sedimenter, aflejringer, organismer, vindens retning og hastighed osv. Konklusionen må ikke indeholde ny information — alt, hvad I konkluderer på, skal allerede være beskrevet tidligere i opgaven.
+
+::: {.callout-tip}
+## Gode råd undervejs
+
+- I skal ikke lave en litteraturliste — I bruger primært lærebogen, hvis I mangler en forklaring på et fagord eller en teori.
+- Husk sidetal, en overskrift til hvert afsnit, og kør Words stave- og grammatikkontrol (under fanen *Gennemse*) igennem, inden I afleverer.
+- Skriv opgaven selv — undlad at bruge AI til at skrive den. Arbejd sammen og hjælp hinanden: lad gerne dem, der er gode til sprog og stavning, læse korrektur undervejs, så I andre også får trænet jeres skriftlige formuleringsevne.
+:::
+

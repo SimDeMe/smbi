@@ -1,0 +1,75 @@
+---
+title: "Mikroskopi af celler"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I lave jeres egne mikroskoppræparater og sammenligne celler fra en plante (løghinde), en vandplante (vandpest) og jeres egne kindceller (kindskrab) i lysmikroskopet.
+
+## Fremgangsmåde
+
+### Sådan indstiller I mikroskopet
+
+1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
+2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
+3. Se fra siden, og kør objektivet så langt ned mod præparatet som muligt med grovskruen.
+4. Se i okularet, og skru langsomt objektivet opad, indtil billedet er skarpt. Finindstil med finskruen.
+5. Justér lysstyrke og blænde, til kontrasten er bedst mulig.
+6. Skift først derefter til større forstørrelse (10× og dernæst 40×). Efterjustér kun med finskruen.
+
+### A. Løghinde
+
+1. Skær et kvadrat på ca. 5 × 5 mm i et stykke løg, og træk den tynde, gennemsigtige hinde af med en pincet.
+2. Læg hinden fladt ud på et objektglas i en dråbe vand — den må ikke folde sig.
+3. Læg et dækglas skråt ned over dråben, så der ikke kommer luftbobler under.
+4. Mikroskopér ved 40×, 100× og 400×, og tegn det, I ser. Løgceller kan ses tydeligt uden farvning.
+
+### B. Vandpest
+
+1. Knib et helt blad af fra toppen af en vandpestplante — brug de yngste, lysegrønne blade.
+2. Læg bladet i en dråbe vand på et objektglas, og læg dækglas på.
+3. Mikroskopér ved 100× og 400×. Find grønkornene, og se efter, om de bevæger sig rundt i cellen (plasmastrømning).
+4. Tegn nogle få celler med grønkorn.
+
+### C. Kindskrab
+
+1. Skrab forsigtigt med den brede ende af en tandstikker på indersiden af din egen kind. Det skal ikke gøre ondt.
+2. Rør materialet ud i en dråbe vand på et objektglas.
+3. Tilsæt en dråbe methylenblåt, og lad det virke 1–2 minutter.
+4. Læg dækglas på, og træk overskydende væske væk med filterpapir i kanten af dækglasset.
+5. Mikroskopér ved 400×. Cellerne ligger spredt og er meget flade — skru langsomt på finskruen. Tegn en enkelt celle.
+6. Læg tandstikker og objektglas i affaldsbeholderen.
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Lysmikroskop med 4×, 10× og 40× objektiv
+- Objektglas og dækglas
+- Pincet, skalpel eller barberblad, pipette
+- Trætandstikkere (til kindskrab)
+- Køkkenrulle og filterpapir
+- Rødløg (eller almindeligt løg) og vandpest (Elodea)
+- Methylenblåt-opløsning og destilleret vand
+- Ethanol 70 % til afspritning
+- Beholder til brugte objektglas og til biologisk affald
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Brug kittel og beskyttelsesbriller. Farvevæsken pletter tøj og hud.
+- **Methylenblåt:** farver kraftigt og er sundhedsskadeligt ved indtagelse. Håndteres kun med pipette.
+- **Ethanol 70 %:** meget brandfarlig. Holdes væk fra åben ild.
+- Skalpel og barberblad er meget skarpe. Skær altid væk fra dig selv og på et fast underlag.
+- Ved kindskrab bruger hver elev **kun sin egen** tandstikker og sit eget objektglas. Brugte tandstikkere og objektglas lægges direkte i den anviste affaldsbeholder — de må ikke deles eller genbruges.
+- Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
+:::

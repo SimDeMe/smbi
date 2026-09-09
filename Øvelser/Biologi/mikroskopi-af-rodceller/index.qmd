@@ -1,0 +1,65 @@
+---
+title: "Mikroskopi af rodceller"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I lave et mikroskoppræparat af celler fra en rodspids og undersøge dem i lysmikroskopet. Rodspidsen er et af de steder i planten, hvor cellerne deler sig hurtigst, så I har gode chancer for at finde celler, der er i gang med celledeling (mitose), når I sammenligner med celler længere oppe ad roden.
+
+## Fremgangsmåde
+
+### Sådan indstiller I mikroskopet
+
+1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
+2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
+3. Se fra siden, og kør objektivet så langt ned mod præparatet som muligt med grovskruen.
+4. Se i okularet, og skru langsomt objektivet opad, indtil billedet er skarpt. Finindstil med finskruen.
+5. Justér lysstyrke og blænde, til kontrasten er bedst mulig.
+6. Skift først derefter til større forstørrelse (10× og dernæst 40×). Efterjustér kun med finskruen.
+
+### Forberedelse af rodspidspræparat
+
+1. Klip den yderste 2-3 mm af en rodspids fra et spiret løg (eller en anden spire, fx hvede eller ært) af med en saks eller skalpel.
+2. Læg rodspidsen i en dråbe saltsyre (1 M HCl) på et objektglas i ca. 3-5 minutter, så vævet blødgøres (macerering).
+3. Sug saltsyren væk med filterpapir, og tilsæt i stedet en dråbe methylenblåt. Lad farven virke 1-2 minutter.
+4. Læg et dækglas på, og tryk forsigtigt og lige ned gennem et stykke filterpapir (fx med viskelæderenden af en blyant), så rodspidsen "smøres" ud til et tyndt, ensartet lag af celler (squash-teknik).
+5. Mikroskopér ved 100× og 400×, og tegn nogle af de celler, I ser.
+
+::: {.callout-tip}
+## Tip
+
+Kig især nær selve spidsen af roden. Her deler cellerne sig aktivt, og I kan se kromosomerne som mørke tråde eller klumper i nogle af cellerne. Længere væk fra spidsen ligger cellerne stille og har en tydelig, rund cellekerne.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Lysmikroskop med 4×, 10× og 40× objektiv
+- Objektglas og dækglas
+- Spiret løg (eller anden spire) med rodspidser på ca. 1 cm
+- Saltsyre (HCl), 1 M
+- Methylenblåt-opløsning
+- Skalpel eller saks, pipette
+- Køkkenrulle og filterpapir
+- Blyant med viskelæder (eller lign.) til at presse præparatet fladt
+- Beholder til brugte objektglas og til biologisk affald
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Brug kittel og beskyttelsesbriller. Både saltsyre og farvevæsken kan give skader/pletter på øjne, hud og tøj.
+- **Saltsyre (HCl) 1 M:** ætsende ved kontakt med hud og øjne. Undgå hudkontakt, og skyl straks med rigeligt vand ved spild eller kontakt med hud/øjne.
+- **Methylenblåt:** farver kraftigt og er sundhedsskadeligt ved indtagelse. Håndteres kun med pipette.
+- Skalpel og saks er skarpe. Skær altid væk fra dig selv og på et fast underlag.
+- Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
+:::

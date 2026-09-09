@@ -1,0 +1,65 @@
+---
+title: "Bromelin i ananas"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge enzymet bromelin, som findes i frisk ananas. Bromelin nedbryder proteinet gelatine (husblas), så det ikke længere kan stivne. I skal undersøge, hvordan opvarmning og syre påvirker enzymets evne til at virke.
+
+## Fremgangsmåde
+
+1. Klip en gelatineplade i fire lige store stykker, og læg ét stykke i hver af fire reagensglas.
+2. Fyld reagensglassene halvt med kogende vand, og ryst, til gelatinen er opløst. Fyld op til ca. ¾, og sørg for, der er lige meget væske i alle fire glas.
+3. Pres saften ud af et stykke frisk ananas med en gaffel. Hver gruppe skal bruge ca. 6 mL frisk ananassaft.
+4. Pipettér 2 mL frisk ananassaft over i det første reagensglas med gelatineopløsning, og omryst grundigt. Mærk glasset "1: Frisk ananas".
+5. Pipettér 2 mL af den friske ananassaft over i et rent reagensglas, og kog saften forsigtigt et par minutter. **Bed læreren om hjælp!** Hæld den kogte saft ned i det andet reagensglas med gelatineopløsning, og omryst grundigt. Mærk glasset "2: Kogt ananas".
+6. Pipettér 2 mL af den friske ananassaft over i et tredje rent reagensglas, og tilsæt et par dråber saltsyre. Hæld blandingen ned i det tredje reagensglas med gelatineopløsning, og omryst grundigt. Mærk glasset "3: Ananas + syre".
+7. Pipettér 2 mL vand i det fjerde reagensglas med gelatineopløsning som kontrol. Omryst grundigt, og mærk glasset "4: Vand (kontrol)".
+8. Stil alle fire glas køligt, fx i køleskab, til næste biologitime.
+9. Undersøg herefter, om gelatinen er stivnet i hvert af de fire glas, og notér resultaterne i skemaet.
+
+::: {.callout-tip}
+## Tip
+
+Brug en ny, ren pipette til hver væske, så safttyperne ikke blandes sammen. Vil I også undersøge, om bromelin findes i andre frugter, kan I erstatte kontrolglasset med frisk saft fra fx kiwi eller appelsin.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- 4 reagensglas med stativ
+- Gelatineplader (husblas)
+- Kogende vand (fra elkedel), sprit- eller bunsenbrænder
+- Pipetter
+- Saks og spritskriver til mærkning
+- Frisk ananas
+- Fortyndet saltsyre (HCl)
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- **Kogende vand:** Der arbejdes med kogende vand og evt. åben ild. Pas på forbrændinger, og bed altid læreren om hjælp ved opvarmning af væsker.
+- **Saltsyre (HCl):** Ætsende. Brug beskyttelsesbriller, undgå kontakt med hud og øjne, og skyl straks med rigeligt vand ved spild på hud eller i øjne.
+- Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
+:::
+
+## Registrering af resultater
+
+| Glas | Indhold | Stivnede gelatinen? |
+|:---:|:---|:---:|
+| 1 | Frisk ananas + gelatine | |
+| 2 | Kogt ananas + gelatine | |
+| 3 | Ananas + syre + gelatine | |
+| 4 | Vand + gelatine (kontrol) | |
+
+: Resultat af enzymforsøget med bromelin fra ananas.

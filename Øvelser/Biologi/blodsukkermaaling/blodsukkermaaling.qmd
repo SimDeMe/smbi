@@ -1,0 +1,80 @@
+---
+title: "Blodsukkermåling"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge, hvordan forskellige kulhydratholdige fødevarer påvirker blodsukkeret. En fastende forsøgsperson indtager en bestemt mængde af en fødevare, og blodsukkeret måles derefter med et glykometer hvert 15. minut i halvanden time.
+
+## Fremgangsmåde
+
+1. Beregn, hvor meget forsøgspersonen skal indtage af fødevaren (se boks med beregningseksempel), og afvej denne mængde.
+2. Mål forsøgspersonens blodsukker med glykometeret, **inden** fødevaren indtages, og notér værdien ved T₀ (se boks om brug af glykometer).
+3. Forsøgspersonen indtager den afvejede fødevare i naturligt, jævnt tempo og drikker undervejs 300 mL vand (dog ikke sammen med en flydende fødevare som cola).
+4. Mål forsøgspersonens blodsukker igen 15 minutter efter, fødevaren er indtaget, og gentag dette hvert 15. minut frem til 90 minutter (T₁₅, T₃₀, T₄₅, T₆₀, T₇₅, T₉₀). Hold tidspunkterne så præcist som muligt, så resultaterne fra forskellige forsøgspersoner kan sammenlignes.
+5. Notér tid og blodsukkerværdi ved hver måling i skemaet nedenfor eller i et fælles regneark.
+
+::: {.callout-tip}
+## Beregning af kulhydratindtag
+
+Forsøgspersonen skal indtage 0,75 g kulhydrat pr. kg kropsvægt, dog **højst 70 g kulhydrat** i alt.
+
+**Eksempel:** En person på 50 kg skal indtage 0,75 g/kg × 50 kg = 37,5 g kulhydrat. Hvis fødevaren indeholder 44 g kulhydrat pr. 100 g, skal personen indtage 37,5 g ÷ 44 g × 100 g ≈ 85 g af fødevaren.
+
+Kulhydratindholdet pr. 100 g/mL for den valgte fødevare findes på varedeklarationen eller i en fødevaredatabase.
+:::
+
+::: {.callout-tip}
+## Brug af glykometer
+
+1. Vask og tør fingeren grundigt, eller aftør med en spritswab og lad den lufttørre.
+2. Sæt en ny teststrimmel i glykometeret.
+3. Stik forsigtigt i siden af fingerspidsen med en ny engangsfingerprikker, og udløs den med knappen.
+4. Pres et lille bloddråbe frem, og hold teststrimlen op mod dråben, til apparatet registrerer nok blod.
+5. Aflæs og notér værdien (mmol/L), når apparatet viser resultatet.
+6. Bortskaf fingerprikkeren og teststrimlen som beskrevet under Sikkerhed.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Glykometer med teststrimler
+- Engangsfingerprikkere (én pr. stikning)
+- Spritswabs
+- Engangshandsker
+- Vægt
+- Kulhydratholdig fødevare (fx lyst brød, rugbrød, cola eller druesukker)
+- 300 mL vand
+- Ur eller stopur
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Forsøgspersonen skal møde fastende.
+- Man må kun tage blodprøve på sig selv. Hvis en kammerat eller lærer hjælper med blodprøveapparatet, skal vedkommende bære engangshandsker.
+- Brug altid en ny engangsfingerprikker til hver stikning — de må aldrig genbruges eller deles mellem personer.
+- Elever med diagnosticeret sukkersyge, eller som ved den indledende måling (T₀) har en blodsukkerværdi over 7 mmol/L, må ikke deltage som forsøgsperson.
+- Brugte fingerprikkere og teststrimler bortskaffes i en kanylebøtte/skarpt affald — spørg jeres lærer, hvis I er i tvivl.
+- Vask hænder grundigt før og efter blodprøvetagning.
+:::
+
+## Registrering af målinger
+
+**Forsøgsperson:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Kropsvægt:** \_\_\_\_\_\_ kg &nbsp;&nbsp;&nbsp;&nbsp; **Fødevare:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Afvejet mængde:** \_\_\_\_\_\_ g/mL
+
+| | T₀ | T₁₅ | T₃₀ | T₄₅ | T₆₀ | T₇₅ | T₉₀ |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Tid (min) | 0 | 15 | 30 | 45 | 60 | 75 | 90 |
+| Blodglukose (mmol/L) | | | | | | | |
+
+: Blodglukose som funktion af tid efter indtagelse af fødevaren.

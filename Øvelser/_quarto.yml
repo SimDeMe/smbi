@@ -1,0 +1,40 @@
+project:
+  type: default
+  post-render: fix-docx-tables.py
+
+lang: da
+
+format:
+  typst:
+    papersize: a4
+    margin:
+      x: 2.1cm
+      y: 2.6cm
+    fontsize: 11pt
+    mainfont: "Carlito"
+    toc: false
+    number-sections: false
+    template-partials:
+      - page.typ
+      - typst-template.typ
+
+  html:
+    theme: [cosmo, styles.scss]
+    toc: false
+    page-layout: article
+    fig-align: center
+    include-before-body: banner.html
+    embed-resources: false
+
+  docx:
+    reference-doc: reference.docx
+    toc: false
+    number-sections: false
+
+execute:
+  echo: false
+  warning: false
+
+hold: "3g Ng"
+fag: "Naturgeografi B"
+doc-type: "Øvelsesvejledning"

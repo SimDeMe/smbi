@@ -1,0 +1,59 @@
+---
+title: "DNA i kiwi"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I isolere DNA fra kiwi og se det som en hvid, trådet klump med det blotte øje. Kiwiens celler brydes op med opvaskemiddel og salt, og det frigjorte DNA fældes derefter ud, når der tilsættes iskold ethanol.
+
+## Fremgangsmåde
+
+1. Skræl et stykke kiwi, og mos det i en morter (eller med en stavblender).
+2. Fortynd 5 mL opvaskemiddel med 50 mL vand i et bægerglas.
+3. Dæk den moste kiwi med den fortyndede opvaskemiddelopløsning i et nyt bægerglas, og rør forsigtigt rundt.
+4. Stil blandingen i isvand i et par minutter.
+5. Tilsæt en teskefuld salt, og bland godt.
+6. Hæld blandingen gennem en tragt med filtrerpapir ned i et rent bægerglas, der står i isvand.
+7. Mål med et måleglas, hvor stort et volumen filtrat I har fået.
+8. Hæld forsigtigt samme volumen iskold ethanol langs kanten af glasset, så den lægger sig som et lag ovenpå filtratet.
+9. Se efter en hvid, trådet klump, der udfælder i grænselaget mellem de to væsker — det er DNA. Fisk forsigtigt DNA'et op med en træpind. Det går let i stykker, så vær forsigtig.
+
+::: {.callout-tip}
+## Tip
+
+Ethanolen skal være iskold for at virke. Sæt flasken i fryseren mindst et døgn før øvelsen, og opbevar den på is, mens I arbejder.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Kiwi
+- Opvaskemiddel og vand
+- Salt (NaCl)
+- Iskold ethanol 96 %
+- 2 × 100 mL bægerglas
+- Morter (eller stavblender)
+- Tragt og filtrerpapir
+- Måleglas
+- Skål med isvand
+- Træpinde
+- Teske
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Brug beskyttelsesbriller.
+- **Ethanol 96 %:** meget brandfarlig. Holdes væk fra åben ild og varmekilder.
+- Opvaskemiddel kan irritere øjnene ved stænk — skyl straks med rigeligt vand ved kontakt.
+- Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
+:::

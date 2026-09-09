@@ -1,0 +1,59 @@
+---
+title: "Biodiversitet i græsplænen"
+subtitle: "Feltøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge biodiversiteten af planter på skolens græsplæner (en slags eng). I skal bruge en Raunkiærcirkel — en ring, der omslutter et areal på 0,1 m² — til at udtage stikprøver af plantelivet og undersøge, hvor mange forskellige plantearter der findes.
+
+## Fremgangsmåde
+
+1. Hver gruppe tildeles et område på plænerne.
+2. Kast Raunkiærcirklen ud på et tilfældigt sted i området.
+3. Undersøg, hvilke plantearter der findes inden for cirklen. Fotografér dem, og bestem arterne (spørg læreren, eller brug en planteidentifikations-app).
+4. Notér arterne i skemaet ud for det rigtige cirkelnummer.
+5. Flyt cirklen til et nyt tilfældigt sted, og gentag trin 2–4, indtil I har undersøgt 10 felter.
+6. Tæl til sidst, hvor mange arter der var i hver cirkel, og beregn gennemsnittet.
+
+::: {.callout-tip}
+## Tip
+
+Vær omhyggelige med at kaste cirklen tilfældigt og få alle arter med — data skal helst kunne bruges til at undersøge sammenhængen mellem areal og antal arter bagefter. Brug gerne en app som iNaturalist eller Seek som hjælp til artsbestemmelsen, men spørg altid læreren, hvis I er i tvivl.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Raunkiærcirkel (ring med et areal på 0,1 m²)
+- Smartphone med kamera og evt. en planteidentifikations-app (fx iNaturalist eller Seek)
+- Illustreret tavle eller flora over typiske arter i området
+:::
+
+## Registrering af målinger
+
+| Art (dansk og evt. latinsk navn) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|:---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Eksempel: Tusindfryd / *Bellis perennis* | x | | x | x | | | x | x | x | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| | | | | | | | | | | |
+| **Antal arter pr. cirkel** | | | | | | | | | | |
+
+: Rådata fra 10 Raunkiærcirkler i græsplænen (sæt et kryds, når arten findes i cirklen).
+
+**Antal arter pr. cirkel i gennemsnit:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_

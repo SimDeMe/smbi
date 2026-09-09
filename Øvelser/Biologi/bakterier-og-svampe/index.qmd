@@ -1,0 +1,94 @@
+---
+title: "Bakterier og svampe"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I bruge agar-plader til to ting: at undersøge, hvor mange bakterie- og svampekim der falder ned fra luften pr. m² pr. time — både indendørs og udendørs — og at påvise bakterier på forskellige overflader og genstande i klasselokalet.
+
+## Fremgangsmåde
+
+### A. Fremstilling af agar-plader
+
+Spring dette trin over, hvis I får udleveret færdigstøbte petriskåle.
+
+1. Opvarm flasker med kød-pepton-agar (til bakterier) og malt-agar (til svampe) i et vandbad, til agaren er smeltet (ca. 30 minutters kogning).
+2. Sæt de sterile petriskåle frem på bordet, så de er nemme at komme til.
+3. Løft låget delvist, og hæld ca. ½ cm agar i hver skål. Læg straks låget delvist på igen.
+4. Lad agaren stivne i ca. 2 minutter. Hæld eventuelt kondensvand fra, og læg låget helt på.
+5. Hver gruppe skal fremstille 3 petriskåle med kød-pepton-agar og 2 petriskåle med malt-agar.
+6. Pak pladerne i plastposer, forsegl dem, og opbevar dem med bunden i vejret ved stuetemperatur (højst 2 døgn) eller i køleskab, indtil de skal bruges.
+
+### B. Kimfald — bakterie- og svampekim fra luften
+
+1. Placér én kød-pepton-agar-plade og én malt-agar-plade udendørs, og de to tilsvarende plader indendørs. Notér, hvor hver plade er placeret.
+2. Tag låget af de fire plader, og start tidtagningen.
+3. Efter 30 minutter lægges låget på igen. Notér tidspunktet.
+
+### C. Påvisning af bakterier på genstande
+
+1. Inddel bunden af den femte petriskål (kød-pepton-agar) i fire felter med en tuschpen, og nummerér dem I, II, III og IV.
+2. Tag kun låget af skålen i et kort øjeblik ad gangen, mens I overfører genstande/aftryk til felterne:
+   - **Felt I:** tryk forsigtigt nogle fingeraftryk.
+   - **Felt II:** læg en mønt et kort øjeblik.
+   - **Felt III:** læg nogle enkelte hår.
+   - **Felt IV:** find selv på noget, og notér hvad.
+3. Læg låget på, og tape det fast langs kanten.
+
+### D. Inkubation og aflæsning
+
+1. Luk alle fem petriskåle til med tape, og skriv gruppens navn og klasse på bunden.
+2. Stil skålene i varmeskab ved 37 °C i ca. 2 døgn.
+3. Tag skålene ud af varmeskabet. **Skålene må ikke åbnes** — kolonierne skal tælles og markeres gennem det lukkede låg.
+4. Tæl kolonierne på hver plade, og sæt en prik med tusch ud for hver talt koloni. Fotografér pladerne.
+
+::: {.callout-tip}
+## Tip
+
+Petriskålens areal findes med $A = \pi r^2$, hvor $r$ er halvdelen af skålens diameter. Brug arealet til at regne kimfaldet om til "kim pr. m² pr. time".
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- 3 petriskåle med kød-pepton-agar (til bakterier)
+- 2 petriskåle med malt-agar (til svampe)
+- Kød-pepton-agar og malt-agar, hvis pladerne skal støbes (se A)
+- Vandbad
+- Tuschpen og lineal
+- Malertape
+- Diverse forsøgsobjekter (fx mønter, hår)
+- Varmeskab (37 °C)
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Smeltet agar er meget varm — pas på ikke at brænde jer, når I hælder den i petriskålene.
+- Efter inkubation ved 37 °C kan pladerne indeholde mikroorganismer, som trives ved kropstemperatur, herunder eventuelle opportunistiske arter. **Skålene må derfor ikke åbnes** efter inkubation.
+- Vask hænder grundigt efter håndtering af petriskålene, både før og efter inkubation.
+- Uåbnede petriskåle bortskaffes samlet i den anviste affaldsbeholder — spørg jeres lærer, hvis I er i tvivl.
+- Spis og drik ikke i laboratoriet.
+:::
+
+## Registrering af resultater
+
+**Petriskålens diameter:** \_\_\_\_\_\_ cm &nbsp;&nbsp;&nbsp;&nbsp; **Radius \(r\):** \_\_\_\_\_\_ cm &nbsp;&nbsp;&nbsp;&nbsp; **Areal \(A = \pi r^2\):** \_\_\_\_\_\_ cm²
+
+| | Indendørs (30 min) | Udendørs (30 min) |
+|:---|:---:|:---:|
+| Antal bakteriekolonier | | |
+| Antal svampekolonier | | |
+| Bakteriekim pr. m² pr. time | | |
+| Svampekim pr. m² pr. time | | |
+
+: Kimfald af bakterier og svampe, indendørs og udendørs.
