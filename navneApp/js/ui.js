@@ -67,3 +67,36 @@ export function renderStudentCard(student, onEdit, vistNavn) {
   );
   return card;
 }
+
+// ── Fokus uden genklik ───────────────────────────────────────────────────────
+//
+// Trykker man Enter i svarfeltet, sender samme tastetryk også en keypress af
+// sted — og den lander på den knap, der i mellemtiden har fået fokus, og
+// klikker den. Et forkert svar viste derfor facit i et splitsekund og hoppede
+// selv videre til næste elev. Det samme sker, hvis man holder Enter nede:
+// tastaturets gentagelser klikker knappen igen og igen.
+//
+// En knap, der fødes med fokus, skal derfor først tage imod, når tastaturet
+// har været sluppet. Er svaret afgivet med mus eller finger, er der ingen tast
+// nede, og knappen virker med det samme.
+
+let tastNede = false;
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', () => { tastNede = true; }, true);
+  window.addEventListener('keyup', () => { tastNede = false; }, true);
+  window.addEventListener('blur', () => { tastNede = false; });
+}
+
+export function fokuserUdenGenklik(knap) {
+  knap.focus();
+  if (!tastNede) return;
+
+  const blokér = e => { e.preventDefault(); e.stopPropagation(); };
+  knap.addEventListener('click', blokér, true);
+
+  const slipLøs = () => {
+    knap.removeEventListener('click', blokér, true);
+    window.removeEventListener('keyup', slipLøs, true);
+  };
+  window.addEventListener('keyup', slipLøs, true);
+}
