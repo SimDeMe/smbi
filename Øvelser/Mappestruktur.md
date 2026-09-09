@@ -117,6 +117,32 @@ gamle filer er bevaret på disk (uændrede, stadig tilgængelige på deres url),
 men ikke længere linket derfra. `JordUndersøgelse_HF/` (HF-udgaven) har ingen
 Quarto-erstatning endnu og er stadig linket som før.
 
+**Samme dag, opfølgning:** `biologi.html`s "Forløb" (Nature vs. Nurture) og
+"Spil & overblik" (Cellens Evolution) er fjernet fra siden — de tog en hel
+grid-søjle for kun ét kort hver, uden at bidrage noget ved siden af de ti
+øvelser. Sektionen er nu én bred "Forsøgsvejledninger"-stak, hvis kort ligger
+i et internt gitter (`.stack-items` i `forside.css`) i stedet for én lang
+søjle. De to sider er ikke slettet, kun afkoblet fra `biologi.html` — `index.html`
+linker stadig til `BiologiC/NatureNurture/` og `CellSpil`.
+
+**Samme dag, endnu en opfølgning:** to `.sub`-links i selve simulerings­kortene
+(`TermiskTryk3` og `poroesitetPermeabilitet` i "Under opbygning") var overset
+i første omgang og pegede stadig på de gamle `GeoVejledninger`-sider — rettet
+til `Øvelser/Geografi/…`.
+
+Alle links til `Geografi/afleveringsopgave-rojle-klint/` er fjernet igen (fra
+`geografi.html`s "Opgavesæt" og fra `sitemap.xml`) — mappen skal ud af repoet
+og er lagt i `.gitignore` (`Øvelser/Geografi/afleveringsopgave-rojle-klint/`).
+Filerne ligger stadig i mappen og er stadig sporet af git indtil de rent
+faktisk flyttes/slettes og den ændring committes — `.gitignore` forhindrer
+kun *nye* ændringer i at blive foreslået til staging, den fjerner ikke i sig
+selv allerede committede filer fra historikken.
+
+`index.html`s egen "Forsøgsvejledninger"-stak (i "Resten af materialet") pegede
+stadig på de gamle `GeoVejledninger/`-sider og manglede pdf/word — rettet til
+samme konvention som `geografi.html`: link til `Øvelser/Geografi/…/index.html`
+plus `PDF`/`Word`-sublinks.
+
 **robots.txt / sitemap.xml:** `Bio-C-delt-mappe/` (rå lærermateriale, ikke
 tiltænkt offentligheden) er tilføjet som `Disallow` i `robots.txt` og er
 hverken linket fra sitet eller i `sitemap.xml`. De 15 øvelsessider er
