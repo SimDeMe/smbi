@@ -95,6 +95,38 @@ Bare bones-versionen er afgrænset til det centrale forsøg med **fire glas** (f
 
 Kun `index.qmd` er lavet — **ikke renderet** til docx/pdf/html, jf. arbejdsgangs-reglen øverst i dette dokument.
 
+## Integreret på sitet (2026-09-09)
+
+Alle 15 færdigrenderede øvelser (5 i `Geografi/`, 10 i `Biologi/`) er nu linket
+fra `geografi.html` (staken "Forsøgsvejledninger" + Røjle Klint-afleveringen i
+"Opgavesæt") og `biologi.html` (ny stak "Forsøgsvejledninger" i sektionen
+"Forsøg & øvrigt"). Hvert kort linker til `index.html` og har desuden direkte
+`PDF`/`Word`-links til `index.pdf`/`index.docx` i samme mappe.
+
+PDF/Word-download i selve vejledningen kræver ingen ekstra knap — Quarto
+lægger allerede en "Andre formater"-boks i margenen på hver renderet
+`index.html` (fordi `_quarto.yml` har flere `format:`-mål), med links til
+`.pdf` og `.docx`. Den findes i alle 15 filer og er ikke rørt.
+
+**Ikke rørt, men nu "duplikeret":** De to gamle vejledninger i
+`GeoVejledninger/konvektionskammer/` og `GeoVejledninger/JordUndersøgelse/`
+dækker samme forsøg som de nye `Geografi/konvektionskammer/` og
+`Geografi/poroesitet-og-permeabilitet/`. `geografi.html`s "Forsøgsvejledninger"
+peger nu på de nye Quarto-versioner i stedet (bedre styling, pdf+word) — de
+gamle filer er bevaret på disk (uændrede, stadig tilgængelige på deres url),
+men ikke længere linket derfra. `JordUndersøgelse_HF/` (HF-udgaven) har ingen
+Quarto-erstatning endnu og er stadig linket som før.
+
+**robots.txt / sitemap.xml:** `Bio-C-delt-mappe/` (rå lærermateriale, ikke
+tiltænkt offentligheden) er tilføjet som `Disallow` i `robots.txt` og er
+hverken linket fra sitet eller i `sitemap.xml`. De 15 øvelsessider er
+tilføjet til `sitemap.xml`.
+
+**Kendt efterslæb:** `Geografi/digital-kystopmaaling-rojle` og
+`Geografi/opmaaling-af-terraenprofil` har en `.qmd`, der er nyere end den
+renderede `.html` (rettelser efter sidste rendering) — den linkede side
+viser stadig den lidt ældre udgave, indtil nogen renderer på ny.
+
 ## Kendte åbne punkter
 
 - De gamle, nu overflødige filer (de to "Quartro Skabelon"-mapper, de gamle Osmose- og Mikroskopi-docx/pdf, leverings-zip'er) ligger i `Øvelser/_to_delete/` på brugerens Mac, fordi sletning kræver brugergodkendelse. Brugeren skal selv slette den mappe, når indholdet er tjekket.

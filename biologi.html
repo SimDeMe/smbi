@@ -58,6 +58,7 @@
       <nav class="top-nav">
         <a href="index.html">Forside</a>
         <a href="#simuleringer">Simuleringer</a>
+        <a href="#vejledninger">Vejledninger</a>
         <a href="#forloeb">Forløb</a>
         <a href="#spil">Spil</a>
         <a href="geografi.html">Geografi</a>
@@ -73,11 +74,11 @@
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Biologi · gymnasiet</span>
       <h1>Celler, enzymer og <span class="hi" style="--hc:#FBD3E1">gener</span></h1>
-      <p class="lead">Ti simuleringer — fem færdige og fem under opbygning — et samlet forløb og et spil. Alt kører i browseren uden login — sæt dem på tavlen, eller giv eleverne linket.</p>
+      <p class="lead">Ti simuleringer — fem færdige og fem under opbygning — ti forsøgsvejledninger, et samlet forløb og et spil. Alt kører i browseren uden login — sæt dem på tavlen, eller giv eleverne linket.</p>
       <div class="stats">
         <span class="stat s2"><b>10</b> simuleringer</span>
+        <span class="stat s3"><b>10</b> vejledninger</span>
         <span class="stat s1"><b>1</b> forløb</span>
-        <span class="stat s3"><b>1</b> spil</span>
       </div>
 
       <!-- søger på tværs af hele siden, ikke kun simuleringerne -->
@@ -268,16 +269,113 @@
     <p class="soeg-tom" id="soeg-tom" hidden>Ingen materialer matcher søgningen.</p>
   </section>
 
-  <!-- FORLØB, SPIL OG OVERBLIK -->
+  <!-- FORSØG, FORLØB, SPIL OG OVERBLIK -->
   <section class="other">
     <div class="other-in">
       <div class="sec-head">
-        <h2>Forløb &amp; øvrigt</h2>
-        <span class="tag t2">Holdt for sig</span>
+        <h2>Forsøg &amp; øvrigt</h2>
+        <span class="tag t2">Til print og felt</span>
         <span class="rule"></span>
       </div>
 
-      <div class="other-grid other-2">
+      <div class="other-grid">
+
+        <div class="stack" id="vejledninger" style="--c:var(--lime);--t:#EDF8E4">
+          <div class="stack-head">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6.2L4.8 18a2 2 0 0 0 1.7 3h10.9a2 2 0 0 0 1.7-3L14 9.2V3"/><path d="M7.4 15h9.2"/></svg>
+            <h3>Forsøgsvejledninger</h3><span class="n">10</span>
+          </div>
+          <div class="item" data-sog="bakterier svampe kimfald agar petriskål mikrobiologi luft overflader kolonier pdf word">
+            <h4><a href="Øvelser/Biologi/bakterier-og-svampe/index.html">Bakterier og svampe</a></h4>
+            <p>Tæl bakterie- og svampekim fra luften på agar-plader, og påvis bakterier på overflader i klasselokalet.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/bakterier-og-svampe/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/bakterier-og-svampe/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="biodiversitet græsplæne raunkiær artsrigdom felt planter eng pdf word">
+            <h4><a href="Øvelser/Biologi/biodiversitet-i-graesplaenen/index.html">Biodiversitet i græsplænen</a></h4>
+            <p>Udtag stikprøver med en Raunkiærcirkel, og kortlæg artsrigdommen på skolens græsplæner.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/biodiversitet-i-graesplaenen/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/biodiversitet-i-graesplaenen/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="blodsukkermåling glykometer kulhydrat blodsukker måltid insulin pdf word">
+            <h4><a href="Øvelser/Biologi/blodsukkermaaling/blodsukkermaaling.html">Blodsukkermåling</a></h4>
+            <p>Mål blodsukkeret hvert 15. minut efter et måltid, og se hvordan fødevaren påvirker kurven.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/blodsukkermaaling/blodsukkermaaling.pdf">PDF</a>
+              <a href="Øvelser/Biologi/blodsukkermaaling/blodsukkermaaling.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="bromelin ananas enzym gelatine husblas protein denaturering syre pdf word">
+            <h4><a href="Øvelser/Biologi/bromelin-i-ananas/index.html">Bromelin i ananas</a></h4>
+            <p>Test hvordan varme og syre slår enzymet bromelin fra — og gelatinen stivner igen.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/bromelin-i-ananas/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/bromelin-i-ananas/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="dafnier koffein hjerterytme mikroskop kaffe fortyndingsrække pdf word">
+            <h4><a href="Øvelser/Biologi/dafnier-og-koffein/index.html">Dafnier og koffein</a></h4>
+            <p>Følg en dafnies hjerterytme i mikroskopet, mens koncentrationen af koffein stiger.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/dafnier-og-koffein/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/dafnier-og-koffein/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="dna kiwi isolering opvaskemiddel ethanol celle pdf word">
+            <h4><a href="Øvelser/Biologi/dna-i-kiwi/index.html">DNA i kiwi</a></h4>
+            <p>Bryd kiwiens celler op med opvaskemiddel og salt, og fæld DNA'et ud med iskold ethanol.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/dna-i-kiwi/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/dna-i-kiwi/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="gærforsøg bobleforsøg gæring co2 bobler bromthymolblåt temperatur pdf word">
+            <h4><a href="Øvelser/Biologi/gaerforsog-bobleforsog/index.html">Gærforsøg — bobleforsøg</a></h4>
+            <p>Tæl CO₂-bobler fra gærens gæring ved forskellige temperaturer, og følg pH med BTB-indikator.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/gaerforsog-bobleforsog/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/gaerforsog-bobleforsog/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="mikroskopi celler løghinde vandpest kindskrab lysmikroskop præparat pdf word">
+            <h4><a href="Øvelser/Biologi/mikroskopi-af-celler/index.html">Mikroskopi af celler</a></h4>
+            <p>Sammenlign løghinde, vandpest og kindskrab i lysmikroskopet — tre celletyper, tre præparationer.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/mikroskopi-af-celler/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/mikroskopi-af-celler/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="mikroskopi rodceller rodspids mitose celledeling squash-præparat pdf word">
+            <h4><a href="Øvelser/Biologi/mikroskopi-af-rodceller/index.html">Mikroskopi af rodceller</a></h4>
+            <p>Squash-præparat af en rodspids — find celler i gang med mitose i lysmikroskopet.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/mikroskopi-af-rodceller/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/mikroskopi-af-rodceller/index.docx">Word</a>
+            </div>
+          </div>
+          <div class="item" data-sog="osmose kartofler saltvand koncentration cellemembran pdf word">
+            <h4><a href="Øvelser/Biologi/osmose-i-kartofler/index.html">Osmose i kartofler</a></h4>
+            <p>Læg kartoffelskiver i saltvand med forskellig koncentration, og mål vægtændringen over tid.</p>
+            <div class="item-meta"><span class="fag">Forsøg</span></div>
+            <div class="sub">
+              <a href="Øvelser/Biologi/osmose-i-kartofler/index.pdf">PDF</a>
+              <a href="Øvelser/Biologi/osmose-i-kartofler/index.docx">Word</a>
+            </div>
+          </div>
+        </div>
 
         <div class="stack paa-moerk" id="forloeb" style="--c:var(--grape);--t:#F0E8FC">
           <div class="stack-head">
