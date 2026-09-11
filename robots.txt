@@ -3,9 +3,13 @@
 # navne-app, studiekort, censorur, gamle mockups) holdes ude med
 # <meta name="robots" content="noindex"> på selve siden — de skal kunne
 # hentes, for ellers når robotten aldrig at læse beskeden.
+# Øvelser/Bio-C-delt-mappe/ er en rå lærermappe (gamle docx/doc-filer,
+# ikke sider) og kan ikke bære en noindex-meta — den holdes ude med
+# Disallow i stedet, og er heller ikke linket fra sitet.
 
 User-agent: *
 Allow: /
 Disallow: /test-results/
+Disallow: /Øvelser/Bio-C-delt-mappe/
 
 Sitemap: https://smbi.dk/sitemap.xml

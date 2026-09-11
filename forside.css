@@ -542,6 +542,12 @@ img{display:block;max-width:100%}
   box-shadow:3px 3px 0 var(--ink);transition:transform .14s,box-shadow .14s;
 }
 .item+.item{margin-top:12px}
+
+/* En stak uden nabostakke i samme other-grid-række må gerne fylde hele
+   bredden — så får dens .item'er deres eget gitter i stedet for at stå i
+   én lang søjle. */
+.stack-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.stack-items .item+.item{margin-top:0}
 .item:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
 .item h4{font-family:var(--display);font-weight:800;font-size:0.98rem;line-height:1.25}
 .item p{font-size:0.84rem;color:#3E4E4C;line-height:1.45;margin:6px 0 11px}
