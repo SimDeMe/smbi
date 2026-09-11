@@ -77,6 +77,10 @@ h3 { color: $accent; }
 
 .doc-banner-fag { text-transform: uppercase; }
 
+// Sætter dokumentet hverken fag eller hold, skal banneret ikke efterlade
+// en tom streg øverst på siden.
+.doc-banner:not(:has(span:not(:empty))) { display: none; }
+
 figcaption, .figure-caption {
   color: $muted;
   font-style: italic;

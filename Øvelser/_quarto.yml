@@ -35,6 +35,6 @@ execute:
   echo: false
   warning: false
 
-hold: "3g Ng"
-fag: "Naturgeografi B"
+hold: ""
+fag: ""
 doc-type: "Øvelsesvejledning"

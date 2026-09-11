@@ -1,6 +1,6 @@
 # Øvelsesvejledninger (Quarto) — sådan virker skabelonen
 
-Dette er en **Quarto-skabelon** til øvelsesvejledninger i biologi og naturgeografi. Du skriver indholdet i almindelig markdown i en `.qmd`-fil, og Quarto bygger automatisk en pænt opsat PDF, Word-fil (.docx) og webside (.html) ud fra samme kilde — alle tre i samme stil (skovgrøn, "3g Ng"-sidehoved, sidetal, samme figur-/tabelopsætning).
+Dette er en **Quarto-skabelon** til øvelsesvejledninger i biologi og naturgeografi. Du skriver indholdet i almindelig markdown i en `.qmd`-fil, og Quarto bygger automatisk en pænt opsat PDF, Word-fil (.docx) og webside (.html) ud fra samme kilde — alle tre i samme stil (skovgrøn, sidehoved med fag og hold, sidetal, samme figur-/tabelopsætning).
 
 ## Sådan hænger det sammen
 
