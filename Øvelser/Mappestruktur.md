@@ -24,26 +24,21 @@ Vi er gået væk fra at have en separat "Quartro Skabelon"-mappe pr. fag, som hv
 ├── LÆS-MIG.md / LÆS-MIG.pdf   (forklarer opsætningen)
 ├── Biologi/
 │   ├── osmose-i-kartofler/
-│   │   ├── index.qmd
-│   │   └── index.docx / .pdf / .html   (renderede outputs)
+│   │   ├── osmose-i-kartofler.qmd
+│   │   └── osmose-i-kartofler.docx / .pdf / .html   (renderede outputs)
 │   ├── mikroskopi-af-celler/
-│   │   ├── index.qmd
-│   │   └── index.docx / .pdf / .html   (⚠ pt. ude af trit med index.qmd, se nedenfor)
-│   ├── mikroskopi-af-rodceller/
-│   │   └── index.qmd   (⚠ endnu ikke renderet — kun .qmd-kilde findes)
-│   ├── bakterier-og-svampe/
-│   │   └── index.qmd   (⚠ endnu ikke renderet — kun .qmd-kilde findes)
-│   ├── dafnier-og-koffein/
-│   │   └── index.qmd   (⚠ endnu ikke renderet — kun .qmd-kilde findes)
-│   ├── dna-i-kiwi/
-│   │   └── index.qmd   (⚠ endnu ikke renderet — kun .qmd-kilde findes)
-│   └── bromelin-i-ananas/
-│       └── index.qmd   (⚠ endnu ikke renderet — kun .qmd-kilde findes)
+│   │   └── mikroskopi-af-celler.qmd + .docx / .pdf / .html
+│   └── …                                (én mappe pr. øvelse, samme mønster)
 └── Geografi/
     └── opmaaling-af-terraenprofil/
-        ├── index.qmd
+        ├── opmaaling-af-terraenprofil.qmd
+        ├── opmaaling-af-terraenprofil.docx / .pdf / .html
         └── figurer/
 ```
+
+**Filnavnet er mappens navn — ikke `index`.** Se afsnittet nederst
+(2026-09-11); en downloadet vejledning skal hedde noget, eleven kan kende
+igen på skrivebordet.
 
 Fordi Quarto leder opad i mappetræet efter `_quarto.yml`, gælder den fælles styling automatisk for enhver `.qmd`, uanset hvor dybt den ligger under `Biologi/` eller `Geografi/`. Der er ikke længere nogen særlig skabelonmappe, en øvelse skal ligge inde i — bare en almindelig undermappe under det rigtige fag.
 
@@ -197,3 +192,30 @@ LibreOffice, der er beskrevet nedenfor.
 - Alle biologi-øvelser indtil videre bruger `callout-note` (blå) til Materialer og `callout-important` (rød) til Sikkerhed, når der er kemikalier eller andre reelle farer (fx varme, biologisk materiale) med — hold den konvention ved fremtidige øvelser. Rent food-grade opløsninger i lave koncentrationer (saltvand, kaffe) har hidtil ikke udløst et sikkerhedsafsnit.
 - `mikroskopi-af-rodceller`, `bakterier-og-svampe`, `dafnier-og-koffein` og `bromelin-i-ananas` har kun `index.qmd` — ingen af dem er renderet til docx/pdf/html endnu. Skal renderes, når brugeren beder om det (se arbejdsgangs-reglen øverst).
 - Bio-C-delt-mappe (den delte mappe med gamle lærermaterialer) er gennemgået og opsummeret i et separat projektdokument, `claude/Bio-C-forsog-oversigt.md`, som lister kandidater til fremtidige standardiserede vejledninger. Dafnie-koffein-forsøget lå ikke i denne mappe, men i de separate "Fag-intro"/"Fagintro"-mapper — se `Forsogsvejledninger.md`, gruppe 4.
+
+## Øvelsesfilerne hedder øvelsen, ikke `index` (2026-09-11)
+
+De 15 øvelser, der stadig hed `index.qmd` / `index.html` / `index.pdf` /
+`index.docx`, er omdøbt, så filnavnet er mappens navn — samme konvention som
+`blodsukkermaaling/` og `digital-kystopmaaling-rojle/` allerede fulgte:
+
+```
+Biologi/osmose-i-kartofler/index.qmd  →  Biologi/osmose-i-kartofler/osmose-i-kartofler.qmd
+```
+
+Grunden er de hentede filer. Når en elev klikker `PDF` eller `Word`, landede
+der før en `index.pdf` i mappen Overførsler — og ti øvelser gav ti filer, der
+alle hed det samme. Nu hedder de `osmose-i-kartofler.pdf`, `dna-i-kiwi.docx`
+osv.
+
+`.qmd`-kilderne er kun flyttet (`git mv`), ikke rettet, og alle tre formater er
+renderet på ny. Resultatet er kontrolleret mod de gamle filer: HTML er linje
+for linje identisk bortset fra filnavnene (biologi-siderne skiftede desuden til
+den nyere kompilerede `bootstrap-…min.css`, som geografi-siderne allerede
+brugte), PDF er identisk bortset fra tidsstempel og dokument-id, og `.docx`
+er identisk bortset fra `docProps`.
+
+**Konsekvens for adresserne:** `smbi.dk/Øvelser/Biologi/dna-i-kiwi/` uden
+filnavn virker ikke længere — GitHub Pages har ingen `index.html` at falde
+tilbage på. Ingen links på sitet brugte den korte form; `geografi.html`,
+`biologi.html` og `sitemap.xml` peger alle på det fulde filnavn.
