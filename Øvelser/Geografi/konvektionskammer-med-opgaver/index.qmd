@@ -1,0 +1,60 @@
+---
+title: "Konvektionskammer — termisk høj- og lavtryk"
+subtitle: "Laboratorieøvelse med journalopgaver"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Klasse:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Formålet er at undersøge, hvordan termisk højtryk og lavtryk opstår, når luft opvarmes forskelligt. I bruger et konvektionskammer, hvor kun den ene af kammerets to skorstene har et fyrfadslys under sig, og gør luftens bevægelse synlig med røg.
+
+## Fremgangsmåde
+
+1. **Gør klar.** Find et køligt sted — gerne udendørs. Læg metalpladen på et koldt underlag; pladen skal være så kold som muligt, inden I går i gang.
+2. **Tænd lyset.** Sæt fyrfadslyset ned i den ene af pladens to cirkler, og tænd det.
+3. **Saml kammeret.** Sæt plexiglaskassen oven på metalpladen, så kassens to skorstene passer præcis med cirklerne i pladen.
+4. **Vent.** Vent ca. 5 minutter. Lyset varmer luften i den ene skorsten op, mens luften i den anden forbliver kold.
+5. **Røgtesten.** Tænd røgelsespinden, lad den brænde lidt, og pust så flammen ud, så den ryger kraftigt. Hold den rygende pind hen over den *kolde* skorsten — den, der ikke har lys under sig.
+6. **Observér.** Hvilken vej bevæger røgen sig inde i kassen? Ned gennem den kolde skorsten, hen langs bunden, op gennem den varme? Tag billeder eller video undervejs.
+
+::: {.callout-tip}
+## Tip
+
+Hold en mørk baggrund (fx en jakke eller et bærbar-cover) op bag kammeret, mens I kigger — det gør røgen meget lettere at se. Jo koldere metalpladen er, inden I starter, jo tydeligere bliver temperaturforskellen i kammeret.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Konvektionskammer (metalplade med plexiglaskasse)
+- Fyrfadslys
+- Tændstikker
+- Røgelsespind (eller andet der kan afgive røg, fx et stykke smøldrende papir)
+- Mørk baggrund, fx en jakke eller et bærbar-cover
+- Stopur eller mobiltelefon
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- Der arbejdes med åben ild (fyrfadslys, tændstikker og en rygende røgelsespind). Brug en fast, ikke-brandbar overflade, og hold brandbare materialer på afstand.
+- Sluk fyrfadslyset og røgelsespinden helt efter brug, og lad metalpladen køle af, før den røres eller ryddes væk.
+- Bøj jer ikke ind over den åbne flamme, og undgå at indånde røgen direkte.
+:::
+
+## Resultater og analyse
+
+Indsæt et foto af jeres forsøg, eller tegn en præcis skitse af, hvordan røgen bevægede sig gennem kammeret. På billedet eller tegningen skal I:
+
+- tegne pile, der viser røgens retning,
+- skrive **H** der, hvor I vurderer, at der er højtryk,
+- skrive **L** der, hvor I vurderer, at der er lavtryk.
+
+## Spørgsmål
+
+1. Beskriv, hvordan et termisk lavtryk udvikles, og hvor I ser det i forsøget.

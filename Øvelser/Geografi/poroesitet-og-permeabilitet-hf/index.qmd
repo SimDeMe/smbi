@@ -1,0 +1,93 @@
+---
+title: "Permeabilitet og vandtilbageholdelse"
+subtitle: "Laboratorieøvelse til HF"
+fag: "Naturgeografi"
+hold: "HF"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Klasse / hold:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Navn:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I skal undersøge to jordtypers evne til at lede vand igennem (permeabilitet) og til at holde på vandet (markkapacitet). Resultaterne bruger I til at vurdere jorden i forhold til grundvandsdannelse og landbrug.
+
+Skriv, hvilke to jordtyper I bruger:
+
+**Jordtype 1:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Jordtype 2:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+**Hypotese:** Hvilken af de to jordtyper tror I, vandet løber hurtigst igennem? Begrund kort.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Fremgangsmåde
+
+1. Læg et kaffefilter i tragten, og stil tragten oven på et måleglas.
+2. Afvej 50 g af den første jordprøve, og hæld den i filteret.
+3. Hæld 100 mL vand ned i tragten i én jævn bevægelse, og start stopuret samtidig.
+4. Aflæs og notér vandmængden i måleglasset til de tidspunkter, der står i skemaet nedenfor.
+5. Notér til sidst, hvor meget vand der i alt er løbet igennem, når det holder op med at sive ("Slut").
+6. Gentag punkt 1–5 med den anden jordtype.
+
+::: {.callout-tip}
+## Tip
+
+Pak jordprøverne lige hårdt i de to forsøg, og hæld vandet på lige hurtigt begge gange — ellers sammenligner I ikke kun jordtyperne, men også jeres egen fremgangsmåde.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- 2 jordprøver
+- Måleglas
+- Kaffetragt og kaffefiltre
+- Vægt og vejeskål
+- Stopur eller mobiltelefon
+- Vand
+:::
+
+## Opgave 1: Dataindsamling
+
+| Tid (sek.) | Jordtype 1 | Jordtype 2 |
+|:---|:---:|:---:|
+| 10 | | |
+| 20 | | |
+| 30 | | |
+| 40 | | |
+| 50 | | |
+| 60 (1 min.) | | |
+| 90 (1½ min.) | | |
+| 120 (2 min.) | | |
+| Slut | | |
+
+: Opsamlet vandmængde (mL) over tid for de to jordtyper.
+
+## Opgave 2: Grafisk fremstilling
+
+Indtegn resultaterne for begge jordtyper i samme koordinatsystem, med tiden (sekunder) ud ad x-aksen og vandmængden (mL) op ad y-aksen. Brug to forskellige farver eller symboler (fx × og ○), så de to kurver kan kendes fra hinanden.
+
+## Opgave 3: Beregning af markkapacitet
+
+Markkapaciteten er et udtryk for, hvor meget vand jorden kan holde tilbage:
+
+$$\text{vand tilbageholdt} = 100\ \text{mL} - \text{vand løbet igennem}$$
+
+| | Jordtype 1 | Jordtype 2 |
+|:---|:---:|:---:|
+| Vand hældt på (mL) | 100 | 100 |
+| Vand løbet igennem i alt (mL) | | |
+| Vand tilbageholdt (mL) | | |
+
+: Markkapacitet for de to jordtyper.
+
+## Opgave 4: Analyse og konklusion
+
+1. **Sammenligning.** Hvilken af de to jordtyper havde den højeste permeabilitet — altså hvor løb vandet hurtigst igennem? Stemte det med jeres hypotese?
+2. **Grundvand.** Hvilken jordtype vil være bedst til at beskytte grundvandet mod nedsivende forurening? Begrund svaret.
+3. **Landbrug.** Hvilken jordtype vil være bedst til landbrug i en tør sommer? Brug resultatet fra opgave 3.
+4. **Fejlkilder.** Nævn mindst én ting, der kan have gjort sammenligningen usikker — fx forskel i pakketæthed eller i den vandmængde, I hældte på.

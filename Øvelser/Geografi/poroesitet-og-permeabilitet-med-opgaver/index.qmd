@@ -1,0 +1,140 @@
+---
+title: "Porøsitet og permeabilitet — grundvand og landbrug"
+subtitle: "Laboratorieøvelse med databehandling"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I arbejder med problemstillingen: *Hvilken betydning har jordbunden for dannelsen af grundvand og for muligheden for at dyrke afgrøder?*
+
+Gennem forsøg med fire jordtyper — sand, podsoljord, brunjord og rødjord — undersøger I jordens evne til at lede vand igennem (permeabilitet) og til at holde på vandet (markkapacitet). Resultaterne skal I bruge til at vurdere:
+
+- hvilke jordtyper der bedst sikrer grundvandsdannelse og beskytter grundvandet mod forurening,
+- hvor egnet jorden er til landbrug — herunder om den kan holde på vandet til planternes vækst i tørre perioder.
+
+## Sedimenttyperne
+
+Inden I går i gang, skal I kende forskel på de fire sedimenter. Undersøg gerne prøverne i mikroskop eller stereolup, og notér, hvad I ser — kornstørrelse, farve og hvor ensartede kornene er.
+
+| Jordtype | Observationer (kornstørrelse, farve, ensartethed) |
+|:---|:---|
+| Sand | |
+| Podsoljord | |
+| Brunjord | |
+| Rødjord (Ghana) | |
+
+: Iagttagelser af de fire sedimentprøver før forsøget.
+
+## Fremgangsmåde
+
+### Fase 1: Nedsivning (permeabilitet)
+
+1. Knus sedimentprøven, så der ikke er store klumper.
+2. Læg et kaffefilter i tragten, og stil tragten oven på et måleglas.
+3. Afvej 50 g af sedimentprøven, og hæld den i filteret.
+4. Hæld 100 mL vand ned i tragten i én jævn bevægelse, og start stopuret samtidig.
+5. Aflæs og notér den nedsivede vandmængde på måleglasset for hvert 10. sekund. Går det meget langsomt, kan I bruge større tidsintervaller.
+6. Gentag punkt 1–5 for hver af de øvrige tre jordtyper.
+
+### Fase 2: Porøsitet
+
+Fase 2 kan laves sideløbende med fase 1 eller umiddelbart efter.
+
+1. Fyld et måleglas med 50 mL af den uknuste sedimentprøve.
+2. Afmål 50 mL vand, og hæld det ned over sedimentet.
+3. Rør vand og sediment forsigtigt sammen med rørepinden.
+4. Lad sedimentpartiklerne bundfælde sig i ca. 30 minutter.
+5. Mål, hvor stor en del af glasset der er fyldt med klart vand oven på det bundfældede sediment.
+
+Volumen af det klare vand svarer til jordpartiklernes eget volumen (den faste masse), fordi vandet har fortrængt luften i hulrummene.
+
+::: {.callout-tip}
+## Tip
+
+Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sammenlignes retfærdigt mellem jordtyperne. Brug samme tragt og samme type filter til alle fire prøver.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- 4 sedimentprøver: sand, podsoljord, brunjord og rødjord
+- Måleglas
+- Kaffetragt og kaffefiltre
+- Vægt og vejeskål
+- Stopur eller mobiltelefon
+- Rørepind
+- Vand
+- Evt. morter/støder til at knuse prøverne
+- Evt. mikroskop eller stereolup
+:::
+
+## Registrering af resultater
+
+### Nedsivning
+
+| Tid (sek.) | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| 10 | | | | |
+| 20 | | | | |
+| 30 | | | | |
+| 40 | | | | |
+| 50 | | | | |
+| 60 | | | | |
+| Slut | | | | |
+
+: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder.
+
+### Porøsitet
+
+| | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| Volumen klart vand efter 30 min. (mL) | | | | |
+
+: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype.
+
+## Resultatbehandling
+
+### Opgave 1: Databehandling af fase 1
+
+Indsæt målingerne fra fase 1 i et regneark, og lav et (x,y)-plot med tiden ud ad x-aksen og den opsamlede vandmængde op ad y-aksen. Tegn alle fire jordtyper i samme koordinatsystem, så kurverne kan sammenlignes.
+
+### Opgave 2: Beregn porøsiteten
+
+Porøsiteten angiver, hvor stor en del af jordartens volumen der i tør tilstand er fyldt med luft. Den regnes i procent:
+
+$$\text{Porøsitet (\%)} = \frac{\text{porevolumen}}{\text{totalvolumen}} \cdot 100$$
+
+Totalvolumenet er de 50 mL sediment, I startede med. Porevolumenet er den plads, vandet nu optager nede mellem kornene.
+
+| | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| Porevolumen (mL) | | | | |
+| Porøsitet (%) | | | | |
+
+: Beregnet porøsitet for hver af de fire jordtyper.
+
+### Opgave 3: Markkapacitet
+
+Hvor meget vand blev holdt tilbage i prøverne i fase 1? Beregn forskellen mellem de 100 mL, I hældte på, og den mængde, der løb igennem.
+
+| | Sand | Podsoljord | Brunjord | Rødjord |
+|:---|:---:|:---:|:---:|:---:|
+| Vand løbet igennem (mL) | | | | |
+| Vand tilbageholdt (mL) | | | | |
+
+: Markkapacitet beregnet som 100 mL minus den gennemløbne vandmængde.
+
+## Diskussion og perspektivering
+
+Diskutér spørgsmålene i gruppen, og skriv svarene i journalen.
+
+1. Hvad kan I på baggrund af resultaterne sige om de fire sedimentprøvers porøsitet og permeabilitet?
+2. Diskutér resultaterne i forhold til, hvor hurtigt grundvandet dannes, og hvor stor risikoen er for, at grundvandet forurenes.
+3. Hvilke usikkerheder og fejlkilder er der i forsøget?
+4. Hvad kan resultaterne fortælle om grundvandsdannelsen i områder med forskellige sedimenttyper?

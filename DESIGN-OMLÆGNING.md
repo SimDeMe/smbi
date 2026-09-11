@@ -356,8 +356,11 @@ topbjælke + `.wrap head` + brødtekst, uden instrumentpanel.
 `stigningsregn-HF-niv.html` (234) · `stigningsregn-C-niv.html` (232) ·
 `oplande-C-niv.html` (95)
 
-**GeoVejledninger** (3): `JordUndersøgelse_HF/` (297) ·
-`konvektionskammer/` (271) · `JordUndersøgelse/` (233)
+**GeoVejledninger**: mappen findes ikke længere (2026-09-11). De tre
+vejledninger er lagt om til Quarto-øvelser under `Øvelser/Geografi/` —
+`poroesitet-og-permeabilitet-hf/`, `konvektionskammer-med-opgaver/` og
+`poroesitet-og-permeabilitet-med-opgaver/` — og skal derfor ikke lægges om
+efter HTML-skabelonen.
 
 **BiologiC/NatureNurture** (9): `1_DNA/test.html` (383) ·
 `2_Proteinsyntese/Opgaver_print.html` (380) · `1_DNA/Modulplan_lærer.html` (226) ·

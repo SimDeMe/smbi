@@ -153,6 +153,43 @@ tilføjet til `sitemap.xml`.
 renderede `.html` (rettelser efter sidste rendering) — den linkede side
 viser stadig den lidt ældre udgave, indtil nogen renderer på ny.
 
+## GeoVejledninger lagt ind i Øvelser (2026-09-11)
+
+Mappen `GeoVejledninger/` i roden af repoet findes ikke længere. Dens tre
+selvstændige HTML-vejledninger er skrevet om til Quarto-øvelser under
+`Geografi/` og renderet til html+pdf+docx som de øvrige:
+
+| Gammel sti | Ny mappe |
+| --- | --- |
+| `GeoVejledninger/JordUndersøgelse_HF/` | `Geografi/poroesitet-og-permeabilitet-hf/` |
+| `GeoVejledninger/JordUndersøgelse/` | `Geografi/poroesitet-og-permeabilitet-med-opgaver/` |
+| `GeoVejledninger/konvektionskammer/` | `Geografi/konvektionskammer-med-opgaver/` |
+
+De to sidste ligger nu **side om side** med de eksisterende
+`Geografi/poroesitet-og-permeabilitet/` og `Geografi/konvektionskammer/`, som
+dækker de samme forsøg. Forskellen er, at `-med-opgaver`-udgaverne også
+indeholder journaldelen fra de gamle sider — resultatbehandling, beregning af
+porøsitet og markkapacitet, diskussionsspørgsmål (jord) henholdsvis
+journalfelter, analyse og spørgsmål (konvektionskammer). De korte udgaver er
+uændrede.
+
+**Alle syv geografi-øvelser har hvert sit kort** i `geografi.html`s stak
+"Forsøgsvejledninger" (tælleren i stak-hovedet er rettet 4 → 7), hver med
+`PDF`/`Word`-sublinks og — hvor der findes en — et link til simuleringen.
+HF-kortet har desuden en `lvl-HF`-pille. Samme kontrol er kørt for
+`biologi.html`: alle ti biologi-øvelser havde allerede kort. Kortene er ét
+pr. mappe under `Øvelser/Geografi/` og `Øvelser/Biologi/`, så en ny øvelse
+altid skal have et nyt kort.
+
+`sitemap.xml`: de tre `GeoVejledninger`-url'er er erstattet af de tre nye
+`Øvelser/Geografi/…/index.html`. `DESIGN-OMLÆGNING.md` er rettet, så
+GeoVejledninger ikke længere står som gammelt design, der mangler omlægning.
+
+**Quarto er nu installeret lokalt** (1.10.18, `/usr/local/bin/quarto`), og alle
+tre nye øvelser er renderet på brugerens egen Mac med `quarto render index.qmd
+--to typst|docx|html` — altså også PDF direkte via Typst, uden omvejen over
+LibreOffice, der er beskrevet nedenfor.
+
 ## Kendte åbne punkter
 
 - De gamle, nu overflødige filer (de to "Quartro Skabelon"-mapper, de gamle Osmose- og Mikroskopi-docx/pdf, leverings-zip'er) ligger i `Øvelser/_to_delete/` på brugerens Mac, fordi sletning kræver brugergodkendelse. Brugeren skal selv slette den mappe, når indholdet er tjekket.

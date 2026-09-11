@@ -78,5 +78,20 @@
     "blodsukkermaaling.typ": "2a89d48f",
     "blodsukkermaaling.html": "027983b3",
     "blodsukkermaaling.docx": "017b5d82"
+  },
+  "Geografi/konvektionskammer-med-opgaver/index.qmd": {
+    "index.typ": "7a54c24a",
+    "index.docx": "26bb00cb",
+    "index.html": "621cea6c"
+  },
+  "Geografi/poroesitet-og-permeabilitet-med-opgaver/index.qmd": {
+    "index.typ": "fdeb727f",
+    "index.docx": "6d6bcb63",
+    "index.html": "d89f406c"
+  },
+  "Geografi/poroesitet-og-permeabilitet-hf/index.qmd": {
+    "index.typ": "2fbe94ef",
+    "index.docx": "a2cc47bc",
+    "index.html": "607cb5d4"
   }
 }
