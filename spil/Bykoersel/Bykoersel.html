@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bykørsel — kørespil i browseren — smbi.dk</title>
+<meta name="description" content="Kør rundt i en uendelig by, undgå andre bilister, fodgængere og cyklister, og tjen point for hver meter du kører — point du kan bruge på bedre biler og opgraderinger i butikken.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/spil/Bykoersel/Bykoersel.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/spil/Bykoersel/Bykoersel.html">
+<meta property="og:title" content="Bykørsel — kørespil i browseren">
+<meta property="og:description" content="Kør rundt i en uendelig by, undgå andre bilister, fodgængere og cyklister, og tjen point for hver meter du kører.">
+<meta property="og:image" content="https://smbi.dk/img/og-smbi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — interaktive simuleringer til biologi og naturgeografi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFF9EE; --paper-2:#FFF3DC; --panel:#FFFFFF;
+  --ink:#17211F;   --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --accent:var(--amber);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{
+  min-height:100dvh;display:flex;flex-direction:column;
+  background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:0.68rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase}
+.enhed{text-transform:none}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{height:7px;background:linear-gradient(90deg,var(--pink) 0 14.3%,var(--coral) 14.3% 28.6%,var(--amber) 28.6% 42.9%,var(--lime) 42.9% 57.2%,var(--teal) 57.2% 71.5%,var(--blue) 71.5% 85.8%,var(--grape) 85.8% 100%)}
+.top{position:sticky;top:0;z-index:60;flex:none}
+.top-bar{background:rgba(255,249,238,0.93);backdrop-filter:blur(10px);border-bottom:2px solid var(--ink)}
+.top-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:16px;height:56px}
+.brand{font-family:var(--display);font-variation-settings:'wdth' 125;font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.brand-mark{width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));flex-shrink:0}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{font-family:var(--display);font-size:0.84rem;font-weight:600;text-decoration:none;color:var(--ink);white-space:nowrap;padding:7px 14px;border-radius:20px;border:2px solid transparent;transition:background .15s,border-color .15s}
+.top-nav a:hover{background:var(--amber);border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.head{padding:20px 0 12px;flex:none}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.05;letter-spacing:-0.03em;margin:12px 0 8px}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg)}
+.lead{font-size:0.98rem;color:#3E4E4C;max-width:70ch}
+
+/* ── Signaturpanel: selve spillet ──────────────────────── */
+.rig-wrap{flex:1;display:flex;min-height:0;padding-bottom:16px}
+.rig{
+  flex:1;display:flex;flex-direction:column;min-height:0;width:100%;
+  background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;
+  overflow:hidden;box-shadow:var(--hard-lg);
+}
+.rig-bar{height:9px;background:var(--accent);flex:none}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:none;
+  padding:10px 15px;border-bottom:2px solid var(--ink);background:#FFF1EC;
+}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite}
+.rig-head .styring{margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5A6C69}
+.btn,.btn-mini{
+  font-family:var(--display);font-weight:700;background:#fff;border:2px solid var(--ink);
+  color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini{font-size:0.78rem;padding:5px 13px;border-radius:18px}
+.btn{font-size:0.95rem;padding:9px 18px;border-radius:22px}
+.btn:hover,.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active,.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+
+.stage{flex:1;min-height:280px;position:relative;background:#8A9490}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.hud-punkt{
+  position:absolute;left:16px;top:14px;z-index:2;pointer-events:none;
+  background:#fff;border:2px solid var(--ink);border-radius:14px;
+  padding:6px 14px;box-shadow:3px 3px 0 var(--ink);
+}
+.hud-punkt .mono{color:#5A6C69}
+.hud-punkt strong{display:block;font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums}
+
+.kompas{
+  position:absolute;right:16px;top:14px;z-index:2;pointer-events:none;
+  width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--ink);
+  box-shadow:3px 3px 0 var(--ink);display:flex;align-items:center;justify-content:center;
+}
+.kompas svg{width:22px;height:22px;transition:transform .15s linear}
+
+.touch-ctrl{position:absolute;left:0;right:0;bottom:14px;z-index:2;display:none;justify-content:space-between;padding:0 16px;pointer-events:none}
+.touch-ctrl .tgrp{display:flex;gap:10px;pointer-events:auto}
+.tbtn{
+  width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);
+  border:2px solid var(--ink);font-size:1.3rem;box-shadow:3px 3px 0 var(--ink);
+  display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;
+}
+.tbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+@media (pointer:coarse){.touch-ctrl{display:flex}}
+
+/* ── Instrumenter ──────────────────────────────────────── */
+.gauges{display:grid;grid-template-columns:1fr 2fr;border-top:2px solid var(--ink);flex:none}
+.gauge{padding:11px 15px;border-left:2px solid var(--ink);display:flex;flex-direction:column;gap:6px;justify-content:center}
+.gauge:first-child{border-left:none}
+.g-fart{background:#E7F4FB}
+.g-mission{background:#F1ECFC}
+.gauge dt{font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
+.gauge dd{font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;font-size:1.2rem;line-height:1;font-variant-numeric:tabular-nums}
+.gauge dd small{font-size:0.6em;font-weight:700;color:#5A6C69;margin-left:2px}
+#mission-navn{font-size:0.98rem}
+#mission-fremgang{font-family:var(--mono);font-size:0.62rem;color:#5A6C69}
+
+/* ── Fakta-fod ─────────────────────────────────────────── */
+.facts{border-top:2px solid var(--ink);background:#fff;padding:10px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;flex:none}
+.fact{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase}
+.fact b{font-family:var(--display);font-size:0.82rem;font-weight:800;letter-spacing:0;text-transform:none}
+
+/* ── Butik (dialog) ────────────────────────────────────── */
+dialog#butik{
+  border:2.5px solid var(--ink);border-radius:18px;box-shadow:var(--hard-lg);
+  padding:0;width:min(560px,92vw);max-height:min(720px,86vh);color:var(--ink);
+  font-family:var(--body);
+}
+dialog#butik::backdrop{background:rgba(23,33,31,.5)}
+.butik-top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:2px solid var(--ink);background:var(--paper-2)}
+.butik-top h2{font-family:var(--display);font-weight:800;font-size:1.2rem}
+.butik-saldo{margin-left:auto;font-family:var(--mono);font-size:0.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.butik-saldo strong{font-family:var(--display);font-size:1rem;margin-left:4px}
+.butik-krop{padding:16px 20px;overflow-y:auto;max-height:calc(min(720px,86vh) - 130px)}
+.butik-krop h3{font-family:var(--display);font-size:0.92rem;font-weight:700;margin:14px 0 8px}
+.butik-krop h3:first-child{margin-top:0}
+.butik-liste{list-style:none;display:flex;flex-direction:column;gap:8px}
+.butik-vare{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);border-radius:12px;padding:8px 12px;flex-wrap:wrap}
+.vare-farve{width:16px;height:16px;border-radius:4px;border:2px solid var(--ink);background:var(--vc,var(--slate));flex:none}
+.vare-navn{font-family:var(--display);font-weight:700;font-size:0.88rem}
+.vare-stats{font-family:var(--mono);font-size:0.62rem;color:#5A6C69}
+.butik-vare button{margin-left:auto}
+.butik-vare button:disabled{opacity:.55;cursor:default;box-shadow:none;transform:none}
+.butik-bund{padding:12px 20px;border-top:2px solid var(--ink);display:flex;justify-content:flex-end}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{background:var(--ink);color:#FFF6E0;padding:16px 0;flex:none}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot .brand{color:#FFF6E0}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{font-family:var(--display);font-size:0.8rem;font-weight:700;text-decoration:none;border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;transition:background .16s,color .16s,border-color .16s}
+.foot-links a:hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+
+@media (max-width:960px){
+  .gauges{grid-template-columns:1fr}
+  .gauge:nth-child(2){border-left:none;border-top:2px solid var(--ink)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:14px;padding-right:14px}
+  .rig-wrap{padding:0 14px 12px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .head{padding:14px 0 8px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.top,.foot,.touch-ctrl{display:none!important}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Game",
+      "name": "Bykørsel — kørespil i browseren",
+      "url": "https://smbi.dk/spil/Bykoersel/Bykoersel.html",
+      "inLanguage": "da-DK",
+      "description": "Kør rundt i en uendelig by, undgå andre bilister, fodgængere og cyklister, og tjen point for hver meter du kører.",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Person", "name": "Simon Messell" },
+      "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
+      "image": "https://smbi.dk/img/og-smbi.png",
+      "isPartOf": { "@id": "https://smbi.dk/#website" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/" },
+        { "@type": "ListItem", "position": 2, "name": "Børn", "item": "https://smbi.dk/born.html" },
+        { "@type": "ListItem", "position": 3, "name": "Bykørsel — kørespil i browseren", "item": "https://smbi.dk/spil/Bykoersel/Bykoersel.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/born.html">Spil</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <span class="eyebrow mono"><span class="blink"></span>Spil · kørsel</span>
+    <h1>Kør gennem <span class="hi" style="--hc:#FFD9C9">byen</span></h1>
+    <p class="lead">Styr med piletaster eller WASD. Undgå andre biler, fodgængere og cyklister, saml checkpoints og løs missioner — point kan bruges i butikken på bedre biler og opgraderinger.</p>
+  </div>
+
+  <div class="wrap rig-wrap">
+    <section class="rig" aria-label="Bykørsel — spil">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="mono" id="status-tekst">Kører</span>
+        <span class="styring">Piletaster/WASD kører · B åbner butikken</span>
+        <button type="button" class="btn-mini" id="btn-butik">Butik</button>
+      </div>
+
+      <div class="stage" id="stage" role="application"
+           aria-label="Byen set oppefra, med spillerbilen i midten. Styr med piletaster eller WASD.">
+        <canvas id="scene"></canvas>
+
+        <div class="hud-punkt">
+          <span class="mono">Point</span>
+          <strong id="point-tal">0</strong>
+        </div>
+
+        <div class="kompas" aria-hidden="true" title="Retning til checkpoint">
+          <svg viewBox="0 0 24 24" id="checkpoint-pil" fill="none" stroke="#17211F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v14"/>
+            <path d="M6 9l6-6 6 6"/>
+          </svg>
+        </div>
+
+        <div class="touch-ctrl">
+          <div class="tgrp">
+            <button type="button" class="tbtn" id="btn-venstre" aria-label="Drej til venstre">◀</button>
+            <button type="button" class="tbtn" id="btn-hoejre" aria-label="Drej til højre">▶</button>
+          </div>
+          <div class="tgrp">
+            <button type="button" class="tbtn" id="btn-ned" aria-label="Brems eller bak">▼</button>
+            <button type="button" class="tbtn" id="btn-op" aria-label="Kør frem">▲</button>
+          </div>
+        </div>
+      </div>
+
+      <dl class="gauges">
+        <div class="gauge g-fart">
+          <dt>Fart</dt>
+          <dd id="fart-tal">0<small><span class="enhed">km/t</span></small></dd>
+        </div>
+        <div class="gauge g-mission">
+          <dt>Mission</dt>
+          <dd id="mission-navn" aria-live="polite">…</dd>
+          <span id="mission-fremgang" class="mono"></span>
+        </div>
+      </dl>
+
+      <div class="facts">
+        <span class="fact">Bil <b id="facts-bil">Starteren</b></span>
+        <span class="fact">Tophastighed <b id="facts-fart">115</b> <span class="enhed">km/t</span></span>
+        <span class="fact">Håndtering <b id="facts-haandtering">100</b>%</span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+    <nav class="foot-links">
+      <a href="/born.html">Flere spil</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<dialog id="butik" aria-label="Butik">
+  <div class="butik-top">
+    <h2>Butik</h2>
+    <span class="butik-saldo">Point <strong id="saldo-tal">0</strong></span>
+  </div>
+  <div class="butik-krop">
+    <h3>Biler</h3>
+    <ul class="butik-liste" id="biler-liste"></ul>
+    <h3>Opgraderinger</h3>
+    <ul class="butik-liste" id="opgraderinger-liste"></ul>
+  </div>
+  <div class="butik-bund">
+    <button type="button" class="btn" id="btn-luk-butik">Tilbage til vejen</button>
+  </div>
+</dialog>
+
+<div id="sr-status" class="sr" aria-live="polite"></div>
+
+<script type="module" src="side.js"></script>
+</body>
+</html>
