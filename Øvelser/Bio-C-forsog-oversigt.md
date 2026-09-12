@@ -133,6 +133,7 @@ Ingen egentlige laboratorieforsøg fundet i denne del af mappen — primært teo
 **Karse i lys og mørke** (fotosyntese/vækstforsøg)
 - `5 Liv og død i skoven/3 Øvelse Karse i lys og mørke.docx` (+ variant)
 - `Økologi 2024-2025/2 Forsøg med karse.docx` — **nyeste version**
+- ✅ **Allerede standardiseret** — ligger som `Biologi/karse-i-lys-og-morke` i den nye Quarto-struktur (bygget på 2025-versionen med daglige højdemålinger over ca. 14 dage; den ældre versions tanke om et fast antal frø og en spiringsprocent står som et frivilligt tillæg i tip-boksen).
 
 **Mikroskopering af plantevæv / spalteåbninger (stomata)**
 - `5 Liv og død i skoven/2016-2017 materialer/1a mikroskopering plantevæv.docx`
@@ -176,7 +177,7 @@ Ingen egentlige laboratorieforsøg fundet i denne del af mappen — primært teo
 ## Bemærkninger
 
 - **Bio C Yubio C** (parallel version for en anden klasse/linje) indeholder ikke nye forsøgstyper udover dem, der allerede er listet ovenfor (mikroskopi, osmose) — kun egne kopier af samme øvelser.
-- Fem forsøg er nu omsat til den nye, ensrettede Quarto-skabelon i `Øvelser/Biologi/`: **osmose i kartofler**, **mikroskopi af celler**, **mikroskopi af rodceller**, **bakterier og svampe** og **bromelin i ananas**. Resten af listen ovenfor er kandidater til fremtidige standardiserede vejledninger.
+- Elleve forsøg er nu omsat til den nye, ensrettede Quarto-skabelon i `Øvelser/Biologi/`: **osmose i kartofler**, **mikroskopi af celler**, **mikroskopi af rodceller**, **bakterier og svampe**, **bromelin i ananas**, **DNA i kiwi**, **gærforsøg (bobleforsøg)**, **dafnier og koffein**, **blodsukkermåling**, **biodiversitet i græsplænen** og **karse i lys og mørke**. Resten af listen ovenfor er kandidater til fremtidige standardiserede vejledninger.
 - Oversigten er lavet ud fra filnavne og mappestruktur (ikke fuld gennemlæsning af hver enkelt fil) — sig til, hvis en bestemt gruppe skal tjekkes mere grundigt, fx for at afklare præcist indhold før en ny vejledning skrives.
 - "(1)", "Kopi af", "GAMMEL/NY", "gl" o.l. i filnavne er behandlet som varianter af samme forsøg og listet i samme gruppe, ligesom i `Forsogsvejledninger.md`.
 - Rene teori-/opgavesæt (BTT-læsespørgsmål, krydsningsskema-opgaver, pusleopgaver, PowerPoints uden praktisk øvelse) er udeladt, da de ikke er forsøg.
