@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Oversigt over øvelser — smbi.dk</title>
+<meta name="description" content="Intern oversigt over biologi- og naturgeografiøvelser: niveau, Quarto-version, databehandling og journalspørgsmål.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);   /* biologi-sider */
+  --geo:var(--blue);   /* geografi-sider */
+  --accent:var(--grape); /* intern side — hverken bio eller geo */
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.55;
+}
+:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
+
+.mono{
+  font-family:var(--mono);font-size:.6rem;text-transform:uppercase;
+  letter-spacing:.13em;font-weight:500;
+}
+.enhed{text-transform:none}
+
+/* ---------- topbjælke ---------- */
+.top{position:sticky;top:0;z-index:50;border-bottom:2px solid var(--ink)}
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,var(--pink) 0 14%,var(--coral) 14% 28%,
+    var(--amber) 28% 43%,var(--lime) 43% 57%,var(--teal) 57% 71%,
+    var(--blue) 71% 85%,var(--grape) 85% 100%);
+}
+.top-bar{
+  background:rgba(255,249,238,.86);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  max-width:var(--max);margin:0 auto;padding:10px 20px;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.brand-mark{
+  width:26px;height:26px;border:2px solid var(--ink);border-radius:6px;
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--teal),var(--blue),var(--grape),var(--pink));
+}
+.brand b{font-family:var(--display);font-weight:800;font-variation-settings:var(--wide);letter-spacing:-.02em}
+.top-nav{display:flex;gap:8px;flex-wrap:wrap}
+.top-nav a{
+  font-family:var(--display);font-weight:700;font-size:.82rem;text-decoration:none;
+  color:var(--ink);border:2px solid var(--ink);border-radius:999px;
+  padding:5px 12px;background:var(--panel);box-shadow:2px 2px 0 var(--ink);
+}
+.top-nav a:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+
+/* ---------- sidehoved ---------- */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+.head{padding-top:34px;padding-bottom:8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--slate)}
+.blink{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:blink 1.6s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+h1{
+  font-family:var(--display);font-weight:800;font-variation-settings:var(--wide);
+  letter-spacing:-.03em;line-height:1.03;font-size:clamp(2rem,5vw,3.1rem);
+  margin:.25em 0 .2em;
+}
+.hi{
+  background:var(--hc,#E2D6F8);box-decoration-break:clone;
+  padding:0 .12em;transform:rotate(-.6deg);display:inline-block;
+}
+.lead{max-width:70ch;color:#2A3A37;margin:0 0 4px}
+
+/* ---------- nøgletal ---------- */
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;padding:0;list-style:none}
+.fact{
+  font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;
+  border:2px solid var(--ink);border-radius:999px;padding:6px 12px;background:var(--panel);
+}
+.fact b{font-family:var(--display);font-size:.95rem;letter-spacing:0}
+
+/* ---------- filterrække ---------- */
+.filtre{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin:22px 0 14px;padding:12px 14px;
+  background:var(--paper-2);border:2.5px solid var(--ink);border-radius:14px;
+  box-shadow:var(--hard);
+}
+.filtre label.mono{color:var(--slate)}
+#soeg{
+  font-family:var(--body);font-size:.95rem;padding:7px 12px;
+  border:2px solid var(--ink);border-radius:999px;background:var(--panel);
+  min-width:min(260px,60vw);color:var(--ink);
+}
+.chip{
+  font-family:var(--display);font-weight:700;font-size:.8rem;cursor:pointer;
+  border:2px solid var(--ink);border-radius:999px;padding:5px 13px;
+  background:var(--panel);box-shadow:2px 2px 0 var(--ink);
+}
+.chip[aria-pressed="true"]{background:var(--accent);color:#FFF6E0}
+.chip:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.chip:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+
+/* ---------- panel ---------- */
+.rig{
+  background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;
+  box-shadow:var(--hard-lg);overflow:hidden;margin:0 0 34px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-bar.bio{background:var(--bio)}
+.rig-bar.geo{background:var(--geo)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:#E7F4FB;padding:9px 16px;border-top:2px solid var(--ink);
+}
+.rig-head.bio{background:#FBD3E1}
+.dot{
+  width:10px;height:10px;border-radius:50%;background:var(--ink);
+  animation:blink 2.2s infinite;
+}
+.rig-head h2{
+  font-family:var(--display);font-weight:800;font-variation-settings:var(--wide);
+  letter-spacing:-.02em;font-size:1.05rem;margin:0;
+}
+.rig-head .tal{margin-left:auto;color:var(--slate)}
+
+/* ---------- tabel ---------- */
+.tabel-rul{overflow-x:auto;border-top:2px solid var(--ink)}
+table{border-collapse:collapse;width:100%;min-width:920px;font-size:.92rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #DFE7E5;vertical-align:top}
+thead th{
+  font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;
+  background:var(--paper-2);border-bottom:2px solid var(--ink);white-space:nowrap;
+}
+tbody tr:hover{background:#FFFBF3}
+tbody tr.kandidat{background:#FFF6E9}
+tbody tr.kandidat:hover{background:#FFEFDA}
+td.navn{font-weight:600;min-width:230px}
+td.navn .type{display:block;margin-top:2px;color:var(--slate)}
+td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
+.filer{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.filer a{
+  font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;
+  text-decoration:none;color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;
+  padding:2px 7px;background:var(--panel);
+}
+.filer a:hover{background:var(--paper-2)}
+
+/* statusmærker: symbol + ord, aldrig farve alene */
+.st{
+  display:inline-block;font-family:var(--display);font-weight:700;font-size:.76rem;
+  border:2px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap;
+}
+.st-ja{background:#D6EFC4}
+.st-delvis{background:#FFE9DC}
+.st-nej{background:var(--paper-2)}
+.st-ukendt{background:#EDEDED;color:var(--slate)}
+.st-daekket{background:#C7E6F6}
+
+.niveau{white-space:nowrap}
+.niveau .form{
+  border-bottom:2px dotted var(--slate);cursor:help;
+}
+.niveau small{display:block;color:var(--slate);font-family:var(--mono);
+  font-size:.53rem;text-transform:uppercase;letter-spacing:.1em}
+
+/* ---------- forklaring ---------- */
+.noter{
+  border:2.5px solid var(--ink);border-radius:18px;background:var(--paper-2);
+  box-shadow:var(--hard);padding:18px 20px;margin:0 0 44px;
+}
+.noter h2{
+  font-family:var(--display);font-weight:800;font-variation-settings:var(--wide);
+  letter-spacing:-.02em;font-size:1.05rem;margin:0 0 10px;
+}
+.noter ul{margin:0 0 10px;padding-left:1.1em}
+.noter li{margin-bottom:5px}
+.noter p{margin:0 0 8px}
+.noter code{font-family:var(--mono);font-size:.78rem;background:var(--panel);
+  border:1px solid #D8D2C4;border-radius:5px;padding:1px 5px}
+.tom{padding:22px;color:var(--slate);font-style:italic}
+
+/* ---------- bund ---------- */
+.foot{background:var(--ink);color:#FFF6E0;margin-top:10px}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:22px 20px;
+  display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-weight:700;font-size:.8rem;text-decoration:none;
+  color:#FFF6E0;border:2px solid #FFF6E0;border-radius:999px;padding:4px 12px;
+}
+.foot-links a:hover{background:#FFF6E0;color:var(--ink)}
+
+@media (max-width:960px){.top-bar{padding:10px 16px}}
+@media (max-width:620px){
+  body{font-size:16px}
+  .rig,.noter{box-shadow:var(--hard)}
+  .wrap{padding:0 16px}
+  .noter{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  .top,.foot,.filtre{display:none}
+  .rig,.noter{box-shadow:none;break-inside:avoid}
+  table{min-width:0;font-size:.7rem}
+  tbody tr.kandidat{background:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <a class="brand" href="/"><span class="brand-mark"></span><b>smbi.dk</b></a>
+    <nav class="top-nav" aria-label="Genveje">
+      <a href="#biologi">Biologi</a>
+      <a href="#geografi">Naturgeografi</a>
+      <a href="/">Forsiden</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <span class="eyebrow mono"><span class="blink"></span>Intern · øvelsesoversigt</span>
+    <h1>Øvelser i <span class="hi" style="--hc:#E2D6F8">overblik</span></h1>
+    <p class="lead">Hvilke øvelser findes som færdig Quarto-vejledning, hvilket niveau hører de til,
+      og har de et databehandlings­afsnit og spørgsmål til journalen? Kandidater, der endnu kun findes
+      som gamle Word-filer, står med gul baggrund.</p>
+
+    <ul class="facts" id="nøgletal"></ul>
+  </div>
+
+  <div class="wrap">
+    <div class="filtre">
+      <label class="mono" for="soeg">Søg</label>
+      <input id="soeg" type="search" placeholder="øvelse, emne, note …" autocomplete="off">
+      <button class="chip" id="f-alle" aria-pressed="true">Alle</button>
+      <button class="chip" id="f-quarto" aria-pressed="false">Kun Quarto</button>
+      <button class="chip" id="f-kandidat" aria-pressed="false">Kun kandidater</button>
+      <button class="chip" id="f-mangler" aria-pressed="false">Uden journalspørgsmål</button>
+    </div>
+
+    <section class="rig" id="biologi">
+      <div class="rig-bar bio"></div>
+      <div class="rig-head bio">
+        <span class="dot"></span>
+        <h2>Biologi</h2>
+        <span class="tal mono" id="tal-bio"></span>
+      </div>
+      <div class="tabel-rul">
+        <table id="tabel-bio">
+          <caption class="mono" style="text-align:left;padding:8px 12px;color:var(--slate)">Biologiøvelser — Quarto-vejledninger og kandidater fra Bio&nbsp;C-mappen</caption>
+          <thead>
+            <tr>
+              <th scope="col">Øvelse</th>
+              <th scope="col">Niveau</th>
+              <th scope="col">Quarto-version</th>
+              <th scope="col">Databehandling</th>
+              <th scope="col">Journalspørgsmål</th>
+              <th scope="col">Note</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="rig" id="geografi">
+      <div class="rig-bar geo"></div>
+      <div class="rig-head">
+        <span class="dot"></span>
+        <h2>Naturgeografi</h2>
+        <span class="tal mono" id="tal-geo"></span>
+      </div>
+      <div class="tabel-rul">
+        <table id="tabel-geo">
+          <caption class="mono" style="text-align:left;padding:8px 12px;color:var(--slate)">Naturgeografiøvelser — Quarto-vejledninger og kandidater fra SM-DRIVE</caption>
+          <thead>
+            <tr>
+              <th scope="col">Øvelse</th>
+              <th scope="col">Niveau</th>
+              <th scope="col">Quarto-version</th>
+              <th scope="col">Databehandling</th>
+              <th scope="col">Journalspørgsmål</th>
+              <th scope="col">Note</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="mono sr-status" id="status" aria-live="polite" style="color:var(--slate);margin:-20px 0 26px"></p>
+
+    <section class="noter">
+      <h2>Sådan læses tabellerne</h2>
+      <ul>
+        <li><span class="st st-ja">✓ Ja</span> afsnittet findes i vejledningen ·
+            <span class="st st-delvis">~ Delvis</span> der regnes eller sammenlignes, men uden selvstændigt afsnit ·
+            <span class="st st-nej">– Nej</span> findes ikke ·
+            <span class="st st-ukendt">? Ukendt</span> gammel fil, ikke gennemgået ·
+            <span class="st st-daekket">≈ Dækket</span> erstattet af en Quarto-øvelse.</li>
+        <li><b>Databehandling</b> = beregning, graf eller resultatbehandling, som eleverne selv skal lave.
+            Et rent registreringsskema tæller ikke med.</li>
+        <li><b>Journalspørgsmål</b> = nummererede spørgsmål til journalen (fx «Spørgsmål»,
+            «Analyse og konklusion», «Diskussion og perspektivering»).</li>
+        <li><b>Niveau med prikket streg</b> er <i>formodet</i> ud fra, hvilket forløb eller hvilken mappe
+            filerne stammer fra — det står ikke i filerne. Kun
+            <code>poroesitet-og-permeabilitet-hf</code> har niveauet i sin egen metadata
+            (<code>fag: "Naturgeografi"</code>, <code>hold: "HF"</code>).</li>
+      </ul>
+      <h2>Det der mangler</h2>
+      <ul>
+        <li>Alle geografi-vejledninger på nær HF-varianten har <b>tomme <code>fag</code>- og
+            <code>hold</code>-felter</b> i deres YAML-hoved. Derfor står sidehovedet tomt i den
+            renderede HTML og PDF. Biologi-øvelserne har alle <code>fag: "Biologi"</code>.</li>
+        <li><b>Ingen biologiøvelse har journalspørgsmål</b> — hverken spørgsmål til diskussion eller
+            fejlkilder. Til sammenligning har tre af de syv geografiøvelser dem.</li>
+        <li>Niveau findes ikke som metadatafelt. Skal det med i sidehovedet på vejledningerne,
+            kan det lægges ind som fx <code>hold: "1g Bio C"</code> i hver <code>.qmd</code>.</li>
+      </ul>
+      <h2>Kilder</h2>
+      <p>Quarto-rækkerne er læst direkte i <code>.qmd</code>-filerne under
+        <code>Biologi/</code> og <code>Geografi/</code>.
+        Biologikandidaterne kommer fra <code>Bio-C-forsog-oversigt.md</code> (mappen
+        <code>Bio-C-delt-mappe</code>), geografikandidaterne fra <code>Forsogsvejledninger.md</code>
+        (SM-DRIVE). Sidstnævnte rummer desuden ca. 54 ældre biologiforsøg fra JA-arkivet,
+        som ikke er taget med her.</p>
+      <p>Siden er intern: den er ikke linket fra smbi.dk, står ikke i <code>sitemap.xml</code>
+        og er markeret <code>noindex</code>.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <a class="brand" href="/"><span class="brand-mark"></span><b>smbi.dk</b></a>
+    <nav class="foot-links" aria-label="Bund">
+      <a href="/">Forsiden</a>
+      <a href="/biologi.html">Biologi</a>
+      <a href="/geografi.html">Naturgeografi</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* ---------------------------------------------------------------
+   Øvelsesdata. Ret her, når en øvelse skifter status eller niveau.
+   quarto : true | false | 'daekket'
+   data / spg : 'ja' | 'delvis' | 'nej' | 'ukendt'
+   niveauFormodet : true, når niveauet er gættet ud fra kilden
+   ---------------------------------------------------------------*/
+const ØVELSER = [
+/* ---------------- BIOLOGI — Quarto ---------------- */
+{fag:'bio',navn:'Mikroskopi af celler',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-celler',fil:'mikroskopi-af-celler',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Løghinde, vandpest og kindskrab. Registreringsafsnittet er bevidst fjernet — eleverne tegner i stedet.'},
+{fag:'bio',navn:'Mikroskopi af rodceller',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-rodceller',fil:'mikroskopi-af-rodceller',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Squash-præparat af rodspids, mitose. Udskilt fra mikroskopi-af-celler.'},
+{fag:'bio',navn:'Osmose i kartofler',type:'Laboratorieøvelse',sti:'Biologi/osmose-i-kartofler',fil:'osmose-i-kartofler',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
+ note:'Skema med vægtændring i g og %, fem NaCl-koncentrationer. Fortyndingsrækken ligger som selvstændig gammel vejledning.'},
+{fag:'bio',navn:'Bakterier og svampe',type:'Laboratorieøvelse',sti:'Biologi/bakterier-og-svampe',fil:'bakterier-og-svampe',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
+ note:'Kimfald + påvisning på genstande. Eleverne beregner areal (A = πr²) og kim pr. m² pr. time.'},
+{fag:'bio',navn:'Bromelin i ananas',type:'Laboratorieøvelse',sti:'Biologi/bromelin-i-ananas',fil:'bromelin-i-ananas',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Kvalitativt skema (stivnede gelatinen?) med frisk/kogt/syrebehandlet ananas og en vandkontrol.'},
+{fag:'bio',navn:'DNA i kiwi',type:'Laboratorie-/hjemmeforsøg',sti:'Biologi/dna-i-kiwi',fil:'dna-i-kiwi',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Eneste biologiøvelse helt uden skema til resultater.'},
+{fag:'bio',navn:'Gærforsøg — bobleforsøg',type:'Laboratorieøvelse',sti:'Biologi/gaerforsog-bobleforsog',fil:'gaerforsog-bobleforsog',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
+ note:'Bobler pr. minut ved 5, 15 og 30 min. plus BTB-farveskift — tælles, men behandles ikke videre.'},
+{fag:'bio',navn:'Dafnier og koffein',type:'Laboratorieøvelse',sti:'Biologi/dafnier-og-koffein',fil:'dafnier-og-koffein',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
+ note:'Fortyndingsrække 0–600 mg/L og gennemsnit af tre tællinger. Ingen opgave om at tegne dosis-respons-kurve.'},
+{fag:'bio',navn:'Blodsukkermåling',type:'Laboratorieøvelse',sti:'Biologi/blodsukkermaaling',fil:'blodsukkermaaling',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
+ note:'Eget afsnit om beregning af kulhydratindtag samt vejledning i brug af glykometer.'},
+{fag:'bio',navn:'Biodiversitet i græsplænen',type:'Feltøvelse',sti:'Biologi/biodiversitet-i-graesplaenen',fil:'biodiversitet-i-graesplaenen',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
+ note:'Ti Raunkiærcirkler; artsantal pr. cirkel og gennemsnit udregnes i skemaet, men ingen videre behandling.'},
+
+/* ---------------- BIOLOGI — kandidater (Bio-C-delt-mappe) ---------------- */
+{fag:'bio',navn:'Karse i lys og mørke',type:'Vækstforsøg',kilde:'Økologi 2024-2025',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Nyeste version: «2 Forsøg med karse.docx». God kandidat — kort forsøg med oplagt databehandling.'},
+{fag:'bio',navn:'Skovøkologi-ekskursion, Øksenrade Skov',type:'Feltundersøgelse',kilde:'5 Liv og død i skoven',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Har allerede rapportskabelon, praktisk ark og elevrapporteksempel.'},
+{fag:'bio',navn:'Raunkiær-øvelse i eng',type:'Feltøvelse',kilde:'Økologi 2024-2025',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Pilotprojekt — udvidelse af græsplæneøvelsen til eng.'},
+{fag:'bio',navn:'Arts-areal-sammenhæng i eng',type:'Feltøvelse',kilde:'Økologi 2024-2025',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Artsantal som funktion af areal; hører sammen med Raunkiær-øvelsen.'},
+{fag:'bio',navn:'Mikroskopi af plantevæv / spalteåbninger',type:'Mikroskopi',kilde:'5 Liv og død i skoven',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Materialer fra 2016-2017, inkl. foto af spalteåbning i tulipan.'},
+{fag:'bio',navn:'Mikroskopi af plante- og dyreplankton',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Mikroskopi af tyresæd',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Lynudgave.'},
+{fag:'bio',navn:'Næringssaltes betydning for algevækst',type:'Laboratorieøvelse',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Fra 2013.'},
+{fag:'bio',navn:'Tørforsøg med mitose og meiose',type:'Modeløvelse',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Papirøvelse, 2014.'},
+{fag:'bio',navn:'Øvelse med mitose og meiose',type:'Modeløvelse',kilde:'Malene og Lotte 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Parallel til tørforsøget ovenfor.'},
+{fag:'bio',navn:'DNAs byggesten — molekylebyggesæt',type:'Modeløvelse',kilde:'4 Arv og miljø',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Min genotype',type:'Klasseundersøgelse',kilde:'Malene og Lotte 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Elev- og lærerversion findes.'},
+{fag:'bio',navn:'Et-gens-egenskaber — mythbusted',type:'Klasseundersøgelse',kilde:'Bio C Yubio C',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Kostregistrering / dagskost',type:'Databehandling (Excel)',kilde:'2 I tykt og tyndt',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Har allerede eget databehandlingsdokument, regneark og fødevaredatabase.'},
+{fag:'bio',navn:'Sundhedsparametre',type:'Kropsmålinger',kilde:'2 I tykt og tyndt',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Vitalkapacitet',type:'Kropsmålinger',kilde:'Den arbejdende krop 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Spirometer; aflevering til luftveje findes.'},
+{fag:'bio',navn:'Peak Flow-måling',type:'Kropsmålinger',kilde:'Den arbejdende krop 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Dataark i Excel.'},
+{fag:'bio',navn:'Ryhmings steptest / kondital',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Vejledning + dataark.'},
+{fag:'bio',navn:'Pulsmåling med Garmin-ur',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Nærmest en brugsanvisning — hører til steptesten.'},
+{fag:'bio',navn:'Dissektion af lunger og hjerte',type:'Dissektion',kilde:'Gamle dokumenter',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Har journalskabelon, opgaver og videoliste.'},
+{fag:'bio',navn:'Springlag — flamingomodel',type:'Modelforsøg',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Temperaturlagdeling i vand — overlapper geografi.'},
+{fag:'bio',navn:'Kulde- og varmepunkter',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Nerveledningshastighed',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Reaktionstid.'},
+{fag:'bio',navn:'Smagssansens følsomhed',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'bio',navn:'Idealvægt og fedtprocent',type:'Kropsmålinger',kilde:'MM_s 1.g-øvelser',
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Målemetoder.'},
+
+/* ---------------- NATURGEOGRAFI — Quarto ---------------- */
+{fag:'geo',navn:'Porøsitet og permeabilitet i jord',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet',fil:'poroesitet-og-permeabilitet',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Grundversionen: to registreringsskemaer (nedsivning + porøsitet), ingen opgaver. Fire jordtyper.'},
+{fag:'geo',navn:'Porøsitet og permeabilitet — grundvand og landbrug',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-med-opgaver',fil:'poroesitet-og-permeabilitet-med-opgaver',
+ niveau:'Ng B',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
+ note:'Tre opgaver: (x,y)-plot, porøsitet i %, markkapacitet. Fire spørgsmål under «Diskussion og perspektivering».'},
+{fag:'geo',navn:'Permeabilitet og vandtilbageholdelse (HF)',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-hf',fil:'poroesitet-og-permeabilitet-hf',
+ niveau:'HF',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
+ note:'Eneste vejledning med fag/hold i metadata. To jordtyper, graf og markkapacitet, fire spørgsmål med fejlkilder.'},
+{fag:'geo',navn:'Konvektionskammer',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer',fil:'konvektionskammer',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
+ note:'Grundversionen: foto eller skitse med pile og H/L, ingen opgaver.'},
+{fag:'geo',navn:'Konvektionskammer — med journalopgaver',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer-med-opgaver',fil:'konvektionskammer-med-opgaver',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'delvis',spg:'ja',
+ note:'Analyse af eget foto/skitse. Kun ét spørgsmål — kunne udbygges.'},
+{fag:'geo',navn:'Opmåling af terrænprofil',type:'Feltøvelse',sti:'Geografi/opmaaling-af-terraenprofil',fil:'opmaaling-af-terraenprofil',
+ niveau:'Ng B (3g)',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
+ note:'Højdeændring med fortegn beregnes i skemaet. Profiltegningen nævnes i indledningen, men der er ingen opgave til den.'},
+{fag:'geo',navn:'Digital kystopmåling ved Røjle Klint',type:'GIS-øvelse',sti:'Geografi/digital-kystopmaaling-rojle',fil:'digital-kystopmaaling-rojle',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'delvis',spg:'ja',
+ note:'MiljøGIS, kystlinjen 1954→i dag. Spørgsmål undervejs i fremgangsmåden plus syv ekstraopgaver. Ni figurer.'},
+
+/* ---------------- NATURGEOGRAFI — kandidater (SM-DRIVE) ---------------- */
+{fag:'geo',navn:'Permeabilitet/porøsitet i jord (gamle udgaver)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
+ niveau:'NF / Ng',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
+ note:'Dækket af de tre porøsitetsvejledninger ovenfor. De gamle udgaver har også pH og nitrat — det er ikke med i den nye.'},
+{fag:'geo',navn:'Konvektion i atmosfæren (gamle udgaver)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
+ niveau:'NF / Ng',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
+ note:'Dækket af de to konvektionskammer-vejledninger ovenfor.'},
+{fag:'geo',navn:'Udvaskning af næringsstoffer fra to jorde',type:'Laboratorieøvelse',kilde:'Villum-forløb 2023',
+ niveau:'Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Hører sammen med Villum-forløbets konvektionskammer, som allerede er lagt om.'},
+{fag:'geo',navn:'Jordvandets nedsivningshastighed',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
+ niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Beslægtet med permeabilitetsøvelserne, men måler i marken. Brugt til NF-eksamen.'},
+{fag:'geo',navn:'Tsunamibølgers hastighed',type:'Regne-/modeløvelse',kilde:'Ng, forløb Geologi',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Findes i mindst fire udgaver, nyeste 7. udg. 2019.'},
+{fag:'geo',navn:'Albedo-forsøg (inkl. IR-termometer)',type:'Laboratorieøvelse',kilde:'NV + NF + NF-eksamen',
+ niveau:'NV / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Mange varianter (gråtoner, farvet papir, arktis). Oplagt kandidat — bruges både i NV og til NF-eksamen.'},
+{fag:'geo',navn:'Globale vindsystemer',type:'Opgaveøvelse',kilde:'NF + Ng',
+ niveau:'NF / Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Opgave 1 og 2 findes hver for sig.'},
+{fag:'geo',navn:'Små klimaforsøg — opvarmning af vand og sand',type:'Laboratorieøvelse',kilde:'NF',
+ niveau:'NF (C)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun som PDF i flere mapper.'},
+{fag:'geo',navn:'Oliens migration',type:'Modelforsøg',kilde:'Ng forløb Energi + NF',
+ niveau:'Ng / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'HF-udgave findes.'},
+{fag:'geo',navn:'Vulkanudbrud',type:'Modelforsøg',kilde:'NV modul 4',
+ niveau:'NV (1.g)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'geo',navn:'Bestemmelse af mineraler og bjergarter',type:'Bestemmelsesøvelse',kilde:'NV modul 5-6',
+ niveau:'NV (1.g)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Både mineral- og bjergartsøvelse, samt bjergarternes kredsløb i tre dele.'},
+{fag:'geo',navn:'Grønlandspumpen',type:'Modelforsøg',kilde:'Ng forsøg + NF-eksamen',
+ niveau:'Ng / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Vandcirkulation i forsøgstank. Der findes allerede en simulering på smbi.dk.'},
+{fag:'geo',navn:'Vandbalancen',type:'Regneøvelse',kilde:'Ng forløb Vand',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Facitliste findes.'},
+{fag:'geo',navn:'Kysterosion og oversvømmelse',type:'Kort-/dataøvelse',kilde:'Geomøde-kursus 2020',
+ niveau:'Ng B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Odense Fjord. Passer sammen med den digitale kystopmåling.'},
+{fag:'geo',navn:'Måling af den lokale strålingsbalance',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
+ niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Også en forkortet Geolink-udgave.'},
+{fag:'geo',navn:'Måling af kuldioxid (CO₂)',type:'Feltøvelse',kilde:'NF, fossilfri transport',
+ niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'geo',navn:'Sø- og landbrise',type:'Laboratorieøvelse',kilde:'Geolink',
+ niveau:'Ng C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Tæt på konvektionskammeret fagligt.'},
+{fag:'geo',navn:'Levevilkår og erhvervsfordeling',type:'Dataøvelse',kilde:'NF-eksamen, del B',
+ niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Udviklingsmål.'},
+{fag:'geo',navn:'Vindmøller og solceller',type:'Dataøvelse',kilde:'NF-eksamen, del B',
+ niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'geo',navn:'Digital laboratoriekursusvejledning',type:'Samlevejledning',kilde:'Ng forsøg',
+ niveau:'Ng B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Fra november 2020 — samler flere forsøg.'},
+{fag:'geo',navn:'Pladetektonik i Google Earth',type:'GIS-øvelse',kilde:'Ng geologi / Zahles',
+ niveau:'Ng C',niveauFormodet:false,quarto:false,data:'ukendt',spg:'ukendt',
+ note:'Filnavnet siger selv C-niveau. Passer i familie med kystopmålingen.'},
+{fag:'geo',navn:'Havstrømme',type:'Modelforsøg',kilde:'Brobygning 8. kl. 2023',
+ niveau:'Brobygning',niveauFormodet:false,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun som PDF.'},
+{fag:'geo',navn:'Bæredygtige byer',type:'Hjemmeforsøg',kilde:'Ng bæredygtighed',
+ niveau:'Ng C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'geo',navn:'Kortøvelse til istidslandskaber',type:'Kortøvelse',kilde:'NF forløb Fødevarer',
+ niveau:'NF (C)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
+{fag:'geo',navn:'Klimaforandringer i Grønland',type:'Forløb (lærervejledning)',kilde:'OD-forløb',
+ niveau:'Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun lærervejledning, ikke en øvelsesvejledning i sig selv.'}
+];
+
+/* --------------------------- visning --------------------------- */
+const MÆRKE = {
+  ja:     ['st-ja','✓ Ja'],
+  delvis: ['st-delvis','~ Delvis'],
+  nej:    ['st-nej','– Nej'],
+  ukendt: ['st-ukendt','? Ukendt']
+};
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function mærke(v){
+  const [k,t] = MÆRKE[v] || MÆRKE.ukendt;
+  return `<span class="st ${k}">${t}</span>`;
+}
+function quartoCelle(ø){
+  if(ø.quarto === 'daekket')
+    return '<span class="st st-daekket">≈ Dækket</span>';
+  if(!ø.quarto)
+    return `<span class="st st-nej">– Nej</span>${ø.kilde?`<div class="filer"><span class="mono" style="color:var(--slate)">${esc(ø.kilde)}</span></div>`:''}`;
+  const b = `${ø.sti}/${ø.fil}`;
+  return `<span class="st st-ja">✓ Ja</span>
+    <span class="filer">
+      <a href="${b}.pdf">PDF</a>
+      <a href="${b}.docx">Word</a>
+      <a href="${b}.html">Web</a>
+      <a href="${b}.qmd">.qmd</a>
+    </span>`;
+}
+function niveauCelle(ø){
+  const n = ø.niveauFormodet
+    ? `<span class="form" title="Formodet ud fra kilden — står ikke i filen">${esc(ø.niveau)}</span>`
+    : esc(ø.niveau);
+  return `<span class="niveau">${n}${ø.niveauFormodet?'<small>formodet</small>':'<small>i metadata</small>'}</span>`;
+}
+function række(ø){
+  return `<tr class="${ø.quarto===true?'':'kandidat'}">
+    <td class="navn">${esc(ø.navn)}<span class="type mono">${esc(ø.type)}</span></td>
+    <td>${niveauCelle(ø)}</td>
+    <td>${quartoCelle(ø)}</td>
+    <td>${mærke(ø.data)}</td>
+    <td>${mærke(ø.spg)}</td>
+    <td class="note">${esc(ø.note)}</td>
+  </tr>`;
+}
+
+let filter = 'alle', søgetekst = '';
+
+function passer(ø){
+  if(filter==='quarto'   && ø.quarto!==true) return false;
+  if(filter==='kandidat' && ø.quarto===true) return false;
+  if(filter==='mangler'  && ø.spg==='ja')    return false;
+  if(!søgetekst) return true;
+  const h = [ø.navn,ø.type,ø.niveau,ø.note,ø.kilde].join(' ').toLowerCase();
+  return h.includes(søgetekst);
+}
+
+function tegn(){
+  let synlige = 0;
+  for(const [fag,id] of [['bio','tabel-bio'],['geo','tabel-geo']]){
+    const rk = ØVELSER.filter(ø => ø.fag===fag && passer(ø));
+    synlige += rk.length;
+    const krop = document.querySelector('#'+id+' tbody');
+    krop.innerHTML = rk.length
+      ? rk.map(række).join('')
+      : `<tr><td colspan="6" class="tom">Ingen øvelser matcher.</td></tr>`;
+    const alle = ØVELSER.filter(ø => ø.fag===fag);
+    const q = alle.filter(ø => ø.quarto===true).length;
+    document.getElementById('tal-'+fag).textContent =
+      `${rk.length} viste · ${q} i Quarto · ${alle.length} i alt`;
+  }
+  document.getElementById('status').textContent = `${synlige} øvelser vises.`;
+}
+
+function nøgletal(){
+  const q  = ØVELSER.filter(ø => ø.quarto===true);
+  const db = q.filter(ø => ø.data==='ja').length;
+  const sp = q.filter(ø => ø.spg==='ja').length;
+  document.getElementById('nøgletal').innerHTML = `
+    <li class="fact">Quarto-vejledninger <b>${q.length}</b></li>
+    <li class="fact">Biologi <b>${q.filter(ø=>ø.fag==='bio').length}</b> af ${ØVELSER.filter(ø=>ø.fag==='bio').length}</li>
+    <li class="fact">Naturgeografi <b>${q.filter(ø=>ø.fag==='geo').length}</b> af ${ØVELSER.filter(ø=>ø.fag==='geo').length}</li>
+    <li class="fact">Med databehandling <b>${db}</b></li>
+    <li class="fact">Med journalspørgsmål <b>${sp}</b></li>`;
+}
+
+const knapper = {alle:'f-alle',quarto:'f-quarto',kandidat:'f-kandidat',mangler:'f-mangler'};
+for(const [navn,id] of Object.entries(knapper)){
+  document.getElementById(id).addEventListener('click',()=>{
+    filter = (filter===navn && navn!=='alle') ? 'alle' : navn;
+    for(const [n,i] of Object.entries(knapper))
+      document.getElementById(i).setAttribute('aria-pressed', String(filter===n));
+    tegn();
+  });
+}
+document.getElementById('soeg').addEventListener('input',e=>{
+  søgetekst = e.target.value.trim().toLowerCase();
+  tegn();
+});
+
+nøgletal();
+tegn();
+
+/* Iframe-krom: skjul top, bund og sidehoved, når siden vises i en iframe */
+if(window.top !== window.self){
+  for(const v of ['#site-top','.foot','.head'])
+    document.querySelector(v)?.style.setProperty('display','none');
+}
+</script>
+</body>
+</html>
