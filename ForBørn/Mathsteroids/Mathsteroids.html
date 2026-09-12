@@ -23,22 +23,42 @@
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <style>
-    body { margin:0; background:#0b0f1a; color:#e8eefc; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-    #wrap { display:flex; justify-content:center; align-items:center; height:100vh; }
-    canvas { background: radial-gradient(circle at 30% 30%, #101a33, #070a12); border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.45); }
+    html, body { margin:0; height:100%; overscroll-behavior:none; }
+    body { background:#0b0f1a; color:#e8eefc; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    #wrap { position:relative; display:flex; justify-content:center; align-items:center; height:100vh; height:100dvh; padding:8px; box-sizing:border-box; }
+    canvas { background: radial-gradient(circle at 30% 30%, #101a33, #070a12); border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.45); touch-action:none; }
     .hint { position:fixed; bottom:10px; width:100%; text-align:center; font-size:12px; opacity:.7; }
-    
+
     /* UI Overlay Styles */
     #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; justify-content: center; align-items: center; }
-    .menu { pointer-events: auto; background: rgba(16, 26, 51, 0.95); padding: 30px; border-radius: 12px; border: 1px solid #4a5d85; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.8); color: #e8eefc; }
+    .menu { pointer-events: auto; background: rgba(16, 26, 51, 0.95); padding: 30px; border-radius: 12px; border: 1px solid #4a5d85; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.8); color: #e8eefc; max-width:92vw; max-height:92vh; overflow-y:auto; box-sizing:border-box; }
     .menu h1 { margin-top: 0; color: #8ab4f8; }
     .control-group { margin: 15px 0; text-align: left; }
-    .control-group label { display: block; margin: 5px 0; cursor: pointer; }
+    .control-group label { display: block; margin: 5px 0; padding: 4px 0; cursor: pointer; }
     .btn { background: #1a73e8; color: white; border: none; padding: 10px 20px; font-size: 18px; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; }
     .btn:hover { background: #135aba; }
-    
-    #pause-btn { pointer-events: auto; position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: none; }
+
+    #pause-btn { pointer-events: auto; position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: none; touch-action:manipulation; }
     #pause-btn:hover { background: rgba(255,255,255,0.2); }
+
+    @media (max-width: 480px) {
+      .menu { padding: 18px; }
+      .menu h1 { font-size: 22px; }
+    }
+
+    /* Touch controls — kun på skærme uden mus/hover (telefon/tablet) */
+    #touch-controls { display:none; position:absolute; left:0; right:0; bottom:0; padding:14px; box-sizing:border-box; justify-content:space-between; align-items:flex-end; pointer-events:none; }
+    @media (hover:none) and (pointer:coarse) {
+      #touch-controls { display:flex; }
+      .hint { display:none; }
+    }
+    .tc-left { display:grid; grid-template-columns:56px 56px 56px; grid-template-rows:56px 56px; gap:8px; pointer-events:auto; }
+    .tc-btn { -webkit-tap-highlight-color:transparent; touch-action:none; user-select:none; width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.35); color:#e8eefc; font-size:20px; display:flex; align-items:center; justify-content:center; }
+    .tc-btn.active, .tc-btn:active { background:rgba(255,255,255,0.32); }
+    #tc-left { grid-column:1; grid-row:2; }
+    #tc-right { grid-column:3; grid-row:2; }
+    #tc-thrust { grid-column:2; grid-row:1 / span 2; }
+    .tc-fire { pointer-events:auto; width:78px; height:78px; font-size:15px; font-weight:700; background:rgba(232,110,90,0.25); border-color:rgba(232,110,90,0.6); }
   </style>
   <script type="application/ld+json">
   {
@@ -115,7 +135,7 @@
       <div id="start-menu" class="menu">
         <h1>Math Asteroids</h1>
         <div class="control-group">
-          <label>Start Level (1-10): <input type="number" id="inp-level" value="1" min="1" max="10" style="width:50px; background:#0b0f1a; color:white; border:1px solid #444; padding:4px;"></label>
+          <label>Start Level (1-10): <input type="number" id="inp-level" value="1" min="1" max="10" inputmode="numeric" style="width:50px; background:#0b0f1a; color:white; border:1px solid #444; padding:4px;"></label>
         </div>
         <div class="control-group">
           <div style="margin-bottom:5px; font-weight:bold;">Regnearter:</div>
@@ -133,6 +153,15 @@
     </div>
 
     <button id="pause-btn">Pause</button>
+
+    <div id="touch-controls" aria-hidden="true">
+      <div class="tc-left">
+        <button type="button" class="tc-btn" id="tc-left" aria-label="Drej venstre">◀</button>
+        <button type="button" class="tc-btn" id="tc-thrust" aria-label="Fremdrift">▲</button>
+        <button type="button" class="tc-btn" id="tc-right" aria-label="Drej højre">▶</button>
+      </div>
+      <button type="button" class="tc-btn tc-fire" id="tc-fire" aria-label="Skyd">SKYD</button>
+    </div>
   </div>
   <div class="hint">Styring: WASD / piletaster + Space (skyd). R (restart).</div>
 
@@ -142,6 +171,22 @@
   const ctx = canvas.getContext("2d");
 
   const W = canvas.width, H = canvas.height;
+
+  // ---------- Responsivt lærred ----------
+  // Lærredets tegneopløsning holdes fast (900x600); kun CSS-størrelsen
+  // skaleres, så figuren altid passer i viewporten uden at strække sig skævt.
+  function fitCanvas() {
+    const wrap = document.getElementById("wrap");
+    const hintH = document.querySelector(".hint").offsetParent ? 22 : 0;
+    const maxW = wrap.clientWidth - 4;
+    const maxH = wrap.clientHeight - hintH - 4;
+    const scale = Math.min(maxW / W, maxH / H, 1);
+    canvas.style.width = Math.floor(W * scale) + "px";
+    canvas.style.height = Math.floor(H * scale) + "px";
+  }
+  window.addEventListener("resize", fitCanvas);
+  window.addEventListener("orientationchange", fitCanvas);
+  fitCanvas();
 
   // ---------- Utils ----------
   const rand = (a,b)=> a + Math.random()*(b-a);
@@ -201,6 +246,25 @@
     if (e.code === "KeyR") reset();
   });
   window.addEventListener("keyup", (e)=> keys.delete(e.code));
+
+  // Touch-knapper: holder samme "keys"-sæt som tastaturet, så update() ikke
+  // skal kende forskel på tryk og tastatur.
+  function bindTouchHold(el, code) {
+    if (!el) return;
+    const press = (e) => { e.preventDefault(); Sfx.init(); keys.add(code); el.classList.add("active"); };
+    const release = (e) => { e.preventDefault(); keys.delete(code); el.classList.remove("active"); };
+    el.addEventListener("pointerdown", press);
+    el.addEventListener("pointerup", release);
+    el.addEventListener("pointercancel", release);
+    el.addEventListener("pointerleave", release);
+  }
+  bindTouchHold(document.getElementById("tc-left"), "ArrowLeft");
+  bindTouchHold(document.getElementById("tc-right"), "ArrowRight");
+  bindTouchHold(document.getElementById("tc-thrust"), "ArrowUp");
+  bindTouchHold(document.getElementById("tc-fire"), "Space");
+
+  // Genstart ved tryk på lærredet, når spillet er slut (ingen R-tast på mobil).
+  canvas.addEventListener("pointerdown", () => { if (gameOver) reset(); });
 
   // ---------- Game state ----------
   let ship, bullets, asteroids, score, lives, level, task, gameOver, lastShot, paused = false, gameRunning = false;
