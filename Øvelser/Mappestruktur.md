@@ -219,3 +219,56 @@ er identisk bortset fra `docProps`.
 filnavn virker ikke længere — GitHub Pages har ingen `index.html` at falde
 tilbage på. Ingen links på sitet brugte den korte form; `geografi.html`,
 `biologi.html` og `sitemap.xml` peger alle på det fulde filnavn.
+
+## Vitalkapacitet og Peak Flow-måling (2026-09-12)
+
+To nye biologiøvelser fra forløbet "Den arbejdende krop" (Malene og Lotte,
+forår 2017) er omsat til skabelonen:
+
+| Kilde i `Bio-C-delt-mappe/` | Ny mappe |
+| --- | --- |
+| `Vitalkapacitet 2017.docx` | `Biologi/vitalkapacitet/` |
+| `Peak Flow 2017.docx` | `Biologi/peak-flow-maaling/` |
+
+De er holdt som **to selvstændige øvelser**, sådan som de også står i
+`oversigt.html` og i kildematerialet — ikke slået sammen til én
+lungefunktionsøvelse. De to måler forskellige ting (lungernes *størrelse*
+mod luftens *strømningshastighed*), og Peak Flow-vejledningen indleder med
+netop den forskel.
+
+**Medtaget fra de gamle filer:** teorien i kort form, hele fremgangsmåden
+(otte trin med lommespirometer, ni med peakflow-meter), klassens dataskema og
+databehandlingen — gennemsnit pr. køn, (højde, vitalkapacitet)-plottet, og for
+Peak Flow de to procentberegninger (afvigelse fra forventet værdi og forskel
+mellem kønnene). Formlerne er skrevet som rigtig matematik (`$$…$$`) i stedet
+for den forvanskede Word-ligning i originalen.
+
+**Bevidst udeladt (bare bones):** de tre refleksionsspørgsmål under
+«Spørgsmål» i `Vitalkapacitet 2017.docx` (kønsforskel, træning, alder) — samme
+linje som ved de øvrige biologiøvelser, hvor `spg` er `nej`. Videolinket til
+Astma-Allergi Danmark er også udeladt: den gamle adresse
+(`astma.astma-allergi.dk/hvaderastma/undersoeglungerne/peakflow`) er død og
+viderestiller nu til en generel astma-side.
+
+**Figurer.** `figurer/lungevolumener.png` i `vitalkapacitet/` er **tegnet fra
+bunden** med matplotlib (`figurer/lungevolumener.py` ligger ved siden af, som i
+`Geografi/opmaaling-af-terraenprofil/`), fordi originalens tre figurer ikke
+kunne genbruges: lungevolumen-diagrammet og brystkasse-figuren er
+lærebogsmateriale (den ene mærket "© 2006 Encyclopædia Britannica"),
+alders­kurven var et scannet, engelsk forskningsplot, og de fire småbilleder af
+lommespirometret viser en identificerbar person. Den nye figur er på dansk og i
+sidens farver (pink kurve, blå pile).
+
+`figurer/peak-flow-diagram.png` i `peak-flow-maaling/` er derimod **taget
+uændret** fra `Peak Flow 2017.docx` — øvelsen kan ikke gennemføres uden det,
+da eleverne skal aflæse deres forventede værdi i det. Kurverne følger
+Nunn & Gregg-referenceværdierne (kontrolleret: mand, 35 år, 183 cm giver
+≈ 650 L/min i både diagram og formel). **Ophavsretten er ikke afklaret** —
+diagrammet stammer fra lærebogsmateriale, og siden ligger offentligt på
+smbi.dk. Skal det erstattes, kan det gentegnes ud fra Nunn & Gregg-ligningerne
+på samme måde som spirogrammet.
+
+Kun `.qmd` + figurer er lavet — **ikke renderet** til docx/pdf/html, og de to
+øvelser er derfor endnu ikke sat til `quarto:true` i `oversigt.html`, ikke
+tilføjet som kort i `biologi.html` og ikke skrevet ind i `sitemap.xml`. Det
+hører med, når der bliver renderet (se arbejdsgangs-reglen øverst).
