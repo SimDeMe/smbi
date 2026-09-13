@@ -1,6 +1,6 @@
 ---
 title: "Oliens migration"
-subtitle: "Modelforsøg med reservoir, segl og fælde"
+subtitle: "Bjergarter, modelforsøg og perspektivering"
 fag: "Naturgeografi"
 hold: ""
 format:
@@ -13,187 +13,107 @@ format:
 
 ## Om øvelsen
 
-Olie bliver ikke dannet dér, hvor den findes i dag. Den dannes af organisk materiale i en **kildebjergart** — typisk et fint, mørkt lerlag — når laget begraves til 2–4 km dybde og varmes op til 60–120 °C. Herfra presses olien ud i de omkringliggende lag, og fordi olie er lettere end det saltvand, der fylder porerne i undergrunden, stiger den opad. Den bevægelse kaldes **migration**.
+Øvelsen er delt i tre:
 
-Olien bliver kun liggende, hvis den undervejs løber ind i en **fælde**: et lag med store, sammenhængende porer (en **reservoirbjergart**) dækket af et tæt lag, olien ikke kan komme igennem (en **seglbjergart**), og bøjet, så der er en top, olien kan samle sig i. Mangler bare én af delene, siver olien videre op til overfladen.
+1. **Olie-geologi** — hvilke bjergarter hører til hvor i undergrunden?
+2. **Det praktiske forsøg** — oliens migration op gennem sand.
+3. **Perspektivering** — olieforbrug, -produktion og -forekomster.
 
-I dag skal I bygge en model af sådan en fælde og følge olien hele vejen: I måler først oliens densitet, som er drivkraften bag migrationen, så hvor hurtigt olien bevæger sig gennem groft og fint sand, og til sidst hvor meget olie jeres fælde kan holde på, før den løber over.
+## Del 1: Olie-geologi
 
-![Fældemodellen set fra siden. Den farvede olie sprøjtes ind i bunden af reservoirbjergarten, stiger opad, rammer seglet af ler og følger derefter dets underside op mod fældens top. Spildepunktet er det højeste sted, olien kan slippe uden om seglet — når olie-vand-kontakten er sunket ned til det punkt, er fælden fuld.](figurer/faeldemodel.png){#fig-faeldemodel width="100%"}
+Ved oliens dannelse og migration er der forskellige bjergarter, der lægger sig forskellige steder i forhold til hinanden. Se på bjergartsstykkerne, de løse sedimenter og råolieprøven på bordet, og sammenhold dem med billederne herunder.
 
-## Fremgangsmåde
+![De otte prøver, I har på bordet. Nummeret bruges i @tbl-1.](figurer/bjergarter.jpg){#fig-bjergarter width="100%"}
 
-### Fase 1: Oliens densitet
+Placér nu prøverne i skemaet, så stratigrafien passer i forhold til oliedannelse og oliefælder. Øverste række er havbunden, og så går det nedad i undergrunden. Skriv bjergartens navn og billedets nummer, og begrund hver placering.
 
-1. Vej et tomt, tørt måleglas, og notér massen.
-2. Hæld præcis 50,0 mL af den farvede olie i måleglasset, og vej det igen.
-3. Gentag punkt 1–2 med 50,0 mL vand i et rent, tørt måleglas.
+| Lag | Bjergart + billede nr. | Begrundelse i forhold til oliedannelse og oliefælde |
+|:-----:|:-------------------------|:--------------------------------------------------|
+| Hav | | |
+| 1 | | |
+| 2 | | |
+| 3 | | |
+| 4 | | |
+| 5 | | |
+| 6 | | |
 
-### Fase 2: Migration gennem reservoirbjergarten
+: Stratigrafien fra havbunden og nedefter. Alle otte prøver skal med — to af dem kan godt høre til i samme lag. {#tbl-1}
 
-Kør de to rør samtidig, så I kan aflæse dem på de samme tidspunkter.
+## Del 2: Praktisk øvelse — oliens migration
 
-1. Fyld det ene rør med groft sand og det andet med fint sand, begge til samme højde (ca. 20 cm). Fyld sandet i lidt ad gangen **under vand**, så der ikke lukkes luft inde.
-2. Fyld efter med vand, til der står 2–3 cm vand over sandet. Bank forsigtigt på rørene, indtil der ikke kommer flere luftbobler op, og lad vandet klare op.
-3. Sæt et mærke på ydersiden af hvert rør ud for sandets overflade, og mål afstanden fra rørets bund op til mærket.
-4. Sæt slangen på sprøjten, og træk 10 mL farvet olie op. Før slangen ned gennem sandet, til spidsen står nede ved bunden af røret.
-5. Sprøjt olien langsomt ind — brug ca. 10 sekunder — og træk derefter slangen roligt op. Start stopuret, når slangen er fri af sandet.
-6. Sæt et mærke med whiteboardmarker ud for **oliefronten**, dvs. det øverste af den farvede olie, efter 1, 2, 5, 10, 15 og 20 minutter.
-7. Mål til sidst afstanden fra rørets bund op til hvert mærke, og notér målingerne i @tbl-2.
+**Formål:** at opnå viden om oliens migration og at knytte den til densitet.
 
-### Fase 3: Fælden
+**Hypotese:** Hvad forventer I vil ske, og hvorfor? Skriv det ned, **inden** I går i gang.
 
-1. Læg et lag groft sand på 3–4 cm i bunden af den gennemsigtige kasse. Det er reservoirbjergarten.
-2. Rul leret ud til en plade på ca. 1 cm, og form den som en flad bue — en antiklinal. Buen skal være så bred, at den når hele vejen fra kassens forside til dens bagside.
-3. Læg buen oven på sandet, og pres kanterne tæt mod for- og bagsiden. Den mindste sprække virker som en sprækkezone, og så løber olien lige igennem seglet. Lad buens to ender ende i forskellig højde — den **højeste** af de to ender er fældens spildepunkt.
-4. Fyld fint sand oven på leret, til der er ca. 2 cm igen til kassens kant. Det er dæklaget.
-5. Hæld forsigtigt vand ned langs kassens side, til alt sandet er mættet, og der står lidt vand oven på sandet.
-6. Træk 20 mL farvet olie op i sprøjten. Før slangen ned gennem sandet til bunden af kassen, ude under den ene af lerbuens flanker.
-7. Sprøjt 2 mL ind ad gangen. Tegn efter hver indsprøjtning oliens omrids på kassens yderside med whiteboardmarker, og notér tiden og jeres iagttagelser i @tbl-3.
-8. Fortsæt, indtil olien løber uden om lerbuens kant og videre op i dæklaget. Notér, hvor meget olie der i alt var sprøjtet ind, da det skete.
-9. Mål til sidst på jeres tegning, hvor lang og hvor høj oliesamlingen var, lige før fælden løb over, og mål kassens indvendige bredde.
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-::: {.callout-tip}
-## Tip
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-- Vask sandet, og lad det stå under vand i mindst 10 minutter før forsøget. Luftbobler i sandet stiger opad ligesom olien og kan let forveksles med den.
-- Sprøjt langsomt. Presses olien ind for hurtigt, laver den sin egen sprække op gennem sandet, og så måler I ikke migration, men gennembrud.
-- Stil rørene og kassen et sted, hvor de kan stå helt i ro, mens I måler — også når I tegner på ydersiden.
-- Tegn altid omridset af olien fra den samme side af kassen, og hold øjnene i højde med olien. Ellers forskyder omridsene sig i forhold til hinanden.
-:::
+### Fremgangsmåde
+
+1. Hæld ca. 1–2 cm madolie i bunden af glasset.
+2. Hæld sand oveni, indtil olien er dækket, og der ligger et "rent" sandlag øverst.
+3. Hæld til sidst forsigtigt 2–3 cm vand ned i glasset.
+4. Lad glasset stå i ca. 20–30 minutter — eller natten over.
+5. Notér, hvad I ser, både med det samme og til sidst.
+
+![Forsøget i tre trin. Efter 20–30 minutter har olien lagt sig øverst.](figurer/forsoget.jpg){#fig-forsoget width="100%"}
 
 ::: {.callout-note}
 ## Materialer (pr. gruppe)
 
-- Gennemsigtig, smal plastkasse, ca. 20 × 10 × 6 cm
-- 2 gennemsigtige rør eller høje måleglas, ca. 25–30 cm
-- Groft sand (0,5–2 mm) og fint sand (under 0,25 mm), begge vaskede
-- Ler eller modellervoks til seglet
-- Farvet madolie, ca. 100 mL
-- 2 sprøjter med et stykke blød slange på spidsen
-- Måleglas, 100 mL
-- Vægt (0,1 g eller finere)
-- Lineal og whiteboardmarker
-- Stopur eller mobiltelefon
-- Vand, køkkenrulle og avispapir til bordet
-- Spand til brugt, olievædet sand
+- Glas eller et gennemsigtigt plastikkrus
+- Sand
+- Vand
+- Madolie
 :::
 
-::: {.callout-important}
-## Sikkerhed
+::: {.callout-tip}
+## Tip
 
-- Farvestoffet i olien pletter tøj, hud og bordplader. Brug kittel, og dæk bordet med avispapir. Læreren farver olien på forhånd — I skal ikke håndtere farvestoffet ufortyndet.
-- Spildt olie på gulvet er meget glat. Tør op med det samme.
-- Olie og olievædet sand må ikke i vasken eller i skraldespanden. Sandet kommes i spanden, og olien afleveres til kemikalieaffald.
+Hæld vandet forsigtigt ned ad glassets inderside eller over en ske, så sandlaget ikke bliver rodet op. Rør ikke i glasset undervejs — olien skal selv finde vej op gennem sandet.
 :::
 
-## Registrering af resultater
+### Iagttagelser
 
-### Fase 1: Densitet
+| Hvornår | Hvad ser I? |
+|:---|:---|
+| Lige efter vandet er hældt i | |
+| Efter ca. 5 minutter | |
+| Efter 20–30 minutter (eller næste dag) | |
 
-| | Farvet olie | Vand |
-|:---|:---:|:---:|
-| Masse af tomt måleglas (g) | | |
-| Masse af måleglas med 50,0 mL væske (g) | | |
-| Væskens masse (g) | | |
+: Iagttagelser undervejs i forsøget. {#tbl-2 tbl-colwidths="[34,66]"}
 
-: Vejninger til bestemmelse af oliens og vandets densitet. {#tbl-1}
+Tegn til sidst glasset af, som det ser ud ved forsøgets slutning, og sæt navn på lagene.
 
-### Fase 2: Migration
+### Konklusion og diskussion af resultater
 
-| Tid (min) | Groft sand (cm) | Fint sand (cm) |
-|:---|:---:|:---:|
-| 1 | | |
-| 2 | | |
-| 5 | | |
-| 10 | | |
-| 15 | | |
-| 20 | | |
+1. Beskriv, hvad I ser. Relatér derefter øvelsen til teorien om oliedannelse, migration, kildebjergarter, reservoirbjergarter og oliefælder: **hvilke af de begreber har vi i vores forsøg, og hvilke har vi ikke?**
+2. Diskutér, hvilke energimæssige og miljømæssige konsekvenser det ville have haft, hvis oliens massefylde havde været større end vands. Hvor ville vores Nordsøolie så befinde sig i dag, og hvad ville det betyde for vores muligheder for at bruge den?
+3. Hvilke problemer er der forbundet med olie som energiråstof?
 
-: Oliefrontens højde over rørets bund. Notér også, hvis olien når op til sandets overflade undervejs — og hvornår. {#tbl-2}
+### Fejlkilder
 
-### Fase 3: Fælden
+Hvad er der for eksempel galt ved at bruge vegetabilsk olie frem for mineralsk olie? Find selv flere fejlkilder.
 
-| Indsprøjtet olie i alt (mL) | Tid (min) | Iagttagelse — hvor er olien nu? |
-|:------------------------:|:--------:|:----------------------------------------------|
-| 2 | | |
-| 4 | | |
-| 6 | | |
-| 8 | | |
-| 10 | | |
-| 12 | | |
-| 14 | | |
+## Del 3: Olieforbrug, produktion og forekomster
 
-: Oliens vej gennem modellen. Tilføj flere rækker, hvis fælden kan rumme mere end 14 mL. {#tbl-3}
+1. Gennemgå udviklingen i Danmarks forbrug af olie og naturgas ud fra @fig-olie og @fig-gas, og kom ind på, hvorvidt Danmark fortsat er selvforsynende med disse energiråstoffer.
 
-**Olie sprøjtet ind, da fælden løb over:** \_\_\_\_\_\_ mL &nbsp;&nbsp;&nbsp;&nbsp; **Kassens indvendige bredde:** \_\_\_\_\_\_ cm
+![Produktion og langsigtet prognose for olie. Kilde: Energistyrelsens ressourceopgørelse (2018).](figurer/olieproduktion.png){#fig-olie width="82%"}
 
-**Oliesamlingen lige før overløb — længde:** \_\_\_\_\_\_ cm &nbsp;&nbsp;&nbsp;&nbsp; **største højde:** \_\_\_\_\_\_ cm
+![Produktion og langsigtet prognose for salgsgas. Kilde: Energistyrelsens ressourceopgørelse (2019).](figurer/gasproduktion.png){#fig-gas width="82%"}
 
-## Resultatbehandling
+De **teknologiske ressourcer** på figurerne er et skøn for, hvor meget mere der kan indvindes med ny teknologi. **Efterforskningsressourcerne** er et skøn for indvindingen fra kommende nye fund. Begge dele er altså olie og gas, man endnu ikke har fundet eller kan hente op — ikke reserver, man ved er der.
 
-### Opgave 1: Drivkraften bag migrationen
+2. Hvilke fem lande besidder de største oliereserver, og er de lande medlem af OPEC? Er Rusland i øvrigt medlem af OPEC?
 
-Beregn densiteten af olien og af vandet ud fra @tbl-1. Volumenet er 50,0 mL = 50,0 cm³.
+![De ti lande med verdens største oliereserver og deres andel af verdens samlede reserver. Kilde: World Oil Review 2018 (tal fra 2017).](figurer/oliereserver.png){#fig-reserver width="66%"}
 
-$$\rho = \frac{m}{V}$$
+3. Tallene på figurerne er fra 2017–2019. Find de nyeste tal for Danmarks olie- og gasproduktion hos Energistyrelsen, og vurdér, hvor meget billedet har flyttet sig siden.
 
-| | Farvet olie | Vand |
-|:---|:---:|:---:|
-| Densitet (g/cm³) | | |
+::: {.callout-note}
+## Oprindelse
 
-: Beregnet densitet. Til sammenligning har råolie fra Nordsøen en densitet omkring 0,85 g/cm³, og det salte porevand i undergrunden ligger over 1,0 g/cm³. {#tbl-4}
-
-Hvor mange procent lettere er olien end vandet? Forklar ud fra tallet, hvorfor olien bevæger sig opad gennem en vandmættet bjergart — og hvorfor den bliver ved, indtil noget stopper den.
-
-### Opgave 2: Migrationshastigheden
-
-Indsæt målingerne fra @tbl-2 i et regneark, og lav et (x,y)-plot med tiden ud ad x-aksen og oliefrontens højde op ad y-aksen. Tegn begge sandtyper i samme koordinatsystem.
-
-Beregn derefter oliens gennemsnitlige migrationshastighed i hver af de to sandtyper over de første 5 minutter:
-
-$$v = \frac{\Delta h}{\Delta t}$$
-
-| | Groft sand | Fint sand |
-|:---|:---:|:---:|
-| Migrationshastighed, 0–5 min. (cm/min) | | |
-| Migrationshastighed, 10–20 min. (cm/min) | | |
-
-: Beregnet migrationshastighed. {#tbl-5}
-
-1. Hvilken af de to sandtyper har den største permeabilitet? Hvordan kan I se det på jeres tal?
-2. Er hastigheden den samme hele vejen op, eller ændrer den sig undervejs? Foreslå en forklaring.
-3. Regn jeres hastighed i groft sand om til meter pr. år. I Nordsøen har olien brugt millioner af år på at migrere nogle få kilometer. Hvad er der galt med at bruge modellens hastighed på virkeligheden?
-
-### Opgave 3: Hvor meget olie kan fælden rumme?
-
-Oliesamlingen under seglet er formet som en flad linse. Dens rumfang kan anslås som to tredjedele af den kasse, den kan tegnes ind i:
-
-$$V_{\text{fælde}} = \frac{2}{3} \cdot l \cdot h \cdot b$$
-
-hvor $l$ er oliesamlingens længde, $h$ dens største højde og $b$ kassens indvendige bredde.
-
-Olien ligger ikke i et hulrum, men i porerne mellem sandkornene — og den fortrænger ikke alt vandet, for en del af det klæber til kornene. Den andel af porerne, olien har fortrængt vandet fra, kaldes **oliemætningen**:
-
-$$\text{Oliemætning} = \frac{V_{\text{olie}}}{V_{\text{fælde}} \cdot \text{porøsitet}} \cdot 100\ \%$$
-
-| | Værdi |
-|:---|:---:|
-| Fældens rumfang, $V_{\text{fælde}}$ (cm³) | |
-| Porevolumen ved en porøsitet på 35 % (cm³) | |
-| Indsprøjtet olie, $V_{\text{olie}}$ (cm³) | |
-| Oliemætning (%) | |
-
-: Fældens rummelighed. 1 mL = 1 cm³. {#tbl-6}
-
-Kommentér resultatet: hvorfor bliver oliemætningen ikke 100 %? I rigtige oliefelter ligger den typisk på 50–80 %.
-
-## Diskussion og perspektivering
-
-Diskutér spørgsmålene i gruppen, og skriv svarene i journalen.
-
-1. Hvad skete der med olien, da fælden var fuld? Hvordan kan det ses i naturen, når olie slipper helt op til overfladen?
-2. Tre ting skal være opfyldt, for at der kan ligge et oliefelt i undergrunden: en kildebjergart, en reservoirbjergart og et tæt segl i en fældestruktur. Forklar ud fra jeres model, hvad der ville ske, hvis hver af de tre manglede.
-3. Hvilke fejlkilder har forsøget? Overvej blandt andet luftbobler i sandet, sprækker mellem leret og kassens sider, indsprøjtningens hastighed og oliens tykkelse (viskositet) ved forskellig temperatur.
-4. I Nordsøen ligger olien i porøs kalk fra Kridttiden, dækket af tætte lerlag, ofte i fælder hen over salthorste, der har bøjet lagene opad. Hvad svarer lerbuen i jeres model til, og hvad svarer salthorsten til? Hvorfor leder olieselskaberne netop efter opbøjede lag med seismiske målinger?
-5. Modellen kører på 20 minutter, mens det i virkeligheden tager millioner af år. Hvilke forhold i undergrunden — dybde, tryk, temperatur og kornstørrelse — er ikke med i modellen?
+Vejledningen bygger på "Øvelse Oliens migration" (2019-udgaven), oprindeligt udarbejdet af Allan Andreasen Kortnum, Viborg Katedralskole, med senere rettelser og tilføjelser af HB. Fotografierne er fra den udgave.
+:::

@@ -155,6 +155,16 @@ thead th{
   background:var(--paper-2);border-bottom:2px solid var(--ink);white-space:nowrap;
 }
 tbody tr:hover{background:#FFFBF3}
+tbody tr.emne th{
+  font-family:var(--display);font-weight:800;font-size:.85rem;letter-spacing:-.01em;
+  text-transform:none;background:#E2D6F8;color:var(--ink);
+  border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:7px 12px;
+}
+tbody tr.emne th .antal{
+  font-family:var(--mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--slate);margin-left:8px;
+}
+tbody tr.emne:hover{background:none}
 tbody tr.kandidat{background:#FFF6E9}
 tbody tr.kandidat:hover{background:#FFEFDA}
 td.navn{font-weight:600;min-width:230px}
@@ -167,6 +177,16 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
   padding:2px 7px;background:var(--panel);
 }
 .filer a:hover{background:var(--paper-2)}
+
+/* sti til den gamle vejledning, originalen */
+.stier{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.sti{
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.04em;
+  text-decoration:none;color:var(--slate);border:1.5px dashed #B9C4C2;border-radius:999px;
+  padding:2px 7px;background:var(--paper);cursor:pointer;font-weight:400;text-align:left;
+}
+.sti:hover{border-style:solid;border-color:var(--ink);color:var(--ink);background:var(--paper-2)}
+.sti.kopieret{background:#D6EFC4;border-color:var(--ink);color:var(--ink)}
 
 /* statusmærker: symbol + ord, aldrig farve alene */
 .st{
@@ -327,6 +347,9 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
             <span class="st st-nej">– Nej</span> findes ikke ·
             <span class="st st-ukendt">? Ukendt</span> gammel fil, ikke gennemgået ·
             <span class="st st-daekket">≈ Dækket</span> erstattet af en Quarto-øvelse.</li>
+        <li>Under øvelsens navn står stien til <b>originalen</b>. <code>SM-DRIVE · …</code> ligger uden for
+            projektet — klik for at kopiere hele stien. <code>Bio C · …</code> ligger i <code>Øvelser/Bio-C-delt-mappe/</code>
+            og åbner direkte. Mangler linjen, findes der ingen gammel vejledning (eller filen kunne ikke findes på disken).</li>
         <li><b>Databehandling</b> = beregning, graf eller resultatbehandling, som eleverne selv skal lave.
             Et rent registreringsskema tæller ikke med.</li>
         <li><b>Journalspørgsmål</b> = nummererede spørgsmål til journalen (fx «Spørgsmål»,
@@ -353,8 +376,8 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
         <code>Bio-C-delt-mappe</code>), geografikandidaterne fra <code>Forsogsvejledninger.md</code>
         (SM-DRIVE). Dertil kommer det sorterede arkiv
         <code>forsøgsvejledninger_sm-drive</code> på SM-DRIVE, hvor 401 gamle vejledninger er
-        samlet i 52 biologiemner og 25 naturgeografiemner — kilden står som
-        <code>SM-DRIVE · BIOLOGI/06</code> osv. og henviser til mappenummeret dér.
+        samlet i 52 biologiemner og 25 naturgeografiemner — stien til den mappe står
+        under øvelsens navn i tabellen.
         Alle 25 geografiemner var i forvejen med i tabellen; biologiemnerne er nu lagt ind.</p>
       <p>Siden er intern: den er ikke linket fra smbi.dk, står ikke i <code>sitemap.xml</code>
         og er markeret <code>noindex</code>.</p>
@@ -382,320 +405,333 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
    ---------------------------------------------------------------*/
 const ØVELSER = [
 /* ---------------- BIOLOGI — Quarto ---------------- */
-{fag:'bio',navn:'Mikroskopi af celler',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-celler',fil:'mikroskopi-af-celler',
+{fag:'bio',navn:'Mikroskopi af celler',emne:'Celler og mikroskopi',original:'BIOLOGI/03 - Mikroskopi af celler',bioc:'Mikroskopering af celler (MMs forløb).docx',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-celler',fil:'mikroskopi-af-celler',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Løghinde, vandpest og kindskrab. Registreringsafsnittet er bevidst fjernet — eleverne tegner i stedet.'},
-{fag:'bio',navn:'Mikroskopi af rodceller',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-rodceller',fil:'mikroskopi-af-rodceller',
+{fag:'bio',navn:'Mikroskopi af rodceller',emne:'Celler og mikroskopi',original:'BIOLOGI/38 - Mitose (løgceller m.fl.)',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-rodceller',fil:'mikroskopi-af-rodceller',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Squash-præparat af rodspids, mitose. Udskilt fra mikroskopi-af-celler.'},
-{fag:'bio',navn:'Osmose i kartofler',type:'Laboratorieøvelse',sti:'Biologi/osmose-i-kartofler',fil:'osmose-i-kartofler',
+{fag:'bio',navn:'Osmose i kartofler',emne:'Celler og mikroskopi',original:'BIOLOGI/01 - Osmoseforsøg (kartofler - saltvands-fortyndingsrække - æg - vandpest)',bioc:'Forsøg osmose kartofler vejledning 2020.doc',type:'Laboratorieøvelse',sti:'Biologi/osmose-i-kartofler',fil:'osmose-i-kartofler',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Skema med vægtændring i g og %, fem NaCl-koncentrationer. Fortyndingsrækken ligger som selvstændig gammel vejledning.'},
-{fag:'bio',navn:'Bakterier og svampe',type:'Laboratorieøvelse',sti:'Biologi/bakterier-og-svampe',fil:'bakterier-og-svampe',
+{fag:'bio',navn:'Bakterier og svampe',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/02 - Kimfald - bakterier og svampe - celletælling',bioc:'NY Øvelse Bakterier og svampe.docx',type:'Laboratorieøvelse',sti:'Biologi/bakterier-og-svampe',fil:'bakterier-og-svampe',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Kimfald + påvisning på genstande. Eleverne beregner areal (A = πr²) og kim pr. m² pr. time.'},
-{fag:'bio',navn:'Bromelin i ananas',type:'Laboratorieøvelse',sti:'Biologi/bromelin-i-ananas',fil:'bromelin-i-ananas',
+{fag:'bio',navn:'Bromelin i ananas',emne:'Stofskifte og enzymer',original:'BIOLOGI/06 - Enzymforsøg – spytamylase, pepsin, bromelin, stivelseshydrolyse',bioc:'7 Enzymer Bromelin 2018.docx',type:'Laboratorieøvelse',sti:'Biologi/bromelin-i-ananas',fil:'bromelin-i-ananas',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Kvalitativt skema (stivnede gelatinen?) med frisk/kogt/syrebehandlet ananas og en vandkontrol.'},
-{fag:'bio',navn:'DNA i kiwi',type:'Laboratorie-/hjemmeforsøg',sti:'Biologi/dna-i-kiwi',fil:'dna-i-kiwi',
+{fag:'bio',navn:'DNA i kiwi',emne:'Genetik og bioteknologi',original:'BIOLOGI/32 - DNA-isolering (kiwi-løg-ærter)',bioc:'3 DNA i KIWI.docx',type:'Laboratorie-/hjemmeforsøg',sti:'Biologi/dna-i-kiwi',fil:'dna-i-kiwi',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Eneste biologiøvelse helt uden skema til resultater.'},
-{fag:'bio',navn:'Gærforsøg — bobleforsøg',type:'Laboratorieøvelse',sti:'Biologi/gaerforsog-bobleforsog',fil:'gaerforsog-bobleforsog',
+{fag:'bio',navn:'Gærforsøg — bobleforsøg',emne:'Stofskifte og enzymer',original:'BIOLOGI/49 - Spirringsforsøg (karse, dej-gær, bestrålede byg-frø, bly)',bioc:'Gær bobleforsøg NV.doc',type:'Laboratorieøvelse',sti:'Biologi/gaerforsog-bobleforsog',fil:'gaerforsog-bobleforsog',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
  note:'Bobler pr. minut ved 5, 15 og 30 min. plus BTB-farveskift — tælles, men behandles ikke videre.'},
-{fag:'bio',navn:'Dafnier og koffein',type:'Laboratorieøvelse',sti:'Biologi/dafnier-og-koffein',fil:'dafnier-og-koffein',
+{fag:'bio',navn:'Dafnier og koffein',emne:'Krop og fysiologi',original:'BIOLOGI/04 - Dafnier (koffein-mikroskopi)',type:'Laboratorieøvelse',sti:'Biologi/dafnier-og-koffein',fil:'dafnier-og-koffein',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
  note:'Fortyndingsrække 0–600 mg/L og gennemsnit af tre tællinger. Ingen opgave om at tegne dosis-respons-kurve.'},
-{fag:'bio',navn:'Blodsukkermåling',type:'Laboratorieøvelse',sti:'Biologi/blodsukkermaaling',fil:'blodsukkermaaling',
+{fag:'bio',navn:'Blodsukkermåling',emne:'Krop og fysiologi',original:'BIOLOGI/05 - Blodsukkerforsøg - blodglukose',bioc:'8 ØVELSE blodsukkermåling.docx',type:'Laboratorieøvelse',sti:'Biologi/blodsukkermaaling',fil:'blodsukkermaaling',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Eget afsnit om beregning af kulhydratindtag samt vejledning i brug af glykometer.'},
-{fag:'bio',navn:'Biodiversitet i græsplænen',type:'Feltøvelse',sti:'Biologi/biodiversitet-i-graesplaenen',fil:'biodiversitet-i-graesplaenen',
+{fag:'bio',navn:'Biodiversitet i græsplænen',emne:'Økologi og evolution',original:'BIOLOGI/33 - Måling af biodiversitet (hjemmeforsøg, Corona-periode)',bioc:'1 Øvelse Biodiversitet i græsplænen.docx',type:'Feltøvelse',sti:'Biologi/biodiversitet-i-graesplaenen',fil:'biodiversitet-i-graesplaenen',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
  note:'Ti Raunkiærcirkler; artsantal pr. cirkel og gennemsnit udregnes i skemaet, men ingen videre behandling.'},
-{fag:'bio',navn:'Karse i lys og mørke',type:'Vækstforsøg',sti:'Biologi/karse-i-lys-og-morke',fil:'karse-i-lys-og-morke',
+{fag:'bio',navn:'Karse i lys og mørke',emne:'Økologi og evolution',original:'BIOLOGI/16 - Karse i lys og mørke',bioc:'3 Øvelse Karse i lys og mørke.docx',type:'Vækstforsøg',sti:'Biologi/karse-i-lys-og-morke',fil:'karse-i-lys-og-morke',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Højdevækst i lys og mørke målt dagligt i ca. 14 dage. Bygget på «2 Forsøg med karse.docx»; eleverne skriver hypoteser, tegner vækstkurver og vurderer fejlkilder.'},
-{fag:'bio',navn:'Vitalkapacitet',type:'Kropsmålinger',sti:'Biologi/vitalkapacitet',fil:'vitalkapacitet',
+{fag:'bio',navn:'Vitalkapacitet',emne:'Krop og fysiologi',original:'BIOLOGI/42 - Åndedrætsøvelser - lungefunktion',bioc:'Vitalkapacitet 2017.docx',type:'Kropsmålinger',sti:'Biologi/vitalkapacitet',fil:'vitalkapacitet',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Lommespirometer, tre målinger pr. elev. Klasseskema med køn, alder og højde; gennemsnit pr. køn og (højde, vitalkapacitet)-plot. Spirogrammet er tegnet fra bunden — originalens lærebogsfigurer kunne ikke genbruges.'},
-{fag:'bio',navn:'Peak Flow-måling',type:'Kropsmålinger',sti:'Biologi/peak-flow-maaling',fil:'peak-flow-maaling',
+{fag:'bio',navn:'Peak Flow-måling',emne:'Krop og fysiologi',original:'BIOLOGI/42 - Åndedrætsøvelser - lungefunktion',bioc:'Peak Flow 2017.docx',type:'Kropsmålinger',sti:'Biologi/peak-flow-maaling',fil:'peak-flow-maaling',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Ventilationsevne i L/min, tre pust pr. elev. Forventet værdi aflæses i Peak Flow-diagrammet (taget uændret fra 2017-udgaven), og afvigelsen samt kønsforskellen regnes ud i procent.'},
 
 /* ---------------- BIOLOGI — kandidater (Bio-C-delt-mappe) ---------------- */
-{fag:'bio',navn:'Skovøkologi-ekskursion, Øksenrade Skov',type:'Feltundersøgelse',kilde:'5 Liv og død i skoven',
+{fag:'bio',navn:'Skovøkologi-ekskursion, Øksenrade Skov',emne:'Økologi og evolution',bioc:'7 Ekskursion til Øksenrade Skov.docx',type:'Feltundersøgelse',kilde:'5 Liv og død i skoven',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Har allerede rapportskabelon, praktisk ark og elevrapporteksempel.'},
-{fag:'bio',navn:'Raunkiær-øvelse i eng',type:'Feltøvelse',kilde:'Økologi 2024-2025',
+{fag:'bio',navn:'Raunkiær-øvelse i eng',emne:'Økologi og evolution',type:'Feltøvelse',kilde:'Økologi 2024-2025',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Pilotprojekt — udvidelse af græsplæneøvelsen til eng.'},
-{fag:'bio',navn:'Arts-areal-sammenhæng i eng',type:'Feltøvelse',kilde:'Økologi 2024-2025',
+{fag:'bio',navn:'Arts-areal-sammenhæng i eng',emne:'Økologi og evolution',type:'Feltøvelse',kilde:'Økologi 2024-2025',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Artsantal som funktion af areal; hører sammen med Raunkiær-øvelsen.'},
-{fag:'bio',navn:'Mikroskopi af plantevæv / spalteåbninger',type:'Mikroskopi',kilde:'5 Liv og død i skoven',
+{fag:'bio',navn:'Mikroskopi af plantevæv / spalteåbninger',emne:'Celler og mikroskopi',bioc:'1a mikroskopering plantevæv.docx',type:'Mikroskopi',kilde:'5 Liv og død i skoven',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Materialer fra 2016-2017, inkl. foto af spalteåbning i tulipan.'},
-{fag:'bio',navn:'Mikroskopi af plante- og dyreplankton',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Mikroskopi af plante- og dyreplankton',emne:'Celler og mikroskopi',original:'BIOLOGI/48 - Søundersøgelse - plankton - primærproduktion',bioc:'Mikroskopi af planteplankton og dyreplankton.docx',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Mikroskopi af tyresæd',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Mikroskopi af tyresæd',emne:'Celler og mikroskopi',bioc:'Mikroskopi af tyresæd - lynudgave.docx',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Lynudgave.'},
-{fag:'bio',navn:'Næringssaltes betydning for algevækst',type:'Laboratorieøvelse',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Næringssaltes betydning for algevækst',emne:'Økologi og evolution',original:'BIOLOGI/48 - Søundersøgelse - plankton - primærproduktion',bioc:'Næringssaltes betydning for algevækst 2013.doc',type:'Laboratorieøvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Fra 2013.'},
-{fag:'bio',navn:'Tørforsøg med mitose og meiose',type:'Modeløvelse',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Tørforsøg med mitose og meiose',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',bioc:'Tørforsøg med mitose og meiose 1y 2014.doc',type:'Modeløvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Papirøvelse, 2014.'},
-{fag:'bio',navn:'Øvelse med mitose og meiose',type:'Modeløvelse',kilde:'Malene og Lotte 2017',
+{fag:'bio',navn:'Øvelse med mitose og meiose',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',bioc:'Øvelse med mitose og meiose.doc',type:'Modeløvelse',kilde:'Malene og Lotte 2017',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Parallel til tørforsøget ovenfor.'},
-{fag:'bio',navn:'DNAs byggesten — molekylebyggesæt',type:'Modeløvelse',kilde:'4 Arv og miljø',
+{fag:'bio',navn:'DNAs byggesten — molekylebyggesæt',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',bioc:'4 DNAs byggesten molekylebyggesæt.docx',type:'Modeløvelse',kilde:'4 Arv og miljø',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Min genotype',type:'Klasseundersøgelse',kilde:'Malene og Lotte 2017',
+{fag:'bio',navn:'Min genotype',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',bioc:'Min genotype elev.docx',type:'Klasseundersøgelse',kilde:'Malene og Lotte 2017',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Elev- og lærerversion findes.'},
-{fag:'bio',navn:'Et-gens-egenskaber — mythbusted',type:'Klasseundersøgelse',kilde:'Bio C Yubio C',
+{fag:'bio',navn:'Et-gens-egenskaber — mythbusted',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',type:'Klasseundersøgelse',kilde:'Bio C Yubio C',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Kostregistrering / dagskost',type:'Databehandling (Excel)',kilde:'2 I tykt og tyndt',
+{fag:'bio',navn:'Kostregistrering / dagskost',emne:'Krop og fysiologi',original:'BIOLOGI/44 - Basalstofskifte - energiomsætning - kostanalyse',bioc:'5 Undersøgelse af dagskost Mad i tal.docx',type:'Databehandling (Excel)',kilde:'2 I tykt og tyndt',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Har allerede eget databehandlingsdokument, regneark og fødevaredatabase.'},
-{fag:'bio',navn:'Sundhedsparametre',type:'Kropsmålinger',kilde:'2 I tykt og tyndt',
+{fag:'bio',navn:'Sundhedsparametre',emne:'Krop og fysiologi',original:'BIOLOGI/45 - Muskelstyrke-vægtvurdering',bioc:'9 Øvelse Sundhedsparametre.docx',type:'Kropsmålinger',kilde:'2 I tykt og tyndt',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Ryhmings steptest / kondital',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
+{fag:'bio',navn:'Ryhmings steptest / kondital',emne:'Krop og fysiologi',original:'BIOLOGI/09 - Kondi--arbejdsfysiologi (cykelforsøg, puls, blodtryk, laktat)',bioc:'Ryhmings steptest vejledning.doc',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Vejledning + dataark.'},
-{fag:'bio',navn:'Pulsmåling med Garmin-ur',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
+{fag:'bio',navn:'Pulsmåling med Garmin-ur',emne:'Krop og fysiologi',original:'BIOLOGI/09 - Kondi--arbejdsfysiologi (cykelforsøg, puls, blodtryk, laktat)',bioc:'Vejledning pulsmåler fra Garmin.docx',type:'Arbejdsfysiologi',kilde:'Den arbejdende krop 2017',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Nærmest en brugsanvisning — hører til steptesten.'},
-{fag:'bio',navn:'Dissektion af lunger og hjerte',type:'Dissektion',kilde:'Gamle dokumenter',
+{fag:'bio',navn:'Dissektion af lunger og hjerte',emne:'Krop og fysiologi',original:'BIOLOGI/10 - Dissektion af hjerte-lunger (svinehjerte, kyllingevinge, m.fl.)',bioc:'Vejledning dissektion lunger hjerte.docx',type:'Dissektion',kilde:'Gamle dokumenter',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Har journalskabelon, opgaver og videoliste.'},
-{fag:'bio',navn:'Springlag — flamingomodel',type:'Modelforsøg',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Springlag — flamingomodel',emne:'Økologi og evolution',original:'BIOLOGI/13 - Springlag i havet',bioc:'Springlag flamingo.doc',type:'Modelforsøg',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Temperaturlagdeling i vand — overlapper geografi.'},
-{fag:'bio',navn:'Kulde- og varmepunkter',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Kulde- og varmepunkter',emne:'Sanser og nervesystem',original:'BIOLOGI/41 - Nervesystemet – diverse sanse--reaktionsøvelser',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Nerveledningshastighed',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Nerveledningshastighed',emne:'Sanser og nervesystem',original:'BIOLOGI/41 - Nervesystemet – diverse sanse--reaktionsøvelser',bioc:'Nerveledningshastighed.docx',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Reaktionstid.'},
-{fag:'bio',navn:'Smagssansens følsomhed',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Smagssansens følsomhed',emne:'Sanser og nervesystem',original:'BIOLOGI/41 - Nervesystemet – diverse sanse--reaktionsøvelser',bioc:'14 Undersøgelse af smagssansens følsomhed.docx',type:'Sanseøvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'bio',navn:'Idealvægt og fedtprocent',type:'Kropsmålinger',kilde:'MM_s 1.g-øvelser',
+{fag:'bio',navn:'Idealvægt og fedtprocent',emne:'Krop og fysiologi',original:'BIOLOGI/45 - Muskelstyrke-vægtvurdering',bioc:'Målemetoder til idealvægt og fedtprocent.doc',type:'Kropsmålinger',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Målemetoder.'},
 
 /* ---------------- BIOLOGI — kandidater (SM-DRIVE-arkivet) ---------------- */
-{fag:'bio',navn:'Enzymforsøg — spytamylase, pepsin og stivelseshydrolyse',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/06',
+{fag:'bio',navn:'Enzymforsøg — spytamylase, pepsin og stivelseshydrolyse',emne:'Stofskifte og enzymer',original:'BIOLOGI/06 - Enzymforsøg – spytamylase, pepsin, bromelin, stivelseshydrolyse',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/06',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Bromelindelen er lagt om til Quarto; resten af mappen mangler — spytamylase ved forskellige temperaturer, pepsin, dialyseforsøg og kvantitativ stivelseshydrolyse. 20 filer.'},
-{fag:'bio',navn:'Katalaseforsøg',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/07',
+{fag:'bio',navn:'Katalaseforsøg',emne:'Stofskifte og enzymer',original:'BIOLOGI/07 - Katalaseforsøg',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/07',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Fire udgaver af samme forsøg, bl.a. fra JSN-arkivet.'},
-{fag:'bio',navn:'Blodtypebestemmelse',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/08',
+{fag:'bio',navn:'Blodtypebestemmelse',emne:'Krop og fysiologi',original:'BIOLOGI/08 - Blodtypebestemmelse',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/08',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Ni filer, bl.a. en 1z-udgave og en variant, der bruger klassens blodtyper til Hardy-Weinberg.'},
-{fag:'bio',navn:'Kondi- og arbejdsfysiologi — cykel, laktat og blodtryk',type:'Arbejdsfysiologi',kilde:'SM-DRIVE · BIOLOGI/09',
+{fag:'bio',navn:'Kondi- og arbejdsfysiologi — cykel, laktat og blodtryk',emne:'Krop og fysiologi',original:'BIOLOGI/09 - Kondi--arbejdsfysiologi (cykelforsøg, puls, blodtryk, laktat)',type:'Arbejdsfysiologi',kilde:'SM-DRIVE · BIOLOGI/09',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Cykelfysiologi, Coopers løbetest, Harvard steptest, laktatmåling ved løb samt puls og blodtryk. Teorispørgsmål med svar findes. Overlapper Ryhmings steptest ovenfor.'},
-{fag:'bio',navn:'Dissektion af kyllingevinge, øje, musling og fisk',type:'Dissektion',kilde:'SM-DRIVE · BIOLOGI/10',
+{fag:'bio',navn:'Dissektion af kyllingevinge, øje, musling og fisk',emne:'Krop og fysiologi',original:'BIOLOGI/10 - Dissektion af hjerte-lunger (svinehjerte, kyllingevinge, m.fl.)',type:'Dissektion',kilde:'SM-DRIVE · BIOLOGI/10',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Ligger sammen med hjerte- og lungedissektionen, men er selvstændige øvelser.'},
-{fag:'bio',navn:'Alkohol, reaktionsevne og hukommelse',type:'Reaktionsøvelse',kilde:'SM-DRIVE · BIOLOGI/11',
+{fag:'bio',navn:'Alkohol, reaktionsevne og hukommelse',emne:'Sanser og nervesystem',original:'BIOLOGI/11 - Alkoholforsøg (reaktionsevne-hukommelse-nervesystem)',type:'Reaktionsøvelse',kilde:'SM-DRIVE · BIOLOGI/11',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Forsøgspersoner testes på reaktionsevne og hukommelse. Fire filer.'},
-{fag:'bio',navn:'Det blinde punkt',type:'Sanseøvelse',kilde:'SM-DRIVE · BIOLOGI/12',
+{fag:'bio',navn:'Det blinde punkt',emne:'Sanser og nervesystem',original:'BIOLOGI/12 - Det blinde punkt - synet',type:'Sanseøvelse',kilde:'SM-DRIVE · BIOLOGI/12',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Tre korte udgaver af samme øjenøvelse.'},
-{fag:'bio',navn:'Fotosyntese og respiration',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/14',
+{fag:'bio',navn:'Fotosyntese og respiration',emne:'Stofskifte og enzymer',original:'BIOLOGI/14 - Fotosyntese og respiration',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/14',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Syv udgaver, bl.a. WWF-vejledningen, en BTB-udgave og JSN-forsøget om lysintensitet. Der findes allerede en simulering på smbi.dk.'},
-{fag:'bio',navn:'Nitrifikation og denitrifikation',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/15',
+{fag:'bio',navn:'Nitrifikation og denitrifikation',emne:'Økologi og evolution',original:'BIOLOGI/15 - Nitrifikation og denitrifikation',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/15',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Én vejledning; den ældre JA-udgave kunne ikke findes på drevet.'},
-{fag:'bio',navn:'Økotoksikologi — kobber og dafnier (LC₅₀)',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/17',
+{fag:'bio',navn:'Økotoksikologi — kobber og dafnier (LC₅₀)',emne:'Økologi og evolution',original:'BIOLOGI/17 - Økotoksikologi (dafnier-kobber-tungmetaller)',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/17',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'LC₅₀ med kobber på dafnier plus kobbers virkning på roddannelse hos løg. Bygger videre på dafnieøvelsen ovenfor.'},
-{fag:'bio',navn:'Mælkebøttebiologi',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/18',
+{fag:'bio',navn:'Mælkebøttebiologi',emne:'Økologi og evolution',original:'BIOLOGI/18 - Mælkebøttebiologi (hjemmeforsøg)',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/18',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'To udgaver fra corona-perioden.'},
-{fag:'bio',navn:'Bænkebideres nedbrydning',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/19',
+{fag:'bio',navn:'Bænkebideres nedbrydning',emne:'Økologi og evolution',original:'BIOLOGI/19 - Bænkebideres nedbrydning',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/19',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Ét dokument fra økologiforløbet.'},
-{fag:'bio',navn:'Genetik — nedarvning, Mendels love og karyotype',type:'Modeløvelse',kilde:'SM-DRIVE · BIOLOGI/20',
+{fag:'bio',navn:'Genetik — nedarvning, Mendels love og karyotype',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',type:'Modeløvelse',kilde:'SM-DRIVE · BIOLOGI/20',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Elleve filer: Mendels to love, majsens 2-genudspaltning, karyotyping, arvegange hos mennesker og modellering af bakterietransformation. Overlapper mitose-/meioseøvelserne ovenfor.'},
-{fag:'bio',navn:'Gelelektroforese',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/21',
+{fag:'bio',navn:'Gelelektroforese',emne:'Genetik og bioteknologi',original:'BIOLOGI/21 - Gelelektroforese',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/21',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Edvotek-vejledning, elektroforese af farvestoffer, en papirmodel og en simulering — elleve filer i alt.'},
-{fag:'bio',navn:'RNAi — nobelprisforsøg',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/22',
+{fag:'bio',navn:'RNAi — nobelprisforsøg',emne:'Genetik og bioteknologi',original:'BIOLOGI/22 - RNAi - nobelprisforsøg',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/22',
  niveau:'Bio A',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Kun som PDF, i to eksemplarer.'},
-{fag:'bio',navn:'Bioinformatik',type:'Dataøvelse',kilde:'SM-DRIVE · BIOLOGI/23',
+{fag:'bio',navn:'Bioinformatik',emne:'Genetik og bioteknologi',original:'BIOLOGI/23 - Bioinformatik-øvelse',type:'Dataøvelse',kilde:'SM-DRIVE · BIOLOGI/23',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'SDU’s udbrudsøvelse plus JSN-øvelser og egne noter.'},
-{fag:'bio',navn:'ELISA-test for HIV',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/24',
+{fag:'bio',navn:'ELISA-test for HIV',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/24 - ELISA-test',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/24',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Nyeste udgave er egen vejledning fra december 2024 (docx + PDF). Dertil lærerudgave og journalvejledning. Oplagt kandidat.'},
-{fag:'bio',navn:'Fangst-genfangst',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/25',
+{fag:'bio',navn:'Fangst-genfangst',emne:'Økologi og evolution',original:'BIOLOGI/25 - Fangst-genfangst (populationsbiologi)',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/25',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'To udgaver af populationsstørrelsesøvelsen.'},
-{fag:'bio',navn:'Ølbrygning',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/26',
+{fag:'bio',navn:'Ølbrygning',emne:'Stofskifte og enzymer',original:'BIOLOGI/26 - Ølbrygning',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/26',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Forløbs- og lærervejledning plus en produktionsvejledning.'},
-{fag:'bio',navn:'Muslingers filtrering og respiration',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/27',
+{fag:'bio',navn:'Muslingers filtrering og respiration',emne:'Økologi og evolution',original:'BIOLOGI/27 - Muslingeforsøg (filtrering-respiration)',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/27',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Tre ældre vejledninger — filtreringshastighed og respiration hos blåmusling.'},
-{fag:'bio',navn:'Antistoftest',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/28',
+{fag:'bio',navn:'Antistoftest',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/28 - Antistoftest',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/28',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Én PDF — vejledning til gymnasiesættet.'},
-{fag:'bio',navn:'Antibiotikaresistens',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/29',
+{fag:'bio',navn:'Antibiotikaresistens',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/29 - Antibiotikaresistens',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/29',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Journalforsøg, undersøgelse af resistensforekomst hos bakterier og et SSO-forsøg.'},
-{fag:'bio',navn:'Miljø-DNA i havvand',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/30',
+{fag:'bio',navn:'Miljø-DNA i havvand',emne:'Genetik og bioteknologi',original:'BIOLOGI/30 - Miljø-DNA (havvand)',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/30',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Indsamlingsvejledning fra 2020, kun som PDF.'},
-{fag:'bio',navn:'Hardy-Weinberg i Excel',type:'Databehandling (Excel)',kilde:'SM-DRIVE · BIOLOGI/31',
+{fag:'bio',navn:'Hardy-Weinberg i Excel',emne:'Genetik og bioteknologi',original:'BIOLOGI/31 - Hardy-Weinberg (Excel-øvelse)',type:'Databehandling (Excel)',kilde:'SM-DRIVE · BIOLOGI/31',
  niveau:'Bio A',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Regnearksøvelse — kun som PDF. Hører sammen med blodtypeøvelsens Hardy-Weinberg-variant.'},
-{fag:'bio',navn:'Måling af biodiversitet',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/33',
+{fag:'bio',navn:'Måling af biodiversitet',emne:'Økologi og evolution',original:'BIOLOGI/33 - Måling af biodiversitet (hjemmeforsøg, Corona-periode)',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/33',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Fra corona-perioden; beslægtet med græsplæneøvelsen, men uden Raunkiærcirkler.'},
-{fag:'bio',navn:'Risikoadfærd — smitteøvelse',type:'Klasseundersøgelse',kilde:'SM-DRIVE · BIOLOGI/34',
+{fag:'bio',navn:'Risikoadfærd — smitteøvelse',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/34 - Risikoadfærd-smitteøvelse',type:'Klasseundersøgelse',kilde:'SM-DRIVE · BIOLOGI/34',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Smittespredning i klassen, fra forløbet om køn og sex.'},
-{fag:'bio',navn:'Det Virtuelle Laboratorium — mus og diabetes',type:'Simuleringsøvelse',kilde:'SM-DRIVE · BIOLOGI/35',
+{fag:'bio',navn:'Det Virtuelle Laboratorium — mus og diabetes',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/35 - Det Virtuelle Laboratorium - forsøg med mus (diabetes)',type:'Simuleringsøvelse',kilde:'SM-DRIVE · BIOLOGI/35',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Forsøg med raske og diabetiske mus. Lærervejledning (PDF) og rapportvejledning.'},
-{fag:'bio',navn:'Bladundersøgelse',type:'Mikroskopi',kilde:'SM-DRIVE · BIOLOGI/36',
+{fag:'bio',navn:'Bladundersøgelse',emne:'Celler og mikroskopi',original:'BIOLOGI/36 - Bladundersøgelse (fotosyntese i blad)',type:'Mikroskopi',kilde:'SM-DRIVE · BIOLOGI/36',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Bladets opbygning og fotosyntese; tre udgaver, bl.a. JSN-arkivets.'},
-{fag:'bio',navn:'Jordrespiration',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/37',
+{fag:'bio',navn:'Jordrespiration',emne:'Økologi og evolution',original:'BIOLOGI/37 - Jordrespiration',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/37',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Fem udgaver, fra en simpel vejledning til en fuld øvelsesvejledning.'},
-{fag:'bio',navn:'EKG',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/39',
+{fag:'bio',navn:'EKG',emne:'Krop og fysiologi',original:'BIOLOGI/39 - EKG',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/39',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Én vejledning.'},
-{fag:'bio',navn:'Hjemmelavet yoghurt og surkål',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/40',
+{fag:'bio',navn:'Hjemmelavet yoghurt og surkål',emne:'Mikrobiologi og sundhed',original:'BIOLOGI/40 - Hjemmelavet yoghurt-surkål (bakteriekultur)',type:'Hjemmeforsøg',kilde:'SM-DRIVE · BIOLOGI/40',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Mælkesyrebakterier — yoghurt samt «fra surkål til ansigtscreme».'},
-{fag:'bio',navn:'Nervesystemet — dykkerefleks, GSR, tryksans og hukommelse',type:'Sanseøvelse',kilde:'SM-DRIVE · BIOLOGI/41',
+{fag:'bio',navn:'Nervesystemet — dykkerefleks, GSR, tryksans og hukommelse',emne:'Sanser og nervesystem',original:'BIOLOGI/41 - Nervesystemet – diverse sanse--reaktionsøvelser',type:'Sanseøvelse',kilde:'SM-DRIVE · BIOLOGI/41',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Fjorten filer ud over de tre sanseøvelser ovenfor. To af nervesystemsøvelserne (spejlstjerne og hjernehalvdele) kunne ikke findes på drevet.'},
-{fag:'bio',navn:'Åndedrætsøvelse ved nedsat lungefunktion',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/42',
+{fag:'bio',navn:'Åndedrætsøvelse ved nedsat lungefunktion',emne:'Krop og fysiologi',original:'BIOLOGI/42 - Åndedrætsøvelser - lungefunktion',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/42',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Illustrerer nedsat lungefunktion under covid-19. Supplerer vitalkapacitet og peak flow ovenfor.'},
-{fag:'bio',navn:'Hæmatokrit og iagttagelser af blod',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/43',
+{fag:'bio',navn:'Hæmatokrit og iagttagelser af blod',emne:'Krop og fysiologi',original:'BIOLOGI/43 - Hæmatokrit-blodprøver',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/43',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Hæmatokritbestemmelse, tre iagttagelser af blod og en blodtryksøvelse.'},
-{fag:'bio',navn:'Basalstofskifte og energiomsætning',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/44',
+{fag:'bio',navn:'Basalstofskifte og energiomsætning',emne:'Krop og fysiologi',original:'BIOLOGI/44 - Basalstofskifte - energiomsætning - kostanalyse',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/44',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Basalstofskifte, energiomsætning hos mennesket og to kostanalyser — overlapper kostregistreringen ovenfor.'},
-{fag:'bio',navn:'Muskelstyrke og vægtvurdering',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/45',
+{fag:'bio',navn:'Muskelstyrke og vægtvurdering',emne:'Krop og fysiologi',original:'BIOLOGI/45 - Muskelstyrke-vægtvurdering',type:'Kropsmålinger',kilde:'SM-DRIVE · BIOLOGI/45',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'To øvelser fra JSN-arkivet; beslægtet med idealvægt og fedtprocent ovenfor.'},
-{fag:'bio',navn:'Evolution og selektion — spil og toleranceloven',type:'Modeløvelse',kilde:'SM-DRIVE · BIOLOGI/46',
+{fag:'bio',navn:'Evolution og selektion — spil og toleranceloven',emne:'Økologi og evolution',original:'BIOLOGI/46 - Evolution-selektion (simuleringsspil, toleranceloven, minimumsloven)',type:'Modeløvelse',kilde:'SM-DRIVE · BIOLOGI/46',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Selektionsspil, «survival of the fittest», den ægyptiske origamifugl og toleranceloven.'},
-{fag:'bio',navn:'Vandløbsundersøgelse — bundfauna',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/47',
+{fag:'bio',navn:'Vandløbsundersøgelse — bundfauna',emne:'Økologi og evolution',original:'BIOLOGI/47 - Vandløbsundersøgelse - bundfauna',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/47',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Bestemmelsesnøgle til akvatisk fauna, artsliste og biomassebestemmelse.'},
-{fag:'bio',navn:'Søundersøgelse — plankton og primærproduktion',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/48',
+{fag:'bio',navn:'Søundersøgelse — plankton og primærproduktion',emne:'Økologi og evolution',original:'BIOLOGI/48 - Søundersøgelse - plankton - primærproduktion',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/48',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Fjorten filer: artsbestemmelse af fytoplankton, zooplanktonbiomasse, klorofylmåling og primærproduktion, samt biotopundersøgelser ved sø, å og skov.'},
-{fag:'bio',navn:'Spirings- og gæringsforsøg (karse, byg, bly, dej)',type:'Vækstforsøg',kilde:'SM-DRIVE · BIOLOGI/49',
+{fag:'bio',navn:'Spirings- og gæringsforsøg (karse, byg, bly, dej)',emne:'Økologi og evolution',original:'BIOLOGI/49 - Spirringsforsøg (karse, dej-gær, bestrålede byg-frø, bly)',type:'Vækstforsøg',kilde:'SM-DRIVE · BIOLOGI/49',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Karsespiring som øvelse i videnskabelig arbejdsmetode, bestrålede byg-frø, bly og spiring samt dej- og gæringsforsøg. Tretten filer.'},
-{fag:'bio',navn:'Regnormepopulationens størrelse',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/50',
+{fag:'bio',navn:'Regnormepopulationens størrelse',emne:'Økologi og evolution',original:'BIOLOGI/50 - Regnormepopulationsstørrelse',type:'Feltøvelse',kilde:'SM-DRIVE · BIOLOGI/50',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Én PDF.'},
-{fag:'bio',navn:'Papirkromatografi af plantefarvestoffer',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/51',
+{fag:'bio',navn:'Papirkromatografi af plantefarvestoffer',emne:'Stofskifte og enzymer',original:'BIOLOGI/51 - Papirkromatografi (plantefarvestoffer)',type:'Laboratorieøvelse',kilde:'SM-DRIVE · BIOLOGI/51',
  niveau:'Bio C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'To JSN-udgaver plus en engelsk vejledning.'},
-{fag:'bio',navn:'Regnskov og dansk skov',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/52',
+{fag:'bio',navn:'Regnskov og dansk skov',emne:'Økologi og evolution',original:'BIOLOGI/52 - Regnskov vs. dansk skov (feltsammenligning)',type:'Feltundersøgelse',kilde:'SM-DRIVE · BIOLOGI/52',
  niveau:'Bio B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Sammenligning af to skovtyper; ét dokument.'},
 
 /* ---------------- NATURGEOGRAFI — Quarto ---------------- */
-{fag:'geo',navn:'Porøsitet og permeabilitet i jord',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet',fil:'poroesitet-og-permeabilitet',
+{fag:'geo',navn:'Porøsitet og permeabilitet i jord',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet',fil:'poroesitet-og-permeabilitet',
  niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Grundversionen: to registreringsskemaer (nedsivning + porøsitet), ingen opgaver. Fire jordtyper.'},
-{fag:'geo',navn:'Porøsitet og permeabilitet — grundvand og landbrug',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-med-opgaver',fil:'poroesitet-og-permeabilitet-med-opgaver',
+{fag:'geo',navn:'Porøsitet og permeabilitet — grundvand og landbrug',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-med-opgaver',fil:'poroesitet-og-permeabilitet-med-opgaver',
  niveau:'Ng B',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
  note:'Tre opgaver: (x,y)-plot, porøsitet i %, markkapacitet. Fire spørgsmål under «Diskussion og perspektivering».'},
-{fag:'geo',navn:'Permeabilitet og vandtilbageholdelse (HF)',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-hf',fil:'poroesitet-og-permeabilitet-hf',
+{fag:'geo',navn:'Permeabilitet og vandtilbageholdelse (HF)',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',sti:'Geografi/poroesitet-og-permeabilitet-hf',fil:'poroesitet-og-permeabilitet-hf',
  niveau:'HF',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
  note:'Eneste vejledning med fag/hold i metadata. To jordtyper, graf og markkapacitet, fire spørgsmål med fejlkilder.'},
-{fag:'geo',navn:'Konvektionskammer',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer',fil:'konvektionskammer',
+{fag:'geo',navn:'Konvektionskammer',emne:'Vejr og klima',original:'NATURGEOGRAFI/05 - Konvektion i atmosfæren',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer',fil:'konvektionskammer',
  niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
  note:'Grundversionen: foto eller skitse med pile og H/L, ingen opgaver.'},
-{fag:'geo',navn:'Konvektionskammer — med journalopgaver',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer-med-opgaver',fil:'konvektionskammer-med-opgaver',
+{fag:'geo',navn:'Konvektionskammer — med journalopgaver',emne:'Vejr og klima',original:'NATURGEOGRAFI/05 - Konvektion i atmosfæren',type:'Laboratorieøvelse',sti:'Geografi/konvektionskammer-med-opgaver',fil:'konvektionskammer-med-opgaver',
  niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'delvis',spg:'ja',
  note:'Analyse af eget foto/skitse. Kun ét spørgsmål — kunne udbygges.'},
-{fag:'geo',navn:'Opmåling af terrænprofil',type:'Feltøvelse',sti:'Geografi/opmaaling-af-terraenprofil',fil:'opmaaling-af-terraenprofil',
+{fag:'geo',navn:'Opmåling af terrænprofil',emne:'Geologi og landskab',type:'Feltøvelse',sti:'Geografi/opmaaling-af-terraenprofil',fil:'opmaaling-af-terraenprofil',
  niveau:'Ng B (3g)',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
  note:'Højdeændring med fortegn beregnes i skemaet. Profiltegningen nævnes i indledningen, men der er ingen opgave til den.'},
-{fag:'geo',navn:'Digital kystopmåling ved Røjle Klint',type:'GIS-øvelse',sti:'Geografi/digital-kystopmaaling-rojle',fil:'digital-kystopmaaling-rojle',
+{fag:'geo',navn:'Digital kystopmåling ved Røjle Klint',emne:'Hav og kyst',type:'GIS-øvelse',sti:'Geografi/digital-kystopmaaling-rojle',fil:'digital-kystopmaaling-rojle',
  niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'delvis',spg:'ja',
  note:'MiljøGIS, kystlinjen 1954→i dag. Spørgsmål undervejs i fremgangsmåden plus syv ekstraopgaver. Ni figurer.'},
-{fag:'geo',navn:'Oliens migration',type:'Modelforsøg',sti:'Geografi/oliens-migration',fil:'oliens-migration',
- niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
- note:'Tre faser: oliens densitet, migrationshastighed i groft og fint sand, og en fælde af ler i en gennemsigtig kasse. Tre opgaver (densitet, (x,y)-plot og hastighed, fældens rummelighed og oliemætning) og fem spørgsmål. Én figur af fældemodellen.'},
+{fag:'geo',navn:'Oliens migration',emne:'Energi og ressourcer',original:'NATURGEOGRAFI/07 - Oliens migration',type:'Modelforsøg',sti:'Geografi/oliens-migration',fil:'oliens-migration',
+ niveau:'Ng C/B',niveauFormodet:true,quarto:true,data:'nej',spg:'ja',
+ note:'Tre dele: stratigrafiskema med otte bjergarts- og sedimentprøver, det klassiske glasforsøg (olie → sand → vand), og perspektivering til Danmarks olie- og gasproduktion og verdens oliereserver. Bygger på 2019-udgaven; fotografierne er originalens egne.'},
 
 /* ---------------- NATURGEOGRAFI — kandidater (SM-DRIVE) ---------------- */
-{fag:'geo',navn:'Permeabilitet/porøsitet i jord (gamle udgaver)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
+{fag:'geo',navn:'Permeabilitet/porøsitet i jord (gamle udgaver)',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
  niveau:'NF / Ng',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
  note:'Dækket af de tre porøsitetsvejledninger ovenfor. De gamle udgaver har også pH og nitrat — det er ikke med i den nye.'},
-{fag:'geo',navn:'Konvektion i atmosfæren (gamle udgaver)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
+{fag:'geo',navn:'Konvektion i atmosfæren (gamle udgaver)',emne:'Vejr og klima',original:'NATURGEOGRAFI/05 - Konvektion i atmosfæren',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
  niveau:'NF / Ng',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
  note:'Dækket af de to konvektionskammer-vejledninger ovenfor.'},
-{fag:'geo',navn:'Udvaskning af næringsstoffer fra to jorde',type:'Laboratorieøvelse',kilde:'Villum-forløb 2023',
+{fag:'geo',navn:'Udvaskning af næringsstoffer fra to jorde',emne:'Vand og grundvand',type:'Laboratorieøvelse',kilde:'Villum-forløb 2023',
  niveau:'Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Hører sammen med Villum-forløbets konvektionskammer, som allerede er lagt om.'},
-{fag:'geo',navn:'Jordvandets nedsivningshastighed',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
+{fag:'geo',navn:'Jordvandets nedsivningshastighed',emne:'Vand og grundvand',original:'NATURGEOGRAFI/14 - Jordvandets nedsivningshastighed',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Beslægtet med permeabilitetsøvelserne, men måler i marken. Brugt til NF-eksamen.'},
-{fag:'geo',navn:'Tsunamibølgers hastighed',type:'Regne-/modeløvelse',kilde:'Ng, forløb Geologi',
+{fag:'geo',navn:'Tsunamibølgers hastighed',emne:'Geologi og landskab',original:'NATURGEOGRAFI/01 - Tsunamibølgers hastighed',type:'Regne-/modeløvelse',kilde:'Ng, forløb Geologi',
  niveau:'Ng C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Findes i mindst fire udgaver, nyeste 7. udg. 2019.'},
-{fag:'geo',navn:'Albedo-forsøg (inkl. IR-termometer)',type:'Laboratorieøvelse',kilde:'NV + NF + NF-eksamen',
+{fag:'geo',navn:'Albedo-forsøg (inkl. IR-termometer)',emne:'Vejr og klima',original:'NATURGEOGRAFI/02 - Albedo-forsøg (inkl. IR-termometer)',type:'Laboratorieøvelse',kilde:'NV + NF + NF-eksamen',
  niveau:'NV / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Mange varianter (gråtoner, farvet papir, arktis). Oplagt kandidat — bruges både i NV og til NF-eksamen.'},
-{fag:'geo',navn:'Globale vindsystemer',type:'Opgaveøvelse',kilde:'NF + Ng',
+{fag:'geo',navn:'Globale vindsystemer',emne:'Vejr og klima',original:'NATURGEOGRAFI/04 - Globale vindsystemer (øvelse)',type:'Opgaveøvelse',kilde:'NF + Ng',
  niveau:'NF / Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Opgave 1 og 2 findes hver for sig.'},
-{fag:'geo',navn:'Små klimaforsøg — opvarmning af vand og sand',type:'Laboratorieøvelse',kilde:'NF',
+{fag:'geo',navn:'Små klimaforsøg — opvarmning af vand og sand',emne:'Vejr og klima',original:'NATURGEOGRAFI/06 - Små klimaforsøg (opvarmning af vand og sand)',type:'Laboratorieøvelse',kilde:'NF',
  niveau:'NF (C)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun som PDF i flere mapper.'},
-{fag:'geo',navn:'Oliens migration (gamle udgaver)',type:'Modelforsøg',kilde:'Ng forløb Energi + NF',
+{fag:'geo',navn:'Oliens migration (gamle udgaver)',emne:'Energi og ressourcer',original:'NATURGEOGRAFI/07 - Oliens migration',type:'Modelforsøg',kilde:'Ng forløb Energi + NF',
  niveau:'Ng / NF',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
- note:'Dækket af vejledningen ovenfor. De gamle filer (2019-udgaven og en HF-udgave) ligger kun i BASE og er ikke set — den nye vejledning er bygget fra bunden.'},
-{fag:'geo',navn:'Vulkanudbrud',type:'Modelforsøg',kilde:'NV modul 4',
+ note:'De to gamle filer — 2019-udgaven (Ng) og en HF-udgave uden perspektiveringsdelen — er læst, og den nye vejledning bygger på dem.'},
+{fag:'geo',navn:'Vulkanudbrud',emne:'Geologi og landskab',original:'NATURGEOGRAFI/08 - Vulkanudbrud (forsøg)',type:'Modelforsøg',kilde:'NV modul 4',
  niveau:'NV (1.g)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'geo',navn:'Bestemmelse af mineraler og bjergarter',type:'Bestemmelsesøvelse',kilde:'NV modul 5-6',
+{fag:'geo',navn:'Bestemmelse af mineraler og bjergarter',emne:'Geologi og landskab',original:'NATURGEOGRAFI/09 - Bestemmelse af mineraler og bjergarter',type:'Bestemmelsesøvelse',kilde:'NV modul 5-6',
  niveau:'NV (1.g)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Både mineral- og bjergartsøvelse, samt bjergarternes kredsløb i tre dele.'},
-{fag:'geo',navn:'Grønlandspumpen',type:'Modelforsøg',kilde:'Ng forsøg + NF-eksamen',
+{fag:'geo',navn:'Grønlandspumpen',emne:'Hav og kyst',original:'NATURGEOGRAFI/10 - Grønlandspumpen',type:'Modelforsøg',kilde:'Ng forsøg + NF-eksamen',
  niveau:'Ng / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Vandcirkulation i forsøgstank. Der findes allerede en simulering på smbi.dk.'},
-{fag:'geo',navn:'Vandbalancen',type:'Regneøvelse',kilde:'Ng forløb Vand',
+{fag:'geo',navn:'Vandbalancen',emne:'Vand og grundvand',original:'NATURGEOGRAFI/11 - Vandbalancen',type:'Regneøvelse',kilde:'Ng forløb Vand',
  niveau:'Ng C/B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Facitliste findes.'},
-{fag:'geo',navn:'Kysterosion og oversvømmelse',type:'Kort-/dataøvelse',kilde:'Geomøde-kursus 2020',
+{fag:'geo',navn:'Kysterosion og oversvømmelse',emne:'Hav og kyst',original:'NATURGEOGRAFI/12 - Kysterosion og oversvømmelse (fra Geomøde-kursus)',type:'Kort-/dataøvelse',kilde:'Geomøde-kursus 2020',
  niveau:'Ng B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Odense Fjord. Passer sammen med den digitale kystopmåling.'},
-{fag:'geo',navn:'Måling af den lokale strålingsbalance',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
+{fag:'geo',navn:'Måling af den lokale strålingsbalance',emne:'Vejr og klima',original:'NATURGEOGRAFI/13 - Måling af den lokale strålingsbalance',type:'Feltøvelse',kilde:'NF, Aarhus HF og VUC',
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Også en forkortet Geolink-udgave.'},
-{fag:'geo',navn:'Måling af kuldioxid (CO₂)',type:'Feltøvelse',kilde:'NF, fossilfri transport',
+{fag:'geo',navn:'Måling af kuldioxid (CO₂)',emne:'Vejr og klima',original:'NATURGEOGRAFI/15 - Måling af kuldioxid (CO2)',type:'Feltøvelse',kilde:'NF, fossilfri transport',
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'geo',navn:'Sø- og landbrise',type:'Laboratorieøvelse',kilde:'Geolink',
+{fag:'geo',navn:'Sø- og landbrise',emne:'Vejr og klima',original:'NATURGEOGRAFI/16 - Sø- og landbrise',type:'Laboratorieøvelse',kilde:'Geolink',
  niveau:'Ng C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Tæt på konvektionskammeret fagligt.'},
-{fag:'geo',navn:'Levevilkår og erhvervsfordeling',type:'Dataøvelse',kilde:'NF-eksamen, del B',
+{fag:'geo',navn:'Levevilkår og erhvervsfordeling',emne:'Mennesket og bæredygtighed',original:'NATURGEOGRAFI/17 - Levevilkår og erhvervsfordeling (øvelse)',type:'Dataøvelse',kilde:'NF-eksamen, del B',
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Udviklingsmål.'},
-{fag:'geo',navn:'Vindmøller og solceller',type:'Dataøvelse',kilde:'NF-eksamen, del B',
+{fag:'geo',navn:'Vindmøller og solceller',emne:'Energi og ressourcer',original:'NATURGEOGRAFI/18 - Vindmøller og solceller (øvelse)',type:'Dataøvelse',kilde:'NF-eksamen, del B',
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'geo',navn:'Digital laboratoriekursusvejledning',type:'Samlevejledning',kilde:'Ng forsøg',
+{fag:'geo',navn:'Digital laboratoriekursusvejledning',emne:'Tværgående',original:'NATURGEOGRAFI/19 - Digital laboratoriekursusvejledning',type:'Samlevejledning',kilde:'Ng forsøg',
  niveau:'Ng B',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Fra november 2020 — samler flere forsøg.'},
-{fag:'geo',navn:'Pladetektonik i Google Earth',type:'GIS-øvelse',kilde:'Ng geologi / Zahles',
+{fag:'geo',navn:'Pladetektonik i Google Earth',emne:'Geologi og landskab',original:'NATURGEOGRAFI/20 - Pladetektonik (Google Earth - Big Bang)',type:'GIS-øvelse',kilde:'Ng geologi / Zahles',
  niveau:'Ng C',niveauFormodet:false,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Filnavnet siger selv C-niveau. Passer i familie med kystopmålingen.'},
-{fag:'geo',navn:'Havstrømme',type:'Modelforsøg',kilde:'Brobygning 8. kl. 2023',
+{fag:'geo',navn:'Havstrømme',emne:'Hav og kyst',original:'NATURGEOGRAFI/22 - Havstrømme (Brobygning-forsøg)',type:'Modelforsøg',kilde:'Brobygning 8. kl. 2023',
  niveau:'Brobygning',niveauFormodet:false,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun som PDF.'},
-{fag:'geo',navn:'Bæredygtige byer',type:'Hjemmeforsøg',kilde:'Ng bæredygtighed',
+{fag:'geo',navn:'Bæredygtige byer',emne:'Mennesket og bæredygtighed',original:'NATURGEOGRAFI/23 - Bæredygtige byer (hjemmeforsøg)',type:'Hjemmeforsøg',kilde:'Ng bæredygtighed',
  niveau:'Ng C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'geo',navn:'Kortøvelse til istidslandskaber',type:'Kortøvelse',kilde:'NF forløb Fødevarer',
+{fag:'geo',navn:'Kortøvelse til istidslandskaber',emne:'Geologi og landskab',original:'NATURGEOGRAFI/24 - Kortøvelse til istidslandskaber',type:'Kortøvelse',kilde:'NF forløb Fødevarer',
  niveau:'NF (C)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
-{fag:'geo',navn:'Klimaforandringer i Grønland',type:'Forløb (lærervejledning)',kilde:'OD-forløb',
+{fag:'geo',navn:'Klimaforandringer i Grønland',emne:'Vejr og klima',original:'NATURGEOGRAFI/25 - Klimaforandringer i Grønland (lærervejledning, OD-forløb)',type:'Forløb (lærervejledning)',kilde:'OD-forløb',
  niveau:'Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Kun lærervejledning, ikke en øvelsesvejledning i sig selv.'}
 ];
 
 /* --------------------------- visning --------------------------- */
+/* Rækkefølgen af emner i hver tabel. Et emne, der ikke står her,
+   havner nederst under sit eget navn. */
+const EMNER = {
+  bio:['Celler og mikroskopi','Mikrobiologi og sundhed','Stofskifte og enzymer',
+       'Krop og fysiologi','Sanser og nervesystem','Genetik og bioteknologi',
+       'Økologi og evolution'],
+  geo:['Geologi og landskab','Vand og grundvand','Vejr og klima','Hav og kyst',
+       'Energi og ressourcer','Mennesket og bæredygtighed','Tværgående']
+};
+
+/* Originalerne — de gamle Word-filer — ligger to steder: SM-DRIVE-arkivet
+   uden for projektet, og Bio C-mappen her i repoet. */
+const SM_ROD = '/Users/sm/Library/CloudStorage/OneDrive-FællesDigital/SM-DRIVE/forsøgsvejledninger_sm-drive';
 const MÆRKE = {
   ja:     ['st-ja','✓ Ja'],
   delvis: ['st-delvis','~ Delvis'],
@@ -711,8 +747,11 @@ function mærke(v){
 function quartoCelle(ø){
   if(ø.quarto === 'daekket')
     return '<span class="st st-daekket">≈ Dækket</span>';
-  if(!ø.quarto)
-    return `<span class="st st-nej">– Nej</span>${ø.kilde?`<div class="filer"><span class="mono" style="color:var(--slate)">${esc(ø.kilde)}</span></div>`:''}`;
+  if(!ø.quarto){
+    /* står stien til originalen allerede under navnet, gentages den ikke her */
+    const vis = ø.kilde && !ø.kilde.startsWith('SM-DRIVE') ? ø.kilde : '';
+    return `<span class="st st-nej">– Nej</span>${vis?`<div class="filer"><span class="mono" style="color:var(--slate)">${esc(vis)}</span></div>`:''}`;
+  }
   const b = `${ø.sti}/${ø.fil}`;
   return `<span class="st st-ja">✓ Ja</span>
     <span class="filer">
@@ -728,9 +767,19 @@ function niveauCelle(ø){
     : esc(ø.niveau);
   return `<span class="niveau">${n}${ø.niveauFormodet?'<small>formodet</small>':'<small>i metadata</small>'}</span>`;
 }
+function stierCelle(ø){
+  const dele = [];
+  if(ø.original)
+    dele.push(`<button type="button" class="sti" data-sti="${esc(SM_ROD+'/'+ø.original)}"
+      title="Kopiér hele stien til originalmappen">SM-DRIVE · ${esc(ø.original)}</button>`);
+  if(ø.bioc)
+    dele.push(`<a class="sti" href="Bio-C-delt-mappe/${encodeURI(ø.bioc)}"
+      title="Åbn originalen i Bio C-mappen">Bio C · ${esc(ø.bioc)}</a>`);
+  return dele.length ? `<div class="stier">${dele.join('')}</div>` : '';
+}
 function række(ø){
   return `<tr class="${ø.quarto===true?'':'kandidat'}">
-    <td class="navn">${esc(ø.navn)}<span class="type mono">${esc(ø.type)}</span></td>
+    <td class="navn">${esc(ø.navn)}<span class="type mono">${esc(ø.type)}</span>${stierCelle(ø)}</td>
     <td>${niveauCelle(ø)}</td>
     <td>${quartoCelle(ø)}</td>
     <td>${mærke(ø.data)}</td>
@@ -746,7 +795,7 @@ function passer(ø){
   if(filter==='kandidat' && ø.quarto===true) return false;
   if(filter==='mangler'  && ø.spg==='ja')    return false;
   if(!søgetekst) return true;
-  const h = [ø.navn,ø.type,ø.niveau,ø.note,ø.kilde].join(' ').toLowerCase();
+  const h = [ø.navn,ø.type,ø.emne,ø.niveau,ø.note,ø.kilde,ø.original,ø.bioc].join(' ').toLowerCase();
   return h.includes(søgetekst);
 }
 
@@ -756,8 +805,15 @@ function tegn(){
     const rk = ØVELSER.filter(ø => ø.fag===fag && passer(ø));
     synlige += rk.length;
     const krop = document.querySelector('#'+id+' tbody');
+    const emner = [...EMNER[fag], ...new Set(rk.map(ø=>ø.emne).filter(e=>!EMNER[fag].includes(e)))];
     krop.innerHTML = rk.length
-      ? rk.map(række).join('')
+      ? emner.map(emne => {
+          const hold = rk.filter(ø => ø.emne===emne)
+                         .sort((a,b)=>(a.quarto===true?0:1)-(b.quarto===true?0:1));
+          if(!hold.length) return '';
+          return `<tr class="emne"><th colspan="6" scope="colgroup">${esc(emne)}<span class="antal">${hold.length} øvelser</span></th></tr>`
+               + hold.map(række).join('');
+        }).join('')
       : `<tr><td colspan="6" class="tom">Ingen øvelser matcher.</td></tr>`;
     const alle = ØVELSER.filter(ø => ø.fag===fag);
     const q = alle.filter(ø => ø.quarto===true).length;
@@ -788,6 +844,21 @@ for(const [navn,id] of Object.entries(knapper)){
     tegn();
   });
 }
+document.addEventListener('click', async e => {
+  const knap = e.target.closest('button.sti');
+  if(!knap) return;
+  try{
+    await navigator.clipboard.writeText(knap.dataset.sti);
+    const før = knap.textContent;
+    knap.classList.add('kopieret');
+    knap.textContent = 'Sti kopieret';
+    setTimeout(()=>{knap.textContent = før; knap.classList.remove('kopieret');}, 1400);
+  }catch{
+    /* uden udklipsholder: vis stien, så den kan markeres og kopieres i hånden */
+    knap.textContent = knap.dataset.sti;
+  }
+});
+
 document.getElementById('soeg').addEventListener('input',e=>{
   søgetekst = e.target.value.trim().toLowerCase();
   tegn();

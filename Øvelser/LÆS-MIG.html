@@ -2231,10 +2231,11 @@ window.MathJax = {
 <ol type="1">
 <li><p>Kopiér en eksisterende øvelsesmappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>) til en ny mappe med et sigende navn, under det rigtige fag (fx <code>Geografi/kysterosion/</code> eller <code>Biologi/enzymforsog/</code>).</p></li>
 <li><p>Slet de gamle figurer i <code>figurer/</code>, og ret <code>index.qmd</code>: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.</p></li>
-<li><p>Bed Claude om at rendere den nye <code>.qmd</code>-fil til PDF/Word/HTML (kræver Quarto — se nedenfor), eller installér selv Quarto og kør, stående inde i øvelsens egen mappe:</p>
-<pre><code>quarto render index.qmd --to typst   # PDF
-quarto render index.qmd --to docx    # Word
-quarto render index.qmd --to html    # webside</code></pre></li>
+<li><p>Claude renderer selv vejledningen til PDF/Word/HTML, hver gang <code>.qmd</code>-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:</p>
+<pre><code>quarto render &lt;øvelse&gt;.qmd --to typst   # PDF
+quarto render &lt;øvelse&gt;.qmd --to docx    # Word
+quarto render &lt;øvelse&gt;.qmd --to html    # webside</code></pre>
+<p>Filen hedder det samme som mappen (fx <code>oliens-migration.qmd</code>), så den downloadede vejledning er til at kende igen på skrivebordet.</p></li>
 </ol>
 </section>
 <section id="genbrugelige-byggeklodser-i-en-.qmd" class="level2">
@@ -2249,7 +2250,7 @@ quarto render index.qmd --to html    # webside</code></pre></li>
 </section>
 <section id="hvis-du-vil-rendere-selv-uden-claude" class="level2">
 <h2 class="anchored" data-anchor-id="hvis-du-vil-rendere-selv-uden-claude">Hvis du vil rendere selv (uden Claude)</h2>
-<p>Quarto er gratis: installér fra quarto.org, og kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>).</p>
+<p>Quarto er allerede installeret (1.10.18). Kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>).</p>
 </section>
 </section>
 

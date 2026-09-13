@@ -36,12 +36,13 @@ Fordi `_quarto.yml` ligger i toppen af `Øvelser/`, gælder opsætningen automat
 
 1. Kopiér en eksisterende øvelsesmappe (fx `Geografi/opmaaling-af-terraenprofil/`) til en ny mappe med et sigende navn, under det rigtige fag (fx `Geografi/kysterosion/` eller `Biologi/enzymforsog/`).
 2. Slet de gamle figurer i `figurer/`, og ret `index.qmd`: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.
-3. Bed Claude om at rendere den nye `.qmd`-fil til PDF/Word/HTML (kræver Quarto — se nedenfor), eller installér selv Quarto og kør, stående inde i øvelsens egen mappe:
+3. Claude renderer selv vejledningen til PDF/Word/HTML, hver gang `.qmd`-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:
    ```
-   quarto render index.qmd --to typst   # PDF
-   quarto render index.qmd --to docx    # Word
-   quarto render index.qmd --to html    # webside
+   quarto render <øvelse>.qmd --to typst   # PDF
+   quarto render <øvelse>.qmd --to docx    # Word
+   quarto render <øvelse>.qmd --to html    # webside
    ```
+   Filen hedder det samme som mappen (fx `oliens-migration.qmd`), så den downloadede vejledning er til at kende igen på skrivebordet.
 
 ## Genbrugelige byggeklodser i en `.qmd`
 
@@ -53,4 +54,4 @@ Fordi `_quarto.yml` ligger i toppen af `Øvelser/`, gælder opsætningen automat
 
 ## Hvis du vil rendere selv (uden Claude)
 
-Quarto er gratis: installér fra quarto.org, og kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx `Geografi/opmaaling-af-terraenprofil/`).
+Quarto er allerede installeret (1.10.18). Kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx `Geografi/opmaaling-af-terraenprofil/`).

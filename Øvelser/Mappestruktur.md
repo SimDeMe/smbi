@@ -1,10 +1,32 @@
 # Mappestruktur for Øvelser (Quarto)
 
-*Opdateret 2026-08-27.*
+*Opdateret 2026-09-13.*
 
 ## Arbejdsgang — vigtigt
 
-**Ret kun i `.qmd`-kilderne. Render ikke automatisk.** Brugeren har bedt om, at ændringer altid nøjes med at rette i Quarto-kilfilerne (`.qmd`, `_quarto.yml` osv.) — ikke selv køre `quarto render` eller generere nye docx/pdf/html-outputs, medmindre der bliver bedt eksplicit om det. Rediger direkte på brugerens Mac via `device_bash` (fx en lille Python-læs-ret-skriv, ikke ved at gengive hele filens indhold fra hukommelsen). De renderede outputs (`index.docx`/`.pdf`/`.html`), der allerede ligger i hver øvelsesmappe, bliver dermed ikke opdateret automatisk efter en rettelse i `.qmd` — de kan blive ude af trit, indtil nogen (bruger eller en fremtidig session, hvis bedt om det) rendering dem igen.
+**Ret i `.qmd`-kilderne — og rendér bagefter.** Rettelser laves i Quarto-kilderne
+(`.qmd`, `_quarto.yml`, `styles.scss` osv.), og derefter renderes de berørte
+vejledninger med det samme, så `.pdf`, `.docx` og `.html` i øvelsesmappen altid
+svarer til kilden:
+
+```bash
+cd Øvelser/<Fag>/<øvelse>
+quarto render <øvelse>.qmd --to typst   # PDF
+quarto render <øvelse>.qmd --to docx    # Word
+quarto render <øvelse>.qmd --to html    # webside
+```
+
+`fix-docx-tables.py` kører selv efter hver docx-rendering og retter sidehovedet
+(fag/hold) og tabeller, der ellers ville blive delt af et sideskift. Rettes en
+`.qmd` i en mappe, hvor der allerede ligger outputs, skal alle tre formater
+renderes igen — ikke kun det ene. Det samme gælder de `.md`-dokumenter her i
+`Øvelser/`, der har renderede udgaver ved siden af (`LÆS-MIG`, `Mappestruktur`,
+`Bio-C-forsog-oversigt`, `Forsogsvejledninger`).
+
+*Ændret 2026-09-13 efter ønske fra brugeren. Tidligere var reglen den modsatte —
+at der aldrig måtte renderes uden eksplicit besked — og derfor står der flere
+steder nedenfor, at noget "ikke er renderet endnu". Det er nu indhentet: alle
+øvelsesmapper har både `.pdf`, `.docx` og `.html`, der svarer til deres `.qmd`.*
 
 ## Beslutning
 
@@ -54,9 +76,9 @@ Da `Osmose i kartofler` blev lavet, viste det sig, at `reference.docx`'s sidehov
 
 Den gamle vejledning havde fire præparater (løg, vandpest, kindskrab, gær) samt formål/teori/hypotese/fejlkilder/konklusion/spørgsmål til journalen og en "Registrering af målinger"-tabel. Efter ønske er den nye version afgrænset til kun **løghinde, vandpest og kindskrab** (gær droppet). Kun kindskrab farves (methylenblåt, det blå farvestof) — løghinde farves slet ikke (observeres direkte, ingen Lugols væske), vandpest farves heller ikke. "Registrering af målinger"-afsnittet (tabel til at notere iagttagelser) er fjernet efter ønske. Da øvelsen stadig bruger methylenblåt og ethanol 70 %, har den (modsat Osmose) et `callout-important`-afsnit om Sikkerhed, som krævet af projektinstruktionerne.
 
-**2026-08-26 — forsøgt tilføjelse af rodspidser, siden rullet tilbage:** Der blev midlertidigt tilføjet et fjerde delforsøg "D. Rodspidser" (squash-præparat med saltsyre og methylenblåt, mitose i rodspidsceller). Ved eftersøgning i `Bio-C-delt-mappe` (alle .docx/.doc/.rtf-filer samt OCR af den store "Mikroskopi vejledning NV-bogen.pdf") viste det sig, at **ingen** af de gamle forsøgsvejledninger nævner rodspidser, saltsyre (i mikroskopi-sammenhæng) eller acetocarmin/orcein — protokollen var altså ikke baseret på brugerens egne, gamle materialer, men på generel biologifaglig praksis. Tilføjelsen blev derfor rullet tilbage fra `mikroskopi-af-celler`, men er efterfølgende genskabt som sin **egen, selvstændige øvelse** `Biologi/mikroskopi-af-rodceller` (squash-præparat af rodspids fra spiret løg, saltsyre 1 M + methylenblåt) — kun `index.qmd` findes endnu, ikke renderet.
+**2026-08-26 — forsøgt tilføjelse af rodspidser, siden rullet tilbage:** Der blev midlertidigt tilføjet et fjerde delforsøg "D. Rodspidser" (squash-præparat med saltsyre og methylenblåt, mitose i rodspidsceller). Ved eftersøgning i `Bio-C-delt-mappe` (alle .docx/.doc/.rtf-filer samt OCR af den store "Mikroskopi vejledning NV-bogen.pdf") viste det sig, at **ingen** af de gamle forsøgsvejledninger nævner rodspidser, saltsyre (i mikroskopi-sammenhæng) eller acetocarmin/orcein — protokollen var altså ikke baseret på brugerens egne, gamle materialer, men på generel biologifaglig praksis. Tilføjelsen blev derfor rullet tilbage fra `mikroskopi-af-celler`, men er efterfølgende genskabt som sin **egen, selvstændige øvelse** `Biologi/mikroskopi-af-rodceller` (squash-præparat af rodspids fra spiret løg, saltsyre 1 M + methylenblåt).
 
-**OBS:** `index.docx`/`.pdf`/`.html` for `mikroskopi-af-celler` er stadig **ikke** gen-renderet efter de oprindelige rettelser (Lugols fjernet, Registrering-afsnit fjernet) — jf. arbejdsgangs-reglen ovenfor. De viser stadig en ældre version, indtil der bliver renderet på ny.
+**Renderet:** `mikroskopi-af-celler` er siden renderet igen, så docx/pdf/html svarer til den afgrænsede udgave.
 
 ## Bakterier og svampe — sammenlagt af Kimfald + Påvisning af bakterier
 
@@ -66,7 +88,6 @@ Denne gruppe af gamle filer (`GAMMEL KIMFALD.doc`, `GAMMEL Påvisning af bakteri
 - **Sammenlægning:** "GAMMEL KIMFALD.doc" og "MM_s KIMFALD.doc" er indholdsmæssigt identiske; samme gælder de to "Påvisning af bakterier.doc"-filer. "NY Øvelse Bakterier og svampe.docx" havde allerede lagt begge øvelser sammen (5 petriskåle: 3 kødpepton-agar + 2 malt-agar — 2 til kimfald ude, 2 til kimfald inde, 1 til påvisning på genstande som fingeraftryk/mønter/hår). Efter ønske fra brugeren er det denne sammenlagte NY-version, den nye standardvejledning bygger på (samme princip som konsolideringen af `mikroskopi-af-celler`).
 - **Indhold:** A) fremstilling af agar-plader (kan springes over, hvis pladerne er færdigstøbte), B) kimfald ude/inde, C) påvisning af bakterier på genstande, D) inkubation i varmeskab ved 37 °C og aflæsning. Et `callout-important`-afsnit om Sikkerhed er medtaget (varm agar, og at plader med mikroorganismer dyrket ved kropstemperatur ikke må åbnes), selvom øvelsen ikke bruger egentlige kemikalier — vurderet nødvendigt pga. de reelle farer ved varme og biologisk materiale.
 - Bevidst udeladt (bare bones): "Klassens resultater"-tabellen (sammenligning på tværs af grupper) samt diskussions-/konklusionsspørgsmålene fra de gamle vejledninger — det er arbejdsspørgsmål, som den enkelte lærer selv tilføjer. En simpel registreringstabel til rå data (kolonietal + areal-beregning) er bevaret, ligesom i `osmose-i-kartofler`.
-- Kun `index.qmd` er lavet — **ikke renderet** til docx/pdf/html, jf. arbejdsgangs-reglen øverst i dette dokument.
 
 ## Dafnier og koffein — de tre "Fagintro"-filer viste sig at være ét forsøg
 
@@ -78,7 +99,6 @@ Brugeren bad om at få lavet "fagintro-dafnieforsøget" (uden at det skulle hedd
 
 Bekræftet med brugeren 2026-08-27, at der er tale om ét forsøg i flere udgaver. Den nye standardvejledning, `Biologi/dafnier-og-koffein`, bygger på **v2's fulde fortyndingsrække** (mest metodisk komplet), uden anatomi-/økologi-baggrundsteksten (bare bones — det er baggrundsstof, en lærer selv kan tilføje). Intet `callout-important`-afsnit om Sikkerhed: kaffeopløsningerne er food-grade og ufarlige i disse koncentrationer, samme vurdering som saltvandsopløsningerne i `osmose-i-kartofler`, der heller ikke har et sikkerhedsafsnit. Der er i stedet en `callout-tip` om at skåne dafnien for unødig lys/varme og evt. skifte til en frisk dafnie undervejs.
 
-Kun `index.qmd` er lavet — **ikke renderet** til docx/pdf/html, jf. arbejdsgangs-reglen øverst i dette dokument.
 
 ## Bromelin i ananas — enzymforsøg baseret på 2018-versionen
 
@@ -88,7 +108,6 @@ Bare bones-versionen er afgrænset til det centrale forsøg med **fire glas** (f
 
 Øvelsen bruger både kogende vand/åben ild og fortyndet saltsyre (til at denaturere enzymet i ét af glassene), så den har et `callout-important`-afsnit om Sikkerhed, som krævet af projektinstruktionerne når der anvendes kemikalier.
 
-Kun `index.qmd` er lavet — **ikke renderet** til docx/pdf/html, jf. arbejdsgangs-reglen øverst i dette dokument.
 
 ## Integreret på sitet (2026-09-09)
 
@@ -188,9 +207,8 @@ LibreOffice, der er beskrevet nedenfor.
 ## Kendte åbne punkter
 
 - De gamle, nu overflødige filer (de to "Quartro Skabelon"-mapper, de gamle Osmose- og Mikroskopi-docx/pdf, leverings-zip'er) ligger i `Øvelser/_to_delete/` på brugerens Mac, fordi sletning kræver brugergodkendelse. Brugeren skal selv slette den mappe, når indholdet er tjekket.
-- Quarto er ikke installeret på brugerens Mac (kun testet i et cloud-miljø, sidst brugt til at generere de outputs, der nu er lidt bagud ift. `.qmd`-kilderne — se OBS ovenfor). PDF-rendering via Typst kræver desuden netværksadgang for at hente `@preview`-pakker (fx fontawesome) — det fejlede i testmiljøet pga. proxy. Som workaround genereres PDF ved at konvertere den (korrekte) `.docx` med LibreOffice (`soffice --headless --convert-to pdf`), hvilket giver et visuelt identisk resultat, da al styling allerede ligger i `reference.docx`.
+- Quarto er installeret lokalt (1.10.18, `/usr/local/bin/quarto`), og PDF'en laves direkte via Typst. Omvejen over LibreOffice (`soffice --headless --convert-to pdf`), der blev brugt, dengang Quarto kun fandtes i et cloud-miljø uden netværk til Typst-pakkerne, er ikke længere nødvendig.
 - Alle biologi-øvelser indtil videre bruger `callout-note` (blå) til Materialer og `callout-important` (rød) til Sikkerhed, når der er kemikalier eller andre reelle farer (fx varme, biologisk materiale) med — hold den konvention ved fremtidige øvelser. Rent food-grade opløsninger i lave koncentrationer (saltvand, kaffe) har hidtil ikke udløst et sikkerhedsafsnit.
-- `mikroskopi-af-rodceller`, `bakterier-og-svampe`, `dafnier-og-koffein` og `bromelin-i-ananas` har kun `index.qmd` — ingen af dem er renderet til docx/pdf/html endnu. Skal renderes, når brugeren beder om det (se arbejdsgangs-reglen øverst).
 - Bio-C-delt-mappe (den delte mappe med gamle lærermaterialer) er gennemgået og opsummeret i et separat projektdokument, `claude/Bio-C-forsog-oversigt.md`, som lister kandidater til fremtidige standardiserede vejledninger. Dafnie-koffein-forsøget lå ikke i denne mappe, men i de separate "Fag-intro"/"Fagintro"-mapper — se `Forsogsvejledninger.md`, gruppe 4.
 
 ## Øvelsesfilerne hedder øvelsen, ikke `index` (2026-09-11)
@@ -268,7 +286,7 @@ diagrammet stammer fra lærebogsmateriale, og siden ligger offentligt på
 smbi.dk. Skal det erstattes, kan det gentegnes ud fra Nunn & Gregg-ligningerne
 på samme måde som spirogrammet.
 
-Kun `.qmd` + figurer er lavet — **ikke renderet** til docx/pdf/html, og de to
+Renderet til docx/pdf/html som alle de andre. De to
 øvelser er derfor endnu ikke sat til `quarto:true` i `oversigt.html`, ikke
 tilføjet som kort i `biologi.html` og ikke skrevet ind i `sitemap.xml`. Det
 hører med, når der bliver renderet (se arbejdsgangs-reglen øverst).
