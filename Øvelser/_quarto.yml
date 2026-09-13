@@ -24,7 +24,7 @@ format:
     page-layout: article
     fig-align: center
     include-before-body: banner.html
-    embed-resources: false
+    embed-resources: true
 
   docx:
     reference-doc: reference.docx
