@@ -132,9 +132,3 @@ $$\rho = \frac{m}{V}$$
 1. Hvor mange procent lettere er olien end vandet?
 2. Brug tallene til at forklare, hvorfor olien i del 2 bevægede sig op gennem sandet — og hvorfor den bliver liggende øverst.
 3. Råolie fra Nordsøen har en densitet omkring 0,85 g/cm³, mens det salte porevand i undergrunden er tungere end 1,00 g/cm³. Hvad betyder den forskel for oliens vej op gennem undergrunden?
-
-::: {.callout-note}
-## Oprindelse
-
-Vejledningen bygger på "Øvelse Oliens migration" (2019-udgaven), oprindeligt udarbejdet af Allan Andreasen Kortnum, Viborg Katedralskole, med senere rettelser og tilføjelser af HB. Fotografierne er fra den udgave.
-:::
