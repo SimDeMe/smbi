@@ -87,26 +87,3 @@ for ax, (noegle, titel) in zip(akser, trin):
 fig.subplots_adjust(left=.02, right=.98, top=.92, bottom=.02, wspace=.12)
 fig.savefig("forsoget.jpg", dpi=220, facecolor="white", pil_kwargs={"quality":88})
 print("skrev forsoget.jpg")
-
-# --- Energistyrelsens to figurer -----------------------------------------
-# Skærmklippene har rapportens egen billedtekst ("FIGUR 2: …") bagt ind under
-# selve figuren. Den ryger væk, så vejledningens egen nummerering står alene.
-def uden_bagt_billedtekst(noegle, filnavn):
-    billede = hent(noegle)
-    if billede.dtype != np.uint8:
-        billede = (billede*255).astype(np.uint8) if billede.max() <= 1 else billede.astype(np.uint8)
-    if billede.shape[2] == 4:
-        billede = billede[:, :, :3]
-    # den beige panelflade fylder næsten hele bredden; billedteksten under den
-    # er nogle få mørke bogstaver på hvid bund
-    fyldt = (np.abs(billede.astype(int) - 255).max(axis=2) > 12).mean(axis=1)
-    raekker = np.where(fyldt > 0.6)[0]
-    billede = billede[: raekker[-1] + 1]
-    fig, ax = plt.subplots(figsize=(billede.shape[1]/300, billede.shape[0]/300), dpi=300)
-    ax.imshow(billede); ax.axis("off")
-    fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    fig.savefig(filnavn, dpi=300, facecolor="white")
-    print("skrev", filnavn)
-
-uden_bagt_billedtekst("c7dfb8e1", "olieproduktion.png")
-uden_bagt_billedtekst("a94d571b", "gasproduktion.png")

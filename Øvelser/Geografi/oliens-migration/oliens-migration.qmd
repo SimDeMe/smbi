@@ -17,7 +17,7 @@ format:
 
 1. **Olie-geologi** — hvilke bjergarter hører til hvor i undergrunden?
 2. **Det praktiske forsøg** — oliens migration op gennem sand.
-3. **Perspektivering** — olieforbrug, -produktion og -forekomster.
+3. **Oliens densitet** — måling af den forskel, der driver migrationen.
 
 ## Del 1: Olie-geologi
 
@@ -66,6 +66,8 @@ Placér nu prøverne i skemaet, så stratigrafien passer i forhold til oliedanne
 - Sand
 - Vand
 - Madolie
+- Måleglas, 100 mL
+- Vægt (0,1 g eller finere)
 :::
 
 ::: {.callout-tip}
@@ -96,21 +98,40 @@ Tegn til sidst glasset af, som det ser ud ved forsøgets slutning, og sæt navn 
 
 Hvad er der for eksempel galt ved at bruge vegetabilsk olie frem for mineralsk olie? Find selv flere fejlkilder.
 
-## Del 3: Olieforbrug, produktion og forekomster
+## Del 3: Oliens densitet
 
-1. Gennemgå udviklingen i Danmarks forbrug af olie og naturgas ud fra @fig-olie og @fig-gas, og kom ind på, hvorvidt Danmark fortsat er selvforsynende med disse energiråstoffer.
+Forsøget i del 2 virker kun, fordi olien er lettere end vandet. Her sætter I tal på forskellen.
 
-![Produktion og langsigtet prognose for olie. Kilde: Energistyrelsens ressourceopgørelse (2018).](figurer/olieproduktion.png){#fig-olie width="82%"}
+### Fremgangsmåde
 
-![Produktion og langsigtet prognose for salgsgas. Kilde: Energistyrelsens ressourceopgørelse (2019).](figurer/gasproduktion.png){#fig-gas width="82%"}
+1. Vej et tomt, tørt måleglas, og notér massen.
+2. Afmål præcis 100 mL vand i måleglasset, og vej det igen.
+3. Tøm og tør måleglasset — eller tag et andet, tørt måleglas af samme slags.
+4. Afmål præcis 100 mL madolie, og vej på samme måde.
 
-De **teknologiske ressourcer** på figurerne er et skøn for, hvor meget mere der kan indvindes med ny teknologi. **Efterforskningsressourcerne** er et skøn for indvindingen fra kommende nye fund. Begge dele er altså olie og gas, man endnu ikke har fundet eller kan hente op — ikke reserver, man ved er der.
+| | Vand | Madolie |
+|:---|:---:|:---:|
+| Masse af tomt måleglas (g) | | |
+| Masse af måleglas med 100 mL væske (g) | | |
+| Væskens masse (g) | | |
 
-2. Hvilke fem lande besidder de største oliereserver, og er de lande medlem af OPEC? Er Rusland i øvrigt medlem af OPEC?
+: Vejninger til bestemmelse af densiteten. {#tbl-3}
 
-![De ti lande med verdens største oliereserver og deres andel af verdens samlede reserver. Kilde: World Oil Review 2018 (tal fra 2017).](figurer/oliereserver.png){#fig-reserver width="66%"}
+### Beregning
 
-3. Tallene på figurerne er fra 2017–2019. Find de nyeste tal for Danmarks olie- og gasproduktion hos Energistyrelsen, og vurdér, hvor meget billedet har flyttet sig siden.
+Densiteten er massen pr. rumfang. Rumfanget er de 100 mL, altså 100 cm³:
+
+$$\rho = \frac{m}{V}$$
+
+| | Vand | Madolie |
+|:---|:---:|:---:|
+| Densitet (g/cm³) | | |
+
+: Beregnet densitet. {#tbl-4}
+
+1. Hvor mange procent lettere er olien end vandet?
+2. Brug tallene til at forklare, hvorfor olien i del 2 bevægede sig op gennem sandet — og hvorfor den bliver liggende øverst.
+3. Råolie fra Nordsøen har en densitet omkring 0,85 g/cm³, mens det salte porevand i undergrunden er tungere end 1,00 g/cm³. Hvad betyder den forskel for oliens vej op gennem undergrunden?
 
 ::: {.callout-note}
 ## Oprindelse
