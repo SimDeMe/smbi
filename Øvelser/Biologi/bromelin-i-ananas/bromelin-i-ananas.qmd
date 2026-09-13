@@ -62,4 +62,4 @@ Brug en ny, ren pipette til hver væske, så safttyperne ikke blandes sammen. Vi
 | 3 | Ananas + syre + gelatine | |
 | 4 | Vand + gelatine (kontrol) | |
 
-: Resultat af enzymforsøget med bromelin fra ananas.
+: Resultat af enzymforsøget med bromelin fra ananas. {#tbl-1}

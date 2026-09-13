@@ -64,7 +64,7 @@ Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sam
 | 50 | | | | |
 | 60 | | | | |
 
-: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder.
+: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder. {#tbl-1}
 
 ### Porøsitet
 
@@ -72,4 +72,4 @@ Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sam
 |:---|:---:|:---:|:---:|:---:|
 | Volumen klart vand efter 30 min. (mL) | | | | |
 
-: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype.
+: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype. {#tbl-2}

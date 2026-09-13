@@ -56,6 +56,6 @@ Dobbelttjek at snoren er helt i vater, før I aflæser højden på stokken — e
 | Snorens højde på anden stok (cm) | | | | | |
 | **Beregnet højdeændring (cm)** — HUSK FORTEGN! | | | | | |
 
-: Måleresultater. Husk fortegn ved højdeændringerne!
+: Måleresultater. Husk fortegn ved højdeændringerne! {#tbl-1}
 
 *Sætter I ekstra stokke ind undervejs, tilføjes ekstra kolonner i hånden.*

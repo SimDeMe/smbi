@@ -68,7 +68,7 @@ Et spirometer (af latin *spirare* = ånde og *metrum* = måle) måler den luftm�
 |:---|:---:|:---:|:---:|:---:|
 | Vitalkapacitet (L) | | | | |
 
-: Dine egne tre målinger. Den højeste af dem er din vitalkapacitet.
+: Dine egne tre målinger. Den højeste af dem er din vitalkapacitet. {#tbl-1}
 
 Skriv derefter dit resultat ind i klassens skema sammen med de andres.
 
@@ -95,7 +95,7 @@ Skriv derefter dit resultat ind i klassens skema sammen med de andres.
 | | | | | |
 | | | | | |
 
-: Klassens data. K = kvinde, M = mand. Skemaet kan overføres direkte til et regneark, hvor graferne laves.
+: Klassens data. K = kvinde, M = mand. Skemaet kan overføres direkte til et regneark, hvor graferne laves. {#tbl-2}
 
 ## Databehandling
 

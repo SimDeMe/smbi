@@ -43,11 +43,11 @@ Skær skiverne så ens i størrelse og tykkelse som muligt — det gør det lett
 ## Registrering af målinger
 
 | NaCl-koncentration | Startvægt (g) | Slutvægt (g) | Ændring (g) | Ændring (%) | Konsistens efter |
-|:---|:---:|:---:|:---:|:---:|:---:|
+|:-------|:---:|:---:|:---:|:---:|:-----:|
 | 0 % (dest. vand) | | | | | |
 | 1 % | | | | | |
 | 3 % | | | | | |
 | 6 % | | | | | |
 | 12 % | | | | | |
 
-: Vægtændring hos kartoffelskiver i NaCl-opløsninger med forskellig koncentration.
+: Vægtændring hos kartoffelskiver i NaCl-opløsninger med forskellig koncentration. {#tbl-1}

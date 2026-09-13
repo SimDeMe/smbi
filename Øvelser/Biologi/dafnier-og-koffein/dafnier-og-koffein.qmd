@@ -60,8 +60,8 @@ Hold igen med lyset mellem tællingerne — det er den hyppigste årsag til, at 
 
 ## Registrering af målinger
 
-| Koffeinkoncentration | 1. gang | 2. gang | 3. gang | Gennemsnit | Noter |
-|:---|:---:|:---:|:---:|:---:|:---|
+| Koffeinkoncentration | Måling 1 | Måling 2 | Måling 3 | Gennemsnit | Noter |
+|:---------|:---:|:---:|:---:|:---:|:-----|
 | 0 mg/L (uden koffein) | | | | | |
 | 18,75 mg/L | | | | | |
 | 37,5 mg/L | | | | | |
@@ -70,4 +70,4 @@ Hold igen med lyset mellem tællingerne — det er den hyppigste årsag til, at 
 | 300 mg/L | | | | | |
 | 600 mg/L | | | | | |
 
-: Antal hjerteslag pr. minut hos dafnien ved stigende koffeinkoncentration.
+: Antal hjerteslag pr. minut hos dafnien ved stigende koffeinkoncentration. {#tbl-1}

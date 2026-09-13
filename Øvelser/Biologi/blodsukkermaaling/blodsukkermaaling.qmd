@@ -77,4 +77,4 @@ Kulhydratindholdet pr. 100 g/mL for den valgte fødevare findes på varedeklarat
 | Tid (min) | 0 | 15 | 30 | 45 | 60 | 75 | 90 |
 | Blodglukose (mmol/L) | | | | | | | |
 
-: Blodglukose som funktion af tid efter indtagelse af fødevaren.
+: Blodglukose som funktion af tid efter indtagelse af fødevaren. {#tbl-1}

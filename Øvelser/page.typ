@@ -66,8 +66,13 @@ $endif$
     #text(fill: rgb("#2C4527"), weight: "bold", size: 1.25em)[#it.body]
   ]
 }
+// Underoverskrifter (### i kildeteksten). Skal være en `block`, ikke bare
+// `text` — ellers fortsætter det følgende afsnit på samme linje som
+// overskriften.
 #show heading.where(level: 2): it => {
-  text(fill: rgb("#3F5F3A"), weight: "bold", size: 1.05em)[#it.body]
+  block(above: 1.3em, below: 0.55em, breakable: false)[
+    #text(fill: rgb("#3F5F3A"), weight: "bold", size: 1.05em)[#it.body]
+  ]
 }
 
 // Data tables: dark green header row, subtle striping, generous padding,
@@ -85,9 +90,54 @@ $endif$
 )
 #show table.cell.where(y: 0): set text(fill: white, weight: "bold")
 #show table.cell: it => {
+  // Brødteksten er lige i begge sider, men en tabelcelle er for smal til det:
+  // "0 % (dest. vand)" bliver strakt ud med store huller mellem ordene, og
+  // overskrifter bliver delt til "NaCl-kon-centration". I cellerne sættes
+  // teksten derfor lige i venstre side og uden orddeling.
+  set par(justify: false)
+  set text(hyphenate: false)
   if it.y == 0 { align(horizon, it) } else { it }
 }
 
 // Don't split a table across a page break — push the whole table to the
-// next page instead if it doesn't fit where it is.
-#show table: it => block(breakable: false, it)
+// next page instead if it doesn't fit where it is. Tabeller centreres i
+// tekstspalten: et smalt måleskema ser strandet ud, når det står op ad
+// venstre kant under en brødtekst, der er lige i begge sider.
+#show table: it => align(center, block(breakable: false, it))
+
+// Billedtekster (figurer og tabeller): centreret, lille, dæmpet kursiv —
+// samme udseende som i HTML- og Word-udgaven. `par(justify: false)` er
+// nødvendig, fordi brødteksten er lige i begge sider og ellers ville strække
+// en tolinjet billedtekst ud i hele spaltens bredde.
+#show figure.caption: it => block(width: 92%, {
+  set par(justify: false, leading: 0.55em)
+  set text(size: 0.82em, fill: muted, style: "italic")
+  align(center, it)
+})
+#show figure: set block(above: 1.4em, below: 1.4em)
+
+// --- Formler -------------------------------------------------------------
+//
+// `\text{...}` i kildeteksten bliver til `upright("...")` i Typst og sættes
+// dermed i matematikskriften — en serif, der falder igennem midt i en
+// ordformel som "Afvigelse (%) = (forventet − målt) / forventet". Ved at
+// skygge `upright` sættes netop de ord i brødskriften, mens rigtige
+// matematiske tegn (ρ, √, ∑, brøkstreger) beholder matematikskriften og
+// dermed deres korrekte udseende.
+#let upright(body) = text(font: "Carlito", math.upright(body))
+
+// Selvstændige formler får deres egen ramme: centreret, med accentstreg i
+// venstre kant, så de står som noget, man skal bruge, og ikke som en løs
+// linje mellem to afsnit.
+#show math.equation.where(block: true): it => block(
+  width: 100%,
+  above: 1.3em,
+  below: 1.3em,
+  align(center, block(
+    fill: rgb("#F5F7F2"),
+    stroke: (left: 3pt + rgb("#3F5F3A"), rest: 0.5pt + rgb("#D8E0D2")),
+    radius: (top-right: 3pt, bottom-right: 3pt),
+    inset: (left: 15pt, right: 17pt, top: 11pt, bottom: 11pt),
+    text(size: 1.05em, it),
+  )),
+)

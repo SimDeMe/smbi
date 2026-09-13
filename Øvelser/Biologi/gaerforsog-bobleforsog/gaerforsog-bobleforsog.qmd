@@ -80,4 +80,4 @@ Bromthymolblåt skifter farve med pH: blåt ved pH over 7,6, grønt ved pH 6,0-7
 | Antal bobler/min efter 30 min | | | | |
 | BTB-farve og tidspunkt for ændring | | | | |
 
-: Iagttagelser fra de fire gærrør.
+: Iagttagelser fra de fire gærrør. {#tbl-1}

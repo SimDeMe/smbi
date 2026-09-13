@@ -29,7 +29,7 @@ Inden I går i gang, skal I kende forskel på de fire sedimenter. Undersøg gern
 | Brunjord | |
 | Rødjord (Ghana) | |
 
-: Iagttagelser af de fire sedimentprøver før forsøget.
+: Iagttagelser af de fire sedimentprøver før forsøget. {#tbl-1}
 
 ## Fremgangsmåde
 
@@ -88,7 +88,7 @@ Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sam
 | 60 | | | | |
 | Slut | | | | |
 
-: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder.
+: Opsamlet vandmængde (mL) over tid for hver jordtype. Tilføj flere rækker, hvis vandet stadig siver igennem efter 60 sekunder. {#tbl-2}
 
 ### Porøsitet
 
@@ -96,7 +96,7 @@ Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sam
 |:---|:---:|:---:|:---:|:---:|
 | Volumen klart vand efter 30 min. (mL) | | | | |
 
-: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype.
+: Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype. {#tbl-3}
 
 ## Resultatbehandling
 
@@ -117,7 +117,7 @@ Totalvolumenet er de 50 mL sediment, I startede med. Porevolumenet er den plads,
 | Porevolumen (mL) | | | | |
 | Porøsitet (%) | | | | |
 
-: Beregnet porøsitet for hver af de fire jordtyper.
+: Beregnet porøsitet for hver af de fire jordtyper. {#tbl-4}
 
 ### Opgave 3: Markkapacitet
 
@@ -128,7 +128,7 @@ Hvor meget vand blev holdt tilbage i prøverne i fase 1? Beregn forskellen melle
 | Vand løbet igennem (mL) | | | | |
 | Vand tilbageholdt (mL) | | | | |
 
-: Markkapacitet beregnet som 100 mL minus den gennemløbne vandmængde.
+: Markkapacitet beregnet som 100 mL minus den gennemløbne vandmængde. {#tbl-5}
 
 ## Diskussion og perspektivering
 

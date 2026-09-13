@@ -65,7 +65,7 @@ Pak jordprøverne lige hårdt i de to forsøg, og hæld vandet på lige hurtigt 
 | 120 (2 min.) | | |
 | Slut | | |
 
-: Opsamlet vandmængde (mL) over tid for de to jordtyper.
+: Opsamlet vandmængde (mL) over tid for de to jordtyper. {#tbl-1}
 
 ## Opgave 2: Grafisk fremstilling
 
@@ -83,7 +83,7 @@ $$\text{vand tilbageholdt} = 100\ \text{mL} - \text{vand løbet igennem}$$
 | Vand løbet igennem i alt (mL) | | |
 | Vand tilbageholdt (mL) | | |
 
-: Markkapacitet for de to jordtyper.
+: Markkapacitet for de to jordtyper. {#tbl-2}
 
 ## Opgave 4: Analyse og konklusion
 

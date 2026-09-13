@@ -98,7 +98,7 @@ Tænk også over, hvilken farve planterne får under de to betingelser.
 |  |  |  |  |  |  |
 |  |  |  |  |  |  |
 
-: Karsens højde (cm) i lys og i mørke, målt én gang i døgnet. De to første rækker er et eksempel på, hvordan skemaet udfyldes.
+: Karsens højde (cm) i lys og i mørke, målt én gang i døgnet. De to første rækker er et eksempel på, hvordan skemaet udfyldes. {#tbl-1}
 
 ## Databehandling og rapport
 

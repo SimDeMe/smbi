@@ -86,11 +86,31 @@ figcaption, .figure-caption {
   font-style: italic;
   font-size: .85rem;
   text-align: center;
+  // Brødteksten er bred; en centreret tekst, der får lov at fylde hele
+  // bredden, ligner et løst afsnit. Holdes den lidt smallere, læses den som
+  // det, den er — en billedtekst.
+  max-width: 42rem;
+  margin-inline: auto;
+  line-height: 1.45;
+}
+
+// Figurer og tabeller står midt i spalten, ikke op ad venstre kant.
+figure, .quarto-float, .quarto-figure {
+  margin-inline: auto;
+  text-align: center;
+}
+figure img, .quarto-figure img {
+  display: block;
+  margin-inline: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 table {
   font-size: .95rem;
   border-collapse: collapse;
+  // Reglen ovenfor centrerer billedteksten — cellerne skal ikke med.
+  text-align: initial;
 }
 
 // Full grid lines, so each cell reads as its own box — matters for
@@ -100,15 +120,80 @@ table td {
   border: 1px solid $table-border-color;
 }
 
-// Horizontal scroll is a screen-only convenience for wide tables — on
-// screen it makes the table `display: block`, which is fine there but
-// would stop @media print below from keeping the table on one page, so
-// it's scoped to screen only.
+// Tomme celler i et skema, der skal udfyldes i hånden, ville ellers klappe
+// sammen til en tynd streg — hver række skal have højde til at skrive i.
+table td { height: 1.75rem; }
+
+// Vandret rulning er en bekvemmelighed for brede tabeller på skærmen. Den
+// gør tabellen til `display: block`, hvilket er fint dér, men ville forhindre
+// @media print nedenfor i at holde tabellen samlet på én side — derfor kun
+// på skærm. `width: fit-content` + `margin-inline: auto` er det, der
+// centrerer blokken; en tabel med bare `display: block` ville stå op ad
+// venstre kant, uanset hvordan figuren omkring den er sat op.
 @media screen {
-  table {
+  table,
+  table.table {           // slår Bootstraps `.table { width: 100% }`
     display: block;
-    overflow-x: auto;
+    width: fit-content;
     max-width: 100%;
+    margin-inline: auto;
+    overflow-x: auto;
+  }
+}
+
+// Bootstrap tegner en kraftig streg mellem tabellens dele
+// (`.table > :not(:first-child)`). Når tabellen er `display: block`, lægger
+// den sig på tværs af hele spalten i stedet for hen over tabellen, og så står
+// der en løs streg til højre for skemaet. Cellernes egne rammer tegner i
+// forvejen gitteret.
+.table > :not(caption) > * > * { box-shadow: none; }
+.table > :not(:first-child) { border-top: 0; }
+
+@media print {
+  table { margin-inline: auto; }
+}
+
+// ---------------------------------------------------------------------------
+// Formler
+// ---------------------------------------------------------------------------
+// Display-formler får deres egen ramme: centreret, med accentstreg i venstre
+// kant, så de står som noget, man skal bruge, og ikke som en løs linje mellem
+// to afsnit. Rammen slutter om formlen i stedet for at fylde hele bredden —
+// ellers ligner den en callout-boks.
+.math.display {
+  display: block;
+  text-align: center;
+  margin: 1.35rem 0;
+}
+
+.math.display mjx-container {
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: .7rem 1.1rem .7rem .95rem;
+  background: $table-striped-bg;
+  border: 1px solid $rule;
+  border-left: 4px solid $accent;
+  border-radius: 0 4px 4px 0;
+  font-size: 1.06em;
+  // En bred formel må rulle vandret i sin egen ramme frem for at flyde ud
+  // over spalten.
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+  vertical-align: middle;
+}
+
+// Ordene i formlen sættes i sidens egen skrift — se mathjax-config.html.
+// Her sikres bare, at MathJax' arvede skrift er brødskriften og ikke noget,
+// et tema har sat på det omsluttende afsnit.
+mjx-container { font-family: $font-family-sans-serif; }
+
+@media print {
+  .math.display mjx-container {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    break-inside: avoid;
   }
 }
 

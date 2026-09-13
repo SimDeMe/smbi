@@ -41,7 +41,7 @@ Vær omhyggelige med at kaste cirklen tilfældigt og få alle arter med — data
 ## Registrering af målinger
 
 | Art (dansk og evt. latinsk navn) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|:---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|:-------------------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | Eksempel: Tusindfryd / *Bellis perennis* | x | | x | x | | | x | x | x | |
 | | | | | | | | | | | |
 | | | | | | | | | | | |
@@ -54,6 +54,6 @@ Vær omhyggelige med at kaste cirklen tilfældigt og få alle arter med — data
 | | | | | | | | | | | |
 | **Antal arter pr. cirkel** | | | | | | | | | | |
 
-: Rådata fra 10 Raunkiærcirkler i græsplænen (sæt et kryds, når arten findes i cirklen).
+: Rådata fra 10 Raunkiærcirkler i græsplænen (sæt et kryds, når arten findes i cirklen). {#tbl-1}
 
 **Antal arter pr. cirkel i gennemsnit:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_

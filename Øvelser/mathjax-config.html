@@ -1,0 +1,15 @@
+<script>
+// Ordene i en tekstformel — \text{...} — skal sættes i sidens egen skrift, så
+// en formel som "Afvigelse (%) = (forventet − målt) / forventet" ikke skifter
+// skrift midt i sætningen. Rigtige matematiske tegn beholder MathJax' egen
+// skrift og dermed deres korrekte udseende. Samme greb som i page.typ til
+// PDF'en, hvor `upright` skygges.
+//
+// Skal stå før MathJax indlæses, derfor `include-in-header` i _quarto.yml.
+window.MathJax = {
+  chtml: {
+    mtextInheritFont: true,
+    merrorInheritFont: true
+  }
+};
+</script>

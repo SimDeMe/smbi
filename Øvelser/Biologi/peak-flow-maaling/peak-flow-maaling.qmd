@@ -66,7 +66,7 @@ I skal måle jeres eget Peak Flow med et peakflow-meter, sammenligne det med den
 |:---|:---:|:---:|:---:|:---:|:---:|
 | Peak Flow (L/min) | | | | | |
 
-: Dine egne tre pust, den højeste værdi og den forventede værdi aflæst i @fig-diagram.
+: Dine egne tre pust, den højeste værdi og den forventede værdi aflæst i @fig-diagram. {#tbl-1}
 
 Beregn, hvor mange procent din målte værdi afviger fra den forventede:
 
@@ -99,7 +99,7 @@ Skriv derefter dit resultat ind i klassens skema sammen med de andres.
 | | | | | |
 | | | | | |
 
-: Klassens resultater. K = kvinde, M = mand. Skemaet kan overføres direkte til et regneark.
+: Klassens resultater. K = kvinde, M = mand. Skemaet kan overføres direkte til et regneark. {#tbl-2}
 
 ## Databehandling
 

@@ -91,4 +91,4 @@ Petriskålens areal findes med $A = \pi r^2$, hvor $r$ er halvdelen af skålens 
 | Bakteriekim pr. m² pr. time | | |
 | Svampekim pr. m² pr. time | | |
 
-: Kimfald af bakterier og svampe, indendørs og udendørs.
+: Kimfald af bakterier og svampe, indendørs og udendørs. {#tbl-1}
