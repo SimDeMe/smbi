@@ -36,6 +36,13 @@ sikkerhed og registreringsskema skal hver vejledning have to afsnit:
 
 Se `Biologi/biodiversitet-i-graesplaenen/` som forlæg for begge.
 
+**Hver øvelse skal have sit eget kort** i staken «Forsøgsvejledninger» på
+`biologi.html` eller `geografi.html` — ét kort pr. mappe under
+`Øvelser/Biologi/` og `Øvelser/Geografi/`, uden undtagelser. Kortet står
+alfabetisk, linker til `.html` og har `PDF`/`Word`-sublinks (samt link til
+simuleringen, hvis der findes en). Tælleren i stak-hovedet (`<span class="n">`)
+rettes med, og sidens adresse skrives ind i `sitemap.xml`.
+
 `Øvelser/oversigt.html` opdateres **altid**, når en vejledning laves eller
 rettes: rækken skal have emne, sti til originalen og de rigtige værdier i
 `data`- og `spg`-felterne, og tællere og «Det der mangler»-listen skal passe

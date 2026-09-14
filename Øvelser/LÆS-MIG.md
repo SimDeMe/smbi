@@ -38,7 +38,8 @@ Fordi `_quarto.yml` ligger i toppen af `Øvelser/`, gælder opsætningen automat
 2. Slet de gamle figurer i `figurer/`, og ret `.qmd`-filen: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.
 3. Tag de to faste afsnit med (se nedenfor): **Databehandling** og **Journalspørgsmål**.
 4. Skriv øvelsen ind i `oversigt.html` — også når du kun retter i en, der findes i forvejen.
-5. Claude renderer selv vejledningen til PDF/Word/HTML, hver gang `.qmd`-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:
+5. Giv øvelsen et kort på `biologi.html` eller `geografi.html` under «Forsøgsvejledninger», så den kan findes fra sitet. Alle øvelser skal have ét.
+6. Claude renderer selv vejledningen til PDF/Word/HTML, hver gang `.qmd`-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:
    ```
    quarto render <øvelse>.qmd --to typst   # PDF
    quarto render <øvelse>.qmd --to docx    # Word

@@ -58,6 +58,22 @@ begrundelse, at det var arbejdsspørgsmål, læreren selv tilføjede
 blev besluttet — reglen er nu den modsatte. Rettes en af de gamle vejledninger,
 skal den have begge afsnit med.
 
+## Hver øvelse har et kort på fagforsiden
+
+Enhver mappe under `Øvelser/Biologi/` og `Øvelser/Geografi/` skal have **ét
+kort** i staken «Forsøgsvejledninger» på henholdsvis `biologi.html` og
+`geografi.html`. En ny øvelse er ikke færdig, før kortet er der.
+
+Kortet står alfabetisk blandt de andre og følger samme markup som naboerne: en
+`.item` med `data-sog` (søgeord i små bogstaver, inkl. `pdf word`), `<h4>` med
+link til `…/<øvelse>.html`, en enkelt sætning om hvad man gør, `<span
+class="fag">Forsøg</span>` og en `.sub` med `PDF`- og `Word`-links. Har øvelsen
+en simulering på sitet, kommer den med som et ekstra `.sub`-link.
+
+Tre ting følger med hver gang: tælleren i stak-hovedet
+(`<h3>Forsøgsvejledninger</h3><span class="n">…</span>`), rækken i
+`oversigt.html` og url'en i `sitemap.xml`.
+
 ## `oversigt.html` opdateres altid
 
 `oversigt.html` er den interne oversigt og skal opdateres, hver gang en
