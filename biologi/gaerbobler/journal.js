@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════════════════════
+   journal.js — arbejdssedlen ved siden af bordet.
+
+   To faneblade: fremgangsmåden fra øvelsesvejledningen, hvor
+   trinnene sætter flueben, efterhånden som de bliver udført, og
+   journalen, hvor de målinger, man selv har taget, samler sig —
+   temperaturer, tid for første boble, bobletællinger og BTB's
+   farveskift. Det er de tal, grafen i databehandlingen skal
+   bygges på.
+   ═══════════════════════════════════════════════════════════ */
+import {btbNavn, roerPH, btbFarve} from './gaering.js';
+
+export const KOLBEFARVER = ['#FFB300', '#5FB030', '#0FA593', '#0E86C8'];
+
+export function urTekst(s){
+  if(s === null || s === undefined) return '–';
+  const m = Math.floor(s / 60), r = Math.floor(s % 60);
+  return `${m}:${String(r).padStart(2, '0')}`;
+}
+
+const komma = (v, n = 0) => Number(v).toFixed(n).replace('.', ',');
+
+/* ── Fremgangsmåden ────────────────────────────────────── *
+ * Trinnene er dem fra Øvelser/Biologi/gaerforsog-bobleforsog.
+ * Rækkefølgen er den anbefalede, men intet er spærret: man må
+ * gerne gøre tingene i en anden orden og se, hvad der så sker.  */
+export function trinListe(v){
+  const [k1, k2, k3, k4] = v.kolber;
+  const andre = [k2, k3, k4];
+  const alle = (f, liste = v.kolber) => liste.every(f);
+  const temps = andre.map(k => k.maaltTemp ?? k.temp);
+  const spredt = andre.every(k => k.vand > 0)
+    && Math.max(...temps) - Math.min(...temps) > 12;
+
+  const taelt = v.kolber.reduce((s, k) => s + k.taellinger.length, 0);
+
+  return [
+    {gruppe:'A · Klargøring af gærrør'},
+    {klar:alle(r => r.vand, v.roer), navn:'Fyld de fire gærrør med vand',
+     tekst:'Træk måleglasset op på et gærrør i stativet — ét ad gangen.'},
+    {klar:alle(r => r.btb, v.roer), navn:'Dryp BTB i',
+     tekst:'Bromthymolblåt farver vandet blåt. Notér farven, før forsøget går i gang.'},
+
+    {gruppe:'B · De fire kolber'},
+    {klar:k1.toerblandet, navn:'Kolbe 1: Gær og sukker tørt',
+     tekst:'20 g gær og 25 g sukker i kolbe 1 — rør rundt med spatlen uden vand, og se, hvad der sker.'},
+    {klar:andre.every(k => k.sukker > 0 && k.vand > 0), navn:'Kolbe 2-4: Sukker i vand',
+     tekst:'25 g sukker og 100 mL vand i hver af de tre andre kolber.'},
+    {klar:spredt, navn:'Tre forskellige temperaturer',
+     tekst:'Sæt kolberne på varmepladerne, og giv dem fx stuetemperatur, håndvarmt og varmt. Mål med termometeret.'},
+    {klar:andre.every(k => k.gaer > 0 && k.roert), navn:'Gær i kolbe 2-4',
+     tekst:'20 g gær i hver, og rør rundt.'},
+    {klar:k1.vand > 0, navn:'Vand i kolbe 1',
+     tekst:'Først nu får kolbe 1 sine 100 mL vand ved stuetemperatur.'},
+    {klar:alle(k => !!k.roer), navn:'Prop med gærrør på alle fire',
+     tekst:'Træk et klargjort gærrør fra stativet ned på kolbens hals.'},
+    {klar:v.ur.løber, navn:'Start stopuret',
+     tekst:'Samtidig for alle fire kolber.'},
+
+    {gruppe:'C · Observation'},
+    {klar:v.kolber.some(k => k.foersteBoble !== null), navn:'Første boble',
+     tekst:'Tidspunktet skrives i journalen af sig selv, når den første boble forlader gærrøret.'},
+    {klar:taelt >= 9, navn:`Tæl bobler i ét minut — ${taelt} af 12 tællinger`,
+     tekst:'Vælg en kolbe, og tryk "Tæl bobler i 1 min". Gør det for alle fire efter fx 5, 15 og 30 minutter.'},
+    {klar:v.kolber.some(k => k.skift.groen || k.skift.gul), navn:'BTB skifter farve',
+     tekst:'Hold øje med farven i gærrørene. Blå over pH 7,6, grøn 6,0-7,6 og gul under 6,0.'},
+  ];
+}
+
+export function tegnTrin(el, v){
+  const liste = trinListe(v);
+  const næste = liste.findIndex(t => !t.gruppe && !t.klar);
+  el.innerHTML = liste.map((t, i) => {
+    if(t.gruppe) return `<div class="trinhoved">${t.gruppe}</div>`;
+    const k = t.klar ? 'klar' : i === næste ? 'naeste' : '';
+    return `<ul class="trin"><li class="${k}"><span class="boks"></span>
+      <div><b>${t.navn}</b><span>${t.tekst}</span></div></li></ul>`;
+  }).join('');
+}
+
+/* ── Journalen ─────────────────────────────────────────── */
+export function tegnJournal(el, v){
+  const blokke = v.kolber.map((k, i) => {
+    const r = k.roer;
+    const rækker = [];
+
+    const temp = k.maaltTemp === null
+      ? '<span class="jtom">Ikke målt endnu</span>'
+      : `<b>${komma(k.maaltTemp)}</b> °C`;
+    rækker.push(`<div class="jrow"><span class="mono">Temperatur</span>${temp}</div>`);
+
+    rækker.push(`<div class="jrow"><span class="mono">1. boble</span>${
+      k.foersteBoble === null ? '–' : `<b>${urTekst(k.foersteBoble)}</b>`}</div>`);
+
+    if(k.taellinger.length === 0){
+      rækker.push('<div class="jrow"><span class="mono">Bobler/min</span>–</div>');
+    } else {
+      for(const t of k.taellinger)
+        rækker.push(`<div class="jrow"><span class="mono">${urTekst(t.tid)}</span><b>${t.antal}</b> bobler/min</div>`);
+    }
+
+    const skift = [];
+    if(k.skift.groen) skift.push(`grøn ${urTekst(k.skift.groen)}`);
+    if(k.skift.gul)   skift.push(`gul ${urTekst(k.skift.gul)}`);
+    const farve = r && r.vand && r.btb ? btbNavn(roerPH(r)) : '–';
+    rækker.push(`<div class="jrow"><span class="mono">BTB</span><b>${farve}</b>${
+      skift.length ? ` <span style="color:#5A6C69">(${skift.join(', ')})</span>` : ''}</div>`);
+
+    if(k.toerblandet && k.toerTid > 40)
+      rækker.push(`<div class="jrow"><span class="mono">Iagttagelse</span>Den tørre blanding blev flydende</div>`);
+
+    return `<div class="jblok" style="--kf:${KOLBEFARVER[i]}">
+      <h4><span class="prik"></span>${k.navn}<span class="t">${komma(k.temp)} °C</span></h4>
+      ${rækker.join('')}
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<button type="button" class="btn-mini" id="btn-kopi"
+      style="margin-bottom:12px">Kopiér skema</button>${blokke}
+    <p class="jnote">Tallene her svarer til skemaet i øvelsesvejledningen. Tegn grafen
+    med tiden på x-aksen og bobler pr. minut på y-aksen, og plot alle fire kolber
+    i samme koordinatsystem.</p>`;
+}
+
+/** Journalen som et skema, der kan sættes ind i et regneark. */
+export function skemaTekst(v){
+  const tider = [...new Set(v.kolber.flatMap(k => k.taellinger.map(t => t.tid)))]
+    .sort((a, b) => a - b);
+  const linjer = [];
+  linjer.push(['', ...v.kolber.map(k => k.navn)].join('\t'));
+  linjer.push(['Temperatur (°C)',
+    ...v.kolber.map(k => k.maaltTemp === null ? '' : komma(k.maaltTemp))].join('\t'));
+  linjer.push(['Tid for første boble',
+    ...v.kolber.map(k => urTekst(k.foersteBoble))].join('\t'));
+  for(const t of tider){
+    linjer.push([`Bobler/min ved ${urTekst(t)}`, ...v.kolber.map(k => {
+      const m = k.taellinger.find(x => x.tid === t);
+      return m ? m.antal : '';
+    })].join('\t'));
+  }
+  linjer.push(['BTB grøn fra', ...v.kolber.map(k => urTekst(k.skift.groen))].join('\t'));
+  linjer.push(['BTB gul fra',  ...v.kolber.map(k => urTekst(k.skift.gul))].join('\t'));
+  return linjer.join('\n');
+}
+
+/** Farveklatten til instrumentet. */
+export function btbKlat(r){
+  if(!r || !r.vand) return '#FFFFFF';
+  return r.btb ? btbFarve(roerPH(r)) : '#CFE6F2';
+}

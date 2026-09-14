@@ -290,3 +290,15 @@ Renderet til docx/pdf/html som alle de andre. De to
 øvelser er derfor endnu ikke sat til `quarto:true` i `oversigt.html`, ikke
 tilføjet som kort i `biologi.html` og ikke skrevet ind i `sitemap.xml`. Det
 hører med, når der bliver renderet (se arbejdsgangs-reglen øverst).
+
+## Grundversionen af poroesitet-og-permeabilitet fjernet (2026-09-14)
+
+`Geografi/poroesitet-og-permeabilitet/` (qmd/html/pdf/docx) er slettet fra
+repoet. Den var overflødig ved siden af de to udgaver, den selv blev forlæg
+for: `-med-opgaver` (fuld databehandling og diskussion) og `-hf` (kortere,
+to jordtyper) — se afsnittet ovenfor om `GeoVejledninger lagt ind i Øvelser`.
+
+Henvisninger fjernet samme sted: kortet i `geografi.html`s
+"Forsøgsvejledninger" (tælleren rettet 8 → 7), `.sub`-linket "Forsøgsvejledning"
+på `poroesitetPermeabilitet`-simuleringskortet (peger nu på `-med-opgaver` i
+stedet), rækken i `Øvelser/oversigt.html`, og url'en i `sitemap.xml`.

@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gærbobleforsøget — virtuelt laboratorium — smbi.dk</title>
+<meta name="description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/biologi/gaerbobler.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/gaerbobler.html">
+<meta property="og:title" content="Gærbobleforsøget — virtuelt laboratorium">
+<meta property="og:description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Gærbobleforsøget — en virtuel klon af laboratorieøvelsen
+   "Gærforsøg — bobleforsøg" (Øvelser/Biologi/gaerforsog-bobleforsog).
+   Man trækker redskaberne rundt på bordet, sætter forsøget op
+   selv og tæller bobler. Følger smbi.dk's designskabelon
+   (design_rules.md), og siden er delt op i moduler — se
+   design_rules.md afsnit 0 og biologi/gaerbobler/side.js.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--bio);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --fig:392px;         /* figurens højdebudget — sættes af
+                          scriptet "Højdebudget" nederst */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.mono{font-family:var(--mono);font-size:0.68rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase}
+.enhed{text-transform:none}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{background:rgba(255,249,238,0.93);backdrop-filter:blur(10px);border-bottom:2px solid var(--ink)}
+.top-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:16px;height:60px}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#FBD3E1;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#F7B9D2;filter:blur(70px);opacity:.5;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:60ch}
+
+/* ── Signaturpanel ─────────────────────────────────────── */
+.rig{
+  position:relative;background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);background:#FDEAF1;
+}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite}
+.rig-head .spacer{margin-left:auto}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{background:var(--accent);color:#fff;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini:disabled{opacity:.4;cursor:not-allowed;box-shadow:2px 2px 0 var(--ink);transform:none}
+
+/* ── Scenen: bordet til venstre, journalen til højre ───── */
+.stage{
+  position:relative;display:grid;grid-template-columns:1fr 328px;
+  border-top:2px solid var(--ink);
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+.view{
+  /* Højdebudget: bordet må ikke blive højere end --fig. */
+  width:min(100%,calc(var(--fig)*1040/560 + 20px));margin-inline:auto;
+  position:relative;padding:10px;
+}
+.view canvas{
+  display:block;width:100%;height:auto;touch-action:none;
+  border:2px solid var(--ink);border-radius:12px;background:#F3F7F6;cursor:grab;
+}
+.view canvas.griber{cursor:grabbing}
+.hint{
+  position:absolute;left:22px;bottom:18px;z-index:2;pointer-events:none;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink);background:rgba(255,249,238,.92);border:1.5px solid var(--ink);
+  border-radius:14px;padding:4px 10px;
+}
+
+/* ── Journalruden ──────────────────────────────────────── *
+ * Ruden må aldrig bestemme, hvor høj scenen er: trinlisten og
+ * journalen er forskelligt lange, og så ville bordet hoppe op og
+ * ned, hver gang man skifter faneblad. Indholdet lægges derfor
+ * oven på ruden og ruller for sig selv.                        */
+.side{border-left:2px solid var(--ink);background:#fff;position:relative;overflow:hidden}
+.side-in{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0}
+.side-h{padding:9px 12px;border-bottom:2px solid var(--ink);background:var(--paper-2);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.side-h .mono{color:#5A6C69;font-size:0.55rem;margin-right:auto}
+.side-body{padding:12px 14px 16px;font-size:0.9rem;line-height:1.5;color:#2A3735;overflow-y:auto;flex:1}
+.side-body[hidden]{display:none}
+
+/* Trinlisten */
+.trin{list-style:none;display:flex;flex-direction:column;gap:9px}
+.trin li{display:flex;gap:9px;align-items:flex-start}
+.trin .boks{
+  flex:none;width:20px;height:20px;border:2px solid var(--ink);border-radius:6px;
+  background:#fff;margin-top:2px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:0.8rem;line-height:1;color:#fff;
+}
+.trin li.klar .boks{background:var(--lime)}
+.trin li.klar .boks::after{content:'✓'}
+.trin li.naeste .boks{background:var(--amber);border-color:var(--ink)}
+.trin li.naeste .boks::after{content:'›';color:var(--ink)}
+.trin b{font-family:var(--display);font-weight:800;font-size:0.9rem;display:block;line-height:1.2}
+.trin span{font-size:0.84rem;line-height:1.4;color:#3E4E4C}
+.trin li.klar b{color:#5A6C69}
+.trinhoved{
+  margin:14px 0 9px;padding-top:11px;border-top:2px solid var(--ink);
+  font-family:var(--mono);font-size:0.55rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;
+}
+.trinhoved:first-child{margin-top:0;padding-top:0;border-top:none}
+
+/* Journalen: én blok pr. kolbe */
+.jblok{border:2px solid var(--ink);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.jblok > h4{
+  font-family:var(--display);font-weight:800;font-size:0.86rem;
+  padding:5px 10px;border-bottom:2px solid var(--ink);background:var(--paper-2);
+  display:flex;align-items:center;gap:7px;
+}
+.jblok > h4 .prik{width:10px;height:10px;border-radius:3px;border:1.5px solid var(--ink);background:var(--kf,#fff);flex:none}
+.jblok > h4 .t{margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:.06em;color:#5A6C69}
+.jrow{display:flex;gap:8px;padding:3px 10px;font-size:0.8rem;align-items:baseline}
+.jrow + .jrow{border-top:1.5px dotted #C9D4D2}
+.jrow .mono{font-size:0.52rem;color:#5A6C69;flex:none;width:86px}
+.jrow b{font-family:var(--display);font-weight:800;font-variant-numeric:tabular-nums}
+.jtom{font-size:0.82rem;color:#5A6C69;padding:3px 10px}
+.jnote{font-size:0.82rem;color:#3E4E4C;margin-top:10px;padding-top:10px;border-top:2px solid var(--ink)}
+
+/* ── Instrumenter ──────────────────────────────────────── */
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink)}
+.gauge{padding:12px 15px 13px;border-left:2px solid var(--ink);display:flex;flex-direction:column;gap:7px}
+.gauge:nth-child(1){border-left:none;background:#FFF1EC}
+.gauge:nth-child(2){background:#F1ECFC}
+.gauge:nth-child(3){background:#EDF8E4}
+.gauge:nth-child(4){background:#E7F4FB}
+.gauge dt{font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
+.gauge dd{
+  font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;
+  font-size:1.06rem;line-height:1.2;font-variant-numeric:tabular-nums;
+  display:flex;align-items:baseline;gap:7px;
+}
+.gauge dd .enhed{
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;
+  letter-spacing:0.04em;color:#5A6C69;text-transform:none;
+}
+.btb-prik{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);background:var(--bf,#fff);flex:none;align-self:center}
+
+/* ── Skydere ───────────────────────────────────────────── */
+.knobs{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:16px 15px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px 26px;
+}
+.knob{display:flex;flex-direction:column;gap:7px}
+.knob-top{display:flex;align-items:baseline;gap:10px}
+.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-val{
+  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;
+  white-space:nowrap;
+}
+.knob-val .enhed{font-family:var(--mono);font-size:0.62rem;font-weight:600;color:#5A6C69}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;
+  background:var(--track,linear-gradient(90deg,#fff,var(--kc,var(--amber))));
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range]::-moz-range-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;
+  background:var(--track,linear-gradient(90deg,#fff,var(--kc,var(--amber))));
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+
+/* ── Kolbevælgeren ─────────────────────────────────────── */
+.facts{border-top:2px solid var(--ink);background:#fff;padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.facts > .mono{color:#5A6C69;font-size:0.55rem;margin-right:2px}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;background:var(--paper);
+  border:2px solid var(--ink);border-radius:22px;padding:5px 13px;color:var(--ink);
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink);flex:none}
+.fact::after{
+  content:attr(data-note);font-family:var(--mono);font-size:0.5rem;
+  border:1.5px solid currentColor;border-radius:9px;padding:0 5px;opacity:.75;
+  text-transform:none;letter-spacing:.04em;
+}
+.fact:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+.fact[aria-pressed="true"]{background:var(--ink);color:#FFF6E0}
+
+/* ── Instruksen ────────────────────────────────────────── *
+ * Det første, man møder: en kort briefing oven på panelet. Den
+ * ligger inde i .rig og er absolut placeret, så panelet ikke
+ * skifter højde, når den lukkes — rammen skal stå stille.       */
+.instruks{
+  position:fixed;inset:0;z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:22px;
+  background:rgba(255,249,238,.93);backdrop-filter:blur(5px);
+}
+.instruks[hidden]{display:none}
+.instruks-kort{
+  background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;
+  box-shadow:var(--hard-lg);padding:22px 26px 20px;max-width:640px;margin:auto;
+  /* Kortet skal kunne rummes på en bærbar skærm: bliver det for
+     højt, ruller det i sig selv i stedet for at skubbe knappen
+     ned under kanten. */
+  max-height:calc(100dvh - 44px);overflow-y:auto;
+}
+.instruks-kort h2{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(1.3rem,2.6vw,1.6rem);line-height:1.06;letter-spacing:-0.028em;margin:12px 0 9px;
+}
+.instruks-kort .ind{font-size:0.97rem;color:#3E4E4C;margin-bottom:15px}
+.instruks-trin{
+  list-style:none;display:flex;flex-direction:column;gap:10px;
+  border-top:2px solid var(--ink);padding-top:14px;
+}
+.instruks-trin li{display:flex;gap:12px;align-items:flex-start}
+.instruks-trin .nr{
+  flex:none;width:26px;height:26px;border-radius:9px;border:2px solid var(--ink);
+  background:var(--accent);color:#fff;display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:0.88rem;line-height:1;
+}
+/* Kun trinnets overskrift er en blok — fremhævninger inde i
+   brødteksten skal blive på linjen. */
+.instruks-trin > li > div > b{font-family:var(--display);font-weight:800;font-size:0.95rem;display:block;line-height:1.2}
+.instruks-trin span{font-size:0.89rem;line-height:1.45;color:#3E4E4C}
+.instruks-fod{
+  margin-top:15px;padding-top:13px;border-top:2px solid var(--ink);
+  font-size:0.88rem;line-height:1.5;color:#3E4E4C;
+}
+/* Knappen hænger fast i bunden af kortet. Er skærmen for lav til
+   hele briefingen, ruller teksten bagom — men "Kom i gang" står
+   der altid, så man ikke skal lede efter vejen videre. */
+.instruks-slut{
+  position:sticky;bottom:-20px;z-index:1;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  margin:15px -26px -20px;padding:13px 26px 20px;
+  background:var(--panel);border-top:2px solid var(--ink);
+}
+.instruks-slut .mono{color:#5A6C69;font-size:0.55rem;line-height:1.6;flex:1;min-width:150px}
+.btn{
+  font-family:var(--display);font-size:0.95rem;font-weight:800;
+  background:var(--accent);color:#fff;border:2.5px solid var(--ink);
+  padding:9px 21px;border-radius:24px;cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--pink);border-color:var(--pink)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+/* ── Projektortilstand ─────────────────────────────────── */
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .fact{font-size:0.76rem}
+body[data-projektor="1"] .knob-top .mono{font-size:0.78rem}
+body[data-projektor="1"] .knob-val{font-size:1.24rem}
+body[data-projektor="1"] .gauge dt{font-size:0.74rem}
+body[data-projektor="1"] .gauge dd{font-size:1.4rem}
+body[data-projektor="1"] .side-body{font-size:1rem}
+body[data-projektor="1"] .instruks-kort{max-width:760px}
+body[data-projektor="1"] .instruks-trin span,
+body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:960px){
+  .stage{grid-template-columns:1fr}
+  .side{border-left:none;border-top:2px solid var(--ink);overflow:visible}
+  .side-in{position:static}
+  .side-body{overflow:visible}
+  .gauges{grid-template-columns:1fr 1fr}
+  .gauge:nth-child(3){border-left:none}
+  .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
+  .knobs{grid-template-columns:1fr 1fr}
+}
+@media (max-width:700px){
+  /* Bordet er bredere, end en telefon kan vise. Figuren får sin
+     egen vandrette rulning; resten af siden ruller kun lodret. */
+  .view{overflow-x:auto;overflow-y:hidden}
+  .view canvas{min-width:720px}
+  .hint{display:none}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding:24px 0 18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .facts,.rig-head,.knobs{padding-left:16px;padding-right:16px}
+  .instruks{padding:14px}
+  .instruks-kort{padding:18px 18px 16px;border-radius:14px;box-shadow:var(--hard);
+                 max-height:calc(100dvh - 28px)}
+  .instruks-slut{margin:14px -18px -16px;padding:12px 18px 16px;bottom:-16px}
+  .knobs{grid-template-columns:1fr}
+  .gauges{grid-template-columns:1fr}
+  .gauge:nth-child(n){border-left:none}
+  .gauge:nth-child(n+2){border-top:2px solid var(--ink)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  .top,.foot,.rig-head .btn-mini,.knobs,.instruks{display:none!important}
+  .stage{grid-template-columns:1fr 300px}
+  .rig{box-shadow:none;break-inside:avoid}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Gærbobleforsøget — virtuelt laboratorium",
+      "url": "https://smbi.dk/biologi/gaerbobler.html",
+      "inLanguage": "da-DK",
+      "description": "Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {
+        "@type": "Person",
+        "name": "Simon Messell"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "smbi.dk",
+        "url": "https://smbi.dk/"
+      },
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": {
+        "@id": "https://smbi.dk/#website"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Gæring og enzymers optimumstemperatur"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/"},
+        {"@type": "ListItem", "position": 2, "name": "Biologi", "item": "https://smbi.dk/biologi.html"},
+        {"@type": "ListItem", "position": 3, "name": "Gærbobleforsøget", "item": "https://smbi.dk/biologi/gaerbobler.html"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Biologi · gæring</span>
+      <h1>Gærbobleforsøget på <span class="hi" style="--hc:#FBD3E1">bordet</span></h1>
+      <p class="lead">Træk sukker, gær og vand ned i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og start stopuret. Det er den samme øvelse som i laboratoriet — og du tæller selv boblerne.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="rig-live"><span class="dot"></span><span class="mono" id="rig-status">Bordet er klar</span></span>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" id="btn-instruks" title="Hent instruksen frem igen">Instruks</button>
+        <button type="button" class="btn-mini" id="btn-ur" title="Start stopuret for alle fire kolber på én gang">Start stopur</button>
+        <button type="button" class="btn-mini" id="btn-taelling" title="Tæl boblerne fra den valgte kolbes gærrør i ét minut">Tæl bobler i 1 min</button>
+        <button type="button" class="btn-mini" id="btn-pause" aria-pressed="false" title="Sæt bordet på pause">Pause</button>
+        <button type="button" class="btn-mini" id="btn-nulstil" title="Ryd op og begynd forfra">Nulstil</button>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false" title="Skjul sidens krom og forstør teksten">Projektor</button>
+      </div>
+
+      <div class="stage">
+        <div class="view" id="view">
+          <canvas id="bord" tabindex="0" role="application"
+            aria-label="Et laboratoriebord set fra siden. På hylden foroven står sukkerglas, gærpose, måleglas med vand, dråbeflaske med bromthymolblåt, spatel og termometer, og til højre et stativ med fire gærrør. På bordpladen forneden står to varmeplader, fire koniske kolber og yderst til højre en spand, man kan tømme en kolbe eller et gærrør ned i. Træk redskaberne ned i kolberne for at udføre forsøget."></canvas>
+          <span class="hint">Træk med musen · piletaster + Enter</span>
+        </div>
+
+        <div class="side">
+          <div class="side-in">
+            <div class="side-h">
+              <span class="mono">Arbejdsseddel</span>
+              <button type="button" class="btn-mini" id="fane-trin" aria-pressed="true">Fremgangsmåde</button>
+              <button type="button" class="btn-mini" id="fane-journal" aria-pressed="false">Journal</button>
+            </div>
+            <div class="side-body" id="krop-trin"></div>
+            <div class="side-body" id="krop-journal" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <dl class="gauges">
+        <div class="gauge">
+          <dt class="mono">Forsøgstid</dt>
+          <dd id="m-tid">–</dd>
+        </div>
+        <div class="gauge">
+          <dt class="mono" id="m-temp-navn">Temperatur · kolbe 1</dt>
+          <dd id="m-temp">–</dd>
+        </div>
+        <div class="gauge">
+          <dt class="mono" id="m-fart-navn">Gæringshastighed</dt>
+          <dd id="m-fart">–</dd>
+        </div>
+        <div class="gauge">
+          <dt class="mono">BTB i gærrøret</dt>
+          <dd id="m-btb">–</dd>
+        </div>
+      </dl>
+
+      <div class="knobs">
+        <div class="knob">
+          <div class="knob-top">
+            <span class="mono">Varmeplade A</span>
+            <span class="knob-val" id="v-plade-a">Slukket</span>
+          </div>
+          <input type="range" id="plade-a" min="20" max="80" step="1" value="20"
+                 style="--kc:#FF6A3D;--track:linear-gradient(90deg,#DFE8E6,#FFD9C9,#FF6A3D)"
+                 aria-label="Varmeplade A, temperatur i grader celsius">
+        </div>
+        <div class="knob">
+          <div class="knob-top">
+            <span class="mono">Varmeplade B</span>
+            <span class="knob-val" id="v-plade-b">Slukket</span>
+          </div>
+          <input type="range" id="plade-b" min="20" max="80" step="1" value="20"
+                 style="--kc:#FF6A3D;--track:linear-gradient(90deg,#DFE8E6,#FFD9C9,#FF6A3D)"
+                 aria-label="Varmeplade B, temperatur i grader celsius">
+        </div>
+        <div class="knob">
+          <div class="knob-top">
+            <span class="mono">Tidsfart</span>
+            <span class="knob-val" id="v-fart">× 10</span>
+          </div>
+          <input type="range" id="fart" min="0" max="5" step="1" value="3"
+                 style="--kc:#7A4FD6;--track:linear-gradient(90deg,#fff,#E2D6F8,#7A4FD6)"
+                 aria-label="Hvor hurtigt tiden går i forhold til virkeligheden">
+        </div>
+      </div>
+
+      <div class="facts">
+        <span class="mono">Vis kolbe</span>
+        <button type="button" class="fact" data-kolbe="0" data-note="tør" aria-pressed="true" style="--fc:#FFB300">Kolbe 1</button>
+        <button type="button" class="fact" data-kolbe="1" data-note="vand" aria-pressed="false" style="--fc:#5FB030">Kolbe 2</button>
+        <button type="button" class="fact" data-kolbe="2" data-note="vand" aria-pressed="false" style="--fc:#0FA593">Kolbe 3</button>
+        <button type="button" class="fact" data-kolbe="3" data-note="vand" aria-pressed="false" style="--fc:#0E86C8">Kolbe 4</button>
+      </div>
+    </section>
+  </div>
+
+  <p class="sr" id="status" aria-live="polite"></p>
+</main>
+
+<div class="instruks" id="instruks" role="dialog" aria-labelledby="instruks-titel">
+  <div class="instruks-kort">
+    <span class="eyebrow mono"><span class="blink"></span>Før du går i gang</span>
+    <h2 id="instruks-titel">Du skal måle, hvor hurtigt gæren arbejder</h2>
+    <p class="ind">Gærceller omsætter sukker til alkohol og kuldioxid, når der ikke er ilt — det er den gæring, der får brøddej til at hæve. Her sætter du forsøget op selv og måler, hvad temperaturen betyder, ved at tælle CO₂-boblerne fra fire kolber.</p>
+    <ol class="instruks-trin">
+      <li><span class="nr">1</span><div>
+        <b>Klargør de fire gærrør</b>
+        <span>Træk måleglasset og BTB-flasken op på hvert gærrør i stativet. Vandet bliver blåt — bromthymolblåt er blåt, så længe vandet ikke er surt.</span>
+      </div></li>
+      <li><span class="nr">2</span><div>
+        <b>Bland kolberne</b>
+        <span>Sukker, vand og gær ned i hver kolbe, og rør rundt med spatlen. Kolbe 1 er den særlige: Dér skal gær og sukker røres sammen <em>tørt</em>, og vandet først i bagefter.</span>
+      </div></li>
+      <li><span class="nr">3</span><div>
+        <b>Giv dem hver sin temperatur</b>
+        <span>Sæt kolberne på varmepladerne, skru op med skyderne under bordet, og mål efter med termometeret.</span>
+      </div></li>
+      <li><span class="nr">4</span><div>
+        <b>Sæt gærrør på, og start stopuret</b>
+        <span>Tæl så bobler i ét minut ad gangen — fx efter 5, 15 og 30 minutter. Journalen skriver tallene ned, og med skyderen <b>tidsfart</b> behøver en halv times gæring ikke tage en halv time.</span>
+      </div></li>
+    </ol>
+    <p class="instruks-fod">Træk med musen — eller betjen bordet med piletaster og Enter. Og kom du til at hælde forkert i, så træk kolben ned i <b>spanden</b> yderst til højre: Så er den tømt og skyllet og klar igen.</p>
+    <div class="instruks-slut">
+      <button type="button" class="btn" id="btn-luk-instruks">Kom i gang</button>
+      <span class="mono">Instruks-knappen henter det her frem igen</span>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Biologi · gæring</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/geografi.html">Geografi</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="gaerbobler/side.js"></script>
+
+
+<!-- ── Højdebudget ──────────────────────────────────────
+     Bordet blev før målt efter spaltens bredde alene, og så voksede
+     panelet ud over skærmen: bord, instrumenter og skydere kunne ikke
+     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
+     andet end figuren, og resten af skærmhøjden lægges i --fig.      -->
+<script>
+(function(){
+  const rig = document.querySelector('.rig');
+  const fig = document.querySelector('.view canvas');
+  if(!rig || !fig) return;
+  const bjaelke = document.querySelector('.top');
+  const MIN = 250, MAKS = 640, LUFT = 16;
+  let sidst = 0, panel = 0, ventende = false;
+
+  function saet(h){
+    if(h === sidst) return;
+    sidst = h;
+    rig.style.setProperty('--fig', h + 'px');
+    if(window.tilpasFigur) window.tilpasFigur();
+  }
+
+  function maal(){
+    saet(MAKS);
+    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
+               ? bjaelke.getBoundingClientRect().height : 0;
+    const rum  = innerHeight - krom - LUFT;
+    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    const h    = Math.round(rum - fast);
+    if(h < MAKS){
+      saet(Math.max(MIN, h));
+      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    }
+    panel = rig.getBoundingClientRect().height;
+  }
+
+  function planlaeg(){
+    if(ventende) return;
+    ventende = true;
+    requestAnimationFrame(function(){ ventende = false; maal(); });
+  }
+
+  maal();
+  addEventListener('resize', planlaeg);
+  addEventListener('load', planlaeg);
+  if(document.fonts) document.fonts.ready.then(planlaeg);
+  new ResizeObserver(function(){
+    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+  }).observe(rig);
+})();
+</script>
+</body>
+</html>
