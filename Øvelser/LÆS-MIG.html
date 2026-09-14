@@ -2210,7 +2210,7 @@ window.MathJax = {
 <li><code>fix-docx-tables.py</code> — kører automatisk efter hver rendering og sørger for, at tabeller i Word-filen aldrig bliver delt af et sideskift.</li>
 </ul>
 <p>Fordi <code>_quarto.yml</code> ligger i toppen af <code>Øvelser/</code>, gælder opsætningen automatisk for <strong>enhver</strong> <code>.qmd</code>-fil, uanset hvor dybt nede den ligger under <code>Biologi/</code> eller <code>Geografi/</code> — Quarto leder selv opad efter <code>_quarto.yml</code>, uanset hvor mange undermapper der er imellem.</p>
-<p><strong>Der er ingen særlig skabelonmappe, man skal ligge inde i.</strong> En ny øvelse er bare en almindelig undermappe under <code>Biologi/</code> eller <code>Geografi/</code> (eller et evt. nyt fag), med sin egen <code>index.qmd</code> og en <code>figurer/</code>-mappe, hvis den har billeder.</p>
+<p><strong>Der er ingen særlig skabelonmappe, man skal ligge inde i.</strong> En ny øvelse er bare en almindelig undermappe under <code>Biologi/</code> eller <code>Geografi/</code> (eller et evt. nyt fag), med sin egen <code>.qmd</code>-fil (samme navn som mappen) og en <code>figurer/</code>-mappe, hvis den har billeder.</p>
 </section>
 <section id="eksempel-på-struktur" class="level2">
 <h2 class="anchored" data-anchor-id="eksempel-på-struktur">Eksempel på struktur</h2>
@@ -2218,25 +2218,34 @@ window.MathJax = {
 ├── _quarto.yml, styles.scss, reference.docx, page.typ, typst-template.typ, banner.html, fix-docx-tables.py   (fælles, rør kun hvis alle vejledninger skal ændres)
 ├── Biologi/
 │   ├── mikroskopi-af-celler/
-│   │   └── index.qmd (+ evt. figurer/)
+│   │   └── mikroskopi-af-celler.qmd (+ evt. figurer/)
 │   └── osmose-i-kartofler/
-│       └── index.qmd (+ evt. figurer/)
+│       └── osmose-i-kartofler.qmd (+ evt. figurer/)
 └── Geografi/
     └── opmaaling-af-terraenprofil/
-        ├── index.qmd
+        ├── opmaaling-af-terraenprofil.qmd
         └── figurer/</code></pre>
 </section>
 <section id="sådan-laver-du-en-ny-vejledning" class="level2">
 <h2 class="anchored" data-anchor-id="sådan-laver-du-en-ny-vejledning">Sådan laver du en ny vejledning</h2>
 <ol type="1">
 <li><p>Kopiér en eksisterende øvelsesmappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>) til en ny mappe med et sigende navn, under det rigtige fag (fx <code>Geografi/kysterosion/</code> eller <code>Biologi/enzymforsog/</code>).</p></li>
-<li><p>Slet de gamle figurer i <code>figurer/</code>, og ret <code>index.qmd</code>: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.</p></li>
+<li><p>Slet de gamle figurer i <code>figurer/</code>, og ret <code>.qmd</code>-filen: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.</p></li>
+<li><p>Tag de to faste afsnit med (se nedenfor): <strong>Databehandling</strong> og <strong>Journalspørgsmål</strong>.</p></li>
+<li><p>Skriv øvelsen ind i <code>oversigt.html</code> — også når du kun retter i en, der findes i forvejen.</p></li>
 <li><p>Claude renderer selv vejledningen til PDF/Word/HTML, hver gang <code>.qmd</code>-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:</p>
 <pre><code>quarto render &lt;øvelse&gt;.qmd --to typst   # PDF
 quarto render &lt;øvelse&gt;.qmd --to docx    # Word
 quarto render &lt;øvelse&gt;.qmd --to html    # webside</code></pre>
 <p>Filen hedder det samme som mappen (fx <code>oliens-migration.qmd</code>), så den downloadede vejledning er til at kende igen på skrivebordet.</p></li>
 </ol>
+</section>
+<section id="de-to-faste-afsnit" class="level2">
+<h2 class="anchored" data-anchor-id="de-to-faste-afsnit">De to faste afsnit</h2>
+<p>Hver vejledning slutter med to afsnit, der gør den til mere end en opskrift:</p>
+<p><strong><code>## Databehandling</code></strong> — hvad eleverne selv skal regne, tegne og vurdere ud fra deres rådata: gennemsnit, procentberegninger, en graf, en sammenligning på tværs af grupper. Skriv formlerne som rigtig matematik (<code>$$…$$</code>), og lav et lille skema til de udregnede tal, hvis der er mere end et par stykker. Afsnittet springes kun over, hvis øvelsen er rent kvalitativ — er der tal, skal der regnes på dem.</p>
+<p><strong><code>## Journalspørgsmål</code></strong> — nummererede forslag til faglige refleksionsspørgsmål, der binder resultaterne sammen med teorien: forklar begrebet, vurdér metodens fejlkilder, sammenlign med en anden situation, diskutér hvor repræsentativt resultatet er. Det er forslag, du kan skære i eller bytte ud, ikke en facitliste.</p>
+<p><code>Biologi/biodiversitet-i-graesplaenen/</code> viser begge afsnit, som de skal se ud.</p>
 </section>
 <section id="genbrugelige-byggeklodser-i-en-.qmd" class="level2">
 <h2 class="anchored" data-anchor-id="genbrugelige-byggeklodser-i-en-.qmd">Genbrugelige byggeklodser i en <code>.qmd</code></h2>
@@ -2245,7 +2254,8 @@ quarto render &lt;øvelse&gt;.qmd --to html    # webside</code></pre>
 <li><code>![Billedtekst](figurer/billede.png)</code> → nummereret figur med billedtekst.</li>
 <li><code>::: {.callout-tip} ## Tip ... :::</code> → grøn tip-boks.</li>
 <li><code>::: {.callout-note} ## Materialer (pr. gruppe) ... :::</code> → blå boks (fx til materialeliste).</li>
-<li>Almindelig markdown-tabel med <code>: Billedtekst</code> under → nummereret tabel/skema med grønt overskriftsfelt.</li>
+<li>Almindelig markdown-tabel med <code>: Billedtekst {#tbl-1}</code> under → nummereret tabel/skema med grønt overskriftsfelt, som der kan henvises til med <code>@tbl-1</code>.</li>
+<li><code>$$\\frac{a}{b}$$</code> → formel på egen linje, til databehandlingsafsnittet.</li>
 </ul>
 </section>
 <section id="hvis-du-vil-rendere-selv-uden-claude" class="level2">

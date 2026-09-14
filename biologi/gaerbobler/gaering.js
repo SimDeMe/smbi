@@ -128,8 +128,6 @@ export function opretKolbe(id, navn){
     sukker:0, gaer:0, vand:0,       /* g, g, mL                     */
     temp:RUM,
     roert:false,                    /* er der rørt rundt?           */
-    toerblandet:false,              /* gær + sukker rørt sammen tørt */
-    toerTid:0,                      /* hvor længe det har stået tørt */
     levende:1,                      /* andel levende gærceller      */
     vaagen:0,                       /* hvor godt gæren er kommet i gang */
     dannet:0,                       /* CO₂ dannet i alt, boble-enheder */
@@ -156,7 +154,7 @@ export function harBlanding(k){ return k.vand > 0 && k.gaer > 0 && k.sukker > 0;
 export function toemKolbe(k){
   k.sukker = 0; k.gaer = 0; k.vand = 0;
   k.temp = RUM;
-  k.roert = false; k.toerblandet = false; k.toerTid = 0;
+  k.roert = false;
   k.levende = 1; k.vaagen = 0;
   k.dannet = 0; k.oploest = 0;
   k.hastighed = 0; k.slip = 0;
@@ -191,27 +189,17 @@ export function opdaterKolbe(k, dt){
   const tau  = k.plads && k.plads.type === 'plade' && k.plads.temp > RUM ? 75 : 900;
   k.temp += (maal - k.temp) * (1 - Math.exp(-dt / tau));
 
-  /* Gær og sukker rørt sammen uden vand: sukkeret trækker osmotisk
-     vand ud af gærcellerne, blandingen bliver flydende, og en del af
-     cellerne tager skade. Det er kolbe 1's pointe. */
-  if(k.toerblandet && k.vand === 0){
-    k.toerTid += dt;
-    k.levende *= Math.exp(-dt / 900);
-  }
-
   /* Varmedøden. Under ca. 40 °C er den uden betydning; over 50 °C går
      det stærkt, og den er uoprettelig — derfor hjælper det ikke at
      køle kolben ned bagefter. */
   k.levende *= Math.exp(-doedsrate(k.temp) * dt);
 
   /* Gæren skal vågne: tørgæren skal suge vand og komme i gang. Det
-     går hurtigere i varmt vand, langsommere hvis der ikke er rørt
-     rundt, og langsommere endnu, hvis gæren har stået tørt med
-     sukkeret først. */
+     går hurtigere i varmt vand og langsommere, hvis der ikke er rørt
+     rundt. */
   if(harBlanding(k)){
     let t = 150 * Math.pow(2, -(k.temp - 20) / 12);
-    if(!k.roert)      t *= 1.8;
-    if(k.toerTid > 0) t *= 1 + Math.min(1, k.toerTid / 240);
+    if(!k.roert) t *= 1.8;
     k.vaagen += (1 - k.vaagen) * (1 - Math.exp(-dt / t));
   }
 

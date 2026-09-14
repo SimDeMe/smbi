@@ -1,6 +1,6 @@
 # Mappestruktur for Øvelser (Quarto)
 
-*Opdateret 2026-09-13.*
+*Opdateret 2026-09-14.*
 
 ## Arbejdsgang — vigtigt
 
@@ -27,6 +27,45 @@ renderes igen — ikke kun det ene. Det samme gælder de `.md`-dokumenter her i
 at der aldrig måtte renderes uden eksplicit besked — og derfor står der flere
 steder nedenfor, at noget "ikke er renderet endnu". Det er nu indhentet: alle
 øvelsesmapper har både `.pdf`, `.docx` og `.html`, der svarer til deres `.qmd`.*
+
+## Fast indhold i en vejledning (ændret 2026-09-14)
+
+Hver vejledning skal ud over `## Fremgangsmåde`, materialeboksen, et evt.
+sikkerhedsafsnit og registreringsskemaet indeholde **to faste afsnit**:
+
+**`## Databehandling`** — de beregninger, grafer og den resultatbehandling,
+eleverne selv skal lave ud fra deres rådata. Nummereret liste; formler skrives
+som rigtig matematik (`$$…$$`), og skal de udregnede tal samles, får de deres
+eget skema ved siden af rådataskemaet. Krydshenvis til tabellerne med `@tbl-1`
+osv. Afsnittet udelades **kun**, hvis øvelsen er rent kvalitativ og der ikke er
+tal at regne på (fx ren mikroskopi) — det svarer til `data:'ejnoedvendig'` i
+`oversigt.html`.
+
+**`## Journalspørgsmål`** — nummererede forslag til faglige
+refleksionsspørgsmål, der binder resultaterne sammen med teorien: begreber, der
+skal forklares, metodens repræsentativitet, fejlkilder, sammenligning med andre
+grupper eller andre situationer. Det er forslag, den enkelte lærer kan skære i
+eller bytte ud — ikke en facitliste, og ikke spørgsmål med ét rigtigt svar
+hentet direkte fra teksten.
+
+`Biologi/biodiversitet-i-graesplaenen/` er forlæg for begge afsnit.
+
+**Dette ophæver «bare bones»-afgrænsningen** flere steder nedenfor, hvor
+databehandling, diskussions- og konklusionsspørgsmål blev udeladt med den
+begrundelse, at det var arbejdsspørgsmål, læreren selv tilføjede
+(`bakterier-og-svampe`, `bromelin-i-ananas`, `dafnier-og-koffein`,
+`vitalkapacitet` m.fl.). De afsnit står som historik over, hvad der dengang
+blev besluttet — reglen er nu den modsatte. Rettes en af de gamle vejledninger,
+skal den have begge afsnit med.
+
+## `oversigt.html` opdateres altid
+
+`oversigt.html` er den interne oversigt og skal opdateres, hver gang en
+vejledning laves eller rettes — ikke kun når en ny mappe kommer til. Det
+omfatter rækken selv (`quarto`, `data`, `spg`, `note`, emne og sti til
+originalen), tællerne og listen «Det der mangler» længere nede på siden.
+Værdierne er `'ja' | 'delvis' | 'nej' | 'ejnoedvendig' | 'ukendt'`, og
+signaturforklaringen på siden siger, hvornår hver enkelt bruges.
 
 ## Beslutning
 

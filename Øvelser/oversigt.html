@@ -272,8 +272,8 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
     <span class="eyebrow mono"><span class="blink"></span>Intern · øvelsesoversigt</span>
     <h1>Øvelser i <span class="hi" style="--hc:#E2D6F8">overblik</span></h1>
     <p class="lead">Hvilke øvelser findes som færdig Quarto-vejledning, hvilket niveau hører de til,
-      og har de et databehandlings­afsnit og spørgsmål til journalen? Kandidater, der endnu kun findes
-      som gamle Word-filer, står med gul baggrund.</p>
+      og har de de to faste afsnit — databehandling og journalspørgsmål? Kandidater, der endnu kun
+      findes som gamle Word-filer, står med gul baggrund.</p>
 
     <ul class="facts" id="nøgletal"></ul>
   </div>
@@ -353,9 +353,11 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
             projektet — klik for at kopiere hele stien. <code>Bio C · …</code> ligger i <code>Øvelser/Bio-C-delt-mappe/</code>
             og åbner direkte. Mangler linjen, findes der ingen gammel vejledning (eller filen kunne ikke findes på disken).</li>
         <li><b>Databehandling</b> = beregning, graf eller resultatbehandling, som eleverne selv skal lave.
-            Et rent registreringsskema tæller ikke med.</li>
-        <li><b>Journalspørgsmål</b> = nummererede spørgsmål til journalen (fx «Spørgsmål»,
-            «Analyse og konklusion», «Diskussion og perspektivering»).</li>
+            Et rent registreringsskema tæller ikke med. Nye vejledninger har afsnittet som
+            <code>## Databehandling</code>.</li>
+        <li><b>Journalspørgsmål</b> = nummererede faglige refleksionsspørgsmål til journalen. Ældre
+            vejledninger kalder afsnittet «Spørgsmål», «Analyse og konklusion» eller «Diskussion og
+            perspektivering»; nye hedder <code>## Journalspørgsmål</code>.</li>
         <li><b>Niveau med prikket streg</b> er <i>formodet</i> ud fra, hvilket forløb eller hvilken mappe
             filerne stammer fra — det står ikke i filerne. Kun
             <code>poroesitet-og-permeabilitet-hf</code> har niveauet i sin egen metadata
@@ -366,9 +368,13 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
         <li>Alle geografi-vejledninger på nær HF-varianten har <b>tomme <code>fag</code>- og
             <code>hold</code>-felter</b> i deres YAML-hoved. Derfor står sidehovedet tomt i den
             renderede HTML og PDF. Biologi-øvelserne har alle <code>fag: "Biologi"</code>.</li>
-        <li><b>Journalspørgsmål mangler stadig i otte af de tretten biologiøvelser.</b> Fem har dem nu
-            (mikroskopi af celler og af rodceller, bakterier og svampe, bromelin i ananas,
-            biodiversitet i græsplænen) — mod fem af de otte geografiøvelser.</li>
+        <li><b>Efterslæb efter standarden fra 14.&nbsp;september 2026:</b> begge afsnit —
+            <code>## Databehandling</code> og <code>## Journalspørgsmål</code> — skal nu være med i
+            <i>alle</i> vejledninger, ikke kun i de nyeste. Databehandling må kun mangle, hvor øvelsen
+            er rent kvalitativ (<span class="st st-ejnoedvendig">⊘ Ej nødvendig</span>).
+            Nøgletallene øverst tæller, hvor mange der er nået i mål, og knappen
+            <b>Uden journalspørgsmål</b> viser resten. Rettes en gammel vejledning, skal begge afsnit
+            med i samme omgang.</li>
         <li>Niveau findes ikke som metadatafelt. Skal det med i sidehovedet på vejledningerne,
             kan det lægges ind som fx <code>hold: "1g Bio C"</code> i hver <code>.qmd</code>.</li>
       </ul>
@@ -414,6 +420,9 @@ const ØVELSER = [
 {fag:'bio',navn:'Mikroskopi af rodceller',emne:'Celler og mikroskopi',original:'BIOLOGI/38 - Mitose (løgceller m.fl.)',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-rodceller',fil:'mikroskopi-af-rodceller',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'ja',
  note:'Squash-præparat af rodspids, mitose. Udskilt fra mikroskopi-af-celler. Fotografering med pile i stedet for tegning, og to journalspørgsmål om at genkende mitosefaser og sammenligne med lærebogens figur.'},
+{fag:'bio',navn:'Mikroskopi af ornesæd',emne:'Celler og mikroskopi',original:'BIOLOGI/03 - Mikroskopi af celler',type:'Mikroskopi',sti:'Biologi/mikroskopi-af-ornesaed',fil:'mikroskopi-af-ornesaed',
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
+ note:'Levende sædceller fra insemineringsdosis. Bygget på «Vejledning Mikroskopering af ornesæd.PDF» (Undervisningsmateriale Katalog/Slagelse Gym/Fra gruppedrev/Forsøgsvejledninger/JA/) — en scannet journalvejledning, hvis teoriafsnit om hoved, akrosomblære, mellemstykke og fruktose er ført videre. Ufarvet præparat til bevægelsesmønster og methylenblåt-præparat til bygning; originalens løse «skøn over andelen af abnorme» er gjort til en optælling i fire synsfelter med udregnet procent og klassegennemsnit op mod de ca. 20 %. Syv journalspørgsmål, bl.a. om temperatur og sædkvalitet.'},
 {fag:'bio',navn:'Osmose i kartofler',emne:'Celler og mikroskopi',original:'BIOLOGI/01 - Osmoseforsøg (kartofler - saltvands-fortyndingsrække - æg - vandpest)',bioc:'Forsøg osmose kartofler vejledning 2020.doc',type:'Laboratorieøvelse',sti:'Biologi/osmose-i-kartofler',fil:'osmose-i-kartofler',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
  note:'Skema med vægtændring i g og %, fem NaCl-koncentrationer. Eleverne tegner vægtændring (%) mod NaCl-koncentration, aflæser den isotoniske koncentration ved skæringen med x-aksen og sammenligner med to andre gruppers tal. Fortyndingsrækken ligger som selvstændig gammel vejledning.'},
@@ -464,7 +473,7 @@ const ØVELSER = [
 {fag:'bio',navn:'Mikroskopi af plante- og dyreplankton',emne:'Celler og mikroskopi',original:'BIOLOGI/48 - Søundersøgelse - plankton - primærproduktion',bioc:'Mikroskopi af planteplankton og dyreplankton.docx',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:''},
 {fag:'bio',navn:'Mikroskopi af tyresæd',emne:'Celler og mikroskopi',bioc:'Mikroskopi af tyresæd - lynudgave.docx',type:'Mikroskopi',kilde:'MM_s 1.g-øvelser',
- niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Lynudgave.'},
+ niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Lynudgave med stationer: kontrol, lav pH, lav og høj temperatur samt methylenblåt. Selve celletypen er dækket af Mikroskopi af ornesæd — her er det stationsopdelingen, der er det særlige.'},
 {fag:'bio',navn:'Næringssaltes betydning for algevækst',emne:'Økologi og evolution',original:'BIOLOGI/48 - Søundersøgelse - plankton - primærproduktion',bioc:'Næringssaltes betydning for algevækst 2013.doc',type:'Laboratorieøvelse',kilde:'MM_s 1.g-øvelser',
  niveau:'Bio C',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Fra 2013.'},
 {fag:'bio',navn:'Tørforsøg med mitose og meiose',emne:'Genetik og bioteknologi',original:'BIOLOGI/20 - Genetik – nedarvning, Mendels love, majs, meiose, karyotype, transformation',bioc:'Tørforsøg med mitose og meiose 1y 2014.doc',type:'Modeløvelse',kilde:'MM_s 1.g-øvelser',

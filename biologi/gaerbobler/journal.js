@@ -10,7 +10,7 @@
    ═══════════════════════════════════════════════════════════ */
 import {btbNavn, roerPH, btbFarve} from './gaering.js';
 
-export const KOLBEFARVER = ['#FFB300', '#5FB030', '#0FA593', '#0E86C8'];
+export const KOLBEFARVER = ['#5FB030', '#0FA593', '#0E86C8'];
 
 export function urTekst(s){
   if(s === null || s === undefined) return '–';
@@ -25,43 +25,36 @@ const komma = (v, n = 0) => Number(v).toFixed(n).replace('.', ',');
  * Rækkefølgen er den anbefalede, men intet er spærret: man må
  * gerne gøre tingene i en anden orden og se, hvad der så sker.  */
 export function trinListe(v){
-  const [k1, k2, k3, k4] = v.kolber;
-  const andre = [k2, k3, k4];
+  const [k1, k2, k3] = v.kolber;
   const alle = (f, liste = v.kolber) => liste.every(f);
-  const temps = andre.map(k => k.maaltTemp ?? k.temp);
-  const spredt = andre.every(k => k.vand > 0)
-    && Math.max(...temps) - Math.min(...temps) > 12;
+  const opvarmet = k1.plads.type !== 'plade' && k2.plads.type === 'plade' && k3.plads.type === 'plade';
 
-  const taelt = v.kolber.reduce((s, k) => s + k.taellinger.length, 0);
+  const taelt = v.kolber.filter(k => k.taellinger.length > 0).length;
 
   return [
     {gruppe:'A · Klargøring af gærrør'},
-    {klar:alle(r => r.vand, v.roer), navn:'Fyld de fire gærrør med vand',
+    {klar:alle(r => r.vand, v.roer), navn:'Fyld de tre gærrør med vand',
      tekst:'Træk måleglasset op på et gærrør i stativet — ét ad gangen.'},
     {klar:alle(r => r.btb, v.roer), navn:'Dryp BTB i',
      tekst:'Bromthymolblåt farver vandet blåt. Notér farven, før forsøget går i gang.'},
 
-    {gruppe:'B · De fire kolber'},
-    {klar:k1.toerblandet, navn:'Kolbe 1: Gær og sukker tørt',
-     tekst:'20 g gær og 25 g sukker i kolbe 1 — rør rundt med spatlen uden vand, og se, hvad der sker.'},
-    {klar:andre.every(k => k.sukker > 0 && k.vand > 0), navn:'Kolbe 2-4: Sukker i vand',
-     tekst:'25 g sukker og 100 mL vand i hver af de tre andre kolber.'},
-    {klar:spredt, navn:'Tre forskellige temperaturer',
-     tekst:'Sæt kolberne på varmepladerne, og giv dem fx stuetemperatur, håndvarmt og varmt. Mål med termometeret.'},
-    {klar:andre.every(k => k.gaer > 0 && k.roert), navn:'Gær i kolbe 2-4',
-     tekst:'20 g gær i hver, og rør rundt.'},
-    {klar:k1.vand > 0, navn:'Vand i kolbe 1',
-     tekst:'Først nu får kolbe 1 sine 100 mL vand ved stuetemperatur.'},
-    {klar:alle(k => !!k.roer), navn:'Prop med gærrør på alle fire',
+    {gruppe:'B · De tre kolber'},
+    {klar:alle(k => k.sukker > 0 && k.vand > 0), navn:'Sukker i vand',
+     tekst:'25 g sukker og 100 mL vand i hver af de tre kolber.'},
+    {klar:alle(k => k.gaer > 0 && k.roert), navn:'Gær i hver kolbe',
+     tekst:'20 g gær i hver kolbe, og rør rundt.'},
+    {klar:opvarmet, navn:'Tre forskellige temperaturer',
+     tekst:'Kolbe 1 bliver stående ved stuetemperatur — den skal ikke på en varmeplade. Sæt Kolbe 2 på en varmeplade ved ca. 37 °C (håndvarmt) og Kolbe 3 på den anden ved ca. 60 °C (varmt), og mål efter med termometeret.'},
+    {klar:alle(k => !!k.roer), navn:'Prop med gærrør på alle tre',
      tekst:'Træk et klargjort gærrør fra stativet ned på kolbens hals.'},
     {klar:v.ur.løber, navn:'Start stopuret',
-     tekst:'Samtidig for alle fire kolber.'},
+     tekst:'Samtidig for alle tre kolber.'},
 
     {gruppe:'C · Observation'},
     {klar:v.kolber.some(k => k.foersteBoble !== null), navn:'Første boble',
      tekst:'Tidspunktet skrives i journalen af sig selv, når den første boble forlader gærrøret.'},
-    {klar:taelt >= 9, navn:`Tæl bobler i ét minut — ${taelt} af 12 tællinger`,
-     tekst:'Vælg en kolbe, og tryk "Tæl bobler i 1 min". Gør det for alle fire efter fx 5, 15 og 30 minutter.'},
+    {klar:taelt >= 3, navn:`Tæl bobler i ét minut — ${taelt} af 3 kolber talt`,
+     tekst:'Vælg en kolbe, og tryk "Tæl bobler i 1 min", når gæringen er kommet i gang. Gør det én gang for hver af de tre kolber.'},
     {klar:v.kolber.some(k => k.skift.groen || k.skift.gul), navn:'BTB skifter farve',
      tekst:'Hold øje med farven i gærrørene. Blå over pH 7,6, grøn 6,0-7,6 og gul under 6,0.'},
   ];
@@ -106,9 +99,6 @@ export function tegnJournal(el, v){
     rækker.push(`<div class="jrow"><span class="mono">BTB</span><b>${farve}</b>${
       skift.length ? ` <span style="color:#5A6C69">(${skift.join(', ')})</span>` : ''}</div>`);
 
-    if(k.toerblandet && k.toerTid > 40)
-      rækker.push(`<div class="jrow"><span class="mono">Iagttagelse</span>Den tørre blanding blev flydende</div>`);
-
     return `<div class="jblok" style="--kf:${KOLBEFARVER[i]}">
       <h4><span class="prik"></span>${k.navn}<span class="t">${komma(k.temp)} °C</span></h4>
       ${rækker.join('')}
@@ -117,29 +107,30 @@ export function tegnJournal(el, v){
 
   el.innerHTML = `<button type="button" class="btn-mini" id="btn-kopi"
       style="margin-bottom:12px">Kopiér skema</button>${blokke}
-    <p class="jnote">Tallene her svarer til skemaet i øvelsesvejledningen. Tegn grafen
-    med tiden på x-aksen og bobler pr. minut på y-aksen, og plot alle fire kolber
-    i samme koordinatsystem.</p>`;
+    <p class="jnote">Tallene her svarer til skemaet i øvelsesvejledningen. Tegn en graf
+    med temperaturen på x-aksen og bobler pr. minut på y-aksen, og sæt de tre kolbers
+    tællinger ind som hvert sit punkt.</p>`;
 }
 
-/** Journalen som et skema, der kan sættes ind i et regneark. */
+/** Journalen som et skema, der kan sættes ind i et regneark — én
+    række pr. kolbe, så temperatur og bobler/min står ved siden af
+    hinanden og er klar til et (x,y)-plot. */
 export function skemaTekst(v){
-  const tider = [...new Set(v.kolber.flatMap(k => k.taellinger.map(t => t.tid)))]
-    .sort((a, b) => a - b);
   const linjer = [];
-  linjer.push(['', ...v.kolber.map(k => k.navn)].join('\t'));
-  linjer.push(['Temperatur (°C)',
-    ...v.kolber.map(k => k.maaltTemp === null ? '' : komma(k.maaltTemp))].join('\t'));
-  linjer.push(['Tid for første boble',
-    ...v.kolber.map(k => urTekst(k.foersteBoble))].join('\t'));
-  for(const t of tider){
-    linjer.push([`Bobler/min ved ${urTekst(t)}`, ...v.kolber.map(k => {
-      const m = k.taellinger.find(x => x.tid === t);
-      return m ? m.antal : '';
-    })].join('\t'));
+  linjer.push(['Kolbe', 'Temperatur (°C)', 'Tid for første boble',
+    'Tid for tælling', 'Bobler/min', 'BTB grøn fra', 'BTB gul fra'].join('\t'));
+  for(const k of v.kolber){
+    const sidste = k.taellinger[k.taellinger.length - 1];
+    linjer.push([
+      k.navn,
+      k.maaltTemp === null ? '' : komma(k.maaltTemp),
+      urTekst(k.foersteBoble),
+      sidste ? urTekst(sidste.tid) : '–',
+      sidste ? sidste.antal : '',
+      urTekst(k.skift.groen),
+      urTekst(k.skift.gul),
+    ].join('\t'));
   }
-  linjer.push(['BTB grøn fra', ...v.kolber.map(k => urTekst(k.skift.groen))].join('\t'));
-  linjer.push(['BTB gul fra',  ...v.kolber.map(k => urTekst(k.skift.gul))].join('\t'));
   return linjer.join('\n');
 }
 

@@ -29,8 +29,8 @@ const FARTER = [1, 2, 5, 10, 20, 60];
 /* ── Bordet ────────────────────────────────────────────── */
 function byggVerden(){
   const pladser = opretPladser();
-  const kolber  = [1, 2, 3, 4].map(n => opretKolbe(n - 1, `Kolbe ${n}`));
-  const roer    = [0, 1, 2, 3].map(i => { const r = opretRoer(i); r.slot = i; return r; });
+  const kolber  = [1, 2, 3].map(n => opretKolbe(n - 1, `Kolbe ${n}`));
+  const roer    = [0, 1, 2].map(i => { const r = opretRoer(i); r.slot = i; return r; });
   kolber.forEach((k, i) => { const p = pladser[2 + i]; p.kolbe = k; k.plads = p; });
   return {
     tid:0,               /* simuleret tid siden start, s              */
@@ -85,7 +85,7 @@ function maalFor(h){
   } else if(h.slags === 'roer'){
     for(const k of v.kolber) if(!k.roer)
       ud.push({slags:'kolbe', ting:k, navn:k.navn, kasse:kolbeKasse(k)});
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < 3; i++){
       const optaget = v.roer.some(r => r !== h.ting && !r.paa && r.slot === i);
       if(!optaget){
         const p = stativPunkt(i);
@@ -358,7 +358,7 @@ function visInstrumenter(dt){
    ville markøren hoppe ud af teksten flere gange i sekundet. */
 let sidsteTrin = '', sidsteJournal = '';
 function opdaterPaneler(){
-  const t = v.kolber.map(k => [k.sukker, k.gaer, k.vand, k.roert, k.toerblandet,
+  const t = v.kolber.map(k => [k.sukker, k.gaer, k.vand, k.roert,
                                !!k.roer, k.taellinger.length].join()).join('|')
           + v.roer.map(r => `${r.vand}${r.btb}`).join() + v.ur.løber
           + v.kolber.map(k => k.maaltTemp === null ? '-' : Math.round(k.maaltTemp)).join()
@@ -512,7 +512,7 @@ el('btn-ur').addEventListener('click', () => {
   v.ur.løber = true; v.ur.start = v.tid;
   el('btn-ur').disabled = true;
   el('btn-ur').textContent = 'Stopuret kører';
-  sig('Stopuret er startet for alle fire kolber');
+  sig('Stopuret er startet for alle tre kolber');
 });
 
 el('btn-taelling').addEventListener('click', startTaelling);
@@ -602,7 +602,7 @@ if(søg.get('projektor') === '1' || søg.get('mode') === 'teach'){
   document.body.dataset.projektor = '1';
   el('btn-projektor').setAttribute('aria-pressed', 'true');
 }
-const fraHash = /kolbe=([1-4])/.exec(location.hash + location.search);
+const fraHash = /kolbe=([1-3])/.exec(location.hash + location.search);
 vælgKolbe(fraHash ? Number(fraHash[1]) - 1 : 0);
 
 /* Instruksen er det første, man møder — men den må ikke rive

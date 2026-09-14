@@ -180,10 +180,6 @@ export const REDSKABER = [
     brug(k, ctx){
       k.roert = true;
       ctx.verden.roerer = {kolbe:k, til:ctx.verden.rt + 2.6};
-      if(k.vand === 0 && k.sukker > 0 && k.gaer > 0 && !k.toerblandet){
-        k.toerblandet = true;
-        return `${k.navn}: Gær og sukker rørt sammen tørt — hold øje med blandingen`;
-      }
       return `Rørt rundt i ${k.navn}`;
     },
     tegn(g){

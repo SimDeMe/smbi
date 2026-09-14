@@ -209,15 +209,8 @@ function tegnVaeske(g, k, x, y, h, ur){
 
 function tegnToert(g, k, x, y){
   const bunker = [];
-  if(k.toerblandet){
-    /* Sukkeret trækker vand ud af gærcellerne — blandingen bliver
-       først fugtig og til sidst helt flydende. */
-    const våd = Math.min(1, k.toerTid / 150);
-    bunker.push({m:k.sukker + k.gaer, f:vaadFarve(våd), x:0, glans:våd});
-  } else {
-    if(k.sukker > 0) bunker.push({m:k.sukker, f:'#FFFFFF', x:-20, glans:0});
-    if(k.gaer   > 0) bunker.push({m:k.gaer,   f:'#E2CB9B', x:22,  glans:0});
-  }
+  if(k.sukker > 0) bunker.push({m:k.sukker, f:'#FFFFFF', x:-20, glans:0});
+  if(k.gaer   > 0) bunker.push({m:k.gaer,   f:'#E2CB9B', x:22,  glans:0});
   for(const bu of bunker){
     const b = Math.min(K.bund - 4, 24 + bu.m * 1.15);
     const h = 8 + bu.m * (bu.glans > .6 ? 0.42 : 0.70);
@@ -247,12 +240,6 @@ function tegnToert(g, k, x, y){
       g.restore();
     }
   }
-}
-
-function vaadFarve(t){
-  const a = [226, 203, 155], b = [150, 111, 60];
-  const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
-  return `rgb(${c[0]},${c[1]},${c[2]})`;
 }
 
 function tegnDamp(g, x, y, temp, ur){

@@ -2,7 +2,7 @@
    bord.js — laboratoriebordet.
 
    Møblementet: væggen, hylden med redskaberne, stativet til
-   gærrørene, de to varmeplader og bordpladen med fire pladser
+   gærrørene, de to varmeplader og bordpladen med tre pladser
    til kolberne. Her ligger også bordets mål, så alle de andre
    moduler kan regne ud fra de samme tal.
    ═══════════════════════════════════════════════════════════ */
@@ -19,8 +19,8 @@ export const PLADE_H   = 34;    /* varmepladens højde                 */
 export const HYLDE_Y = HYLDE_TOP;
 
 /* Stativet til gærrørene fylder højre del af hylden. */
-export const STATIV = {x0:648, x1:1016, bund:HYLDE_TOP};
-export const STATIV_X = [692, 772, 852, 932];
+export const STATIV = {x0:648, x1:936, bund:HYLDE_TOP};
+export const STATIV_X = [692, 792, 892];
 
 /** De pladser, en kolbe kan stå på. */
 export function opretPladser(){
@@ -28,9 +28,8 @@ export function opretPladser(){
     {id:'plade-a', type:'plade', navn:'Varmeplade A', x:96,  top:BORD_TOP - PLADE_H, temp:RUM, kolbe:null},
     {id:'plade-b', type:'plade', navn:'Varmeplade B', x:252, top:BORD_TOP - PLADE_H, temp:RUM, kolbe:null},
     {id:'bord-1',  type:'bord',  navn:'Bordplads 1',  x:424, top:BORD_TOP, kolbe:null},
-    {id:'bord-2',  type:'bord',  navn:'Bordplads 2',  x:580, top:BORD_TOP, kolbe:null},
-    {id:'bord-3',  type:'bord',  navn:'Bordplads 3',  x:736, top:BORD_TOP, kolbe:null},
-    {id:'bord-4',  type:'bord',  navn:'Bordplads 4',  x:892, top:BORD_TOP, kolbe:null},
+    {id:'bord-2',  type:'bord',  navn:'Bordplads 2',  x:660, top:BORD_TOP, kolbe:null},
+    {id:'bord-3',  type:'bord',  navn:'Bordplads 3',  x:876, top:BORD_TOP, kolbe:null},
   ];
 }
 
@@ -43,7 +42,7 @@ export function pladsKasse(p){
   return {x0:p.x - b, x1:p.x + b, y0:p.top - 150, y1:BORD_TOP + 72};
 }
 
-/* Stativets fire huller — der, hvor et gærrør står, når det ikke
+/* Stativets tre huller — der, hvor et gærrør står, når det ikke
    sidder på en kolbe. */
 export const STATIV_Y = STATIV.bund - 30;
 export function stativPunkt(i){ return {x:STATIV_X[i], y:STATIV_Y}; }
@@ -55,7 +54,7 @@ export function stativPunkt(i){ return {x:STATIV_X[i], y:STATIV_Y}; }
 export const SPAND = {x:992, top:BORD_TOP - 106, halv:36};
 /* Kassen rækker ned over bordforkanten af samme grund som pladserne:
    en kolbe slippes der, hvor dens bund havner. Til gengæld må den
-   ikke gå ind over bordplads 4 — så ville man komme til at hælde ud,
+   ikke gå ind over bordplads 3 — så ville man komme til at hælde ud,
    når man sigtede efter bordet. */
 export function spandKasse(){
   return {x0:SPAND.x - 32, x1:SPAND.x + 40, y0:SPAND.top - 34, y1:BORD_TOP + 72};
@@ -116,7 +115,7 @@ export function tegnHylde(g){
   blaek(g, '#E3CFA6', 2.5);
 }
 
-/** Stativet med de fire gærrør. */
+/** Stativet med de tre gærrør. */
 export function tegnStativ(g){
   boks(g, STATIV.x0, STATIV.bund - 34, STATIV.x1 - STATIV.x0, 34, 7);
   blaek(g, '#CDB489', 2.5);

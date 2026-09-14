@@ -1,0 +1,127 @@
+---
+title: "Mikroskopi af ornesæd"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I mikroskopere levende sædceller fra en orne. I skal se, hvordan en sædcelle er bygget op, iagttage hvordan cellerne bevæger sig, og give et skøn over, hvor stor en del af cellerne der er abnorme. Øvelsen hører sammen med gennemgangen af kønsorganerne og af befrugtningen.
+
+Sædcellens hoved består af cellekernen med arveanlæggene. Yderst på hovedet sidder akrosomblæren, som har betydning, når sædcellen skal genkende ægcellen og trænge ind i den. Mellemstykket indeholder mange mitokondrier: her omdannes sukkerstofferne ved respiration til den energi, halen bruger til at bevæge sig med.
+
+Selve sædvæsken kommer overvejende fra sædblæren og indeholder sukkerarten fruktose, som er energigivende næringsstof for sædcellerne, samt basisk væske fra blærehalskirtlen. Hos mennesket indeholder 1 mL sæd knap 100 millioner sædceller, og ca. 20 % af dem er normalt abnorme. Tobaksrygning, stress, forhøjet temperatur omkring testiklerne (fx stramme bukser) og belastning med tungmetaller kan få den andel til at stige.
+
+## Fremgangsmåde
+
+### Sådan indstiller I mikroskopet
+
+1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
+2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
+3. Kør objektbordet helt op, og sænk det derefter langsomt med grovskruen, indtil billedet er skarpt.
+4. Justér lysstyrke og blænde. Ufarvede sædceller er næsten gennemsigtige, så skru lyset **ned**, indtil cellerne træder tydeligt frem.
+5. Skift trinvist til større forstørrelse (10× og dernæst 40×), og find skarpt billede igen. Ved de store forstørrelser må I kun bruge finskruen — har mikroskopet ingen finskrue, så gå meget langsomt frem med grovskruen.
+
+### A. Ufarvet præparat — bevægelse
+
+1. Rør forsigtigt rundt i glasset med ornesæd, så cellerne fordeler sig jævnt i væsken, og udtag en lille dråbe med pipetten.
+2. Anbring dråben midt på et rent objektglas, og læg et dækglas skråt ned over den, så der ikke kommer luftbobler under.
+3. Mikroskopér ved 100× og derefter 400×.
+4. Iagttag sædcellernes bevægelsesmønster: bevæger de sig fremad i en lige bane, svømmer de i cirkler, eller ligger de stille og slår kun med halen? Beskriv det med ord i @tbl-1.
+5. Skøn samtidig, hvor stor en del af cellerne der overhovedet bevæger sig.
+
+### B. Farvet præparat — bygning og abnorme celler
+
+1. Anbring en ny lille dråbe sæd på et rent objektglas, og bland den med en dråbe methylenblåt. Farven gør cellerne meget tydeligere, men den slår dem også ihjel, så de ikke længere bevæger sig.
+2. Læg dækglas på, og træk overskydende væske væk med filterpapir i kanten af dækglasset.
+3. Mikroskopér ved 400×. Find en normal sædcelle, og genkend hoved, mellemstykke og hale.
+4. Tegn eller fotografér en normal sædcelle, og sæt pile på med navne på de dele, I kan genkende.
+5. Led derefter efter abnorme celler — fx med to haler, to hoveder, skævt eller for stort hoved, knækket hale eller helt manglende hale. Tegn eller fotografér et par eksempler.
+6. Tæl til sidst cellerne i fire forskellige synsfelter som beskrevet under **Registrering af resultater**.
+
+::: {.callout-tip}
+## Tip
+
+Sædcellerne er tunge og synker ned mod objektglasset, så det er typisk i det **nederste** fokusplan, I finder flest. Kør derfor langsomt gennem dybden med skruen, før I konkluderer, at der ikke er noget at se.
+
+Er I færdige før tid, kan I undersøge, hvordan temperaturen påvirker bevægelsen: lav et nyt ufarvet præparat, hold en isterning mod undersiden af objektglasset i et minut, og se, hvad der sker med bevægelsesmønsteret.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Mikroskop med 4×, 10× og 40× objektiv (gerne med kamera)
+- Objektglas og dækglas
+- Pipetter (en ny til hver dråbe)
+- Prøve med ornesæd (insemineringsdosis fra svinebesætning)
+- Methylenblåt-opløsning
+- Filterpapir og køkkenrulle
+- Engangshandsker
+- Ethanol 70 % til afspritning
+- Beholder til brugte objektglas og til biologisk affald
+:::
+
+::: {.callout-important}
+## Sikkerhed og håndtering af prøven
+
+- Ornesæd er **biologisk materiale**. Brug kittel og engangshandsker, og vask hænder grundigt efter øvelsen. Spis og drik ikke i laboratoriet.
+- Brugte objektglas, dækglas, pipetter og handsker lægges direkte i den anviste beholder til biologisk affald — de må ikke skylles i vasken eller genbruges.
+- **Methylenblåt** farver kraftigt og er sundhedsskadeligt ved indtagelse. Håndteres kun med pipette, og det pletter tøj og hud.
+- **Ethanol 70 %** er meget brandfarlig. Holdes væk fra åben ild.
+- Dækglas er tynde og knækker let. Læg dem på med fingerspidserne, ikke med et tryk.
+- **Opbevaring (til læreren):** prøven er kun holdbar ca. 2 døgn og skal stå ved 16–18 °C — ikke i køleskab. Den skal genopvarmes langsomt til ca. 37 °C, før den mikroskoperes, ellers ligger cellerne stille.
+:::
+
+## Registrering af resultater
+
+| | Beskrivelse |
+|:---------------------------|:----------------------------------------|
+| Prøvens temperatur ved mikroskopering | |
+| Bevægelsesmønster (ufarvet præparat) | |
+| Andel af celler, der bevæger sig (skøn i %) | |
+| Farve og udseende af det farvede præparat | |
+
+: Iagttagelser af det levende og det farvede præparat. {#tbl-1}
+
+Tæl i det farvede præparat mindst **25 celler pr. synsfelt** i fire forskellige synsfelter, og notér for hvert synsfelt, hvor mange af de talte celler der var normale, og hvor mange der var abnorme. Flyt objektglasset et lille stykke mellem hver optælling, så I ikke tæller de samme celler igen.
+
+| Synsfelt | Antal normale celler | Antal abnorme celler | Talt i alt |
+|:--------:|:-------------------:|:--------------------:|:----------:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| **I alt** | | | |
+
+: Optælling af normale og abnorme sædceller i fire synsfelter. {#tbl-2}
+
+## Databehandling
+
+1. Læg jeres fire synsfelter sammen i bundrækken af @tbl-2, og beregn andelen af abnorme celler i jeres prøve:
+
+$$\text{Andel abnorme} = \frac{\text{antal abnorme celler}}{\text{samlet antal talte celler}} \cdot 100\ \%$$
+
+2. Beregn den samme andel for hvert enkelt synsfelt. Hvor meget svinger tallet fra synsfelt til synsfelt? Hvad siger den variation om, hvor sikkert et enkelt synsfelt ville have været?
+3. Saml klassens tal i et skema med én linje pr. gruppe, og beregn klassens gennemsnitlige andel abnorme celler. Da alle grupper har taget deres dråbe fra den samme prøve, bør tallene ligne hinanden — gør de det?
+4. Sammenlign klassens gennemsnit med de ca. 20 % abnorme celler, der er normalt i en sædprøve. Ligger jeres tal over, under eller på niveau med det?
+
+## Journalspørgsmål
+
+1. Tegn eller indsæt jeres billede af en normal sædcelle, og forklar for hver af de tre dele — hoved, mellemstykke og hale — hvilken funktion den har ved befrugtningen.
+2. Mellemstykket er fyldt med mitokondrier. Forklar, hvor sædcellen får sin energi fra, og hvorfor sædvæsken indeholder fruktose.
+3. Væsken fra blærehalskirtlen er basisk. Hvilken betydning har det for sædcellerne, når sæden afsættes i kvindens skede?
+4. Beskriv mindst to af de abnorme celletyper, I fandt, og vurdér, hvorfor netop den type fejl vil gøre det svært for cellen at nå frem til ægcellen.
+5. Testiklerne ligger uden for kroppen i pungen, og sædprøven skal opbevares ved 16–18 °C. Forklar ud fra det, hvorfor langvarig solbadning, saunaophold, varme karbade og stramme bukser kan nedsætte sædkvaliteten.
+6. I har talt nogle få hundrede celler ud af de mange millioner, prøven indeholder. Diskutér, hvor sikkert jeres skøn over andelen af abnorme celler er, og nævn to fejlkilder ved metoden.
+7. Ornesæd bruges her som model for menneskets sædceller. Hvad taler for at bruge en dyremodel i denne øvelse, og hvad skal man være opmærksom på, når resultatet overføres til mennesker?
+
+## Konklusion
+
+Skriv kort, hvordan en sædcelle er bygget op, hvordan cellerne bevægede sig i jeres præparat, og hvor stor en andel af cellerne der var abnorme.

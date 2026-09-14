@@ -22,8 +22,24 @@ Nye vejledninger bygges på de gamle originaler, der ligger i SM-DRIVE-arkivet
 (`~/Library/CloudStorage/OneDrive-FællesDigital/SM-DRIVE/forsøgsvejledninger_sm-drive/`)
 og i `Øvelser/Bio-C-delt-mappe/` — find og læs originalen først; gamle `.doc`-filer
 pakkes ud med `soffice --headless --convert-to "html:HTML (StarWriter)"`.
-`Øvelser/oversigt.html` er den interne oversigt: hver ny eller ændret øvelse skal
-have sin række dér, med emne og sti til originalen.
+
+**Fast indhold i hver vejledning.** Ud over fremgangsmåde, materialer, evt.
+sikkerhed og registreringsskema skal hver vejledning have to afsnit:
+
+* `## Databehandling` — de beregninger og grafer, eleverne selv skal lave ud fra
+  deres rådata (formler som rigtig matematik, `$$…$$`, og et skema til de
+  udregnede tal, hvor det giver mening). Er øvelsen rent kvalitativ, så der
+  ikke er tal at regne på, udelades afsnittet — og kun da.
+* `## Journalspørgsmål` — nummererede forslag til faglige refleksionsspørgsmål,
+  der binder forsøgets resultater sammen med teorien. De er forslag, læreren kan
+  skære i, ikke en facitliste.
+
+Se `Biologi/biodiversitet-i-graesplaenen/` som forlæg for begge.
+
+`Øvelser/oversigt.html` opdateres **altid**, når en vejledning laves eller
+rettes: rækken skal have emne, sti til originalen og de rigtige værdier i
+`data`- og `spg`-felterne, og tællere og «Det der mangler»-listen skal passe
+bagefter.
 
 **Rendér altid efter en rettelse.** Når en `.qmd` (eller et `.md` med renderede
 udgaver ved siden af) er rettet, køres alle tre formater igen, så `.pdf`, `.docx`

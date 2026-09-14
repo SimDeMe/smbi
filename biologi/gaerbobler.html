@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gærbobleforsøget — virtuelt laboratorium — smbi.dk</title>
-<meta name="description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.">
+<meta name="description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved tre temperaturer.">
 <!-- Deling, ikoner og kanonisk adresse -->
 <link rel="canonical" href="https://smbi.dk/biologi/gaerbobler.html">
 <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
 <meta property="og:locale" content="da_DK">
 <meta property="og:url" content="https://smbi.dk/biologi/gaerbobler.html">
 <meta property="og:title" content="Gærbobleforsøget — virtuelt laboratorium">
-<meta property="og:description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.">
+<meta property="og:description" content="Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved tre temperaturer.">
 <meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -439,7 +439,7 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
       "name": "Gærbobleforsøget — virtuelt laboratorium",
       "url": "https://smbi.dk/biologi/gaerbobler.html",
       "inLanguage": "da-DK",
-      "description": "Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved fire temperaturer.",
+      "description": "Udfør gærbobleforsøget på et virtuelt laboratoriebord: Hæld sukker, gær og vand i kolberne, varm vandet på varmepladen, sæt gærrør med BTB på og tæl boblerne ved tre temperaturer.",
       "learningResourceType": "interaktiv simulering",
       "educationalLevel": "Gymnasialt niveau (stx, hf)",
       "isAccessibleForFree": true,
@@ -505,7 +505,7 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
         <span class="rig-live"><span class="dot"></span><span class="mono" id="rig-status">Bordet er klar</span></span>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-instruks" title="Hent instruksen frem igen">Instruks</button>
-        <button type="button" class="btn-mini" id="btn-ur" title="Start stopuret for alle fire kolber på én gang">Start stopur</button>
+        <button type="button" class="btn-mini" id="btn-ur" title="Start stopuret for alle tre kolber på én gang">Start stopur</button>
         <button type="button" class="btn-mini" id="btn-taelling" title="Tæl boblerne fra den valgte kolbes gærrør i ét minut">Tæl bobler i 1 min</button>
         <button type="button" class="btn-mini" id="btn-pause" aria-pressed="false" title="Sæt bordet på pause">Pause</button>
         <button type="button" class="btn-mini" id="btn-nulstil" title="Ryd op og begynd forfra">Nulstil</button>
@@ -515,7 +515,7 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
       <div class="stage">
         <div class="view" id="view">
           <canvas id="bord" tabindex="0" role="application"
-            aria-label="Et laboratoriebord set fra siden. På hylden foroven står sukkerglas, gærpose, måleglas med vand, dråbeflaske med bromthymolblåt, spatel og termometer, og til højre et stativ med fire gærrør. På bordpladen forneden står to varmeplader, fire koniske kolber og yderst til højre en spand, man kan tømme en kolbe eller et gærrør ned i. Træk redskaberne ned i kolberne for at udføre forsøget."></canvas>
+            aria-label="Et laboratoriebord set fra siden. På hylden foroven står sukkerglas, gærpose, måleglas med vand, dråbeflaske med bromthymolblåt, spatel og termometer, og til højre et stativ med tre gærrør. På bordpladen forneden står to varmeplader, tre koniske kolber og yderst til højre en spand, man kan tømme en kolbe eller et gærrør ned i. Træk redskaberne ned i kolberne for at udføre forsøget."></canvas>
           <span class="hint">Træk med musen · piletaster + Enter</span>
         </div>
 
@@ -583,10 +583,9 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
 
       <div class="facts">
         <span class="mono">Vis kolbe</span>
-        <button type="button" class="fact" data-kolbe="0" data-note="tør" aria-pressed="true" style="--fc:#FFB300">Kolbe 1</button>
-        <button type="button" class="fact" data-kolbe="1" data-note="vand" aria-pressed="false" style="--fc:#5FB030">Kolbe 2</button>
-        <button type="button" class="fact" data-kolbe="2" data-note="vand" aria-pressed="false" style="--fc:#0FA593">Kolbe 3</button>
-        <button type="button" class="fact" data-kolbe="3" data-note="vand" aria-pressed="false" style="--fc:#0E86C8">Kolbe 4</button>
+        <button type="button" class="fact" data-kolbe="0" data-note="20 °C" aria-pressed="true" style="--fc:#5FB030">Kolbe 1</button>
+        <button type="button" class="fact" data-kolbe="1" data-note="20 °C" aria-pressed="false" style="--fc:#0FA593">Kolbe 2</button>
+        <button type="button" class="fact" data-kolbe="2" data-note="20 °C" aria-pressed="false" style="--fc:#0E86C8">Kolbe 3</button>
       </div>
     </section>
   </div>
@@ -598,23 +597,23 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
   <div class="instruks-kort">
     <span class="eyebrow mono"><span class="blink"></span>Før du går i gang</span>
     <h2 id="instruks-titel">Du skal måle, hvor hurtigt gæren arbejder</h2>
-    <p class="ind">Gærceller omsætter sukker til alkohol og kuldioxid, når der ikke er ilt — det er den gæring, der får brøddej til at hæve. Her sætter du forsøget op selv og måler, hvad temperaturen betyder, ved at tælle CO₂-boblerne fra fire kolber.</p>
+    <p class="ind">Gærceller omsætter sukker til alkohol og kuldioxid, når der ikke er ilt — det er den gæring, der får brøddej til at hæve. Her sætter du forsøget op selv og måler, hvad temperaturen betyder, ved at tælle CO₂-boblerne fra tre kolber ved tre forskellige temperaturer.</p>
     <ol class="instruks-trin">
       <li><span class="nr">1</span><div>
-        <b>Klargør de fire gærrør</b>
+        <b>Klargør de tre gærrør</b>
         <span>Træk måleglasset og BTB-flasken op på hvert gærrør i stativet. Vandet bliver blåt — bromthymolblåt er blåt, så længe vandet ikke er surt.</span>
       </div></li>
       <li><span class="nr">2</span><div>
         <b>Bland kolberne</b>
-        <span>Sukker, vand og gær ned i hver kolbe, og rør rundt med spatlen. Kolbe 1 er den særlige: Dér skal gær og sukker røres sammen <em>tørt</em>, og vandet først i bagefter.</span>
+        <span>Sukker, vand og gær ned i hver af de tre kolber, og rør rundt med spatlen.</span>
       </div></li>
       <li><span class="nr">3</span><div>
         <b>Giv dem hver sin temperatur</b>
-        <span>Sæt kolberne på varmepladerne, skru op med skyderne under bordet, og mål efter med termometeret.</span>
+        <span><b>Kolbe 1</b> bliver stående på bordet ved stuetemperatur — den skal <em>ikke</em> på en varmeplade. Sæt <b>Kolbe 2</b> på en varmeplade og skru op til ca. <b>37 °C</b> (håndvarmt), og <b>Kolbe 3</b> på den anden varmeplade og skru op til ca. <b>60 °C</b> (varmt). Mål efter med termometeret.</span>
       </div></li>
       <li><span class="nr">4</span><div>
         <b>Sæt gærrør på, og start stopuret</b>
-        <span>Tæl så bobler i ét minut ad gangen — fx efter 5, 15 og 30 minutter. Journalen skriver tallene ned, og med skyderen <b>tidsfart</b> behøver en halv times gæring ikke tage en halv time.</span>
+        <span>Når gæringen er kommet i gang, tæller du bobler i ét minut for hver af de tre kolber — én tælling pr. kolbe er nok. Journalen skriver tallene ned, og med skyderen <b>tidsfart</b> behøver gæringen ikke tage lige så lang tid som i virkeligheden.</span>
       </div></li>
     </ol>
     <p class="instruks-fod">Træk med musen — eller betjen bordet med piletaster og Enter. Og kom du til at hælde forkert i, så træk kolben ned i <b>spanden</b> yderst til højre: Så er den tømt og skyllet og klar igen.</p>
