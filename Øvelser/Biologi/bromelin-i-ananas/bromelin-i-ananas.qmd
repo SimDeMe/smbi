@@ -63,3 +63,25 @@ Brug en ny, ren pipette til hver væske, så safttyperne ikke blandes sammen. Vi
 | 4 | Vand + gelatine (kontrol) | |
 
 : Resultat af enzymforsøget med bromelin fra ananas. {#tbl-1}
+
+## Databehandling
+
+1. Gør resultaterne op i @tbl-1. Skriv for hvert glas, om gelatinen stivnede helt, delvist eller slet ikke — "delvist" er et gyldigt resultat, og så skal I beskrive, hvor tyktflydende indholdet var, når I vippede glasset. Dokumentér beskrivelsen med jeres fotos, og husk figurnummer og figurtekst.
+2. Forklar forskellen mellem glas 1 og kontrolglasset (glas 4) ud fra enzym og substrat: bromelin er et enzym, der spalter proteiner, og gelatine er et protein. Hvad sker der med gelatinens lange proteinkæder, og hvorfor kan de så ikke længere danne det netværk, der får blandingen til at stivne? Forklar samtidig, hvad I *ikke* kunne have konkluderet uden kontrolglasset.
+3. I sørgede for lige meget væske i alle fire glas. Hvilken alternativ forklaring på et flydende glas 1 udelukker det?
+4. Sammenlign glas 1 og glas 2. Forklar med ordene *denaturering* og *aktivt center*, hvad kogningen gjorde ved enzymet. Bemærk, at den kogte saft stadig indeholder ananassaftens sukker og syre — hvilken forklaring på resultatet i glas 1 kan I dermed afvise?
+5. Sammenlign glas 1 og glas 3. Enzymer virker kun i et bestemt pH-interval; forklar ud fra jeres resultat, hvad saltsyren gjorde ved bromelinen. Hvis man ville bruge det samme trick i køkkenet for at få frisk ananas til at stivne i en dessert, hvilke utilsigtede virkninger skulle man så regne med?
+6. Sammenlign med resten af klassen i @tbl-2 — især de grupper, der brugte kiwi eller appelsin i stedet for kontrolglasset. Hvilke af frugterne ser ud til at indeholde et proteinnedbrydende enzym, og hvilke gør ikke? Er I enige på tværs af grupperne, eller er der glas, hvor resultaterne ikke stemmer overens?
+
+| Gruppe | 1: Frisk ananas | 2: Kogt ananas | 3: Ananas + syre | 4: Kontrol eller anden frugt (hvilken?) |
+|:---|:---:|:---:|:---:|:---:|
+| Vores | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+
+: Klassens resultater — stivnede gelatinen? {#tbl-2}
+
+7. **Perspektivering.** Kan man lave gelé med frisk ananas? Med ananas fra dåse? Begrund begge svar med jeres egne resultater. Bromelin sælges også som kødmørner — forklar ud fra øvelsen, hvorfor det virker, og hvorfor det ikke virker, hvis man drysser det på kødet efter stegningen.
+8. **Fejlkilder og konklusion.** Gik noget galt undervejs — blandede pipetter, ulige mængder gelatine, glas der ikke nåede at køle nok — skal I skrive hvad, og vurdere, hvilken vej det trak resultatet. Saml derefter op: hvad viste forsøget om bromelin, og hvad viste det om, hvad temperatur og pH betyder for et enzym?
