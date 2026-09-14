@@ -92,3 +92,36 @@ Petriskålens areal findes med $A = \pi r^2$, hvor $r$ er halvdelen af skålens 
 | Svampekim pr. m² pr. time | | |
 
 : Kimfald af bakterier og svampe, indendørs og udendørs. {#tbl-1}
+
+Skriv derefter jeres fire kimfaldstal ind i klassens skema sammen med de andre gruppers.
+
+| Gruppe | Bakterier, indendørs | Bakterier, udendørs | Svampe, indendørs | Svampe, udendørs |
+|:---:|:---:|:---:|:---:|:---:|
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+
+: Klassens kimfald, i kim pr. m² pr. time. Skemaet kan overføres direkte til et regneark. {#tbl-2}
+
+## Databehandling
+
+1. Beregn kimfaldet for hver af de fire plader som antal kolonier divideret med pladens areal og eksponeringstiden:
+
+$$\text{Kimfald} = \frac{\text{antal kolonier}}{A \cdot t}$$
+
+hvor $A$ er arealet i m² (se @tbl-1) og $t$ er eksponeringstiden i timer (30 minutter = 0,5 time). Sæt tallene ind i @tbl-1.
+
+2. Sammenlign jeres fire tal: Er der flest kim indendørs eller udendørs? Er der flest bakterier eller svampe? Angiv forskellene i procent, fx
+
+$$\text{Forskel (\%)} = \frac{\text{udendørs} - \text{indendørs}}{\text{udendørs}} \cdot 100$$
+
+3. Beregn klassens gennemsnitlige kimfald for hver af de fire kombinationer ud fra @tbl-2, og sammenlign med jeres egne tal. Er der stor spredning mellem grupperne? Diskutér, hvad forskelle i placering, tidspunkt og vejr kan have betydet.
+4. Beskriv resultatet fra genstandspladen (felt I–IV) i ord: i hvilket felt voksede der flest kolonier, og i hvilket færrest? Understøt med jeres foto.
+5. Diskutér på baggrund af resultaterne:
+   - Hvor stammer de bakterier og svampesporer, I har fundet, fra?
+   - Hvilke betingelser (temperatur, fugt, næring) skal være til stede, for at bakterier og svampe kan vokse — og hvordan har I selv skabt dem i varmeskabet?
+   - Hvordan kan I bruge jeres resultater fra felt I–IV til at give et råd om håndhygiejne?
+6. Skriv en kort konklusion, der samler formålet, de vigtigste tal og svarene på spørgsmålene ovenfor.
