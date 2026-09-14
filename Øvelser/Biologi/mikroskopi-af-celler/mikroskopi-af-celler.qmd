@@ -21,24 +21,30 @@ I dag skal I lave jeres egne mikroskoppræparater og sammenligne celler fra en p
 
 1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
 2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
-3. Se fra siden, og kør objektivet så langt ned mod præparatet som muligt med grovskruen.
-4. Se i okularet, og skru langsomt objektivet opad, indtil billedet er skarpt. Finindstil med finskruen.
+3. Kør krydsbordet helt ned med grovskruen.
+4. Se på skærmen, og kør krydsbordet langsomt op med grovskruen, indtil billedet er skarpt.
 5. Justér lysstyrke og blænde, til kontrasten er bedst mulig.
-6. Skift først derefter til større forstørrelse (10× og dernæst 40×). Efterjustér kun med finskruen.
+6. Skift til næste forstørrelse (10× og dernæst 40×), og find skarpt billede igen med grovskruen. Mikroskopet har ingen finskrue, så gå langsomt frem, især ved 40×.
+
+::: {.callout-tip}
+## Billeder og pile
+
+Brug mikroskopets kamera til at tage et billede af det, I ser. Sæt bagefter pile ind på billedet med forklaring af de strukturer, I kan genkende (fx cellevæg, cellekerne, grønkorn), og sammenlign med de tilsvarende figurer i lærebogen.
+:::
 
 ### A. Løghinde
 
 1. Skær et kvadrat på ca. 5 × 5 mm i et stykke løg, og træk den tynde, gennemsigtige hinde af med en pincet.
 2. Læg hinden fladt ud på et objektglas i en dråbe vand — den må ikke folde sig.
 3. Læg et dækglas skråt ned over dråben, så der ikke kommer luftbobler under.
-4. Mikroskopér ved 40×, 100× og 400×, og tegn det, I ser. Løgceller kan ses tydeligt uden farvning.
+4. Mikroskopér ved 40×, 100× og 400×, og fotografér cellerne ved den forstørrelse, hvor de ses tydeligst. Løgceller kan ses tydeligt uden farvning.
 
 ### B. Vandpest
 
 1. Knib et helt blad af fra toppen af en vandpestplante — brug de yngste, lysegrønne blade.
 2. Læg bladet i en dråbe vand på et objektglas, og læg dækglas på.
 3. Mikroskopér ved 100× og 400×. Find grønkornene, og se efter, om de bevæger sig rundt i cellen (plasmastrømning).
-4. Tegn nogle få celler med grønkorn.
+4. Fotografér nogle få celler med grønkorn.
 
 ### C. Kindskrab
 
@@ -46,13 +52,13 @@ I dag skal I lave jeres egne mikroskoppræparater og sammenligne celler fra en p
 2. Rør materialet ud i en dråbe vand på et objektglas.
 3. Tilsæt en dråbe methylenblåt, og lad det virke 1–2 minutter.
 4. Læg dækglas på, og træk overskydende væske væk med filterpapir i kanten af dækglasset.
-5. Mikroskopér ved 400×. Cellerne ligger spredt og er meget flade — skru langsomt på finskruen. Tegn en enkelt celle.
+5. Mikroskopér ved 400×. Cellerne ligger spredt og er meget flade — kør grovskruen langsomt og forsigtigt. Fotografér en enkelt celle.
 6. Læg tandstikker og objektglas i affaldsbeholderen.
 
 ::: {.callout-note}
 ## Materialer (pr. gruppe)
 
-- Lysmikroskop med 4×, 10× og 40× objektiv
+- Digitalt mikroskop med 7″ skærm og indbygget kamera (fx MatataStudio MT3-5), med 4×, 10× og 40× objektiv
 - Objektglas og dækglas
 - Pincet, skalpel eller barberblad, pipette
 - Trætandstikkere (til kindskrab)
@@ -73,3 +79,12 @@ I dag skal I lave jeres egne mikroskoppræparater og sammenligne celler fra en p
 - Ved kindskrab bruger hver elev **kun sin egen** tandstikker og sit eget objektglas. Brugte tandstikkere og objektglas lægges direkte i den anviste affaldsbeholder — de må ikke deles eller genbruges.
 - Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
 :::
+
+## Journalspørgsmål
+
+1. Sammenlign jeres tre billeder: hvilke strukturer så I i alle tre celletyper, og hvilke så I kun i nogle af dem (fx cellevæg, cellekerne, grønkorn)?
+2. Løg- og vandpestceller har en tydelig, firkantet form, mens kindcellerne ligger uregelmæssigt og flade. Forklar forskellen ud fra, om cellerne har en cellevæg eller ej.
+3. Kindcellerne skulle farves med methylenblåt for at kunne ses tydeligt, mens løg- og vandpestcellerne kunne mikroskoperes ufarvede. Hvad er årsagen til den forskel?
+4. Hvis I så grønkornene i vandpestcellen bevæge sig rundt i cellen (plasmastrømning): hvad er formålet med denne bevægelse, og hvilken funktion har grønkornene?
+5. Sæt en omtrentlig størrelsesangivelse på et af jeres billeder (fx "celle ca. __ µm lang"), og forklar kort, hvordan I er nået frem til tallet ud fra forstørrelsen.
+6. Sammenlign et af jeres annoterede billeder med den tilsvarende figur i lærebogen. Er der strukturer, bogens figur viser, som I ikke selv kunne få øje på — eller omvendt? Hvad kan forklare en eventuel forskel?

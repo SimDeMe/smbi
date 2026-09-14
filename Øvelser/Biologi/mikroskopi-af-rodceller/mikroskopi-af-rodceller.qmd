@@ -21,10 +21,16 @@ I dag skal I lave et mikroskoppræparat af celler fra en rodspids og undersøge 
 
 1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
 2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
-3. Se fra siden, og kør objektivet så langt ned mod præparatet som muligt med grovskruen.
-4. Se i okularet, og skru langsomt objektivet opad, indtil billedet er skarpt. Finindstil med finskruen.
+3. Kør krydsbordet helt ned med grovskruen.
+4. Se på skærmen, og kør krydsbordet langsomt op med grovskruen, indtil billedet er skarpt.
 5. Justér lysstyrke og blænde, til kontrasten er bedst mulig.
-6. Skift først derefter til større forstørrelse (10× og dernæst 40×). Efterjustér kun med finskruen.
+6. Skift til næste forstørrelse (10× og dernæst 40×), og find skarpt billede igen med grovskruen. Mikroskopet har ingen finskrue, så gå langsomt frem, især ved 40×.
+
+::: {.callout-tip}
+## Billeder og pile
+
+Brug mikroskopets kamera til at tage et billede af det, I ser. Sæt bagefter pile ind på billedet med forklaring af de strukturer, I kan genkende (fx cellevæg, cellekerne, kromosomer), og sammenlign med de tilsvarende figurer i lærebogen.
+:::
 
 ### Forberedelse af rodspidspræparat
 
@@ -32,7 +38,7 @@ I dag skal I lave et mikroskoppræparat af celler fra en rodspids og undersøge 
 2. Læg rodspidsen i en dråbe saltsyre (1 M HCl) på et objektglas i ca. 3-5 minutter, så vævet blødgøres (macerering).
 3. Sug saltsyren væk med filterpapir, og tilsæt i stedet en dråbe methylenblåt. Lad farven virke 1-2 minutter.
 4. Læg et dækglas på, og tryk forsigtigt og lige ned gennem et stykke filterpapir (fx med viskelæderenden af en blyant), så rodspidsen "smøres" ud til et tyndt, ensartet lag af celler (squash-teknik).
-5. Mikroskopér ved 100× og 400×, og tegn nogle af de celler, I ser.
+5. Mikroskopér ved 100× og 400×, og fotografér nogle af de celler, I ser.
 
 ::: {.callout-tip}
 ## Tip
@@ -43,7 +49,7 @@ Kig især nær selve spidsen af roden. Her deler cellerne sig aktivt, og I kan s
 ::: {.callout-note}
 ## Materialer (pr. gruppe)
 
-- Lysmikroskop med 4×, 10× og 40× objektiv
+- Digitalt mikroskop med 7″ skærm og indbygget kamera (fx MatataStudio MT3-5), med 4×, 10× og 40× objektiv
 - Objektglas og dækglas
 - Spiret løg (eller anden spire) med rodspidser på ca. 1 cm
 - Saltsyre (HCl), 1 M
@@ -63,3 +69,8 @@ Kig især nær selve spidsen af roden. Her deler cellerne sig aktivt, og I kan s
 - Skalpel og saks er skarpe. Skær altid væk fra dig selv og på et fast underlag.
 - Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
 :::
+
+## Journalspørgsmål
+
+1. Sammenlign et af jeres annoterede billeder med lærebogens figur af mitosens faser. Kan I genkende, hvilken fase (profase, metafase, anafase, telofase) de celler, I har markeret med pile, befinder sig i?
+2. De fleste celler i jeres billeder ligger stille med en tydelig, rund cellekerne. Hvorfor er det kun en lille del af cellerne nær rodspidsen, der er i gang med celledeling?
