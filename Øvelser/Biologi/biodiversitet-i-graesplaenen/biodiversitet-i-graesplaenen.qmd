@@ -56,4 +56,28 @@ Vær omhyggelige med at kaste cirklen tilfældigt og få alle arter med — data
 
 : Rådata fra 10 Raunkiærcirkler i græsplænen (sæt et kryds, når arten findes i cirklen). {#tbl-1}
 
-**Antal arter pr. cirkel i gennemsnit:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_
+## Databehandling
+
+1. Tæl for hver cirkel, hvor mange arter der blev fundet, og skriv tallet i bundrækken af @tbl-1. Beregn derefter gennemsnittet:
+
+$$\text{Gennemsnitligt antal arter pr. cirkel} = \frac{\text{summen af arter i de 10 cirkler}}{10}$$
+
+2. Lav en arts-areal-kurve: gennemgå jeres 10 cirkler i den rækkefølge, I undersøgte dem, og notér for hver cirkel det samlede areal undersøgt indtil da ($n \cdot 0{,}1\ \text{m}^2$) og det samlede antal *forskellige* arter fundet indtil da (en art tælles kun med første gang, den dukker op). Sæt tallene ind i et skema som nedenfor, og afsæt dem i et koordinatsystem med areal på x-aksen og det samlede antal arter på y-aksen.
+
+| Antal undersøgte cirkler | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|:---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Samlet areal (m²) | | | | | | | | | | |
+| Samlet antal arter | | | | | | | | | | |
+
+: Arts-areal-kurvens data, udledt af @tbl-1. {#tbl-2}
+
+3. Vurdér ud fra kurvens forløb: flader den ud mod cirkel 10, eller stiger den stadig næsten lige så meget som i starten? Hvad siger det om, hvor godt jeres 10 cirkler dækker plænens samlede biodiversitet?
+4. Sammenlign jeres gennemsnitlige artsantal pr. cirkel og jeres arts-areal-kurve med en anden gruppes data fra et andet område af skolens plæner. Er der forskel på artsantallet eller på, hvor hurtigt kurven flader ud? Hvad kan forklare en eventuel forskel (fx sol/skygge, slid, jordbund)?
+5. Vurdér hypotesen: kunne den be- eller afkræftes ud fra jeres tal?
+
+## Journalspørgsmål
+
+1. Definér begrebet biodiversitet, og forklar med egne ord, hvorfor høj biodiversitet gør et økosystem mere robust.
+2. Hvorfor er der i disse år stort fokus på at bevare biodiversiteten, både globalt og i Danmark? Nævn mindst én konkret trussel mod biodiversiteten på danske græsarealer.
+3. Diskutér, hvor repræsentativt jeres resultat er for hele plænen: gør antallet af cirkler og tilfældigheden i, hvor de kastes, en forskel for konklusionen?
+4. Hvordan ville I forvente, at artsantallet så ud, hvis I i stedet undersøgte en nyslået fodboldbane eller en urørt eng ved siden af skolen? Begrund svaret med, hvad planter har brug for for at etablere sig og overleve slåning eller græsning.
