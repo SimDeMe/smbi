@@ -346,6 +346,29 @@ Renderet til docx/pdf/html som alle de andre. De to
 tilføjet som kort i `biologi.html` og ikke skrevet ind i `sitemap.xml`. Det
 hører med, når der bliver renderet (se arbejdsgangs-reglen øverst).
 
+## Spytamylases nedbrydning af stivelse (2026-09-14)
+
+Ny biologiøvelse, `Biologi/spytamylase-nedbrydning-af-stivelse/`, bygget direkte på en
+vejledningstekst brugeren indsatte i chatten (fem reagensglas: kontrol, tre
+temperaturer og ét pH 2-glas med saltsyre, Lugols reagens som farveindikator
+for stivelse). Arkivet `BIOLOGI/06 - Enzymforsøg – spytamylase, pepsin,
+bromelin, stivelseshydrolyse/` blev gennemsøgt først — det indeholder tre
+andre spytamylase-varianter (`Spytamylase.docx` fra Randers HF 2016 med
+tre glas og enzymopløsning A/B/C, `JSN fys hydrolysering af stivelse med
+spyt amylase.doc` med dråbetest hvert 30. sekund ved pH 2-10, og `Forsøg med
+spytamylase og pepsin.docx`) — men ingen af dem matcher brugerens fem-glas-
+opstilling 1:1, så den nye vejledning er bygget på brugerens tekst, med titlen
+"Spytamylases nedbrydning af stivelse" hentet fra `Spytamylase.docx`.
+
+Nyt `## Databehandling`-afsnit regner tiden for farveskift om til en relativ
+reaktionshastighed ($v = 1/t$) og beder eleverne søjlediagramme temperatur-
+og pH-effekten hver for sig. Kortet er sat ind i `biologi.html`s
+"Forsøgsvejledninger" (14 → 15, alfabetisk mellem Peak Flow-måling og
+Vitalkapacitet), raden i `oversigt.html` er tilføjet under "Stofskifte og
+enzymer" (ved siden af Bromelin i ananas), og kandidatraden for resten af
+mappe 06 er rettet til kun at nævne pepsin, dialyseforsøg og kvantitativ
+stivelseshydrolyse som resterende. Renderet til html/pdf/docx.
+
 ## Grundversionen af poroesitet-og-permeabilitet fjernet (2026-09-14)
 
 `Geografi/poroesitet-og-permeabilitet/` (qmd/html/pdf/docx) er slettet fra

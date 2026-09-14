@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>mappestruktur</title>
+<title>Spytamylases nedbrydning af stivelse</title>
 <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -22,41 +22,6 @@ ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
 width: 0.8em;
 margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
-}
-
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-}
-pre.numberSource { margin-left: 3em; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -2360,214 +2325,227 @@ window.Quarto = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="Mappestruktur.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="Mappestruktur.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
+<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="spytamylase-nedbrydning-af-stivelse.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="spytamylase-nedbrydning-af-stivelse.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 <div class="doc-banner">
-  <span class="doc-banner-fag"></span>
+  <span class="doc-banner-fag">Biologi</span>
   <span class="doc-banner-hold"></span>
+</div>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Spytamylases nedbrydning af stivelse</h1>
+<p class="subtitle lead">Laboratorieøvelse</p>
 </div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="mappestruktur-for-øvelser-quarto" class="level1">
-<h1>Mappestruktur for Øvelser (Quarto)</h1>
-<p><em>Opdateret 2026-09-14.</em></p>
-<section id="arbejdsgang-vigtigt" class="level2">
-<h2 class="anchored" data-anchor-id="arbejdsgang-vigtigt">Arbejdsgang — vigtigt</h2>
-<p><strong>Ret i <code>.qmd</code>-kilderne — og rendér bagefter.</strong> Rettelser laves i Quarto-kilderne (<code>.qmd</code>, <code>_quarto.yml</code>, <code>styles.scss</code> osv.), og derefter renderes de berørte vejledninger med det samme, så <code>.pdf</code>, <code>.docx</code> og <code>.html</code> i øvelsesmappen altid svarer til kilden:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> Øvelser/<span class="op">&lt;</span>Fag<span class="op">&gt;</span>/<span class="op">&lt;</span>øvelse<span class="op">&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render <span class="op">&lt;</span>øvelse<span class="op">&gt;</span>.qmd <span class="at">--to</span> typst   <span class="co"># PDF</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render <span class="op">&lt;</span>øvelse<span class="op">&gt;</span>.qmd <span class="at">--to</span> docx    <span class="co"># Word</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render <span class="op">&lt;</span>øvelse<span class="op">&gt;</span>.qmd <span class="at">--to</span> html    <span class="co"># webside</span></span></code></pre></div><button title="Kopier til udklipsholder" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>fix-docx-tables.py</code> kører selv efter hver docx-rendering og retter sidehovedet (fag/hold) og tabeller, der ellers ville blive delt af et sideskift. Rettes en <code>.qmd</code> i en mappe, hvor der allerede ligger outputs, skal alle tre formater renderes igen — ikke kun det ene. Det samme gælder de <code>.md</code>-dokumenter her i <code>Øvelser/</code>, der har renderede udgaver ved siden af (<code>LÆS-MIG</code>, <code>Mappestruktur</code>, <code>Bio-C-forsog-oversigt</code>, <code>Forsogsvejledninger</code>).</p>
-<p><em>Ændret 2026-09-13 efter ønske fra brugeren. Tidligere var reglen den modsatte — at der aldrig måtte renderes uden eksplicit besked — og derfor står der flere steder nedenfor, at noget “ikke er renderet endnu”. Det er nu indhentet: alle øvelsesmapper har både <code>.pdf</code>, <code>.docx</code> og <code>.html</code>, der svarer til deres <code>.qmd</code>.</em></p>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Dato:</strong> ____________________      <strong>Gruppe / navne:</strong> ____________________________________________</p>
+<section id="om-øvelsen" class="level2">
+<h2 class="anchored" data-anchor-id="om-øvelsen">Om øvelsen</h2>
+<p>I dag skal I undersøge nedbrydningen af stivelse ved hjælp af enzymet amylase. Stivelse er et kulhydrat opbygget af flere hundrede glukosemolekyler i lange kæder, og det udgør langt størstedelen af kulhydraterne i vores kost. Amylase kan spalte stivelse til maltose, som kun består af to glukosemolekyler. Fordøjelsen af stivelse starter allerede i munden, hvor spytkirtlerne udskiller spytamylase; øverst i tyndtarmen tilføres desuden bugspytamylase fra bugspytkirtlen.</p>
+<p>I forsøget påvises spaltningen af stivelse via et farveskift: jod binder sig til stivelsesmolekylerne og farver dem blå, og når stivelsen nedbrydes til mindre enheder, slipper jodet igen, og den blå farve viger for en gullig. Det er dette farveskift — og hastigheden af det — I bruger som mål for amylaseaktiviteten. I skal bruge jeres eget spyt som enzymkilde, og undersøge hvilken effekt temperatur og pH har på, hvor hurtigt stivelsen nedbrydes.</p>
 </section>
-<section id="fast-indhold-i-en-vejledning-ændret-2026-09-14" class="level2">
-<h2 class="anchored" data-anchor-id="fast-indhold-i-en-vejledning-ændret-2026-09-14">Fast indhold i en vejledning (ændret 2026-09-14)</h2>
-<p>Hver vejledning skal ud over <code>## Fremgangsmåde</code>, materialeboksen, et evt. sikkerhedsafsnit og registreringsskemaet indeholde <strong>to faste afsnit</strong>:</p>
-<p><strong><code>## Databehandling</code></strong> — de beregninger, grafer og den resultatbehandling, eleverne selv skal lave ud fra deres rådata. Nummereret liste; formler skrives som rigtig matematik (<code>$$…$$</code>), og skal de udregnede tal samles, får de deres eget skema ved siden af rådataskemaet. Krydshenvis til tabellerne med <code>@tbl-1</code> osv. Afsnittet udelades <strong>kun</strong>, hvis øvelsen er rent kvalitativ og der ikke er tal at regne på (fx ren mikroskopi) — det svarer til <code>data:&#39;ejnoedvendig&#39;</code> i <code>oversigt.html</code>.</p>
-<p><strong><code>## Journalspørgsmål</code></strong> — nummererede forslag til faglige refleksionsspørgsmål, der binder resultaterne sammen med teorien: begreber, der skal forklares, metodens repræsentativitet, fejlkilder, sammenligning med andre grupper eller andre situationer. Det er forslag, den enkelte lærer kan skære i eller bytte ud — ikke en facitliste, og ikke spørgsmål med ét rigtigt svar hentet direkte fra teksten.</p>
-<p><code>Biologi/biodiversitet-i-graesplaenen/</code> er forlæg for begge afsnit.</p>
-<p><strong>Dette ophæver «bare bones»-afgrænsningen</strong> flere steder nedenfor, hvor databehandling, diskussions- og konklusionsspørgsmål blev udeladt med den begrundelse, at det var arbejdsspørgsmål, læreren selv tilføjede (<code>bakterier-og-svampe</code>, <code>bromelin-i-ananas</code>, <code>dafnier-og-koffein</code>, <code>vitalkapacitet</code> m.fl.). De afsnit står som historik over, hvad der dengang blev besluttet — reglen er nu den modsatte. Rettes en af de gamle vejledninger, skal den have begge afsnit med.</p>
-</section>
-<section id="hver-øvelse-har-et-kort-på-fagforsiden" class="level2">
-<h2 class="anchored" data-anchor-id="hver-øvelse-har-et-kort-på-fagforsiden">Hver øvelse har et kort på fagforsiden</h2>
-<p>Enhver mappe under <code>Øvelser/Biologi/</code> og <code>Øvelser/Geografi/</code> skal have <strong>ét kort</strong> i staken «Forsøgsvejledninger» på henholdsvis <code>biologi.html</code> og <code>geografi.html</code>. En ny øvelse er ikke færdig, før kortet er der.</p>
-<p>Kortet står alfabetisk blandt de andre og følger samme markup som naboerne: en <code>.item</code> med <code>data-sog</code> (søgeord i små bogstaver, inkl. <code>pdf word</code>), <code>&lt;h4&gt;</code> med link til <code>…/&lt;øvelse&gt;.html</code>, en enkelt sætning om hvad man gør, <code>&lt;span class=&quot;fag&quot;&gt;Forsøg&lt;/span&gt;</code> og en <code>.sub</code> med <code>PDF</code>- og <code>Word</code>-links. Har øvelsen en simulering på sitet, kommer den med som et ekstra <code>.sub</code>-link.</p>
-<p>Tre ting følger med hver gang: tælleren i stak-hovedet (<code>&lt;h3&gt;Forsøgsvejledninger&lt;/h3&gt;&lt;span class=&quot;n&quot;&gt;…&lt;/span&gt;</code>), rækken i <code>oversigt.html</code> og url’en i <code>sitemap.xml</code>.</p>
-</section>
-<section id="oversigt.html-opdateres-altid" class="level2">
-<h2 class="anchored" data-anchor-id="oversigt.html-opdateres-altid"><code>oversigt.html</code> opdateres altid</h2>
-<p><code>oversigt.html</code> er den interne oversigt og skal opdateres, hver gang en vejledning laves eller rettes — ikke kun når en ny mappe kommer til. Det omfatter rækken selv (<code>quarto</code>, <code>data</code>, <code>spg</code>, <code>note</code>, emne og sti til originalen), tællerne og listen «Det der mangler» længere nede på siden. Værdierne er <code>&#39;ja&#39; | &#39;delvis&#39; | &#39;nej&#39; | &#39;ejnoedvendig&#39; | &#39;ukendt&#39;</code>, og signaturforklaringen på siden siger, hvornår hver enkelt bruges.</p>
-</section>
-<section id="beslutning" class="level2">
-<h2 class="anchored" data-anchor-id="beslutning">Beslutning</h2>
-<p>Vi er gået væk fra at have en separat “Quartro Skabelon”-mappe pr. fag, som hver øvelse skulle ligge inde i. Det var tungt (dobbelt konfiguration for Biologi og Geografi, der let kunne glide fra hinanden) og skabte forvirring om, hvor en øvelse “skulle bo” (jf. episoden hvor <code>opmaaling-af-terraenprofil</code> blev flyttet ud af sin skabelonmappe og dermed mistede den fælles styling).</p>
-<p><strong>Model:</strong> Den fælles Quarto-konfiguration ligger som 7 filer direkte i toppen af <code>Øvelser/</code>:</p>
-<pre><code>Øvelser/
-├── _quarto.yml
-├── styles.scss
-├── reference.docx
-├── page.typ
-├── typst-template.typ
-├── banner.html
-├── fix-docx-tables.py
-├── LÆS-MIG.md / LÆS-MIG.pdf   (forklarer opsætningen)
-├── Biologi/
-│   ├── osmose-i-kartofler/
-│   │   ├── osmose-i-kartofler.qmd
-│   │   └── osmose-i-kartofler.docx / .pdf / .html   (renderede outputs)
-│   ├── mikroskopi-af-celler/
-│   │   └── mikroskopi-af-celler.qmd + .docx / .pdf / .html
-│   └── …                                (én mappe pr. øvelse, samme mønster)
-└── Geografi/
-    └── opmaaling-af-terraenprofil/
-        ├── opmaaling-af-terraenprofil.qmd
-        ├── opmaaling-af-terraenprofil.docx / .pdf / .html
-        └── figurer/</code></pre>
-<p><strong>Filnavnet er mappens navn — ikke <code>index</code>.</strong> Se afsnittet nederst (2026-09-11); en downloadet vejledning skal hedde noget, eleven kan kende igen på skrivebordet.</p>
-<p>Fordi Quarto leder opad i mappetræet efter <code>_quarto.yml</code>, gælder den fælles styling automatisk for enhver <code>.qmd</code>, uanset hvor dybt den ligger under <code>Biologi/</code> eller <code>Geografi/</code>. Der er ikke længere nogen særlig skabelonmappe, en øvelse skal ligge inde i — bare en almindelig undermappe under det rigtige fag.</p>
-<p>Fag-specifik metadata (<code>hold:</code>, <code>fag:</code>) sættes i den enkelte <code>.qmd</code>-fils egen YAML-header, som overskriver projekt-niveauets værdier — så det er ikke nødvendigt med separate <code>_quarto.yml</code>-filer pr. fag. Alle biologi-øvelser sætter <code>fag: &quot;Biologi&quot;</code> og <code>hold: &quot;&quot;</code> (fordi “3g Ng” i roden er Geografi-specifikt).</p>
-</section>
-<section id="rettet-fejl-faghold-i-word-sidehoved-var-hardkodet" class="level2">
-<h2 class="anchored" data-anchor-id="rettet-fejl-faghold-i-word-sidehoved-var-hardkodet">Rettet fejl: fag/hold i Word-sidehoved var hardkodet</h2>
-<p>Da <code>Osmose i kartofler</code> blev lavet, viste det sig, at <code>reference.docx</code>’s sidehoved/-fod indeholder <strong>statisk tekst</strong> (“NATURGEOGRAFI B” / “3g Ng”), fordi Word (i modsætning til HTML og PDF/Typst) ikke selv kan slå Quarto-metadata som <code></code> op i sidehovedet. Alle <code>.docx</code>-outputs ville derfor altid vise “Naturgeografi B / 3g Ng” i toppen, uanset fag — det var kun HTML (<code>banner.html</code>) og PDF (<code>page.typ</code>) der reelt var dynamiske.</p>
-<p><code>fix-docx-tables.py</code> er udvidet til også at rette dette: efter hver rendering finder scriptet nu den <code>.qmd</code>, der hører til hver genereret <code>.docx</code>, læser dens <code>fag</code>/<code>hold</code>/<code>doc-type</code> (med fald tilbage til <code>_quarto.yml</code>s standardværdier), og indsætter den rigtige tekst i sidehoved og -fod. Testet og verificeret på <code>osmose-i-kartofler</code>, <code>mikroskopi-af-celler</code> (begge viser “BIOLOGI”) og <code>opmaaling-af-terraenprofil</code> (viser stadig korrekt “NATURGEOGRAFI B / 3g Ng”) — ingen regression.</p>
-</section>
-<section id="mikroskopi-af-celler-bevidst-afgrænset" class="level2">
-<h2 class="anchored" data-anchor-id="mikroskopi-af-celler-bevidst-afgrænset">Mikroskopi af celler — bevidst afgrænset</h2>
-<p>Den gamle vejledning havde fire præparater (løg, vandpest, kindskrab, gær) samt formål/teori/hypotese/fejlkilder/konklusion/spørgsmål til journalen og en “Registrering af målinger”-tabel. Efter ønske er den nye version afgrænset til kun <strong>løghinde, vandpest og kindskrab</strong> (gær droppet). Kun kindskrab farves (methylenblåt, det blå farvestof) — løghinde farves slet ikke (observeres direkte, ingen Lugols væske), vandpest farves heller ikke. “Registrering af målinger”-afsnittet (tabel til at notere iagttagelser) er fjernet efter ønske. Da øvelsen stadig bruger methylenblåt og ethanol 70 %, har den (modsat Osmose) et <code>callout-important</code>-afsnit om Sikkerhed, som krævet af projektinstruktionerne.</p>
-<p><strong>2026-08-26 — forsøgt tilføjelse af rodspidser, siden rullet tilbage:</strong> Der blev midlertidigt tilføjet et fjerde delforsøg “D. Rodspidser” (squash-præparat med saltsyre og methylenblåt, mitose i rodspidsceller). Ved eftersøgning i <code>Bio-C-delt-mappe</code> (alle .docx/.doc/.rtf-filer samt OCR af den store “Mikroskopi vejledning NV-bogen.pdf”) viste det sig, at <strong>ingen</strong> af de gamle forsøgsvejledninger nævner rodspidser, saltsyre (i mikroskopi-sammenhæng) eller acetocarmin/orcein — protokollen var altså ikke baseret på brugerens egne, gamle materialer, men på generel biologifaglig praksis. Tilføjelsen blev derfor rullet tilbage fra <code>mikroskopi-af-celler</code>, men er efterfølgende genskabt som sin <strong>egen, selvstændige øvelse</strong> <code>Biologi/mikroskopi-af-rodceller</code> (squash-præparat af rodspids fra spiret løg, saltsyre 1 M + methylenblåt).</p>
-<p><strong>Renderet:</strong> <code>mikroskopi-af-celler</code> er siden renderet igen, så docx/pdf/html svarer til den afgrænsede udgave.</p>
-</section>
-<section id="bakterier-og-svampe-sammenlagt-af-kimfald-påvisning-af-bakterier" class="level2">
-<h2 class="anchored" data-anchor-id="bakterier-og-svampe-sammenlagt-af-kimfald-påvisning-af-bakterier">Bakterier og svampe — sammenlagt af Kimfald + Påvisning af bakterier</h2>
-<p>Denne gruppe af gamle filer (<code>GAMMEL KIMFALD.doc</code>, <code>GAMMEL Påvisning af bakterier.doc</code>, <code>NY Øvelse Bakterier og svampe.docx</code>, samt identiske kopier i <code>MM_s 1.g-øvelser/</code>) er lavet til én standardvejledning, <code>Biologi/bakterier-og-svampe</code>.</p>
+<section id="fremgangsmåde" class="level2">
+<h2 class="anchored" data-anchor-id="fremgangsmåde">Fremgangsmåde</h2>
+<ol type="1">
+<li>Opsaml ca. 2-3 mL spyt fra én person i gruppen i et lille bægerglas. Fortynd det med ca. 4 mL vand, og rør grundigt rundt — dette er jeres spytamylase-opløsning.</li>
+<li>Nummerér fem reagensglas fra 1 til 5. Glassenes indhold, pH og temperatur fremgår af <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.</li>
+<li>Tilsæt med et 10 mL måleglas 5 mL af den fælles 0,5 % stivelsesopløsning til hvert af de fem glas.</li>
+<li>Stil glassene i vandbad ved den temperatur, der er angivet i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>. Glasset ved 80 °C stilles først i vandbadet 2-3 minutter, før spytamylasen tilsættes.</li>
+<li>Tilsæt 2 dråber jod-jod-kaliumopløsning (Lugols reagens) til hvert glas med en engangspipette, og rør rundt med en spatel. Notér farven, og hold især øje med, om farven i glas 1 (kontrol) ændrer sig i løbet af forsøget. Skyl spatlen grundigt mellem hvert glas.</li>
+<li>Tilsæt 0,5 mL spytamylase til glas 2, rør rundt, og tag straks tiden. Stop uret, når væsken skifter fra blå til gullig — hold glasset op mod et stykke hvidt papir sammen med glas 1 (kontrollen) for lettere at se skiftet. Notér tiden i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.</li>
+<li>Gentag trin 6 for glas 3 og glas 4.</li>
+<li>Tilsæt til glas 5 først 0,5 mL fortyndet saltsyre (0,1 M) med en plastpipette og derefter 0,5 mL spytamylase. Rør rundt med en ren spatel, tag tiden, og notér farveskiftet som i de øvrige glas.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Materialer (pr. gruppe)
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><strong>Vigtig afklaring:</strong> Brugeren omtalte oprindeligt “Kimfald” som “(frøspiring)” — men de gamle filer handler slet ikke om det. “Kimfald” er her et mikrobiologisk begreb: man sammenligner, hvor mange bakterie- og svampekim (kolonier) der falder ned fra luften pr. m² pr. time, på åbne petriskåle indendørs vs. udendørs. Der findes intet frøspiringsdokument i <code>Bio-C-delt-mappe</code> (søgt efter “spir*” — ingen match). Bekræftet med brugeren 2026-08-26, som gik videre med den mikrobiologiske betydning.</li>
-<li><strong>Sammenlægning:</strong> “GAMMEL KIMFALD.doc” og “MM_s KIMFALD.doc” er indholdsmæssigt identiske; samme gælder de to “Påvisning af bakterier.doc”-filer. “NY Øvelse Bakterier og svampe.docx” havde allerede lagt begge øvelser sammen (5 petriskåle: 3 kødpepton-agar + 2 malt-agar — 2 til kimfald ude, 2 til kimfald inde, 1 til påvisning på genstande som fingeraftryk/mønter/hår). Efter ønske fra brugeren er det denne sammenlagte NY-version, den nye standardvejledning bygger på (samme princip som konsolideringen af <code>mikroskopi-af-celler</code>).</li>
-<li><strong>Indhold:</strong> A) fremstilling af agar-plader (kan springes over, hvis pladerne er færdigstøbte), B) kimfald ude/inde, C) påvisning af bakterier på genstande, D) inkubation i varmeskab ved 37 °C og aflæsning. Et <code>callout-important</code>-afsnit om Sikkerhed er medtaget (varm agar, og at plader med mikroorganismer dyrket ved kropstemperatur ikke må åbnes), selvom øvelsen ikke bruger egentlige kemikalier — vurderet nødvendigt pga. de reelle farer ved varme og biologisk materiale.</li>
-<li>Bevidst udeladt (bare bones): “Klassens resultater”-tabellen (sammenligning på tværs af grupper) samt diskussions-/konklusionsspørgsmålene fra de gamle vejledninger — det er arbejdsspørgsmål, som den enkelte lærer selv tilføjer. En simpel registreringstabel til rå data (kolonietal + areal-beregning) er bevaret, ligesom i <code>osmose-i-kartofler</code>.</li>
+<li>Bægerglas med ca. 100 mL 0,5 % forklistret stivelsesopløsning (fælles)</li>
+<li>Reagensglas med 5 % jod-jod-kaliumopløsning (Lugols reagens)</li>
+<li>Lille bægerglas til opsamling af spyt</li>
+<li>Stativ med 5 reagensglas</li>
+<li>10 mL måleglas</li>
+<li>Spatel, engangspipetter og en plastpipette</li>
+<li>Fortyndet saltsyre (0,1 M HCl)</li>
+<li>Stopur</li>
+<li>Vandbade ved ca. 15 °C, 40 °C og 80 °C</li>
 </ul>
-</section>
-<section id="dafnier-og-koffein-de-tre-fagintro-filer-viste-sig-at-være-ét-forsøg" class="level2">
-<h2 class="anchored" data-anchor-id="dafnier-og-koffein-de-tre-fagintro-filer-viste-sig-at-være-ét-forsøg">Dafnier og koffein — de tre “Fagintro”-filer viste sig at være ét forsøg</h2>
-<p>Brugeren bad om at få lavet “fagintro-dafnieforsøget” (uden at det skulle hedde “fagintro” i den nye vejledning). <code>Forsogsvejledninger.md</code> listede gruppe 4 (“Dafnier (koffein/mikroskopi)”) som om der potentielt var to forskellige forsøg — ét om koffein og ét om mikroskopi. Efter at have læst alle tre kildefiler (staget og læst 2026-08-27) viste det sig, at de er <strong>samme forsøg</strong>: dafniens hjerterytme observeres i mikroskop, før og efter tilsætning af kaffeopløsninger med stigende koffeinkoncentration. Forskellen mellem filerne er kun mængden af baggrundsstof:</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Vigtigt</span>Sikkerhed
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><code>Undervisning 2019-2020/Fag-intro/CS materialer/2 - Øvelsesvejledning dafnie koffein v2.docx</code> (identisk kopi i <code>Modul 2/</code>) — mest komplette protokol, med en fuld fortyndingsrække (stamopløsning 600 mg/L halveret trinvist ned til 18,75 mg/L) og eksplicitte formål/hypotese/resultater/fejlkilder/konklusions-prompts.</li>
-<li><code>Undervisning 2019-2020/Fag-intro/CS materialer/1 - Dafnier mikroskopi CS.docx .docx</code> — samme forsøg, men kun med én koffeinkoncentration (ingen fortyndingsrække), efterfulgt af et langt tekststykke om dafniens anatomi, formering og økologiske betydning (baggrundslæsning, ikke en del af selve fremgangsmåden).</li>
-<li><code>Undervisning 2021-2022/Fagintro/03 Øvelsesvejledning Dafnier mikroskopi 2021.docx</code> — samme protokol som v2 (men fremstiller kun stamopløsningen og siger “udvid selv, hvis I ikke ser effekt” i stedet for at foreskrive alle seks koncentrationer), rammet ind som et postermateriale, plus samme baggrundstekst om dafniens økologi.</li>
+<li><strong>Jod-jod-kaliumopløsning (Lugols reagens):</strong> Farver hud og tøj. Undgå spild, og skyl straks med vand ved kontakt med hud eller øjne.</li>
+<li><strong>Saltsyre (HCl):</strong> Brug beskyttelsesbriller, undgå kontakt med hud og øjne, og skyl straks med rigeligt vand ved spild.</li>
+<li><strong>Vandbadet ved 80 °C:</strong> Pas på skoldning — brug klemme eller grydelap, når det varme glas skal håndteres.</li>
+<li>Der arbejdes med eget spyt (biologisk materiale). Brug kun jeres eget udstyr, og vask hænder grundigt efter øvelsen.</li>
 </ul>
-<p>Bekræftet med brugeren 2026-08-27, at der er tale om ét forsøg i flere udgaver. Den nye standardvejledning, <code>Biologi/dafnier-og-koffein</code>, bygger på <strong>v2’s fulde fortyndingsrække</strong> (mest metodisk komplet), uden anatomi-/økologi-baggrundsteksten (bare bones — det er baggrundsstof, en lærer selv kan tilføje). Intet <code>callout-important</code>-afsnit om Sikkerhed: kaffeopløsningerne er food-grade og ufarlige i disse koncentrationer, samme vurdering som saltvandsopløsningerne i <code>osmose-i-kartofler</code>, der heller ikke har et sikkerhedsafsnit. Der er i stedet en <code>callout-tip</code> om at skåne dafnien for unødig lys/varme og evt. skifte til en frisk dafnie undervejs.</p>
+</div>
+</div>
 </section>
-<section id="bromelin-i-ananas-enzymforsøg-baseret-på-2018-versionen" class="level2">
-<h2 class="anchored" data-anchor-id="bromelin-i-ananas-enzymforsøg-baseret-på-2018-versionen">Bromelin i ananas — enzymforsøg baseret på 2018-versionen</h2>
-<p>Kildematerialet (<code>Bio-C-delt-mappe/2 I tykt og tyndt - Kost og sundhed/7 Enzymer Bromelin 2018.docx</code> og <code>Bio-C-delt-mappe/MM_s 1.g-øvelser/Enzymer Bromelin.doc</code>) er to udgaver af samme forsøg: enzymet bromelin fra frisk ananas nedbryder proteinet gelatine (husblas), så det ikke stivner. 2018-versionen er den mest komplette (seks glas: frisk, kogt og syrebehandlet ananassaft, en vand-kontrol samt valgfri kiwi-/appelsinsaft for nogle grupper) og er derfor lagt til grund for den nye standardvejledning, <code>Biologi/bromelin-i-ananas</code>, efter samme princip som ved de øvrige konsolideringer.</p>
-<p>Bare bones-versionen er afgrænset til det centrale forsøg med <strong>fire glas</strong> (frisk ananas, kogt ananas, ananas + syre, vand-kontrol) — de valgfri kiwi-/appelsin-varianter er i stedet nævnt i en <code>callout-tip</code> som en mulig udvidelse, en lærer selv kan vælge at bruge. Bevidst udeladt (bare bones): hypotese-/resultatskemaet med forklarende spørgsmål samt diskussions- og konklusionsspørgsmålene fra begge kildefiler — det er arbejdsspørgsmål, den enkelte lærer selv tilføjer. En simpel registreringstabel (stivnede gelatinen i hvert glas?) er bevaret.</p>
-<p>Øvelsen bruger både kogende vand/åben ild og fortyndet saltsyre (til at denaturere enzymet i ét af glassene), så den har et <code>callout-important</code>-afsnit om Sikkerhed, som krævet af projektinstruktionerne når der anvendes kemikalier.</p>
+<section id="registrering-af-målinger" class="level2">
+<h2 class="anchored" data-anchor-id="registrering-af-målinger">Registrering af målinger</h2>
+<div id="tbl-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 1: Forsøgsopstilling og tid for farveskift i de fem glas.
+</figcaption>
+<div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Glas nr.</th>
+<th style="text-align: left;">Enzym</th>
+<th style="text-align: center;">pH</th>
+<th style="text-align: center;">Temperatur</th>
+<th style="text-align: center;">Tid for farveskift (blå → gul)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1 (kontrol)</td>
+<td style="text-align: left;">Ingen</td>
+<td style="text-align: center;">7 (neutral)</td>
+<td style="text-align: center;">ca. 40 °C</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Spytamylase</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">ca. 15 °C</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Spytamylase</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">ca. 40 °C</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Spytamylase</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">ca. 80 °C</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Spytamylase</td>
+<td style="text-align: center;">2 (saltsyre)</td>
+<td style="text-align: center;">ca. 40 °C</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
-<section id="integreret-på-sitet-2026-09-09" class="level2">
-<h2 class="anchored" data-anchor-id="integreret-på-sitet-2026-09-09">Integreret på sitet (2026-09-09)</h2>
-<p>Alle 15 færdigrenderede øvelser (5 i <code>Geografi/</code>, 10 i <code>Biologi/</code>) er nu linket fra <code>geografi.html</code> (staken “Forsøgsvejledninger” + Røjle Klint-afleveringen i “Opgavesæt”) og <code>biologi.html</code> (ny stak “Forsøgsvejledninger” i sektionen “Forsøg &amp; øvrigt”). Hvert kort linker til <code>index.html</code> og har desuden direkte <code>PDF</code>/<code>Word</code>-links til <code>index.pdf</code>/<code>index.docx</code> i samme mappe.</p>
-<p>PDF/Word-download i selve vejledningen kræver ingen ekstra knap — Quarto lægger allerede en “Andre formater”-boks i margenen på hver renderet <code>index.html</code> (fordi <code>_quarto.yml</code> har flere <code>format:</code>-mål), med links til <code>.pdf</code> og <code>.docx</code>. Den findes i alle 15 filer og er ikke rørt.</p>
-<p><strong>Ikke rørt, men nu “duplikeret”:</strong> De to gamle vejledninger i <code>GeoVejledninger/konvektionskammer/</code> og <code>GeoVejledninger/JordUndersøgelse/</code> dækker samme forsøg som de nye <code>Geografi/konvektionskammer/</code> og <code>Geografi/poroesitet-og-permeabilitet/</code>. <code>geografi.html</code>s “Forsøgsvejledninger” peger nu på de nye Quarto-versioner i stedet (bedre styling, pdf+word) — de gamle filer er bevaret på disk (uændrede, stadig tilgængelige på deres url), men ikke længere linket derfra. <code>JordUndersøgelse_HF/</code> (HF-udgaven) har ingen Quarto-erstatning endnu og er stadig linket som før.</p>
-<p><strong>Samme dag, opfølgning:</strong> <code>biologi.html</code>s “Forløb” (Nature vs. Nurture) og “Spil &amp; overblik” (Cellens Evolution) er fjernet fra siden — de tog en hel grid-søjle for kun ét kort hver, uden at bidrage noget ved siden af de ti øvelser. Sektionen er nu én bred “Forsøgsvejledninger”-stak, hvis kort ligger i et internt gitter (<code>.stack-items</code> i <code>forside.css</code>) i stedet for én lang søjle. De to sider er ikke slettet, kun afkoblet fra <code>biologi.html</code> — <code>index.html</code> linker stadig til <code>BiologiC/NatureNurture/</code> og <code>CellSpil</code>.</p>
-<p><strong>Samme dag, endnu en opfølgning:</strong> to <code>.sub</code>-links i selve simulerings­kortene (<code>TermiskTryk3</code> og <code>poroesitetPermeabilitet</code> i “Under opbygning”) var overset i første omgang og pegede stadig på de gamle <code>GeoVejledninger</code>-sider — rettet til <code>Øvelser/Geografi/…</code>.</p>
-<p>Alle links til <code>Geografi/afleveringsopgave-rojle-klint/</code> er fjernet igen (fra <code>geografi.html</code>s “Opgavesæt” og fra <code>sitemap.xml</code>) — mappen skal ud af repoet og er lagt i <code>.gitignore</code> (<code>Øvelser/Geografi/afleveringsopgave-rojle-klint/</code>). Filerne ligger stadig i mappen og er stadig sporet af git indtil de rent faktisk flyttes/slettes og den ændring committes — <code>.gitignore</code> forhindrer kun <em>nye</em> ændringer i at blive foreslået til staging, den fjerner ikke i sig selv allerede committede filer fra historikken.</p>
-<p><code>index.html</code>s egen “Forsøgsvejledninger”-stak (i “Resten af materialet”) pegede stadig på de gamle <code>GeoVejledninger/</code>-sider og manglede pdf/word — rettet til samme konvention som <code>geografi.html</code>: link til <code>Øvelser/Geografi/…/index.html</code> plus <code>PDF</code>/<code>Word</code>-sublinks.</p>
-<p><strong>robots.txt / sitemap.xml:</strong> <code>Bio-C-delt-mappe/</code> (rå lærermateriale, ikke tiltænkt offentligheden) er tilføjet som <code>Disallow</code> i <code>robots.txt</code> og er hverken linket fra sitet eller i <code>sitemap.xml</code>. De 15 øvelsessider er tilføjet til <code>sitemap.xml</code>.</p>
-<p><strong>Kendt efterslæb:</strong> <code>Geografi/digital-kystopmaaling-rojle</code> og <code>Geografi/opmaaling-af-terraenprofil</code> har en <code>.qmd</code>, der er nyere end den renderede <code>.html</code> (rettelser efter sidste rendering) — den linkede side viser stadig den lidt ældre udgave, indtil nogen renderer på ny.</p>
-</section>
-<section id="geovejledninger-lagt-ind-i-øvelser-2026-09-11" class="level2">
-<h2 class="anchored" data-anchor-id="geovejledninger-lagt-ind-i-øvelser-2026-09-11">GeoVejledninger lagt ind i Øvelser (2026-09-11)</h2>
-<p>Mappen <code>GeoVejledninger/</code> i roden af repoet findes ikke længere. Dens tre selvstændige HTML-vejledninger er skrevet om til Quarto-øvelser under <code>Geografi/</code> og renderet til html+pdf+docx som de øvrige:</p>
+<section id="databehandling" class="level2">
+<h2 class="anchored" data-anchor-id="databehandling">Databehandling</h2>
+<ol type="1">
+<li>Omregn tiderne fra <a href="#tbl-1" class="quarto-xref">Tabel 1</a> til en relativ reaktionshastighed for hvert af glassene 2-5:</li>
+</ol>
+<p><span class="math display">\[v = \frac{1}{t}\]</span></p>
+<p>hvor <span class="math inline">\(t\)</span> er tiden i sekunder fra tilsætning af spytamylase til farveskiftet fra blå til gul, og <span class="math inline">\(v\)</span> dermed har enheden <span class="math inline">\(\text{s}^{-1}\)</span>. Jo kortere tid, jo højere hastighed. Sæt tallene ind i <a href="#tbl-2" class="quarto-xref">Tabel 2</a>.</p>
+<div id="tbl-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 2: De beregnede reaktionshastigheder, udledt af <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.
+</figcaption>
+<div aria-describedby="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 26%">
+<col style="width: 21%">
+<col style="width: 26%">
+<col style="width: 26%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Gammel sti</th>
-<th>Ny mappe</th>
+<th style="text-align: center;">Glas nr.</th>
+<th style="text-align: left;">Variabel</th>
+<th style="text-align: center;">Tid <span class="math inline">\(t\)</span> (s)</th>
+<th style="text-align: center;">Hastighed <span class="math inline">\(v = 1/t\)</span> (<span class="math inline">\(\text{s}^{-1}\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>GeoVejledninger/JordUndersøgelse_HF/</code></td>
-<td><code>Geografi/poroesitet-og-permeabilitet-hf/</code></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">ca. 15 °C, pH 7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td><code>GeoVejledninger/JordUndersøgelse/</code></td>
-<td><code>Geografi/poroesitet-og-permeabilitet-med-opgaver/</code></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">ca. 40 °C, pH 7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="odd">
-<td><code>GeoVejledninger/konvektionskammer/</code></td>
-<td><code>Geografi/konvektionskammer-med-opgaver/</code></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">ca. 80 °C, pH 7</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">ca. 40 °C, pH 2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 </tbody>
 </table>
-<p>De to sidste ligger nu <strong>side om side</strong> med de eksisterende <code>Geografi/poroesitet-og-permeabilitet/</code> og <code>Geografi/konvektionskammer/</code>, som dækker de samme forsøg. Forskellen er, at <code>-med-opgaver</code>-udgaverne også indeholder journaldelen fra de gamle sider — resultatbehandling, beregning af porøsitet og markkapacitet, diskussionsspørgsmål (jord) henholdsvis journalfelter, analyse og spørgsmål (konvektionskammer). De korte udgaver er uændrede.</p>
-<p><strong>Alle syv geografi-øvelser har hvert sit kort</strong> i <code>geografi.html</code>s stak “Forsøgsvejledninger” (tælleren i stak-hovedet er rettet 4 → 7), hver med <code>PDF</code>/<code>Word</code>-sublinks og — hvor der findes en — et link til simuleringen. HF-kortet har desuden en <code>lvl-HF</code>-pille. Samme kontrol er kørt for <code>biologi.html</code>: alle ti biologi-øvelser havde allerede kort. Kortene er ét pr. mappe under <code>Øvelser/Geografi/</code> og <code>Øvelser/Biologi/</code>, så en ny øvelse altid skal have et nyt kort.</p>
-<p><code>sitemap.xml</code>: de tre <code>GeoVejledninger</code>-url’er er erstattet af de tre nye <code>Øvelser/Geografi/…/index.html</code>. <code>DESIGN-OMLÆGNING.md</code> er rettet, så GeoVejledninger ikke længere står som gammelt design, der mangler omlægning.</p>
-<p><strong>Quarto er nu installeret lokalt</strong> (1.10.18, <code>/usr/local/bin/quarto</code>), og alle tre nye øvelser er renderet på brugerens egen Mac med <code>quarto render index.qmd --to typst|docx|html</code> — altså også PDF direkte via Typst, uden omvejen over LibreOffice, der er beskrevet nedenfor.</p>
+</div>
+</figure>
+</div>
+<ol start="2" type="1">
+<li>Lav et søjlediagram, der viser hastigheden <span class="math inline">\(v\)</span> som funktion af temperaturen (glas 2, 3 og 4), med temperatur på x-aksen og <span class="math inline">\(v\)</span> på y-aksen.</li>
+<li>Lav et andet søjlediagram, der sammenligner hastigheden ved pH 7 og pH 2 ved samme temperatur (glas 3 og 5).</li>
+<li>Beskriv ud fra de to diagrammer, hvordan temperatur henholdsvis pH påvirker spytamylasens reaktionshastighed. Nævn især, om sammenhængen med temperatur er lige så enkel (“jo varmere, jo hurtigere”) hele vejen, eller om der sker noget særligt ved den højeste temperatur.</li>
+</ol>
 </section>
-<section id="kendte-åbne-punkter" class="level2">
-<h2 class="anchored" data-anchor-id="kendte-åbne-punkter">Kendte åbne punkter</h2>
-<ul>
-<li>De gamle, nu overflødige filer (de to “Quartro Skabelon”-mapper, de gamle Osmose- og Mikroskopi-docx/pdf, leverings-zip’er) ligger i <code>Øvelser/_to_delete/</code> på brugerens Mac, fordi sletning kræver brugergodkendelse. Brugeren skal selv slette den mappe, når indholdet er tjekket.</li>
-<li>Quarto er installeret lokalt (1.10.18, <code>/usr/local/bin/quarto</code>), og PDF’en laves direkte via Typst. Omvejen over LibreOffice (<code>soffice --headless --convert-to pdf</code>), der blev brugt, dengang Quarto kun fandtes i et cloud-miljø uden netværk til Typst-pakkerne, er ikke længere nødvendig.</li>
-<li>Alle biologi-øvelser indtil videre bruger <code>callout-note</code> (blå) til Materialer og <code>callout-important</code> (rød) til Sikkerhed, når der er kemikalier eller andre reelle farer (fx varme, biologisk materiale) med — hold den konvention ved fremtidige øvelser. Rent food-grade opløsninger i lave koncentrationer (saltvand, kaffe) har hidtil ikke udløst et sikkerhedsafsnit.</li>
-<li>Bio-C-delt-mappe (den delte mappe med gamle lærermaterialer) er gennemgået og opsummeret i et separat projektdokument, <code>claude/Bio-C-forsog-oversigt.md</code>, som lister kandidater til fremtidige standardiserede vejledninger. Dafnie-koffein-forsøget lå ikke i denne mappe, men i de separate “Fag-intro”/“Fagintro”-mapper — se <code>Forsogsvejledninger.md</code>, gruppe 4.</li>
-</ul>
-</section>
-<section id="øvelsesfilerne-hedder-øvelsen-ikke-index-2026-09-11" class="level2">
-<h2 class="anchored" data-anchor-id="øvelsesfilerne-hedder-øvelsen-ikke-index-2026-09-11">Øvelsesfilerne hedder øvelsen, ikke <code>index</code> (2026-09-11)</h2>
-<p>De 15 øvelser, der stadig hed <code>index.qmd</code> / <code>index.html</code> / <code>index.pdf</code> / <code>index.docx</code>, er omdøbt, så filnavnet er mappens navn — samme konvention som <code>blodsukkermaaling/</code> og <code>digital-kystopmaaling-rojle/</code> allerede fulgte:</p>
-<pre><code>Biologi/osmose-i-kartofler/index.qmd  →  Biologi/osmose-i-kartofler/osmose-i-kartofler.qmd</code></pre>
-<p>Grunden er de hentede filer. Når en elev klikker <code>PDF</code> eller <code>Word</code>, landede der før en <code>index.pdf</code> i mappen Overførsler — og ti øvelser gav ti filer, der alle hed det samme. Nu hedder de <code>osmose-i-kartofler.pdf</code>, <code>dna-i-kiwi.docx</code> osv.</p>
-<p><code>.qmd</code>-kilderne er kun flyttet (<code>git mv</code>), ikke rettet, og alle tre formater er renderet på ny. Resultatet er kontrolleret mod de gamle filer: HTML er linje for linje identisk bortset fra filnavnene (biologi-siderne skiftede desuden til den nyere kompilerede <code>bootstrap-…min.css</code>, som geografi-siderne allerede brugte), PDF er identisk bortset fra tidsstempel og dokument-id, og <code>.docx</code> er identisk bortset fra <code>docProps</code>.</p>
-<p><strong>Konsekvens for adresserne:</strong> <code>smbi.dk/Øvelser/Biologi/dna-i-kiwi/</code> uden filnavn virker ikke længere — GitHub Pages har ingen <code>index.html</code> at falde tilbage på. Ingen links på sitet brugte den korte form; <code>geografi.html</code>, <code>biologi.html</code> og <code>sitemap.xml</code> peger alle på det fulde filnavn.</p>
-</section>
-<section id="vitalkapacitet-og-peak-flow-måling-2026-09-12" class="level2">
-<h2 class="anchored" data-anchor-id="vitalkapacitet-og-peak-flow-måling-2026-09-12">Vitalkapacitet og Peak Flow-måling (2026-09-12)</h2>
-<p>To nye biologiøvelser fra forløbet “Den arbejdende krop” (Malene og Lotte, forår 2017) er omsat til skabelonen:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Kilde i <code>Bio-C-delt-mappe/</code></th>
-<th>Ny mappe</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Vitalkapacitet 2017.docx</code></td>
-<td><code>Biologi/vitalkapacitet/</code></td>
-</tr>
-<tr class="even">
-<td><code>Peak Flow 2017.docx</code></td>
-<td><code>Biologi/peak-flow-maaling/</code></td>
-</tr>
-</tbody>
-</table>
-<p>De er holdt som <strong>to selvstændige øvelser</strong>, sådan som de også står i <code>oversigt.html</code> og i kildematerialet — ikke slået sammen til én lungefunktionsøvelse. De to måler forskellige ting (lungernes <em>størrelse</em> mod luftens <em>strømningshastighed</em>), og Peak Flow-vejledningen indleder med netop den forskel.</p>
-<p><strong>Medtaget fra de gamle filer:</strong> teorien i kort form, hele fremgangsmåden (otte trin med lommespirometer, ni med peakflow-meter), klassens dataskema og databehandlingen — gennemsnit pr. køn, (højde, vitalkapacitet)-plottet, og for Peak Flow de to procentberegninger (afvigelse fra forventet værdi og forskel mellem kønnene). Formlerne er skrevet som rigtig matematik (<code>$$…$$</code>) i stedet for den forvanskede Word-ligning i originalen.</p>
-<p><strong>Bevidst udeladt (bare bones):</strong> de tre refleksionsspørgsmål under «Spørgsmål» i <code>Vitalkapacitet 2017.docx</code> (kønsforskel, træning, alder) — samme linje som ved de øvrige biologiøvelser, hvor <code>spg</code> er <code>nej</code>. Videolinket til Astma-Allergi Danmark er også udeladt: den gamle adresse (<code>astma.astma-allergi.dk/hvaderastma/undersoeglungerne/peakflow</code>) er død og viderestiller nu til en generel astma-side.</p>
-<p><strong>Figurer.</strong> <code>figurer/lungevolumener.png</code> i <code>vitalkapacitet/</code> er <strong>tegnet fra bunden</strong> med matplotlib (<code>figurer/lungevolumener.py</code> ligger ved siden af, som i <code>Geografi/opmaaling-af-terraenprofil/</code>), fordi originalens tre figurer ikke kunne genbruges: lungevolumen-diagrammet og brystkasse-figuren er lærebogsmateriale (den ene mærket “© 2006 Encyclopædia Britannica”), alders­kurven var et scannet, engelsk forskningsplot, og de fire småbilleder af lommespirometret viser en identificerbar person. Den nye figur er på dansk og i sidens farver (pink kurve, blå pile).</p>
-<p><code>figurer/peak-flow-diagram.png</code> i <code>peak-flow-maaling/</code> er derimod <strong>taget uændret</strong> fra <code>Peak Flow 2017.docx</code> — øvelsen kan ikke gennemføres uden det, da eleverne skal aflæse deres forventede værdi i det. Kurverne følger Nunn &amp; Gregg-referenceværdierne (kontrolleret: mand, 35 år, 183 cm giver ≈ 650 L/min i både diagram og formel). <strong>Ophavsretten er ikke afklaret</strong> — diagrammet stammer fra lærebogsmateriale, og siden ligger offentligt på smbi.dk. Skal det erstattes, kan det gentegnes ud fra Nunn &amp; Gregg-ligningerne på samme måde som spirogrammet.</p>
-<p>Renderet til docx/pdf/html som alle de andre. De to øvelser er derfor endnu ikke sat til <code>quarto:true</code> i <code>oversigt.html</code>, ikke tilføjet som kort i <code>biologi.html</code> og ikke skrevet ind i <code>sitemap.xml</code>. Det hører med, når der bliver renderet (se arbejdsgangs-reglen øverst).</p>
-</section>
-<section id="spytamylases-nedbrydning-af-stivelse-2026-09-14" class="level2">
-<h2 class="anchored" data-anchor-id="spytamylases-nedbrydning-af-stivelse-2026-09-14">Spytamylases nedbrydning af stivelse (2026-09-14)</h2>
-<p>Ny biologiøvelse, <code>Biologi/spytamylase-nedbrydning-af-stivelse/</code>, bygget direkte på en vejledningstekst brugeren indsatte i chatten (fem reagensglas: kontrol, tre temperaturer og ét pH 2-glas med saltsyre, Lugols reagens som farveindikator for stivelse). Arkivet <code>BIOLOGI/06 - Enzymforsøg – spytamylase, pepsin, bromelin, stivelseshydrolyse/</code> blev gennemsøgt først — det indeholder tre andre spytamylase-varianter (<code>Spytamylase.docx</code> fra Randers HF 2016 med tre glas og enzymopløsning A/B/C, <code>JSN fys hydrolysering af stivelse med spyt amylase.doc</code> med dråbetest hvert 30. sekund ved pH 2-10, og <code>Forsøg med spytamylase og pepsin.docx</code>) — men ingen af dem matcher brugerens fem-glas- opstilling 1:1, så den nye vejledning er bygget på brugerens tekst, med titlen “Spytamylases nedbrydning af stivelse” hentet fra <code>Spytamylase.docx</code>.</p>
-<p>Nyt <code>## Databehandling</code>-afsnit regner tiden for farveskift om til en relativ reaktionshastighed (<span class="math inline">\(v = 1/t\)</span>) og beder eleverne søjlediagramme temperatur- og pH-effekten hver for sig. Kortet er sat ind i <code>biologi.html</code>s “Forsøgsvejledninger” (14 → 15, alfabetisk mellem Peak Flow-måling og Vitalkapacitet), raden i <code>oversigt.html</code> er tilføjet under “Stofskifte og enzymer” (ved siden af Bromelin i ananas), og kandidatraden for resten af mappe 06 er rettet til kun at nævne pepsin, dialyseforsøg og kvantitativ stivelseshydrolyse som resterende. Renderet til html/pdf/docx.</p>
-</section>
-<section id="grundversionen-af-poroesitet-og-permeabilitet-fjernet-2026-09-14" class="level2">
-<h2 class="anchored" data-anchor-id="grundversionen-af-poroesitet-og-permeabilitet-fjernet-2026-09-14">Grundversionen af poroesitet-og-permeabilitet fjernet (2026-09-14)</h2>
-<p><code>Geografi/poroesitet-og-permeabilitet/</code> (qmd/html/pdf/docx) er slettet fra repoet. Den var overflødig ved siden af de to udgaver, den selv blev forlæg for: <code>-med-opgaver</code> (fuld databehandling og diskussion) og <code>-hf</code> (kortere, to jordtyper) — se afsnittet ovenfor om <code>GeoVejledninger lagt ind i Øvelser</code>.</p>
-<p>Henvisninger fjernet samme sted: kortet i <code>geografi.html</code>s “Forsøgsvejledninger” (tælleren rettet 8 → 7), <code>.sub</code>-linket “Forsøgsvejledning” på <code>poroesitetPermeabilitet</code>-simuleringskortet (peger nu på <code>-med-opgaver</code> i stedet), rækken i <code>Øvelser/oversigt.html</code>, og url’en i <code>sitemap.xml</code>.</p>
-</section>
+<section id="journalspørgsmål" class="level2">
+<h2 class="anchored" data-anchor-id="journalspørgsmål">Journalspørgsmål</h2>
+<ol type="1">
+<li>Hvad viser kontrolforsøget (glas 1)? Hvorfor holdes temperaturen i kontrollen og i pH-forsøget (glas 5) den samme som i glas 3 — og hvorfor giver det mening at gøre det ved netop pH 7?</li>
+<li>Hvilken effekt har temperatur på amylaseaktiviteten? Brug jeres resultater fra glas 2-4 og begreberne <em>aktivt center</em> og <em>denaturering</em> i svaret.</li>
+<li>Hvilken effekt har pH på amylaseaktiviteten? Sammenlign jeres resultat fra glas 5 med pH-forholdene i mavesækken, og forklar, hvorfor det er vigtigt, at kroppen tilfører amylase fra bugspytkirtlen og ikke kun fra spytkirtlerne i munden.</li>
+<li>Gik noget galt undervejs — glas der ikke nåede den rigtige temperatur, upræcis tidtagning, forurenet spatel? Skriv hvad, og vurdér, hvilken vej det trak jeres tider.</li>
+<li><strong>Perspektivering.</strong> Hvorfor giver det ikke meget mening at tygge maden længe for at “fordøje mere stivelse” i munden, når stivelsen alligevel skal videre til mavesækken? Hvad sker der med den amylase, der stadig er i madklumpen, når den når mavesækken?</li>
+<li>Saml op: hvad viste forsøget samlet set om spytamylase og om, hvad temperatur og pH betyder for et enzyms aktivitet?</li>
+</ol>
 </section>
 
 </main>

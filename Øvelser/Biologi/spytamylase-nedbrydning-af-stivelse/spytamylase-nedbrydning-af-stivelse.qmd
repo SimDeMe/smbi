@@ -1,0 +1,94 @@
+---
+title: "Spytamylases nedbrydning af stivelse"
+subtitle: "Laboratorieøvelse"
+fag: "Biologi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I dag skal I undersøge nedbrydningen af stivelse ved hjælp af enzymet amylase. Stivelse er et kulhydrat opbygget af flere hundrede glukosemolekyler i lange kæder, og det udgør langt størstedelen af kulhydraterne i vores kost. Amylase kan spalte stivelse til maltose, som kun består af to glukosemolekyler. Fordøjelsen af stivelse starter allerede i munden, hvor spytkirtlerne udskiller spytamylase; øverst i tyndtarmen tilføres desuden bugspytamylase fra bugspytkirtlen.
+
+I forsøget påvises spaltningen af stivelse via et farveskift: jod binder sig til stivelsesmolekylerne og farver dem blå, og når stivelsen nedbrydes til mindre enheder, slipper jodet igen, og den blå farve viger for en gullig. Det er dette farveskift — og hastigheden af det — I bruger som mål for amylaseaktiviteten. I skal bruge jeres eget spyt som enzymkilde, og undersøge hvilken effekt temperatur og pH har på, hvor hurtigt stivelsen nedbrydes.
+
+## Fremgangsmåde
+
+1. Opsaml ca. 2-3 mL spyt fra én person i gruppen i et lille bægerglas. Fortynd det med ca. 4 mL vand, og rør grundigt rundt — dette er jeres spytamylase-opløsning.
+2. Nummerér fem reagensglas fra 1 til 5. Glassenes indhold, pH og temperatur fremgår af @tbl-1.
+3. Tilsæt med et 10 mL måleglas 5 mL af den fælles 0,5 % stivelsesopløsning til hvert af de fem glas.
+4. Stil glassene i vandbad ved den temperatur, der er angivet i @tbl-1. Glasset ved 80 °C stilles først i vandbadet 2-3 minutter, før spytamylasen tilsættes.
+5. Tilsæt 2 dråber jod-jod-kaliumopløsning (Lugols reagens) til hvert glas med en engangspipette, og rør rundt med en spatel. Notér farven, og hold især øje med, om farven i glas 1 (kontrol) ændrer sig i løbet af forsøget. Skyl spatlen grundigt mellem hvert glas.
+6. Tilsæt 0,5 mL spytamylase til glas 2, rør rundt, og tag straks tiden. Stop uret, når væsken skifter fra blå til gullig — hold glasset op mod et stykke hvidt papir sammen med glas 1 (kontrollen) for lettere at se skiftet. Notér tiden i @tbl-1.
+7. Gentag trin 6 for glas 3 og glas 4.
+8. Tilsæt til glas 5 først 0,5 mL fortyndet saltsyre (0,1 M) med en plastpipette og derefter 0,5 mL spytamylase. Rør rundt med en ren spatel, tag tiden, og notér farveskiftet som i de øvrige glas.
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Bægerglas med ca. 100 mL 0,5 % forklistret stivelsesopløsning (fælles)
+- Reagensglas med 5 % jod-jod-kaliumopløsning (Lugols reagens)
+- Lille bægerglas til opsamling af spyt
+- Stativ med 5 reagensglas
+- 10 mL måleglas
+- Spatel, engangspipetter og en plastpipette
+- Fortyndet saltsyre (0,1 M HCl)
+- Stopur
+- Vandbade ved ca. 15 °C, 40 °C og 80 °C
+:::
+
+::: {.callout-important}
+## Sikkerhed
+
+- **Jod-jod-kaliumopløsning (Lugols reagens):** Farver hud og tøj. Undgå spild, og skyl straks med vand ved kontakt med hud eller øjne.
+- **Saltsyre (HCl):** Brug beskyttelsesbriller, undgå kontakt med hud og øjne, og skyl straks med rigeligt vand ved spild.
+- **Vandbadet ved 80 °C:** Pas på skoldning — brug klemme eller grydelap, når det varme glas skal håndteres.
+- Der arbejdes med eget spyt (biologisk materiale). Brug kun jeres eget udstyr, og vask hænder grundigt efter øvelsen.
+:::
+
+## Registrering af målinger
+
+| Glas nr. | Enzym | pH | Temperatur | Tid for farveskift (blå → gul) |
+|:---:|:---|:---:|:---:|:---:|
+| 1 (kontrol) | Ingen | 7 (neutral) | ca. 40 °C | |
+| 2 | Spytamylase | 7 | ca. 15 °C | |
+| 3 | Spytamylase | 7 | ca. 40 °C | |
+| 4 | Spytamylase | 7 | ca. 80 °C | |
+| 5 | Spytamylase | 2 (saltsyre) | ca. 40 °C | |
+
+: Forsøgsopstilling og tid for farveskift i de fem glas. {#tbl-1}
+
+## Databehandling
+
+1. Omregn tiderne fra @tbl-1 til en relativ reaktionshastighed for hvert af glassene 2-5:
+
+$$v = \frac{1}{t}$$
+
+hvor $t$ er tiden i sekunder fra tilsætning af spytamylase til farveskiftet fra blå til gul, og $v$ dermed har enheden $\text{s}^{-1}$. Jo kortere tid, jo højere hastighed. Sæt tallene ind i @tbl-2.
+
+| Glas nr. | Variabel | Tid $t$ (s) | Hastighed $v = 1/t$ ($\text{s}^{-1}$) |
+|:---:|:---|:---:|:---:|
+| 2 | ca. 15 °C, pH 7 | | |
+| 3 | ca. 40 °C, pH 7 | | |
+| 4 | ca. 80 °C, pH 7 | | |
+| 5 | ca. 40 °C, pH 2 | | |
+
+: De beregnede reaktionshastigheder, udledt af @tbl-1. {#tbl-2}
+
+2. Lav et søjlediagram, der viser hastigheden $v$ som funktion af temperaturen (glas 2, 3 og 4), med temperatur på x-aksen og $v$ på y-aksen.
+3. Lav et andet søjlediagram, der sammenligner hastigheden ved pH 7 og pH 2 ved samme temperatur (glas 3 og 5).
+4. Beskriv ud fra de to diagrammer, hvordan temperatur henholdsvis pH påvirker spytamylasens reaktionshastighed. Nævn især, om sammenhængen med temperatur er lige så enkel ("jo varmere, jo hurtigere") hele vejen, eller om der sker noget særligt ved den højeste temperatur.
+
+## Journalspørgsmål
+
+1. Hvad viser kontrolforsøget (glas 1)? Hvorfor holdes temperaturen i kontrollen og i pH-forsøget (glas 5) den samme som i glas 3 — og hvorfor giver det mening at gøre det ved netop pH 7?
+2. Hvilken effekt har temperatur på amylaseaktiviteten? Brug jeres resultater fra glas 2-4 og begreberne *aktivt center* og *denaturering* i svaret.
+3. Hvilken effekt har pH på amylaseaktiviteten? Sammenlign jeres resultat fra glas 5 med pH-forholdene i mavesækken, og forklar, hvorfor det er vigtigt, at kroppen tilfører amylase fra bugspytkirtlen og ikke kun fra spytkirtlerne i munden.
+4. Gik noget galt undervejs — glas der ikke nåede den rigtige temperatur, upræcis tidtagning, forurenet spatel? Skriv hvad, og vurdér, hvilken vej det trak jeres tider.
+5. **Perspektivering.** Hvorfor giver det ikke meget mening at tygge maden længe for at "fordøje mere stivelse" i munden, når stivelsen alligevel skal videre til mavesækken? Hvad sker der med den amylase, der stadig er i madklumpen, når den når mavesækken?
+6. Saml op: hvad viste forsøget samlet set om spytamylase og om, hvad temperatur og pH betyder for et enzyms aktivitet?
