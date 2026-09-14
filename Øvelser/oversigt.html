@@ -196,6 +196,7 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
 .st-ja{background:#D6EFC4}
 .st-delvis{background:#FFE9DC}
 .st-nej{background:var(--paper-2)}
+.st-ejnoedvendig{background:#E2D6F8}
 .st-ukendt{background:#EDEDED;color:var(--slate)}
 .st-daekket{background:#C7E6F6}
 
@@ -345,6 +346,7 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
         <li><span class="st st-ja">✓ Ja</span> afsnittet findes i vejledningen ·
             <span class="st st-delvis">~ Delvis</span> der regnes eller sammenlignes, men uden selvstændigt afsnit ·
             <span class="st st-nej">– Nej</span> findes ikke ·
+            <span class="st st-ejnoedvendig">⊘ Ej nødvendig</span> øvelsen er rent kvalitativ — der er ingen tal at regne på ·
             <span class="st st-ukendt">? Ukendt</span> gammel fil, ikke gennemgået ·
             <span class="st st-daekket">≈ Dækket</span> erstattet af en Quarto-øvelse.</li>
         <li>Under øvelsens navn står stien til <b>originalen</b>. <code>SM-DRIVE · …</code> ligger uden for
@@ -364,8 +366,9 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
         <li>Alle geografi-vejledninger på nær HF-varianten har <b>tomme <code>fag</code>- og
             <code>hold</code>-felter</b> i deres YAML-hoved. Derfor står sidehovedet tomt i den
             renderede HTML og PDF. Biologi-øvelserne har alle <code>fag: "Biologi"</code>.</li>
-        <li><b>Ingen biologiøvelse har journalspørgsmål</b> — hverken spørgsmål til diskussion eller
-            fejlkilder. Til sammenligning har tre af de syv geografiøvelser dem.</li>
+        <li><b>Journalspørgsmål mangler stadig i otte af de tretten biologiøvelser.</b> Fem har dem nu
+            (mikroskopi af celler og af rodceller, bakterier og svampe, bromelin i ananas,
+            biodiversitet i græsplænen) — mod fem af de otte geografiøvelser.</li>
         <li>Niveau findes ikke som metadatafelt. Skal det med i sidehovedet på vejledningerne,
             kan det lægges ind som fx <code>hold: "1g Bio C"</code> i hver <code>.qmd</code>.</li>
       </ul>
@@ -400,7 +403,7 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
 /* ---------------------------------------------------------------
    Øvelsesdata. Ret her, når en øvelse skifter status eller niveau.
    quarto : true | false | 'daekket'
-   data / spg : 'ja' | 'delvis' | 'nej' | 'ukendt'
+   data / spg : 'ja' | 'delvis' | 'nej' | 'ejnoedvendig' | 'ukendt'
    niveauFormodet : true, når niveauet er gættet ud fra kilden
    ---------------------------------------------------------------*/
 const ØVELSER = [
@@ -418,14 +421,14 @@ const ØVELSER = [
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
  note:'Kimfald + påvisning på genstande. Eleverne beregner areal (A = πr²) og kim pr. m² pr. time, sammenligner med klassens skema og svarer på tre diskussionsspørgsmål om bakteriekilder, vækstbetingelser og håndhygiejne.'},
 {fag:'bio',navn:'Bromelin i ananas',emne:'Stofskifte og enzymer',original:'BIOLOGI/06 - Enzymforsøg – spytamylase, pepsin, bromelin, stivelseshydrolyse',bioc:'7 Enzymer Bromelin 2018.docx',type:'Laboratorieøvelse',sti:'Biologi/bromelin-i-ananas',fil:'bromelin-i-ananas',
- niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
- note:'Kvalitativt skema (stivnede gelatinen?) med frisk/kogt/syrebehandlet ananas og en vandkontrol. Eleverne forklarer hvert glas ud fra enzym og substrat, bruger kogning og syre som kontroller for denaturering og pH, samler klassens kiwi- og appelsinglas i et fælles skema og perspektiverer til gelé af dåseananas og til kødmørner.'},
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ejnoedvendig',spg:'ja',
+ note:'Kvalitativt skema (stivnede gelatinen?) med frisk/kogt/syrebehandlet ananas og en vandkontrol. Otte journalspørgsmål: hvert glas forklares ud fra enzym og substrat, kogning og syre bruges som kontroller for denaturering og pH, klassens kiwi- og appelsinglas samles i et fælles skema, og der perspektiveres til gelé af dåseananas og til kødmørner.'},
 {fag:'bio',navn:'DNA i kiwi',emne:'Genetik og bioteknologi',original:'BIOLOGI/32 - DNA-isolering (kiwi-løg-ærter)',bioc:'3 DNA i KIWI.docx',type:'Laboratorie-/hjemmeforsøg',sti:'Biologi/dna-i-kiwi',fil:'dna-i-kiwi',
- niveau:'Bio C',niveauFormodet:true,quarto:true,data:'nej',spg:'nej',
- note:'Eneste biologiøvelse helt uden skema til resultater.'},
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ejnoedvendig',spg:'nej',
+ note:'Eneste biologiøvelse helt uden skema til resultater — udbyttet er den synlige DNA-tråd, ikke et måltal.'},
 {fag:'bio',navn:'Gærforsøg — bobleforsøg',emne:'Stofskifte og enzymer',original:'BIOLOGI/49 - Spirringsforsøg (karse, dej-gær, bestrålede byg-frø, bly)',bioc:'Gær bobleforsøg NV.doc',type:'Laboratorieøvelse',sti:'Biologi/gaerforsog-bobleforsog',fil:'gaerforsog-bobleforsog',
- niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
- note:'Bobler pr. minut ved 5, 15 og 30 min. plus BTB-farveskift — tælles, men behandles ikke videre.'},
+ niveau:'Bio C',niveauFormodet:true,quarto:true,data:'ja',spg:'nej',
+ note:'Bobler pr. minut ved 5, 15 og 30 min. plus BTB-farveskift. Nyt databehandlingsafsnit: graf over gæringshastighed for alle fire kolber, sammenligning af temperaturens effekt (kolbe 2-4) og af tørt vs. opløst sukker (kolbe 1 vs. 2), BTB-farveskiftet holdt op mod bobletallene, og klassens temperaturer og gæringshastigheder samlet i et fælles skema.'},
 {fag:'bio',navn:'Dafnier og koffein',emne:'Krop og fysiologi',original:'BIOLOGI/04 - Dafnier (koffein-mikroskopi)',type:'Laboratorieøvelse',sti:'Biologi/dafnier-og-koffein',fil:'dafnier-og-koffein',
  niveau:'Bio C',niveauFormodet:true,quarto:true,data:'delvis',spg:'nej',
  note:'Fortyndingsrække 0–600 mg/L og gennemsnit af tre tællinger. Ingen opgave om at tegne dosis-respons-kurve.'},
@@ -736,6 +739,7 @@ const MÆRKE = {
   ja:     ['st-ja','✓ Ja'],
   delvis: ['st-delvis','~ Delvis'],
   nej:    ['st-nej','– Nej'],
+  ejnoedvendig: ['st-ejnoedvendig','⊘ Ej nødvendig'],
   ukendt: ['st-ukendt','? Ukendt']
 };
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

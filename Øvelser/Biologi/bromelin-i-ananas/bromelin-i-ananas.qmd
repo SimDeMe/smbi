@@ -64,7 +64,7 @@ Brug en ny, ren pipette til hver væske, så safttyperne ikke blandes sammen. Vi
 
 : Resultat af enzymforsøget med bromelin fra ananas. {#tbl-1}
 
-## Databehandling
+## Journalspørgsmål
 
 1. Gør resultaterne op i @tbl-1. Skriv for hvert glas, om gelatinen stivnede helt, delvist eller slet ikke — "delvist" er et gyldigt resultat, og så skal I beskrive, hvor tyktflydende indholdet var, når I vippede glasset. Dokumentér beskrivelsen med jeres fotos, og husk figurnummer og figurtekst.
 2. Forklar forskellen mellem glas 1 og kontrolglasset (glas 4) ud fra enzym og substrat: bromelin er et enzym, der spalter proteiner, og gelatine er et protein. Hvad sker der med gelatinens lange proteinkæder, og hvorfor kan de så ikke længere danne det netværk, der får blandingen til at stivne? Forklar samtidig, hvad I *ikke* kunne have konkluderet uden kontrolglasset.

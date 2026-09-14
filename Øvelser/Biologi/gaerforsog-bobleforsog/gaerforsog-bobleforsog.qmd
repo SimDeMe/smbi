@@ -81,3 +81,25 @@ Bromthymolblåt skifter farve med pH: blåt ved pH over 7,6, grønt ved pH 6,0-7
 | BTB-farve og tidspunkt for ændring | | | | |
 
 : Iagttagelser fra de fire gærrør. {#tbl-1}
+
+## Databehandling
+
+1. Tegn en graf med tiden (5, 15 og 30 min) på x-aksen og antal bobler pr. minut på y-aksen. Plot alle fire kolber i samme koordinatsystem med hver sin kurve eller signatur, så de er til at kende fra hinanden. Husk aksetitler med enheder, forklaring/signaturforklaring, figurnummer og figurtekst.
+2. Antal bobler pr. minut er et udtryk for *gæringshastigheden* — hvor hurtigt gæren omsætter sukker til CO₂. Beskriv ud fra jeres graf, om hastigheden stiger, falder eller er nogenlunde konstant i løbet af de 30 minutter for hver kolbe.
+3. Sammenlign kolbe 2, 3 og 4, som havde samme opskrift, men forskellig temperatur. Ved hvilken temperatur var gæringen hurtigst? Gæring er en enzymatisk proces — brug begreberne *enzym* og *optimumstemperatur* til at forklare forskellen, og forhold jer til, om den varmeste kolbe gærede langsommere end forventet.
+4. Sammenlign kolbe 1 og kolbe 2, som havde samme temperatur, men hvor kolbe 1 ikke fik tilsat vand, før sukkeret og gæren var rørt sammen tørt. Hvad viser forskellen mellem de to kolber om, hvad gæren og sukkeret har brug for, for at gæringen kan komme i gang?
+5. Sammenlign tidspunktet for BTB's farveskift i hver kolbe med tidspunktet for den første boble og med bobletallene. CO₂ opløses i vandet og danner kulsyre ($\text{CO}_2 + \text{H}_2\text{O} \rightarrow \text{H}_2\text{CO}_3$), som sænker pH. Hænger farveskiftet sammen med, hvor hurtigt kolben gærede?
+6. Skriv jeres målte temperaturer for kolbe 3 og 4 samt bobletallene efter 15 minutter ind i klassens skema (@tbl-2). Sammenlign med de andre gruppers resultater: følger tallene på tværs af klassen samme mønster som jeres egen graf, eller er der grupper, hvor sammenhængen mellem temperatur og gæringshastighed ser anderledes ud?
+
+| Gruppe | Temp. kolbe 3 (°C) | Bobler/min, kolbe 3 (15 min) | Temp. kolbe 4 (°C) | Bobler/min, kolbe 4 (15 min) |
+|:---|:---:|:---:|:---:|:---:|
+| Vores | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+
+: Klassens temperaturer og gæringshastigheder for kolbe 3 og 4. {#tbl-2}
+
+7. **Fejlkilder.** Gik noget galt undervejs — fx et gærrør, der proppede til, en forkert aflæst temperatur eller en forsinket start — skal I skrive hvad, og vurdere, hvilken vej det trak resultatet. Gik alt som planlagt, skriver I det.
+8. **Konklusion.** Saml op: hvordan påvirkede temperaturen gæringshastigheden, hvad viste kolbe 1, og hvordan stemte BTB-farveskiftet overens med bobletællingerne?
