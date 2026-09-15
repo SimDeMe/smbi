@@ -1,0 +1,125 @@
+---
+title: "Grønlandspumpen"
+subtitle: "Modelforsøg om den termohaline cirkulation"
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+I skal bygge en model af **Grønlandspumpen** — den cirkulation, hvor koldt og salt havvand synker til bunds ud for Grønlands kyst, mens Golfstrømmen fører nyt, varmt vand nordpå til erstatning. I et gennemsigtigt kar undersøger I først, hvordan temperaturforskelle og saltindhold hver for sig får vand til at bevæge sig, og samler det til sidst i én cirkulation med is og varme på hver sin side af karret.
+
+## Hypotese
+
+Skriv jeres bud, **inden** I går i gang — og begrund med begrebet densitet (massefylde):
+
+Hvad tror I sker, når koldt vand møder varmt vand?
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+Hvad tror I sker, når ferskvand møder saltvand?
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+Hvordan tror I, der kan dannes en hel cirkulation i karret, når is og varme bruges samtidig?
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Fremgangsmåde
+
+### Del 1: Koldt og varmt vand mødes
+
+1. Sæt skillepladen midt i karret.
+2. Fyld varmt vand i den ene side og koldt vand i den anden.
+3. Tilsæt blå frugtfarve til den kolde side, så I kan følge den.
+4. Fjern skillepladen forsigtigt, og observér, hvad der sker i grænsezonen.
+
+### Del 2: Saltvand og ferskvand mødes
+
+1. Skyl karret, og fyld det igen — nu med lunkent vand i begge sider.
+2. Opløs salt i den ene side ("havsiden"), så saltholdigheden svarer nogenlunde til havvand (se materialer), og tilsæt rød frugtfarve.
+3. Den anden side ("kystsiden") er almindeligt fersk, lunkent vand — uden salt.
+4. Fjern skillepladen forsigtigt, og observér, hvad der sker.
+
+### Del 3: Selve Grønlandspumpen — cirkulationen
+
+1. Fjern skillepladen helt, og fyld karret med lunkent vand til lige over isholderpladen.
+2. Placér isholderpladen i den ene ende af karret — den lille udskæring skal vende **nedad**.
+3. Læg knust is på pladen, og dryp blå frugtfarve på isen.
+4. Stil en lukket flaske med varmt vand i den modsatte ende af karret som varmekilde.
+5. Vent et par minutter, og observér: det kolde, blå vand synker ned ved isen, strømmer langs bunden mod den varme ende og stiger op dér — det danner en cirkulation.
+6. Fotografér både opstillingen og resultatet.
+
+### Del 4: Hvor meget tungere er saltvand?
+
+1. Vej et tomt, tørt måleglas (100 mL), og notér massen.
+2. Afmål præcis 100 mL postevand i måleglasset, og vej det igen.
+3. Tøm og tør måleglasset (eller brug et andet af samme slags).
+4. Opløs 3,5 g salt i 100 mL vand — det svarer til havvands gennemsnitlige saltholdighed — og vej på samme måde.
+
+::: {.callout-tip}
+## Tip
+
+Hold en mørk baggrund (fx et stykke sort karton) bag karret, så frugtfarven er lettere at se. Vandet skal have samme temperatur i de to sider i Del 2, ellers blander I temperatur- og saltforskellen sammen. Brug ikke kogende vand i flasken i Del 3 — lunkent til håndvarmt er nok, og det er mere behageligt at røre ved bagefter.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Gennemsigtigt plexiglas-kar med skilleplade
+- Isholderplade (med lille udskæring, der skal vende nedad)
+- Knust is
+- Flaske med skruelåg til varmt vand
+- Frugtfarve (blå og rød)
+- Salt
+- Lunkent vand
+- Vægt (0,1 g eller finere)
+- Måleglas, 100 mL (2 stk., eller ét der kan tørres mellem målingerne)
+- Digitalkamera/mobil til billeder
+:::
+
+## Registrering af målinger
+
+| Delforsøg | Beskriv, hvad I så (kvalitativt) | Tid til vandet var helt blandet/faldet til ro (sekunder) |
+|:---|:---|:---:|
+| Del 1 — koldt og varmt vand | | |
+| Del 2 — salt og fersk vand | | |
+| Del 3 — cirkulationen | | |
+
+: Iagttagelser fra de tre delforsøg. {#tbl-1}
+
+| | Postevand | Saltvand (≈ havvand) |
+|:---|:---:|:---:|
+| Masse af tomt måleglas (g) | | |
+| Masse af måleglas + 100 mL væske (g) | | |
+| Væskens masse (g) | | |
+
+: Vejninger til bestemmelse af densitet, Del 4. {#tbl-2}
+
+## Databehandling
+
+1. Beregn væskens masse for hver prøve i @tbl-2 (masse af glas med væske minus det tomme glas).
+2. Beregn densiteten af hver væske. Rumfanget er de 100 mL, altså 100 cm³:
+
+$$\rho = \frac{m}{V}$$
+
+| | Postevand | Saltvand (≈ havvand) |
+|:---|:---:|:---:|
+| Densitet (g/cm³) | | |
+
+: Beregnet densitet af de to væsker. {#tbl-3}
+
+3. Sammenlign jeres beregnede densiteter med de kendte værdier for fersk- og havvand — ca. 1,00 g/cm³ for postevand og ca. 1,025 g/cm³ for havvand. Hvor tæt kom I på?
+4. Sammenhold @tbl-1 og @tbl-3: hvordan hænger densitetsforskellen, I lige har regnet ud, sammen med det, I så ske i Del 2 og Del 3?
+
+## Journalspørgsmål
+
+1. Forklar med fagbegreber (densitet, temperatur, salinitet), hvorfor det kolde vand synker ved isen, og hvorfor det varme vand stiger ved flasken i Del 3.
+2. Hvordan minder cirkulationen i karret om den rigtige dybvandsdannelse ved Grønland? Nævn også mindst to måder, modellen er en forsimpling af det virkelige hav (fx størrelse, tidsskala, vind og jordrotation).
+3. I virkeligheden smelter Grønlands indlandsis og tilfører Nordatlanten ferskvand. Hvad ville der ske med jeres model, hvis I gentog Del 3 med smeltende ferskvandsis i stedet for almindelig is — og hvorfor?
+4. Hvad kan en svækket eller helt stoppet Grønlandspumpe betyde for klimaet i Danmark og Nordeuropa? Inddrag begrebet global energitransport via havstrømme, og forklar sammenhængen til Golfstrømmen (Den Nordatlantiske Strøm).
+5. Diskutér metoden: hvilke variable holdt I konstant, og hvilke ændrede I mellem de fire delforsøg? Stemte jeres hypoteser med det, der rent faktisk skete? Kunne en anden gruppe gentage forsøget og få samme resultat?
