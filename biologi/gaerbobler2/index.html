@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gærbobleforsøget i laboratoriet — smbi.dk</title>
+<meta name="description" content="Gærbobleforsøget i et virtuelt laboratorium: bland kolberne, giv dem hver sin temperatur, sæt gærrør med BTB på, og tæl selv boblerne.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+
+<header class="top">
+    <h1><span class="ikon">⚗</span> Gærbobleforsøget <span class="undertitel">Gæring ved tre temperaturer</span></h1>
+
+    <div class="top-hoejre">
+        <button class="knap topknap" id="nytknap" type="button" title="Start et nyt forsøg (N)">Nyt forsøg</button>
+        <button class="knap topknap" id="introknap" type="button" title="Hvad forsøget handler om">Om forsøget</button>
+        <button class="knap topknap" id="teoriknap" type="button" title="Teori (T)">Teori</button>
+        <button class="ikonknap" id="lydknap" type="button" title="Lyd til og fra (M)" aria-label="Lyd til og fra" aria-pressed="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>
+                <path class="boelger" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path class="kryds" d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <button class="ikonknap" id="hjaelpknap" type="button" title="Rundvisning (H)" aria-label="Rundvisning">?</button>
+    </div>
+</header>
+
+<main class="forsoeg">
+    <div class="scene" id="scene">
+        <canvas id="scene-laerred" aria-label="Laboratoriebord med sukker, gær, måleglas, BTB, spatel, termometer og en bobletæller, tre koniske kolber, to varmeplader, et stativ med tre gærrør på hylden og en affaldsspand"></canvas>
+        <div class="scenebesked" id="scenebesked" aria-live="polite"></div>
+    </div>
+
+    <aside class="panel">
+        <div class="kort fremhaev" id="forloeb-kort">
+            <h2><span>Forløb</span> <span class="taeller" id="forloeb-taeller"></span></h2>
+            <ol class="trinliste" id="trin-liste"></ol>
+            <div class="knaprad">
+                <button class="knap orange" id="boble-knap" type="button" title="Én boble (mellemrum)" hidden><span>Boble</span><span class="tegn">+1</span></button>
+                <button class="knap" id="vent-knap" type="button" title="Spol fem minutter frem (V)"><span>Vent 5 min</span><span class="tegn">⏱</span></button>
+                <button class="knap" id="hint-knap" type="button" title="Hint til trinnet (I)"><span>Hint</span><span class="tegn">?</span></button>
+            </div>
+            <p class="hint" id="hint-tekst" hidden></p>
+        </div>
+
+        <div class="kort" id="maal-kort">
+            <h2><span>Måleskema</span> <span class="taeller" id="maal-nr">Forsøg 1</span></h2>
+            <table class="maaleskema">
+                <tr class="hoved"><th>Kolbe</th><th>Temperatur</th><th>Bobler/min</th></tr>
+                <tr id="raekke-0"><th>Kolbe 1</th><td id="t-0"></td><td id="b-0"></td></tr>
+                <tr id="raekke-1"><th>Kolbe 2</th><td id="t-1"></td><td id="b-1"></td></tr>
+                <tr id="raekke-2"><th>Kolbe 3</th><td id="t-2"></td><td id="b-2"></td></tr>
+            </table>
+        </div>
+
+        <div class="kort" id="serie-kort">
+            <h2>Tegneserie</h2>
+            <p class="besked" id="serie-tekst">Låses op, når der er talt bobler i alle tre kolber.</p>
+            <button class="knap stor blaa" id="serieknap" type="button" title="Tegneserie (S)" hidden><span>Se forsøget som tegneserie</span><span class="tegn">→</span></button>
+        </div>
+    </aside>
+</main>
+
+<!-- ================================================================= -->
+<div class="overlay" id="intro">
+    <div class="overlay-boks intro-boks" role="dialog" aria-labelledby="intro-titel">
+        <h2 id="intro-titel">Gærbobleforsøget</h2>
+        <p class="intro-formaal">Forsøget undersøger, hvordan temperaturen påvirker, hvor hurtigt gær omdanner sukker.</p>
+
+        <h3>Forsøget</h3>
+        <ol class="intro-trin">
+            <li>Hæld vand og BTB i tre gærrør.</li>
+            <li>Kom sukker, gær og vand i tre kolber, og rør rundt.</li>
+            <li>Giv kolberne tre temperaturer, og mål dem.</li>
+            <li>Sæt gærrørene på, og tæl selv boblerne i ét minut fra hver kolbe.</li>
+        </ol>
+
+        <h3>Uheld</h3>
+        <p>Alt kan prøves, også det forkerte. SM-Simon rydder op og kommenterer, men forsøget kan altid fortsætte.</p>
+
+        <div class="knapper">
+            <button class="knap" id="intro-rundvisning" type="button">Rundvisning</button>
+            <button class="knap blaa" id="intro-start" type="button">Start forsøget</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<div class="overlay" id="teori">
+    <div class="overlay-boks">
+        <h2>Gæring</h2>
+        <p>Uden ilt omdanner gærceller sukker til ethanol og carbondioxid. CO₂ er boblerne i gærrøret.</p>
+        <div class="ligning lille">C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</div>
+
+        <h3>Temperatur</h3>
+        <p>Gæringen styres af enzymer. De arbejder hurtigere, når det bliver varmere, indtil proteinerne ødelægges af varmen. Over ca. 50 °C dør gærcellerne.</p>
+
+        <h3>BTB</h3>
+        <p>CO₂ gør vandet i gærrøret surt. Bromthymolblåt er blåt over pH 7,6, grønt mellem 6,0 og 7,6 og gult under 6,0.</p>
+
+        <div class="knapper">
+            <button class="knap blaa" id="teori-luk" type="button">Luk</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<div class="overlay" id="tegneserie">
+    <div class="overlay-boks bred">
+        <h2>Forsøget som tegneserie</h2>
+        <div class="serie" id="serie-ruder"></div>
+        <div class="knapper">
+            <button class="knap blaa" id="serie-luk" type="button">Luk</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================= -->
+<div class="rundvisning" id="rundvisning" hidden>
+    <div class="rundvisning-baggrund" id="rv-baggrund"></div>
+    <div class="rundvisning-spot" id="rv-spot"></div>
+    <div class="rundvisning-boks" id="rv-boks">
+        <div class="rundvisning-hoved">
+            <span class="rundvisning-tal" id="rv-tal">1/6</span>
+            <button class="rundvisning-luk" id="rv-luk" type="button" aria-label="Afslut rundvisning">✕</button>
+        </div>
+        <h3 id="rv-titel"></h3>
+        <p id="rv-tekst"></p>
+        <div class="rundvisning-knapper">
+            <button class="knap" id="rv-forrige" type="button">← Forrige</button>
+            <button class="knap blaa" id="rv-naeste" type="button">Næste →</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/kerne.js"></script>
+<script src="js/model.js"></script>
+<script src="js/lyd.js"></script>
+<script src="js/sprites.js"></script>
+<script src="simon/simon.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/forsoeg.js"></script>
+<script src="js/handlinger.js"></script>
+<script src="js/bord.js"></script>
+<script src="js/laerer.js"></script>
+<script src="js/tegneserie.js"></script>
+<script src="js/rundvisning.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

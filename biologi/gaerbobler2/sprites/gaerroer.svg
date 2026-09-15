@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="212" viewBox="0 0 80 106">
+  <!-- Gaerroer: S-boejet glasroer. Midterlinjen er stien "roer" herunder.
+       Vandet med BTB staar i den nederste bue og tegnes af animationen:
+       vandlinjen er y 42, benene er x 43 og 69. Stilkens bund (11, 104)
+       sidder i proppen. Ankeret er (11, 100). -->
+  <defs>
+    <path id="roer" d="M11 104 L11 29 A16 16 0 0 1 43 29 L43 53 A13 13 0 0 0 69 53 L69 15"/>
+    <mask id="vaeg" maskUnits="userSpaceOnUse" x="0" y="0" width="80" height="106">
+      <use href="#roer" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="butt" stroke-linejoin="round"/>
+      <use href="#roer" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="square" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <!-- Svag glasfarve inden i roeret -->
+  <use href="#roer" fill="none" stroke="#d4ebfa" stroke-opacity="0.1" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Glasvaeggen -->
+  <rect x="0" y="0" width="80" height="106" fill="#dcecf8" fill-opacity="0.85" mask="url(#vaeg)"/>
+  <!-- Kant ved aabningen -->
+  <rect x="63.5" y="12" width="11" height="3.5" rx="1.5" fill="#e6f2fb" fill-opacity="0.8"/>
+  <!-- Genskin -->
+  <path d="M9.6 96 L9.6 34" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M67.6 50 L67.6 22" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.2" stroke-linecap="round"/>
+</svg>
