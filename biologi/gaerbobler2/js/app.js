@@ -53,7 +53,7 @@
             var celle = NK.el("b-" + i);
             var live = T.aktiv === i;
             celle.classList.toggle("live", live);
-            NK.saetTekst("b-" + i, live ? String(T.tal) : (k.taelling ? String(k.taelling.klik) : ""));
+            NK.saetTekst("b-" + i, live ? String(T.tal) : (k.taelling ? String(k.taelling.perMin) : ""));
         });
 
         var slut = !!f.gjort.slut;
@@ -68,7 +68,7 @@
         var t = f.aktueltTrin();
         return [
             t ? t.id : "", !!f.handling, !!f.spol, f.taeller.aktiv, f.taeller.tal, !!f.gjort.slut, f.forsoegNr,
-            f.kolber.map(function (k) { return [k.maaltTemp, k.taelling ? k.taelling.klik : "-"].join(","); }).join(";"),
+            f.kolber.map(function (k) { return [k.maaltTemp, k.taelling ? k.taelling.perMin : "-"].join(","); }).join(";"),
             NK.TRIN.map(function (x) { return f.trinGjort(x.id) ? 1 : 0; }).join("")
         ].join("|");
     }

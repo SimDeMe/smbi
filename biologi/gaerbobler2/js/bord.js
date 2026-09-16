@@ -38,6 +38,8 @@
                 if (Math.hypot(pt.x - k0.x, pt.y - k0.y) < k0.r + 4) return "plade:" + pl.id + ":" + kn[j];
             }
         }
+        if (g.kaffe.findes && S.inden("nillerKop", g.kaffe.p, g.kaffe.anker, pt.x, pt.y, 6)) return "kaffe";
+        if (!(this.laerer && this.laerer.baerer === "baegerglas") && S.inden("baegerglas", g.baegerglas.p, g.baegerglas.anker, pt.x, pt.y, 4)) return "baegerglas";
         if (S.inden("taeller", g.taeller.p, g.taeller.anker, pt.x, pt.y, 6)) return "taeller";
         for (i = 0; i < 3; i++) {
             var ro = this.roer[i];
@@ -53,6 +55,7 @@
         var navne = ["termometer", "spatel", "btb", "maaleglas", "gaer", "sukker"];
         for (i = 0; i < navne.length; i++) {
             var gg = g[navne[i]];
+            if (gg.skjult) continue;
             if (S.inden(gg.sprite, gg.p, gg.anker, pt.x, pt.y, navne[i] === "spatel" || navne[i] === "termometer" ? 9 : 4)) return navne[i];
         }
         for (i = 3; i < 5; i++) {
@@ -237,6 +240,7 @@
         /* Ingredienser og redskaber paa bordet */
         ["sukker", "gaer", "maaleglas", "btb", "spatel", "termometer", "taeller"].forEach(function (navn) {
             var gg = g[navn];
+            if (gg.skjult) return;
             if (hjemme(gg)) {
                 if (navn !== "spatel" && navn !== "termometer") S.skygge(ctx, gg.hjem.x - gg.anker.x + NK.Sprites.FILER[gg.sprite].b / 2, NK.Sprites.FILER[gg.sprite].b * 0.45, 0.3);
                 mig.tegnGenstand(ctx, navn, tid);
@@ -245,6 +249,20 @@
             }
         });
         S.tegnHolder(ctx);
+
+        /* Baegerglasset, der ikke hoerer til forsoeget, og Kemi-Nillers kaffe */
+        if (!(this.laerer && this.laerer.baerer === "baegerglas")) {
+            if (!this.baegerPaaHylde) S.skygge(ctx, g.baegerglas.p.x - 32, 34, 0.3);
+            S.tegnBaeger(ctx, { p: g.baegerglas.p, btb: g.baegerglas.btb, fremhaev: mig.markeret("baegerglas") }, tid);
+        }
+        if (g.kaffe.findes && !(this.niller && this.niller.baerer === "nillerKop")) {
+            if (hjemme(g.kaffe)) {
+                S.skygge(ctx, g.kaffe.p.x, 20, 0.3);
+                S.tegnKaffe(ctx, g.kaffe.p, mig.markeret("kaffe"), tid);
+            } else {
+                oppe.push(function () { S.tegnKaffe(ctx, g.kaffe.p, false, tid); });
+            }
+        }
 
         /* Varmepladerne */
         ["pladeA", "pladeB"].forEach(function (id, n) {
@@ -314,6 +332,7 @@
         if (this.haandAlfa > 0.01 && this.sidsteGreb) NK.Sprites.tegnPositur(ctx, "haand", this.sidsteGreb, A.haand, this.haandAlfa);
 
         if (this.tegnLaerer) this.tegnLaerer(ctx, tid);
+        if (this.tegnNiller) this.tegnNiller(ctx, tid);
         ctx.restore();
     };
 }());

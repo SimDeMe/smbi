@@ -22,7 +22,7 @@
     var NK = window.NK;
 
     var RUM = 20;
-    var PORTION = { sukker: 25, gaer: 20, vand: 100, roerVand: 8, btb: 3 };
+    var PORTION = { sukker: 25, gaer: 20, vand: 100, roerVand: 8, btb: 3, kaffe: 30 };
 
     /* Hvad der fysisk kan vaere i glassene, mL */
     var GRAENSE = { kolbe: 250, roer: 11 };
@@ -76,7 +76,7 @@
     /* ----- Kolbe og gaerroer ----------------------------------------- */
     function nyKolbe() {
         return {
-            sukker: 0, gaer: 0, vand: 0, temp: RUM, roert: false, btb: 0,
+            sukker: 0, gaer: 0, vand: 0, temp: RUM, roert: false, btb: 0, kaffe: 0,
             levende: 1, vaagen: 0, dannet: 0, oploest: 0, hastighed: 0, slip: 0, luft: 0
         };
     }
@@ -162,7 +162,8 @@
         vand:     { r: 190, g: 222, b: 244, a: 0.32 },
         gaer:     { r: 214, g: 176, b: 112, a: 0.9 },
         sukker:   { r: 236, g: 236, b: 226, a: 0.42 },
-        skum:     { r: 250, g: 244, b: 226, a: 0.92 }
+        skum:     { r: 250, g: 244, b: 226, a: 0.92 },
+        kaffe:    { r: 82, g: 52, b: 28, a: 0.95 }
     };
 
     function kolbeFarve(k) {
@@ -170,6 +171,7 @@
         var f = FARVE.vand;
         if (k.sukker > 0) f = NK.blandFarve(f, FARVE.sukker, k.roert ? 0.4 : 0.15);
         if (k.gaer > 0) f = NK.blandFarve(f, FARVE.gaer, NK.klamp(k.gaer / 20, 0, 1) * (k.roert ? 0.85 : 0.35));
+        if (k.kaffe > 0) f = NK.blandFarve(f, FARVE.kaffe, NK.klamp(k.kaffe / 40, 0, 0.85));
         if (k.btb > 0) {
             /* BTB i kolben: gaeringen goer hele kolben sur */
             var pH = NK.klamp(7.8 - k.dannet / 60, 5.6, 7.8);

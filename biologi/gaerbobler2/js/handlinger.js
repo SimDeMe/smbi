@@ -74,6 +74,8 @@
             case "termometer": this.besked("Træk termometeret hen på en kolbe."); return false;
             case "taeller": this.besked("Træk tælleren hen på den kolbe, du vil tælle bobler fra."); return false;
             case "spand": this.besked("Træk en kolbe eller et gærrør hen i spanden for at tømme det."); return false;
+            case "baegerglas": this.besked(this.baegerPaaHylde ? "Bægerglasset står på hylden nu." : "Et bægerglas med noget indtørret. Det hører ikke til forsøget."); return false;
+            case "kaffe": this.besked(this.g.kaffe.tom ? "Kemi-Nillers kop. Nu er den tom." : "Kemi-Niller glemte sin kaffe."); return false;
         }
         return false;
     };
@@ -110,7 +112,8 @@
         sukker: ["kolbe"],
         gaer: ["kolbe"],
         maaleglas: ["kolbe", "roer"],
-        btb: ["roer", "kolbe"],
+        btb: ["roer", "kolbe", "baeger"],
+        kaffe: ["kolbe"],
         spatel: ["kolbe"],
         termometer: ["kolbe"],
         taeller: ["kolbe"],
@@ -129,6 +132,7 @@
         if (!navn || this.optaget()) return false;
         var d = navn.split(":");
         if (d[0] === "taeller") return this.taeller.aktiv === null;
+        if (d[0] === "kaffe") return !!this.g.kaffe.findes && !this.g.kaffe.tom;
         if (d[0] === "kolbe") { var k = this.kolber[+d[1]]; return !!k.sted && !k.knust; }
         if (d[0] === "roer") return !this.roer[+d[1]].knust;
         return !!MULIGE[d[0]];
@@ -141,6 +145,7 @@
             case "plads": var pl = S.PLADS[i]; return { x: pl.x, y: pl.y - 60, rx: 54, ry: 84 };
             case "stativ": return { x: S.STATIV.huller[i] + 30, y: S.STATIV.top - 45, rx: 46, ry: 64 };
             case "spand": return { x: S.SPAND_P.x, y: 548, rx: 62, ry: 62 };
+            case "baeger": var b = NK.tilVerden(this.g.baegerglas.p, A.baegerglas, 36, 46); return { x: b.x, y: b.y, rx: 46, ry: 62 };
         }
         return null;
     };
@@ -152,6 +157,7 @@
             case "plads": var pl = S.PLADS[m.i]; return { x: pl.x - 50, y: pl.y - 130, b: 100, h: 132 };
             case "stativ": return { x: S.STATIV.huller[m.i] - 14, y: S.STATIV.top - 98, b: 92, h: 110 };
             case "spand": return { x: S.SPAND_P.x - 44, y: 512, b: 88, h: 86 };
+            case "baeger": return S.rekt("baegerglas", this.g.baegerglas.p, A.baegerglas, 0);
         }
         return null;
     };
@@ -188,6 +194,8 @@
                     var optaget = mig.roer.some(function (x) { return x.i !== egen && x.paa === null && x.slot === i; });
                     if (!optaget) proev("stativ", i);
                 }
+            } else if (type === "baeger") {
+                if (!mig.baegerPaaHylde && !mig.g.baegerglas.btb) proev("baeger", 0);
             } else if (type === "spand") {
                 proev("spand", 0);
             }
@@ -204,10 +212,11 @@
             case "sukker": return this.drys(k, "sukker");
             case "gaer": return this.drys(k, "gaer");
             case "maaleglas": return k ? this.haeldVand(k) : this.haeldVandRoer(ro);
-            case "btb": return k ? this.btbIKolbe(k) : this.btbIRoer(ro);
+            case "btb": return m.type === "baeger" ? this.btbIBaeger() : (k ? this.btbIKolbe(k) : this.btbIRoer(ro));
             case "spatel": return this.roerRundt(k);
             case "termometer": return this.maalTemp(k);
             case "taeller": return this.taellerPaa(k);
+            case "kaffe": return this.kaffeIKolbe(k);
             case "kolbe":
                 var kk = this.kolber[+d[1]];
                 if (m.type === "plads") return this.flytKolbe(kk, S.PLADS[m.i]);
@@ -341,7 +350,15 @@
         } };
     };
 
+    /* Flasken kan vaere toemt i baegerglasset, indtil Kemi-Niller kommer */
+    P.btbSkalHaves = function () {
+        if (!this.btbTom) return true;
+        this.besked("BTB-flasken er tom.", "advarsel");
+        return false;
+    };
+
     P.btbIRoer = function (ro) {
+        if (!this.btbSkalHaves()) return false;
         var gg = this.g.btb;
         this.btbN = 0;
         this.koer([
@@ -354,6 +371,7 @@
     };
 
     P.btbIKolbe = function (k) {
+        if (!this.btbSkalHaves()) return false;
         if (this.proppet(k, "BTB kan ikke komme ned gennem proppen.")) return false;
         var gg = this.g.btb;
         this.btbN = 0;
@@ -366,8 +384,54 @@
         return true;
     };
 
-    /* ----- Spatel og termometer -------------------------------------------- */
-    P.roerRundt = function (k) {
+    /* Paaskeaeg: de sidste draaber BTB i det gamle baegerglas. Det saetter
+       historien med SM-Simon og Kemi-Niller i gang (js/laerer.js). */
+    P.btbIBaeger = function () {
+        if (!this.btbSkalHaves()) return false;
+        var gg = this.g.btb, b = this.g.baegerglas;
+        this.btbN = 0;
+        this.koer([
+            { flyt: gg, til: function () { var t = NK.tilVerden(b.p, A.baegerglas, 36, 0); return { x: t.x, y: t.y - 26, v: Math.PI }; }, tid: 0.8, loeft: 40 },
+            this.btbDraaber(function () { return NK.tilVerden(b.p, A.baegerglas, 36, 82).y; }, "rgba(40, 110, 205, 0.95)"),
+            { kald: function () {
+                b.btb += M.PORTION.btb;
+                this.btbTom = true;
+                this.aendret("baeger");
+            } },
+            this.hjemTil(gg, 0.8, 40),
+            { kald: function () { if (this.laererBaeger) this.laererBaeger(); } }
+        ], "baegerBtb");
+        return true;
+    };
+
+    /* Kemi-Nillers glemte kaffe kan haeldes i en kolbe */
+    P.kaffeIKolbe = function (k) {
+        if (this.proppet(k, "Kaffen kan ikke komme ned gennem proppen.")) return false;
+        var gg = this.g.kaffe, m = k.m, haeldt = 0;
+        this.koer([
+            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 4, y: a.y - 20, v: 2.1 }; }, tid: 0.8, loeft: 50 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(1); } },
+            { tid: 1.0, hver: function (t) {
+                var nu = M.PORTION.kaffe * NK.blod(t);
+                var ind = Math.min(nu - haeldt, Math.max(0, M.GRAENSE.kolbe - M.rumfang(m)));
+                haeldt = nu;
+                if (ind > 0) { M.blandTemp(m, ind, 55); m.vand += ind; m.kaffe += ind; }
+                var spids = NK.tilVerden(gg.p, gg.anker, 22, 6);
+                this.straale = { fra: spids, til: { x: k.p.x + 2, y: k.niveau !== null ? k.niveau : k.p.y + 118 }, farve: M.FARVE.kaffe, bredde: 2.6 };
+            } },
+            { kald: function () {
+                this.straale = null;
+                m.roert = false;
+                gg.tom = true;
+                this.iagttag("kaffeIKolbe", true);
+                this.aendret("kaffe");
+            } },
+            this.hjemTil(gg, 0.8, 50)
+        ], "kaffe");
+        return true;
+    };
+
+    /* ----- Spatel og termometer -------------------------------------------- */    P.roerRundt = function (k) {
         if (this.proppet(k, "Spatlen kan ikke komme ned gennem proppen.")) return false;
         var gg = this.g.spatel;
         function inde() { return NK.tilVerden(k.p, A.kolbe, 48, 112); }

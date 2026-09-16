@@ -24,6 +24,7 @@
     S.ANKER = {
         kolbe:      { x: 48, y: 2.5 },
         gaerroer:   { x: 11, y: 100 },
+        baegerglas: { x: 68, y: 3 },
         maaleglas:  { x: 8, y: 6 },
         btb:        { x: 17, y: 2 },
         termometer: { x: 7, y: 118 },
@@ -35,7 +36,9 @@
         haand:      { x: 40, y: 46 },
         papir:      { x: 36, y: 22 }
     };
-    Object.keys(NK.Simon.ANKER).forEach(function (navn) { S.ANKER[navn] = NK.Simon.ANKER[navn]; });
+    [NK.Simon.ANKER, NK.Niller.ANKER].forEach(function (a) {
+        Object.keys(a).forEach(function (navn) { S.ANKER[navn] = a[navn]; });
+    });
 
     function staar(navn, x, y) {
         var f = F[navn], a = S.ANKER[navn];
@@ -50,27 +53,32 @@
     S.HYLDE_H = { x0: 590, x1: 992, y: 215 };
     S.STATIV = { x0: 636, x1: 964, top: 191, y: 215, huller: [690, 800, 910] };
     S.LUP = { x: 470, y: 176, r: 104 };
-    S.HOLDER = { x: 273, b: 38, h: 40 };
+    S.HOLDER = { x: 249, b: 38, h: 40 };
     S.SPAND_P = { x: 862, y: 598, v: 0 };
 
     S.PLADS = [
-        { id: "bord1", type: "bord", navn: "bordet", x: 452, y: S.BORD },
-        { id: "bord2", type: "bord", navn: "bordet", x: 560, y: S.BORD },
-        { id: "bord3", type: "bord", navn: "bordet", x: 668, y: S.BORD },
+        { id: "bord1", type: "bord", navn: "bordet", x: 470, y: S.BORD },
+        { id: "bord2", type: "bord", navn: "bordet", x: 575, y: S.BORD },
+        { id: "bord3", type: "bord", navn: "bordet", x: 680, y: S.BORD },
         { id: "pladeA", type: "plade", navn: "varmeplade A", x: 792, y: S.BORD - 45 },
         { id: "pladeB", type: "plade", navn: "varmeplade B", x: 926, y: S.BORD - 45 }
     ];
 
     S.HJEM = {
-        sukker:     staar("sukker", 58),
-        gaer:       staar("gaer", 124),
-        maaleglas:  staar("maaleglas", 180),
-        btb:        staar("btb", 226),
-        spatel:     { x: 264, y: 496, v: -0.12 },
-        termometer: { x: 283, y: 496, v: 0.1 },
-        taeller:    staar("taeller", 336),
+        sukker:     staar("sukker", 50),
+        gaer:       staar("gaer", 110),
+        maaleglas:  staar("maaleglas", 162),
+        btb:        staar("btb", 204),
+        spatel:     { x: 240, y: 496, v: -0.12 },
+        termometer: { x: 259, y: 496, v: 0.1 },
+        taeller:    staar("taeller", 300),
+        baegerglas: staar("baegerglas", 372),
+        kaffe:      staar("nillerKop", 372),
         kaffekop:   staar("simonKop", 124, S.HYLDE_V.y)
     };
+
+    /* Baegerglasset ender paa hylden ved siden af krusset */
+    S.BAEGER_HYLDE = staar("baegerglas", 68, S.HYLDE_V.y);
 
     S.kolbePaa = function (plads) { return staar("kolbe", plads.x, plads.y); };
     S.roerIStativ = function (i) { return { x: S.STATIV.huller[i], y: S.STATIV.top + 8, v: 0 }; };
@@ -649,6 +657,51 @@
         }
         ctx.restore();
         if (r.fremhaev) S.tegnMarkering(ctx, S.rekt("gaerroer", r.p, a, 0), tid);
+    };
+
+    /* ================================================================
+       BAEGERGLASSET OG KAFFEN
+       Baegerglasset hoerer ikke til forsoeget: det er ikke blevet ryddet
+       op. b: { p, btb, fremhaev }
+       ================================================================ */
+    S.tegnBaeger = function (ctx, b, tid) {
+        var a = S.ANKER.baegerglas;
+        ctx.save();
+        ctx.translate(b.p.x, b.p.y);
+        ctx.rotate(b.p.v);
+        ctx.translate(-a.x, -a.y);
+        /* Indtoerret rest i bunden og gamle raender paa glasset */
+        ctx.fillStyle = "rgba(150, 132, 96, 0.5)";
+        ctx.beginPath();
+        ctx.moveTo(10, 84);
+        ctx.quadraticCurveTo(36, 73, 62, 84);
+        ctx.lineTo(62, 86);
+        ctx.quadraticCurveTo(36, 88, 10, 86);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "rgba(186, 172, 140, 0.3)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(10, 60); ctx.quadraticCurveTo(36, 65, 62, 59);
+        ctx.moveTo(10, 71); ctx.quadraticCurveTo(36, 75, 62, 70);
+        ctx.stroke();
+        if (b.btb > 0) {
+            ctx.fillStyle = "rgba(40, 110, 205, 0.75)";
+            ctx.beginPath();
+            ctx.moveTo(12, 86);
+            ctx.quadraticCurveTo(36, 80 - Math.min(7, b.btb * 1.6), 60, 86);
+            ctx.closePath();
+            ctx.fill();
+        }
+        ctx.restore();
+        NK.Sprites.tegnPositur(ctx, "baegerglas", b.p, a);
+        if (b.fremhaev) S.tegnMarkering(ctx, S.rekt("baegerglas", b.p, a, 0), tid);
+    };
+
+    /* Kemi-Nillers glemte kaffe */
+    S.tegnKaffe = function (ctx, p, fremhaev, tid) {
+        NK.Sprites.tegnPositur(ctx, "nillerKop", p, S.ANKER.nillerKop);
+        if (fremhaev) S.tegnMarkering(ctx, S.rekt("nillerKop", p, S.ANKER.nillerKop, 0), tid);
     };
 
     /* ================================================================

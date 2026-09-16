@@ -22,21 +22,32 @@
     var S = NK.Scene;
     var P = NK.Forsoeg.prototype;
 
-    var UDE = Si.UDE;
-    var HAENGER = Si.HAENGER;
+    var UDE = NK.Figur.UDE;
+    var HAENGER = NK.Figur.HAENGER;
+    var KAFFE_X = 170;
 
-    Si.paa(P, { kaffeX: 170, fredet: ["tabt", "overloeb"] });
+    /* Begge laerere bruger den samme figur: SM-Simon som "laerer" og
+       Kemi-Niller som "niller". */
+    NK.Figur.paa(P, NK.Simon.cfg);
+    NK.Figur.paa(P, NK.Niller.cfg);
 
     P.laererStartEkstra = function () {
         this.antalNyt = 0;
         this.bemaerket = {};
         this.bemaerkKoe = [];
+        this.nillerStart();
     };
 
     P.laererNytEkstra = function () {
         this.bemaerket = {};
         this.bemaerkKoe = [];
         this.laerer.baerer = null;
+        this.nillerNyt();
+    };
+
+    /* Kemi-Niller foelger med i hvert billede */
+    P.opdaterLaererEkstra = function (dt) {
+        this.opdaterNiller(dt);
     };
 
     P.laererVentende = function () {
@@ -49,6 +60,140 @@
     };
 
     function staaVed(x) { return NK.klamp(x - 160, 40, 780); }
+
+    /* ----- Krusset paa hylden -------------------------------------------- */
+    P.klikKop = function () {
+        var L = this.laerer, kop = this.g.kaffekop;
+        if (L.scene || kop.skjult) return false;
+        var kold = Si.glimt("kaffeKold");
+        this.laererKoer("kaffe", [
+            { udtryk: { vrede: 0.7, humoer: -0.4, roed: 0.1 } },
+            { gaa: KAFFE_X },
+            { sig: "Det er mit krus.", vis: 2.2, tid: 0.3 },
+            { arm: -0.5, tid: 0.55 },
+            { kald: function () { kop.iHaand = true; this.laerer.baerer = "simonKop"; } },
+            { arm: -0.98, tid: 0.6 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.slurk(); } }
+        ].concat(kold ? [
+            { udtryk: { vrede: 0.2, humoer: -0.3, roed: 0 } },
+            { tid: 0.5 },
+            Si.suk(1.1),
+            { sig: kold, vis: 2.2, tid: 1.8 }
+        ] : [
+            { udtryk: { vrede: 0, humoer: 0.6, roed: 0 } },
+            { tid: 1.0 },
+            { sig: "Ahh.", vis: 1.3, tid: 1.1 }
+        ], [
+            { kald: function () { kop.skjult = true; this.koppenVaek = true; } },
+            { arm: -0.3, tid: 0.4 },
+            { gaa: UDE },
+            { kald: function () { this.laerer.baerer = null; } }
+        ]));
+        return true;
+    };
+
+    /* ----- Paaskeaeg: baegerglasset, den tomme flaske og Kemi-Niller -----
+       Dryppes der BTB i det gamle baegerglas, stiller SM-Simon det op paa
+       hylden, opdager at flasken er tom og kalder paa en kemilaerer.
+       Scenen blokerer ikke: eleven kan arbejde videre imens. */
+    P.laererBaeger = function () {
+        var mig = this;
+        var L = this.laerer;
+        var b = this.g.baegerglas;
+        if (!L || this.baegerHistorie) return false;
+        this.baegerHistorie = true;
+        L.scene = null;
+        this.laererKoer("baeger", [
+            { udtryk: { vrede: 0.5, humoer: -0.2, roed: 0.05, skeptisk: 1, kig: 1 } },
+            { gaa: staaVed(b.p.x) },
+            { sig: "Det bægerglas er ikke en del af forsøget.", vis: 2.8, tid: 0.4 },
+            { udtryk: { skeptisk: 0, kig: 0 } },
+            { sig: "Det stod her i forvejen.", vis: 2.4, tid: 2.2 },
+            { arm: 1.9, tid: 0.5 },
+            { kald: function () { this.laerer.baerer = "baegerglas"; if (NK.Lyd) NK.Lyd.klirr(); } },
+            { arm: 2.3, tid: 0.4 },
+            { gaa: 150 },
+            { arm: -0.7, tid: 0.7 },
+            { kald: function () {
+                this.laerer.baerer = null;
+                this.baegerPaaHylde = true;
+                b.p = { x: S.BAEGER_HYLDE.x, y: S.BAEGER_HYLDE.y, v: 0 };
+                if (NK.Lyd) NK.Lyd.klirr();
+                this.aendret("baeger");
+            } },
+            { arm: HAENGER, tid: 0.4 },
+            { sig: "Det kan stå deroppe. Jeg skyller det i morgen.", vis: 3, tid: 2.8 }
+        ].concat(Si.glimtTrin("rod"), [
+            { udtryk: { vrede: 0.7, humoer: -0.5 } },
+            { gaa: 250 },
+            { sig: "Og nu er BTB-flasken tom.", vis: 2.6, tid: 2.4 },
+            Si.suk(),
+            { gaa: 90 },
+            { sig: "Er der en kemilærer?", vis: 2.6, tid: 1.4 },
+            { arm: 0.3, tid: 0.4 },
+            { kald: function () { mig.nillerKommer(); } },
+            { arm: HAENGER, tid: 0.6 },
+            { tid: 2.0 },
+            { sig: "Vi mangler BTB.", vis: 2.2, tid: 2.4 },
+            { tid: 7.0 },
+            { udtryk: { skeptisk: 0.6 } },
+            { sig: "Det lyder rigtigt nok.", vis: 2.4, tid: 2.8 },
+            { udtryk: { skeptisk: 0 } }
+        ], Si.glimtTrin("kemi"), [
+            { tid: 6.5 },
+            { sig: "Tak. Så kan vi komme videre.", vis: 2.4, tid: 3.4 },
+            { udtryk: { kig: 1 } },
+            { sig: "Han glemte sin kaffe.", vis: 2.6, tid: 2.6 },
+            { udtryk: { kig: 0 } },
+            { gaa: UDE }
+        ]), false);
+        return true;
+    };
+
+    /* Kemi-Niller kommer ind med en ny flaske og sin egen kaffe */
+    P.nillerKommer = function () {
+        var N = this.niller;
+        if (!N) return false;
+        N.baerer = "nillerKop";
+        this.nillerKoer("besoeg", [
+            { gaa: 340 },
+            { sig: "BTB? Det har jeg aldrig hørt om.", vis: 3, tid: 3.4 },
+            { udtryk: { skeptisk: 0.8, kig: 1 } },
+            { sig: "Mener du bromthymolblåt?", vis: 3, tid: 3.6 },
+            { udtryk: { skeptisk: 0, kig: 0, humoer: 0.6 } },
+            { sig: "Så siger vi det. Jeg har en flaske.", vis: 2.8, tid: 2.6 },
+            /* Kaffen saettes fra, saa han kan tage flasken frem */
+            { arm: 1.9, tid: 0.6 },
+            { kald: function () {
+                this.niller.baerer = null;
+                this.kaffeFindes = true;
+                this.g.kaffe.findes = true;
+                this.g.kaffe.tom = false;
+                this.g.kaffe.p = { x: S.HJEM.kaffe.x, y: S.HJEM.kaffe.y, v: 0 };
+                if (NK.Lyd) NK.Lyd.klirr();
+                this.aendret("kaffe");
+            } },
+            { arm: 0.8, tid: 0.5 },
+            /* Han tager den tomme flaske med og stiller en ny paa pladsen */
+            { kald: function () { this.niller.baerer = "btb"; this.g.btb.skjult = true; } },
+            { gaa: function () { return S.HJEM.btb.x + 96; } },
+            { arm: 1.8, tid: 0.6 },
+            { kald: function () {
+                this.niller.baerer = null;
+                this.g.btb.skjult = false;
+                this.g.btb.p = { x: S.HJEM.btb.x, y: S.HJEM.btb.y, v: 0 };
+                this.btbTom = false;
+                if (NK.Lyd) NK.Lyd.klirr();
+                this.aendret("btb");
+            } },
+            { arm: HAENGER, tid: 0.4 },
+            { sig: "Værsgo. Bromthymolblåt.", vis: 2.6, tid: 2.6 },
+            { udtryk: { humoer: 0.8 } },
+            { sig: "Sig til, hvis I mangler mere.", vis: 2.4, tid: 2.4 },
+            { gaa: UDE }
+        ], false);
+        return true;
+    };
 
     /* ----- For meget vand i kolben: han toerrer bordet af ---------------- */
     P.laererOverloeb = function (k) {
@@ -151,7 +296,8 @@
         ingenBtb:      { tekst: "Uden BTB er der intet farveskift at se på." },
         luftbobler:    { tekst: "Varm luft bobler også. Vent, til temperaturen står stille.", nyt: true },
         nulBobler:     { tekst: "Nul bobler. Gæren er ikke vågnet endnu.", glimt: "boller" },
-        skaevTaelling: { tekst: "Dit tal og boblerne er ikke helt enige." }
+        skaevTaelling: { tekst: "Dit tal og boblerne er ikke helt enige." },
+        kaffeIKolbe:   { tekst: "Det ser godt nok mærkeligt ud." }
     };
     NK.BEMAERK = BEMAERK;
 
@@ -190,8 +336,10 @@
     };
 
     /* ----- Det, han har i haanden ------------------------------------------- */
-    P.tegnBaaretEkstra = function (ctx, L, hd) {
-        if (L.baerer === "papir") {
+    P.laererBaaretEkstra = function (ctx, L, hd) {
+        if (L.baerer === "baegerglas") {
+            NK.Sprites.tegnPositur(ctx, "baegerglas", { x: hd.x + 34, y: hd.y + 14, v: 0.12 }, S.ANKER.baegerglas);
+        } else if (L.baerer === "papir") {
             NK.Sprites.tegnPositur(ctx, "papir", { x: hd.x + 6, y: hd.y + 8, v: 0.2 }, S.ANKER.papir);
         } else if (L.baerer === "kost") {
             ctx.save();

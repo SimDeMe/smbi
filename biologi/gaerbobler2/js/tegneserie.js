@@ -90,6 +90,7 @@
         m.vand = o.vand === undefined ? 100 : o.vand;
         m.roert = o.roert === undefined ? true : o.roert;
         m.btb = o.btb || 0;
+        m.kaffe = o.kaffe || 0;
         m.dannet = o.dannet || 0;
         var p = o.p || S.kolbePaa(plads);
         var bobler = [];
@@ -141,7 +142,8 @@
             var nr = 0;
             var gj = f.iagttaget;
             var K = f.kolber;
-            var tal = K.map(function (k) { return k.taelling ? k.taelling.klik : 0; });
+            var tal = K.map(function (k) { return k.taelling ? k.taelling.perMin : 0; });
+            var raa = K.map(function (k) { return k.taelling ? k.taelling.klik : 0; });
             var steder = K.map(function (k) { return k.sted || S.PLADS[k.i]; });
 
             rude(container, ++nr, "Gærrørene fyldes med vand og nogle dråber BTB. Vandet er blåt.", {
@@ -180,7 +182,7 @@
             });
 
             var maks = Math.max.apply(null, tal.concat([10]));
-            rude(container, ++nr, "Du talte " + tal[0] + ", " + tal[1] + " og " + tal[2] + " bobler pr. minut.", {
+            rude(container, ++nr, "Du talte " + raa[0] + ", " + raa[1] + " og " + raa[2] + " bobler på ti sekunder. Ganget op med seks bliver det " + tal[0] + ", " + tal[1] + " og " + tal[2] + " pr. minut.", {
                 oven: function (ctx) {
                     tavle(ctx);
                     etiket(ctx, "Bobler pr. minut", B / 2, 26, { font: "700 14px 'Segoe UI', sans-serif", farve: "#f2c53d" });
@@ -222,7 +224,8 @@
                     kolbe(ctx, S.PLADS[3], { nr: 3, sukker: 0, gaer: 0, roer: { bobler: [{ t: 0.3, pop: 0 }, { t: 0.8, pop: 0 }] } });
                 }],
                 ["nulBobler", "Der blev talt, før gæren var kommet i gang. Uret kan spole tiden frem.", UDSNIT.bord, function (ctx) { kolbe(ctx, S.PLADS[1], { nr: 2, roert: false, roer: {} }); }],
-                ["skaevTaelling", skaev ? "I " + skaev.navn.toLowerCase() + " talte du " + skaev.taelling.klik + " bobler, men der kom " + skaev.taelling.sande + "." : "En tælling passede ikke med boblerne.", null, null],
+                ["kaffeIKolbe", "Der kom kaffe i en kolbe. Den bliver brun og lidt varmere, men gæren gærer videre.", UDSNIT.bord, function (ctx) { kolbe(ctx, S.PLADS[1], { nr: 2, kaffe: 30, ekstraMl: 30, bobler: 8 }); }],
+                ["skaevTaelling", skaev ? "I " + skaev.navn.toLowerCase() + " talte du " + skaev.taelling.klik + " bobler på ti sekunder, men der kom " + skaev.taelling.sande + "." : "En tælling passede ikke med boblerne.", null, null],
                 ["samme", "To kolber havde næsten samme temperatur. Så kan temperaturens betydning ikke ses.", UDSNIT.alle, function (ctx) {
                     K.forEach(function (k, i) { var p = kolbe(ctx, steder[i], { nr: k.nr, roer: {} }); S.tegnAflaesning(ctx, p.x - 30, p.y - 120, tempTekst(k), 1); });
                 }]

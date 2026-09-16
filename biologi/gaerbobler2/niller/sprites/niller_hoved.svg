@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="260" viewBox="0 0 110 130">
+  <!-- Kemi-Nillers hoved uden oejne, bryn, briller og mund; dem tegner
+       animationen. Halsen (ankeret) er (55, 126). Brillernes midter er
+       (37, 60) og (73, 60), munden sidder ved (55, 97). -->
+  <defs>
+    <radialGradient id="hud" cx="0.45" cy="0.4" r="0.65">
+      <stop offset="0" stop-color="#f7d3b2"/>
+      <stop offset="0.75" stop-color="#eebf98"/>
+      <stop offset="1" stop-color="#d69f78"/>
+    </radialGradient>
+  </defs>
+  <!-- Hals -->
+  <rect x="44" y="104" width="24" height="26" rx="6" fill="#e2b089"/>
+  <!-- Oerer -->
+  <ellipse cx="14" cy="66" rx="7" ry="11" fill="#e7b48d"/>
+  <ellipse cx="96" cy="66" rx="7" ry="11" fill="#e7b48d"/>
+  <path d="M12 60 Q16 66 12 72 M98 60 Q94 66 98 72" stroke="#c98f68" stroke-width="1.4" fill="none"/>
+  <!-- Ansigt: smallere end Simons -->
+  <path d="M55 8 Q92 8 92 56 Q92 96 74 110 Q65 118 55 118 Q45 118 36 110 Q18 96 18 56 Q18 8 55 8 Z" fill="url(#hud)"/>
+  <!-- Kort, lyst haar med hoej pandeflig -->
+  <path d="M18 52 Q16 18 44 10 Q58 5 74 12 Q92 20 92 52 Q88 34 78 28 Q64 24 52 26 Q34 26 26 34 Q20 40 18 52 Z" fill="#a8925f"/>
+  <path d="M30 30 Q44 20 58 24 M60 24 Q76 24 84 32" fill="none" stroke="#bda874" stroke-width="2" stroke-linecap="round"/>
+  <!-- Naese -->
+  <path d="M55 62 Q50 76 48 80 Q52 84 58 82" fill="none" stroke="#c98f68" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Kindernes rødme og et lille smilehul -->
+  <ellipse cx="30" cy="76" rx="6" ry="4" fill="#e39a86" fill-opacity="0.3"/>
+  <ellipse cx="80" cy="76" rx="6" ry="4" fill="#e39a86" fill-opacity="0.3"/>
+  <path d="M40 100 Q42 103 40 106" stroke="#d9a77f" stroke-width="1.2" fill="none"/>
+</svg>

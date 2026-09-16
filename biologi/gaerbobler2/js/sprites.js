@@ -16,6 +16,7 @@
     var FILER = {
         kolbe:      { fil: "kolbe.svg", b: 96, h: 128 },
         gaerroer:   { fil: "gaerroer.svg", b: 80, h: 106 },
+        baegerglas: { fil: "baegerglas.svg", b: 72, h: 90 },
         maaleglas:  { fil: "maaleglas.svg", b: 40, h: 110 },
         btb:        { fil: "btb.svg", b: 34, h: 70 },
         termometer: { fil: "termometer.svg", b: 14, h: 120 },

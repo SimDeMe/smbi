@@ -24,6 +24,10 @@
     var r = NK.r;
     var A = S.ANKER;
 
+    /* Der taelles i ti sekunder, og tallet ganges op til bobler pr. minut */
+    var TAELLE_SEK = 10;
+    var TAELLE_FAKTOR = 60 / TAELLE_SEK;
+
     function kopi(p) { return { x: p.x, y: p.y, v: p.v }; }
 
     var TRIN = [
@@ -33,14 +37,14 @@
           hint: "Træk sukkeret, gæren og måleglasset hen på hver af de tre kolber." },
         { id: "roert", tekst: "Rør rundt", mark: "spatel",
           hint: "Træk spatlen hen på hver kolbe." },
-        { id: "temp", tekst: "Tre temperaturer", mark: "plader",
+        { id: "temp", tekst: "Tre temperaturer: bordet, ca. 37 °C og ca. 60 °C", mark: "plader",
           hint: "Kolbe 1 bliver på bordet. Stil de to andre på hver sin varmeplade, og indstil pladerne med + til ca. 37 °C og ca. 60 °C." },
         { id: "maalt", tekst: "Mål temperaturen i kolberne", mark: "termometer",
           hint: "Klik på uret for at vente, til kolberne er varme. Træk så termometeret hen på hver kolbe." },
         { id: "prop", tekst: "Gærrør på kolberne", mark: "roer",
           hint: "Træk et gærrør fra hylden hen på hver kolbe." },
-        { id: "taelt", tekst: "Tæl bobler i ét minut", mark: "taeller",
-          hint: "Træk tælleren hen på en kolbe. Tryk på mellemrumstasten eller knappen Boble, hver gang en boble kommer op gennem vandet i gærrøret." }
+        { id: "taelt", tekst: "Tæl bobler i ti sekunder", mark: "taeller",
+          hint: "Træk tælleren hen på en kolbe. Tryk på mellemrumstasten eller knappen Boble, hver gang en boble kommer op gennem vandet i gærrøret. Efter ti sekunder ganges tallet op til bobler pr. minut." }
     ];
     NK.TRIN = TRIN;
 
@@ -56,6 +60,9 @@
         this.forsoegNr = 0;
         this.resultater = [];
         this.koppenVaek = false;
+        this.baegerPaaHylde = false;
+        this.kaffeFindes = false;
+        this.baegerHistorie = false;
         this.urMinutter = 0;
         this.urSekunder = 0;
         this.vedAendring = null;
@@ -105,9 +112,17 @@
             spatel:     genstand("spatel", "spatel", S.HJEM.spatel),
             termometer: genstand("termometer", "termometer", S.HJEM.termometer),
             taeller:    genstand("taeller", "taeller", S.HJEM.taeller),
+            baegerglas: genstand("baegerglas", "baegerglas", S.HJEM.baegerglas),
+            kaffe:      genstand("kaffe", "nillerKop", S.HJEM.kaffe),
             kaffekop:   genstand("kaffekop", "simonKop", S.HJEM.kaffekop)
         };
         this.g.kaffekop.skjult = this.koppenVaek;
+        /* Baegerglasset og Kemi-Nillers glemte kaffe foelger hele sessionen */
+        this.g.baegerglas.p = kopi(this.baegerPaaHylde ? S.BAEGER_HYLDE : S.HJEM.baegerglas);
+        this.g.baegerglas.btb = 0;
+        this.g.kaffe.findes = !!this.kaffeFindes;
+        this.g.kaffe.tom = false;
+        this.btbTom = false;
 
         this.taeller = { aktiv: null, tal: 0, sande: 0, start: 0, slut: 0, tempStart: 0, luft: 0, tryk: 0 };
         this.spol = null;
@@ -274,13 +289,13 @@
         T.sande = 0;
         T.luft = 0;
         T.start = this.simTid;
-        T.slut = this.simTid + 60;
+        T.slut = this.simTid + TAELLE_SEK;
         T.tempStart = k.m.temp;
         this.antalBobler = 0;
         if (k.roer === null) this.iagttag("ingenRoer", true);
         else if (this.roer[k.roer].m.vand <= 0) this.iagttag("tomtRoer", true);
         else if (this.roer[k.roer].m.btb <= 0) this.iagttag("ingenBtb", true);
-        this.besked("Tæl boblerne i " + k.navn.toLowerCase() + " i ét minut.", "god");
+        this.besked("Tæl boblerne i " + k.navn.toLowerCase() + " i ti sekunder.", "god");
         this.aendret("taelling");
     };
 
@@ -312,17 +327,19 @@
         var k = this.kolber[T.aktiv];
         var ro = this.roerPaaKolbe(k);
         var res = {
-            klik: T.tal, sande: T.sande, tMaalt: k.maaltTemp, tSand: k.m.temp,
+            klik: T.tal, sande: T.sande,
+            perMin: Math.round(T.tal * TAELLE_FAKTOR), sandePerMin: Math.round(T.sande * TAELLE_FAKTOR),
+            tMaalt: k.maaltTemp, tSand: k.m.temp,
             roer: !!ro, vand: !!(ro && ro.m.vand > 0), luft: T.luft, stigning: k.m.temp - T.tempStart
         };
         k.taelling = res;
         T.aktiv = null;
         if (NK.Lyd) NK.Lyd.bip();
-        this.besked(k.navn + ": " + res.klik + " bobler pr. minut.", "god");
-        if (res.luft > 2 || res.stigning > 2) this.iagttag("luftbobler", true);
+        this.besked(k.navn + ": " + res.klik + " bobler på ti sekunder, altså " + res.perMin + " pr. minut.", "god");
+        if (res.luft > 0.4 || res.stigning > 0.5) this.iagttag("luftbobler", true);
         /* Nul bobler er kun en fejl, hvis gæren lever: ved 60 °C er det resultatet */
         if (res.sande === 0 && res.klik === 0 && res.vand && M.harBlanding(k.m) && k.m.levende > 0.3) this.iagttag("nulBobler", true);
-        else if (res.vand && Math.abs(res.klik - res.sande) > Math.max(3, res.sande * 0.25)) this.iagttag("skaevTaelling", true);
+        else if (res.vand && Math.abs(res.klik - res.sande) > Math.max(2, res.sande * 0.3)) this.iagttag("skaevTaelling", true);
         this.maal("taelling", k.i);
         this.koer([this.hjemTil(this.g.taeller, 0.8, 30)], "taellerHjem");
 
@@ -336,7 +353,7 @@
         if (Math.abs(temps[0] - temps[1]) < 4 || Math.abs(temps[1] - temps[2]) < 4 || Math.abs(temps[0] - temps[2]) < 4) this.iagttag("samme");
         this.resultater.push({
             nr: this.forsoegNr,
-            raekker: this.kolber.map(function (k, i) { return { nr: k.nr, temp: temps[i], bobler: k.taelling.klik, sande: k.taelling.sande }; })
+            raekker: this.kolber.map(function (k, i) { return { nr: k.nr, temp: temps[i], bobler: k.taelling.perMin, sande: k.taelling.sandePerMin }; })
         });
         if (NK.Lyd) NK.Lyd.succes();
         if (this.laererSlut) this.laererSlut();

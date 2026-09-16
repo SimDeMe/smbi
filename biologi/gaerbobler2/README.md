@@ -13,7 +13,7 @@ virker også direkte fra harddisken (`file://`). Læreren SM-Simon ligger i
 
 Eleven undersøger, hvordan temperaturen påvirker gæringen: tre kolber med
 sukker, gær og vand ved stuetemperatur, ca. 37 °C og ca. 60 °C. CO₂ bobler
-gennem gærrør med BTB, og eleven tæller selv boblerne i ét minut.
+gennem gærrør med BTB, og eleven tæller selv boblerne i ti sekunder.
 
 * **En rigtig opstilling.** Sukker, tørgær, måleglas, BTB, spatel, termometer
   og en håndtæller på bordet, tre kolber, to varmeplader, tre gærrør i et
@@ -21,10 +21,16 @@ gennem gærrør med BTB, og eleven tæller selv boblerne i ét minut.
   hvor det skal bruges. Varmepladerne indstilles med − og +.
 * **Tiden går i virkelig tid**, så boblerne kan tælles. Et klik på uret (eller
   knappen Vent 5 min) spoler fem minutter frem.
-* **Eleven tæller selv.** Tælleren trækkes hen på en kolbe. En lup viser
-  gærrøret tæt på, og eleven trykker på mellemrum eller Boble for hver boble.
-  Modellen tæller de rigtige bobler ved siden af, så tegneserien kan vise, om
-  tællingen passede.
+* **Eleven tæller selv i ti sekunder.** Tælleren trækkes hen på en kolbe. En
+  lup viser gærrøret tæt på, og eleven trykker på mellemrum eller Boble for
+  hver boble. Efter ti sekunder ganges tallet op med seks til bobler pr.
+  minut. Modellen tæller de rigtige bobler ved siden af, så tegneserien kan
+  vise, om tællingen passede.
+* **Påskeæg: bægerglasset.** Midt på bordet står et bægerglas, der ikke hører
+  til forsøget. Dryppes der BTB i det, kommer SM-Simon, sætter det op på
+  hylden og opdager, at flasken er tom. Så kommer kemilæreren Kemi-Niller med
+  en ny og glemmer sin kaffe, som kan hældes i en kolbe. Hele historien står i
+  `niller/README.md`.
 * **Fri leg.** Træk og hæld udføres altid, også når det er forkert: dobbelt
   gær, BTB i kolben, for meget vand i kolben eller gærrøret, en kolbe uden
   sukker, et gærrør uden vand, en kolbe på gulvet eller i spanden, en kolbe
@@ -67,6 +73,7 @@ Alle ligger i `sprites/` som SVG og tegnes med `drawImage`. Ankrene står i
 | `spatel.svg` | spatel | bladets spids (6, 108) |
 | `taeller.svg` | håndtæller | bunden (22, 52); tallet tegnes i koden |
 | `spand.svg` | affaldsspand | bunden (44, 88) |
+| `baegerglas.svg` | bægerglasset, der ikke hører til forsøget | tuden (68, 3) |
 
 Proppen, væsker, bobler, skum, dampe, glasskår, spild, stativet, lokalet og
 luppen tegnes i koden.
@@ -80,6 +87,7 @@ js/kerne.js         NK-navnerum, positurer, væskeniveau, tegnehjælpere
 js/model.js         biologien og tallene: gæring, mætning, BTB, farver
 js/lyd.js           lydene med Web Audio, ingen lydfiler
 js/sprites.js       indlæser SVG'erne og tegner dem drejet om et anker
+js/figur.js         en lærer på scenen: gang, arm, ansigt, taleboble og scener
 js/scene.js         tegnebordet (1000 x 600): mål, lokalet, kolber, gærrør, luppen
 js/forsoeg.js       trinene, tilstanden, tiden og tællingen
 js/handlinger.js    klik, træk og slip: hvad der sker med hvad
@@ -88,7 +96,8 @@ js/laerer.js        SM-Simons scener og bemærkningerne om fejl
 js/tegneserie.js    tegneserien med fejlruder, resultatskema og graf
 js/rundvisning.js   spotlight-rundvisningen bag ?-knappen
 js/app.js           panel, måleskema, knapper, tastatur, tegneløkke
-simon/              SM-Simon: figuren og hans sprites
+simon/              SM-Simon: hans ansigt, hans sprites og hans glimt
+niller/             Kemi-Niller: gæsten fra kemilokalet ved siden af
 ```
 
 ## At rette i den
