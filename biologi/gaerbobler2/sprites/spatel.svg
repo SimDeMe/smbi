@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="220" viewBox="0 0 12 110">
+  <!-- Spatel i rustfrit staal. Bladet er forneden; ankeret er bladets
+       spids (6, 108). -->
+  <defs>
+    <linearGradient id="staal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8e98a3"/>
+      <stop offset="0.45" stop-color="#e3e8ed"/>
+      <stop offset="1" stop-color="#7d8792"/>
+    </linearGradient>
+  </defs>
+  <rect x="4.3" y="2" width="3.4" height="84" rx="1.7" fill="url(#staal)" stroke="#5d6670" stroke-width="0.6"/>
+  <path d="M2 84 Q1 104 6 109 Q11 104 10 84 Z" fill="url(#staal)" stroke="#5d6670" stroke-width="0.6"/>
+  <path d="M1.8 6 Q1.2 0 6 0 Q10.8 0 10.2 6 Q10 10 6 10 Q2 10 1.8 6 Z" fill="url(#staal)" stroke="#5d6670" stroke-width="0.6"/>
+</svg>

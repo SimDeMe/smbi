@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="220" viewBox="0 0 40 110">
+  <!-- Maaleglas, 100 mL, fyldt til stregen. Tuden er (8, 6). Bunden er
+       (20, 110). -->
+  <defs>
+    <linearGradient id="glas" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d4ebfa" stop-opacity="0.35"/>
+      <stop offset="0.3" stop-color="#d4ebfa" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#d4ebfa" stop-opacity="0.28"/>
+    </linearGradient>
+    <linearGradient id="vand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8fc4ea" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#b9dcf4" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#7fb6de" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <!-- Fod -->
+  <path d="M3 110 L6 101 L34 101 L37 110 Z" fill="#9fb3c4" fill-opacity="0.55" stroke="#dcecf8" stroke-opacity="0.7" stroke-width="1"/>
+  <!-- Vandet -->
+  <rect x="11.5" y="24" width="17" height="77" fill="url(#vand)"/>
+  <path d="M11.5 24 Q20 26.5 28.5 24" fill="none" stroke="#e8f5ff" stroke-opacity="0.8" stroke-width="0.9"/>
+  <!-- Cylinderen med tud -->
+  <path d="M8 5 L11 9 L11 101 L29 101 L29 7 Z" fill="url(#glas)"/>
+  <path d="M8 5 L11 9 L11 101 M29 101 L29 7" fill="none" stroke="#dcecf8" stroke-opacity="0.85" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M8 5 Q18 6 29 7" fill="none" stroke="#e6f2fb" stroke-opacity="0.8" stroke-width="1.2"/>
+  <!-- Inddeling -->
+  <g stroke="#eef6fc" stroke-opacity="0.85" stroke-width="0.9">
+    <path d="M22 24 h7 M25 39 h4 M22 54 h7 M25 69 h4 M22 84 h7"/>
+  </g>
+  <text x="20" y="96" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="6" font-weight="700" fill="#eef6fc" fill-opacity="0.85">100 mL</text>
+  <!-- Genskin -->
+  <rect x="13" y="12" width="1.6" height="84" rx="0.8" fill="#ffffff" fill-opacity="0.25"/>
+</svg>

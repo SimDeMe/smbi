@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="280" viewBox="0 0 60 140">
+  <!-- SM-Simons hoejre arm med loeftet pegefinger. Skulderen (ankeret,
+       som armen drejer om) er (30, 132). Fingerspidsen er (29, 4),
+       haandfladens midte (30, 36). -->
+  <defs>
+    <linearGradient id="kittel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c9d2da"/>
+      <stop offset="0.4" stop-color="#f7f9fb"/>
+      <stop offset="1" stop-color="#bcc6cf"/>
+    </linearGradient>
+  </defs>
+  <!-- Aerme: bredere end Kemichaels -->
+  <path d="M8 140 Q4 100 10 58 L50 58 Q56 100 52 140 Z" fill="url(#kittel)" stroke="#9aa6b1" stroke-width="1.2"/>
+  <path d="M10 64 L50 64" stroke="#9aa6b1" stroke-width="1.2"/>
+  <!-- Haand med pegefinger -->
+  <path d="M14 58 Q9 40 16 30 L23 28 L23 8 Q23 2 29 2 Q35 2 35 8 L35 28 Q48 28 48 40 Q48 52 44 58 Z" fill="#efc19b" stroke="#c98f68" stroke-width="1"/>
+  <path d="M35 34 Q41 36 46 36 M35 42 Q41 44 47 44 M34 50 Q39 51 45 51" stroke="#c98f68" stroke-width="1" fill="none"/>
+  <path d="M25 10 Q29 8 33 10" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1.2" fill="none"/>
+</svg>

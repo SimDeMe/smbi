@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="104" viewBox="0 0 44 52">
+  <!-- Haandtaeller (klikker) til at taelle bobler. Tallet tegnes af
+       animationen i vinduet x 9-35, y 24-36. Knappen er (22, 6).
+       Bunden er (22, 52). -->
+  <defs>
+    <linearGradient id="krop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9edf1"/>
+      <stop offset="1" stop-color="#9aa4ae"/>
+    </linearGradient>
+  </defs>
+  <!-- Knappen -->
+  <rect x="16" y="2" width="12" height="10" rx="2.5" fill="#d8453a" stroke="#8e2a22" stroke-width="0.8"/>
+  <rect x="18" y="3.5" width="8" height="2" rx="1" fill="#ffffff" fill-opacity="0.35"/>
+  <!-- Kroppen -->
+  <circle cx="22" cy="30" r="20" fill="url(#krop)" stroke="#5d6670" stroke-width="1"/>
+  <circle cx="22" cy="30" r="15.5" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+  <rect x="8.5" y="23.5" width="27" height="13" rx="2" fill="#1e2228" stroke="#5d6670" stroke-width="0.8"/>
+  <!-- Nulstilling og fingerring -->
+  <circle cx="36" cy="44" r="3" fill="#5d6670"/>
+  <path d="M14 48 Q22 56 30 48" fill="none" stroke="#7d8792" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

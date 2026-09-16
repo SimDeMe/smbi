@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="260" viewBox="0 0 120 130">
+  <!-- SM-Simons hoved uden oejne, bryn og mund; dem tegner animationen.
+       Halsen (ankeret) er (60, 126). Oejnene sidder ved (42, 56) og
+       (78, 56), munden ved (60, 93) midt i skaegget. -->
+  <defs>
+    <radialGradient id="hud" cx="0.45" cy="0.38" r="0.7">
+      <stop offset="0" stop-color="#f7d3b2"/>
+      <stop offset="0.75" stop-color="#eebf98"/>
+      <stop offset="1" stop-color="#d69f78"/>
+    </radialGradient>
+    <linearGradient id="skaeg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b4630"/>
+      <stop offset="1" stop-color="#4a2f1f"/>
+    </linearGradient>
+  </defs>
+  <!-- Hals -->
+  <rect x="44" y="100" width="32" height="30" rx="8" fill="#e2b089"/>
+  <!-- Oerer -->
+  <ellipse cx="13" cy="62" rx="8" ry="12" fill="#e7b48d"/>
+  <ellipse cx="107" cy="62" rx="8" ry="12" fill="#e7b48d"/>
+  <path d="M11 56 Q15 62 11 68 M109 56 Q105 62 109 68" stroke="#c98f68" stroke-width="1.5" fill="none"/>
+  <!-- Ansigt: bredt og rundt -->
+  <path d="M60 8 Q104 8 104 54 Q104 96 84 110 Q72 118 60 118 Q48 118 36 110 Q16 96 16 54 Q16 8 60 8 Z" fill="url(#hud)"/>
+  <!-- Kort, moerkt haar -->
+  <path d="M16 50 Q12 14 44 8 Q60 2 76 8 Q108 14 104 50 Q100 34 92 28 Q80 20 60 22 Q40 20 28 28 Q20 34 16 50 Z" fill="#4a3222"/>
+  <path d="M30 26 Q44 16 60 18 M62 18 Q80 16 92 26" fill="none" stroke="#5f4430" stroke-width="2" stroke-linecap="round"/>
+  <!-- Naese -->
+  <path d="M60 60 Q54 72 53 76 Q57 80 64 78" fill="none" stroke="#c98f68" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Fuldskaeg fra kinderne og ned, med overskaeg -->
+  <path d="M16 58 Q18 84 30 102 Q44 124 60 126 Q76 124 90 102 Q102 84 104 58 Q98 74 90 80 Q78 84 70 84 Q64 81 60 83 Q56 81 50 84 Q42 84 30 80 Q22 74 16 58 Z" fill="url(#skaeg)"/>
+  <path d="M40 90 Q50 82 60 86 Q70 82 80 90 Q72 93 66 91 Q60 94 54 91 Q48 93 40 90 Z" fill="#553623"/>
+  <!-- Aabning i skaegget til munden -->
+  <ellipse cx="60" cy="96" rx="9" ry="4" fill="#e8b690"/>
+  <g stroke="#3d2618" stroke-width="1" stroke-linecap="round" fill="none" stroke-opacity="0.7">
+    <path d="M30 96 Q33 104 38 108 M44 108 Q47 114 52 117 M70 116 Q74 113 77 108 M84 106 Q89 101 91 95 M24 80 Q25 88 28 92 M96 82 Q95 88 92 92"/>
+  </g>
+  <!-- Kindernes rødme -->
+  <ellipse cx="30" cy="70" rx="7" ry="4" fill="#e39a86" fill-opacity="0.35"/>
+  <ellipse cx="90" cy="70" rx="7" ry="4" fill="#e39a86" fill-opacity="0.35"/>
+</svg>
