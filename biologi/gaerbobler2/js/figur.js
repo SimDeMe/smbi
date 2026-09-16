@@ -40,6 +40,23 @@
     var KANT = 14;
     var HAENGER = 2.9;
 
+    /* Replikkerne staar lidt laenge, saa der er tid til at laese dem, og
+       endnu laengere, naar den anden laerer ogsaa har en taleboble paa
+       skaermen. Med { vent: "niller" } eller { naar: function () {...} }
+       venter et trin paa den anden, saa de to aldrig taler i munden paa
+       hinanden. */
+    var TALE_FART = 1.35;
+    var TO_TALER = 1.35;
+    var PRAEFIKSER = [];
+
+    function andreTaler(vaert, p) {
+        for (var i = 0; i < PRAEFIKSER.length; i++) {
+            var q = PRAEFIKSER[i];
+            if (q !== p && vaert[q] && vaert[q].taleUr > 0.15) return true;
+        }
+        return false;
+    }
+
     function stor(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
     /* Et suk: oejnene lukkes, og hovedet synker og kommer op igen */
@@ -90,6 +107,7 @@
         var fredet = (cfg.fredet || []).concat("gaaUd");
         var svar = cfg.svar || [];
         var start = cfg.start || {};
+        if (PRAEFIKSER.indexOf(p) < 0) PRAEFIKSER.push(p);
 
         P[p + "Start"] = function () {
             this[p] = {
@@ -208,6 +226,24 @@
                 var tr = sc.trin[sc.i];
                 if (!tr) { L.scene = null; this.aendret(p); break; }
                 if (tr.kald) { tr.kald.call(this); sc.i++; sc.t = 0; continue; }
+                /* Vent paa den anden laerer, foer scenen gaar videre */
+                if (tr.naar || tr.vent !== undefined) {
+                    /* Efter 30 sekunder gaar scenen videre alligevel, saa den
+                       aldrig kan haenge fast paa en, der er gaaet sin vej */
+                    tr.ventet = (tr.ventet || 0) + rest;
+                    var klarNu = tr.ventet > 30 || !(tr.naar && !tr.naar.call(this));
+                    if (klarNu && tr.vent !== undefined) {
+                        var anden = this[tr.vent];
+                        if (anden && anden.taleUr > 0) klarNu = false;
+                    }
+                    if (!klarNu) { sc.t = 0; break; }
+                    sc.t += rest;
+                    rest = 0;
+                    if (sc.t < (tr.tid === undefined ? 0.5 : tr.tid)) break;
+                    sc.i++;
+                    sc.t = 0;
+                    continue;
+                }
                 if (tr.udtryk) {
                     var u = tr.udtryk;
                     if (u.vrede !== undefined) L.vredeMaal = u.vrede;
@@ -222,12 +258,18 @@
                 if (!tr.startet) {
                     tr.startet = true;
                     if (tr.gaa !== undefined) { L.maalX = typeof tr.gaa === "function" ? tr.gaa.call(this) : tr.gaa; L.loeb = !!tr.loeb; }
-                    if (tr.sig) this[p + "Sig"](tr.sig, tr.vis);
+                    if (tr.sig) {
+                        var langsom = TALE_FART * (andreTaler(this, p) ? TO_TALER : 1);
+                        tr.visNu = (tr.vis === undefined ? 2 : tr.vis) * langsom;
+                        if (tr.tid) tr.tidNu = tr.tid * langsom;
+                        this[p + "Sig"](tr.sig, tr.visNu);
+                    }
                     if (tr.arm !== undefined) { L.armFra = L.arm; L.armTil = tr.arm; }
                 }
                 sc.t += rest;
                 rest = 0;
-                var t = tr.tid ? Math.min(1, sc.t / tr.tid) : 1;
+                var varighed = tr.tidNu || tr.tid;
+                var t = varighed ? Math.min(1, sc.t / varighed) : 1;
                 if (tr.arm !== undefined) L.arm = NK.lerp(L.armFra, L.armTil, NK.blod(t));
                 if (tr.hver) tr.hver.call(this, t);
                 var klar = t >= 1;

@@ -35,6 +35,9 @@
         this.antalNyt = 0;
         this.bemaerket = {};
         this.bemaerkKoe = [];
+        this.nillerSpurgt = false;
+        this.simonSvaret = false;
+        this.nillerFaerdig = false;
         this.nillerStart();
     };
 
@@ -133,14 +136,16 @@
             { arm: 0.3, tid: 0.4 },
             { kald: function () { mig.nillerKommer(); } },
             { arm: HAENGER, tid: 0.6 },
-            { tid: 2.0 },
+            { vent: "niller", tid: 0.8 },
             { sig: "Vi mangler BTB.", vis: 2.2, tid: 2.4 },
-            { tid: 7.0 },
+            /* Han svarer foerst, naar Kemi-Niller har spurgt faerdig */
+            { naar: function () { return this.nillerSpurgt; }, vent: "niller", tid: 0.9 },
             { udtryk: { skeptisk: 0.6 } },
             { sig: "Det lyder rigtigt nok.", vis: 2.4, tid: 2.8 },
+            { kald: function () { this.simonSvaret = true; } },
             { udtryk: { skeptisk: 0 } }
         ], Si.glimtTrin("kemi"), [
-            { tid: 6.5 },
+            { naar: function () { return this.nillerFaerdig; }, vent: "niller", tid: 1.0 },
             { sig: "Tak. Så kan vi komme videre.", vis: 2.4, tid: 3.4 },
             { udtryk: { kig: 1 } },
             { sig: "Han glemte sin kaffe.", vis: 2.6, tid: 2.6 },
@@ -157,9 +162,13 @@
         N.baerer = "nillerKop";
         this.nillerKoer("besoeg", [
             { gaa: 340 },
+            { vent: "laerer", tid: 0.6 },
             { sig: "BTB? Det har jeg aldrig hørt om.", vis: 3, tid: 3.4 },
             { udtryk: { skeptisk: 0.8, kig: 1 } },
-            { sig: "Mener du bromthymolblåt?", vis: 3, tid: 3.6 },
+            { sig: "Mener du bromthymolblåt?", vis: 3, tid: 3.4 },
+            { kald: function () { this.nillerSpurgt = true; } },
+            /* Han venter paa SM-Simons svar */
+            { naar: function () { return this.simonSvaret; }, vent: "laerer", tid: 0.8 },
             { udtryk: { skeptisk: 0, kig: 0, humoer: 0.6 } },
             { sig: "Så siger vi det. Jeg har en flaske.", vis: 2.8, tid: 2.6 },
             /* Kaffen saettes fra, saa han kan tage flasken frem */
@@ -190,6 +199,7 @@
             { sig: "Værsgo. Bromthymolblåt.", vis: 2.6, tid: 2.6 },
             { udtryk: { humoer: 0.8 } },
             { sig: "Sig til, hvis I mangler mere.", vis: 2.4, tid: 2.4 },
+            { kald: function () { this.nillerFaerdig = true; } },
             { gaa: UDE }
         ], false);
         return true;

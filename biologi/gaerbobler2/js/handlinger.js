@@ -129,8 +129,13 @@
     };
 
     P.kanTraekke = function (navn) {
-        if (!navn || this.optaget()) return false;
+        if (!navn) return false;
         var d = navn.split(":");
+        /* En genstand paa vej hjem maa gribes i luften, saa man hurtigt
+           kan haelde i det naeste glas */
+        var h = this.handling;
+        var iLuften = !!(h && h.gribbar === d[0] && h.i >= h.liste.length - 1);
+        if (!iLuften && this.optaget()) return false;
         if (d[0] === "taeller") return this.taeller.aktiv === null;
         if (d[0] === "kaffe") return !!this.g.kaffe.findes && !this.g.kaffe.tom;
         if (d[0] === "kolbe") { var k = this.kolber[+d[1]]; return !!k.sted && !k.knust; }
@@ -247,9 +252,9 @@
         var gg = this.g[hvad];
         var farve = hvad === "sukker" ? "#f4f6f8" : "#caa56a";
         this.koer([
-            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 8, y: a.y - 18, v: hvad === "sukker" ? 1.95 : 2.25 }; }, tid: 0.8, loeft: 50 },
-            { kald: function () { if (NK.Lyd) NK.Lyd.drys(1); } },
-            { tid: 1.0, hver: function () {
+            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 8, y: a.y - 18, v: hvad === "sukker" ? 1.95 : 2.25 }; }, tid: 0.5, loeft: 50 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.drys(0.6); } },
+            { tid: 0.6, hver: function () {
                 if (Math.random() < 0.8) {
                     var spids = NK.tilVerden(gg.p, gg.anker, gg.anker.x, gg.anker.y);
                     var bund = k.niveau !== null ? k.niveau : NK.tilVerden(k.p, A.kolbe, 48, 118).y;
@@ -264,8 +269,8 @@
                 m.roert = false;
                 this.aendret(hvad);
             } },
-            this.hjemTil(gg, 0.8, 50)
-        ], hvad);
+            this.hjemTil(gg, 0.5, 50)
+        ], hvad, hvad);
         return true;
     };
 
@@ -274,9 +279,9 @@
         if (this.proppet(k, "Der kan ikke hældes vand i.")) return false;
         var gg = this.g.maaleglas, m = k.m, haeldt = 0, spildt = 0;
         this.koer([
-            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 6, y: a.y - 20, v: 1.95 }; }, tid: 0.8, loeft: 50 },
-            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(1.3); } },
-            { tid: 1.3, hver: function (t) {
+            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 6, y: a.y - 20, v: 1.95 }; }, tid: 0.5, loeft: 50 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(0.8); } },
+            { tid: 0.8, hver: function (t) {
                 var nu = M.PORTION.vand * NK.blod(t);
                 var plads = Math.max(0, M.GRAENSE.kolbe - M.rumfang(m));
                 var ind = Math.min(plads, nu - haeldt - spildt);
@@ -304,17 +309,17 @@
                 }
                 this.aendret("vand");
             } },
-            this.hjemTil(gg, 0.8, 50)
-        ], "vand");
+            this.hjemTil(gg, 0.5, 50)
+        ], "vand", "maaleglas");
         return true;
     };
 
     P.haeldVandRoer = function (ro) {
         var gg = this.g.maaleglas, foer = ro.m.vand;
         this.koer([
-            { flyt: gg, til: function () { var t = roerTop(ro); return { x: t.x - 4, y: t.y - 16, v: 1.95 }; }, tid: 0.8, loeft: 40 },
-            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(0.5); } },
-            { tid: 0.6, hver: function () {
+            { flyt: gg, til: function () { var t = roerTop(ro); return { x: t.x - 4, y: t.y - 16, v: 1.95 }; }, tid: 0.5, loeft: 40 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(0.4); } },
+            { tid: 0.4, hver: function () {
                 var spids = NK.tilVerden(gg.p, gg.anker, 8, 6);
                 var t = roerTop(ro);
                 this.straale = { fra: spids, til: { x: t.x, y: t.y + 20 }, farve: M.FARVE.vand, bredde: 2 };
@@ -330,8 +335,8 @@
                 }
                 this.aendret("roerVand");
             } },
-            this.hjemTil(gg, 0.8, 40)
-        ], "roerVand");
+            this.hjemTil(gg, 0.5, 40)
+        ], "roerVand", "maaleglas");
         return true;
     };
 
@@ -339,8 +344,8 @@
     P.btbDraaber = function (til, farve) {
         var gg = this.g.btb;
         var mig = this;
-        return { tid: 0.9, hver: function (t, tt) {
-            var n = Math.floor(tt / 0.3);
+        return { tid: 0.6, hver: function (t, tt) {
+            var n = Math.floor(tt / 0.2);
             if (n > (this.btbN || 0) - 1 && n < 3) {
                 mig.btbN = n + 1;
                 var spids = NK.tilVerden(gg.p, gg.anker, 17, 2);
@@ -362,11 +367,11 @@
         var gg = this.g.btb;
         this.btbN = 0;
         this.koer([
-            { flyt: gg, til: function () { var t = roerTop(ro); return { x: t.x, y: t.y - 30, v: Math.PI }; }, tid: 0.8, loeft: 40 },
+            { flyt: gg, til: function () { var t = roerTop(ro); return { x: t.x, y: t.y - 30, v: Math.PI }; }, tid: 0.5, loeft: 40 },
             this.btbDraaber(function () { return roerTop(ro).y + 30; }, "rgba(40, 100, 210, 0.95)"),
             { kald: function () { ro.m.btb += M.PORTION.btb; this.aendret("btb"); } },
-            this.hjemTil(gg, 0.8, 40)
-        ], "btb");
+            this.hjemTil(gg, 0.5, 40)
+        ], "btb", "btb");
         return true;
     };
 
@@ -376,11 +381,11 @@
         var gg = this.g.btb;
         this.btbN = 0;
         this.koer([
-            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x, y: a.y - 26, v: Math.PI }; }, tid: 0.8, loeft: 40 },
+            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x, y: a.y - 26, v: Math.PI }; }, tid: 0.5, loeft: 40 },
             this.btbDraaber(function () { return k.niveau !== null ? k.niveau : k.p.y + 118; }, "rgba(40, 100, 210, 0.95)"),
             { kald: function () { k.m.btb += M.PORTION.btb; this.iagttag("btbKolbe", true); this.aendret("btb"); } },
-            this.hjemTil(gg, 0.8, 40)
-        ], "btbKolbe");
+            this.hjemTil(gg, 0.5, 40)
+        ], "btbKolbe", "btb");
         return true;
     };
 
@@ -391,14 +396,14 @@
         var gg = this.g.btb, b = this.g.baegerglas;
         this.btbN = 0;
         this.koer([
-            { flyt: gg, til: function () { var t = NK.tilVerden(b.p, A.baegerglas, 36, 0); return { x: t.x, y: t.y - 26, v: Math.PI }; }, tid: 0.8, loeft: 40 },
+            { flyt: gg, til: function () { var t = NK.tilVerden(b.p, A.baegerglas, 36, 0); return { x: t.x, y: t.y - 26, v: Math.PI }; }, tid: 0.5, loeft: 40 },
             this.btbDraaber(function () { return NK.tilVerden(b.p, A.baegerglas, 36, 82).y; }, "rgba(40, 110, 205, 0.95)"),
             { kald: function () {
                 b.btb += M.PORTION.btb;
                 this.btbTom = true;
                 this.aendret("baeger");
             } },
-            this.hjemTil(gg, 0.8, 40),
+            this.hjemTil(gg, 0.5, 40),
             { kald: function () { if (this.laererBaeger) this.laererBaeger(); } }
         ], "baegerBtb");
         return true;
@@ -409,9 +414,9 @@
         if (this.proppet(k, "Kaffen kan ikke komme ned gennem proppen.")) return false;
         var gg = this.g.kaffe, m = k.m, haeldt = 0;
         this.koer([
-            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 4, y: a.y - 20, v: 2.1 }; }, tid: 0.8, loeft: 50 },
-            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(1); } },
-            { tid: 1.0, hver: function (t) {
+            { flyt: gg, til: function () { var a = aabning(k); return { x: a.x - 4, y: a.y - 20, v: 2.1 }; }, tid: 0.5, loeft: 50 },
+            { kald: function () { if (NK.Lyd) NK.Lyd.haeld(0.7); } },
+            { tid: 0.7, hver: function (t) {
                 var nu = M.PORTION.kaffe * NK.blod(t);
                 var ind = Math.min(nu - haeldt, Math.max(0, M.GRAENSE.kolbe - M.rumfang(m)));
                 haeldt = nu;
@@ -426,8 +431,8 @@
                 this.iagttag("kaffeIKolbe", true);
                 this.aendret("kaffe");
             } },
-            this.hjemTil(gg, 0.8, 50)
-        ], "kaffe");
+            this.hjemTil(gg, 0.5, 50)
+        ], "kaffe", "kaffe");
         return true;
     };
 

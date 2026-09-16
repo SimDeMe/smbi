@@ -18,7 +18,8 @@ gennem gærrør med BTB, og eleven tæller selv boblerne i ti sekunder.
 * **En rigtig opstilling.** Sukker, tørgær, måleglas, BTB, spatel, termometer
   og en håndtæller på bordet, tre kolber, to varmeplader, tre gærrør i et
   stativ på hylden og en affaldsspand. Alt bruges ved at trække det derhen,
-  hvor det skal bruges. Varmepladerne indstilles med − og +.
+  hvor det skal bruges. Varmepladerne indstilles med − og +. Et glas kan
+  gribes i luften på vej tilbage, så man hurtigt kan hælde i det næste.
 * **Tiden går i virkelig tid**, så boblerne kan tælles. Et klik på uret (eller
   knappen Vent 5 min) spoler fem minutter frem.
 * **Eleven tæller selv i ti sekunder.** Tælleren trækkes hen på en kolbe. En

@@ -20,7 +20,7 @@
     var MAPPE = script && script.src ? script.src.replace(/[^\/]*$/, "") + "sprites/" : "niller/sprites/";
 
     var SPRITES = {
-        nillerKop:   { fil: "niller_kop.svg", b: 44, h: 56 },
+        nillerKop:   { fil: "niller_kop.svg", b: 46, h: 48 },
         nillerKrop:  { fil: "niller_krop.svg", b: 220, h: 250 },
         nillerHoved: { fil: "niller_hoved.svg", b: 110, h: 130 },
         nillerArm:   { fil: "niller_arm.svg", b: 56, h: 150 }
@@ -31,7 +31,7 @@
     });
 
     var ANKER = {
-        nillerKop:   { x: 22, y: 56 },
+        nillerKop:   { x: 23, y: 48 },
         nillerKrop:  { x: 110, y: 18 },
         nillerHoved: { x: 55, y: 126 },
         nillerArm:   { x: 28, y: 142 }
@@ -142,7 +142,7 @@
             gaarSvar: "Jeg går tilbage til kemi.",
             fredet: ["besoeg"],
             baaret: {
-                nillerKop: { sprite: "nillerKop", dx: 6, dy: 22 },
+                nillerKop: { sprite: "nillerKop", dx: 6, dy: 20 },
                 btb: { sprite: "btb", dx: 2, dy: 18, v: 0.12 }
             },
             tegnAnsigt: tegnAnsigt

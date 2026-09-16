@@ -72,6 +72,11 @@
         var navn = this.hvad(pt);
         if (!navn) return false;
         if (this.kanTraekke(navn)) {
+            /* Gribes den i luften, afbrydes turen hjem */
+            if (this.handling && this.handling.gribbar === navn.split(":")[0]) {
+                this.handling = null;
+                this.aendret("handling");
+            }
             var gg = this.traekGenstand(navn);
             this.holdt = { navn: navn, start: pt, sidst: pt, flyttet: false, dx: gg.p.x - pt.x, dy: gg.p.y - pt.y,
                 fra: { x: gg.p.x, y: gg.p.y, v: gg.p.v }, fraSted: gg.sted };

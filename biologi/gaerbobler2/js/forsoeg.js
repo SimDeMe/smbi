@@ -231,8 +231,10 @@
     };
 
     /* ----- Koreografier ------------------------------------------------ */
-    P.koer = function (liste, navn) {
-        this.handling = { liste: liste, i: 0, t: 0, navn: navn || "" };
+    /* gribbar: navnet paa den genstand, eleven maa gribe i luften, mens
+       den er paa vej hjem efter sidste trin i koreografien. */
+    P.koer = function (liste, navn, gribbar) {
+        this.handling = { liste: liste, i: 0, t: 0, navn: navn || "", gribbar: gribbar || null };
         this.aendret("handling");
     };
 
