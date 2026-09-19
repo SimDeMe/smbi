@@ -13,7 +13,7 @@ format:
 
 ## Om øvelsen
 
-Danmark ligger nordligere end det meste af Labrador og er alligevel langt varmere om vinteren. Forklaringen er en havstrøm-cirkulation i Nordatlanten, som i daglig tale kaldes **Grønlandspumpen**: varmt overfladevand føres nordpå, afgiver sin varme til luften over Nordvesteuropa, bliver tungt og synker til bunds ud for Grønland.
+Danmark ligger nordligere end det meste af Labrador, Canada og er alligevel langt varmere om vinteren. Forklaringen er havstrømmen **Golfstrømmen** og dens forlængelse mod nordøst, som fører varmt overfladevand nordpå mod Nordvesteuropa. Strømmen skyldes for det meste vinden og Jordens rotation, men den bliver forstærket af **Grønlandspumpen**: ude for Grønland har vandet afgivet sin varme til luften, så det er blevet koldt og tungt og synker til bunds — og det trækker nyt, varmt overfladevand nordpå i stedet.
 
 I denne øvelse bygger I en model af pumpen i ét gennemsigtigt kar med is i den ene ende og en varmekilde i den anden. Farven viser jer, hvor vandet bevæger sig hen — men hvor løber det, og hvad sker der i den varme ende? Det skal I selv observere og konkludere ud fra forsøget.
 
@@ -27,9 +27,12 @@ Koldt vand er tungere (mere tætpakket) end varmt vand — det er hele modellens
 
 ![Koldt vand er tungere end varmt, og salt vand er tungere end fersk. Det tungeste vand i Nordatlanten er derfor det, der er både iskoldt og ekstra salt.](figurer/densitet.svg){#fig-densitet width="92%"}
 
-I dette forsøg bruger I kun temperaturforskellen — is i den ene ende, varmt vand i den anden. Vil I selv undersøge, hvad saltholdigheden gør ved densiteten, findes der en øvelse om netop det: *Vands temperatur, salinitet og densitet*.
+I dette forsøg bruger I kun temperaturforskellen — is i den ene ende, varmt vand i den anden.
+
+{{< pagebreak >}}
 
 Når havis dannes i virkeligheden, bygges saltionerne ikke ind i iskrystallerne, men efterlades i vandet under isen, som derfor bliver ekstra tungt:
+
 
 ![Når havis dannes, efterlades saltet i vandet nedenunder. Det vand er både iskoldt og ekstra salt og bliver dermed det tungeste vand i Nordatlanten.](figurer/havis.svg){#fig-havis width="100%"}
 
