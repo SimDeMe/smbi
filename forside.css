@@ -519,6 +519,7 @@ img{display:block;max-width:100%}
 .other-in{max-width:var(--max);margin:0 auto;padding:0 32px}
 .other-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;align-items:start}
 .other-grid.other-2{grid-template-columns:1fr 1fr}
+.other-grid.other-1{grid-template-columns:1fr}
 .stack{--c:var(--lime);--t:#EDF8E4;scroll-margin-top:84px}
 .stack-head{
   display:flex;align-items:center;gap:11px;
