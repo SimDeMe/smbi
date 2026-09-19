@@ -1,7 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-label="Forsøgsopstillingen til Del 3: plexiglaskar med skrå isholderplade, knust is med blå frugtfarve i den ene ende og en flaske med varmt vand i den anden">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 236" width="640" height="236" role="img" aria-label="Forsøgsopstillingen til Del 3: plexiglaskar med skrå isholderplade, knust is med blå frugtfarve i den ene ende og en flaske med varmt vand i den anden">
   <title>Opstillingen til Del 3</title>
-  <desc>Et gennemsigtigt kar fyldt med lunkent vand. I venstre ende sidder isholderpladen skråt med udskæringen nedad, og på den ligger knust is med blå frugtfarve. I højre ende står en lukket flaske med varmt vand. Bag karret står et stykke sort karton.</desc>
-  <rect x="44" y="30" width="552" height="196" fill="#3E4B44"/>
+  <desc>Et gennemsigtigt kar fyldt med lunkent vand. I venstre ende sidder isholderpladen skråt med udskæringen nedad, og på den ligger knust is med blå frugtfarve. I højre ende står en lukket flaske med varmt vand.</desc>
   <rect x="50" y="212" width="540" height="12" rx="2" fill="#EDF0EA" stroke="#26332B" stroke-width="1.6"/>
   <rect x="62" y="44" width="516" height="168" fill="#D9E9F0" stroke="#26332B" stroke-width="2.2"/>
   <path d="M64 58 H576" stroke="#7FA8BC" stroke-width="1.6"/>
@@ -26,6 +25,4 @@
   <text x="216" y="148" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" fill="#26332B">isholderplade — udskæringen vender nedad</text>
   <path d="M212 144 C180 140 140 152 100 148" stroke="#26332B" stroke-width="1.2" fill="none"/>
   <text x="300" y="196" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" fill="#37474F">lunkent vand</text>
-  <text x="44" y="248" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6B7A66">Den mørke flade bagved er et stykke sort karton — det gør frugtfarven langt lettere at se og fotografere.</text>
-  <text x="44" y="268" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6B7A66">Vandstanden skal stå lige over isholderpladens nederste kant.</text>
 </svg>
