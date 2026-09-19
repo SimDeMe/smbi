@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 150" width="560" height="150">
+  <g>
+    <rect x="40" y="14" width="140" height="102" rx="4" fill="#fff" stroke="#C9D5D4" stroke-width="2"/>
+    <rect x="42" y="16" width="136" height="48" fill="#F4E3DE"/>
+    <rect x="42" y="64" width="136" height="50" fill="#DDEBF0"/>
+    <path d="M42 64 H178" stroke="#C9D5D4" stroke-width="1.5"/>
+    <path d="M110 78 V100" stroke="#16617A" stroke-width="6" stroke-linecap="round"/>
+    <path d="M100 94 L110 106 L120 94" fill="none" stroke="#16617A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="52" y="44" font-family="Georgia,serif" font-size="13" fill="#476069">varmt</text>
+    <text x="52" y="84" font-family="Georgia,serif" font-size="13" fill="#476069">koldt</text>
+    <text x="40" y="140" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#0F2229">Koldt vand synker</text>
+  </g>
+  <g>
+    <rect x="330" y="14" width="140" height="102" rx="4" fill="#fff" stroke="#C9D5D4" stroke-width="2"/>
+    <rect x="332" y="16" width="136" height="46" fill="#fff"/>
+    <rect x="332" y="62" width="136" height="52" fill="#A9C9D6"/>
+    <path d="M332 62 H468" stroke="#C9D5D4" stroke-width="1.5"/>
+    <g fill="#16617A"><circle cx="366" cy="34" r="3"/><circle cx="388" cy="26" r="3"/><circle cx="410" cy="38" r="3"/><circle cx="434" cy="28" r="3"/></g>
+    <path d="M400 76 V98" stroke="#16617A" stroke-width="6" stroke-linecap="round"/>
+    <path d="M390 92 L400 104 L410 92" fill="none" stroke="#16617A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="342" y="92" font-family="Georgia,serif" font-size="13" fill="#476069">salt</text>
+    <text x="330" y="140" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#0F2229">Salt vand synker</text>
+  </g>
+</svg>

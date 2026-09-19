@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 130" width="260" height="130">
+  <rect x="60" y="14" width="140" height="102" rx="4" fill="#fff" stroke="#C9D5D4" stroke-width="2"/>
+  <rect x="62" y="16" width="136" height="48" fill="#F4E3DE"/>
+  <rect x="62" y="64" width="136" height="50" fill="#DDEBF0"/>
+  <path d="M62 64 H198" stroke="#C9D5D4" stroke-width="1.5"/>
+  <path d="M130 78 V100" stroke="#046E9B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M120 94 L130 106 L140 94" fill="none" stroke="#046E9B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="72" y="44" font-family="Georgia,serif" font-size="13" fill="#476069">varmt</text>
+  <text x="72" y="84" font-family="Georgia,serif" font-size="13" fill="#476069">koldt</text>
+</svg>

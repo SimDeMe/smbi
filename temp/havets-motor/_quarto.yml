@@ -1,0 +1,9 @@
+project:
+  title: "Havets motor"
+  output-dir: _output
+  render:
+    - havets-motor.qmd
+    - ark-a.qmd
+    - ark-b.qmd
+
+lang: da

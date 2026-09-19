@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250" width="640" height="250" role="img" aria-label="Havis fryser ved overfladen, saltet efterlades i vandet nedenunder, og det tunge vand synker">
+  <title>Havis efterlader saltet i vandet</title>
+  <desc>Flager af havis ligger i overfladen. Saltprikker falder ned i vandet under isen, hvor vandet bliver både koldt og ekstra salt og derfor synker.</desc>
+  <rect x="0" y="58" width="640" height="172" fill="#D9E9F0"/>
+  <rect x="0" y="158" width="640" height="72" fill="#B6D4E2"/>
+  <path d="M0 58 H640" stroke="#26332B" stroke-width="1.8"/>
+  <g fill="#FAFBF9" stroke="#26332B" stroke-width="1.8">
+    <rect x="56" y="40" width="130" height="30" rx="5"/>
+    <rect x="206" y="44" width="96" height="26" rx="5"/>
+    <rect x="322" y="38" width="150" height="32" rx="5"/>
+  </g>
+  <text x="58" y="26" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13.5" font-weight="700" fill="#26332B">Havis — næsten ferskvand</text>
+  <g fill="#1F5F8B">
+    <circle cx="100" cy="92" r="4"/><circle cx="146" cy="114" r="4"/><circle cx="192" cy="96" r="4"/>
+    <circle cx="236" cy="124" r="4"/><circle cx="282" cy="100" r="4"/><circle cx="332" cy="120" r="4"/>
+    <circle cx="378" cy="94" r="4"/><circle cx="420" cy="126" r="4"/><circle cx="124" cy="138" r="4"/>
+    <circle cx="256" cy="146" r="4"/><circle cx="396" cy="148" r="4"/>
+  </g>
+  <text x="466" y="104" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">saltet bliver efterladt</text>
+  <text x="466" y="120" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">i vandet under isen</text>
+  <path d="M556 132 V156" stroke="#1F5F8B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M546 150 L556 164 L566 150" fill="none" stroke="#1F5F8B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="18" y="194" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="14" font-weight="700" fill="#26332B">koldt + ekstra salt = det tungeste vand i Nordatlanten</text>
+  <text x="18" y="214" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6B7A66">og så synker det — helt til bunds, ca. 3000 meter ned</text>
+</svg>

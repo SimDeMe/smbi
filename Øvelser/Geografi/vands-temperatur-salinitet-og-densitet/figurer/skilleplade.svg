@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 236" width="640" height="236" role="img" aria-label="Karret med skilleplade før og efter pladen trækkes op: den tunge væske løber ind under den lette som en kile">
+  <title>Skillepladeforsøget, Del 1 og Del 2</title>
+  <desc>Til venstre står skillepladen i midten af karret med varmt vand i den ene side og koldt i den anden. Til højre er pladen trukket op, og det tunge vand har lagt sig som en kile langs bunden, mens det lette glider den modsatte vej henover.</desc>
+  <defs>
+    <marker id="s-kold" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#1F5F8B"/></marker>
+    <marker id="s-varm" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#A8402C"/></marker>
+  </defs>
+  <text x="20" y="22" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">1 · Skillepladen sidder i</text>
+  <rect x="22" y="42" width="266" height="120" fill="#FFFFFF" stroke="#26332B" stroke-width="2"/>
+  <rect x="24" y="44" width="129" height="116" fill="#F6E2DC"/>
+  <rect x="157" y="44" width="129" height="116" fill="#C3DAE6"/>
+  <path d="M155 28 V170" stroke="#26332B" stroke-width="5" stroke-linecap="round"/>
+  <text x="56" y="108" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13.5" fill="#26332B">varmt / fersk</text>
+  <text x="182" y="108" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13.5" fill="#26332B">koldt / salt</text>
+  <text x="102" y="186" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">samme vandstand i begge sider</text>
+  <text x="352" y="22" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">2 · Lige efter pladen er trukket op</text>
+  <rect x="352" y="42" width="266" height="120" fill="#F6E2DC" stroke="#26332B" stroke-width="2"/>
+  <path d="M354 160 L616 160 L616 92 C540 114 444 148 354 154 Z" fill="#C3DAE6"/>
+  <path d="M616 92 C540 114 444 148 354 154" fill="none" stroke="#7FA8BC" stroke-width="1.6"/>
+  <rect x="352" y="42" width="266" height="120" fill="none" stroke="#26332B" stroke-width="2"/>
+    <path d="M592 138 C520 148 466 152 424 154" fill="none" stroke="#1F5F8B" stroke-width="6" stroke-linecap="round" marker-end="url(#s-kold)"/>
+  <path d="M378 70 H570" fill="none" stroke="#A8402C" stroke-width="6" stroke-linecap="round" marker-end="url(#s-varm)"/>
+  <text x="352" y="186" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">det tunge vand løber ind under det lette som en kile</text>
+  <text x="20" y="220" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" fill="#6B7A66">Blå = den tunge væske (koldt vand i Del 1, saltvand i Del 2). Rød = den lette. Farvelæg kun den ene side.</text>
+</svg>

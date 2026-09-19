@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" font-family="Helvetica Neue,Helvetica,Arial,sans-serif">
+<line x1="152" y1="382.0" x2="700" y2="382.0" stroke="#D3DEDD" stroke-width="1"/>
+<text x="140" y="387.0" text-anchor="end" font-size="15" fill="#8199A0">-20</text>
+<line x1="152" y1="297.5" x2="700" y2="297.5" stroke="#D3DEDD" stroke-width="1"/>
+<text x="140" y="302.5" text-anchor="end" font-size="15" fill="#8199A0">-10</text>
+<line x1="152" y1="128.5" x2="700" y2="128.5" stroke="#D3DEDD" stroke-width="1"/>
+<text x="140" y="133.5" text-anchor="end" font-size="15" fill="#8199A0">10</text>
+<line x1="152" y1="44.0" x2="700" y2="44.0" stroke="#D3DEDD" stroke-width="1"/>
+<text x="140" y="49.0" text-anchor="end" font-size="15" fill="#8199A0">20</text>
+<line x1="152" y1="213.0" x2="700" y2="213.0" stroke="#A9B9B8" stroke-width="1.6"/>
+<text x="140" y="218.0" text-anchor="end" font-size="15" fill="#476069">0</text>
+<text x="140" y="30" text-anchor="end" font-size="13" fill="#8199A0" letter-spacing="1">°C</text>
+<text x="158" y="235.0" font-size="14" fill="#8199A0" font-style="italic">frysepunkt</text>
+<text x="152.0" y="412" text-anchor="middle" font-size="17" fill="#476069">J</text>
+<text x="201.8" y="412" text-anchor="middle" font-size="17" fill="#476069">F</text>
+<text x="251.6" y="412" text-anchor="middle" font-size="17" fill="#476069">M</text>
+<text x="301.5" y="412" text-anchor="middle" font-size="17" fill="#476069">A</text>
+<text x="351.3" y="412" text-anchor="middle" font-size="17" fill="#476069">M</text>
+<text x="401.1" y="412" text-anchor="middle" font-size="17" fill="#476069">J</text>
+<text x="450.9" y="412" text-anchor="middle" font-size="17" fill="#476069">J</text>
+<text x="500.7" y="412" text-anchor="middle" font-size="17" fill="#476069">A</text>
+<text x="550.5" y="412" text-anchor="middle" font-size="17" fill="#476069">S</text>
+<text x="600.4" y="412" text-anchor="middle" font-size="17" fill="#476069">O</text>
+<text x="650.2" y="412" text-anchor="middle" font-size="17" fill="#476069">N</text>
+<text x="700.0" y="412" text-anchor="middle" font-size="17" fill="#476069">D</text>
+<line x1="124.0" y1="201.2" x2="124.0" y2="356.6" stroke="#0F2229" stroke-width="1.8"/>
+<line x1="118.0" y1="201.2" x2="130.0" y2="201.2" stroke="#0F2229" stroke-width="1.8"/>
+<line x1="118.0" y1="356.6" x2="130.0" y2="356.6" stroke="#0F2229" stroke-width="1.8"/>
+<text x="108.0" y="276.9" text-anchor="end" font-size="26" font-weight="700" fill="#0F2229">18°</text>
+<text x="108.0" y="298.9" text-anchor="end" font-size="14" fill="#476069">i januar</text>
+<line x1="450.9" y1="87.5" x2="450.9" y2="137" stroke="#8199A0" stroke-width="1.2"/>
+<text x="450.9" y="157" text-anchor="middle" font-size="15" fill="#476069">kun 2,2° i juli</text>
+<path d="M152.0 356.6 L201.8 348.2 L251.6 293.3 L301.5 224.8 L351.3 165.7 L401.1 114.1 L450.9 79.5 L500.7 82.0 L550.5 126.0 L600.4 180.9 L650.2 243.4 L700.0 310.2" fill="none" stroke="#046E9B" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M152.0 201.2 L201.8 201.2 L251.6 184.3 L301.5 149.6 L351.3 111.6 L401.1 82.0 L450.9 60.9 L500.7 61.7 L550.5 91.3 L600.4 131.0 L650.2 164.8 L700.0 191.0" fill="none" stroke="#A8402C" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="152.0" cy="201.2" r="6" fill="#A8402C" stroke="#F1F4F4" stroke-width="2"/>
+<circle cx="152.0" cy="356.6" r="6" fill="#046E9B" stroke="#F1F4F4" stroke-width="2"/>
+<circle cx="450.9" cy="60.9" r="6" fill="#A8402C" stroke="#F1F4F4" stroke-width="2"/>
+<circle cx="450.9" cy="79.5" r="6" fill="#046E9B" stroke="#F1F4F4" stroke-width="2"/>
+<circle cx="720" cy="191.0" r="6" fill="#A8402C"/>
+<text x="734" y="197.0" font-size="19" font-weight="700" fill="#0F2229">København</text>
+<text x="734" y="218.0" font-size="14" fill="#476069">55,7° N</text>
+<circle cx="720" cy="310.2" r="6" fill="#046E9B"/>
+<text x="734" y="316.2" font-size="19" font-weight="700" fill="#0F2229">Goose Bay</text>
+<text x="734" y="337.2" font-size="14" fill="#476069">53,3° N</text>
+<text x="152" y="460" font-size="13" fill="#8199A0">Månedsmiddeltemperatur · klimanormaler 1991–2020</text>
+</svg>

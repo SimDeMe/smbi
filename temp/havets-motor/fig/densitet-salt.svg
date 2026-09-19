@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 130" width="260" height="130">
+  <rect x="60" y="14" width="140" height="102" rx="4" fill="#fff" stroke="#C9D5D4" stroke-width="2"/>
+  <rect x="62" y="16" width="136" height="46" fill="#fff"/>
+  <rect x="62" y="62" width="136" height="52" fill="#A9C9D6"/>
+  <path d="M62 62 H198" stroke="#C9D5D4" stroke-width="1.5"/>
+  <g fill="#046E9B"><circle cx="96" cy="34" r="3"/><circle cx="118" cy="26" r="3"/><circle cx="140" cy="38" r="3"/><circle cx="164" cy="28" r="3"/></g>
+  <path d="M130 76 V98" stroke="#046E9B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M120 92 L130 104 L140 92" fill="none" stroke="#046E9B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="72" y="92" font-family="Georgia,serif" font-size="13" fill="#476069">salt</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 188" width="560" height="188">
+  <rect x="26" y="40" width="508" height="118" fill="#CFE3EB"/>
+  <rect x="26" y="40" width="508" height="118" fill="none" stroke="#10242B" stroke-width="1.4"/>
+  <path d="M26 40 L26 22 L104 22 L118 40 Z" fill="#DCD9CE"/>
+  <path d="M26 40 L26 22 L104 22 L118 40" fill="none" stroke="#10242B" stroke-width="1.4"/>
+  <path d="M534 40 L534 12 L430 12 L404 40 Z" fill="#DCD9CE"/>
+  <path d="M534 40 L534 12 L430 12 L404 40" fill="none" stroke="#10242B" stroke-width="1.4"/>
+  <path d="M534 12 L430 12 L418 26 L534 26 Z" fill="#F4F8F9"/>
+  <path d="M430 12 L418 26 L534 26" fill="none" stroke="#10242B" stroke-width="1.4"/>
+  <path d="M404 40 L404 92 L370 104 L370 158" fill="none" stroke="#10242B" stroke-width="1.4"/>
+  <path d="M26 100 H534" fill="none" stroke="#B6C4C3" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="34" y="18" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="0.6" fill="#10242B">DANMARK</text>
+  <text x="452" y="9" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="0.6" fill="#10242B">GRØNLAND</text>
+  <text x="440" y="23" font-family="Georgia,serif" font-size="10.5" fill="#4A6069">indlandsis</text>
+  <text x="32" y="53" font-family="Georgia,serif" font-size="10.5" fill="#4A6069">overfladen</text>
+  <text x="32" y="153" font-family="Georgia,serif" font-size="10.5" fill="#4A6069">havbunden, ca. 3000 m</text>
+  <text x="238" y="97" font-family="Georgia,serif" font-size="10.5" fill="#4A6069">1500 m</text>
+</svg>

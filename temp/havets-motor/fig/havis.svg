@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 262" width="640" height="262">
+  <rect x="0" y="62" width="640" height="198" fill="#CFE3EB"/>
+  <rect x="0" y="170" width="640" height="90" fill="#A9C9D6"/>
+  <path d="M0 62 H640" stroke="#0F2229" stroke-width="1.6"/>
+  <g fill="#FAFCFC" stroke="#0F2229" stroke-width="1.6">
+    <rect x="60" y="44" width="130" height="30" rx="5"/>
+    <rect x="210" y="48" width="96" height="26" rx="5"/>
+    <rect x="326" y="42" width="150" height="32" rx="5"/>
+  </g>
+  <text x="66" y="30" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#0F2229">HAVIS — næsten ferskvand</text>
+  <g fill="#16617A">
+    <circle cx="104" cy="96" r="4"/><circle cx="150" cy="118" r="4"/><circle cx="196" cy="100" r="4"/>
+    <circle cx="240" cy="128" r="4"/><circle cx="286" cy="104" r="4"/><circle cx="336" cy="124" r="4"/>
+    <circle cx="382" cy="98" r="4"/><circle cx="424" cy="130" r="4"/><circle cx="128" cy="142" r="4"/>
+    <circle cx="260" cy="150" r="4"/><circle cx="400" cy="152" r="4"/>
+  </g>
+  <text x="470" y="112" font-family="monospace" font-size="12" font-weight="700" letter-spacing="1" fill="#0F2229">SALTET FALDER UD</text>
+  <path d="M520 128 V152" stroke="#16617A" stroke-width="6" stroke-linecap="round"/>
+  <path d="M510 146 L520 160 L530 146" fill="none" stroke="#16617A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="18" y="206" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#0F2229">KOLDT + EKSTRA SALT = TUNGEST AF ALT VAND</text>
+  <text x="18" y="232" font-family="Georgia,serif" font-size="13" fill="#476069">og så synker det — helt til bunds, 3000 meter ned</text>
+</svg>

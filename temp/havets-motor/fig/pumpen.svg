@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 310" width="640" height="310">
+  <defs>
+    <marker id="aR" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#A8402C"/></marker>
+    <marker id="aB" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#16617A"/></marker>
+  </defs>
+  <rect x="26" y="62" width="588" height="200" fill="#CFE3EB"/>
+  <rect x="26" y="62" width="588" height="200" fill="none" stroke="#0F2229" stroke-width="1.6"/>
+  <path d="M26,62 L26,28 L118,28 L142,62 Z" fill="#E1DDD1"/>
+  <path d="M26,28 L118,28 L142,62" fill="none" stroke="#0F2229" stroke-width="1.6"/>
+  <path d="M614,62 L614,16 L468,16 L438,62 Z" fill="#E1DDD1"/>
+  <path d="M614,16 L468,16 L438,62" fill="none" stroke="#0F2229" stroke-width="1.6"/>
+  <path d="M468,16 L448,40 L614,40 Z" fill="#FAFCFC"/>
+  <path d="M468,16 L448,40 L614,40" fill="none" stroke="#0F2229" stroke-width="1.6"/>
+  <path d="M438,62 L438,140 L398,164 L398,262" fill="none" stroke="#0F2229" stroke-width="1.6"/>
+  <text x="32" y="22" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#0F2229">DANMARK</text>
+  <text x="492" y="12" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#0F2229">GRØNLAND</text>
+  <text x="470" y="34" font-family="Georgia,serif" font-size="13" fill="#476069">indlandsis</text>
+  <path d="M70,86 H396" fill="none" stroke="#A8402C" stroke-width="7" stroke-linecap="round" marker-end="url(#aR)"/>
+  <text x="82" y="76" font-family="monospace" font-size="12" font-weight="700" letter-spacing="1" fill="#0F2229">GOLFSTRØMMEN — VARMT</text>
+  <path d="M414,110 C414,150 404,176 402,222" fill="none" stroke="#16617A" stroke-width="7" stroke-linecap="round" marker-end="url(#aB)"/>
+  <text x="290" y="150" font-family="monospace" font-size="12" font-weight="700" letter-spacing="1" fill="#0F2229">TUNGT VAND SYNKER</text>
+  <path d="M370,244 H62" fill="none" stroke="#16617A" stroke-width="7" stroke-linecap="round" marker-end="url(#aB)"/>
+  <text x="150" y="234" font-family="monospace" font-size="12" font-weight="700" letter-spacing="1" fill="#0F2229">DYBVAND MOD SYD</text>
+  <text x="32" y="284" font-family="Georgia,serif" font-size="13" fill="#476069">havbunden, ca. 3000 meter</text>
+</svg>
