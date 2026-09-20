@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flashkort: blodprop i hjertet — smbi.dk</title>
-<meta name="description" content="Træn eksamenssvaret om blodprop i hjertet på tre flashkort: hvad det er, symptomerne og førstehjælpen.">
+<title>Flashkort til førstehjælpseksamen — smbi.dk</title>
+<meta name="description" content="Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.">
 <!-- Deling, ikoner og kanonisk adresse -->
 <link rel="canonical" href="https://smbi.dk/foerstehjaelp/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="smbi.dk">
 <meta property="og:locale" content="da_DK">
 <meta property="og:url" content="https://smbi.dk/foerstehjaelp/">
-<meta property="og:title" content="Flashkort: blodprop i hjertet">
-<meta property="og:description" content="Træn eksamenssvaret om blodprop i hjertet på tre flashkort: hvad det er, symptomerne og førstehjælpen.">
+<meta property="og:title" content="Flashkort til førstehjælpseksamen">
+<meta property="og:description" content="Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.">
 <meta property="og:image" content="https://smbi.dk/img/og-smbi.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -53,9 +53,8 @@
   --mono:'IBM Plex Mono',ui-monospace,monospace;
 
   --wide:'wdth' 118;
-  --max:980px;
-  --fig:430px;         /* kortets højdebudget — sættes af
-                          scriptet "Højdebudget" nederst */
+  --max:1040px;
+  --klaeb:60px;        /* topbjælkens højde — betjeningen klæber under den */
 
   --hard:4px 4px 0 var(--ink);
   --hard-lg:7px 7px 0 var(--ink);
@@ -83,6 +82,7 @@ a{color:inherit}
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
 }
+[hidden]{display:none!important}
 
 /* ── Topbjælke ─────────────────────────────────────────── */
 .rainbow{
@@ -146,13 +146,15 @@ h1{
   content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
   background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
 }
-.lead{font-size:1.06rem;color:#3E4E4C;max-width:60ch}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:62ch}
 
-/* ── Signaturpanel: selve kortbunken ───────────────────── */
+/* ── Signaturpanelet ───────────────────────────────────────
+   overflow:clip frem for hidden — ellers bliver panelet en
+   rullebeholder, og så kan betjeningsrækken ikke klæbe. */
 .rig{
   position:relative;
   background:var(--panel);
-  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  border:2.5px solid var(--ink);border-radius:18px;overflow:clip;
   box-shadow:var(--hard-lg);
   margin-top:26px;
 }
@@ -162,15 +164,15 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#FFE9DC;
 }
-.rig-live{display:flex;align-items:center;gap:7px}
-.rig-live .mono{color:var(--ink);font-weight:600}
+.rig-live{display:flex;align-items:center;gap:7px;min-width:0}
+.rig-live .mono{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dot{
   width:9px;height:9px;border-radius:50%;background:var(--accent);
-  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;flex:none;
 }
 .rig-head .who{
   margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
-  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;white-space:nowrap;
 }
 .btn-mini{
   font-family:var(--display);font-size:0.72rem;font-weight:700;
@@ -186,74 +188,112 @@ h1{
   transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
 }
 
-/* ── Kortbunken ────────────────────────────────────────────
-   Alle tre kort — og begge sider af hvert kort — ligger i den
-   samme gittercelle. Så er bunkens højde det højeste kort én
-   gang for alle, og rammen hopper ikke, når man bladrer eller
-   vender. De kort, der ikke er fremme, får visibility:hidden,
-   så deres plads bliver stående. */
+/* ── Oversigten over de 24 spørgsmål ───────────────────── */
+.oversigt{padding:20px 18px 24px;background:var(--paper-2)}
+.oversigt .intro{
+  font-size:0.99rem;color:#3E4E4C;max-width:66ch;margin-bottom:16px;
+}
+.emner{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(236px,1fr));
+}
+.emne{
+  display:flex;flex-direction:column;gap:6px;align-items:flex-start;
+  text-align:left;font-family:var(--body);font-size:1rem;color:var(--ink);
+  background:#fff;border:2px solid var(--ink);border-radius:13px;
+  padding:12px 14px 13px;cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .16s;
+}
+.emne:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);background:#FFF9EE}
+.emne:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.emne-top{display:flex;align-items:center;gap:9px;width:100%}
+.emne .nr{
+  font-family:var(--display);font-weight:800;font-size:0.8rem;
+  min-width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);
+  background:var(--gc,var(--paper-2));
+  display:inline-flex;align-items:center;justify-content:center;flex:none;
+}
+.emne .gruppe{
+  font-family:var(--mono);font-size:0.54rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;margin-left:auto;text-align:right;
+}
+.emne h3{
+  font-family:var(--display);font-variation-settings:'wdth' 110;
+  font-weight:800;font-size:1.02rem;line-height:1.2;letter-spacing:-0.015em;
+}
+.emne p{font-size:0.83rem;color:#5A6C69;line-height:1.35}
+
+/* ── Betjeningen — klæber, så den kan nås under et langt svar ── */
+.styr{
+  position:sticky;top:var(--klaeb);z-index:30;
+  border-bottom:2px solid var(--ink);background:var(--paper-2);
+  padding:12px 15px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+}
+.btn{
+  font-family:var(--display);font-size:0.9rem;font-weight:700;
+  background:#fff;border:2.5px solid var(--ink);color:var(--ink);
+  padding:8px 17px;border-radius:24px;cursor:pointer;white-space:nowrap;
+  box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .16s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);background:#FFD9C9}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:var(--hard);background:#fff}
+.btn-vend{background:var(--accent);color:#fff}
+.btn-vend:hover{background:var(--accent);filter:brightness(1.07)}
+.btn-hjem{margin-right:auto}
+.trin{display:flex;gap:7px;align-items:center;margin-left:auto}
+.trin b{
+  width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);
+  background:#fff;display:block;
+}
+.trin b[data-aktiv="1"]{background:var(--accent)}
+
+/* ── Kortet ────────────────────────────────────────────────
+   Kortets højde følger den side, der vender opad — så vokser
+   siden, når svaret er langt, i stedet for at kortet får sin
+   egen rulning. Ét sted at rulle, også på mobil. */
 .stage{
-  padding:22px 18px;
+  padding:20px 18px;
   background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
 }
-.bunke{
-  display:grid;grid-template-rows:minmax(0,1fr);
-  perspective:1600px;
-  /* Højdebudget: kortet skal kunne ses sammen med sine knapper, så et
-     langt svar ruller inde i kortet i stedet for at skubbe knapperne
-     ned under skærmkanten. */
-  height:var(--fig);
-}
+.bunke{perspective:1800px}
 .kort{
-  grid-area:1/1;display:grid;min-height:0;
+  position:relative;height:var(--h,320px);
   transform-style:preserve-3d;
-  transition:transform .5s cubic-bezier(.2,.7,.3,1);
+  transition:transform .5s cubic-bezier(.2,.7,.3,1),height .38s cubic-bezier(.2,.7,.3,1);
   cursor:pointer;
 }
-.kort[aria-hidden="true"]{visibility:hidden}
 .kort.vendt{transform:rotateY(180deg)}
 .side{
-  grid-area:1/1;min-height:0;overflow:hidden;
+  position:absolute;top:0;left:0;right:0;
   -webkit-backface-visibility:hidden;backface-visibility:hidden;
   border:2px solid var(--ink);border-radius:12px;
   box-shadow:var(--hard);
   padding:20px 22px 22px;
   display:flex;flex-direction:column;gap:12px;
 }
-/* Forsiden har kun ét spørgsmål, men skal fylde samme kort som det
-   længste svar — spørgsmålet står derfor midt i kortet. */
-.forside{background:#fff;display:grid;grid-template-rows:auto 1fr auto;gap:12px}
-.forside .sp{align-self:center}
-.bagside{background:var(--paper-2);transform:rotateY(180deg);position:relative}
-/* Kan svaret rulle videre, lægges der en tone i bunden af kortet, så
-   det kan ses, at der står mere. Klassen sættes fra scriptet. */
-.side.mere::after{
-  content:'';position:absolute;left:2px;right:2px;bottom:2px;height:34px;
-  border-radius:0 0 10px 10px;pointer-events:none;
-  background:linear-gradient(rgba(255,243,220,0),var(--paper-2) 78%);
-}
-.side.mere .rul{opacity:1}
-.rul{
-  position:absolute;right:14px;bottom:8px;opacity:0;transition:opacity .2s;
-  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.12em;
-  text-transform:uppercase;color:#7E8F8C;pointer-events:none;
-}
+.forside{background:#fff;min-height:320px;justify-content:center}
+.bagside{background:var(--paper-2);transform:rotateY(180deg)}
 .side .mono{color:#5A6C69}
 .kort-nr{display:flex;align-items:center;gap:9px}
 .kort-nr .pil{
   width:9px;height:9px;border-radius:3px;border:1.5px solid var(--ink);
   background:var(--kc,var(--accent));flex:none;
 }
+.forside .kort-nr{position:absolute;top:20px;left:22px}
+.forside .vink{position:absolute;bottom:18px;left:22px}
 .sp{
   font-family:var(--display);font-variation-settings:'wdth' 112;
-  font-weight:800;font-size:clamp(1.3rem,3.6vw,2.05rem);line-height:1.16;
+  font-weight:800;font-size:clamp(1.3rem,3.4vw,1.95rem);line-height:1.16;
   letter-spacing:-0.02em;
 }
 .vink{
-  margin-top:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
   letter-spacing:0.12em;text-transform:uppercase;color:#7E8F8C;
 }
-.svar{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto;padding:0 4px 8px 0;scrollbar-width:thin}
+.svar{display:flex;flex-direction:column;gap:14px}
 .blok h3{
   font-family:var(--display);font-variation-settings:'wdth' 108;
   font-weight:800;font-size:0.94rem;letter-spacing:-0.01em;margin-bottom:5px;
@@ -265,36 +305,10 @@ h1{
   width:7px;height:7px;border-radius:2px;
   border:1.5px solid var(--ink);background:var(--lc,#fff);
 }
-.blok li b{font-weight:700}
 .obs{
   border:2px solid var(--ink);border-radius:10px;background:#FFE9DC;
   padding:10px 13px;
 }
-
-/* ── Betjening ─────────────────────────────────────────── */
-.knobs{
-  border-top:2px solid var(--ink);background:var(--paper-2);
-  padding:16px 15px;
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
-}
-.btn{
-  font-family:var(--display);font-size:0.92rem;font-weight:700;
-  background:#fff;border:2.5px solid var(--ink);color:var(--ink);
-  padding:9px 20px;border-radius:24px;cursor:pointer;
-  box-shadow:var(--hard);
-  transition:transform .12s,box-shadow .12s,background .16s;
-}
-.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);background:#FFD9C9}
-.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
-.btn:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:var(--hard);background:#fff}
-.btn-vend{background:var(--accent);color:#fff}
-.btn-vend:hover{background:var(--accent);filter:brightness(1.06)}
-.trin{display:flex;gap:7px;align-items:center}
-.trin b{
-  width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);
-  background:#fff;display:block;
-}
-.trin b[data-aktiv="1"]{background:var(--accent)}
 
 /* ── Kortvælger nederst ────────────────────────────────── */
 .facts{
@@ -305,7 +319,7 @@ h1{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
   font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;
-  text-transform:uppercase;cursor:pointer;
+  text-transform:uppercase;cursor:pointer;color:var(--ink);
   transition:background .15s;
 }
 .fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
@@ -340,14 +354,15 @@ h1{
 .foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
 .foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
 
-/* ── Projektortilstand ─────────────────────────────────── */
+/* ── Projektortilstand og indlejring ───────────────────── */
+body[data-projektor="1"],body.indlejret{--klaeb:0px}
 body[data-projektor="1"] .top,
 body[data-projektor="1"] .head,
 body[data-projektor="1"] .opgave,
 body[data-projektor="1"] .foot{display:none}
 body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
 body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
-body[data-projektor="1"] .sp{font-size:clamp(1.6rem,3.6vw,2.4rem)}
+body[data-projektor="1"] .sp{font-size:clamp(1.6rem,3.8vw,2.5rem)}
 body[data-projektor="1"] .blok li{font-size:1.16rem}
 body[data-projektor="1"] .blok h3{font-size:1.16rem}
 body[data-projektor="1"] .fact{font-size:0.74rem}
@@ -357,27 +372,36 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
   body{font-size:16px}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
   .head{padding:24px 0 18px}
+  /* det lange ord i overskriften må ikke løbe ud over kanten */
+  h1{font-size:clamp(1.5rem,7.2vw,2.2rem)}
+  .top-in{gap:10px}
+  .brand{font-size:1rem}
+  .top-nav a{padding:6px 10px;font-size:0.78rem}
   .rig{border-radius:14px;box-shadow:var(--hard)}
   .stage{padding:14px 12px}
+  .oversigt{padding:16px 12px 20px}
+  .emner{grid-template-columns:1fr}
   .side{padding:16px 15px 18px}
-  .btn{padding:8px 15px;font-size:0.86rem}
+  .forside .kort-nr{top:16px;left:15px}
+  .forside .vink{bottom:14px;left:15px}
+  .styr{gap:8px;padding:10px 12px}
+  .btn{padding:7px 13px;font-size:0.84rem}
+  .btn .lang{display:none}
+  .btn-hjem{margin-right:0}
+  .trin{margin-left:0}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
 @media print{
-  .top,.foot,.knobs,.rig-head,.facts{display:none!important}
-  .rig{box-shadow:none}
+  .top,.foot,.styr,.rig-head,.facts,.vink{display:none!important}
+  .rig{box-shadow:none;border:none}
   /* Til print foldes kortet ud: spørgsmål og svar under hinanden. */
-  .bunke{display:block;perspective:none;height:auto;overflow:visible}
-  .side{overflow:visible}
-  .side.mere::after{display:none}
-  .rul{display:none}
-  .svar{overflow:visible}
-  .kort{display:block;transform:none!important;visibility:visible!important}
-  .kort[aria-hidden="true"]{display:none}
-  .side{box-shadow:none;break-inside:avoid}
-  .bagside{transform:none;margin-top:10px}
+  .kort{height:auto!important;transform:none!important;perspective:none}
+  .side{position:static;box-shadow:none;break-inside:avoid;transform:none!important}
+  .forside{min-height:0;justify-content:flex-start}
+  .forside .kort-nr{position:static}
+  .bagside{margin-top:10px}
 }
 </style>
 <script type="application/ld+json">
@@ -386,24 +410,24 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
   "@graph": [
     {
       "@type": "LearningResource",
-      "name": "Flashkort: blodprop i hjertet",
+      "name": "Flashkort til førstehjælpseksamen",
       "url": "https://smbi.dk/foerstehjaelp/",
       "inLanguage": "da-DK",
-      "description": "Træn eksamenssvaret om blodprop i hjertet på tre flashkort: hvad det er, symptomerne og førstehjælpen.",
+      "description": "Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.",
       "learningResourceType": "flashkort",
-      "educationalLevel": "Førstehjælpskursus",
+      "educationalLevel": "Certificering af førstehjælpsinstruktører",
       "isAccessibleForFree": true,
       "author": {"@type": "Person", "name": "Simon Messell"},
       "publisher": {"@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/"},
       "image": "https://smbi.dk/img/og-smbi.png",
       "isPartOf": {"@id": "https://smbi.dk/#website"},
-      "about": {"@type": "Thing", "name": "Førstehjælp ved blodprop i hjertet"}
+      "about": {"@type": "Thing", "name": "Førstehjælp"}
     },
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/"},
-        {"@type": "ListItem", "position": 2, "name": "Flashkort: blodprop i hjertet", "item": "https://smbi.dk/foerstehjaelp/"}
+        {"@type": "ListItem", "position": 2, "name": "Flashkort til førstehjælpseksamen", "item": "https://smbi.dk/foerstehjaelp/"}
       ]
     }
   ]
@@ -428,9 +452,9 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 <main>
   <div class="wrap head">
     <div class="head-in">
-      <span class="eyebrow mono"><span class="blink"></span>Førstehjælp · eksamensspørgsmål</span>
-      <h1>Flashkort: <span class="hi" style="--hc:#FFD9C9">blodprop i hjertet</span></h1>
-      <p class="lead">Ét eksamensspørgsmål delt op i tre kort. Læs spørgsmålet, svar højt i stikord — og vend først kortet bagefter for at se, om du fik det hele med.</p>
+      <span class="eyebrow mono"><span class="blink"></span>Førstehjælp · faglige spørgsmål</span>
+      <h1>Flashkort til <span class="hi" style="--hc:#FFD9C9">førstehjælpseksamen</span></h1>
+      <p class="lead">De 24 faglige spørgsmål til certificering af førstehjælpsinstruktører. Vælg ét emne, træn dets tre kort — læs spørgsmålet, svar højt, og vend så kortet for at se svaret i stikord.</p>
     </div>
   </div>
 
@@ -438,182 +462,39 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
     <section class="rig">
       <div class="rig-bar"></div>
       <div class="rig-head">
-        <span class="rig-live"><span class="dot"></span><span class="mono">Flashkort</span></span>
-        <span class="who" id="taeller">Kort 1 af 3 · forside</span>
+        <span class="rig-live"><span class="dot"></span><span class="mono" id="rig-titel">Vælg et emne</span></span>
+        <span class="who" id="taeller">24 emner</span>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør teksten">Projektor</button>
       </div>
 
-      <div class="stage">
-        <div class="bunke" id="bunke" aria-live="polite">
+      <!-- Oversigten -->
+      <div class="oversigt" id="oversigt">
+        <p class="intro">Ét spørgsmål bliver til tre kort: <b>hvad det er</b>, <b>hvad man ser</b> og <b>hvad man gør</b>. Du kommer tilbage hertil, når de tre kort er kørt igennem.</p>
+        <div class="emner" id="emner"></div>
+      </div>
 
-          <!-- ── Kort 1 ─────────────────────────────────── -->
-          <article class="kort" data-kort="1" style="--kc:var(--coral)">
-            <div class="side forside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 1 af 3</span>
-              <p class="sp">Forklar hvad en blodprop i hjertet er, og hvad der sker i kroppen.</p>
-              <span class="vink">Svar højt — vend så kortet</span>
-            </div>
-            <div class="side bagside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 1 · svar i stikord</span>
-              <div class="svar">
-                <div class="blok" style="--lc:#FFD9C9">
-                  <h3>Hvad det er</h3>
-                  <ul>
-                    <li>Fagord: <b>akut myokardieinfarkt</b> (AMI)</li>
-                    <li>En af hjertets <b>kranspulsårer</b> (koronararterier) bliver lukket</li>
-                    <li>Kranspulsårerne er hjertemusklens egen forsyning med ilt og næring</li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#E2D6F8">
-                  <h3>Sådan opstår den</h3>
-                  <ul>
-                    <li><b>Åreforkalkning:</b> fedt og kalk aflejres som plak i karvæggen → karret bliver snævrere</li>
-                    <li>Plakken <b>brister</b> → kroppen reagerer som på et sår</li>
-                    <li>Blodplader og fibrin klumper sammen → <b>blodprop</b> (trombe) lukker karret helt</li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#D6EFC4">
-                  <h3>Hvad der sker i kroppen</h3>
-                  <ul>
-                    <li>Blodet kan ikke komme forbi → hjertemusklen bag proppen får <b>ingen ilt</b> (iltmangel/iskæmi)</li>
-                    <li>Iltmangel i muskelcellerne giver den <b>trykkende brystsmerte</b></li>
-                    <li>Efter minutter til timer <b>dør</b> cellerne i området — det døde væv erstattes af arvæv, der ikke kan trække sig sammen</li>
-                    <li>Hjertet pumper dårligere → <b>lavt blodtryk, åndenød, chok</b></li>
-                    <li>Det skadede væv kan give <b>rytmeforstyrrelser</b> → ventrikelflimren → <b>hjertestop</b></li>
-                    <li>Jo hurtigere karret åbnes igen (ambulance, ballonudvidelse), jo mindre muskel går tabt — <b>tid er hjertemuskel</b></li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#C7E6F6">
-                  <h3>Risikofaktorer</h3>
-                  <ul>
-                    <li>Rygning, højt blodtryk, højt kolesterol, diabetes</li>
-                    <li>Overvægt, for lidt motion, stress, arvelig disposition, alder</li>
-                  </ul>
-                </div>
-              </div>
-              <span class="rul" aria-hidden="true">Rul for mere ▾</span>
-            </div>
-          </article>
-
-          <!-- ── Kort 2 ─────────────────────────────────── -->
-          <article class="kort" data-kort="2" style="--kc:var(--grape)" aria-hidden="true">
-            <div class="side forside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 2 af 3</span>
-              <p class="sp">Nævn symptomer på en blodprop i hjertet.</p>
-              <span class="vink">Svar højt — vend så kortet</span>
-            </div>
-            <div class="side bagside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 2 · svar i stikord</span>
-              <div class="svar">
-                <div class="blok" style="--lc:#FFD9C9">
-                  <h3>Det klassiske hovedsymptom</h3>
-                  <ul>
-                    <li><b>Trykkende, knugende smerte bag brystbenet</b> — som en snærende ring om brystet</li>
-                    <li>Varer typisk <b>mere end 15 minutter</b> og forsvinder <b>ikke</b> ved hvile</li>
-                    <li>Smerten kan <b>stråle ud</b>: venstre arm (eller begge), hals, kæbe, skuldre, ryg, mavepulen</li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#E2D6F8">
-                  <h3>Andre symptomer</h3>
-                  <ul>
-                    <li>Åndenød, følelse af ikke at kunne få luft</li>
-                    <li><b>Bleg, koldsvedende og klam</b> hud</li>
-                    <li>Kvalme, evt. opkastning</li>
-                    <li>Angst, uro, følelse af at noget er alvorligt galt</li>
-                    <li>Svimmelhed, træthed, kraftesløshed</li>
-                    <li>Hurtig, langsom eller uregelmæssig puls</li>
-                  </ul>
-                </div>
-                <div class="blok obs" style="--lc:#fff">
-                  <h3>Pas på de utypiske symptomer</h3>
-                  <ul>
-                    <li><b>Kvinder, ældre og diabetikere</b> har ofte ikke den klassiske brystsmerte</li>
-                    <li>I stedet: uforklarlig træthed, åndenød, kvalme, ubehag i maven, smerter i ryg eller kæbe</li>
-                    <li>Symptomerne kan komme <b>snigende</b> over timer — ikke altid pludseligt</li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#D6EFC4">
-                  <h3>Hvis det forværres</h3>
-                  <ul>
-                    <li>Personen kan blive <b>bevidstløs</b></li>
-                    <li>Vejrtrækningen bliver unormal eller stopper → <b>hjertestop</b></li>
-                    <li>Ved mistanke: <b>ring 1-1-2 — også i tvivlstilfælde</b></li>
-                  </ul>
-                </div>
-              </div>
-              <span class="rul" aria-hidden="true">Rul for mere ▾</span>
-            </div>
-          </article>
-
-          <!-- ── Kort 3 ─────────────────────────────────── -->
-          <article class="kort" data-kort="3" style="--kc:var(--lime)" aria-hidden="true">
-            <div class="side forside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 3 af 3</span>
-              <p class="sp">Forklar førstehjælpen til en person, der vurderes at have en blodprop i hjertet.</p>
-              <span class="vink">Svar højt — vend så kortet</span>
-            </div>
-            <div class="side bagside">
-              <span class="kort-nr mono"><span class="pil"></span>Kort 3 · svar i stikord</span>
-              <div class="svar">
-                <div class="blok" style="--lc:#FFD9C9">
-                  <h3>Førstehjælpens 4 hovedpunkter</h3>
-                  <ul>
-                    <li><b>1. Stands ulykken:</b> få personen til at stoppe al aktivitet og anstrengelse med det samme</li>
-                    <li><b>2. Livreddende førstehjælp:</b> tjek bevidsthed og vejrtrækning — er personen vågen? trækker vejret normalt?</li>
-                    <li><b>3. Tilkald hjælp:</b> ring <b>1-1-2</b> og sig «mistanke om blodprop i hjertet» + adresse</li>
-                    <li><b>4. Almindelig førstehjælp:</b> hvilestilling, ro og omsorg, overvågning</li>
-                  </ul>
-                </div>
-                <div class="blok" style="--lc:#E2D6F8">
-                  <h3>Mens I venter på ambulancen</h3>
-                  <ul>
-                    <li><b>Hvilestilling:</b> halvsiddende med støtte i ryggen og bøjede knæ — aflaster hjertet og letter vejrtrækningen</li>
-                    <li>Personen må <b>ikke</b> gå selv, bære noget eller selv køre til lægen</li>
-                    <li>Løsn stramt tøj, skaf frisk luft, hold personen varm med et tæppe</li>
-                    <li><b>Ro og omsorg:</b> tal roligt, bliv hos personen, lad ikke personen være alene</li>
-                    <li>Hjælp med personens <b>egen lægeordinerede medicin</b> (fx nitroglycerin under tungen)</li>
-                    <li>Giv kun anden medicin — fx acetylsalicylsyre — <b>efter aftale med alarmcentralen</b></li>
-                    <li>Giv <b>ikke</b> mad eller drikke</li>
-                    <li><b>Overvåg hele tiden</b> bevidsthed og vejrtrækning — tilstanden kan skifte på sekunder</li>
-                    <li>Send en anden ud for at <b>møde ambulancen</b> og hold døren åben</li>
-                  </ul>
-                </div>
-                <div class="blok obs" style="--lc:#fff">
-                  <h3>Hvis tilstanden forværres</h3>
-                  <ul>
-                    <li><b>Bevidstløs, men trækker vejret normalt:</b> skab frie luftveje, læg i <b>stabilt sideleje</b>, bliv ved med at tjekke vejrtrækningen</li>
-                    <li><b>Bevidstløs uden normal vejrtrækning = hjertestop:</b> start <b>hjerte-lunge-redning</b> straks</li>
-                    <li><b>30 tryk : 2 indblæsninger</b>, tryk midt på brystet, 5–6 cm dybt, ca. 100–120 tryk i minuttet</li>
-                    <li>Få en <b>hjertestarter (AED)</b> hentet og tændt — følg dens besked</li>
-                    <li>Fortsæt til ambulancen overtager, eller personen viser tydelige livstegn</li>
-                  </ul>
-                </div>
-              </div>
-              <span class="rul" aria-hidden="true">Rul for mere ▾</span>
-            </div>
-          </article>
-
+      <!-- Træningen -->
+      <div id="traening" hidden>
+        <div class="styr">
+          <button type="button" class="btn btn-hjem" id="btn-hjem" aria-label="Tilbage til oversigten">◀ Emner</button>
+          <button type="button" class="btn" id="btn-forrige" aria-label="Forrige kort">◀<span class="lang"> Forrige</span></button>
+          <button type="button" class="btn btn-vend" id="btn-vend" aria-pressed="false">Vend kort</button>
+          <button type="button" class="btn" id="btn-naeste" aria-label="Næste kort"><span class="lang">Næste </span>▶</button>
+          <span class="trin" id="trin" aria-hidden="true"></span>
         </div>
-      </div>
 
-      <div class="knobs">
-        <button type="button" class="btn" id="btn-forrige" aria-label="Forrige kort">◀ Forrige</button>
-        <button type="button" class="btn btn-vend" id="btn-vend" aria-pressed="false">Vend kort</button>
-        <button type="button" class="btn" id="btn-naeste" aria-label="Næste kort">Næste ▶</button>
-        <span class="trin" id="trin" aria-hidden="true"><b data-aktiv="1"></b><b></b><b></b></span>
-      </div>
+        <div class="stage">
+          <div class="bunke" id="bunke" aria-live="polite"></div>
+        </div>
 
-      <div class="facts" role="group" aria-label="Vælg kort">
-        <button type="button" class="fact" data-gaa="1" style="--fc:var(--coral)" aria-current="true">1 · Hvad er det</button>
-        <button type="button" class="fact" data-gaa="2" style="--fc:var(--grape)">2 · Symptomer</button>
-        <button type="button" class="fact" data-gaa="3" style="--fc:var(--lime)">3 · Førstehjælp</button>
+        <div class="facts" id="facts" role="group" aria-label="Vælg kort"></div>
       </div>
     </section>
 
-    <div class="opgave">
+    <div class="opgave" id="opgave" hidden>
       <span class="mono">Eksamensspørgsmålet, kortene er delt op efter</span>
-      <p>«Forklar hvad en blodprop i hjertet er. Nævn symptomer på en blodprop i hjertet og forklar, hvad der sker ved en blodprop i hjertet. Forklar førstehjælpen til en person, der vurderes at have en blodprop i hjertet.»</p>
+      <p id="opgave-tekst"></p>
     </div>
 
     <p class="sr" id="sr-status" aria-live="polite"></p>
@@ -624,7 +505,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
   <div class="foot-in">
     <div>
       <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
-      <div class="mono">Flashkort · blodprop i hjertet</div>
+      <div class="mono">Flashkort · førstehjælp</div>
     </div>
     <nav class="foot-links">
       <a href="/studiekort/index.html">Studiekort</a>
@@ -637,175 +518,13 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 <script>
 /* skjul side-krom, når siden vises i en iframe */
 (function(){try{if(window.top!==window.self){
+  document.body.classList.add('indlejret');
   document.getElementById('site-top').style.display='none';
   document.querySelector('.foot').style.display='none';
   document.querySelector('.head').style.display='none';
 }}catch(x){}})();
 </script>
 
-<script>
-(function(){
-  const kort      = Array.from(document.querySelectorAll('.kort'));
-  const ANTAL     = kort.length;
-  const taeller   = document.getElementById('taeller');
-  const trin      = Array.from(document.querySelectorAll('#trin b'));
-  const vaelgere  = Array.from(document.querySelectorAll('.fact[data-gaa]'));
-  const btnForrige= document.getElementById('btn-forrige');
-  const btnNaeste = document.getElementById('btn-naeste');
-  const btnVend   = document.getElementById('btn-vend');
-  const srStatus  = document.getElementById('sr-status');
-
-  let aktiv = 1;        // hvilket kort der ligger øverst
-  let vendt = false;    // ligger svarsiden opad?
-
-  /* ── Tegn tilstanden op ──────────────────────────────── */
-  function tegn(){
-    kort.forEach(function(k){
-      const nr = Number(k.dataset.kort);
-      k.setAttribute('aria-hidden', nr === aktiv ? 'false' : 'true');
-      k.classList.toggle('vendt', nr === aktiv && vendt);
-    });
-    trin.forEach(function(b,i){
-      if(i + 1 === aktiv) b.setAttribute('data-aktiv','1'); else b.removeAttribute('data-aktiv');
-    });
-    vaelgere.forEach(function(v){
-      v.setAttribute('aria-current', Number(v.dataset.gaa) === aktiv ? 'true' : 'false');
-    });
-    btnForrige.disabled = aktiv === 1;
-    btnNaeste.disabled  = aktiv === ANTAL;
-    btnVend.setAttribute('aria-pressed', vendt ? 'true' : 'false');
-    btnVend.textContent = vendt ? 'Vis spørgsmålet' : 'Vend kort';
-    taeller.textContent = 'Kort ' + aktiv + ' af ' + ANTAL + ' · ' + (vendt ? 'svar' : 'forside');
-    srStatus.textContent = 'Kort ' + aktiv + ' af ' + ANTAL + ' — ' + (vendt ? 'svaret vises' : 'spørgsmålet vises');
-    skrivAdresse();
-  }
-
-  /* ── Deling og tavle: kortnummeret lever i adressen ──── */
-  let egenAendring = false;
-  function skrivAdresse(){
-    const h = '#kort=' + aktiv;
-    if(location.hash === h) return;
-    egenAendring = true;
-    history.replaceState(null, '', location.pathname + location.search + h);
-    egenAendring = false;
-  }
-  function laesAdresse(){
-    const fraHash  = /kort=(\d+)/.exec(location.hash);
-    const fraQuery = /[?&]kort=(\d+)/.exec(location.search);
-    const n = Number((fraHash || fraQuery || [])[1]);
-    if(n >= 1 && n <= ANTAL){ aktiv = n; vendt = false; }
-  }
-
-  /* ── Betjening ───────────────────────────────────────── */
-  function gaaTil(n){
-    n = Math.min(ANTAL, Math.max(1, n));
-    if(n === aktiv) return;
-    aktiv = n; vendt = false; tegn();
-  }
-  function vend(){ vendt = !vendt; tegn(); }
-
-  btnForrige.addEventListener('click', function(){ gaaTil(aktiv - 1); });
-  btnNaeste .addEventListener('click', function(){ gaaTil(aktiv + 1); });
-  btnVend   .addEventListener('click', vend);
-  vaelgere.forEach(function(v){
-    v.addEventListener('click', function(){ gaaTil(Number(v.dataset.gaa)); });
-  });
-  /* Kortet kan også vendes ved at klikke på det — knappen «Vend kort»
-     er stadig vejen til det for tastatur og skærmlæser. */
-  kort.forEach(function(k){
-    k.addEventListener('click', function(){
-      /* markerer man tekst i svaret, er det ikke et klik på kortet */
-      if(String(getSelection ? getSelection() : '').length) return;
-      if(Number(k.dataset.kort) === aktiv) vend();
-    });
-  });
-
-  addEventListener('keydown', function(e){
-    const felt = e.target.closest('input,textarea,select,button,a');
-    if(e.key === 'ArrowRight'){ gaaTil(aktiv + 1); e.preventDefault(); }
-    else if(e.key === 'ArrowLeft'){ gaaTil(aktiv - 1); e.preventDefault(); }
-    else if((e.key === ' ' || e.key === 'Enter') && !felt){ vend(); e.preventDefault(); }
-  });
-
-  addEventListener('hashchange', function(){
-    if(egenAendring) return;
-    laesAdresse(); tegn();
-  });
-
-  /* ── Er der mere svar under kanten? ──────────────────── */
-  document.querySelectorAll('.svar').forEach(function(svar){
-    function tjek(){
-      const mere = svar.scrollHeight - svar.scrollTop - svar.clientHeight > 4;
-      svar.closest('.side').classList.toggle('mere', mere);
-    }
-    svar.addEventListener('scroll', tjek);
-    addEventListener('resize', tjek);
-    new ResizeObserver(tjek).observe(svar);
-  });
-
-  /* ── Projektortilstand ───────────────────────────────── */
-  const btnProjektor = document.getElementById('btn-projektor');
-  function saetProjektor(til){
-    document.body.dataset.projektor = til ? '1' : '0';
-    btnProjektor.setAttribute('aria-pressed', til ? 'true' : 'false');
-  }
-  btnProjektor.addEventListener('click', function(){
-    saetProjektor(document.body.dataset.projektor !== '1');
-  });
-  const q = new URLSearchParams(location.search);
-  if(q.get('projektor') === '1' || q.get('mode') === 'teach') saetProjektor(true);
-
-  laesAdresse();
-  tegn();
-})();
-</script>
-<!-- Højdebudget — samme mekanik som på simuleringssiderne: der måles,
-     hvad panelet bruger til alt andet end kortet, og resten af
-     skærmhøjden lægges i --fig. Budgettet kan kun gøre kortet mindre,
-     og giver op, hvis panelet alligevel ikke kan komme til at passe. -->
-<script>
-(function(){
-  const rig = document.querySelector('.rig');
-  const fig = document.getElementById('bunke');
-  if(!rig || !fig) return;
-  const bjaelke = document.querySelector('.top');
-  const MIN = 260, MAKS = 620, LUFT = 16;
-  let sidst = 0, panel = 0, ventende = false;
-
-  function saet(h){
-    if(h === sidst) return;
-    sidst = h;
-    rig.style.setProperty('--fig', h + 'px');
-  }
-
-  function maal(){
-    saet(MAKS);
-    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
-               ? bjaelke.getBoundingClientRect().height : 0;
-    const rum  = innerHeight - krom - LUFT;
-    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
-    const h    = Math.round(rum - fast);
-    if(h < MAKS){
-      saet(Math.max(MIN, h));
-      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
-    }
-    panel = rig.getBoundingClientRect().height;
-  }
-
-  function planlaeg(){
-    if(ventende) return;
-    ventende = true;
-    requestAnimationFrame(function(){ ventende = false; maal(); });
-  }
-
-  maal();
-  addEventListener('resize', planlaeg);
-  addEventListener('load', planlaeg);
-  if(document.fonts) document.fonts.ready.then(planlaeg);
-  new ResizeObserver(function(){
-    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
-  }).observe(rig);
-})();
-</script>
+<script type="module" src="./side.js"></script>
 </body>
 </html>
