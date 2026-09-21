@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flashkort til førstehjælpseksamen — smbi.dk</title>
+<meta name="description" content="Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/foerstehjaelp/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/foerstehjaelp/">
+<meta property="og:title" content="Flashkort til førstehjælpseksamen">
+<meta property="og:description" content="Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.">
+<meta property="og:image" content="https://smbi.dk/img/og-smbi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — simuleringer, forsøg og opgaver">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Flashkort til førstehjælpseksamen — smbi.dk's designskabelon
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;
+  --paper-2:#FFF3DC;
+  --panel:#FFFFFF;
+  --ink:#17211F;
+  --slate:#566B68;
+
+  --pink:#E8336D;
+  --blue:#0E86C8;
+  --lime:#5FB030;
+  --amber:#FFB300;
+  --grape:#7A4FD6;
+  --coral:#FF6A3D;
+  --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--coral);     /* førstehjælp har sin egen farve */
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1040px;
+  --klaeb:60px;        /* topbjælkens højde — betjeningen klæber under den */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+.enhed{text-transform:none}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+[hidden]{display:none!important}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);
+  backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#FFD9C9;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#FFC9B4;filter:blur(70px);opacity:.5;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:62ch}
+
+/* ── Signaturpanelet ───────────────────────────────────────
+   overflow:clip frem for hidden — ellers bliver panelet en
+   rullebeholder, og så kan betjeningsrækken ikke klæbe. */
+.rig{
+  position:relative;
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:clip;
+  box-shadow:var(--hard-lg);
+  margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);
+  background:#FFE9DC;
+}
+.rig-live{display:flex;align-items:center;gap:7px;min-width:0}
+.rig-live .mono{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;flex:none;
+}
+.rig-head .who{
+  margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;white-space:nowrap;
+}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--accent);color:#fff;
+  transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+
+/* ── Oversigten over de 24 spørgsmål ───────────────────── */
+.oversigt{padding:20px 18px 24px;background:var(--paper-2)}
+.oversigt .intro{
+  font-size:0.99rem;color:#3E4E4C;max-width:66ch;margin-bottom:16px;
+}
+.emner{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(236px,1fr));
+}
+.emne{
+  display:flex;flex-direction:column;gap:6px;align-items:flex-start;
+  text-align:left;font-family:var(--body);font-size:1rem;color:var(--ink);
+  background:#fff;border:2px solid var(--ink);border-radius:13px;
+  padding:12px 14px 13px;cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .16s;
+}
+.emne:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);background:#FFF9EE}
+.emne:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.emne-top{display:flex;align-items:center;gap:9px;width:100%}
+.emne .nr{
+  font-family:var(--display);font-weight:800;font-size:0.8rem;
+  min-width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);
+  background:var(--gc,var(--paper-2));
+  display:inline-flex;align-items:center;justify-content:center;flex:none;
+}
+.emne .gruppe{
+  font-family:var(--mono);font-size:0.54rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;margin-left:auto;text-align:right;
+}
+.emne h3{
+  font-family:var(--display);font-variation-settings:'wdth' 110;
+  font-weight:800;font-size:1.02rem;line-height:1.2;letter-spacing:-0.015em;
+}
+.emne p{font-size:0.83rem;color:#5A6C69;line-height:1.35}
+
+/* ── Betjeningen — klæber, så den kan nås under et langt svar ── */
+.styr{
+  position:sticky;top:var(--klaeb);z-index:30;
+  border-bottom:2px solid var(--ink);background:var(--paper-2);
+  padding:12px 15px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+}
+.btn{
+  font-family:var(--display);font-size:0.9rem;font-weight:700;
+  background:#fff;border:2.5px solid var(--ink);color:var(--ink);
+  padding:8px 17px;border-radius:24px;cursor:pointer;white-space:nowrap;
+  box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .16s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);background:#FFD9C9}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:var(--hard);background:#fff}
+.btn-vend{background:var(--accent);color:#fff}
+.btn-vend:hover{background:var(--accent);filter:brightness(1.07)}
+.btn-hjem{margin-right:auto}
+.trin{display:flex;gap:7px;align-items:center;margin-left:auto}
+.trin b{
+  width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);
+  background:#fff;display:block;
+}
+.trin b[data-aktiv="1"]{background:var(--accent)}
+
+/* ── Kortet ────────────────────────────────────────────────
+   Kortets højde følger den side, der vender opad — så vokser
+   siden, når svaret er langt, i stedet for at kortet får sin
+   egen rulning. Ét sted at rulle, også på mobil. */
+.stage{
+  padding:20px 18px;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+.bunke{perspective:1800px}
+.kort{
+  position:relative;height:var(--h,320px);
+  transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1),height .38s cubic-bezier(.2,.7,.3,1);
+  cursor:pointer;
+}
+.kort.vendt{transform:rotateY(180deg)}
+.side{
+  position:absolute;top:0;left:0;right:0;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+  border:2px solid var(--ink);border-radius:12px;
+  box-shadow:var(--hard);
+  padding:20px 22px 22px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.forside{background:#fff;min-height:320px;justify-content:center}
+.bagside{background:var(--paper-2);transform:rotateY(180deg)}
+.side .mono{color:#5A6C69}
+.kort-nr{display:flex;align-items:center;gap:9px}
+.kort-nr .pil{
+  width:9px;height:9px;border-radius:3px;border:1.5px solid var(--ink);
+  background:var(--kc,var(--accent));flex:none;
+}
+.forside .kort-nr{position:absolute;top:20px;left:22px}
+.forside .vink{position:absolute;bottom:18px;left:22px}
+.sp{
+  font-family:var(--display);font-variation-settings:'wdth' 112;
+  font-weight:800;font-size:clamp(1.3rem,3.4vw,1.95rem);line-height:1.16;
+  letter-spacing:-0.02em;
+}
+.vink{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#7E8F8C;
+}
+.svar{display:flex;flex-direction:column;gap:14px}
+.blok h3{
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:0.94rem;letter-spacing:-0.01em;margin-bottom:5px;
+}
+.blok ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.blok li{position:relative;padding-left:17px;font-size:0.97rem;line-height:1.45}
+.blok li::before{
+  content:'';position:absolute;left:0;top:0.6em;
+  width:7px;height:7px;border-radius:2px;
+  border:1.5px solid var(--ink);background:var(--lc,#fff);
+}
+.obs{
+  border:2px solid var(--ink);border-radius:10px;background:#FFE9DC;
+  padding:10px 13px;
+}
+
+/* ── Kortvælger nederst ────────────────────────────────── */
+.facts{
+  border-top:2px solid var(--ink);background:#fff;
+  padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;cursor:pointer;color:var(--ink);
+  transition:background .15s;
+}
+.fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
+.fact:hover{background:#FFD9C9}
+.fact[aria-current="true"]{background:var(--ink);color:#FFF6E0}
+
+/* ── Selve eksamensspørgsmålet ─────────────────────────── */
+.opgave{
+  margin-top:22px;border:2px solid var(--ink);border-radius:14px;
+  background:var(--paper-2);padding:15px 18px;box-shadow:var(--hard);
+}
+.opgave .mono{color:#5A6C69;display:block;margin-bottom:6px}
+.opgave p{font-size:0.98rem;color:#3E4E4C}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{
+  margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px;
+}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--coral);border-color:var(--coral)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+/* ── Projektortilstand og indlejring ───────────────────── */
+body[data-projektor="1"],body.indlejret{--klaeb:0px}
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .opgave,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .sp{font-size:clamp(1.6rem,3.8vw,2.5rem)}
+body[data-projektor="1"] .blok li{font-size:1.16rem}
+body[data-projektor="1"] .blok h3{font-size:1.16rem}
+body[data-projektor="1"] .fact{font-size:0.74rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding:24px 0 18px}
+  /* det lange ord i overskriften må ikke løbe ud over kanten */
+  h1{font-size:clamp(1.5rem,7.2vw,2.2rem)}
+  .top-in{gap:10px}
+  .brand{font-size:1rem}
+  .top-nav a{padding:6px 10px;font-size:0.78rem}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .stage{padding:14px 12px}
+  .oversigt{padding:16px 12px 20px}
+  .emner{grid-template-columns:1fr}
+  .side{padding:16px 15px 18px}
+  .forside .kort-nr{top:16px;left:15px}
+  .forside .vink{bottom:14px;left:15px}
+  .styr{gap:8px;padding:10px 12px}
+  .btn{padding:7px 13px;font-size:0.84rem}
+  .btn .lang{display:none}
+  .btn-hjem{margin-right:0}
+  .trin{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  .top,.foot,.styr,.rig-head,.facts,.vink{display:none!important}
+  .rig{box-shadow:none;border:none}
+  /* Til print foldes kortet ud: spørgsmål og svar under hinanden. */
+  .kort{height:auto!important;transform:none!important;perspective:none}
+  .side{position:static;box-shadow:none;break-inside:avoid;transform:none!important}
+  .forside{min-height:0;justify-content:flex-start}
+  .forside .kort-nr{position:static}
+  .bagside{margin-top:10px}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Flashkort til førstehjælpseksamen",
+      "url": "https://smbi.dk/foerstehjaelp/",
+      "inLanguage": "da-DK",
+      "description": "Træn de 24 faglige spørgsmål til certificering af førstehjælpsinstruktører — ét emne ad gangen, tre kort med svar i stikord.",
+      "learningResourceType": "flashkort",
+      "educationalLevel": "Certificering af førstehjælpsinstruktører",
+      "isAccessibleForFree": true,
+      "author": {"@type": "Person", "name": "Simon Messell"},
+      "publisher": {"@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/"},
+      "image": "https://smbi.dk/img/og-smbi.png",
+      "isPartOf": {"@id": "https://smbi.dk/#website"},
+      "about": {"@type": "Thing", "name": "Førstehjælp"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/"},
+        {"@type": "ListItem", "position": 2, "name": "Flashkort til førstehjælpseksamen", "item": "https://smbi.dk/foerstehjaelp/"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/studiekort/index.html">Studiekort</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Førstehjælp · faglige spørgsmål</span>
+      <h1>Flashkort til <span class="hi" style="--hc:#FFD9C9">førstehjælpseksamen</span></h1>
+      <p class="lead">De 24 faglige spørgsmål til certificering af førstehjælpsinstruktører. Vælg ét emne, træn dets tre kort — læs spørgsmålet, svar højt, og vend så kortet for at se svaret i stikord.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="rig-live"><span class="dot"></span><span class="mono" id="rig-titel">Vælg et emne</span></span>
+        <span class="who" id="taeller">24 emner</span>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
+                title="Skjul sidens krom og forstør teksten">Projektor</button>
+      </div>
+
+      <!-- Oversigten -->
+      <div class="oversigt" id="oversigt">
+        <p class="intro">Ét spørgsmål bliver til tre kort: <b>hvad det er</b>, <b>hvad man ser</b> og <b>hvad man gør</b>. Du kommer tilbage hertil, når de tre kort er kørt igennem.</p>
+        <div class="emner" id="emner"></div>
+      </div>
+
+      <!-- Træningen -->
+      <div id="traening" hidden>
+        <div class="styr">
+          <button type="button" class="btn btn-hjem" id="btn-hjem" aria-label="Tilbage til oversigten">◀ Emner</button>
+          <button type="button" class="btn" id="btn-forrige" aria-label="Forrige kort">◀<span class="lang"> Forrige</span></button>
+          <button type="button" class="btn btn-vend" id="btn-vend" aria-pressed="false">Vend kort</button>
+          <button type="button" class="btn" id="btn-naeste" aria-label="Næste kort"><span class="lang">Næste </span>▶</button>
+          <span class="trin" id="trin" aria-hidden="true"></span>
+        </div>
+
+        <div class="stage">
+          <div class="bunke" id="bunke" aria-live="polite"></div>
+        </div>
+
+        <div class="facts" id="facts" role="group" aria-label="Vælg kort"></div>
+      </div>
+    </section>
+
+    <div class="opgave" id="opgave" hidden>
+      <span class="mono">Eksamensspørgsmålet, kortene er delt op efter</span>
+      <p id="opgave-tekst"></p>
+    </div>
+
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Flashkort · førstehjælp</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/studiekort/index.html">Studiekort</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.body.classList.add('indlejret');
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
+<script type="module" src="./side.js"></script>
+</body>
+</html>
