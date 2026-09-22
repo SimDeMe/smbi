@@ -25,11 +25,18 @@ Siderne indlæser den med én linje før `</body>`:
    indholdet af `feedback/apps-script.gs` ind i stedet.
 3. Øverst i filen: skriv din mailadresse i `MAIL_TIL`, hvis du vil have besked
    ved hver tilbagemelding. Lader du den stå tom, sendes der ingen mails.
-4. **Udrul → Ny udrulning → Webapp**. Sæt *Kør som* til dig selv og
-   *Hvem har adgang* til **Alle**. Uden det sidste kan eleverne ikke sende.
-   Google beder om lov til at sende mails på dine vegne — det er `MailApp`.
-5. Kopiér webappens adresse. Den ender på `/exec`.
-6. Sæt adressen ind i `feedback.js`:
+4. Gem med **⌘S**, og klik så den blå **Implementer** øverst til højre →
+   **Ny implementering**. Tandhjulet ved «Vælg type» → **Web-app**. Sæt
+   *Kør som* til dig selv og *Hvem har adgang* til **Alle**.
+
+   «Alle» er det afgørende valg: står der «Alle med en Google-konto», skal
+   eleven logge ind, og så er hele pointen væk.
+5. Godkend adgangen. Google advarer om, at appen ikke er bekræftet — det gør
+   den om alle egne Apps Script-projekter. **Avanceret → Gå til … (usikker) →
+   Tillad**. Den beder også om lov til at sende mails på dine vegne; det er
+   `MailApp`, der giver dig besked ved hver tilbagemelding.
+6. Kopiér web-appens adresse. Den ender på `/exec`.
+7. Sæt adressen ind i `feedback.js` (linje 21):
 
    ```js
    var MODTAGER = 'https://script.google.com/macros/s/…/exec';
@@ -37,12 +44,19 @@ Siderne indlæser den med én linje før `</body>`:
 
    **Så længe feltet er tomt, sættes der ingen knapper ind på siderne.** En knap,
    der ikke kan sende noget, er værre end ingen knap.
-7. Åbn `/exec`-adressen i en browser. Står der «smbi.dk tager imod feedback her.»,
-   er udrulningen i orden.
+8. Åbn `/exec`-adressen i en browser. Står der «smbi.dk tager imod feedback her.»,
+   er implementeringen i orden. Kommer der i stedet en loginskærm, er
+   *Hvem har adgang* sat forkert.
 
-**Ved senere rettelser i `apps-script.gs`:** udrul som *ny version* af den samme
-udrulning. Laver du en helt ny udrulning, får den en ny adresse, og så sender
-siderne ud i ingenting — uden at nogen opdager det.
+**Ved senere rettelser i `apps-script.gs`:** **Implementer → Administrer
+implementeringer →** blyanten på den, der kører **→ Version: Ny version →
+Implementer**. Så beholder den sin adresse. Vælger du i stedet *Ny
+implementering*, får den en ny adresse, den gamle svarer ingenting, og siderne
+sender ud i det blå — uden at nogen opdager det, fordi afsenderen altid får
+«Tak, beskeden er sendt».
+
+Menupunkterne hedder «Implementer» i den danske udgave og «Deploy» i den
+engelske.
 
 ## Hvad der havner i arket
 
