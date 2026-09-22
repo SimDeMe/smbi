@@ -19,7 +19,11 @@ I dag skal I undersøge, om røde blodlegemer klumper sammen med anti-A, anti-B 
 
 På overfladen af røde blodlegemer kan der sidde A- og B-antigener. Blodtype A har A-antigen, B har B-antigen, AB har begge, og 0 har ingen af dem. RhD-positivt blod har desuden D-antigen; RhD-negativt blod har det ikke. Blodplasma indeholder normalt antistoffer mod de ABO-antigener, som ens egne røde blodlegemer mangler. Anti-D opstår derimod normalt først efter påvirkning fra RhD-positive blodlegemer.
 
+![Skematisk oversigt over A-, B- og D-antigener på røde blodlegemer. ABO-type og RhD-type bestemmes uafhængigt af hinanden.](figurer/blodtype-antigener.svg){#fig-blodtype-antigener width="95%"}
+
 Når et passende antistof binder til antigener på flere røde blodlegemer, kan cellerne danne synlige klumper. Det kaldes **agglutination**. Reaktion med anti-A viser A-antigen; reaktion med anti-B viser B-antigen; reaktion med anti-D tyder på D-antigen. Hvis en reaktion er uklar, kan blodtypen ikke bestemmes sikkert ud fra prøven.
+
+![Anti-A binder til A-antigener på to røde blodlegemer og kan forbinde dem. Anti-B passer ikke til A-antigenet, så cellerne forbliver adskilte. Tegningen er skematisk.](figurer/agglutination.svg){#fig-agglutination width="95%"}
 
 ABO-systemet har tre almindelige alleler: $I^A$, $I^B$ og $i$. $I^A$ og $I^B$ er kodominante, mens $i$ er recessiv. Derfor kan fænotypen A svare til $I^AI^A$ eller $I^Ai$, mens AB kun svarer til $I^AI^B$. I en forenklet arvegang kan RhD-positiv beskrives med mindst én $D$-allel ($DD$ eller $Dd$) og RhD-negativ med $dd$. En blodtypeprøve alene afgør ikke, hvilken af to mulige genotyper en person har.
 
@@ -77,10 +81,11 @@ $$\text{Andel i procent} = \frac{\text{antal med blodtypen}}{N}\cdot 100\,\%$$
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
 | Antal | | | | | | |
 | Andel (%) | | | | | | |
+| Danmark (%) | 44 | 10 | 5 | 41 | 84 | 16 |
 
-: Klassens fordeling. ABO-kolonnerne summerer til $N$ og 100 %, og det samme gør de to RhD-kolonner. {#tbl-fordeling}
+: Klassens fordeling og fordelingen i Danmark. ABO-kolonnerne summerer til $N$ og 100 %, og det samme gør de to RhD-kolonner. De danske andele er beregnet ud fra [Bloddonorerne Danmarks fordeling af de otte blodtyper](https://bloddonor.dk/fakta-om-blod/blodtyper/). {#tbl-fordeling}
 
-3. Lav et søjlediagram for klassens fire ABO-andele. Sammenlign med referenceværdierne i undervisningsmaterialet (de ældre vejledninger bruger cirka A 44 %, 0 42 %, B 10 % og AB 4 %). Beregn forskellen i procentpoint for hver type: klassens andel minus referenceandelen. Sammenlign RhD+ og RhD− separat, hvis der er referenceværdier. Diskutér, hvad klassens størrelse betyder for sammenligningen.
+3. Lav et søjlediagram for klassens fire ABO-andele. Sammenlign med fordelingen i Danmark i @tbl-fordeling. Beregn forskellen i procentpoint for hver type: klassens andel minus Danmarks andel. Sammenlign også RhD+ og RhD−. Diskutér, hvad klassens størrelse betyder for sammenligningen.
 
 ## Journalspørgsmål
 
