@@ -10,7 +10,6 @@ sig om — uden at eleven skal vælge noget i en liste, og uden login.
 | --- | --- |
 | `feedback.js` (i roden) | knapperne, dialogen og afsendelsen. Én fil, ingen afhængigheder |
 | `feedback/apps-script.gs` | modtageren. Hører til i Apps Script, ikke på sitet |
-| `Øvelser/feedback.html` | den linje, Quarto lægger ind i øvelsesvejledningerne |
 
 Siderne indlæser den med én linje før `</body>`:
 
@@ -90,30 +89,19 @@ kunne læse sig til, hvad der virkede.
 * **Siden selv** — en pille i sidefoden. Har siden ingen `.foot` (de gamle sider),
   lægger den sig nederst til højre i stedet.
 * **Ikke** i en iframe, ikke i projektortilstand (`?projektor=1`, `?mode=teach`),
-  og ikke på print.
+  ikke på print — og ikke inde i øvelsesvejledningerne, se nedenfor.
 
-## Øvelsesvejledningerne
+## Øvelsesvejledningerne har ingen knap
 
-De 25 HTML-vejledninger renderes af Quarto, så linjen kan ikke skrives ind i
-dem — den ville forsvinde ved næste render. I stedet står der
-`include-after-body: feedback.html` i `Øvelser/_quarto.yml`.
+De 25 HTML-vejledninger får **ikke** en knap, og `Øvelser/_quarto.yml` er
+urørt. Feedback om en vejledning gives på dens kort på `biologi.html` eller
+`geografi.html`.
 
-`embed-resources: true` samler normalt alt i én fil. Adressen `/feedback.js` er
-rod-relativ og peger ikke på en fil, Quarto kan finde på disken, så den burde
-blive stående som et almindeligt `<script src>`. **Det er ikke efterprøvet her** —
-Quarto er ikke installeret i det miljø, filerne blev skrevet i. Render én
-vejledning, og se efter linjen i den færdige `.html`:
+Det er også der, den hører hjemme: en vejledning bliver lige så tit hentet som
+PDF eller Word som læst i browseren, og de to formater kan ikke have en knap.
+Sidder knappen kun på kortet, rammer alle tilbagemeldinger det samme sted,
+uanset hvilket format eleven valgte — og det er stadig mappen, der er nøglen.
 
-```bash
-cd Øvelser/Biologi/osmose-i-kartofler
-quarto render osmose-i-kartofler.qmd --to html
-grep feedback.js osmose-i-kartofler.html
-```
-
-Står linjen der, er resten også i orden. Gør den ikke, skal indholdet af
-`feedback.js` i stedet skrives direkte ind i `Øvelser/feedback.html` mellem
-`<script>`-mærker — så virker det, men en rettelse i koden kræver, at alle
-vejledninger renderes igen.
-
-PDF- og Word-udgaverne får naturligvis ingen knap. Derfor sidder knappen også på
-kortet på `biologi.html` og `geografi.html`, hvor man vælger format.
+Til gengæld er der intet at vedligeholde: ingen Quarto-stump, der skal med i
+hver render, og ingen kode bagt ind i 25 selvstændige HTML-filer, som skulle
+renderes igen, hver gang `feedback.js` blev rettet.
