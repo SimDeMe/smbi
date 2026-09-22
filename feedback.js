@@ -18,7 +18,7 @@
 
 /* Apps Script-webappens /exec-adresse. Så længe den er tom, sættes der
    ingen knapper ind — en knap, der ikke kan sende, er værre end ingen. */
-var MODTAGER = '';
+var MODTAGER = 'https://script.google.com/macros/s/AKfycbzxN4BPMuaJUV_uFOLyZhurs58xqkwdaSoQ3fU2oND4MJ6N1w21QoRNegsA8QkBUNO4tg/exec';
 
 var MINDST_TEGN     = 15;   /* kortere beskeder kan vi ikke bruge til noget */
 var MINDST_SEKUNDER = 3;    /* tidsfælde: så hurtigt skriver et menneske ikke */
