@@ -24,6 +24,7 @@ format:
     page-layout: article
     fig-align: center
     include-before-body: banner.html
+    include-after-body: feedback.html
     include-in-header: mathjax-config.html
     embed-resources: true
 
