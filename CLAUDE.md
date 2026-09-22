@@ -59,6 +59,12 @@ quarto render <øvelse>.qmd --to docx    # Word
 quarto render <øvelse>.qmd --to html    # webside
 ```
 
+Skal alle vejledninger igennem på én gang — fx efter en ændring i `_quarto.yml`,
+i `styles.scss` eller i Typst-skabelonen — så kør `Øvelser/render-alle.sh`. Den
+tager kun `.qmd`-filerne under `Biologi/` og `Geografi/`; et bart
+`quarto render` i `Øvelser/` ville også give arbejdsdokumenterne i mappen
+`.pdf`- og `.docx`-udgaver, de ikke skal have.
+
 Detaljerne står i `Øvelser/Mappestruktur.md` og `Øvelser/LÆS-MIG.md`.
 
 ---

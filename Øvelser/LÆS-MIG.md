@@ -47,6 +47,21 @@ Fordi `_quarto.yml` ligger i toppen af `Øvelser/`, gælder opsætningen automat
    ```
    Filen hedder det samme som mappen (fx `oliens-migration.qmd`), så den downloadede vejledning er til at kende igen på skrivebordet.
 
+   Skal **alle** vejledninger igennem på én gang, så kør scriptet i toppen af `Øvelser/`:
+   ```
+   ./render-alle.sh              # alle 25, i alle tre formater
+   ./render-alle.sh osmose       # kun dem, hvis sti indeholder «osmose»
+   ./render-alle.sh Geografi     # kun geografi-øvelserne
+   ```
+   En vejledning, der fejler, stopper ikke de andre — fejlene samles til sidst med
+   Quartos egen fejlbesked. Kør det efter ændringer i `_quarto.yml`, `styles.scss`
+   eller Typst-skabelonen, hvor alle vejledninger skal følge med.
+
+   **Kør ikke bare `quarto render` inde i `Øvelser/`.** Den ville også tage
+   `LÆS-MIG.md`, `Mappestruktur.md`, `Forsogsvejledninger.md`,
+   `Bio-C-forsog-oversigt.md` og `forsøgsliste2109.md` med og lave `.pdf`- og
+   `.docx`-udgaver af arbejdsdokumenter, der kun skal findes som websider.
+
 ## De to faste afsnit
 
 Hver vejledning slutter med to afsnit, der gør den til mere end en opskrift:
