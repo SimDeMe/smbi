@@ -74,6 +74,7 @@ body{
 a{color:inherit}
 :focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
 
+.enhed{text-transform:none}
 .mono{
   font-family:var(--mono);font-size:0.68rem;font-weight:500;
   letter-spacing:0.14em;text-transform:uppercase;
@@ -606,7 +607,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
             <div class="ticks"><span>40°</span><span>5°</span><span>−30°</span></div>
           </div>
           <dd id="temp-l">—<small>°C</small></dd>
-          <p class="g-sub">Jorden <b id="p0-l">—</b><br>1500 m <b id="p1-l">—</b></p>
+          <p class="g-sub">Jorden <b id="p0-l">—</b> <span class="enhed">hPa</span><br>1500 <span class="enhed">m</span> <b id="p1-l">—</b> <span class="enhed">hPa</span></p>
         </div>
 
         <div class="gauge g-r">
@@ -616,7 +617,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
             <div class="ticks"><span>40°</span><span>5°</span><span>−30°</span></div>
           </div>
           <dd id="temp-r">—<small>°C</small></dd>
-          <p class="g-sub">Jorden <b id="p0-r">—</b><br>1500 m <b id="p1-r">—</b></p>
+          <p class="g-sub">Jorden <b id="p0-r">—</b> <span class="enhed">hPa</span><br>1500 <span class="enhed">m</span> <b id="p1-r">—</b> <span class="enhed">hPa</span></p>
         </div>
 
         <div class="gauge g-dt">
@@ -1198,7 +1199,7 @@ function drawAxis() {
   for (let km = 0; km <= 3; km++) {
     const y = Z(km / 3);
     ctx.beginPath(); ctx.moveTo(PAD.l - 5, y); ctx.lineTo(PAD.l, y); ctx.stroke();
-    ctx.fillText(km + ' KM', PAD.l - 8, y);
+    ctx.fillText(km + ' km', PAD.l - 8, y);
   }
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
 }
@@ -1327,10 +1328,10 @@ function updateReadouts(d) {
   $('th-r').style.height = thPct(state.tR) + '%';
   $('th-l').style.background = tempFarve(state.tL);
   $('th-r').style.background = tempFarve(state.tR);
-  $('p0-l').textContent = d.p0L.toFixed(0) + ' hPa';
-  $('p0-r').textContent = d.p0R.toFixed(0) + ' hPa';
-  $('p1-l').textContent = d.p1L.toFixed(0) + ' hPa';
-  $('p1-r').textContent = d.p1R.toFixed(0) + ' hPa';
+  $('p0-l').textContent = d.p0L.toFixed(0);
+  $('p0-r').textContent = d.p0R.toFixed(0);
+  $('p1-l').textContent = d.p1L.toFixed(0);
+  $('p1-r').textContent = d.p1R.toFixed(0);
 
   const fortegn = d.dT >= 0 ? '+' : '−';
   $('val-dt').innerHTML = fortegn + fmt1(Math.abs(d.dT)) + '<small>°C</small>';

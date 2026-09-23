@@ -72,6 +72,7 @@ body{
 a{color:inherit}
 :focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
 
+.enhed{text-transform:none}
 .mono{
   font-family:var(--mono);font-size:0.68rem;font-weight:500;
   letter-spacing:0.14em;text-transform:uppercase;
@@ -517,7 +518,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       <div class="rig-bar"></div>
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
-        <span class="who">Tør 1,0 °C/100 m · fugtig 0,5 °C/100 m</span>
+        <span class="who">Tør 1,0 <span class="enhed">°C/100 m</span> · fugtig 0,5 <span class="enhed">°C/100 m</span></span>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
       </div>
@@ -585,8 +586,8 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       </div>
 
       <div class="facts">
-        <span class="fact" style="--fc:var(--blue)">Tøradiabatisk <b>1,0 °C/100 m</b></span>
-        <span class="fact" style="--fc:var(--grape)">Fugtadiabatisk <b>0,5 °C/100 m</b></span>
+        <span class="fact" style="--fc:var(--blue)">Tøradiabatisk <b>1,0 <span class="enhed">°C/100 m</span></b></span>
+        <span class="fact" style="--fc:var(--grape)">Fugtadiabatisk <b>0,5 <span class="enhed">°C/100 m</span></b></span>
         <span class="fact" style="--fc:var(--coral)">Føhn: tør &amp; varm i læ</span>
       </div>
     </section>
@@ -916,7 +917,7 @@ function drawSea(){
 
   ctx.fillStyle = 'rgba(255,255,255,.92)';
   ctx.font = "600 10px 'IBM Plex Mono', monospace";
-  ctx.fillText('HAV · 0 M', 7, H - 9);
+  ctx.fillText('HAV · 0 m', 7, H - 9);
 }
 
 function drawCondensationLine(){
@@ -937,7 +938,7 @@ function drawCondensationLabel(){
   if (lcl === null || lcl > 2000) return;
   const y = yOf(lcl);
   ctx.save();
-  const txt = 'SKYBASE ' + Math.round(lcl) + ' M';
+  const txt = 'SKYBASE ' + Math.round(lcl) + ' m';
   ctx.font = "600 10px 'IBM Plex Mono', monospace";
   const w = ctx.measureText(txt).width + 16;
   const bx = W - 12 - w, by = y - 19;
