@@ -49,7 +49,7 @@ Fordi `_quarto.yml` ligger i toppen af `Øvelser/`, gælder opsætningen automat
 
    Skal **alle** vejledninger igennem på én gang, så kør scriptet i toppen af `Øvelser/`:
    ```
-   ./render-alle.sh              # alle 25, i alle tre formater
+   ./render-alle.sh              # alle 26, i alle tre formater
    ./render-alle.sh osmose       # kun dem, hvis sti indeholder «osmose»
    ./render-alle.sh Geografi     # kun geografi-øvelserne
    ```

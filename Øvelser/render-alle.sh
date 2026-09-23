@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # render-alle.sh — renderer alle øvelsesvejledninger til PDF, Word og HTML.
 #
-#   ./render-alle.sh              alle 25 vejledninger
+#   ./render-alle.sh              alle 26 vejledninger
 #   ./render-alle.sh osmose       kun dem, hvis sti indeholder «osmose»
 #   ./render-alle.sh Geografi     kun geografi-øvelserne
 #
