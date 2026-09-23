@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>læs-mig</title>
+<title>Bjergarternes densitet</title>
 <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -2179,6 +2179,44 @@ window.MathJax = {
 };
 </script>
 
+  
+  
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -2186,89 +2224,305 @@ window.MathJax = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="LÆS-MIG.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="LÆS-MIG.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
+<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="bjergarters-densitet.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="bjergarters-densitet.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 <div class="doc-banner">
-  <span class="doc-banner-fag"></span>
+  <span class="doc-banner-fag">Naturgeografi</span>
   <span class="doc-banner-hold"></span>
+</div>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Bjergarternes densitet</h1>
+<p class="subtitle lead">Hvorfor synker oceanbunden, mens kontinenterne bliver liggende?</p>
 </div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="øvelsesvejledninger-quarto-sådan-virker-skabelonen" class="level1">
-<h1>Øvelsesvejledninger (Quarto) — sådan virker skabelonen</h1>
-<p>Dette er en <strong>Quarto-skabelon</strong> til øvelsesvejledninger i biologi og naturgeografi. Du skriver indholdet i almindelig markdown i en <code>.qmd</code>-fil, og Quarto bygger automatisk en pænt opsat PDF, Word-fil (.docx) og webside (.html) ud fra samme kilde — alle tre i samme stil (skovgrøn, sidehoved med fag og hold, sidetal, samme figur-/tabelopsætning).</p>
-<section id="sådan-hænger-det-sammen" class="level2">
-<h2 class="anchored" data-anchor-id="sådan-hænger-det-sammen">Sådan hænger det sammen</h2>
-<p>Den fælles opsætning ligger som <strong>6 filer direkte i toppen af <code>Øvelser/</code></strong>:</p>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Dato:</strong> ____________________      <strong>Gruppe / navne:</strong> ____________________________________________</p>
+<section id="om-øvelsen" class="level2">
+<h2 class="anchored" data-anchor-id="om-øvelsen">Om øvelsen</h2>
+<p>Kontinenterne har ligget på Jordens overflade i milliarder af år, men oceanbunden bliver hele tiden skabt ved de midtoceaniske rygge og forsvinder igen ned i kappen ved dybhavsgravene. Forklaringen skal findes i, hvad pladerne er lavet af. I denne øvelse bestemmer I <strong>densiteten</strong> af fire bjergarter, som hver repræsenterer sin del af Jorden. Bagefter bruger I tallene til at forklare, hvorfor pladerne opfører sig så forskelligt.</p>
+</section>
+<section id="baggrund" class="level2">
+<h2 class="anchored" data-anchor-id="baggrund">Baggrund</h2>
+<p>Densitet er masse pr. rumfang:</p>
+<p><span class="math display">\[\rho = \frac{m}{V}\]</span></p>
+<p>Massen af en sten kan I veje direkte. Rumfanget er sværere at finde, fordi stenen har en uregelmæssig form. I løser det ved at lade vandet gøre arbejdet:</p>
 <ul>
-<li><code>_quarto.yml</code> — fælles indstillinger (papirstørrelse, marginer, sidehoved/-fod, farver). Ret her, hvis noget skal ændres for <em>alle</em> vejledninger på én gang.</li>
-<li><code>styles.scss</code> — udseendet for HTML-versionen.</li>
-<li><code>page.typ</code> / <code>typst-template.typ</code> — udseendet for PDF-versionen (Typst).</li>
-<li><code>reference.docx</code> — udseendet for Word-versionen. Bruges kun som “stilskabelon” — dens eget indhold vises aldrig.</li>
-<li><code>fix-docx-tables.py</code> — kører automatisk efter hver rendering og sørger for, at tabeller i Word-filen aldrig bliver delt af et sideskift.</li>
+<li>Vandet løfter opad på en sten, der er sænket ned i det. Denne <strong>opdrift</strong> er lige så stor som tyngden af det vand, stenen skubber til side (Arkimedes’ lov).</li>
+<li>Stenen skubber til gengæld lige så meget nedad på vandet. Hænger stenen frit i en snor, er det den kraft og kun den, vægten under skålen mærker. Resten af stenens tyngde bæres af snoren.</li>
+<li>Nulstiller I vægten med vandskålen på, viser den derfor direkte <strong>massen af det fortrængte vand</strong>.</li>
 </ul>
-<p>Fordi <code>_quarto.yml</code> ligger i toppen af <code>Øvelser/</code>, gælder opsætningen automatisk for <strong>enhver</strong> <code>.qmd</code>-fil, uanset hvor dybt nede den ligger under <code>Biologi/</code> eller <code>Geografi/</code> — Quarto leder selv opad efter <code>_quarto.yml</code>, uanset hvor mange undermapper der er imellem.</p>
-<p><strong>Der er ingen særlig skabelonmappe, man skal ligge inde i.</strong> En ny øvelse er bare en almindelig undermappe under <code>Biologi/</code> eller <code>Geografi/</code> (eller et evt. nyt fag), med sin egen <code>.qmd</code>-fil (samme navn som mappen) og en <code>figurer/</code>-mappe, hvis den har billeder.</p>
+<p>Vand har densiteten 1,00 g/cm³. Hvert gram fortrængt vand svarer altså til 1 cm³, og det rumfang har stenen også.</p>
+<div id="fig-opstilling" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-opstilling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img role="img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMjcwIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjI3MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJWw6ZndGVuIG51bHN0aWxsZXMgbWVkIHNrw6VsZW4gcMOlLCBvZyBkZXJlZnRlciBow6ZuZ2VzIHN0ZW5lbiBpIHNub3IgbmVkIGkgdmFuZGV0LCBzw6UgdsOmZ3RlbiB2aXNlciBtYXNzZW4gYWYgZGV0IGZvcnRyw6ZuZ3RlIHZhbmQiPgogIDx0aXRsZT5PcHN0aWxsaW5nZW46IHbDpmd0LCB2YW5kc2vDpWwgb2cgc3RlbiBpIHNub3I8L3RpdGxlPgogIDxkZXNjPlRpbCB2ZW5zdHJlIHN0w6VyIGVuIHNrw6VsIG1lZCB2YW5kIHDDpSB2w6ZndGVuLCBzb20gdmlzZXIgMCBnIGVmdGVyIG51bHN0aWxsaW5nLiBUaWwgaMO4anJlIGjDpm5nZXIgZW4gc3RlbiBpIGVuIHNub3IgaGVsdCBuZWRlIGkgdmFuZGV0IHVkZW4gYXQgcsO4cmUgYnVuZGVuLiBWYW5kZXQgbMO4ZnRlciBzdGVuZW4gbWVkIGVuIG9wZHJpZnQsIHN0ZW5lbiB0cnlra2VyIHRpbHN2YXJlbmRlIG5lZCBww6UgdmFuZGV0LCBvZyB2w6ZndGVuIHZpc2VyIG51IGV0IHBvc2l0aXZ0IHRhbDogbWFzc2VuIGFmIGRldCB2YW5kLCBzdGVuZW4gZm9ydHLDpm5nZXIuPC9kZXNjPgogIDxkZWZzPgogICAgPG1hcmtlciBpZD0iby1waWwiIHZpZXdCb3g9IjAgMCAxMiAxMiIgcmVmWD0iNyIgcmVmWT0iNiIgbWFya2VyV2lkdGg9IjQuNSIgbWFya2VySGVpZ2h0PSI0LjUiIG9yaWVudD0iYXV0by1zdGFydC1yZXZlcnNlIj48cGF0aCBkPSJNMSwxIEwxMSw2IEwxLDExIHoiIGZpbGw9IiMxRjVGOEIiLz48L21hcmtlcj4KICAgIDxtYXJrZXIgaWQ9Im8tcGlsMiIgdmlld0JveD0iMCAwIDEyIDEyIiByZWZYPSI3IiByZWZZPSI2IiBtYXJrZXJXaWR0aD0iNC41IiBtYXJrZXJIZWlnaHQ9IjQuNSIgb3JpZW50PSJhdXRvLXN0YXJ0LXJldmVyc2UiPjxwYXRoIGQ9Ik0xLDEgTDExLDYgTDEsMTEgeiIgZmlsbD0iI0E4NDAyQyIvPjwvbWFya2VyPgogIDwvZGVmcz4KICA8dGV4dCB4PSIyMCIgeT0iMjIiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyNjMzMkIiPjEgwrcgU2vDpWwgbWVkIHZhbmQgcMOlIHbDpmd0ZW4g4oCUIHRyeWsgVEFSRTwvdGV4dD4KICA8cGF0aCBkPSJNODQgMTMyIEwyMzYgMTMyIEwyMTkgMTkwIEwxMDEgMTkwIFoiIGZpbGw9IiNDM0RBRTYiLz4KICA8cGF0aCBkPSJNNzggMTEwIEwyNDIgMTEwIEwyMjIgMTk0IEw5OCAxOTQgWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxyZWN0IHg9IjUwIiB5PSIxOTYiIHdpZHRoPSIyMjAiIGhlaWdodD0iMzYiIHJ4PSI2IiBmaWxsPSIjRURFRkVBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxyZWN0IHg9IjEyNiIgeT0iMjA1IiB3aWR0aD0iNjgiIGhlaWdodD0iMTkiIHJ4PSIzIiBmaWxsPSIjMjYzMzJCIi8+CiAgPHRleHQgeD0iMTYwIiB5PSIyMTkiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNENkYyQzQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjAgZzwvdGV4dD4KICA8dGV4dCB4PSIxNjAiIHk9IjI1NCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZCN0E2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+c2vDpWwgb2cgdmFuZCB0w6ZsbGVyIG51IGlra2UgbWVkPC90ZXh0PgoKICA8dGV4dCB4PSIzNDAiIHk9IjIyIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjYzMzJCIj4yIMK3IFN0ZW5lbiBow6ZuZ2VyIGZyaXQgaSB2YW5kZXQ8L3RleHQ+CiAgPHBhdGggZD0iTTQxNCAxMjYgTDU2NiAxMjYgTDU0OSAxOTAgTDQzMSAxOTAgWiIgZmlsbD0iI0MzREFFNiIvPgogIDxwYXRoIGQ9Ik00MTQgMTI2IEw1NjYgMTI2IiBzdHJva2U9IiM3RkE4QkMiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgPHBhdGggZD0iTTQ5MCAzNiBWMTQyIiBzdHJva2U9IiM4QTZEM0IiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxwYXRoIGQ9Ik00NjYgMTUwIEw0NzggMTM5IEw1MDAgMTM3IEw1MTUgMTQ3IEw1MTIgMTY0IEw0OTQgMTcxIEw0NzIgMTY3IFoiIGZpbGw9IiM5QTlDOTciIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTQwOCAxMTAgTDU3MiAxMTAgTDU1MiAxOTQgTDQyOCAxOTQgWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik00NDggMTcyIFYxNDYiIHN0cm9rZT0iIzFGNUY4QiIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI28tcGlsKSIvPgogIDx0ZXh0IHg9IjQxMCIgeT0iMTY0IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMUY1RjhCIiB0ZXh0LWFuY2hvcj0iZW5kIj5vcGRyaWZ0PC90ZXh0PgogIDxwYXRoIGQ9Ik01MzIgMTUwIFYxNzYiIHN0cm9rZT0iI0E4NDAyQyIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI28tcGlsMikiLz4KICA8dGV4dCB4PSI1NjgiIHk9IjE2MCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iI0E4NDAyQyI+bW9ka3JhZnQ8L3RleHQ+CiAgPHBhdGggZD0iTTQ5NCAxNzQgVjE4OCIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1kYXNoYXJyYXk9IjIgMiIvPgogIDx0ZXh0IHg9IjU2NiIgeT0iMTkwIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExLjUiIGZpbGw9IiM2QjdBNjYiPmZyaSBhZiBidW5kZW48L3RleHQ+CiAgPHBhdGggZD0iTTU2MiAxODYgTDUwMCAxODIiIHN0cm9rZT0iIzZCN0E2NiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPHRleHQgeD0iNDk4IiB5PSI0OCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZCN0E2NiI+aG9sZCBpIHNub3JlbjwvdGV4dD4KICA8cmVjdCB4PSIzODAiIHk9IjE5NiIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIzNiIgcng9IjYiIGZpbGw9IiNFREVGRUEiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHJlY3QgeD0iNDU2IiB5PSIyMDUiIHdpZHRoPSI2OCIgaGVpZ2h0PSIxOSIgcng9IjMiIGZpbGw9IiMyNjMzMkIiLz4KICA8dGV4dCB4PSI0OTAiIHk9IjIxOSIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0Q2RjJDNCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MTQ4IGc8L3RleHQ+CiAgPHRleHQgeD0iNDkwIiB5PSIyNTQiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2QjdBNjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnRhbGxldCA9IG1hc3NlbiBhZiBkZXQgZm9ydHLDpm5ndGUgdmFuZDwvdGV4dD4KPC9zdmc+Cg==" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-opstilling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur 1: Sådan måles rumfanget. Vægten nulstilles med vandskålen på (1). Når stenen hænger frit i vandet, viser vægten massen af det vand, stenen fortrænger (2).
+</figcaption>
+</figure>
+</div>
 </section>
-<section id="eksempel-på-struktur" class="level2">
-<h2 class="anchored" data-anchor-id="eksempel-på-struktur">Eksempel på struktur</h2>
-<pre><code>Øvelser/
-├── _quarto.yml, styles.scss, reference.docx, page.typ, typst-template.typ, banner.html, fix-docx-tables.py   (fælles, rør kun hvis alle vejledninger skal ændres)
-├── Biologi/
-│   ├── mikroskopi-af-celler/
-│   │   └── mikroskopi-af-celler.qmd (+ evt. figurer/)
-│   └── osmose-i-kartofler/
-│       └── osmose-i-kartofler.qmd (+ evt. figurer/)
-└── Geografi/
-    └── opmaaling-af-terraenprofil/
-        ├── opmaaling-af-terraenprofil.qmd
-        └── figurer/</code></pre>
+<section id="hypotese" class="level2">
+<h2 class="anchored" data-anchor-id="hypotese">Hypotese</h2>
+<p>De fire bjergarter er <strong>granit</strong>, <strong>basalt</strong>, <strong>peridotit</strong> og <strong>eklogit</strong>. Prøv at løfte dem i hånden, og slå op, hvor på Jorden de hører hjemme. Skriv derefter jeres bud på rækkefølgen fra lettest til tungest, <strong>inden</strong> I måler.</p>
+<p>Lettest ________________ &lt; ________________ &lt; ________________ &lt; ________________ tungest</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Materialer (pr. gruppe)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Digital vægt med tarafunktion, der kan veje op til ca. 2 kg</li>
+<li>Skål eller bægerglas med vand, stor nok til at den største sten kan hænge frit</li>
+<li>Tynd snor, fx gavebånd eller fiskeline</li>
+<li>Køkkenrulle</li>
+<li>Fire bjergartsprøver: granit (eller granitisk gnejs), basalt, peridotit og eklogit</li>
+</ul>
+</div>
+</div>
 </section>
-<section id="sådan-laver-du-en-ny-vejledning" class="level2">
-<h2 class="anchored" data-anchor-id="sådan-laver-du-en-ny-vejledning">Sådan laver du en ny vejledning</h2>
+<section id="fremgangsmåde" class="level2">
+<h2 class="anchored" data-anchor-id="fremgangsmåde">Fremgangsmåde</h2>
 <ol type="1">
-<li><p>Kopiér en eksisterende øvelsesmappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>) til en ny mappe med et sigende navn, under det rigtige fag (fx <code>Geografi/kysterosion/</code> eller <code>Biologi/enzymforsog/</code>).</p></li>
-<li><p>Slet de gamle figurer i <code>figurer/</code>, og ret <code>.qmd</code>-filen: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.</p></li>
-<li><p>Tag de to faste afsnit med (se nedenfor): <strong>Databehandling</strong> og <strong>Journalspørgsmål</strong>.</p></li>
-<li><p>Skriv øvelsen ind i <code>oversigt.html</code> — også når du kun retter i en, der findes i forvejen.</p></li>
-<li><p>Giv øvelsen et kort på <code>biologi.html</code> eller <code>geografi.html</code> under «Forsøgsvejledninger», så den kan findes fra sitet. Alle øvelser skal have ét.</p></li>
-<li><p>Claude renderer selv vejledningen til PDF/Word/HTML, hver gang <code>.qmd</code>-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:</p>
-<pre><code>quarto render &lt;øvelse&gt;.qmd --to typst   # PDF
-quarto render &lt;øvelse&gt;.qmd --to docx    # Word
-quarto render &lt;øvelse&gt;.qmd --to html    # webside</code></pre>
-<p>Filen hedder det samme som mappen (fx <code>oliens-migration.qmd</code>), så den downloadede vejledning er til at kende igen på skrivebordet.</p>
-<p>Skal <strong>alle</strong> vejledninger igennem på én gang, så kør scriptet i toppen af <code>Øvelser/</code>:</p>
-<pre><code>./render-alle.sh              # alle 26, i alle tre formater
-./render-alle.sh osmose       # kun dem, hvis sti indeholder «osmose»
-./render-alle.sh Geografi     # kun geografi-øvelserne</code></pre>
-<p>En vejledning, der fejler, stopper ikke de andre — fejlene samles til sidst med Quartos egen fejlbesked. Kør det efter ændringer i <code>_quarto.yml</code>, <code>styles.scss</code> eller Typst-skabelonen, hvor alle vejledninger skal følge med.</p>
-<p><strong>Kør ikke bare <code>quarto render</code> inde i <code>Øvelser/</code>.</strong> Den ville også tage <code>LÆS-MIG.md</code>, <code>Mappestruktur.md</code>, <code>Forsogsvejledninger.md</code>, <code>Bio-C-forsog-oversigt.md</code> og <code>forsøgsliste2109.md</code> med og lave <code>.pdf</code>- og <code>.docx</code>-udgaver af arbejdsdokumenter, der kun skal findes som websider.</p></li>
+<li>Tør stenene af, så de er helt tørre, og vej hver af dem. Skriv massen i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.</li>
+<li>Bind snoren godt fast om den første sten.</li>
+<li>Fyld vand i skålen, så stenen senere kan dækkes helt. Stil skålen på vægten, og tryk <strong>TARE</strong>. Vent, til vægten viser 0 g.</li>
+<li>Sænk stenen ned i vandet ved at holde i snoren. Den skal være helt dækket, men må hverken røre bunden eller siderne (<a href="#fig-opstilling" class="quarto-xref">Figur 1</a>).</li>
+<li>Ryst stenen let, så eventuelle luftbobler slipper. Aflæs vægten, når tallet står stille, og skriv det i <a href="#tbl-1" class="quarto-xref">Tabel 1</a> som måling 1.</li>
+<li>Løft stenen op, lad den dryppe af, og gentag trin 3–5. Skriv resultatet som måling 2.</li>
+<li>Gør det samme med de tre andre sten. Nulstil vægten igen før hver sten, for der er måske sprøjtet lidt vand ud.</li>
 </ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Store sten giver de mest præcise resultater. En vægt, der viser hele gram, har en usikkerhed på ± 1 g, og det betyder meget mere for en sten på 40 g end for en på 400 g.</p>
+</div>
+</div>
 </section>
-<section id="de-to-faste-afsnit" class="level2">
-<h2 class="anchored" data-anchor-id="de-to-faste-afsnit">De to faste afsnit</h2>
-<p>Hver vejledning slutter med to afsnit, der gør den til mere end en opskrift:</p>
-<p><strong><code>## Databehandling</code></strong> — hvad eleverne selv skal regne, tegne og vurdere ud fra deres rådata: gennemsnit, procentberegninger, en graf, en sammenligning på tværs af grupper. Skriv formlerne som rigtig matematik (<code>$$…$$</code>), og lav et lille skema til de udregnede tal, hvis der er mere end et par stykker. Afsnittet springes kun over, hvis øvelsen er rent kvalitativ — er der tal, skal der regnes på dem.</p>
-<p><strong><code>## Journalspørgsmål</code></strong> — nummererede forslag til faglige refleksionsspørgsmål, der binder resultaterne sammen med teorien: forklar begrebet, vurdér metodens fejlkilder, sammenlign med en anden situation, diskutér hvor repræsentativt resultatet er. Det er forslag, du kan skære i eller bytte ud, ikke en facitliste.</p>
-<p><code>Biologi/biodiversitet-i-graesplaenen/</code> viser begge afsnit, som de skal se ud.</p>
+<section id="registrering-af-målinger" class="level2">
+<h2 class="anchored" data-anchor-id="registrering-af-målinger">Registrering af målinger</h2>
+<div id="tbl-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 1: Rådata: masse af stenene og af det vand, de fortrænger.
+</figcaption>
+<div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Bjergart</th>
+<th style="text-align: center;">Stenens masse (g)</th>
+<th style="text-align: center;">Fortrængt vand, måling 1 (g)</th>
+<th style="text-align: center;">Fortrængt vand, måling 2 (g)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Granit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basalt</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peridotit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eklogit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
-<section id="genbrugelige-byggeklodser-i-en-.qmd" class="level2">
-<h2 class="anchored" data-anchor-id="genbrugelige-byggeklodser-i-en-.qmd">Genbrugelige byggeklodser i en <code>.qmd</code></h2>
-<ul>
-<li><code>## Overskrift</code> → grøn sektionsoverskrift med streg i venstre side.</li>
-<li><code>![Billedtekst](figurer/billede.png)</code> → nummereret figur med billedtekst.</li>
-<li><code>::: {.callout-tip} ## Tip ... :::</code> → grøn tip-boks.</li>
-<li><code>::: {.callout-note} ## Materialer (pr. gruppe) ... :::</code> → blå boks (fx til materialeliste).</li>
-<li>Almindelig markdown-tabel med <code>: Billedtekst {#tbl-1}</code> under → nummereret tabel/skema med grønt overskriftsfelt, som der kan henvises til med <code>@tbl-1</code>.</li>
-<li><code>$$\\frac{a}{b}$$</code> → formel på egen linje, til databehandlingsafsnittet.</li>
-</ul>
+<section id="databehandling" class="level2">
+<h2 class="anchored" data-anchor-id="databehandling">Databehandling</h2>
+<ol type="1">
+<li>Beregn gennemsnittet af de to målinger af fortrængt vand for hver sten. Omregn det til stenens rumfang, hvor vandets densitet er 1,00 g/cm³:</li>
+</ol>
+<p><span class="math display">\[V_\text{sten} = \frac{m_\text{fortrængt vand}}{\rho_\text{vand}}\]</span></p>
+<ol start="2" type="1">
+<li>Beregn densiteten af hver sten:</li>
+</ol>
+<p><span class="math display">\[\rho_\text{sten} = \frac{m_\text{sten}}{V_\text{sten}}\]</span></p>
+<ol start="3" type="1">
+<li>Sammenlign med tabelværdien i <a href="#tbl-2" class="quarto-xref">Tabel 2</a>, og beregn afvigelsen i procent. Brug midten af intervallet som tabelværdi:</li>
+</ol>
+<p><span class="math display">\[\text{afvigelse} = \frac{\rho_\text{målt} - \rho_\text{tabel}}{\rho_\text{tabel}} \cdot 100\ \%\]</span></p>
+<div id="tbl-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 2: Beregnede værdier og sammenligning med typiske tabelværdier.
+</figcaption>
+<div aria-describedby="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Bjergart</th>
+<th style="text-align: center;">Rumfang (cm³)</th>
+<th style="text-align: center;">Målt densitet (g/cm³)</th>
+<th style="text-align: center;">Tabelværdi (g/cm³)</th>
+<th style="text-align: center;">Afvigelse (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Granit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2,6–2,7</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basalt</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2,9–3,0</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peridotit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">3,2–3,4</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eklogit</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">3,4–3,6</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<ol start="4" type="1">
+<li>Sæt de fire bjergarter i rækkefølge efter jeres målte densitet, og sammenlign med jeres hypotese.</li>
+<li><a href="#fig-profil" class="quarto-xref">Figur 2</a> viser et snit fra en midtoceanisk ryg til et kontinent. Find ud af, hvilken bjergart der hører til i hvert af felterne A–D, og udfyld <a href="#tbl-3" class="quarto-xref">Tabel 3</a>.</li>
+</ol>
+<div id="fig-profil" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-profil-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img role="img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMzAwIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjMwMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJTa2VtYXRpc2sgdHbDpnJzbml0IGZyYSBlbiBtaWR0b2NlYW5pc2sgcnlnIG92ZXIgb2NlYW5idW5kZW4gdGlsIGVuIHN1YmR1a3Rpb25zem9uZSB1bmRlciBldCBrb250aW5lbnQsIG1lZCBmaXJlIGZlbHRlciBBIHRpbCBEIj4KICA8dGl0bGU+VHbDpnJzbml0IGdlbm5lbSBlbiBvY2VhbnBsYWRlIG9nIGV0IGtvbnRpbmVudDwvdGl0bGU+CiAgPGRlc2M+VGlsIHZlbnN0cmUgbGlnZ2VyIGRlbiBtaWR0b2NlYW5pc2tlIHJ5ZywgaHZvciBwbGFkZXJuZSBnbGlkZXIgZnJhIGhpbmFuZGVuLiBPY2VhbmJ1bmRzcGxhZGVuIGJldsOmZ2VyIHNpZyBtb2QgaMO4anJlLCBiw7hqZXIgbmVkIHZlZCBkeWJoYXZzZ3JhdmVuIG9nIHN5bmtlciBza3LDpXQgbmVkIHVuZGVyIGtvbnRpbmVudGV0LCBodm9yIGRlciBsaWdnZXIgZW4gdnVsa2FuLiBGZWx0IEEgbGlnZ2VyIGkga29udGluZW50ZXQsIGZlbHQgQiBpIG9jZWFuYnVuZHNza29ycGVuLCBmZWx0IEMgaSBrYXBwZW4gdW5kZXIgb2NlYW5idW5kZW4gb2cgZmVsdCBEIHDDpSBkZW4gbmVkc3lua2VuZGUgcGxhZGUgZHlidCB1bmRlciBrb250aW5lbnRldC48L2Rlc2M+CiAgPGRlZnM+CiAgICA8bWFya2VyIGlkPSJwLXBpbCIgdmlld0JveD0iMCAwIDEyIDEyIiByZWZYPSI3IiByZWZZPSI2IiBtYXJrZXJXaWR0aD0iNC41IiBtYXJrZXJIZWlnaHQ9IjQuNSIgb3JpZW50PSJhdXRvLXN0YXJ0LXJldmVyc2UiPjxwYXRoIGQ9Ik0xLDEgTDExLDYgTDEsMTEgeiIgZmlsbD0iIzI2MzMyQiIvPjwvbWFya2VyPgogIDwvZGVmcz4KICA8cmVjdCB4PSIwIiB5PSI4NiIgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMTQiIGZpbGw9IiNGM0U2QzkiLz4KICA8cGF0aCBkPSJNMCA3MCBMNDcwIDcwIEw0NzAgMTEyIEw0MjAgMTA2IFExNDAgOTYgNzAgODggUTM1IDk2IDAgMTAwIFoiIGZpbGw9IiNDM0RBRTYiLz4KICA8cGF0aCBkPSJNMCA3MCBINDcwIiBzdHJva2U9IiM3RkE4QkMiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgPHBhdGggZD0iTTAgMTAwIFEzNSA5NiA3MCA4OCBRMTQwIDk2IDQyMCAxMDYgQzQ3MCAxMTAgNTIwIDE1MCA2MDAgMjQwIEw1NzggMjUyIEM1MDAgMTY1IDQ1NSAxMjYgNDEwIDEyMCBRMTQwIDExMCA3MCAxMDIgUTM1IDExMCAwIDExNCBaIiBmaWxsPSIjOEU5QTlBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTQ0MCAxMDQgTDQ1MiA3NiBMNTA1IDY2IEw1MjIgNjQgTDUzNCA0MiBMNTQ2IDY0IEw2NDAgNjAgTDY0MCAxNDAgTDUzMCAxMzggQzUwMCAxMjAgNDcwIDEwOCA0NDAgMTA0IFoiIGZpbGw9IiNFNkM5QTgiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNNTM0IDQyIEw1MzAgMzAgTTUzNCA0MiBMNTM4IDI4IE01MzQgNDIgTDUzNCAyNiIgc3Ryb2tlPSIjQTg0MDJDIiBzdHJva2Utd2lkdGg9IjEuNiIvPgogIDxwYXRoIGQ9Ik02MCA4MCBMMTYgODQiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIiBtYXJrZXItZW5kPSJ1cmwoI3AtcGlsKSIvPgogIDxwYXRoIGQ9Ik04NCA4MCBMMTUwIDg0IiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIgbWFya2VyLWVuZD0idXJsKCNwLXBpbCkiLz4KICA8cGF0aCBkPSJNMjUwIDg4IEwzMzAgOTMiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIiBtYXJrZXItZW5kPSJ1cmwoI3AtcGlsKSIvPgogIDxwYXRoIGQ9Ik01MjAgMTgwIEw1NTYgMjE0IiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIgbWFya2VyLWVuZD0idXJsKCNwLXBpbCkiLz4KICA8dGV4dCB4PSI3MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyNjMzMkIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPm1pZHRvY2VhbmlzayByeWc8L3RleHQ+CiAgPHBhdGggZD0iTTcwIDY0IFY4NCIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8dGV4dCB4PSI0MjAiIHk9IjYwIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMjYzMzJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5keWJoYXZzZ3JhdjwvdGV4dD4KICA8cGF0aCBkPSJNNDIwIDY0IFYxMDQiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPHRleHQgeD0iNTYwIiB5PSIyNCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzI2MzMyQiI+dnVsa2FuPC90ZXh0PgogIDx0ZXh0IHg9IjMwMCIgeT0iNjYiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM2QjdBNjYiPmhhdm5pdmVhdTwvdGV4dD4KICA8ZyBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjYzMzJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4KICAgIDxjaXJjbGUgY3g9IjU5MCIgY3k9IjEwMCIgcj0iMTMiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNTkwIiB5PSIxMDUiPkE8L3RleHQ+CiAgICA8Y2lyY2xlIGN4PSIyMjAiIGN5PSIxMDQiIHI9IjEzIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjIyMCIgeT0iMTA5Ij5CPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjEwIiByPSIxMyIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjIxNSI+QzwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjU5MiIgY3k9IjIzNiIgcj0iMTMiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNTkyIiB5PSIyNDEiPkQ8L3RleHQ+CiAgPC9nPgogIDx0ZXh0IHg9IjYyNiIgeT0iMjkyIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBmaWxsPSIjNkI3QTY2IiB0ZXh0LWFuY2hvcj0iZW5kIj5za2VtYXRpc2sg4oCUIGlra2UgbcOlbGZhc3Q8L3RleHQ+Cjwvc3ZnPgo=" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-profil-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur 2: Snit fra en midtoceanisk ryg over oceanbunden til en subduktionszone under et kontinent. Pilene viser, hvordan pladerne bevæger sig.
+</figcaption>
+</figure>
+</div>
+<div id="tbl-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 3: Bjergarterne placeret i snittet.
+</figcaption>
+<div aria-describedby="tbl-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Felt</th>
+<th style="text-align: left;">Del af Jorden</th>
+<th style="text-align: left;">Bjergart</th>
+<th style="text-align: center;">Målt densitet (g/cm³)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">A</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">B</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">C</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
-<section id="hvis-du-vil-rendere-selv-uden-claude" class="level2">
-<h2 class="anchored" data-anchor-id="hvis-du-vil-rendere-selv-uden-claude">Hvis du vil rendere selv (uden Claude)</h2>
-<p>Quarto er allerede installeret (1.10.18). Kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>).</p>
-</section>
+<section id="journalspørgsmål" class="level2">
+<h2 class="anchored" data-anchor-id="journalspørgsmål">Journalspørgsmål</h2>
+<ol type="1">
+<li>Forklar med egne ord, hvorfor vægten viser massen af det fortrængte vand og ikke stenens masse, når stenen hænger i snoren. Hvad ville vægten vise, hvis stenen lå på bunden af skålen?</li>
+<li>Brug jeres målte densiteter til at forklare, hvorfor det altid er oceanbundspladen og aldrig kontinentet, der bliver presset ned i en subduktionszone.</li>
+<li>Basalten omdannes til eklogit, når den oceaniske plade er nået ned i dybden. Sammenlign eklogittens densitet med kappens (peridotittens). Hvad betyder forskellen for, om pladen synker videre af sig selv, og hvilken rolle spiller det som drivkraft for pladebevægelserne?</li>
+<li>De ældste bjergarter på kontinenterne er omkring 4 milliarder år gamle, mens den ældste oceanbund er under 200 millioner år gammel. Forklar forskellen ud fra jeres resultater.</li>
+<li>Kontinenterne ligger over havniveau, og oceanbunden ligger flere kilometer under. Hvordan kan forskellen i densitet være med til at forklare det?</li>
+<li>Vurdér jeres fejlkilder. Hvilke af dem giver for stor en densitet, og hvilke giver for lille? Tænk fx på luftbobler, en porøs sten, der suger vand, snoren og vægtens opløsning.</li>
+<li>Hvor godt repræsenterer én håndstor sten en hel del af Jorden? Diskutér, hvad der kunne gøre jeres resultat mere sikkert.</li>
+</ol>
 </section>
 
 </main>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" role="img" aria-label="Skematisk tværsnit fra en midtoceanisk ryg over oceanbunden til en subduktionszone under et kontinent, med fire felter A til D">
+  <title>Tværsnit gennem en oceanplade og et kontinent</title>
+  <desc>Til venstre ligger den midtoceaniske ryg, hvor pladerne glider fra hinanden. Oceanbundspladen bevæger sig mod højre, bøjer ned ved dybhavsgraven og synker skråt ned under kontinentet, hvor der ligger en vulkan. Felt A ligger i kontinentet, felt B i oceanbundsskorpen, felt C i kappen under oceanbunden og felt D på den nedsynkende plade dybt under kontinentet.</desc>
+  <defs>
+    <marker id="p-pil" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#26332B"/></marker>
+  </defs>
+  <rect x="0" y="86" width="640" height="214" fill="#F3E6C9"/>
+  <path d="M0 70 L470 70 L470 112 L420 106 Q140 96 70 88 Q35 96 0 100 Z" fill="#C3DAE6"/>
+  <path d="M0 70 H470" stroke="#7FA8BC" stroke-width="1.4"/>
+  <path d="M0 100 Q35 96 70 88 Q140 96 420 106 C470 110 520 150 600 240 L578 252 C500 165 455 126 410 120 Q140 110 70 102 Q35 110 0 114 Z" fill="#8E9A9A" stroke="#26332B" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M440 104 L452 76 L505 66 L522 64 L534 42 L546 64 L640 60 L640 140 L530 138 C500 120 470 108 440 104 Z" fill="#E6C9A8" stroke="#26332B" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M534 42 L530 30 M534 42 L538 28 M534 42 L534 26" stroke="#A8402C" stroke-width="1.6"/>
+  <path d="M60 80 L16 84" stroke="#26332B" stroke-width="2" marker-end="url(#p-pil)"/>
+  <path d="M84 80 L150 84" stroke="#26332B" stroke-width="2" marker-end="url(#p-pil)"/>
+  <path d="M250 88 L330 93" stroke="#26332B" stroke-width="2" marker-end="url(#p-pil)"/>
+  <path d="M520 180 L556 214" stroke="#26332B" stroke-width="2" marker-end="url(#p-pil)"/>
+  <text x="70" y="60" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#26332B" text-anchor="middle">midtoceanisk ryg</text>
+  <path d="M70 64 V84" stroke="#26332B" stroke-width="1"/>
+  <text x="420" y="60" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#26332B" text-anchor="middle">dybhavsgrav</text>
+  <path d="M420 64 V104" stroke="#26332B" stroke-width="1"/>
+  <text x="560" y="24" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#26332B">vulkan</text>
+  <text x="300" y="66" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#6B7A66">havniveau</text>
+  <g font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#26332B" text-anchor="middle">
+    <circle cx="590" cy="100" r="13" fill="#FFFFFF" stroke="#26332B" stroke-width="2"/><text x="590" y="105">A</text>
+    <circle cx="220" cy="104" r="13" fill="#FFFFFF" stroke="#26332B" stroke-width="2"/><text x="220" y="109">B</text>
+    <circle cx="200" cy="210" r="13" fill="#FFFFFF" stroke="#26332B" stroke-width="2"/><text x="200" y="215">C</text>
+    <circle cx="592" cy="236" r="13" fill="#FFFFFF" stroke="#26332B" stroke-width="2"/><text x="592" y="241">D</text>
+  </g>
+  <text x="626" y="292" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#6B7A66" text-anchor="end">skematisk — ikke målfast</text>
+</svg>
