@@ -77,6 +77,7 @@ a{color:inherit}
   font-family:var(--mono);font-size:0.68rem;font-weight:500;
   letter-spacing:0.14em;text-transform:uppercase;
 }
+.enhed{text-transform:none}
 .sr{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
@@ -512,7 +513,7 @@ body[data-projektor="1"] .key{font-size:0.74rem}
       <div class="rig-bar"></div>
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
-        <span class="who" id="who-counts">6 µM enzym · 40 µM substrat</span>
+        <span class="who" id="who-counts">6 <span class="enhed">µM</span> enzym · 40 <span class="enhed">µM</span> substrat</span>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-fast" aria-pressed="true"
                 title="Til: koncentrationerne holdes konstante. Fra: lukket beholder, hvor substratet bliver brugt op">Fast koncentration</button>
@@ -616,17 +617,17 @@ body[data-projektor="1"] .key{font-size:0.74rem}
           <input type="range" id="inp-temp" min="0" max="80" step="1" value="37">
         </label>
         <label class="knob" for="inp-ph">
-          <span class="knob-top"><span class="mono">pH-værdi</span><span class="knob-val" id="lbl-ph">7,0</span></span>
+          <span class="knob-top"><span class="mono"><span class="enhed">pH</span>-værdi</span><span class="knob-val" id="lbl-ph">7,0</span></span>
           <input type="range" id="inp-ph" min="1" max="14" step="0.1" value="7.0">
         </label>
       </div>
 
       <div class="facts">
-        <span class="fact" style="--fc:var(--lime)">V<sub>max</sub> <b id="f-vmax">5,2</b> µM/s</span>
-        <span class="fact" style="--fc:var(--grape)">K<sub>M</sub> <b id="f-km">36</b> µM</span>
-        <span class="fact" style="--fc:var(--coral)">k<sub>cat</sub> <b id="f-kcat">0,87</b> s⁻¹</span>
+        <span class="fact" style="--fc:var(--lime)"><span class="enhed">V<sub>max</sub></span> <b id="f-vmax">5,2</b> <span class="enhed">µM/s</span></span>
+        <span class="fact" style="--fc:var(--grape)"><span class="enhed">K<sub>M</sub></span> <b id="f-km">36</b> <span class="enhed">µM</span></span>
+        <span class="fact" style="--fc:var(--coral)"><span class="enhed">k<sub>cat</sub></span> <b id="f-kcat">0,87</b> <span class="enhed">s⁻¹</span></span>
         <span class="fact" style="--fc:var(--amber)">Temperaturoptimum <b>≈ 40 °C</b></span>
-        <span class="fact" style="--fc:var(--blue)">pH-optimum <b>7,0</b></span>
+        <span class="fact" style="--fc:var(--blue)"><span><span class="enhed">pH</span>-optimum</span> <b>7,0</b></span>
       </div>
     </section>
 
@@ -850,7 +851,7 @@ function syncEtiketter(){
   el('lbl-sub').textContent  = SUB + ' µM';
   el('lbl-temp').textContent = Math.round(temp) + ' °C';
   el('lbl-ph').textContent   = ph.toFixed(1).replace('.', ',');
-  elWho.textContent = ENZ + ' µM enzym · ' + (fastMode ? SUB : frieAntal()) + ' µM substrat';
+  elWho.innerHTML = ENZ + ' <span class="enhed">µM</span> enzym · ' + (fastMode ? SUB : frieAntal()) + ' <span class="enhed">µM</span> substrat';
 }
 
 /* ── Binding og frigivelse ──────────────────────────────── */
@@ -1536,7 +1537,7 @@ function opdaterUI(dt){
   el('f-km').textContent   = Math.round(km);
   el('f-kcat').textContent = komma(kc, 2);
 
-  elWho.textContent = ENZ + ' µM enzym · ' + (fastMode ? SUB : sidsteFri) + ' µM substrat';
+  elWho.innerHTML = ENZ + ' <span class="enhed">µM</span> enzym · ' + (fastMode ? SUB : sidsteFri) + ' <span class="enhed">µM</span> substrat';
 
   if (plotSnavset) tegnPlot(); else tegnMarkoer(false);
   planlaegStatus(vM, occ, fAndel);
