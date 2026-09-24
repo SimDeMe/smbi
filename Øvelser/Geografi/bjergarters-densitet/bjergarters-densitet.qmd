@@ -40,7 +40,7 @@ Lettest \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_
 ::: {.callout-note}
 ## Materialer (pr. gruppe)
 
-- Digital vægt med tarafunktion, der kan veje op til ca. 2 kg
+- En præcis vægt
 - Skål eller bægerglas med vand, stor nok til at den største sten kan hænge frit
 - Tynd snor, fx gavebånd eller fiskeline
 - Køkkenrulle
@@ -84,32 +84,46 @@ $$V_\text{sten} = \frac{m_\text{fortrængt vand}}{\rho_\text{vand}}$$
 
 $$\rho_\text{sten} = \frac{m_\text{sten}}{V_\text{sten}}$$
 
-3. Sammenlign med tabelværdien i @tbl-2, og beregn afvigelsen i procent. Brug midten af intervallet som tabelværdi:
+| Bjergart | Rumfang (cm³) | Densitet (g/cm³) |
+|:---|:-:|:-:|
+| Granit | | |
+| Basalt | | |
+| Peridotit | | |
+| Eklogit | | |
 
-$$\text{afvigelse} = \frac{\rho_\text{målt} - \rho_\text{tabel}}{\rho_\text{tabel}} \cdot 100\ \%$$
+: Jeres gruppes beregnede rumfang og densitet. {#tbl-2}
 
-| Bjergart | Rumfang (cm³) | Målt densitet (g/cm³) | Tabelværdi (g/cm³) | Afvigelse (%) |
-|:---|:-:|:-:|:-:|:-:|
-| Granit | | | 2,6–2,7 | |
-| Basalt | | | 2,9–3,0 | |
-| Peridotit | | | 3,2–3,4 | |
-| Eklogit | | | 3,4–3,6 | |
+3. Skriv jeres densiteter op på tavlen sammen med de andre gruppers, og saml hele klassens resultater i @tbl-3. Beregn gennemsnittet for hver bjergart, hvor $n$ er antallet af grupper, der har målt på den:
 
-: Beregnede værdier og sammenligning med typiske tabelværdier. {#tbl-2}
+$$\bar{\rho} = \frac{\rho_1 + \rho_2 + \dots + \rho_n}{n}$$
 
-4. Sæt de fire bjergarter i rækkefølge efter jeres målte densitet, og sammenlign med jeres hypotese.
-5. @fig-profil viser et snit fra en midtoceanisk ryg til et kontinent. Find ud af, hvilken bjergart der hører til i hvert af felterne A–D, og udfyld @tbl-3.
+| Gruppe | Granit (g/cm³) | Basalt (g/cm³) | Peridotit (g/cm³) | Eklogit (g/cm³) |
+|:-:|:-:|:-:|:-:|:-:|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| 7 | | | | |
+| 8 | | | | |
+| **Gennemsnit** | | | | |
 
-![Snit fra en midtoceanisk ryg over oceanbunden til en subduktionszone under et kontinent. Pilene viser, hvordan pladerne bevæger sig.](figurer/profil.svg){#fig-profil width="100%"}
+: Hele klassens målte densiteter. {#tbl-3}
 
-| Felt | Del af Jorden | Bjergart | Målt densitet (g/cm³) |
+4. Sæt de fire bjergarter i rækkefølge efter klassens gennemsnit, og sammenlign med jeres hypotese.
+5. @fig-profil viser et snit fra en midtoceanisk ryg til et kontinent. Find ud af, hvilken bjergart der hører til i hvert af felterne A–D, og udfyld @tbl-4.
+
+![Snit fra en midtoceanisk ryg over oceanbunden til en subduktionszone under et kontinent. Pilene viser, hvordan pladerne bevæger sig.](figurer/profil.svg){#fig-profil width="88%"}
+
+| Felt | Del af Jorden | Bjergart | Klassens gennemsnit (g/cm³) |
 |:-:|:---|:---|:-:|
 | A | | | |
 | B | | | |
 | C | | | |
 | D | | | |
 
-: Bjergarterne placeret i snittet. {#tbl-3}
+: Bjergarterne placeret i snittet. {#tbl-4}
 
 ## Journalspørgsmål
 
@@ -119,4 +133,5 @@ $$\text{afvigelse} = \frac{\rho_\text{målt} - \rho_\text{tabel}}{\rho_\text{tab
 4. De ældste bjergarter på kontinenterne er omkring 4 milliarder år gamle, mens den ældste oceanbund er under 200 millioner år gammel. Forklar forskellen ud fra jeres resultater.
 5. Kontinenterne ligger over havniveau, og oceanbunden ligger flere kilometer under. Hvordan kan forskellen i densitet være med til at forklare det?
 6. Vurdér jeres fejlkilder. Hvilke af dem giver for stor en densitet, og hvilke giver for lille? Tænk fx på luftbobler, en porøs sten, der suger vand, snoren og vægtens opløsning.
-7. Hvor godt repræsenterer én håndstor sten en hel del af Jorden? Diskutér, hvad der kunne gøre jeres resultat mere sikkert.
+7. Sammenlign jeres egne densiteter med klassens gennemsnit. Hvor meget spreder gruppernes resultater, og hvorfor er et gennemsnit af hele klassen mere pålideligt end én gruppes måling?
+8. Hvor godt repræsenterer én håndstor sten en hel del af Jorden? Diskutér, hvad der kunne gøre resultatet endnu mere sikkert.
