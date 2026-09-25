@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kompas — indstil en kurs og gå efter nålen — smbi.dk</title>
+<meta name="description" content="Drej kompashuset til en kurs, drej dig selv, til nålen ligger i orienteringspilen, og løs opgaver i at tage og følge en kurs med et pladekompas.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/geografi/kompas.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/geografi/kompas.html">
+<meta property="og:title" content="Kompas — indstil en kurs og gå efter nålen">
+<meta property="og:description" content="Drej kompashuset til en kurs, drej dig selv, til nålen ligger i orienteringspilen, og løs opgaver i at tage og følge en kurs med et pladekompas.">
+<meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — naturgeografi: simuleringer, forsøg og opgaver">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Kompas — et pladekompas set oppefra, midt i et landskab.
+   Følger smbi.dk's designskabelon (design_rules.md). Koden
+   ligger i modulerne i kompas/: kompasset, landskabet og
+   opgaverne hver for sig.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--geo);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --fig:500px;         /* figurens højdebudget — sættes af
+                          scriptet "Højdebudget" nederst */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.enhed{text-transform:none}
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);
+  backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#C7E6F6;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding-top:34px;padding-bottom:22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#9BE0F5;filter:blur(70px);opacity:.5;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:56ch}
+
+/* ── Signaturpanel: selve simuleringen ─────────────────── */
+.rig{
+  --accent:var(--geo);
+  position:relative;
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);
+  margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);
+  background:#E7F4FB;
+}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+}
+.rig-head .who{
+  margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;
+}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--accent);color:#fff;
+  transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+
+
+/* skifteknapper: Frit / Opgaver */
+.seg{display:inline-flex;gap:6px}
+
+/* figur til venstre, opgaver og instrumenter til højre */
+.rig-body{display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.side{border-left:2px solid var(--ink);display:flex;flex-direction:column}
+.side > .gauges{flex:1}
+
+/* kanvas */
+.stage{
+  /* Højdebudget: figuren må ikke blive højere end --fig. */
+  max-width:calc(var(--fig)*800/560 + 20px);margin-inline:auto;
+  position:relative;
+  padding:10px 10px 10px;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+  /* træk drejer kompasset — siden må ikke rulle imens */
+  touch-action:none;
+}
+.stage:focus-visible{outline-offset:-4px}
+canvas{
+  display:block;width:100%;height:auto;
+  border:2px solid var(--ink);border-radius:12px;
+  cursor:grab;background:#E6F2D8;
+}
+canvas.hus{cursor:alias}
+canvas.dragging{cursor:grabbing}
+
+/* ── Opgaver ───────────────────────────────────────────── */
+.opg{
+  border-bottom:2px solid var(--ink);background:#F1ECFC;
+  padding:14px 15px 15px;display:flex;flex-direction:column;gap:10px;
+}
+.opg[hidden]{display:none}
+.opg-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.opg-top .mono{font-weight:600}
+.opg-dots{display:flex;gap:6px;flex-wrap:wrap}
+.opg-dots button{
+  width:24px;height:24px;border-radius:50%;border:2px solid var(--ink);
+  background:#fff;cursor:pointer;font-family:var(--display);font-size:0.66rem;font-weight:800;
+  color:var(--ink);display:grid;place-items:center;
+}
+.opg-dots button[aria-current="step"]{background:var(--ink);color:#FFF6E0}
+.opg-dots button.loest{background:#D6EFC4}
+.opg-dots button.loest::after{content:'✓';font-size:0.62rem;margin-left:1px}
+.opg-dots button.loest[aria-current="step"]{background:#2F6E1C;color:#fff}
+.opg-txt{font-size:1.02rem;line-height:1.5;max-width:68ch}
+.opg-svar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:38px}
+.opg-svar label{font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
+.opg-svar input{
+  width:92px;font-family:var(--display);font-weight:800;font-size:1.05rem;
+  border:2px solid var(--ink);border-radius:10px;padding:5px 10px;background:#fff;
+}
+.opg-svar .hvordan{font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
+.valg{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;color:var(--ink);
+  background:#fff;border:2px solid var(--ink);border-radius:18px;padding:5px 13px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);transition:transform .12s,box-shadow .12s;
+}
+.valg:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.valg[aria-pressed="true"]{background:var(--amber);transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.opg-bund{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn{
+  font-family:var(--display);font-size:0.86rem;font-weight:800;color:var(--ink);
+  background:var(--amber);border:2px solid var(--ink);border-radius:20px;
+  padding:7px 18px;cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.hvid{background:#fff}
+.opg-nav{margin-left:auto;display:flex;gap:8px}
+.opg-fb{
+  min-height:5.8em;font-size:0.95rem;line-height:1.45;
+  border-left:5px solid transparent;padding-left:10px;
+}
+.opg-fb.ok{border-color:#2F6E1C}
+.opg-fb.nej{border-color:var(--coral)}
+.opg-fb .maerke{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;border:1.5px solid var(--ink);border-radius:10px;padding:1px 7px;margin-right:6px;
+}
+.opg-fb.ok .maerke{background:#D6EFC4}
+.opg-fb.nej .maerke{background:#FFD9C9}
+
+/* ── Instrumenter ──────────────────────────────────────── */
+.gauges{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:2px solid var(--ink);
+}
+.gauge{
+  padding:13px 15px 14px;border-left:2px solid var(--ink);
+  display:flex;flex-direction:column;gap:9px;
+}
+.gauge:first-child{border-left:none}
+.gauge dt{
+  font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;
+}
+.gauge dd{
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1.28rem;line-height:1;font-variant-numeric:tabular-nums;
+}
+.gauge dd small{font-size:0.66em;font-weight:700;color:#5A6C69;margin-left:2px}
+
+
+.g-hus{background:#E7F4FB}
+.g-naal{background:#FFF1EC}
+.g-sigt{background:#EDF8E4}
+.side .gauges{grid-template-columns:1fr;border-top:none}
+.side .gauge{border-left:none}
+.side .gauge + .gauge{border-top:2px solid var(--ink)}
+body[data-tilstand="opgaver"] .g-sigt{display:none}
+.gauge .under{font-family:var(--display);font-size:0.86rem;font-weight:700;color:#3E4E4C;line-height:1.3}
+.g-naal.ihus{background:#D6EFC4}
+
+/* ── Kontrolpanel ──────────────────────────────────────── */
+.knobs{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:18px 15px 20px;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px 26px;
+}
+.knob{display:flex;flex-direction:column;gap:7px}
+.knob-top{display:flex;align-items:baseline;gap:10px}
+.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-val{
+  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;
+  white-space:nowrap;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;
+  background:var(--track,#fff);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));
+  box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range]::-moz-range-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+
+#inp-hus{--track:linear-gradient(90deg,#17211F,#566B68,#17211F);--kc:#FFF6E0}
+#inp-retning{--track:linear-gradient(90deg,#C7E6F6,#0E86C8,#C7E6F6);--kc:var(--blue)}
+
+/* ── Fakta-fod ─────────────────────────────────────────── */
+.facts{
+  border-top:2px solid var(--ink);background:#fff;
+  padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+}
+.fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
+.fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{
+  margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px;
+}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--blue);border-color:var(--blue)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+
+/* ── Projektortilstand ─────────────────────────────────────
+   Sidens krom ryger væk, og alt der skal aflæses bagerst i
+   lokalet skaleres op. Slås til med knappen eller ?projektor=1. */
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .gauge dt{font-size:0.78rem}
+body[data-projektor="1"] .gauge dd{font-size:1.9rem}
+body[data-projektor="1"] .gauge .under{font-size:1.05rem}
+body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
+body[data-projektor="1"] .knob-val{font-size:1.05rem}
+body[data-projektor="1"] .opg-txt{font-size:1.3rem}
+body[data-projektor="1"] .opg-fb{font-size:1.15rem}
+body[data-projektor="1"] .fact{font-size:0.74rem}
+body[data-projektor="1"] .fact b{font-size:0.92rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:960px){
+  .rig-body{grid-template-columns:1fr}
+  .side{border-left:none;border-top:2px solid var(--ink)}
+  .side .gauges{grid-template-columns:repeat(3,1fr)}
+  .side .gauge + .gauge{border-top:none;border-left:2px solid var(--ink)}
+  body[data-tilstand="opgaver"] .side .gauges{grid-template-columns:1fr 1fr}
+}
+@media (max-width:700px){
+  .side .gauges,body[data-tilstand="opgaver"] .side .gauges{grid-template-columns:1fr}
+  .side .gauge + .gauge{border-left:none;border-top:2px solid var(--ink)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding-top:24px;padding-bottom:18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .knobs{grid-template-columns:1fr}
+  .gauge dd{font-size:1.1rem}
+  .opg-nav{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  .top,.foot,.btn-mini,.opg-nav,.opg-dots,#opg-tjek{display:none!important}
+  .rig{box-shadow:none}
+  .knobs{display:none}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Kompas — indstil en kurs og gå efter nålen",
+      "url": "https://smbi.dk/geografi/kompas.html",
+      "inLanguage": "da-DK",
+      "description": "Drej kompashuset til en kurs, drej dig selv, til nålen ligger i orienteringspilen, og løs opgaver i at tage og følge en kurs med et pladekompas.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {
+        "@type": "Person",
+        "name": "Simon Messell"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "smbi.dk",
+        "url": "https://smbi.dk/"
+      },
+      "image": "https://smbi.dk/img/og-geografi.png",
+      "isPartOf": {
+        "@id": "https://smbi.dk/#website"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Orientering med kompas"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Forside",
+          "item": "https://smbi.dk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Naturgeografi",
+          "item": "https://smbi.dk/geografi.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Kompas",
+          "item": "https://smbi.dk/geografi/kompas.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/geografi.html">Naturgeografi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · orientering</span>
+      <h1>Gå efter <span class="hi" style="--hc:#C7E6F6">kompasset</span></h1>
+      <p class="lead">Drej kompashuset til en kurs, og drej så dig selv, til den røde nål ligger i orienteringspilen. Så peger kursepilen den vej, du skal gå.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="seg" role="group" aria-label="Tilstand">
+          <button type="button" class="btn-mini" id="btn-fri" aria-pressed="true">Frit</button>
+          <button type="button" class="btn-mini" id="btn-opgaver" aria-pressed="false">Opgaver</button>
+        </span>
+        <span class="who">Træk i ringen: drej huset · træk udenfor: drej dig</span>
+        <button type="button" class="btn-mini" id="btn-navne" aria-pressed="false"
+                title="Vis hvad kompassets dele hedder">Navne</button>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
+                title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
+      </div>
+
+      <div class="rig-body">
+      <div class="stage" id="stage" tabindex="0" role="application"
+           aria-label="Et pladekompas set oppefra midt i et landskab med nord opad. Træk i den mørke ring for at dreje kompashuset, træk uden for ringen for at dreje dig selv. Med tastaturet: venstre og højre piletast drejer dig, op og ned drejer kompashuset. Hold Skift for 10 grader ad gangen.">
+        <canvas id="kompasCanvas" width="800" height="560"></canvas>
+      </div>
+
+      <div class="side">
+
+      <div class="opg" id="opg" hidden>
+        <div class="opg-top">
+          <span class="mono" id="opg-nr">Opgave 1 af 9</span>
+          <span class="opg-dots" id="opg-dots" role="group" aria-label="Vælg opgave"></span>
+        </div>
+        <p class="opg-txt" id="opg-txt"></p>
+        <div class="opg-svar" id="opg-svar"></div>
+        <div class="opg-bund">
+          <button type="button" class="btn" id="opg-tjek">Tjek</button>
+          <span class="opg-nav">
+            <button type="button" class="btn-mini" id="opg-forrige">← Forrige</button>
+            <button type="button" class="btn-mini" id="opg-naeste">Næste →</button>
+          </span>
+        </div>
+        <p class="opg-fb" id="opg-fb" aria-live="polite"></p>
+      </div>
+
+      <dl class="gauges">
+        <div class="gauge g-hus">
+          <dt>Gradskiven viser</dt>
+          <dd id="val-hus">0°</dd>
+          <span class="under" id="val-hus-hj">Nord</span>
+        </div>
+        <div class="gauge g-naal" id="g-naal">
+          <dt>Nål og orienteringspil</dt>
+          <dd id="val-naal">I hus</dd>
+          <span class="under" id="val-naal-hj">Du går i den kurs, huset er stillet på</span>
+        </div>
+        <div class="gauge g-sigt" id="g-sigt">
+          <dt>Kursepilen peger mod</dt>
+          <dd id="val-sigt">0°</dd>
+          <span class="under" id="val-sigt-hj">—</span>
+        </div>
+      </dl>
+      </div>
+      </div>
+
+      <div class="knobs">
+        <label class="knob" for="inp-hus">
+          <span class="knob-top"><span class="mono">Kompashuset</span><span class="knob-val" id="lbl-hus">0°</span></span>
+          <input type="range" id="inp-hus" min="0" max="359" step="1" value="0">
+        </label>
+        <label class="knob" for="inp-retning">
+          <span class="knob-top"><span class="mono">Drej dig — kursepilens retning</span><span class="knob-val" id="lbl-retning">0°</span></span>
+          <input type="range" id="inp-retning" min="0" max="359" step="1" value="0">
+        </label>
+      </div>
+
+      <div class="facts">
+        <span class="fact" style="--fc:var(--pink)">Rød i hus</span>
+        <span class="fact" style="--fc:var(--blue)">Tilbagekurs <b>kurs ± 180°</b></span>
+        <span class="fact" style="--fc:var(--slate)">Misvisning sat til <b>0°</b></span>
+      </div>
+    </section>
+
+    <!-- Kompasset tegnes 60 gange i sekundet, så aflæsningen læses op her,
+         når det har stået stille et øjeblik. -->
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Kompas</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/geografi.html">Naturgeografi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
+<script type="module" src="kompas/side.js"></script>
+
+<!-- ── Højdebudget ──────────────────────────────────────
+     Figuren blev før målt efter spaltens bredde alene, og så voksede
+     panelet ud over skærmen: figur, instrumenter og skydere kunne ikke
+     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
+     andet end figuren, og resten af skærmhøjden lægges i --fig.
+     Budgettet kan kun gøre figuren mindre — aldrig større end spalten
+     i forvejen tillod — og det rører den slet ikke, hvis panelet
+     alligevel ikke kan komme til at passe.                          -->
+<script>
+(function(){
+  const rig = document.querySelector('.rig');
+  const fig = document.querySelector('#kompasCanvas');
+  if(!rig || !fig) return;
+  const bjaelke = document.querySelector('.top');
+  const MIN = 230, MAKS = 620, LUFT = 16;
+  let sidst = 0, panel = 0, ventende = false;
+
+  function saet(h){
+    if(h === sidst) return;
+    sidst = h;
+    rig.style.setProperty('--fig', h + 'px');
+    /* Sider, der selv sætter lærredets størrelse, skal måle om. */
+    if(window.tilpasFigur) window.tilpasFigur();
+  }
+
+  function maal(){
+    /* Først slippes figuren fri: så er "alt andet end figuren" det
+       samme tal, uanset hvad budgettet gav sidste gang. Uden det ville
+       en sidespalte, der er højere end figuren, presse budgettet i bund. */
+    saet(MAKS);
+    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
+               ? bjaelke.getBoundingClientRect().height : 0;   /* den klæbende topbjælke */
+    const rum  = innerHeight - krom - LUFT;                    /* det, panelet må fylde */
+    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    const h    = Math.round(rum - fast);
+    if(h < MAKS){
+      saet(Math.max(MIN, h));
+      /* Hjalp det ikke — fx fordi en sidespalte er højere end figuren —
+         så får figuren pladsen igen. */
+      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    }
+    panel = rig.getBoundingClientRect().height;
+  }
+
+  function planlaeg(){
+    if(ventende) return;
+    ventende = true;
+    requestAnimationFrame(function(){ ventende = false; maal(); });
+  }
+
+  maal();
+  addEventListener('resize', planlaeg);
+  addEventListener('load', planlaeg);            /* moduler indlæses efter dette script */
+  if(document.fonts) document.fonts.ready.then(planlaeg);
+  /* Panelets faste dele kan skifte højde undervejs (trin, tekst, projektor).
+     Vores egne ændringer springes over — dem kender vi højden på. */
+  new ResizeObserver(function(){
+    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+  }).observe(rig);
+})();
+</script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
