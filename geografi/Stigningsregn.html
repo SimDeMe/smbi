@@ -222,14 +222,6 @@ canvas.dragging{cursor:grabbing}
   border:1.5px solid var(--ink);border-radius:12px;padding:2px 8px;flex:none;
 }
 
-.hint{
-  position:absolute;right:22px;bottom:22px;z-index:2;pointer-events:none;
-  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;
-  text-transform:uppercase;color:var(--ink);
-  background:rgba(255,249,238,.9);border:1.5px solid var(--ink);border-radius:14px;
-  padding:4px 10px;transition:opacity .3s;
-}
-.hint.gone{opacity:0}
 
 /* ── Instrumenter ──────────────────────────────────────── */
 .gauges{
@@ -423,13 +415,12 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   .knobs{grid-template-columns:1fr}
   .proc{left:16px;top:16px;padding:5px 11px 5px 9px}
   .proc-txt{font-size:0.72rem}
-  .hint{display:none}
   .gauge dd{font-size:1.1rem}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
-@media print{.top,.foot{display:none!important}}
+@media print{.top,.foot,.btn-mini{display:none!important}}
 </style>
 <script type="application/ld+json">
 {
@@ -519,18 +510,19 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
         <span class="who">Tør 1,0 <span class="enhed">°C/100 m</span> · fugtig 0,5 <span class="enhed">°C/100 m</span></span>
+        <button type="button" class="btn-mini" id="btn-afspil" aria-pressed="false"
+                title="Lad luftpakken køre hen over bjerget af sig selv">▶ Afspil</button>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
       </div>
 
       <div class="stage" id="stage" tabindex="0" role="application"
-           aria-label="Simulering: træk luftpakken hen over bjerget. Brug venstre og højre piletast til at flytte den.">
+           aria-label="Simulering: træk luftpakken hen over bjerget, eller tryk Afspil. Brug venstre og højre piletast til at flytte den.">
         <canvas id="simCanvas" width="800" height="400"></canvas>
         <div class="proc" id="proc" style="--pc:var(--slate)">
           <span class="proc-dot"></span>
           <span class="proc-txt" id="proc-txt">Start ved havet</span>
         </div>
-        <div class="hint" id="hint">Træk luftpakken →</div>
       </div>
 
       <dl class="gauges">
@@ -650,7 +642,7 @@ const animAlt  = document.getElementById('anim-alt');
 const animRain = document.getElementById('anim-rain');
 const elProc     = document.getElementById('proc');
 const elProcTxt  = document.getElementById('proc-txt');
-const elHint     = document.getElementById('hint');
+const btnAfspil  = document.getElementById('btn-afspil');
 const stage      = document.getElementById('stage');
 const inpTemp  = document.getElementById('inp-temp');
 const inpWater = document.getElementById('inp-water');
@@ -670,7 +662,9 @@ let dragX = 50;
 let isDragging = false;
 let totalRainMm = 0;
 let activeUntil = 0;         // holder "det regner ned i måleren" i gang ved tastatur-flyt
-let touched = false;
+let touched = false;          // indtil da viser luftpakken selv, at den kan trækkes
+let playing = false;         // ▶ Afspil: pakken kører selv hen over bjerget
+const AFSPIL_FART = 90;      // px pr. sekund — hele vejen over på ca. 9 s
 const reduceMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 // ── Terrænmodel (uændret) ───────────────────────────────
@@ -1010,6 +1004,49 @@ function drawParcel(state){
   }
 }
 
+// «Træk mig»: pulserende ring og pile om luftpakken, til den er rørt første gang.
+// Hintet sidder på pakken selv, så det også ses på mobil.
+function drawGrabHint(state, now){
+  const y = yOf(state.alt) - LIFT;
+  const puls = reduceMotion ? 0.5 : 0.5 + 0.5 * Math.sin(now / 260);
+  const skub = reduceMotion ? 0 : 4 * Math.sin(now / 260);
+
+  ctx.save();
+  ctx.strokeStyle = `rgba(23,33,31,${0.35 + 0.5 * puls})`;
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.arc(dragX, y, 33 + 6 * puls, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // pile: mod bjerget altid, tilbage kun når der er plads
+  ctx.fillStyle = '#17211F';
+  function pil(retning){
+    const x0 = dragX + retning * (48 + skub);
+    ctx.beginPath();
+    ctx.moveTo(x0 + retning * 14, y);
+    ctx.lineTo(x0, y - 10);
+    ctx.lineTo(x0, y + 10);
+    ctx.closePath();
+    ctx.fill();
+  }
+  pil(1);
+  if (dragX > 80) pil(-1);
+
+  // mærkat over pakken
+  ctx.font = "700 11px 'IBM Plex Mono', monospace";
+  ctx.textAlign = 'center';
+  const txt = 'TRÆK MIG';
+  const bw = ctx.measureText(txt).width + 16, by = y - 62;
+  ctx.fillStyle = '#17211F';
+  roundRect(dragX - bw / 2 + 2, by + 2, bw, 20, 10); ctx.fill();
+  ctx.fillStyle = '#FFF9EE';
+  roundRect(dragX - bw / 2, by, bw, 20, 10); ctx.fill();
+  ctx.strokeStyle = '#17211F'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#17211F';
+  ctx.fillText(txt, dragX, by + 14);
+  ctx.restore();
+}
+
 // nedbørsslør fra skybunden ned til terrænet — det er det, man ser først
 function drawVeil(x, cloudY, type){
   const half = 26;
@@ -1080,8 +1117,13 @@ function frame(now){
   const dt = Math.max(0, Math.min(0.05, (now - last) / 1000));
   last = now;
 
+  if (playing){
+    dragX = Math.min(W, dragX + AFSPIL_FART * dt);
+    if (dragX >= W) stopAfspil();
+  }
+
   const state = calculateStateAtX(dragX);
-  const active = isDragging || now < activeUntil;
+  const active = isDragging || playing || now < activeUntil;
 
   if (state.isRaining){
     const y = yOf(state.alt) - LIFT;
@@ -1100,6 +1142,7 @@ function frame(now){
   drawSplashes();
   drawCondensationLabel();
   drawParcel(state);
+  if (!touched && !playing) drawGrabHint(state, now);
   drawDrops();
 
   updateUI(state);
@@ -1235,11 +1278,25 @@ function setDragFromEvent(e){
   dragX = Math.max(0, Math.min(W, x));
   hideHint();
 }
-function hideHint(){
-  if (!touched){ touched = true; elHint.classList.add('gone'); }
+function hideHint(){ touched = true; }
+
+// ▶ Afspil — alternativ til at trække: pakken kører jævnt fra havet over bjerget
+function startAfspil(){
+  if (dragX >= W - 1) { dragX = 0; }     // står den i mål, begynder turen forfra
+  playing = true;
+  hideHint();
+  btnAfspil.textContent = '⏸ Pause';
+  btnAfspil.setAttribute('aria-pressed', 'true');
 }
+function stopAfspil(){
+  playing = false;
+  btnAfspil.textContent = dragX >= W ? '↺ Igen' : '▶ Afspil';
+  btnAfspil.setAttribute('aria-pressed', 'false');
+}
+btnAfspil.addEventListener('click', () => { playing ? stopAfspil() : startAfspil(); });
 
 canvas.addEventListener('pointerdown', e => {
+  if (playing) stopAfspil();             // eleven tager selv over
   isDragging = true;
   canvas.classList.add('dragging');
   canvas.setPointerCapture?.(e.pointerId);
@@ -1262,6 +1319,7 @@ stage.addEventListener('keydown', e => {
   else if (e.key === 'Home'){ dragX = 0; }
   else if (e.key === 'End'){ dragX = W; }
   else return;
+  if (playing) stopAfspil();
   activeUntil = performance.now() + 220;
   hideHint();
   e.preventDefault();
