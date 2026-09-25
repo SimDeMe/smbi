@@ -1,1400 +1,716 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kvindens hormoncyklus — simulering — smbi.dk</title>
-    <meta name="description" content="Dynamisk model af menstruationscyklus: følg FSH, LH, østrogen og progesteron dag for dag, og se hvad p-piller, graviditet og fortrydelsespille gør ved kurverne.">
-    <!-- Deling, ikoner og kanonisk adresse -->
-    <link rel="canonical" href="https://smbi.dk/biologi/KvindensCyklus/FinalSim.html">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="smbi.dk">
-    <meta property="og:locale" content="da_DK">
-    <meta property="og:url" content="https://smbi.dk/biologi/KvindensCyklus/FinalSim.html">
-    <meta property="og:title" content="Kvindens hormoncyklus — simulering">
-    <meta property="og:description" content="Dynamisk model af menstruationscyklus: følg FSH, LH, østrogen og progesteron dag for dag, og se hvad p-piller, graviditet og fortrydelsespille gør ved kurverne.">
-    <meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="theme-color" content="#FFF9EE">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; flex-direction: column; align-items: center; }
-        h1 { color: #2c3e50; margin-bottom: 5px; }
-        .subtitle { color: #7f8c8d; margin-bottom: 20px; font-size: 0.9em; }
-        
-        /* Layout Container */
-        .container { display: flex; gap: 20px; max-width: 1200px; }
-        
-        /* Venstre side: Anatomi */
-        .anatomy-panel { position: relative; width: 500px; height: 600px; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #ddd;}
-        canvas#anatomyCanvas { width: 100%; height: 100%; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kvindens hormoncyklus — smbi.dk</title>
+<meta name="description" content="Følg hypofysens FSH og LH, ovariets østrogen og progesteron og livmoderens slimhinde dag for dag — og se, hvad samleje, p-piller og fortrydelsespille gør ved feedbacken.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/biologi/KvindensCyklus/FinalSim.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/KvindensCyklus/FinalSim.html">
+<meta property="og:title" content="Kvindens hormoncyklus">
+<meta property="og:description" content="Følg hypofysens FSH og LH, ovariets østrogen og progesteron og livmoderens slimhinde dag for dag — og se, hvad samleje, p-piller og fortrydelsespille gør ved feedbacken.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Kvindens hormoncyklus — smbi.dk's fælles design
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;
+  --paper-2:#FFF3DC;
+  --panel:#FFFFFF;
+  --ink:#17211F;
+  --slate:#566B68;
 
-        /* Højre side: Data */
-        .data-panel { width: 500px; display: flex; flex-direction: column; gap: 20px; }
-        
-        /* Grafer */
-        .graph-box { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        canvas#graphCanvas { width: 100%; height: 200px; background: #fafafa; border: 1px solid #eee; }
+  --pink:#E8336D;
+  --blue:#0E86C8;
+  --lime:#5FB030;
+  --amber:#FFB300;
+  --grape:#7A4FD6;
+  --coral:#FF6A3D;
+  --teal:#0FA593;
 
-        /* Termometre (Søjler) */
-        .meters { display: flex; justify-content: space-around; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .meter-group { text-align: center; width: 60px; }
-        .bar-container { height: 150px; background: #e0e0e0; border-radius: 5px; position: relative; margin-bottom: 5px; overflow: hidden; }
-        .bar-fill { position: absolute; bottom: 0; width: 100%; transition: height 0.1s; }
-        
-        /* Farvekoder */
-        .color-fsh { background-color: #3498db; }
-        .color-lh { background-color: #9b59b6; }
-        .color-est { background-color: #e74c3c; }
-        .color-prog { background-color: #f1c40f; }
-        .color-hcg { background-color: #2ecc71; }
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--bio);
 
-        /* Info tekst */
-        #statusText { font-weight: bold; color: #333; min-height: 1.5em; font-size: 14px; }
-        .legend { font-size: 12px; color: #666; margin-top: 5px;}
-        .controls { margin-top: 10px; display: flex; align-items: center; gap: 15px;}
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #27ae60; color: white; border: none; border-radius: 5px; }
-        button:hover { background: #219150; }
-        button.pill-active { background: #e67e22; }
-        button.preg-active { background: #9b59b6; }
-        .day-display { font-size: 20px; font-weight: bold; color: #2c3e50; background: white; padding: 5px 15px; border-radius: 5px; border: 1px solid #ccc;}
-    </style>
-    <script type="application/ld+json">
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --fig:540px;         /* figurens højdebudget — sættes af
+                        scriptet "Højdebudget" nederst */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+
+  /* hormonernes farver — samme i figur, kurver og instrumenter */
+  --fsh:#0E86C8; --lh:#7A4FD6; --oe:#E8336D; --prog:#B07A00; --hcg:#0FA593;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+/* Enheder skrives, som de staves — versalerne i mono-mærkaterne må
+   ikke lave pmol/L om til PMOL/L eller hCG om til HCG. */
+.enhed{text-transform:none;letter-spacing:0.04em}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);
+  backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#FBD3E1;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding-top:34px;padding-bottom:22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#FBD3E1;filter:blur(70px);opacity:.65;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:66ch}
+
+/* ── Signaturpanel ─────────────────────────────────────── */
+.rig{
+  position:relative;
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);
+  margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);
+  background:#FBD3E1;
+}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+}
+.who{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A4451;
+  font-variant-numeric:tabular-nums;
+}
+.who-fase{
+  background:#fff;border:1.5px solid var(--ink);border-radius:12px;padding:1px 9px;color:var(--ink);
+}
+.spacer{margin-left:auto}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;white-space:nowrap;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--accent);color:#fff;
+  transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+
+/* ── Scenen ────────────────────────────────────────────── */
+.stage{
+  position:relative;
+  padding:10px;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+.stage-in{
+  /* Højdebudget: figuren må ikke blive højere end --fig. */
+  max-width:calc(var(--fig)*1000/520);margin-inline:auto;
+  overflow-x:auto;overflow-y:hidden;
+}
+#scene{
+  display:block;width:100%;height:auto;
+  border:2px solid var(--ink);border-radius:12px;
+  background:#fff;
+}
+.haendelse{
+  border-top:2px solid var(--ink);background:#FFE9DC;
+  padding:8px 15px;min-height:2.4em;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--ink);
+  display:flex;align-items:center;gap:9px;
+}
+.haendelse::before{
+  content:'';flex:none;width:9px;height:9px;border-radius:2px;
+  background:var(--ink);transform:rotate(45deg);
+}
+.haendelse.ny::before{animation:pulse 1s ease-in-out 3}
+
+/* figurens dele */
+.svg-mono{
+  font-family:var(--mono);font-size:9.5px;font-weight:600;
+  letter-spacing:.11em;text-transform:uppercase;fill:var(--ink);
+}
+.svg-mono.enhed{text-transform:none;letter-spacing:.04em}
+.svg-mono.lille{font-size:8px;letter-spacing:.08em;fill:var(--slate)}
+.svg-enhed{font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--slate)}
+.svg-navn{font-family:var(--display);font-weight:800;font-size:14px;fill:var(--ink)}
+.svg-tal{font-family:var(--display);font-weight:700;font-size:10.5px;font-variant-numeric:tabular-nums}
+.raekke{fill:#FCFBF7;stroke:var(--ink);stroke-width:1.5}
+.raekke-navn{fill:var(--slate)}
+.gitter{stroke:#E3E8E6;stroke-width:1}
+.akse-streg{stroke:var(--ink);stroke-width:1.5}
+.kurve{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+.slim-flade{fill:#F9C6D4;stroke:#C2185B;stroke-width:1.6;stroke-linejoin:round}
+.blod-tone{fill:#FBD3E1;opacity:.45}
+.blod-baand{stroke:#B3261E;stroke-width:1}
+.pille-aktiv{fill:var(--ink)}
+.pille-pause{fill:#fff;stroke:var(--ink);stroke-width:1.3;stroke-dasharray:3 2}
+.pille-tekst{font-size:7.5px;fill:var(--ink)}
+.pille-tekst.lys{fill:#FFF6E0}
+.saed-baand{stroke:#0E86C8;stroke-width:1}
+.aeg-baand{fill:#FFD9C9;stroke:#FF6A3D;stroke-width:1.3}
+.maerke{fill:#0E86C8;stroke:var(--ink);stroke-width:1}
+.follikel-glyf{fill:#FFF3DC;stroke:var(--ink);stroke-width:1.4}
+.gul-glyf{fill:#FFD54F;stroke:var(--ink);stroke-width:1.4}
+.aeg-glyf{fill:#FF6A3D;stroke:var(--ink);stroke-width:.8}
+.maerke-linje{stroke:var(--ink);stroke-width:1.3;stroke-dasharray:4 3}
+.maerke-linje.fortryd{stroke:var(--grape)}
+.maerkat rect{fill:#fff;stroke:var(--ink);stroke-width:1.2}
+.maerkat text{font-size:8px}
+.nu-linje{stroke:var(--ink);stroke-width:2}
+.nu-skilt{fill:var(--ink)}
+.nu-tekst{fill:#FFF6E0;font-size:8.5px}
+.skillelinje{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 4}
+
+.kasse{fill:#fff;stroke:var(--ink);stroke-width:2}
+.ovarie{fill:#FDE6D8;stroke:var(--ink);stroke-width:2}
+.follikel{fill:#FFF9EE;stroke:var(--ink);stroke-width:1.8}
+.aeg{fill:#FF6A3D;stroke:var(--ink);stroke-width:1.2}
+.aeg.vandrer{transition:opacity .3s}
+.aeg.befrugtet{fill:#FFB300}
+.gul{fill:#FFD54F;stroke:var(--ink);stroke-width:1.8}
+.aeggeleder{fill:none;stroke:#F2B8A2;stroke-width:11;stroke-linecap:round}
+.saed{fill:#0E86C8}
+.livmoder{fill:#F2B8A2;stroke:var(--ink);stroke-width:2}
+.slimhinde{fill:#E57399}
+.hulrum{fill:#FFF9EE;stroke:#B3265E;stroke-width:1}
+.foster circle{fill:#FFB300;stroke:var(--ink);stroke-width:1.5}
+.foster .kerne{fill:#fff;stroke:none}
+.draabe{fill:#B3261E}
+.strom-bane{fill:none;opacity:.16;stroke-linecap:round}
+.strom-flyd{fill:none;stroke-dasharray:1.5 7;stroke-linecap:round}
+.strom-navn{font-size:9px}
+.feedback{fill:none;stroke-linejoin:round}
+.feedback.neg{stroke:var(--ink)}
+.feedback.pos{stroke:#B9C5C2;stroke-width:1.5;stroke-dasharray:5 4}
+.feedback.pos.aktiv{stroke:var(--lime);stroke-width:5;stroke-dasharray:none}
+.fb-pil.neg{fill:var(--ink)}
+.fb-pil.pos{fill:#B9C5C2}
+.fb-pil.pos.aktiv{fill:var(--lime)}
+.fb-skilt circle{fill:#fff;stroke:var(--ink);stroke-width:2}
+.fb-skilt.aktiv circle{fill:#D6EFC4}
+.fb-tekst{font-size:8.5px;fill:var(--slate)}
+.fb-tekst.aktiv{fill:var(--ink)}
+.synt rect{fill:#E2D6F8;stroke:var(--grape);stroke-width:2}
+.synt text{font-size:8.5px}
+.synt-pil{stroke:var(--grape);stroke-width:3}
+
+/* ── Instrumenter ──────────────────────────────────────── */
+.gauges{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  border-top:2px solid var(--ink);
+}
+.gauge{
+  padding:12px 14px 13px;border-left:2px solid var(--ink);
+  display:flex;flex-direction:column;gap:8px;
+}
+.gauge:first-child{border-left:none}
+.g-hyp{background:#E7F4FB}
+.g-ov{background:#FFF1EC}
+.g-hcg{background:#EDF8E4}
+.gauge dt{
+  font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;display:flex;align-items:center;gap:7px;
+}
+.gauge dt svg{flex:none}
+.gauge dd{
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1.28rem;line-height:1.1;font-variant-numeric:tabular-nums;
+}
+.gauge dd small{font-size:0.6em;font-weight:700;color:#5A6C69;margin-left:4px;text-transform:none}
+.col{
+  position:relative;width:100%;height:14px;
+  border:2px solid var(--ink);border-radius:9px;overflow:hidden;
+  background:
+    repeating-linear-gradient(90deg,rgba(23,33,31,.09) 0 1.5px,transparent 1.5px 20%),
+    #fff;
+}
+.col i{
+  position:absolute;left:0;bottom:0;top:0;display:block;
+  background:var(--cc);width:0%;
+  border-right:2px solid var(--ink);
+}
+.test{
+  font-family:var(--mono);font-size:0.55rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  border:1.5px solid var(--ink);border-radius:10px;padding:0 7px;margin-left:6px;background:#fff;
+  vertical-align:middle;
+}
+.test[data-pos="true"]{background:var(--ink);color:#FFF6E0}
+
+/* ── Kontrolpanel ──────────────────────────────────────── */
+.knobs{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:16px 15px 18px;
+  display:grid;grid-template-columns:1fr 2fr;gap:18px 26px;align-items:start;
+}
+.knob{display:flex;flex-direction:column;gap:7px}
+.knob-top{display:flex;align-items:baseline;gap:10px}
+.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-val{
+  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;
+  white-space:nowrap;
+}
+.knob-val small{font-size:0.7em;font-weight:700;color:#5A6C69;margin-left:3px}
+.indgreb{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  font-family:var(--display);font-size:0.86rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:8px 16px;border-radius:22px;cursor:pointer;
+  box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn[aria-pressed="true"]{background:var(--ink);color:#FFF6E0}
+.btn small{font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:.08em;margin-left:5px;opacity:.75}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;
+  background:var(--track,#fff);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));
+  box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range]::-moz-range-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+#slider-tempo{--track:linear-gradient(90deg,#FFF3DC,#FBD3E1,#E8336D);--kc:var(--pink)}
+
+/* ── Signaturforklaring ────────────────────────────────── */
+.facts{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  padding:12px 15px;border-top:2px solid var(--ink);background:#fff;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:4px 12px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+}
+.fact svg{display:block;overflow:visible}
+
+/* ── Projektortilstand ─────────────────────────────────── */
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .who{font-size:0.8rem}
+body[data-projektor="1"] .gauge{padding:9px 14px 10px;gap:6px}
+body[data-projektor="1"] .gauge dt{font-size:0.7rem}
+body[data-projektor="1"] .gauge dd{font-size:1.6rem}
+body[data-projektor="1"] .knobs{padding:10px 15px 12px}
+body[data-projektor="1"] .btn{font-size:1rem;padding:6px 14px}
+body[data-projektor="1"] .facts{padding:8px 15px}
+body[data-projektor="1"] .fact{font-size:0.7rem;padding:2px 11px}
+body[data-projektor="1"] .haendelse{font-size:0.8rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:960px){
+  .gauges{grid-template-columns:repeat(3,1fr)}
+  .gauge:nth-child(4){border-left:none}
+  .gauge:nth-child(n+4){border-top:2px solid var(--ink)}
+  .knobs{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  #scene{min-width:760px}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding-top:24px;padding-bottom:18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .knobs{padding:16px}
+  .gauges{grid-template-columns:1fr 1fr}
+  .gauge{border-left:none!important;border-top:2px solid var(--ink)}
+  .gauge:nth-child(even){border-left:2px solid var(--ink)!important}
+  .gauge:nth-child(-n+2){border-top:none}
+  .gauge dd{font-size:1.1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  .top,.foot,.rig-head .btn-mini,.knobs{display:none!important}
+  .rig{box-shadow:none}
+}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--pink);border-color:var(--pink)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "LearningResource",
+      "name": "Kvindens hormoncyklus",
+      "url": "https://smbi.dk/biologi/KvindensCyklus/FinalSim.html",
+      "inLanguage": "da-DK",
+      "description": "Følg hypofysens FSH og LH, ovariets østrogen og progesteron og livmoderens slimhinde dag for dag — og se, hvad samleje, p-piller og fortrydelsespille gør ved feedbacken.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {
+        "@type": "Person",
+        "name": "Simon Messell"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "smbi.dk",
+        "url": "https://smbi.dk/"
+      },
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": {
+        "@id": "https://smbi.dk/#website"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Menstruationscyklus og hormoner"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
         {
-          "@type": "LearningResource",
-          "name": "Kvindens hormoncyklus — simulering",
-          "url": "https://smbi.dk/biologi/KvindensCyklus/FinalSim.html",
-          "inLanguage": "da-DK",
-          "description": "Dynamisk model af menstruationscyklus: følg FSH, LH, østrogen og progesteron dag for dag, og se hvad p-piller, graviditet og fortrydelsespille gør ved kurverne.",
-          "learningResourceType": "interaktiv simulering",
-          "educationalLevel": "Gymnasialt niveau (stx, hf)",
-          "isAccessibleForFree": true,
-          "author": {
-            "@type": "Person",
-            "name": "Simon Messell"
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "smbi.dk",
-            "url": "https://smbi.dk/"
-          },
-          "image": "https://smbi.dk/img/og-biologi.png",
-          "isPartOf": {
-            "@id": "https://smbi.dk/#website"
-          },
-          "about": {
-            "@type": "Thing",
-            "name": "Menstruationscyklus og hormoner"
-          }
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Forside",
+          "item": "https://smbi.dk/"
         },
         {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Forside",
-              "item": "https://smbi.dk/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Biologi",
-              "item": "https://smbi.dk/biologi.html"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Kvindens hormoncyklus — simulering",
-              "item": "https://smbi.dk/biologi/KvindensCyklus/FinalSim.html"
-            }
-          ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Biologi",
+          "item": "https://smbi.dk/biologi.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Kvindens hormoncyklus",
+          "item": "https://smbi.dk/biologi/KvindensCyklus/FinalSim.html"
         }
       ]
     }
-    </script>
+  ]
+}
+</script>
 </head>
 <body>
-<!-- smbi hjem-knap -->
-<a href="/" class="smbi-home" aria-label="Til forsiden" title="Til forsiden">
-<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-<span>Hjem</span>
-</a>
-<style>
-.smbi-home{position:fixed;top:14px;left:14px;z-index:2147483000;display:inline-flex;align-items:center;gap:6px;padding:8px 13px;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:#F5F0E8;background:#1C2E44;border:1px solid #2E4A6A;border-radius:999px;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.28);opacity:.9;transition:opacity .15s,transform .15s}
-.smbi-home:hover{opacity:1;transform:translateY(-1px)}
-.smbi-home svg{flex:none}
-@media print{.smbi-home{display:none!important}}
-</style>
-<script>(function(){try{if(window.top!==window.self){var e=document.querySelector(".smbi-home");if(e)e.style.display="none";}}catch(x){}})();</script>
 
-
-    <h1>Simulering: Kvindens Hormoncyklus</h1>
-    <div class="subtitle">Dynamisk model med feedback & partikler</div>
-    
-    <div class="controls">
-        <button id="playButton" onclick="togglePause()">Start</button>
-        <button onclick="resetSim()">Nulstil</button>
-        <button id="pillButton" onclick="togglePill()">Tag P-pille</button>
-        <button id="pregButton" onclick="togglePregnancy()">Ønsker Graviditet</button>
-        <button onclick="haveSex()" style="background-color: #e84393;">Ha' Sex</button>
-        <button onclick="takeMorningAfterPill()" style="background-color: #c0392b;">Fortrydelsespille</button>
-        <button onclick="exportData()">Gem Data (CSV)</button>
-        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-            <small>Tempo: <span id="speedDisplay">1.0x</span></small>
-            <input id="speedSlider" type="range" min="-1.3" max="1.3" step="0.1" value="0" style="width: 100px;" oninput="setSpeed(this.value)">
-        </div>
-        <div class="day-display">Dag i cyklus: <span id="dayDisplay">1.0</span></div>
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
     </div>
+  </div>
+</header>
 
-    <div class="container">
-        <div class="anatomy-panel">
-            <canvas id="anatomyCanvas" width="500" height="600"></canvas>
-        </div>
-
-        <div class="data-panel">
-            <div class="graph-box">
-                <div id="statusText">Systemet er klar. Tryk Start.</div>
-            </div>
-
-            <div class="graph-box" style="padding: 5px;">
-                <canvas id="diagramCanvas" width="460" height="150"></canvas>
-            </div>
-
-            <div class="meters">
-                <div class="meter-group">
-                    <div class="bar-container"><div id="bar-fsh" class="bar-fill color-fsh" style="height: 0%;"></div></div>
-                    <small>FSH</small>
-                </div>
-                <div class="meter-group">
-                    <div class="bar-container"><div id="bar-lh" class="bar-fill color-lh" style="height: 0%;"></div></div>
-                    <small>LH</small>
-                </div>
-                <div class="meter-group">
-                    <div class="bar-container"><div id="bar-est" class="bar-fill color-est" style="height: 0%;"></div></div>
-                    <small>Østrogen</small>
-                </div>
-                <div class="meter-group">
-                    <div class="bar-container"><div id="bar-prog" class="bar-fill color-prog" style="height: 0%;"></div></div>
-                    <small>Progest.</small>
-                </div>
-                <div class="meter-group">
-                    <div class="bar-container"><div id="bar-hcg" class="bar-fill color-hcg" style="height: 0%;"></div></div>
-                    <small>hCG</small>
-                </div>
-            </div>
-
-            <div class="graph-box">
-                <canvas id="graphCanvas" width="460" height="200"></canvas>
-                <div class="legend">
-                    <span style="color:#3498db">■ FSH</span> &nbsp; 
-                    <span style="color:#9b59b6">■ LH</span> &nbsp; 
-                    <span style="color:#e74c3c">■ Østrogen</span> &nbsp; 
-                    <span style="color:#f1c40f">■ Progesteron</span>
-                </div>
-            </div>
-        </div>
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Biologi B · hormoner</span>
+      <h1>Kvindens <span class="hi" style="--hc:#FBD3E1">hormoncyklus</span></h1>
+      <p class="lead">Følg hypofysens FSH og LH, ovariets østrogen og progesteron og slimhinden i livmoderen dag for dag — og se, hvad samleje, p-piller og en fortrydelsespille gør ved feedbacken.</p>
     </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig" aria-label="Simulering af kvindens hormoncyklus">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
+        <span class="who" id="who-dag">Cyklus 1 · dag 1</span>
+        <span class="who who-fase" id="who-fase">menstruation</span>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" id="btn-start" aria-pressed="false">Start</button>
+        <button type="button" class="btn-mini" id="btn-dag" title="Gå et døgn frem">+1 døgn</button>
+        <button type="button" class="btn-mini" id="btn-nulstil" title="Tilbage til dag 1 uden indgreb">Nulstil</button>
+        <button type="button" class="btn-mini" id="btn-csv" title="Hent kurverne som regneark">Gem data (CSV)</button>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
+                title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
+      </div>
+
+      <div class="stage">
+        <div class="stage-in">
+          <svg id="scene" viewBox="0 0 1000 520" role="img"
+               aria-labelledby="scene-titel scene-desc">
+            <title id="scene-titel">Hormonaksen og kurverne over cyklussen</title>
+            <desc id="scene-desc">Til venstre: hypothalamus og hypofysen sender FSH og LH ned til ovariet, hvor en follikel vokser og bliver til et gult legeme. Ovariet sender østrogen og progesteron videre til livmoderens slimhinde og tilbage op til hypofysen som negativ og positiv feedback. Til højre: fire kurver over de seneste 42 døgn — FSH og LH, folliklen og det gule legeme, østradiol og progesteron, og slimhindens tykkelse med blødningerne.</desc>
+            <line x1="392" x2="392" y1="14" y2="506" class="skillelinje"/>
+          </svg>
+        </div>
+      </div>
+      <p class="haendelse" id="haendelse" aria-hidden="true"></p>
+
+      <dl class="gauges">
+        <div class="gauge g-hyp">
+          <dt><svg width="22" height="6" aria-hidden="true"><line x1="0" x2="22" y1="3" y2="3" stroke="var(--fsh)" stroke-width="2.6"/></svg>FSH · hypofysen</dt>
+          <div class="col"><i id="bar-fsh" style="--cc:#9BD7F3"></i></div>
+          <dd><span id="val-fsh">0</span><small>IU/L</small></dd>
+        </div>
+        <div class="gauge g-hyp">
+          <dt><svg width="22" height="6" aria-hidden="true"><line x1="0" x2="22" y1="3" y2="3" stroke="var(--lh)" stroke-width="2.6" stroke-dasharray="9 5"/></svg>LH · hypofysen</dt>
+          <div class="col"><i id="bar-lh" style="--cc:#C6AEF0"></i></div>
+          <dd><span id="val-lh">0</span><small>IU/L</small></dd>
+        </div>
+        <div class="gauge g-ov">
+          <dt><svg width="22" height="6" aria-hidden="true"><line x1="0" x2="22" y1="3" y2="3" stroke="var(--oe)" stroke-width="2.6"/></svg>Østradiol · ovariet</dt>
+          <div class="col"><i id="bar-oe" style="--cc:#F7A3BE"></i></div>
+          <dd><span id="val-oe">0</span><small>pmol/L</small></dd>
+        </div>
+        <div class="gauge g-ov">
+          <dt><svg width="22" height="6" aria-hidden="true"><line x1="0" x2="22" y1="3" y2="3" stroke="var(--prog)" stroke-width="2.6" stroke-dasharray="11 4 2 4"/></svg>Progesteron · ovariet</dt>
+          <div class="col"><i id="bar-prog" style="--cc:#FFD54F"></i></div>
+          <dd><span id="val-prog">0</span><small>nmol/L</small></dd>
+        </div>
+        <div class="gauge g-hcg">
+          <dt><svg width="22" height="6" aria-hidden="true"><line x1="0" x2="22" y1="3" y2="3" stroke="var(--hcg)" stroke-width="2.6" stroke-dasharray="2 4" stroke-linecap="round"/></svg><span><span class="enhed">hCG</span> · fostret</span></dt>
+          <div class="col" title="Logaritmisk søjle"><i id="bar-hcg" style="--cc:#8FE0C8"></i></div>
+          <dd><span id="val-hcg">0</span><small>IU/L</small><span class="test" id="hcg-test" data-pos="false">negativ</span></dd>
+        </div>
+      </dl>
+
+      <div class="knobs">
+        <label class="knob" for="slider-tempo">
+          <span class="knob-top"><span class="mono">Tempo</span><span class="knob-val"><span id="val-tempo">1,5</span><small>døgn/s</small></span></span>
+          <input type="range" id="slider-tempo" min="-2" max="3" step="0.25" value="0.585">
+        </label>
+        <div class="knob" role="group" aria-labelledby="indgreb-navn">
+          <span class="knob-top"><span class="mono" id="indgreb-navn">Indgreb</span></span>
+          <div class="indgreb">
+            <button type="button" class="btn" id="btn-samleje">Samleje<small>sædceller i 5 døgn</small></button>
+            <button type="button" class="btn" id="btn-fortryd">Fortrydelsespille</button>
+            <button type="button" class="btn" id="btn-pille" aria-pressed="false">P-piller<small>21 + 7</small></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="facts" aria-label="Signaturforklaring">
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><circle cx="11" cy="6" r="5.5" fill="#FFF3DC" stroke="#17211F" stroke-width="1.4"/><circle cx="9" cy="5" r="1.8" fill="#FF6A3D"/></svg>Follikel</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><circle cx="11" cy="6" r="5.5" fill="#FFD54F" stroke="#17211F" stroke-width="1.4"/></svg>Gult legeme</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><rect x="1" y="1" width="20" height="10" fill="url(#fakta-blod)" stroke="#B3261E"/><defs><pattern id="fakta-blod" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#FBD3E1"/><line x1="0" y1="0" x2="0" y2="5" stroke="#B3261E" stroke-width="2"/></pattern></defs></svg>Blødning</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><rect x="1" y="1" width="20" height="10" fill="#C7E6F6" stroke="#0E86C8"/><path d="M1,11 l-4,6 h8z" fill="#0E86C8"/></svg>Sædceller i live</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><rect x="1" y="1" width="20" height="10" fill="#FFD9C9" stroke="#FF6A3D"/></svg>Æg i live</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><path d="M1,6 H21" stroke="#5FB030" stroke-width="4"/></svg>+ positiv feedback</span>
+        <span class="fact"><svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true"><path d="M1,6 H21" stroke="#17211F" stroke-width="3"/></svg>− negativ feedback</span>
+      </div>
+    </section>
+
+    <!-- Instrumenterne opdateres mange gange i sekundet og kan derfor ikke
+         selv være aria-live. Hændelserne (ægløsning, menstruation …) læses
+         op her i stedet. -->
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Kvindens hormoncyklus · FSH, LH, østrogen og progesteron</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="side.js"></script>
 
 <script>
-    // --- GRAFIK SETUP ---
-    const anatomyCanvas = document.getElementById('anatomyCanvas');
-    const actx = anatomyCanvas.getContext('2d');
-    const bgImage = new Image();
-    bgImage.src = 'anatomi.png'; 
-    
-    const graphCanvas = document.getElementById('graphCanvas');
-    const gctx = graphCanvas.getContext('2d');
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
 
-    const diagramCanvas = document.getElementById('diagramCanvas');
-    const dctx = diagramCanvas.getContext('2d');
-    
-    // --- KONFIGURATION AF MODEL ---
-    const config = {
-        dt: 0.05, 
-        clearance: { fsh: 0.05, lh: 0.15, est: 0.05, prog: 0.05 }, // FSH clearance sat ned igen
-        ovulationThreshold: 40, 
-        estrogenTrigger: 25     
-    };
+<!-- ── Højdebudget ──────────────────────────────────────
+     Figuren følger spaltens bredde, og i en bred spalte ville panelet
+     vokse ud over skærmen: figur, instrumenter og knapper kunne ikke
+     ses på én gang. Her måles, hvad panelet bruger til alt andet end
+     figuren, og resten af skærmhøjden lægges i --fig. Budgettet kan
+     kun gøre figuren mindre, og det giver op, hvis panelet alligevel
+     ikke kan komme til at passe.                                  -->
+<script>
+(function(){
+  const rig = document.querySelector('.rig');
+  const fig = document.querySelector('#scene');
+  if(!rig || !fig) return;
+  const bjaelke = document.querySelector('.top');
+  const MIN = 280, MAKS = 620, LUFT = 16;
+  let sidst = 0, panel = 0, ventende = false;
 
-    // --- TILSTAND (State) ---
-    let sim = {
-        time: 1.0,           
-        cycleDay: 1.0,     
-        fsh: 6, lh: 3, est: 5, prog: 0,
-        follicleSize: 1,   
-        clSize: 0,         
-        hasOvulated: false,
-        paused: true,
-        onPill: false,
-        pillDay: 0,        // Tæller dage i p-pille pakken (1-28)
-        isMenstruating: false,
-        wantPregnancy: false, // Brugerens ønske
-        isPregnant: false,    // Faktisk tilstand
-        conceptionTime: 0,    // Tidspunkt for befrugtning
-        hcg: 0,               // Graviditetshormon
-        lastSexTime: -100,    // Tidspunkt for seneste samleje
-        ovulationTime: 0,     // Tidspunkt for ægløsning
-        speed: 1,             // Simulationshastighed
-        speedAccumulator: 0   // Til at håndtere hastigheder under 1x
-    };
+  function saet(h){
+    if(h === sidst) return;
+    sidst = h;
+    rig.style.setProperty('--fig', h + 'px');
+    if(window.tilpasFigur) window.tilpasFigur();
+  }
 
-    // Data til grafen (Rullende)
-    let historyData = { time: [], fsh: [], lh: [], est: [], prog: [] };
-
-    // --- PARTIKEL SYSTEM (HER ER PARTIKLERNE!) ---
-    let particles = []; 
-    class Particle {
-        constructor(x, y, color, direction) {
-            this.x = x; this.y = y; this.color = color;
-            this.vx = (Math.random() - 0.5) * 4; 
-            this.vy = direction * (1 + Math.random()); 
-            this.life = 1.0; 
-            this.decay = 0.01 + Math.random() * 0.02; 
-        }
-        update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
-        draw(ctx) {
-            ctx.globalAlpha = this.life; ctx.beginPath();
-            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2); 
-            ctx.fillStyle = this.color; ctx.fill(); ctx.globalAlpha = 1.0; 
-        }
+  function maal(){
+    saet(MAKS);
+    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
+               ? bjaelke.getBoundingClientRect().height : 0;
+    const rum  = innerHeight - krom - LUFT;
+    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    const h    = Math.round(rum - fast);
+    if(h < MAKS){
+      saet(Math.max(MIN, h));
+      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
     }
+    panel = rig.getBoundingClientRect().height;
+  }
 
-    // --- HOVED MOTOR (Matematik) ---
-    function updateModel() {
-        if (sim.paused) return;
+  function planlaeg(){
+    if(ventende) return;
+    ventende = true;
+    requestAnimationFrame(function(){ ventende = false; maal(); });
+  }
 
-        // --- P-PILLE LOGIK (21 dage aktiv / 7 dage pause) ---
-        let pillEst = 0;
-        let pillProg = 0;
-
-        if (sim.onPill) {
-            sim.pillDay += config.dt;
-            if (sim.pillDay > 28) sim.pillDay = 1; // Start ny pakke
-
-            if (sim.pillDay <= 21) {
-                // Aktive piller
-                pillEst = 25;  // Endnu mere østrogen for at sikre suppression
-                pillProg = 30; // Meget højt progesteron for at blokere alt totalt
-                document.getElementById('statusText').innerText = `P-pille: Aktiv (Dag ${Math.floor(sim.pillDay)}/21)`;
-            } else {
-                // Pause uge (Ingen hormoner -> Blødning)
-                document.getElementById('statusText').innerText = `P-pille: Pause (Dag ${Math.floor(sim.pillDay-21)}/7)`;
-            }
-        } else {
-            sim.pillDay = 0;
-        }
-
-        // Feedback Loops
-        let inhibition = 1 / (1 + (sim.est * 0.10) + (sim.prog * 3.0)); 
-        let positiveFeedback = 0;
-        if (sim.est > config.estrogenTrigger && sim.prog < 2) {
-            positiveFeedback = (sim.est - config.estrogenTrigger) * 2.0; 
-        }
-
-        // Hormon beregninger
-        let fshProd = 1.8 * inhibition; // Tilbage til normal hastighed
-        if (sim.prog < 1 && sim.clSize < 2 && sim.hasOvulated) fshProd += 2.0; 
-        let fshChange = (fshProd - (sim.fsh * config.clearance.fsh)) * config.dt;
-
-        let lhProd = (1.0 * inhibition) + positiveFeedback;
-        let lhChange = (lhProd - (sim.lh * config.clearance.lh)) * config.dt;
-
-        // Biologi
-        if (!sim.hasOvulated) {
-            // Hvis FSH er lav (pga p-piller), skal folliklen skrumpe (atresi)
-            // Vi dæmper væksthastigheden under p-pille kur (også i pausen), da ovarierne er undertrykte
-            let growthSpeed = sim.onPill ? 0.02 : 0.08; 
-            let growth = (sim.fsh > 3.0) ? sim.fsh * growthSpeed : -5.0; 
-            sim.follicleSize += growth * config.dt;
-            if (sim.follicleSize < 1) sim.follicleSize = 1;
-
-            let targetEst = Math.max(sim.follicleSize * 3.5, pillEst); // P-pille sætter bundniveau
-            sim.est += (targetEst - sim.est) * 0.5 * config.dt; 
-            document.getElementById('statusText').innerText = "Fase: Follikulær (Østrogen stiger, Follikel vokser)";
-        }
-
-        if (!sim.hasOvulated && sim.lh > config.ovulationThreshold) {
-            sim.hasOvulated = true;
-            sim.ovulationTime = sim.time; // Gem tidspunktet for ægløsning
-            sim.follicleSize = 0; sim.clSize = 10; sim.est = 10; // Dykker efter ægløsning
-            document.getElementById('statusText').innerText = "HÆNDELSE: ÆGLØSNING!";
-        }
-
-        if (sim.hasOvulated) {
-            // Tjek for befrugtning
-            // 1. Hvis man aktivt ønsker det (Guddommelig indgriben)
-            // 2. ELLER hvis der er levende sperm (sex inden for 3 dage) OG ægget er levende (< 1 dag gammelt)
-            let spermActive = (sim.time - sim.lastSexTime) <= 3.0;
-            let eggViable = (sim.time - sim.ovulationTime) <= 1.0;
-
-            if (!sim.isPregnant) {
-                if (sim.wantPregnancy || (spermActive && eggViable)) {
-                    sim.isPregnant = true;
-                    sim.conceptionTime = sim.time;
-                    if(spermActive) document.getElementById('statusText').innerText = "BEFRUGTNING: Sperm mødte ægget!";
-                }
-            }
-
-            if (sim.isPregnant) {
-                // hCG stiger når man er gravid (produceres af fosteret)
-                let embryoAge = sim.time - sim.conceptionTime;
-                sim.hcg = Math.min(embryoAge * 5, 50); // Stiger op til max 50
-
-                document.getElementById('statusText').innerText = "GRAVID: hCG bevarer det gule legeme -> Ingen menstruation!";
-                // Det gule legeme dør IKKE, men holdes i live af hCG
-                if (sim.clSize < 10) sim.clSize += 0.5 * config.dt;
-                
-                // Hormoner holdes høje og stabile
-                let targetProg = 25; 
-                sim.prog += (targetProg - sim.prog) * 0.2 * config.dt;
-                let targetEst = 15;
-                sim.est += (targetEst - sim.est) * 0.1 * config.dt;
-            } else {
-                // Normal cyklus: Det gule legeme dør
-                document.getElementById('statusText').innerText = "Fase: Luteal (Progesteron dominerer)";
-                sim.clSize -= 0.8 * config.dt; 
-                if (sim.clSize <= 0) {
-                    startNewCycle(); // Starter forfra (Menstruation)
-                } else {
-                    let targetProg = Math.max(sim.clSize * 1.5, pillProg);
-                    let progSpeed = sim.onPill ? 5.0 : 0.2; 
-                    sim.prog += (targetProg - sim.prog) * progSpeed * config.dt;
-                    let targetEst = Math.max(sim.clSize * 0.8, pillEst);
-                    sim.est += (targetEst - sim.est) * 0.1 * config.dt;
-                }
-            }
-        } else {
-            // Ingen CL: Progesteron falder mod 0 (eller mod p-pille niveau)
-            let progSpeed = sim.onPill ? 5.0 : 0.3; // Endnu hurtigere optagelse
-            sim.prog += (pillProg - sim.prog) * progSpeed * config.dt;
-            sim.hcg = 0; 
-        }
-
-        sim.fsh += fshChange; sim.lh += lhChange;
-        if(sim.fsh < 0) sim.fsh = 0; if(sim.lh < 0) sim.lh = 0; if(sim.est < 0) sim.est = 0;
-
-        sim.time += config.dt; sim.cycleDay += config.dt;
-
-        // --- MENSTRUATION STATUS ---
-        sim.isMenstruating = false;
-        if (!sim.isPregnant) { // Ingen menstruation hvis gravid!
-            if (sim.onPill) {
-                // På p-piller: Blødning i slutningen af pausen
-                if (sim.pillDay > 23) sim.isMenstruating = true;
-            } else {
-                // Normal cyklus: Dag 1-5
-                if (sim.cycleDay <= 5) sim.isMenstruating = true;
-            }
-        }
-
-        // Gem data
-        if (Math.floor(sim.time * 10) % 5 === 0) {
-            historyData.time.push(sim.time);
-            historyData.fsh.push(sim.fsh); historyData.lh.push(sim.lh);
-            historyData.est.push(sim.est); historyData.prog.push(sim.prog);
-        }
-    }
-
-    function startNewCycle() {
-        sim.clSize = 0; sim.hasOvulated = false; sim.follicleSize = 1;
-        sim.cycleDay = 1.0;
-        // Vi beholder historyData for at grafen kan rulle
-    }
-
-    // --- TEGNING AF ANATOMI & PARTIKLER ---
-    function drawAnatomy() {
-        actx.clearRect(0, 0, 500, 600);
-        if (bgImage.complete) actx.drawImage(bgImage, 0, 0, 500, 600);
-        
-        // Variabler til position (så vi kan bruge dem til partikler også)
-        let follicleX = 145;
-        let follicleY = 400;
-
-        // Tegn Anatomi
-        if (!sim.hasOvulated) {
-            // Beregn position: Bevægelse fra 400 -> 465 i en bue
-            let progress = (sim.follicleSize - 1) / 9.0; // Antager max str ca 10
-            if (progress < 0) progress = 0;
-            if (progress > 1) progress = 1;
-            
-            follicleX = 145 + Math.sin(progress * Math.PI) * 30; // Buer ud til siden
-            follicleY = 400 + (progress * 65); // Bevæger sig nedad
-
-            let radius = sim.follicleSize * 2.5; 
-            actx.beginPath(); actx.arc(follicleX, follicleY, radius, 0, Math.PI*2);
-            actx.fillStyle = "white"; actx.shadowBlur=10; actx.shadowColor="white"; actx.fill();
-            actx.shadowBlur=0; actx.strokeStyle="#333"; actx.stroke();
-        } else {
-            // Efter ægløsning er vi ved det gule legeme (465)
-            follicleX = 145; follicleY = 465;
-            let radius = sim.clSize * 4; 
-            actx.beginPath(); actx.arc(145, 465, radius, 0, Math.PI*2);
-            actx.fillStyle="#f1c40f"; actx.fill(); actx.stroke();
-        }
-
-        // Tegn Æg (Animation)
-        if (sim.hasOvulated && sim.clSize > 8) {
-            let travel = (10 - sim.clSize) / 2; 
-            let ex = 140 + (travel * 100); let ey = 465 - (travel * 80);
-            actx.beginPath(); actx.arc(ex, ey, 6, 0, Math.PI*2);
-            actx.fillStyle = "#e74c3c"; actx.fill(); actx.stroke();
-        }
-
-        // Graviditet (Embryo i livmoderen)
-        if (sim.isPregnant) {
-            let embryoAge = sim.time - sim.conceptionTime;
-            let embryoSize = Math.min(embryoAge * 0.8 + 2, 20); // Vokser langsomt
-            
-            // Tegn embryo i livmoderen (samme sted som blodet kom fra)
-            actx.beginPath(); actx.arc(307, 460, embryoSize, 0, Math.PI*2);
-            actx.fillStyle = "#e67e22"; actx.fill(); actx.strokeStyle = "#fff"; actx.stroke();
-
-            // hCG partikler fra embryo (Grønne)
-            if (!sim.paused) spawnParticles(307, 460, sim.hcg, "#2ecc71", -1);
-        }
-
-        // Menstruation (Blod)
-        if (sim.isMenstruating && !sim.paused) {
-            // Spawn røde partikler fra livmoderen (ca midt i billedet, lidt nede)
-            spawnParticles(307, 460, 15, "#8b0000", 1); 
-        }
-
-        // GENERER PARTIKLER (Her laves de!)
-        if (!sim.paused) {
-            spawnParticles(260, 140, sim.fsh, "#3498db", 1); // FSH (Blå)
-            spawnParticles(260, 140, sim.lh,  "#9b59b6", 1); // LH (Lilla)
-            
-            // Skaler emission baseret på kildens størrelse (Follikel eller CL)
-            let sourceSize = sim.hasOvulated ? sim.clSize : sim.follicleSize;
-            let estEmission = sim.est * (sourceSize / 10);
-            spawnParticles(follicleX, follicleY, estEmission, "#e74c3c", -1); // Østrogen (Rød)
-            
-            if(sim.hasOvulated) spawnParticles(145, 465, sim.prog, "#f1c40f", -1); // Prog (Gul)
-        }
-        
-        // TEGN PARTIKLER
-        for (let i = particles.length - 1; i >= 0; i--) {
-            let p = particles[i]; p.update(); p.draw(actx);
-            if (p.life <= 0) particles.splice(i, 1);
-        }
-    }
-
-    function spawnParticles(x, y, level, color, dir) {
-        let count = Math.floor(level / 2); 
-        if (Math.random() < (level % 2) / 2) count++;
-        for(let i=0; i<count; i++) particles.push(new Particle(x, y, color, dir));
-    }
-
-    // --- RULLENDE GRAF ---
-    function drawGraph() {
-        gctx.clearRect(0, 0, 460, 200);
-        const visiblePoints = 300; 
-        const xStep = 460 / visiblePoints; 
-
-        // Gitter og Akser
-        gctx.beginPath(); gctx.strokeStyle = "#eee";
-        gctx.moveTo(0, 180); gctx.lineTo(460, 180); 
-        let pixelsPerMonth = 28 * 4 * xStep;
-        for(let x=460; x>0; x-= pixelsPerMonth) {
-             gctx.moveTo(x, 0); gctx.lineTo(x, 200);
-        }
-        gctx.stroke();
-
-        // Tegn Kurver
-        plotRollingLine(historyData.fsh, "#3498db", 40, xStep);
-        plotRollingLine(historyData.lh, "#9b59b6", 50, xStep);
-        plotRollingLine(historyData.est, "#e74c3c", 40, xStep);
-        plotRollingLine(historyData.prog, "#f1c40f", 20, xStep);
-
-        // Nål (Current Time)
-        gctx.beginPath(); gctx.moveTo(458, 0); gctx.lineTo(458, 200);
-        gctx.strokeStyle = "#333"; gctx.lineWidth = 2; gctx.stroke();
-    }
-
-    function plotRollingLine(data, color, maxVal, xStep) {
-        if(data.length < 2) return;
-        gctx.beginPath(); gctx.strokeStyle = color; gctx.lineWidth = 2;
-        let startIndex = data.length - 1;
-        let currentX = 460;
-        gctx.moveTo(currentX, 180 - (data[startIndex] * (160/maxVal)));
-        for (let i = startIndex - 1; i >= 0; i--) {
-            currentX -= xStep; 
-            if (currentX < 0) break; 
-            let y = 180 - (data[i] * (160/maxVal));
-            if(y < 10) y = 10; 
-            gctx.lineTo(currentX, y);
-        }
-        gctx.stroke();
-    }
-
-    // --- BLOKDIAGRAM ---
-    function drawDiagram() {
-        dctx.clearRect(0, 0, 460, 150);
-        
-        const cx = 230; // Center X
-        const topY = 35;
-        const botY = 115;
-        
-        // Bokse
-        dctx.fillStyle = "#fff"; dctx.strokeStyle = "#333"; dctx.lineWidth = 2;
-        dctx.fillRect(cx - 50, topY - 15, 100, 30); dctx.strokeRect(cx - 50, topY - 15, 100, 30);
-        dctx.fillRect(cx - 50, botY - 15, 100, 30); dctx.strokeRect(cx - 50, botY - 15, 100, 30);
-        
-        dctx.fillStyle = "#333"; dctx.font = "bold 14px sans-serif"; dctx.textAlign = "center"; dctx.textBaseline = "middle";
-        dctx.fillText("Hypofyse", cx, topY);
-        dctx.fillText("Ovarier", cx, botY);
-        
-        // Pile ned (FSH / LH)
-        drawArrow(dctx, cx - 20, topY + 15, cx - 20, botY - 15, "#3498db"); // FSH
-        drawArrow(dctx, cx + 20, topY + 15, cx + 20, botY - 15, "#9b59b6"); // LH
-        dctx.font = "10px sans-serif";
-        dctx.fillStyle = "#3498db"; dctx.fillText("FSH", cx - 35, (topY+botY)/2);
-        dctx.fillStyle = "#9b59b6"; dctx.fillText("LH", cx + 35, (topY+botY)/2);
-
-        // Negativ Feedback (Højre side) - RØD
-        let negActive = (sim.est > 2 || sim.prog > 1);
-        let negColor = negActive ? "#e74c3c" : "#eee";
-        drawFeedbackLoop(dctx, cx, topY, botY, 1, negColor, "-", "Negativ Feedback");
-
-        // Positiv Feedback (Venstre side) - GRØN
-        let posActive = (sim.est > config.estrogenTrigger && sim.prog < 2);
-        let posColor = posActive ? "#27ae60" : "#eee";
-        drawFeedbackLoop(dctx, cx, topY, botY, -1, posColor, "+", "Positiv Feedback");
-    }
-
-    function drawArrow(ctx, x1, y1, x2, y2, color) {
-        ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2;
-        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-        let angle = Math.atan2(y2-y1, x2-x1);
-        ctx.beginPath();
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x2 - 8 * Math.cos(angle - Math.PI/6), y2 - 8 * Math.sin(angle - Math.PI/6));
-        ctx.lineTo(x2 - 8 * Math.cos(angle + Math.PI/6), y2 - 8 * Math.sin(angle + Math.PI/6));
-        ctx.fillStyle = color; ctx.fill();
-    }
-
-    function drawFeedbackLoop(ctx, cx, topY, botY, dir, color, symbol, label) {
-        ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = (color === "#eee") ? 1 : 3;
-        ctx.moveTo(cx + (50*dir), botY); ctx.lineTo(cx + (100*dir), botY); 
-        ctx.lineTo(cx + (100*dir), topY); ctx.lineTo(cx + (50*dir), topY); ctx.stroke();
-        ctx.fillStyle = color; ctx.font = "bold 16px sans-serif"; ctx.fillText(symbol, cx + (100*dir), (topY+botY)/2);
-        ctx.fillStyle = (color === "#eee") ? "#ccc" : "#333"; ctx.font = "10px sans-serif"; ctx.fillText(label, cx + (100*dir), topY - 10);
-    }
-
-    // --- UI FUNKTIONER ---
-    function updateUI() {
-        document.getElementById('dayDisplay').innerText = sim.cycleDay.toFixed(1);
-        setBar('bar-fsh', sim.fsh, 20); setBar('bar-lh', sim.lh, 50);
-        setBar('bar-est', sim.est, 40); setBar('bar-prog', sim.prog, 15);
-        setBar('bar-hcg', sim.hcg, 50);
-    }
-    function setBar(id, val, max) {
-        let pct = (val / max) * 100; if(pct > 100) pct = 100;
-        document.getElementById(id).style.height = pct + "%";
-    }
-    function togglePause() {
-        sim.paused = !sim.paused;
-        document.getElementById('playButton').textContent = sim.paused ? "Start" : "Pause";
-    }
-    function togglePill() {
-        sim.onPill = !sim.onPill;
-        const btn = document.getElementById('pillButton');
-        btn.textContent = sim.onPill ? "Stop P-pille" : "Tag P-pille";
-        btn.className = sim.onPill ? "pill-active" : "";
-    }
-    function togglePregnancy() {
-        sim.wantPregnancy = !sim.wantPregnancy;
-        const btn = document.getElementById('pregButton');
-        btn.textContent = sim.wantPregnancy ? "Forsøger Graviditet..." : "Ønsker Graviditet";
-        btn.className = sim.wantPregnancy ? "preg-active" : "";
-    }
-    function takeMorningAfterPill() {
-        sim.prog += 40; // Høj dosis gestagen for at blokere/udskyde LH-surge
-        document.getElementById('statusText').innerText = "HÆNDELSE: Fortrydelsespille taget! (Høj dosis hormon bremser ægløsning)";
-    }
-    function haveSex() {
-        sim.lastSexTime = sim.time;
-        document.getElementById('statusText').innerText = "HÆNDELSE: Samleje! (Sperm lever i ca. 3 dage)";
-        spawnParticles(307, 550, 20, "#ffc0cb", -1); // Visuel effekt (Pink partikler)
-    }
-    function resetSim() {
-        sim.time = 1; sim.cycleDay = 1; sim.paused = true;
-        sim.fsh = 6; sim.lh = 3; sim.est = 5; sim.prog = 0;
-        sim.follicleSize = 1; sim.clSize = 0; sim.hasOvulated = false;
-        sim.onPill = false;
-        historyData = { time: [], fsh: [], lh: [], est: [], prog: [] };
-        sim.pillDay = 0; sim.isMenstruating = true; // Starter med menstruation
-        sim.speed = 1; sim.speedAccumulator = 0;
-        document.getElementById('speedDisplay').innerText = "1.0x";
-        document.getElementById('speedSlider').value = 0;
-        sim.wantPregnancy = false; sim.isPregnant = false; sim.hcg = 0;
-        sim.lastSexTime = -100; sim.ovulationTime = 0;
-        document.getElementById('playButton').textContent = "Start";
-        document.getElementById('pillButton').textContent = "Tag P-pille";
-        document.getElementById('pillButton').className = "";
-        document.getElementById('pregButton').textContent = "Ønsker Graviditet";
-        document.getElementById('pregButton').className = "";
-        updateUI(); drawAnatomy(); drawGraph();
-    }
-    function setSpeed(val) {
-        let speed = Math.pow(10, parseFloat(val));
-        if (Math.abs(parseFloat(val)) < 0.05) speed = 1; // Snap til 1.0 ved 0
-        sim.speed = speed;
-        document.getElementById('speedDisplay').innerText = speed.toFixed(1) + "x";
-    }
-    function loop() {
-        sim.speedAccumulator += sim.speed;
-        let steps = Math.floor(sim.speedAccumulator);
-        sim.speedAccumulator -= steps;
-        
-        for(let i=0; i<steps; i++) {
-            updateModel();
-        }
-        updateUI(); // Opdater kun UI én gang per frame
-        drawAnatomy(); drawGraph(); drawDiagram(); requestAnimationFrame(loop);
-    }
-
-    function exportData() {
-        let csvContent = "data:text/csv;charset=utf-8,Tid,FSH,LH,Estrogen,Progesteron\n";
-        for(let i=0; i<historyData.time.length; i++) {
-            let row = [
-                historyData.time[i].toFixed(2), 
-                historyData.fsh[i].toFixed(2), 
-                historyData.lh[i].toFixed(2), 
-                historyData.est[i].toFixed(2), 
-                historyData.prog[i].toFixed(2)
-            ].join(",");
-            csvContent += row + "\n";
-        }
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "hormon_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Start
-    bgImage.onload = () => drawAnatomy();
-    setTimeout(() => drawAnatomy(), 100); 
-    loop();
-
+  maal();
+  addEventListener('resize', planlaeg);
+  addEventListener('load', planlaeg);
+  if(document.fonts) document.fonts.ready.then(planlaeg);
+  new ResizeObserver(function(){
+    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+  }).observe(rig);
+})();
 </script>
 <script src="/feedback.js" defer></script>
 </body>
 </html>
-
-<!-- 
-Tid,FSH,LH,Estrogen,Progesteron
-1.05,6.29,3.02,4.96,0.00
-1.50,8.71,3.17,4.79,0.00
-1.55,8.97,3.19,4.78,0.00
-2.00,11.11,3.33,4.90,0.00
-2.05,11.33,3.35,4.92,0.00
-2.55,13.38,3.49,5.39,0.00
-2.60,13.57,3.50,5.45,0.00
-3.05,15.11,3.61,6.17,0.00
-3.10,15.27,3.62,6.26,0.00
-3.55,16.52,3.71,7.25,0.00
-3.60,16.64,3.72,7.37,0.00
-4.05,17.62,3.79,8.60,0.00
-4.10,17.72,3.80,8.75,0.00
-4.55,18.44,3.85,10.21,0.00
-4.60,18.51,3.85,10.38,0.00
-5.05,19.01,3.88,12.03,0.00
-5.10,19.05,3.88,12.22,0.00
-5.55,19.34,3.89,14.04,0.00
-5.60,19.37,3.89,14.25,0.00
-6.05,19.49,3.89,16.21,0.00
-6.10,19.49,3.88,16.43,0.00
-6.55,19.47,3.86,18.50,0.00
-6.60,19.46,3.86,18.73,0.00
-7.05,19.32,3.83,20.88,0.00
-7.10,19.30,3.82,21.13,0.00
-7.55,19.06,3.78,23.34,0.00
-7.60,19.03,3.77,23.59,0.00
-8.05,18.72,3.83,25.85,0.00
-8.10,18.68,3.90,26.10,0.00
-8.55,18.32,5.69,28.38,0.00
-8.60,18.28,6.00,28.63,0.00
-9.05,17.87,9.86,30.92,0.00
-9.10,17.83,10.40,31.17,0.00
-9.50,17.44,15.44,33.19,0.00
-9.55,17.39,16.17,33.45,0.00
-10.00,16.95,23.53,35.70,0.00
-10.05,16.90,24.45,35.95,0.00
-10.50,16.44,33.44,38.18,0.00
-10.55,16.39,34.53,38.43,0.00
-11.00,16.06,40.51,9.96,0.59
-11.05,16.00,40.23,9.95,0.73
-11.50,15.04,37.68,9.85,1.91
-11.55,14.91,37.40,9.84,2.03
-12.00,13.75,35.00,9.73,3.05
-12.05,13.62,34.74,9.71,3.15
-12.50,12.48,32.50,9.60,4.02
-12.55,12.36,32.26,9.58,4.11
-13.00,11.30,30.18,9.46,4.84
-13.05,11.18,29.95,9.44,4.92
-13.50,10.21,28.02,9.31,5.53
-13.55,10.11,27.81,9.29,5.59
-14.00,9.23,26.01,9.15,6.09
-14.05,9.14,25.82,9.13,6.14
-14.50,8.35,24.15,8.99,6.55
-14.55,8.26,23.97,8.97,6.59
-15.00,7.56,22.42,8.81,6.90
-15.05,7.48,22.25,8.80,6.93
-15.50,6.85,20.82,8.63,7.16
-15.55,6.79,20.66,8.61,7.18
-16.00,6.23,19.33,8.45,7.34
-16.05,6.17,19.18,8.43,7.35
-16.50,5.67,17.95,8.25,7.44
-16.55,5.62,17.81,8.23,7.45
-17.00,5.18,16.67,8.05,7.48
-17.05,5.13,16.54,8.03,7.48
-17.50,4.75,15.48,7.85,7.45
-17.55,4.71,15.36,7.83,7.45
-18.00,4.37,14.37,7.64,7.37
-18.05,4.33,14.27,7.62,7.36
-18.50,4.03,13.35,7.42,7.25
-18.55,4.00,13.26,7.40,7.23
-19.00,3.74,12.41,7.20,7.07
-19.05,3.71,12.32,7.18,7.05
-19.50,3.49,11.53,6.97,6.86
-19.55,3.47,11.44,6.95,6.83
-20.00,3.27,10.71,6.74,6.61
-20.05,3.26,10.64,6.72,6.58
-20.50,3.09,9.96,6.51,6.32
-20.55,3.08,9.89,6.48,6.29
-21.00,2.94,9.26,6.27,6.01
-21.05,2.93,9.20,6.24,5.97
-21.50,2.82,8.62,6.03,5.66
-21.55,2.81,8.55,6.00,5.63
-22.00,2.73,8.02,5.78,5.30
-22.05,2.72,7.96,5.75,5.26
-22.50,2.66,7.47,5.53,4.91
-22.55,2.65,7.41,5.50,4.87
-23.00,2.62,6.96,5.27,4.50
-23.05,2.62,6.91,5.25,4.46
-23.50,2.61,6.49,5.00,4.05
-23.55,2.61,6.44,4.96,3.99
-24.00,2.64,6.05,4.67,3.49
-24.05,2.65,6.01,4.64,3.43
-24.50,2.72,5.66,4.41,3.00
-24.55,2.73,5.62,4.38,2.95
-25.00,2.84,5.30,4.20,2.58
-25.05,2.85,5.26,4.19,2.54
-25.50,3.01,4.97,4.05,2.22
-25.55,3.03,4.94,4.03,2.18
-26.00,3.23,4.68,3.98,1.90
-26.05,3.25,4.65,3.98,1.88
-26.50,3.50,4.41,4.03,1.64
-26.55,3.53,4.39,4.04,1.61
-27.00,3.82,4.18,4.18,1.41
-27.05,3.86,4.15,4.20,1.39
-27.50,4.20,3.97,4.41,1.21
-27.55,4.24,3.95,4.44,1.19
-28.00,4.62,3.78,4.73,1.04
-28.05,4.67,3.77,4.76,1.02
-28.50,5.10,3.63,5.11,0.89
-28.55,5.15,3.61,5.16,0.88
-29.00,5.63,3.49,5.58,0.77
-29.05,5.68,3.48,5.63,0.76
-29.50,6.20,3.38,6.11,0.66
-29.55,6.26,3.37,6.17,0.65
-30.00,6.81,3.29,6.72,0.57
-30.05,6.87,3.28,6.79,0.56
-30.50,7.45,3.21,7.41,0.49
-30.55,7.51,3.21,7.48,0.48
-31.00,8.11,3.15,8.18,0.42
-31.05,8.18,3.15,8.26,0.41
-31.50,8.79,3.11,9.03,0.36
-31.55,8.86,3.11,9.12,0.36
-32.00,9.46,3.08,9.96,0.31
-32.05,9.53,3.08,10.06,0.31
-32.50,10.12,3.06,10.99,0.27
-32.55,10.19,3.06,11.09,0.26
-33.00,10.76,3.05,12.10,0.23
-33.05,10.82,3.04,12.21,0.23
-33.50,11.36,3.04,13.30,0.20
-33.55,11.42,3.04,13.42,0.19
-34.00,11.91,3.03,14.59,0.17
-34.05,11.96,3.03,14.72,0.17
-34.50,12.40,3.03,15.96,0.15
-34.55,12.45,3.03,16.10,0.14
-35.00,12.84,3.02,17.41,0.13
-35.05,12.88,3.02,17.56,0.12
-35.50,13.21,3.02,18.94,0.11
-35.55,13.24,3.02,19.10,0.11
-36.00,13.51,3.01,20.55,0.09
-36.05,13.53,3.01,20.71,0.09
-36.50,13.74,3.00,22.21,0.08
-36.55,13.76,3.00,22.38,0.08
-37.00,13.91,2.99,23.94,0.07
-37.05,13.92,2.99,24.11,0.07
-37.50,14.02,3.08,25.71,0.06
-37.55,14.02,3.14,25.89,0.06
-38.05,14.07,4.77,27.71,0.05
-38.10,14.07,5.03,27.90,0.05
-38.55,14.06,8.05,29.56,0.04
-38.60,14.06,8.46,29.75,0.04
-39.05,14.01,12.89,31.44,0.04
-39.10,14.01,13.46,31.63,0.04
-39.55,13.92,19.20,33.34,0.03
-39.60,13.91,19.91,33.53,0.03
-40.05,13.80,26.89,35.25,0.03
-40.10,13.78,27.73,35.44,0.03
-40.55,13.64,35.86,37.16,0.02
-40.60,13.62,36.82,37.35,0.02
-41.05,13.56,40.66,9.95,0.75
-41.10,13.51,40.37,9.94,0.89
-41.55,12.75,37.80,9.84,2.05
-41.60,12.65,37.52,9.82,2.17
-42.05,11.71,35.11,9.71,3.17
-42.10,11.60,34.85,9.70,3.27
-42.55,10.67,32.60,9.58,4.13
-42.60,10.57,32.36,9.57,4.21
-43.05,9.69,30.27,9.44,4.93
-43.10,9.60,30.05,9.43,5.01
-43.55,8.80,28.10,9.29,5.60
-43.60,8.71,27.90,9.28,5.66
-44.05,7.98,26.09,9.13,6.16
-44.10,7.90,25.90,9.12,6.20
-44.55,7.24,24.22,8.97,6.60
-44.60,7.17,24.04,8.95,6.63
-45.05,6.58,22.49,8.80,6.94
-45.10,6.52,22.32,8.78,6.97
-45.55,5.99,20.88,8.61,7.19
-45.60,5.94,20.73,8.60,7.21
-46.05,5.47,19.39,8.43,7.36
-46.10,5.42,19.24,8.41,7.37
-46.55,5.00,18.00,8.23,7.45
-46.60,4.96,17.87,8.21,7.46
-47.05,4.59,16.72,8.03,7.48
-47.10,4.55,16.59,8.01,7.48
-47.55,4.23,15.52,7.83,7.45
-47.60,4.19,15.41,7.81,7.45
-48.05,3.91,14.42,7.62,7.37
-48.10,3.88,14.31,7.59,7.36
-48.55,3.63,13.39,7.40,7.23
-48.60,3.60,13.30,7.38,7.22
-49.05,3.38,12.44,7.18,7.06
-49.10,3.36,12.35,7.16,7.04
-49.55,3.18,11.56,6.95,6.84
-49.60,3.16,11.48,6.93,6.81
-50.05,3.00,10.75,6.72,6.58
-50.10,2.98,10.67,6.70,6.55
-50.55,2.85,9.99,6.48,6.29
-50.60,2.84,9.92,6.46,6.26
-51.05,2.73,9.29,6.24,5.97
-51.10,2.72,9.22,6.22,5.94
-51.55,2.63,8.64,6.00,5.63
-51.60,2.62,8.58,5.98,5.59
-52.05,2.56,8.04,5.75,5.26
-52.10,2.56,7.99,5.73,5.22
-52.55,2.52,7.49,5.50,4.87
-52.60,2.51,7.44,5.48,4.83
-53.05,2.50,6.98,5.25,4.46
-53.10,2.50,6.93,5.22,4.41
-53.55,2.51,6.51,4.96,4.00
-53.60,2.51,6.46,4.93,3.94
-54.05,2.55,6.07,4.64,3.43
-54.10,2.56,6.03,4.61,3.38
-54.55,2.64,5.68,4.38,2.95
-54.60,2.65,5.64,4.36,2.91
-55.05,2.78,5.32,4.19,2.54
-55.10,2.80,5.28,4.17,2.50
-55.55,2.96,4.99,4.03,2.18
-55.60,2.98,4.96,4.02,2.15
-56.05,3.20,4.69,3.95,1.88
-56.10,3.22,4.67,3.95,1.85
-56.55,3.48,4.43,3.98,1.61
-56.60,3.51,4.40,3.99,1.59
-57.05,3.81,4.19,4.12,1.39
-57.10,3.85,4.17,4.14,1.37
-57.55,4.20,3.98,4.35,1.19
-57.60,4.24,3.96,4.37,1.17
-58.05,4.63,3.80,4.65,1.03
-58.10,4.68,3.78,4.69,1.01
-58.55,5.12,3.64,5.04,0.88
-58.60,5.17,3.63,5.08,0.87
-59.05,5.66,3.51,5.50,0.76
-59.10,5.71,3.50,5.55,0.75
-59.55,6.24,3.39,6.03,0.65
-59.60,6.30,3.38,6.09,0.64
-60.05,6.86,3.30,6.64,0.56
-60.10,6.92,3.29,6.71,0.55
-60.55,7.51,3.23,7.33,0.48
-60.60,7.57,3.22,7.40,0.47
-61.05,8.18,3.17,8.10,0.41
-61.10,8.24,3.17,8.18,0.41
-61.55,8.86,3.13,8.96,0.36
-61.60,8.92,3.13,9.05,0.35
-62.05,9.54,3.10,9.90,0.31
-62.10,9.60,3.10,10.00,0.30
-62.55,10.20,3.08,10.93,0.26
-62.60,10.27,3.08,11.03,0.26
-63.05,10.84,3.06,12.05,0.23
-63.10,10.90,3.06,12.16,0.22
-63.55,11.44,3.05,13.25,0.19
-63.60,11.49,3.05,13.38,0.19
-64.05,11.99,3.05,14.55,0.17
-64.10,12.04,3.05,14.69,0.16
-64.55,12.48,3.05,15.93,0.14
-64.60,12.53,3.04,16.08,0.14
-65.05,12.73,3.02,17.40,13.20
-65.10,12.58,3.00,17.55,17.40
-65.55,11.29,2.81,18.92,29.05
-65.60,11.15,2.79,19.08,29.29
-66.05,10.00,2.61,20.46,29.95
-66.10,9.88,2.59,20.62,29.96
-66.55,8.86,2.43,21.97,30.00
-66.60,8.76,2.41,22.12,30.00
-67.05,7.86,2.26,23.42,30.00
-67.10,7.77,2.24,23.56,30.00
-67.55,6.98,2.10,24.79,30.00
-67.60,6.90,2.08,24.92,30.00
-68.05,6.20,1.95,26.07,30.00
-68.10,6.13,1.94,26.19,30.00
-68.55,5.51,1.81,27.26,30.00
-68.60,5.45,1.80,27.37,30.00
-69.05,4.91,1.69,28.35,30.00
-69.10,4.85,1.68,28.46,30.00
-69.55,4.37,1.57,29.36,30.00
-69.60,4.32,1.56,29.45,30.00
-70.05,3.90,1.46,30.27,30.00
-70.10,3.86,1.45,30.36,30.00
-70.55,3.49,1.36,31.11,30.00
-70.60,3.45,1.35,31.18,30.00
-71.05,3.12,1.27,31.86,30.00
-71.10,3.09,1.26,31.93,30.00
-71.55,2.80,1.18,32.08,30.00
-71.60,2.77,1.17,32.00,30.00
-72.05,2.51,1.10,30.41,30.00
-72.10,2.49,1.09,30.15,30.00
-72.55,2.26,1.03,27.31,30.00
-72.60,2.24,1.02,27.00,30.00
-73.05,2.04,0.96,24.56,30.00
-73.10,2.02,0.95,24.32,30.00
-73.55,1.85,0.89,22.42,30.00
-73.60,1.83,0.89,22.23,30.00
-74.05,1.67,0.83,20.76,30.00
-74.10,1.66,0.83,20.62,30.00
-74.55,1.52,0.78,19.47,30.00
-74.60,1.51,0.77,19.36,30.00
-75.05,1.39,0.73,18.47,30.00
-75.10,1.38,0.72,18.39,30.00
-75.55,1.27,0.68,17.70,30.00
-75.60,1.26,0.67,17.63,30.00
-76.05,1.17,0.64,17.09,30.00
-76.10,1.16,0.63,17.04,30.00
-76.55,1.08,0.59,16.62,30.00
-76.60,1.07,0.59,16.58,30.00
-77.05,0.99,0.56,16.26,30.00
-77.10,0.99,0.55,16.23,30.00
-77.55,0.92,0.52,15.98,30.00
-77.60,0.92,0.52,15.95,30.00
-78.05,0.86,0.49,15.76,30.00
-78.10,0.85,0.49,15.74,30.00
-78.55,0.81,0.46,15.59,30.00
-78.60,0.80,0.46,15.58,30.00
-79.05,0.76,0.43,15.46,30.00
-79.10,0.75,0.43,15.45,30.00
-79.55,0.71,0.40,15.36,30.00
-79.60,0.71,0.40,15.35,30.00
-80.05,0.68,0.38,15.28,30.00
-80.10,0.67,0.38,15.27,30.00
-80.55,0.64,0.36,15.21,30.00
-80.60,0.64,0.36,15.21,30.00
-81.05,0.61,0.34,15.17,30.00
-81.10,0.61,0.34,15.16,30.00
-81.55,0.59,0.32,15.13,30.00
-81.60,0.58,0.32,15.13,30.00
-82.05,0.56,0.30,15.10,30.00
-82.10,0.56,0.30,15.10,30.00
-82.55,0.54,0.28,15.08,30.00
-82.60,0.54,0.28,15.08,30.00
-83.05,0.53,0.27,15.06,30.00
-83.10,0.52,0.27,15.06,30.00
-83.55,0.51,0.25,15.05,30.00
-83.60,0.51,0.25,15.05,30.00
-84.05,0.50,0.24,15.04,30.00
-84.10,0.49,0.24,15.04,30.00
-84.55,0.48,0.23,15.03,30.00
-84.60,0.48,0.23,15.03,30.00
-85.05,0.47,0.22,15.02,30.00
-85.10,0.47,0.22,15.02,30.00
-85.55,0.46,0.21,15.02,30.00
-85.60,0.46,0.21,15.02,30.00
-86.05,0.46,0.20,14.17,12.66
-86.10,0.47,0.20,13.91,9.49
-86.55,0.84,0.23,11.79,0.71
-86.60,0.95,0.24,11.58,0.53
-87.05,2.69,0.44,9.93,0.04
-87.10,2.94,0.46,9.77,0.03
-87.55,5.20,0.73,8.54,0.00
-87.60,5.45,0.76,8.43,0.00
-88.05,7.61,1.02,7.62,0.00
-88.10,7.84,1.05,7.55,0.00
-88.55,9.82,1.30,7.15,0.00
-88.60,10.03,1.32,7.12,0.00
-89.05,11.80,1.56,7.09,0.00
-89.10,11.99,1.58,7.10,0.00
-89.55,13.54,1.80,7.41,0.00
-89.60,13.70,1.83,7.46,0.00
-90.05,15.01,2.02,8.09,0.00
-90.10,15.14,2.04,8.17,0.00
-90.55,16.22,2.21,9.08,0.00
-90.60,16.33,2.23,9.20,0.00
-91.05,17.17,2.38,10.36,0.00
-91.10,17.26,2.39,10.50,0.00
-91.55,17.89,2.52,11.89,0.00
-91.60,17.94,2.53,12.06,0.00
-92.05,18.38,2.63,13.64,0.00
-92.10,18.41,2.64,13.83,0.00
-92.55,18.67,2.72,15.58,0.00
-92.60,18.69,2.73,15.78,0.00
-93.05,18.34,2.74,17.66,17.34
-93.10,18.12,2.72,17.88,20.51
-93.55,16.23,2.55,19.85,29.29
-93.60,16.03,2.53,20.07,29.47
-94.05,14.36,2.37,22.05,29.96
-94.10,14.19,2.35,22.27,29.97
-94.55,12.71,2.20,24.21,30.00
-94.60,12.55,2.18,24.42,30.00
-95.05,11.25,2.05,26.29,30.00
-95.10,11.12,2.03,26.49,30.00
-95.55,9.97,1.90,28.25,30.00
-95.60,9.85,1.89,28.44,30.00
-96.05,8.84,1.77,30.08,30.00
-96.10,8.73,1.76,30.26,30.00
-96.55,7.84,1.65,31.79,30.00
-96.60,7.74,1.64,31.95,30.00
-97.05,6.96,1.53,33.35,30.00
-97.10,6.88,1.52,33.50,30.00
-97.55,6.18,1.43,34.78,30.00
-97.60,6.11,1.42,34.92,30.00
-98.05,5.50,1.33,36.09,30.00
-98.10,5.43,1.32,36.21,30.00
-98.55,4.89,1.24,37.28,30.00
-98.60,4.84,1.23,37.39,30.00
-99.05,4.36,1.15,38.35,30.00
-99.10,4.31,1.14,38.45,30.00
-99.55,3.89,1.07,39.32,30.00
-99.60,3.85,1.07,39.41,30.00
-100.05,3.48,1.00,40.19,30.00
-100.10,3.44,0.99,40.28,30.00
-100.55,3.11,0.93,40.98,30.00
-100.60,3.08,0.93,41.06,30.00
-101.05,2.79,0.87,41.23,30.00
-101.10,2.76,0.87,41.15,30.00
-101.55,2.51,0.81,39.58,30.00
-101.60,2.48,0.81,39.32,30.00
-102.05,2.25,0.76,36.34,30.00
-102.10,2.23,0.75,35.94,30.00
-102.55,2.03,0.71,31.98,30.00
-102.60,2.01,0.71,31.55,30.00
-103.05,1.84,0.66,28.18,30.00
-103.10,1.82,0.66,27.85,30.00
-103.55,1.67,0.62,25.23,30.00
-103.60,1.65,0.62,24.98,30.00
-104.05,1.52,0.58,22.94,30.00
-104.10,1.50,0.58,22.74,30.00
-104.55,1.38,0.54,21.17,30.00
-104.60,1.37,0.54,21.01,30.00
-105.05,1.27,0.51,19.79,30.00
-105.10,1.26,0.51,19.67,30.00
-105.55,1.16,0.48,18.72,30.00
-105.60,1.15,0.48,18.62,30.00
-106.05,1.07,0.45,17.89,30.00
-106.10,1.06,0.45,17.81,30.00
-106.55,0.99,0.42,17.24,30.00
-106.60,0.98,0.42,17.18,30.00
-107.05,0.92,0.40,16.74,30.00
-107.10,0.91,0.39,16.70,30.00
-107.55,0.86,0.37,16.35,30.00
-107.60,0.85,0.37,16.32,30.00
-108.05,0.80,0.35,16.05,30.00
-108.10,0.80,0.35,16.02,30.00
-108.55,0.75,0.33,15.81,30.00
-108.60,0.75,0.33,15.79,30.00
-109.05,0.71,0.31,15.63,30.00
-109.10,0.71,0.31,15.62,30.00
-109.55,0.67,0.29,15.49,30.00
-109.60,0.67,0.29,15.48,30.00
-110.05,0.64,0.28,15.38,30.00
-110.10,0.64,0.28,15.37,30.00
-110.55,0.61,0.26,15.30,30.00
-110.60,0.61,0.26,15.29,30.00
-111.05,0.59,0.25,15.23,30.00
-111.10,0.58,0.25,15.22,30.00
-111.55,0.56,0.24,15.18,30.00
-111.60,0.56,0.24,15.17,30.00
-112.05,0.54,0.23,15.14,30.00
-112.10,0.54,0.22,15.13,30.00
-112.55,0.52,0.21,15.11,30.00
-112.60,0.52,0.21,15.10,30.00
-113.05,0.51,0.20,14.24,12.66
-113.10,0.52,0.20,13.97,9.49
-113.55,0.89,0.24,11.84,0.71
-113.60,1.00,0.25,11.63,0.53
-114.05,2.73,0.44,9.97,0.04
-114.10,2.98,0.47,9.81,0.03
-114.55,5.23,0.73,8.57,0.00
-114.60,5.48,0.76,8.46,0.00
-115.05,7.64,1.02,7.65,0.00
-115.10,7.87,1.05,7.58,0.00
-115.55,9.84,1.30,7.17,0.00
-115.60,10.05,1.33,7.15,0.00
-116.05,11.82,1.56,7.11,0.00
-116.10,12.00,1.59,7.12,0.00
-116.55,13.55,1.80,7.43,0.00
-116.60,13.71,1.83,7.48,0.00
-117.05,15.02,2.02,8.11,0.00
-117.10,15.15,2.04,8.19,0.00
-117.55,16.22,2.21,9.10,0.00
-117.60,16.33,2.23,9.22,0.00
-118.05,17.18,2.38,10.38,0.00
-118.10,17.26,2.40,10.52,0.00
-118.55,17.89,2.52,11.91,0.00
-118.60,17.94,2.53,12.08,0.00
-119.05,18.37,2.63,13.66,0.00
-119.10,18.41,2.64,13.85,0.00
-119.55,18.67,2.72,15.59,0.00
-119.60,18.69,2.73,15.80,0.00
-120.05,18.34,2.74,17.68,17.34
-120.10,18.12,2.72,17.89,20.51
-120.55,16.23,2.55,19.86,29.29
-120.60,16.03,2.53,20.08,29.47
-121.05,14.36,2.37,22.07,29.96
-121.10,14.18,2.35,22.29,29.97
-121.55,12.71,2.20,24.23,30.00
-121.60,12.55,2.18,24.44,30.00
-122.05,11.25,2.05,26.30,30.00
-122.10,11.11,2.03,26.50,30.00
-122.55,9.97,1.90,28.27,30.00
-122.60,9.85,1.89,28.45,30.00
-123.05,8.83,1.77,30.10,30.00
-123.10,8.73,1.76,30.28,30.00
-123.55,7.84,1.65,31.80,30.00
-123.60,7.74,1.64,31.96,30.00
-124.05,6.96,1.53,33.37,30.00
-124.10,6.87,1.52,33.52,30.00
-124.55,6.18,1.43,34.80,30.00
-124.60,6.11,1.42,34.94,30.00
-125.05,5.50,1.33,36.11,30.00
-125.10,5.43,1.32,36.23,30.00
-125.55,4.89,1.24,37.29,30.00
-125.60,4.84,1.23,37.40,30.00
-126.05,4.36,1.15,38.36,30.00
-126.10,4.31,1.14,38.47,30.00
-126.55,3.89,1.07,39.33,30.00
-126.60,3.85,1.07,39.43,30.00
-127.05,3.48,1.00,40.21,30.00
-127.10,3.44,0.99,40.29,30.00
-127.55,3.11,0.93,41.00,30.00
-127.60,3.08,0.93,41.07,30.00
-128.05,2.79,0.87,41.24,30.00
-128.10,2.76,0.87,41.16,30.00
-128.55,2.50,0.81,39.59,30.00
-128.60,2.48,0.81,39.33,30.00
-129.05,2.25,0.76,36.35,30.00
-129.10,2.23,0.75,35.95,30.00
-129.55,2.03,0.71,31.99,30.00
-129.60,2.01,0.71,31.56,30.00
-130.05,1.84,0.66,28.19,30.00
-130.10,1.82,0.66,27.86,30.00
-130.55,1.67,0.62,25.24,30.00
-130.60,1.65,0.62,24.98,30.00
-131.05,1.52,0.58,22.95,30.00
-131.10,1.50,0.58,22.75,30.00
-131.55,1.38,0.54,21.17,30.00
-131.60,1.37,0.54,21.02,30.00
-132.05,1.27,0.51,19.79,30.00
-132.10,1.26,0.51,19.67,30.00
-132.55,1.16,0.48,18.72,30.00
-132.60,1.15,0.48,18.63,30.00
-133.05,1.07,0.45,17.89,30.00
-133.10,1.06,0.45,17.82,30.00
-133.55,0.99,0.42,17.24,30.00
-133.60,0.98,0.42,17.19,30.00
-134.05,0.92,0.40,16.74,30.00
-134.10,0.91,0.39,16.70,30.00
-134.55,0.86,0.37,16.35,30.00
-134.60,0.85,0.37,16.32,30.00
-135.05,0.80,0.35,16.05,30.00
-135.10,0.80,0.35,16.02,30.00
-135.55,0.75,0.33,15.81,30.00
-135.60,0.75,0.33,15.79,30.00
-136.05,0.71,0.31,15.63,30.00
-136.10,0.71,0.31,15.62,30.00
-136.55,0.67,0.29,15.49,30.00
-136.60,0.67,0.29,15.48,30.00
-137.05,0.64,0.28,15.38,30.00
-137.10,0.64,0.28,15.37,30.00
-137.55,0.61,0.26,15.30,30.00
-137.60,0.61,0.26,15.29,30.00
-138.05,0.59,0.25,15.23,30.00
-138.10,0.58,0.25,15.22,30.00
-138.55,0.56,0.24,15.18,30.00
-138.60,0.56,0.24,15.17,30.00
-139.05,0.54,0.23,15.14,30.00
-139.10,0.54,0.22,15.13,30.00
-139.55,0.52,0.21,15.11,30.00
-139.60,0.52,0.21,15.10,30.00
-140.05,0.51,0.20,14.24,12.66
-140.10,0.52,0.20,13.97,9.49
-140.55,0.89,0.24,11.84,0.71
-140.60,1.00,0.25,11.63,0.53
-141.05,2.73,0.44,9.97,0.04
-141.10,2.98,0.47,9.81,0.03
-141.55,5.23,0.73,8.57,0.00
-141.60,5.48,0.76,8.46,0.00
-142.05,7.64,1.02,7.65,0.00
-142.10,7.87,1.05,7.58,0.00
-142.55,9.84,1.30,7.17,0.00
-142.60,10.05,1.33,7.15,0.00
-143.05,11.82,1.56,7.11,0.00
-143.10,12.00,1.59,7.12,0.00
-143.55,13.55,1.80,7.43,0.00
-143.60,13.71,1.83,7.48,0.00
-144.05,15.02,2.02,8.11,0.00
-144.10,15.15,2.04,8.19,0.00
-144.55,16.22,2.21,9.10,0.00
-144.60,16.33,2.23,9.22,0.00
-145.05,17.18,2.38,10.38,0.00
-145.10,17.26,2.40,10.52,0.00
-145.55,17.89,2.52,11.91,0.00
-145.60,17.94,2.53,12.08,0.00
-146.05,18.37,2.63,13.66,0.00
-146.10,18.41,2.64,13.85,0.00
-146.55,18.67,2.72,15.59,0.00
-146.60,18.69,2.73,15.80,0.00
-147.05,18.34,2.74,17.68,17.34
-147.10,18.12,2.72,17.89,20.51
-147.55,16.23,2.55,19.86,29.29
-147.60,16.03,2.53,20.08,29.47
-148.05,14.36,2.37,22.07,29.96
-148.10,14.18,2.35,22.29,29.97
-148.55,12.71,2.20,24.23,30.00
-148.60,12.55,2.18,24.44,30.00
-149.05,11.25,2.05,26.30,30.00
-149.10,11.11,2.03,26.50,30.00
-149.55,9.97,1.90,28.27,30.00
-149.60,9.85,1.89,28.45,30.00
-150.05,8.83,1.77,30.10,30.00
-150.10,8.73,1.76,30.28,30.00
-150.55,7.84,1.65,31.80,30.00
-151.00,7.04,1.54,33.22,30.00
-151.05,6.96,1.53,33.37,30.00
-151.50,6.25,1.44,34.66,30.00
-151.55,6.18,1.43,34.80,30.00
-152.00,5.56,1.34,35.98,30.00
-152.05,5.50,1.33,36.11,30.00
-152.50,4.95,1.25,37.18,30.00
-152.55,4.89,1.24,37.29,30.00
-153.00,4.41,1.16,38.26,30.00
-153.05,4.36,1.15,38.36,30.00
-153.50,3.93,1.08,39.24,30.00
-153.55,3.89,1.07,39.33,30.00
-154.00,3.51,1.01,40.13,30.00
-154.05,3.48,1.00,40.21,30.00
-154.50,3.15,0.94,40.92,30.00
-154.55,3.11,0.93,41.00,30.00
-155.00,2.82,0.88,41.31,30.00
-155.05,2.79,0.87,41.24,30.00
-155.50,2.53,0.82,39.83,30.00
-155.55,2.50,0.81,39.59,30.00
-156.00,2.28,0.77,36.73,30.00
-156.05,2.25,0.76,36.35,30.00
-156.50,2.05,0.71,32.42,30.00
-156.55,2.03,0.71,31.99,30.00
-157.00,1.86,0.67,28.53,30.00
-157.05,1.84,0.66,28.19,30.00
-157.50,1.68,0.63,25.50,30.00
-157.55,1.67,0.62,25.24,30.00
-158.00,1.53,0.58,23.15,30.00
-158.05,1.52,0.58,22.95,30.00
-158.50,1.40,0.55,21.33,30.00
-158.55,1.38,0.54,21.17,30.00
-159.00,1.28,0.51,19.91,30.00
-159.05,1.27,0.51,19.79,30.00
-159.50,1.17,0.48,18.81,30.00
-159.55,1.16,0.48,18.72,30.00
-160.00,1.08,0.45,17.96,30.00
-160.05,1.07,0.45,17.89,30.00
-160.50,1.00,0.42,17.30,30.00
-160.55,0.99,0.42,17.24,30.00
-161.00,0.93,0.40,16.78,30.00
-161.05,0.92,0.40,16.74,30.00
-161.50,0.86,0.38,16.39,30.00
-161.55,0.86,0.37,16.35,30.00
-162.00,0.81,0.35,16.08,30.00
-162.05,0.80,0.35,16.05,30.00
-162.50,0.76,0.33,15.84,30.00
-162.55,0.75,0.33,15.81,30.00
-163.00,0.72,0.31,15.65,30.00
-163.05,0.71,0.31,15.63,30.00
-163.50,0.68,0.30,15.50,30.00
-163.55,0.67,0.29,15.49,30.00
-164.00,0.64,0.28,15.39,30.00
-164.05,0.64,0.28,15.38,30.00
-164.50,0.61,0.27,15.30,30.00
-164.55,0.61,0.26,15.30,30.00
-165.00,0.59,0.25,15.24,30.00
-165.05,0.59,0.25,15.23,30.00
-165.50,0.56,0.24,15.18,30.00
-165.55,0.56,0.24,15.18,30.00
-166.00,0.54,0.23,15.14,30.00
-166.05,0.54,0.23,15.14,30.00
-166.50,0.53,0.22,15.11,30.00
-166.55,0.52,0.21,15.11,30.00
-167.00,0.51,0.20,14.52,16.87
-167.05,0.51,0.20,14.24,12.66
-167.50,0.80,0.23,12.05,0.95
-167.55,0.89,0.24,11.84,0.71
-168.00,2.49,0.42,10.14,0.05
-168.05,2.73,0.44,9.97,0.04
-168.50,4.98,0.70,8.69,0.00
-168.55,5.23,0.73,8.57,0.00
-169.00,7.41,0.99,7.72,0.00
-169.05,7.64,1.02,7.65,0.00
-169.50,9.63,1.27,7.20,0.00
-169.55,9.84,1.30,7.17,0.00
-170.00,11.63,1.54,7.10,0.00
-170.05,11.82,1.56,7.11,0.00
-170.50,13.39,1.78,7.38,0.00
-170.55,13.55,1.80,7.43,0.00
-171.00,14.88,2.00,8.02,0.00
-171.05,15.02,2.02,8.11,0.00
-171.50,16.11,2.20,8.99,0.00
-171.55,16.22,2.21,9.10,0.00
-172.00,17.09,2.36,10.24,0.00
-172.05,17.18,2.38,10.38,0.00
-172.50,17.82,2.51,11.75,0.00
-172.55,17.89,2.52,11.91,0.00
-173.00,18.33,2.62,13.48,0.00
-173.05,18.37,2.63,13.66,0.00
-173.50,18.65,2.71,15.39,0.00
-173.55,18.67,2.72,15.59,0.00
-174.00,18.56,2.76,17.46,13.13
-174.05,18.34,2.74,17.68,17.34
-174.50,16.43,2.56,19.64,29.05
-174.55,16.23,2.55,19.86,29.29
-175.00,14.53,2.38,21.85,29.95
-175.05,14.36,2.37,22.07,29.96
-175.50,12.86,2.22,24.02,30.00
-175.55,12.71,2.20,24.23,30.00
-176.00,11.39,2.06,26.10,30.00
-176.05,11.25,2.05,26.30,30.00
-
- -->
