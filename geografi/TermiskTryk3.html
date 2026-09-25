@@ -1472,8 +1472,8 @@ function frame(now) {
     }
   }
 
-  // Partikler — flyder videre også under pause
-  if (state.layers.parcels || state.layers.tracer) stepParcels(dtReal, d.s);
+  // Partikler — står stille ved pause ligesom uret og temperaturerne
+  if (state.running && (state.layers.parcels || state.layers.tracer)) stepParcels(dtReal, d.s);
 
   // ── Tegn ──
   ctx.clearRect(0, 0, W, H);

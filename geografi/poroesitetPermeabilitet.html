@@ -84,6 +84,12 @@
   100 ml hældes på over 2 simulerede sekunder. Nedsivningen foregår i det
   SAMME billede som kornene — der er ikke længere en tragt ved siden af.
 
+  TIDSLUPEN
+  Hver nedsivning begynder i virkelig tid (1×). Eleven skruer selv tidslupen
+  op (1× … 1 mia.×, i trin af ca. en halv dekade), også midt i forsøget. Grus
+  er igennem på få sekunder ved 1×; ler rører sig ikke, før tidslupen står på
+  millioner. Det er den forskel, en automatisk tidslup ville skjule.
+
   TEGNINGEN AF TVÆRSNITTET
   Kornene lægges med en simpel gravitationspakning (fald + sidelæns glid) og
   tegnes som cirkler. En 2D-pakning af cirkler bliver for tæt (~16 % hulrum),
@@ -287,6 +293,10 @@ canvas{
   flex:1 1 260px;min-height:3.2em;font-size:0.98rem;line-height:1.45;color:#3E4E4C;
 }
 .says strong{color:var(--ink)}
+.lup{flex:0 1 300px;display:flex;flex-direction:column;gap:5px}
+.lup .knob-top .mono{color:#5A6C69;font-size:0.62rem}
+#inp-lup{--track:linear-gradient(90deg,#fff,#FFD9C9 40%,#FF6A3D);--kc:var(--coral)}
+#inp-lup:disabled{cursor:not-allowed;opacity:.55}
 
 /* ── Instrumenter ──────────────────────────────────────── */
 .gauges{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink)}
@@ -454,6 +464,7 @@ body[data-projektor="1"] .gauge dd small{font-size:0.95rem}
 body[data-projektor="1"] .says{font-size:1.2rem}
 body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
 body[data-projektor="1"] .knob-val{font-size:1.05rem}
+body[data-projektor="1"] .lup .knob-top .mono{font-size:0.82rem}
 body[data-projektor="1"] .fact{font-size:0.74rem}
 body[data-projektor="1"] .fact b{font-size:0.92rem}
 
@@ -472,6 +483,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   .gauge dd{font-size:1.1rem}
   .badge{right:16px;top:16px}
   .says{min-height:0}
+  .lup{flex:1 1 100%}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -581,6 +593,14 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
 
       <div class="tools">
         <button type="button" class="btn" id="btn-vand">Hæld 100 ml vand på</button>
+        <div class="lup">
+          <label class="knob-top" for="inp-lup">
+            <span class="mono">Tidslup</span>
+            <span class="knob-val" id="lbl-lup">1×</span>
+          </label>
+          <input type="range" id="inp-lup" min="0" max="18" step="1" value="0" disabled
+                 aria-describedby="lbl-lup">
+        </div>
         <p class="says" id="says"></p>
       </div>
 
@@ -728,7 +748,8 @@ var K = {
   TRAGT_AREAL: 0.0040,      // m^2  (ca. 7 cm i diameter)
   PROEVE_TYKKELSE: 0.03,    // m
   HAELDETID: 2.0,           // simulerede sekunder til at hælde 100 ml på
-  SKAERMTID: 20,            // så længe må en nedsivning vare på skærmen (sekunder)
+  LUP_MAKS: 18,             // tidslupens trin: 10^(trin/2), dvs. 1× … 1 mia.×
+  LUP_PUF: 15,              // skærmsekunder tilbage, før eleven bliver bedt om at skrue op
 
   /* Tegningen                                                             */
   KORN_FINT: 46,            // antal korn på tværs ved det fineste ler
@@ -1272,29 +1293,36 @@ function nulstilVand(){
   t.tSim = 0; t.paahaeldt = 0; t.staaende = 0;
   t.iJorden = 0; t.udloebt = 0; t.front = 0; t.draen = 0;
   t.draaber = []; t.udDraaber = [];
-  t.faktor = vaelgTidsfaktor();
+  saetLup(0);                        // hvert forsøg begynder i virkelig tid
 }
 
-/* Hvor meget skal tiden skrues op, for at nedsivningen kan ses på skærmen?
-   Skønnet bygger på Darcy med en middelhøjde af vandet oven på prøven.    */
-function vaelgTidsfaktor(){
-  var m = S.m;
-  /*  Med q = K*A*(1 + h/L) og h = V/A kan tiden løses eksakt:
-        t = (L/K) * ln(1 + V0/(A*L))       V0 i m^3                       */
+/* Hvor længe tager nedsivningen i virkeligheden?
+   Med q = K*A*(1 + h/L) og h = V/A kan tiden løses eksakt:
+     t = (L/K) * ln(1 + V0/(A*L))       V0 i m^3                           */
+function estimeretTid(){
   var V0 = K.VAND_ML*1e-6;                                          // m^3
-  var estimat = K.HAELDETID +
-      (K.PROEVE_TYKKELSE/Math.max(m.Kms,1e-12)) *
+  return K.HAELDETID +
+      (K.PROEVE_TYKKELSE/Math.max(S.m.Kms,1e-12)) *
       Math.log(1 + V0/(K.TRAGT_AREAL*K.PROEVE_TYKKELSE));
-  var f = estimat / K.SKAERMTID;
-  if(f <= 1) return 1;
-  /* Rund op til nærmeste pæne tal */
-  var e = Math.floor(Math.log10(f));
-  var kand = [1,2,3,5,10];
-  for(var i=0;i<kand.length;i++){
-    var v = kand[i]*Math.pow(10,e);
-    if(v >= f) return v;
-  }
-  return Math.pow(10,e+1);
+}
+
+/* Tidslupen: trin 0..LUP_MAKS giver 1, 3, 10, 30, 100 … — pæne tal */
+function lupFaktor(trin){
+  var e = Math.floor(trin/2);
+  return (trin % 2 ? 3 : 1) * Math.pow(10, e);
+}
+function saetLup(trin){
+  trin = klem(Math.round(trin), 0, K.LUP_MAKS);
+  el.inpLup.value = trin;
+  S.vand.faktor = lupFaktor(trin);
+  el.lblLup.textContent = kortFaktor(S.vand.faktor) + "×";
+  el.inpLup.setAttribute("aria-valuetext",
+    S.vand.faktor === 1 ? "virkelig tid" : kortFaktor(S.vand.faktor) + " gange hurtigere end virkeligheden");
+}
+/* Skærmsekunder tilbage med den nuværende tidslup — et skøn */
+function skaermTidTilbage(){
+  var t = S.vand;
+  return Math.max(0, estimeretTid() - t.tSim) / t.faktor;
 }
 
 /*  Vandregnskabet holdes i tre poster, der altid summer til det påhældte:
@@ -1350,8 +1378,9 @@ function skridtVand(dt){
 
 function opdaterDraaber(dt){
   var t = S.vand;
-  /* Farten følger permeabiliteten, så forskellen mellem ler og grus ses */
-  var fart = klem(20 + Math.log10(S.m.Kms*1e10+1)*26, 12, 150) * (H/540);
+  /* Farten følger permeabiliteten gange tidslupen, så forskellen mellem
+     ler og grus ses — og så det kan mærkes, når tidslupen skrues op      */
+  var fart = klem(20 + Math.log10(S.m.Kms*t.faktor*1e10+1)*26, 12, 150) * (H/540);
   while(t.draaber.length < K.DRAABER){
     t.draaber.push({ x:Math.random()*W,
                      y:Y_TOP + Math.random()*(Y_BUND-Y_TOP),
@@ -1398,7 +1427,9 @@ var el = {
   inpKorn:document.getElementById("inp-korn"),
   inpSort:document.getElementById("inp-sort"),
   klasser:document.getElementById("klasser"),
-  btnVand:document.getElementById("btn-vand")
+  btnVand:document.getElementById("btn-vand"),
+  inpLup: document.getElementById("inp-lup"),
+  lblLup: document.getElementById("lbl-lup")
 };
 
 function sorteringsOrd(){
@@ -1443,18 +1474,15 @@ function opdaterInstrumenter(){
 
   el.status.textContent = t.koerer ? "Vandet siver ned"
                         : t.faerdig ? "Drænet" : "Tør prøve";
-  if(t.koerer && t.faktor > 1.01){
-    el.badge.hidden = false;
-    el.badge.textContent = "Tidslup · " + kortFaktor(t.faktor) + "× hurtigere end i virkeligheden";
-  } else if(t.koerer){
-    el.badge.hidden = false;
-    el.badge.textContent = "Kører i virkelig hastighed";
-  } else {
-    el.badge.hidden = true;
-  }
+  /* Tidslupens værdi står ved skyderen; mærkatet på billedet siger kun til,
+     når forsøget ellers ville tage for lang tid at se færdigt            */
+  var langsom = t.koerer && t.faktor < lupFaktor(K.LUP_MAKS) && skaermTidTilbage() > K.LUP_PUF;
+  el.badge.hidden = !langsom;
+  if(langsom) el.badge.textContent = "Det går langsomt — skru op for tidslupen";
 }
 
 function kortFaktor(f){
+  if(f >= 1e9) return dk(f/1e9, (f/1e9)%1?1:0) + " mia.";
   if(f >= 1e6) return dk(f/1e6, (f/1e6)%1?1:0) + " mio.";
   if(f >= 1000) return dk(f/1000, (f/1000)%1?1:0) + " tusind";
   return dk(f, f%1?1:0);
@@ -1467,6 +1495,10 @@ function fortael(){
   if(t.koerer){
     s = "Vandet arbejder sig ned gennem hulrummene. Læg mærke til farten — " +
         "den er permeabiliteten.";
+    if(skaermTidTilbage() > K.LUP_PUF){
+      s = "I virkeligheden tager det her ca. <strong>" + tidIndi(estimeretTid()) + "</strong>. " +
+          "Træk i tidslupen for at nå til enden.";
+    }
   } else if(t.faerdig){
     s = "Der løb <strong>" + dk(t.udloebt,0) + " ml</strong> igennem på <strong>" +
         tidIndi(t.tSim) + "</strong>. De sidste <strong>" + dk(K.VAND_ML-t.udloebt,0) +
@@ -1501,6 +1533,7 @@ function opdaterSr(){
 function opdaterKnap(){
   var t = S.vand;
   el.btnVand.disabled = t.koerer;
+  el.inpLup.disabled = !t.koerer;
   el.btnVand.textContent = t.koerer ? "Vandet siver …"
                          : t.faerdig ? "Hæld vand på igen" : "Hæld 100 ml vand på";
 }
@@ -1572,6 +1605,12 @@ el.btnVand.addEventListener("click", function(){
   nulstilVand();
   S.vand.koerer = true;
   opdaterKnap();
+  fortael();
+  opdaterInstrumenter();
+});
+
+el.inpLup.addEventListener("input", function(){
+  saetLup(parseFloat(el.inpLup.value));
   fortael();
   opdaterInstrumenter();
 });
