@@ -601,8 +601,8 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 
     // FYSIK PARAMETRE (Disse styrer både simulering og kurver)
     const PROCESSING_TIME_SEC = 1; // Tid det tager at omdanne
-    const PROCESSING_FRAMES = 60; // Ved 60fps
-    const MAX_THEORETICAL_RPM_PER_ENZYME = 60 / PROCESSING_TIME_SEC; // 120 RPM pr enzym
+    const PROCESSING_FRAMES = 60; // modeltrin á 1/60 s, se simulerTrin
+    const MAX_THEORETICAL_RPM_PER_ENZYME = 60 / PROCESSING_TIME_SEC; // 60 reaktioner/min pr. enzym
 
     let enzymes = [];
     let substrates = [];
@@ -784,11 +784,17 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
         }
     }
 
-    function updatePhysics() {
+    // Modellen er skrevet i billeder ved 60 Hz: en omdannelse varer 60 billeder,
+    // og molekylerne flytter sig et fast stykke pr. billede. Derfor regnes den
+    // altid i faste trin på 1/60 s, uanset skærmens opdateringsfrekvens — ellers
+    // kører alt dobbelt så hurtigt på en 120 Hz-skærm, og målingen af
+    // reaktioner/min passer ikke med den teoretiske kurve.
+    const TRIN = 1 / 60;          // s pr. modeltrin
+    const MAKS_EFTERSLAEB = 0.25; // s — mere indhentes ikke (fx efter en skjult fane)
+
+    function simulerTrin() {
         let speedFactor = state.temp / 8;
         if(state.denatured) speedFactor = 1.5;
-
-        ctx.clearRect(0,0,W, H);
 
         enzymes.forEach(enz => {
             enz.move(speedFactor);
@@ -805,13 +811,11 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
                     }
                 }
             }
-            enz.draw();
         });
 
         for (let i = substrates.length - 1; i >= 0; i--) {
             let sub = substrates[i];
             sub.move(speedFactor);
-            sub.draw();
 
             if (!sub.active) { substrates.splice(i, 1); continue; }
             if (state.denatured) continue;
@@ -844,12 +848,31 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 
         for (let i = products.length - 1; i >= 0; i--) {
             products[i].update();
-            products[i].draw();
             if(products[i].life <= 0) products.splice(i, 1);
         }
 
         replenishSubstrates();
-        requestAnimationFrame(updatePhysics);
+    }
+
+    function tegnAlt() {
+        ctx.clearRect(0,0,W, H);
+        enzymes.forEach(enz => enz.draw());
+        substrates.forEach(sub => sub.draw());
+        products.forEach(p => p.draw());
+    }
+
+    let sidsteTid = null, efterslaeb = 0;
+    function loekke(nu) {
+        if (sidsteTid !== null) {
+            efterslaeb = Math.min(MAKS_EFTERSLAEB, efterslaeb + (nu - sidsteTid) / 1000);
+            while (efterslaeb >= TRIN) {
+                simulerTrin();
+                efterslaeb -= TRIN;
+            }
+        }
+        sidsteTid = nu;
+        tegnAlt();
+        requestAnimationFrame(loekke);
     }
 
     // REAKTIONSMÅLER + BESÆTNINGSMÅLER (10Hz update)
@@ -863,7 +886,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 
         document.getElementById('cpm-display').innerText = averageRPM;
 
-        let maxVal = 1800; // teoretisk max for 15 enzymer (15 * 120)
+        let maxVal = 15 * MAX_THEORETICAL_RPM_PER_ENZYME; // teoretisk max for 15 enzymer (15 · 60)
         let ratePercent = Math.min(averageRPM / maxVal, 1) * 100;
         document.getElementById('anim-rate').style.width = ratePercent + '%';
 
@@ -1094,7 +1117,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
     laesTilstand();
     initSim();
     updateStatus();
-    updatePhysics();
+    requestAnimationFrame(loekke);
 
 </script>
 
