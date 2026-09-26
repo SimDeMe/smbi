@@ -29,13 +29,20 @@ stadig det gamle design — rør dem kun, når opgaven handler om dem.
 
 ## 0. Filstruktur — én fil eller flere
 
-Små figurer bliver i én selvstændig HTML-fil, som hidtil. **Større simuleringer
-deles op i moduler** — 2D såvel som 3D. Del op, når mindst ét af disse er sandt:
+**Alle nye simuleringer må deles op i flere filer** — 2D såvel som 3D, store
+som små. Det er et frit valg, ikke et krav: en lille figur må gerne blive i én
+selvstændig HTML-fil. Del op, når det gør siden lettere at læse og rette, og
+altid når mindst ét af disse er sandt:
 
 * JavaScript-delen er over ca. 600 linjer,
 * siden består af flere uafhængige dele, der kan bygges og rettes hver for sig
   (fx én transportmekanisme ad gangen),
-* siden indeholder fagdata, som skal kunne rettes uden at scrolle forbi kode.
+* siden indeholder en beregningsmodel eller fagdata, som skal kunne læses og
+  rettes uden at scrolle forbi tegnekode.
+
+Et lille eksempel i ren canvas 2D + SVG er `geografi/boelger.html`: `model.js`
+(bølgemodellen), `strand.js` (profil og sand), `boelger.js`, `opskyl.js`,
+`kort.js` (bølgekortet) og `side.js`.
 
 Koden lægges i ES-moduler i en undermappe med sidens navn:
 
