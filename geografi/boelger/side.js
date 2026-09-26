@@ -1,203 +1,203 @@
-/* side.js — binder skydere, instrumenter og de tre modeller sammen,
+/* side.js — binder skydere, bølgekort, instrumenter og figur sammen,
    og holder billedet i gang. */
 
-import * as K from './kyst.js';
+import * as M from './model.js';
+import * as S from './strand.js';
 import * as B from './boelger.js';
 import * as O from './opskyl.js';
+import { byg as bygKort } from './kort.js';
 
 const $ = id => document.getElementById(id);
 
 const kanvas = $('sim');
 const c = kanvas.getContext('2d');
-
-const inpVind  = $('inp-vind'),   inpStraek = $('inp-straek');
-const inpHoejde= $('inp-hoejde'), inpPeriode= $('inp-periode');
-const inpHaeld = $('inp-haeld'),  inpTid    = $('inp-tid');
-const parVejr  = $('par-vejr'),   parBoelge = $('par-boelge');
+const inpH = $('inp-hoejde'), inpT = $('inp-periode'), inpTid = $('inp-tid');
 
 const roligt = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-let tilstand = 'vejr';
-let tid = 0, sidsteBillede = 0, haeldTraekkes = false;
+let tid = 0, Th = 0, sidsteBillede = 0, koerer = true;
+let nSidst = null, tSidst = -99;
 const pr = { punkter: [] };
 
 // ── Skarpt billede på skærme med høj pixeltæthed ───────
 function tilpasKanvas(){
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  kanvas.width  = Math.round(K.W  * dpr);
-  kanvas.height = Math.round(K.HC * dpr);
+  kanvas.width  = Math.round(S.W  * dpr);
+  kanvas.height = Math.round(S.HC * dpr);
   c.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 tilpasKanvas();
 window.addEventListener('resize', tilpasKanvas);
 
 // ── Talformat ──────────────────────────────────────────
-const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
-const grader = h => Math.atan(h) * 180 / Math.PI;
-const fraGrader = g => Math.tan(g * Math.PI / 180);
+const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits: n, maximumFractionDigits: n });
 
-// ── Sidens to måder at sætte bølgen på ─────────────────
+// ── Bølgen ─────────────────────────────────────────────
+// En bølge kan ikke blive stejlere end ca. 1:7 — så bryder den af sig
+// selv. Højden standser derfor, hvor den grænse er nået.
 function boelgen(){
-  if (tilstand === 'boelge'){
-    const T = +inpPeriode.value;
-    // En bølge kan ikke blive stejlere end ca. 1:7 — så bryder den af sig
-    // selv. Skyderen standser derfor, hvor den grænse er nået.
-    const maks = Math.min(+inpHoejde.max, 0.14 * B.dybvandsLaengde(T));
-    const H = Math.min(+inpHoejde.value, maks);
-    if (+inpHoejde.value > H) inpHoejde.value = H.toFixed(1);
-    return { H, T };
-  }
-  return B.fraVind(+inpVind.value, +inpStraek.value * 1000);
+  const T = +inpT.value;
+  const H = Math.min(+inpH.value, M.maksHoejde(T));
+  if (+inpH.value > H + 1e-9) inpH.value = (Math.floor(H * 10) / 10).toFixed(1);
+  return { H: +inpH.value, T };
 }
 
-function saetTilstand(navn){
-  tilstand = navn;
-  const vejr = navn === 'vejr';
-  parVejr.hidden = !vejr; parBoelge.hidden = vejr;
-  $('btn-vejr').setAttribute('aria-pressed', vejr ? 'true' : 'false');
-  $('btn-boelge').setAttribute('aria-pressed', vejr ? 'false' : 'true');
-  // skift af tilstand må ikke flytte bølgen: tag de aktuelle tal med over
-  if (!vejr){
-    const b = B.fraVind(+inpVind.value, +inpStraek.value * 1000);
-    inpHoejde.value  = Math.min(8, Math.max(0.1, b.H)).toFixed(1);
-    inpPeriode.value = Math.min(14, Math.max(2, b.T)).toFixed(1);
-  }
+function saetBoelge(H, T){
+  inpT.value = T.toFixed(1);
+  inpH.value = Math.min(H, M.maksHoejde(+inpT.value)).toFixed(1);
   merkater(); gemTilstand();
 }
 
 const FORLAEG = {
-  kattegat: { u: 8,  s: 20  },
-  nordsoen: { u: 8,  s: 500 },
-  storm:    { u: 22, s: 120 }
+  brise:    { H: 0.4, T: 4.5 },   // svag pålandsvind en sommerdag
+  doenning: { H: 1.2, T: 11  },   // dønning fra en storm langt ude
+  kuling:   { H: 1.8, T: 6   },   // kuling tæt på kysten
+  storm:    { H: 3.5, T: 7.5 }    // vinterstorm
 };
-function saetForlaeg(navn){
-  const f = FORLAEG[navn];
-  inpVind.value = f.u; inpStraek.value = f.s;
-  saetTilstand('vejr');
-  merkater();
+
+// ── Bølgekortet ────────────────────────────────────────
+const opdaterKort = bygKort($('kort'), {
+  tMin: +inpT.min, tMax: +inpT.max, hMin: +inpH.min,
+  onVaelg: (H, T) => saetBoelge(H, T)
+});
+
+// ── Mærkater på skyderne ───────────────────────────────
+function merkater(){
+  $('lbl-hoejde').textContent  = tal(+inpH.value, 1) + ' m';
+  $('lbl-periode').textContent = tal(+inpT.value, 1) + ' s';
+  const d = +inpTid.value;
+  $('lbl-tid').textContent = d === 0 ? 'står stille' : tal(d, 1) + ' døgn/s';
 }
 
 // ── Instrumenter og nøgletal ───────────────────────────
-function merkater(){
-  if (tilstand === 'vejr'){
-    $('lbl-vind').textContent   = tal(+inpVind.value, 1) + ' m/s';
-    $('lbl-straek').textContent = (+inpStraek.value).toLocaleString('da-DK') + ' km';
-  } else {
-    $('lbl-hoejde').textContent  = tal(+inpHoejde.value, 1) + ' m';
-    $('lbl-periode').textContent = tal(+inpPeriode.value, 1) + ' s';
-  }
-  $('lbl-haeld').textContent = tal(+inpHaeld.value, 1) + '°';
-  const d = +inpTid.value;
-  $('lbl-tid').textContent = d === 0 ? 'sat på pause' : tal(d, 1) + ' døgn/s';
-}
-
+const SKALA_TID = 13;   // s — tidslinjens fulde bredde
 let srTimer = 0;
-function aflaes(b, m){
-  const t = O.type(m.netto);
 
-  $('val-h').firstChild.nodeValue = tal(b.H, 2);
-  $('val-l').firstChild.nodeValue = tal(pr.L0, 1);
-  $('val-t').firstChild.nodeValue = tal(b.T, 1);
+function aflaes(m, t){
+  // stejlhed
+  $('val-stejl').firstChild.nodeValue = '1:' + Math.round(1 / m.stejlhed);
+  $('val-hl').textContent = tal(m.stejlhed, 3);
+  $('anim-stejl').style.width = Math.min(100, m.stejlhed / 0.08 * 100) + '%';
+  $('anim-stejl').style.background = t.farve;
+
+  // frekvens
+  $('val-frek').firstChild.nodeValue = tal(m.frekvens, 1);
+  $('anim-frek').style.width = Math.min(100, m.frekvens / 20 * 100) + '%';
+
+  // tidsregnskabet
+  const pct = s => Math.min(100, s / SKALA_TID * 100) + '%';
+  $('tl-periode').style.width = pct(m.T);
+  $('tl-skyl').style.width = pct(m.tSkyl);
+  $('tl-naeste').style.left = pct(m.T);
+  const over = $('tl-over');
+  if (m.luft < 0){ over.style.left = pct(m.T); over.style.width = `calc(${pct(m.tSkyl)} - ${pct(m.T)})`; }
+  else over.style.width = '0';
+  $('val-luft').firstChild.nodeValue = m.luft >= 0 ? 'Ja' : 'Nej';
+  $('val-luft-s').textContent = tal(Math.abs(m.luft), 1) + ' s ' + (m.luft >= 0 ? 'til overs' : 'for lidt');
+
+  // opskyl mod tilbageskyl
+  $('bar-op').style.width  = m.op  * 100 + '%';
+  $('bar-ned').style.width = m.ned * 100 + '%';
   $('val-type').firstChild.nodeValue = t.navn;
-  $('val-flux').textContent = (m.netto >= 0 ? '+' : '−') + tal(Math.abs(m.netto), 2);
+  $('val-netto').textContent = (m.netto >= 0 ? '+' : '−') + tal(Math.abs(m.netto), 1);
+  $('g-type').style.background = t.lys;
 
-  $('anim-h').style.height = Math.min(100, b.H / 6 * 100) + '%';
-  $('anim-l').style.width  = Math.min(100, pr.L0 / 140 * 100) + '%';
-  $('anim-t').style.width  = Math.min(100, b.T / 14 * 100) + '%';
-
-  const f = Math.max(-1, Math.min(1, m.netto / 6));
-  const flux = $('anim-flux');
-  flux.style.width = Math.abs(f) * 50 + '%';
-  flux.style.left  = f >= 0 ? '50%' : (50 - Math.abs(f) * 50) + '%';
-  flux.style.background = t.farve;
-  $('g-type').style.setProperty('--tc', t.farve);
-
-  $('f-stejl').textContent  = tal(b.H / pr.L0, 3);
-  $('f-frek').textContent   = Math.round(m.frekvens);
-  $('f-basis').textContent  = tal(pr.boelgebasis, 1);
-  $('f-bryd').textContent   = pr.dBryd > 0 ? tal(pr.dBryd, 1) : '—';
-  $('f-dag').textContent    = Math.floor(K.kyst.dag).toLocaleString('da-DK');
+  // fakta
+  $('f-l').textContent = Math.round(m.L).toLocaleString('da-DK');
+  $('f-nedsiv').textContent = Math.round(m.nedsivning * 100);
+  $('f-brems').textContent = Math.round(m.bremsning * 100);
+  $('f-dag').textContent = Math.floor(S.sand.dag).toLocaleString('da-DK');
 
   if (performance.now() > srTimer){
-    srTimer = performance.now() + 1500;
+    srTimer = performance.now() + 2000;
     $('sr-status').textContent =
-      'Bølgehøjde ' + tal(b.H, 2) + ' meter, bølgelængde ' + tal(pr.L0, 1) +
-      ' meter, periode ' + tal(b.T, 1) + ' sekunder. Strandhældning ' +
-      tal(grader(K.kyst.haeldning), 1) + ' grader. ' + t.navn +
-      ', netto ' + t.ord + ' ' + tal(Math.abs(m.netto), 2) +
-      ' kubikmeter pr. meter kystlinje pr. døgn. Dag ' + Math.floor(K.kyst.dag) + '.';
+      'Bølgehøjde ' + tal(m.H, 1) + ' meter, periode ' + tal(m.T, 1) + ' sekunder, bølgelængde ' +
+      Math.round(m.L) + ' meter. Stejlhed 1 til ' + Math.round(1 / m.stejlhed) + '. ' +
+      tal(m.frekvens, 1) + ' bølger pr. minut. Opskyl og tilbageskyl tager ' + tal(m.tSkyl, 1) +
+      ' sekunder, så der er ' + tal(Math.abs(m.luft), 1) + ' sekunder ' +
+      (m.luft >= 0 ? 'til overs' : 'for lidt') + ' før næste bølge. ' + t.navn + ' bølge: ' + t.ord +
+      ' på ' + tal(Math.abs(m.netto), 1) + ' kubikmeter sand pr. meter kyst pr. døgn.';
   }
 }
 
 // ── Billedet ───────────────────────────────────────────
-function tegn(b, m, sk){
-  c.clearRect(0, 0, K.W, K.HC);
-  K.tegnHimmel(c);
-  if (tilstand === 'vejr') B.tegnVind(c, +inpVind.value);
-  B.tegnVand(c, pr, tid, K.kystlinje() + sk.front);
-  const basis = B.tegnBoelgebasis(c, pr);
-  K.tegnBund(c);
-  O.tegnOpskyl(c, m, sk);
+function tegn(m, sk){
+  c.clearRect(0, 0, S.W, S.HC);
+  S.tegnHimmel(c);
+  B.tegnVand(c, pr, Th);
+  S.tegnBund(c);
+  S.tegnStartprofil(c);
+  O.tegnNedsivning(c, sk);
+  O.tegnTunger(c, sk);
   O.tegnKorn(c);
-  B.tegnBrydning(c, pr, tid);
-  O.tegnPile(c, m);
+  O.tegnMoede(c, sk);
+  B.tegnBrydning(c, pr, Th);
 
   const maerk = [];
-  if (basis) maerk.push({ tekst:'BØLGEBASIS ' + tal(basis.dybde, 1) + ' m', x: basis.x, y: basis.y });
-  if (K.kyst.revle > 0.35)
-    maerk.push({ tekst:'REVLE', x: K.px(K.revleX()), y: K.py(K.bundZ(K.revleX())) + 34 });
-  const foerste = pr.punkter.find(p => p.bryder);
-  if (foerste && foerste.x < pr.xs - 20)
-    maerk.push({ tekst:'GRUNDBRÆNDING', x: K.px(foerste.x), y: K.py(0) - 34, tik: 20 });
-  maerk.push({ tekst:'KLIT', x: K.px(K.KLIT_X + 12), y: K.py(K.bundZ(K.KLIT_X + 12)) - 16 });
-  K.tegnMaerkater(c, maerk);
+  const fr = O.forreste(sk);
+  if (sk.moede !== null){
+    const x = S.XS + sk.moede;
+    maerk.push({ tekst: 'OPSKYL BREMSES', x: S.px(x), y: S.py(S.bundZ(x)) - 44,
+                 mod: S.py(S.bundZ(x)) - 12, bund: '#FFD9C9' });
+  } else if (fr && fr.x > S.XS + 1){
+    maerk.push({ tekst: fr.op ? 'OPSKYL →' : '← TILBAGESKYL', x: S.px(fr.x), y: S.py(S.bundZ(fr.x)) - 44,
+                 mod: S.py(S.bundZ(fr.x)) - 8 });
+  }
+  if (pr.xBryd !== null && pr.xBryd < S.XS - 4)
+    maerk.push({ tekst: 'BØLGERNE BRYDER', x: S.px(pr.xBryd), y: S.HAV_Y - 72, mod: S.HAV_Y - 30 });
+  if (S.revleHoejde() > 0.3)
+    maerk.push({ tekst: 'REVLE', x: S.px(S.revleX()), y: S.py(S.bundZ(S.revleX())) + 38 });
+  if (S.sand.s > 0.62)
+    maerk.push({ tekst: 'BERM', x: S.px(S.bermX()), y: S.py(S.bundZ(S.bermX())) + 40 });
+  if (m.nedsivning > 0.06 && sk.st.some(s => !s.op))
+    maerk.push({ tekst: 'NEDSIVNING', x: S.px(S.XS + 7), y: S.py(S.bundZ(S.XS + 7)) + 70 });
+  maerk.push({ tekst: 'KLIT', x: S.px(S.KLIT_X + 7), y: S.py(S.bundZ(S.KLIT_X + 7)) - 18 });
+  S.tegnMaerkater(c, maerk);
 }
 
 // ── Løkken ─────────────────────────────────────────────
 function billede(nu){
   const dt = Math.min(0.05, (nu - sidsteBillede) / 1000 || 0);
   sidsteBillede = nu;
-  if (!roligt) tid += dt;
-
-  if (!haeldTraekkes && document.activeElement !== inpHaeld)
-    inpHaeld.value = grader(K.kyst.haeldning).toFixed(1);
-
   const b = boelgen();
+  const m = M.beregn(b.H, b.T);
+  const t = M.type(m);
+
+  const gaar = koerer && !roligt;
+  if (gaar){ tid += dt; Th += 2 * Math.PI / b.T * dt; }
+
   B.profil(b.H, b.T, pr);
-  const m = O.beregn(pr.Hb, b.T, K.kyst.haeldning);
 
-  const doegn = dt * (+inpTid.value);
-  K.udvikl(m.netto, doegn);
+  // Når en bølgetop når kystlinjen, begynder et nyt opskyl
+  const n = Math.floor((Th - pr.faseKyst) / (2 * Math.PI));
+  if (nSidst !== null && n > nSidst && tid - tSidst > 0.5 * b.T){ O.nyBoelge(tid, m); tSidst = tid; }
+  nSidst = n;
 
-  const sk = O.opdaterTunger(tid, m, b.T);
-  O.flytKorn(dt, m, sk, pr);
+  if (gaar) S.udvikl(m.netto, dt * (+inpTid.value));
+  const sk = O.stilling(tid);
+  if (gaar) O.flytKorn(dt, tid, m, sk);
 
-  tegn(b, m, sk);
-  aflaes(b, m);
-  merkater();
+  tegn(m, sk);
+  aflaes(m, t);
+  opdaterKort(m, t);
   requestAnimationFrame(billede);
 }
 
 // ── Betjening ──────────────────────────────────────────
-[inpVind, inpStraek, inpHoejde, inpPeriode, inpTid].forEach(el =>
-  el.addEventListener('input', () => { merkater(); gemTilstand(); }));
+[inpH, inpT, inpTid].forEach(el => el.addEventListener('input', () => { merkater(); gemTilstand(); }));
 
-inpHaeld.addEventListener('input', () => {
-  K.kyst.haeldning = Math.min(K.HAELD_MAX, Math.max(K.HAELD_MIN, fraGrader(+inpHaeld.value)));
-  merkater(); gemTilstand();
-});
-inpHaeld.addEventListener('pointerdown', () => { haeldTraekkes = true; });
-window.addEventListener('pointerup',   () => { haeldTraekkes = false; });
-
-$('btn-vejr').addEventListener('click',   () => saetTilstand('vejr'));
-$('btn-boelge').addEventListener('click', () => saetTilstand('boelge'));
 for (const navn of Object.keys(FORLAEG))
-  $('btn-' + navn).addEventListener('click', () => saetForlaeg(navn));
+  $('btn-' + navn).addEventListener('click', () => saetBoelge(FORLAEG[navn].H, FORLAEG[navn].T));
+
+const btnPause = $('btn-pause');
+btnPause.addEventListener('click', () => {
+  koerer = !koerer;
+  btnPause.setAttribute('aria-pressed', koerer ? 'false' : 'true');
+  btnPause.textContent = koerer ? 'Pause' : 'Fortsæt';
+});
 
 $('btn-reset').addEventListener('click', () => {
-  K.nulstil(); O.nulstilTunger(); O.saaKorn();
-  inpHaeld.value = grader(K.kyst.haeldning).toFixed(1);
-  merkater(); gemTilstand();
+  S.nulstil(); O.nulstilTunger(); O.saaKorn();
 });
 
 // Projektortilstand: sidens krom ryger væk, aflæsningerne skaleres op
@@ -211,11 +211,7 @@ btnProjektor.addEventListener('click', () =>
 
 // ── Deling: tilstanden ligger i adressen ───────────────
 let hashTimer = 0, hashSidste = '';
-function tilstandStreng(){
-  return '#m=' + tilstand + '&u=' + inpVind.value + '&s=' + inpStraek.value +
-         '&h=' + inpHoejde.value + '&p=' + inpPeriode.value +
-         '&b=' + (+inpHaeld.value).toFixed(1) + '&d=' + inpTid.value;
-}
+const tilstandStreng = () => '#h=' + inpH.value + '&t=' + inpT.value + '&d=' + inpTid.value;
 function gemTilstand(){
   const h = tilstandStreng();
   if (h === hashSidste) return;
@@ -230,29 +226,23 @@ function laesTilstand(){
     const v = parseFloat(p.get(noegle));
     if (isFinite(v)) el.value = Math.max(+el.min, Math.min(+el.max, v));
   };
-  saet(inpVind, 'u'); saet(inpStraek, 's');
-  saet(inpHoejde, 'h'); saet(inpPeriode, 'p');
-  saet(inpHaeld, 'b'); saet(inpTid, 'd');
-  K.kyst.haeldning = Math.min(K.HAELD_MAX, Math.max(K.HAELD_MIN, fraGrader(+inpHaeld.value)));
-  if (p.get('m') === 'boelge'){ tilstand = 'boelge'; parVejr.hidden = true; parBoelge.hidden = false;
-    $('btn-vejr').setAttribute('aria-pressed','false'); $('btn-boelge').setAttribute('aria-pressed','true'); }
+  saet(inpT, 't'); saet(inpH, 'h'); saet(inpTid, 'd');
   hashSidste = tilstandStreng();
 }
 
 // ── Start ──────────────────────────────────────────────
 if (roligt) inpTid.value = 0;
-inpHaeld.value = grader(K.kyst.haeldning).toFixed(1);
 laesTilstand();
 O.saaKorn();
 merkater();
 if (/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
 
-// På en smal skærm ruller figuren vandret. Start ved brændingen og
-// stranden — det er dér, der sker noget.
-const scene = document.querySelector('.stage');
+// På en smal skærm ruller figuren vandret. Start ved stranden — det er
+// dér, det afgøres.
+const scene = document.querySelector('.fig-rul');
 requestAnimationFrame(() => {
-  if (scene.scrollWidth > scene.clientWidth)
-    scene.scrollLeft = (scene.scrollWidth - scene.clientWidth) * 0.8;
+  if (scene && scene.scrollWidth > scene.clientWidth)
+    scene.scrollLeft = scene.scrollWidth - scene.clientWidth;
 });
 
 requestAnimationFrame(billede);

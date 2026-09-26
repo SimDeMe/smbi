@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Konstruktive og destruktive bølger — smbi.dk</title>
-<meta name="description" content="Interaktiv simulering af bølger ved kysten: sæt vind og frit stræk, og se om opskyllet bygger stranden op, eller tilbageskyllet æder den.">
+<meta name="description" content="Skru på bølgehøjde og bølgeperiode, og se hvorfor stejle, hyppige bølger æder stranden, mens flade bølger med lang periode bygger den op.">
 <!-- Deling, ikoner og kanonisk adresse -->
 <link rel="canonical" href="https://smbi.dk/geografi/boelger.html">
 <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
 <meta property="og:locale" content="da_DK">
 <meta property="og:url" content="https://smbi.dk/geografi/boelger.html">
 <meta property="og:title" content="Konstruktive og destruktive bølger">
-<meta property="og:description" content="Interaktiv simulering af bølger ved kysten: sæt vind og frit stræk, og se om opskyllet bygger stranden op, eller tilbageskyllet æder den.">
+<meta property="og:description" content="Skru på bølgehøjde og bølgeperiode, og se hvorfor stejle, hyppige bølger æder stranden, mens flade bølger med lang periode bygger den op.">
 <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -144,56 +144,78 @@ h1{
 .btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 .btn-mini[aria-pressed="true"]{background:var(--accent);color:#fff;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 
+/* Figuren og bølgekortet står side om side og er altid lige høje:
+   spalterne deler bredden i forholdet 900/430 : 340/357. */
 .stage{
+  display:grid;grid-template-columns:2.093fr 0.952fr;gap:12px;align-items:start;
   /* Højdebudget: figuren må ikke blive højere end --fig. */
-  max-width:calc(var(--fig)*900/430 + 20px);margin-inline:auto;
-  position:relative;padding:10px 10px 0;
+  max-width:calc(var(--fig)*3.045 + 32px);margin-inline:auto;
+  padding:10px;
   background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
 }
+.fig-rul,.kort-boks{min-width:0}
 canvas{display:block;width:100%;height:auto;border:2px solid var(--ink);border-radius:12px;background:#DFF1FB}
+#kort{
+  display:block;width:100%;height:auto;border:2px solid var(--ink);border-radius:12px;
+  background:#fff;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none;
+}
+#kort text{font-family:var(--mono);font-weight:600;fill:var(--ink)}
+#kort .k-tal{font-size:10px}
+#kort .k-akse{font-size:9.5px;letter-spacing:.12em}
+#kort .k-lille{font-size:8.5px;letter-spacing:.1em;fill:#566B68}
+#kort .k-omr{font-family:var(--display);font-size:15px;font-weight:800;letter-spacing:.02em;text-anchor:middle}
+#kort .k-graense{font-size:10px;letter-spacing:.1em;text-anchor:middle}
+#kort .k-punkt-tal{font-family:var(--display);font-size:12px;font-weight:800}
+#kort .k-punkt{cursor:grab}
 
 /* ── Instrumenter ──────────────────────────────────────── */
-.gauges{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink)}
-.gauge{padding:13px 15px 14px;border-left:2px solid var(--ink);display:flex;flex-direction:column;gap:9px}
+.gauges{display:grid;grid-template-columns:1fr 1fr 1.35fr 1.35fr;border-top:2px solid var(--ink)}
+.gauge{padding:13px 15px 14px;border-left:2px solid var(--ink);display:flex;flex-direction:column;gap:9px;min-width:0}
 .gauge:first-child{border-left:none}
-.g-h{background:#E7F4FB}
-.g-l{background:#F1ECFC}
-.g-t{background:#EDF8E4}
-.g-type{background:#FFF1EC}
+.g-s{background:#FFF1EC}
+.g-f{background:#F1ECFC}
+.g-tid{background:#E7F4FB}
+#g-type{background:#EEF1F0;transition:background .3s}
 .gauge dt{font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
 .gauge dd{
   font-family:var(--display);font-variation-settings:'wdth' 108;
   font-weight:800;font-size:1.28rem;line-height:1;font-variant-numeric:tabular-nums;
 }
-.gauge dd small{display:block;font-size:0.6em;font-weight:700;color:#5A6C69;margin-top:5px}
+.gauge dd small{display:block;font-size:0.6em;font-weight:700;color:#5A6C69;margin-top:5px;white-space:nowrap}
 .g-viz{display:flex;align-items:center;gap:10px;height:46px}
 
-.bar-v{position:relative;width:14px;height:44px;flex:none;border:2px solid var(--ink);border-radius:9px;background:#fff;overflow:hidden}
-.bar-v i{position:absolute;left:0;right:0;bottom:0;display:block;background:var(--bc,var(--blue));height:0;transition:height .12s linear}
-.ticks{display:flex;flex-direction:column;justify-content:space-between;height:44px}
-.ticks span{font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#7E8F8C;letter-spacing:.04em}
 .bar-h{
-  position:relative;width:100%;max-width:140px;height:24px;flex:1;
+  position:relative;width:100%;height:24px;flex:1;
   border:2px solid var(--ink);border-radius:8px;overflow:hidden;
   background:repeating-linear-gradient(90deg,rgba(23,33,31,.09) 0 1.5px,transparent 1.5px 25%),#fff;
 }
 .bar-h i{position:absolute;left:0;top:0;bottom:0;display:block;background:var(--bc,var(--grape));width:0;border-right:2px solid var(--ink);transition:width .12s linear}
 .bar-h b{position:absolute;right:5px;top:3px;font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#5A6C69;letter-spacing:.06em;background:rgba(255,255,255,.82);border-radius:5px;padding:0 3px}
-.flux{position:relative;width:100%;max-width:140px;height:24px;flex:1;border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
-.flux::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ink);z-index:2}
-.flux i{position:absolute;top:0;bottom:0;left:50%;width:0;display:block;background:var(--tc,var(--slate));transition:width .12s linear,left .12s linear}
-.btn-reset{
-  font-family:var(--display);font-size:0.72rem;font-weight:700;color:var(--ink);
-  background:#fff;border:2px solid var(--ink);border-radius:18px;padding:5px 12px;cursor:pointer;
-  box-shadow:2px 2px 0 var(--ink);transition:transform .12s,box-shadow .12s,background .15s;flex:none;
-}
-.btn-reset:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink);background:var(--amber)}
-.btn-reset:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.bar-h .mark{position:absolute;top:-2px;bottom:-2px;width:2.5px;margin-left:-1px;background:var(--ink);z-index:2}
+.bar-h .mark-lbl{position:absolute;top:3px;margin-left:5px;font-family:var(--mono);font-size:0.5rem;font-weight:600;color:var(--ink);z-index:2}
+
+/* Tidslinjen: tiden mellem to bølger mod tiden for ét opskyl + tilbageskyl */
+.tl{display:flex;align-items:center;gap:7px;width:100%}
+.tl-lbls{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:0.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5A6C69;white-space:nowrap}
+.tl-lbls span{height:14px;line-height:14px}
+.tl-bars{position:relative;flex:1;display:flex;flex-direction:column;gap:7px}
+.tl-rad{position:relative;height:14px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden}
+.tl-rad i{position:absolute;left:0;top:0;bottom:0;display:block;width:0}
+#tl-periode{background:var(--lime);border-right:2px solid var(--ink)}
+#tl-skyl{background:var(--blue);border-right:2px solid var(--ink)}
+#tl-over{background:repeating-linear-gradient(45deg,var(--coral) 0 3px,#fff 3px 6px);border-left:2px solid var(--ink)}
+#tl-naeste{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2.5px dashed var(--ink);margin-left:-1px;z-index:2}
+
+/* Opskyl mod tilbageskyl */
+.duel{display:grid;grid-template-columns:auto 1fr;gap:7px 7px;align-items:center;width:100%}
+.duel span{font-family:var(--mono);font-size:0.5rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5A6C69;white-space:nowrap}
+.duel-rad{position:relative;height:14px;border:2px solid var(--ink);border-radius:6px;background:#fff;overflow:hidden}
+.duel-rad i{position:absolute;left:0;top:0;bottom:0;display:block;width:0;border-right:2px solid var(--ink);transition:width .12s linear}
+#bar-op{background:var(--teal)}
+#bar-ned{background:repeating-linear-gradient(45deg,var(--coral) 0 4px,#FFB49C 4px 8px)}
 
 /* ── Kontrolpanel ──────────────────────────────────────── */
-.knobs{border-top:2px solid var(--ink);background:var(--paper-2);padding:18px 15px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px 26px}
-.par{display:contents}
-.par[hidden]{display:none}
+.knobs{border-top:2px solid var(--ink);background:var(--paper-2);padding:18px 15px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px 26px}
 .knob{display:flex;flex-direction:column;gap:7px}
 .knob-top{display:flex;align-items:baseline;gap:10px}
 .knob-top .mono{color:#5A6C69;font-size:0.62rem}
@@ -210,11 +232,8 @@ input[type=range]::-webkit-slider-thumb{
 }
 input[type=range]::-moz-range-track{height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff)}
 input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink)}
-#inp-vind   {--track:linear-gradient(90deg,#F3FAFE,#0E86C8,#7A4FD6);--kc:var(--blue)}
-#inp-straek {--track:linear-gradient(90deg,#FFF3DC,#FFB300);--kc:var(--amber)}
 #inp-hoejde {--track:linear-gradient(90deg,#F3FAFE,#0E86C8);--kc:var(--blue)}
 #inp-periode{--track:linear-gradient(90deg,#FFF3DC,#0FA593);--kc:var(--teal)}
-#inp-haeld  {--track:linear-gradient(90deg,#EFF7E8,#5FB030,#FF6A3D);--kc:var(--lime)}
 #inp-tid    {--track:linear-gradient(90deg,#FFFFFF,#7A4FD6);--kc:var(--grape)}
 
 /* ── Fakta-fod ─────────────────────────────────────────── */
@@ -225,6 +244,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bor
   font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
 }
 .fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
+.fact.stiplet::before{background:none;border:none;border-top:2px dashed var(--ink);height:0;width:16px;border-radius:0}
 .fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0;font-variant-numeric:tabular-nums}
 
 /* ── Bund ──────────────────────────────────────────────── */
@@ -250,7 +270,9 @@ body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
 body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
 body[data-projektor="1"] .gauge dt{font-size:0.78rem}
 body[data-projektor="1"] .gauge dd{font-size:1.9rem}
-body[data-projektor="1"] .gauge dd small{font-size:0.8rem}
+body[data-projektor="1"] .gauge dd small{font-size:0.5em}
+body[data-projektor="1"] .tl-lbls,
+body[data-projektor="1"] .duel span{font-size:0.66rem}
 body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
 body[data-projektor="1"] .knob-val{font-size:1.05rem}
 body[data-projektor="1"] .fact{font-size:0.74rem}
@@ -258,12 +280,15 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
 @media (max-width:960px){
+  .stage{grid-template-columns:1fr;max-width:calc(var(--fig)*900/430 + 20px)}
+  .kort-boks{width:100%;max-width:400px;margin-inline:auto}
   .gauges{grid-template-columns:1fr 1fr}
   .gauge:nth-child(3){border-left:none}
   .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
+  .knobs{grid-template-columns:1fr 1fr}
 }
 @media (max-width:700px){
-  .stage{overflow-x:auto}
+  .fig-rul{overflow-x:auto}
   canvas{min-width:620px}
 }
 @media (max-width:620px){
@@ -271,6 +296,9 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
   .head{padding:24px 0 18px}
   .rig{border-radius:14px;box-shadow:var(--hard)}
+  .gauges{grid-template-columns:1fr}
+  .gauge{border-left:none}
+  .gauge:nth-child(n+2){border-top:2px solid var(--ink)}
   .knobs{grid-template-columns:1fr}
   .gauge dd{font-size:1.1rem}
 }
@@ -278,7 +306,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   *{animation:none!important;transition:none!important}
 }
 @media print{
-  .top,.foot,.btn-mini,.btn-reset{display:none!important}
+  .top,.foot,.btn-mini{display:none!important}
   .rig{box-shadow:none;break-inside:avoid}
 }
 </style>
@@ -291,7 +319,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       "name": "Konstruktive og destruktive bølger",
       "url": "https://smbi.dk/geografi/boelger.html",
       "inLanguage": "da-DK",
-      "description": "Interaktiv simulering af bølger ved kysten: sæt vind og frit stræk, og se om opskyllet bygger stranden op, eller tilbageskyllet æder den.",
+      "description": "Skru på bølgehøjde og bølgeperiode, og se hvorfor stejle, hyppige bølger æder stranden, mens flade bølger med lang periode bygger den op.",
       "learningResourceType": "interaktiv simulering",
       "educationalLevel": "Gymnasialt niveau (stx, hf)",
       "isAccessibleForFree": true,
@@ -299,7 +327,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
       "image": "https://smbi.dk/img/og-geografi.png",
       "isPartOf": { "@id": "https://smbi.dk/#website" },
-      "about": { "@type": "Thing", "name": "Bølger, kysterosion og sedimenttransport" }
+      "about": { "@type": "Thing", "name": "Konstruktive og destruktive bølger, opskyl og tilbageskyl" }
     },
     {
       "@type": "BreadcrumbList",
@@ -333,115 +361,111 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · kyst &amp; bølger</span>
       <h1>Konstruktive og <span class="hi" style="--hc:#FFD9C9">destruktive</span> bølger</h1>
-      <p class="lead">Sæt vinden og det frie stræk, og følg bølgen ind mod land: den mærker bunden, bryder over revlen og skyller op ad stranden — og løber tilbage igen. Spørgsmålet er, hvem af de to der flytter mest sand.</p>
+      <p class="lead">Hvad afgør, om bølgerne bygger stranden op eller æder den? Skru på bølgehøjden og perioden — eller træk i punktet på bølgekortet — og hold øje med, om tilbageskyllet når at blive færdigt, før den næste bølge kommer.</p>
     </div>
   </div>
 
   <div class="wrap">
-    <section class="rig">
+    <section class="rig" aria-label="Simulering af konstruktive og destruktive bølger">
       <div class="rig-bar"></div>
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
-        <button type="button" class="btn-mini" id="btn-kattegat">Kattegat</button>
-        <button type="button" class="btn-mini" id="btn-nordsoen">Nordsøen</button>
-        <button type="button" class="btn-mini" id="btn-storm">Storm</button>
+        <button type="button" class="btn-mini" id="btn-brise"    title="0,4 m høje bølger, 4,5 s mellem dem">Sommerbrise</button>
+        <button type="button" class="btn-mini" id="btn-doenning" title="1,2 m høje bølger, 11 s mellem dem">Dønning</button>
+        <button type="button" class="btn-mini" id="btn-kuling"   title="1,8 m høje bølger, 6 s mellem dem">Kuling</button>
+        <button type="button" class="btn-mini" id="btn-storm"    title="3,5 m høje bølger, 7,5 s mellem dem">Storm</button>
         <span class="hoejre">
-          <button type="button" class="btn-mini" id="btn-vejr" aria-pressed="true"
-                  title="Sæt vind og frit stræk — bølgen følger af det">Vejr</button>
-          <button type="button" class="btn-mini" id="btn-boelge" aria-pressed="false"
-                  title="Sæt bølgehøjde og bølgeperiode direkte">Bølge</button>
+          <button type="button" class="btn-mini" id="btn-pause" aria-pressed="false">Pause</button>
+          <button type="button" class="btn-mini" id="btn-reset" title="Læg sandet tilbage, som det lå ved start">Nulstil stranden</button>
           <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                   title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
         </span>
       </div>
 
       <div class="stage">
-        <canvas id="sim" width="900" height="430" role="img"
-                aria-label="Tværprofil af en sandkyst. Bølgerne kommer ind fra venstre, bliver højere over den lave havbund, bryder over revlen og skyller op ad stranden. Aflæsningerne står under figuren."></canvas>
+        <div class="fig-rul">
+          <canvas id="sim" width="900" height="430" role="img"
+                  aria-label="Tværprofil af en sandstrand. Bølgerne kommer ind fra venstre, bryder og skyller op ad stranden og løber tilbage igen. Sandkornene flytter sig op mod bermen eller ud mod revlen. Aflæsningerne står under figuren."></canvas>
+        </div>
+        <div class="kort-boks">
+          <svg id="kort" role="img" aria-labelledby="kort-titel kort-desc">
+            <title id="kort-titel">Bølgekortet</title>
+            <desc id="kort-desc">Bølgehøjde op ad lodret akse, bølgelængde hen ad vandret akse. En ret linje gennem origo med stejlheden 1:40 deler kortet: over linjen er bølgerne destruktive, under den konstruktive. Punktet er den aktuelle bølge og kan trækkes; skyderne under figuren gør det samme.</desc>
+          </svg>
+        </div>
       </div>
 
       <dl class="gauges">
-        <div class="gauge g-h">
-          <dt>Bølgehøjde</dt>
+        <div class="gauge g-s">
+          <dt>Stejlhed · højde mod længde</dt>
           <div class="g-viz">
-            <div class="bar-v" style="--bc:var(--blue)"><i id="anim-h"></i></div>
-            <div class="ticks"><span>6 m</span><span>3 m</span><span>0</span></div>
+            <div class="bar-h"><i id="anim-stejl"></i><span class="mark" style="left:31.25%"></span><span class="mark-lbl" style="left:31.25%">1:40</span></div>
           </div>
-          <dd id="val-h">0,58<small>m fra bølgedal til bølgetop</small></dd>
+          <dd id="val-stejl">1:40<small>H/L = <span id="val-hl">0,025</span></small></dd>
         </div>
 
-        <div class="gauge g-l">
-          <dt>Bølgelængde</dt>
+        <div class="gauge g-f">
+          <dt>Frekvens</dt>
           <div class="g-viz">
-            <div class="bar-h" style="--bc:var(--grape)"><i id="anim-l"></i><b>140 m</b></div>
+            <div class="bar-h" style="--bc:var(--grape)"><i id="anim-frek"></i><b>20</b></div>
           </div>
-          <dd id="val-l">11,5<small>m mellem to bølgetoppe</small></dd>
+          <dd id="val-frek">10<small>bølger pr. minut</small></dd>
         </div>
 
-        <div class="gauge g-t">
-          <dt>Bølgeperiode</dt>
+        <div class="gauge g-tid">
+          <dt>Når tilbageskyllet at slutte?</dt>
           <div class="g-viz">
-            <div class="bar-h" style="--bc:var(--lime)"><i id="anim-t"></i><b>14 s</b></div>
+            <div class="tl">
+              <div class="tl-lbls"><span>Mellem bølger</span><span>Op + tilbage</span></div>
+              <div class="tl-bars">
+                <div class="tl-rad"><i id="tl-periode"></i></div>
+                <div class="tl-rad"><i id="tl-skyl"></i><i id="tl-over"></i></div>
+                <b id="tl-naeste"></b>
+              </div>
+            </div>
           </div>
-          <dd id="val-t">2,7<small>sekunder mellem to bølgetoppe</small></dd>
+          <dd id="val-luft">Ja<small id="val-luft-s">0,0 s til overs</small></dd>
         </div>
 
-        <div class="gauge g-type" id="g-type">
-          <dt>Bølgetype · netto sandflux</dt>
+        <div class="gauge" id="g-type">
+          <dt>Opskyl mod tilbageskyl · sand</dt>
           <div class="g-viz">
-            <div class="flux"><i id="anim-flux"></i></div>
-            <button class="btn-reset" type="button" id="btn-reset">Nulstil kyst</button>
+            <div class="duel">
+              <span>Op</span><div class="duel-rad"><i id="bar-op"></i></div>
+              <span>Tilbage</span><div class="duel-rad"><i id="bar-ned"></i></div>
+            </div>
           </div>
-          <dd id="val-type">I balance<small><span id="val-flux">+0,00</span> m³ pr. m kyst pr. døgn</small></dd>
+          <dd id="val-type">På grænsen<small><span id="val-netto">+0,0</span> m³ sand pr. m kyst pr. døgn</small></dd>
         </div>
       </dl>
 
       <div class="knobs">
-        <div class="par" id="par-vejr">
-          <label class="knob" for="inp-vind">
-            <span class="knob-top"><span class="mono">Vindhastighed</span><span class="knob-val" id="lbl-vind">9,0 m/s</span></span>
-            <input type="range" id="inp-vind" min="0" max="35" step="0.5" value="9">
-          </label>
-          <label class="knob" for="inp-straek">
-            <span class="knob-top"><span class="mono">Frit stræk</span><span class="knob-val" id="lbl-straek">60 km</span></span>
-            <input type="range" id="inp-straek" min="5" max="800" step="5" value="60">
-          </label>
-        </div>
-
-        <div class="par" id="par-boelge" hidden>
-          <label class="knob" for="inp-hoejde">
-            <span class="knob-top"><span class="mono">Bølgehøjde</span><span class="knob-val" id="lbl-hoejde">0,6 m</span></span>
-            <input type="range" id="inp-hoejde" min="0.1" max="8" step="0.1" value="0.6">
-          </label>
-          <label class="knob" for="inp-periode">
-            <span class="knob-top"><span class="mono">Bølgeperiode</span><span class="knob-val" id="lbl-periode">2,7 s</span></span>
-            <input type="range" id="inp-periode" min="2" max="14" step="0.1" value="2.7">
-          </label>
-        </div>
-
-        <label class="knob" for="inp-haeld">
-          <span class="knob-top"><span class="mono">Strandens hældning</span><span class="knob-val" id="lbl-haeld">2,9°</span></span>
-          <input type="range" id="inp-haeld" min="1.4" max="10.2" step="0.1" value="2.9">
+        <label class="knob" for="inp-hoejde">
+          <span class="knob-top"><span class="mono">Bølgehøjde</span><span class="knob-val" id="lbl-hoejde">1,2 m</span></span>
+          <input type="range" id="inp-hoejde" min="0.2" max="5" step="0.1" value="1.2">
+        </label>
+        <label class="knob" for="inp-periode">
+          <span class="knob-top"><span class="mono">Bølgeperiode</span><span class="knob-val" id="lbl-periode">11,0 s</span></span>
+          <input type="range" id="inp-periode" min="3" max="12" step="0.1" value="11">
         </label>
         <label class="knob" for="inp-tid">
-          <span class="knob-top"><span class="mono">Tidsskala</span><span class="knob-val" id="lbl-tid">2,0 døgn/s</span></span>
-          <input type="range" id="inp-tid" min="0" max="20" step="0.5" value="2">
+          <span class="knob-top"><span class="mono">Stranden · tidsskala</span><span class="knob-val" id="lbl-tid">1,0 døgn/s</span></span>
+          <input type="range" id="inp-tid" min="0" max="10" step="0.5" value="1">
         </label>
       </div>
 
       <div class="facts">
-        <span class="fact" style="--fc:var(--coral)">Stejlhed H/L <b id="f-stejl">0,050</b></span>
-        <span class="fact" style="--fc:var(--blue)">Frekvens <b id="f-frek">22</b> <span class="enhed">pr. min</span></span>
-        <span class="fact" style="--fc:var(--teal)">Bølgebasis <b id="f-basis">5,7</b> <span class="enhed">m</span></span>
-        <span class="fact" style="--fc:var(--grape)">Bryder på <b id="f-bryd">0,9</b> <span class="enhed">m vand</span></span>
+        <span class="fact" style="--fc:var(--grape)">Bølgelængde <b id="f-l">189</b> <span class="enhed">m</span></span>
+        <span class="fact" style="--fc:var(--blue)">Nedsivning <b id="f-nedsiv">0</b> %</span>
+        <span class="fact" style="--fc:var(--coral)">Opskyl bremset <b id="f-brems">0</b> %</span>
         <span class="fact" style="--fc:var(--amber)">Dag <b id="f-dag">0</b></span>
-        <span class="fact" style="--fc:var(--slate)">Lodret overhøjde ca. 6×</span>
+        <span class="fact stiplet">Stranden ved start</span>
+        <span class="fact" style="--fc:var(--slate)">Lodret overhøjde 4×</span>
       </div>
     </section>
 
     <!-- Instrumenterne opdateres 60 gange i sekundet og kan derfor ikke selv
-         være aria-live. I stedet opsummeres aflæsningen her et par gange
-         i minuttet. -->
+         være aria-live. I stedet opsummeres aflæsningen her hvert andet sekund. -->
     <p class="sr" id="sr-status" aria-live="polite"></p>
   </div>
 </main>

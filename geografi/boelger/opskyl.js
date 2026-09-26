@@ -1,197 +1,186 @@
-/* opskyl.js — opskyl, tilbageskyl og sandets vandring.
-   Her afgøres, om bølgerne er konstruktive eller destruktive. Tre ting
-   trækker i hver sin retning, og de svarer én til én til grundbogens
-   forklaringer:
+/* opskyl.js — opskyl, tilbageskyl, nedsivning og sandkornene.
+   Hver bølge, der når kystlinjen, bliver til én tunge vand, der skyller op
+   ad stranden og løber tilbage igen. Varer det længere, end der er mellem
+   to bølger, overlapper tungerne: den nye bølges opskyl løber ind i den
+   forriges tilbageskyl og bremses. Er der tid til overs, siver en del af
+   vandet ned i sandet, mens tilbageskyllet løber. */
 
-     bremse  — kommer bølgerne så tæt, at tilbageskyllet fra den forrige
-               bølge stadig løber, når den næste skyller op? (frekvens)
-     samling — en stejl strand afsætter energien på et lille område, så
-               tilbageskyllet får høj strømhastighed. (strandhældning)
-     svaev   — hvor stor en del af sandet holdes svævende i vandsøjlen
-               længe nok til at blive ført ud igen? (bølgestørrelse mod
-               periode — suspensionen fra kapitlet om sedimenttransport)
+import { OP_ANDEL } from './model.js';
+import { XS, KLIT_X, px, py, bundZ, revleX } from './strand.js';
 
-   Netto sandflux er opskyllets opbygning minus tilbageskyllets bortførsel.
-   Positiv = aflejring, negativ = erosion. */
-
-import { G, px, py, bundZ, kystlinje, KLIT_X, strandbredde } from './kyst.js';
-
-const MU      = 0.05;   // nedsivning og friktion på strandplanet
-const C_SKYL  = 14;     // sætter, hvor længe ét opskyl + tilbageskyl varer
-const W_SYNK  = 0.035;  // sandkornets synkehastighed, m/s (fint sand)
-const OMEGA_0 = 6;      // hvor kraftig en bølge der skal til, før sandet svæver
-const K_FLUX  = 0.15;   // m³ pr. m kystlinje pr. døgn
-
-export function beregn(Hb, T, haeldning){
-  const u0    = Math.sqrt(G * Hb);                       // strømhastighed i opskyllet
-  const tSkyl = C_SKYL * Math.sqrt(Hb / G);              // opskyl + tilbageskyl, sekunder
-  const bremse= Math.max(0, Math.min(0.9, (tSkyl - T) / tSkyl));
-  const samling = Math.sqrt(haeldning / (haeldning + MU));
-  const omega = Hb / (W_SYNK * T);                       // hvor let sandet holdes svævende
-  const svaev = omega / (omega + OMEGA_0);
-
-  const vOp  = u0 * (1 - bremse);
-  const vTil = u0 * samling;
-  const op   = Math.pow(vOp, 3)  * (1 - svaev);          // sand, der bliver liggende
-  const til  = Math.pow(vTil, 3) * svaev;                // sand, der føres med ud
-  const netto = K_FLUX * (op - til);
-
-  const raek = Math.min(strandbredde() + 12, 0.7 * Hb / haeldning);
-
-  return { u0, tSkyl, bremse, samling, svaev, omega, vOp, vTil, netto, raek,
-           frekvens: 60 / T };
+// Hvor langt ind ad stranden (vandret, m) når vandet op til en given højde?
+export function raekkevidde(h){
+  let x = XS;
+  while (x < KLIT_X - 0.5 && bundZ(x) < h) x += 0.1;
+  return Math.max(0.6, x - XS);
 }
-
-export function type(netto){
-  if (netto >  0.12) return { navn:'Konstruktiv', ord:'aflejring', farve:'#0FA593' };
-  if (netto < -0.12) return { navn:'Destruktiv',  ord:'erosion',   farve:'#FF6A3D' };
-  return { navn:'I balance', ord:'hverken eller', farve:'#566B68' };
-}
-
-// ── Opskyllets tunger ──────────────────────────────────
-// Én tunge pr. bølge. Varer et opskyl længere, end der er mellem to
-// bølger, overlapper tungerne — og så er det netop den forrige bølges
-// tilbageskyl, den nye bølge løber ind i.
-const tunger = [];
-let sidsteTunge = -99;
 
 function frontAndel(tau){
-  if (tau < 0.36) return Math.sin(tau / 0.36 * Math.PI / 2);
-  return Math.cos((tau - 0.36) / 0.64 * Math.PI / 2);
+  if (tau < OP_ANDEL) return Math.sin(tau / OP_ANDEL * Math.PI / 2);
+  return Math.cos((tau - OP_ANDEL) / (1 - OP_ANDEL) * Math.PI / 2);
 }
 
-export function opdaterTunger(t, m, T){
-  if (t - sidsteTunge >= T){ tunger.push({ t0: t }); sidsteTunge = t; }
-  for (let i = tunger.length - 1; i >= 0; i--){
-    if (t - tunger[i].t0 > m.tSkyl) tunger.splice(i, 1);
-  }
-  if (tunger.length > 6) tunger.splice(0, tunger.length - 6);
+// ── Tungerne ───────────────────────────────────────────
+const tunger = [];
 
-  let front = 0, moede = null;
-  const stat = tunger.map(tu => {
-    const tau = (t - tu.t0) / m.tSkyl;
-    return { f: m.raek * frontAndel(tau), op: tau < 0.36 };
+export function nyBoelge(t, m){
+  tunger.push({ t0: t, R: raekkevidde(m.opskylsHoejde), tS: m.tSkyl,
+                p: m.nedsivning, h0: 0.10 + 0.04 * m.u0 });
+  if (tunger.length > 6) tunger.shift();
+}
+
+export function nulstilTunger(){ tunger.length = 0; }
+
+// Stillingen lige nu: hvor langt hver tunge er nået, og om den er på vej
+// op eller ned. Tungerne står ældst først.
+export function stilling(t){
+  for (let i = tunger.length - 1; i >= 0; i--)
+    if (t - tunger[i].t0 > tunger[i].tS) tunger.splice(i, 1);
+  const st = tunger.map(tu => {
+    const tau = (t - tu.t0) / tu.tS;
+    return { tu, tau, f: tu.R * frontAndel(tau), op: tau < OP_ANDEL };
   });
-  for (const s of stat) front = Math.max(front, s.f);
-  for (const a of stat) for (const b of stat){
-    if (a.op && !b.op && b.f > a.f * 0.25 && Math.abs(a.f - b.f) < m.raek * 0.22)
-      moede = (a.f + b.f) / 2;
+  // Dér, hvor et nyt opskyl er nået op til vand, der stadig løber tilbage
+  let moede = null;
+  for (let i = 0; i < st.length; i++){
+    if (!st[i].op) continue;
+    for (let j = 0; j < i; j++){
+      if (!st[j].op && st[j].f > st[i].f && st[i].f > 0.4) moede = st[i].f;
+    }
   }
-  return { front, moede };
+  return { st, moede };
 }
 
-export function nulstilTunger(){ tunger.length = 0; sidsteTunge = -99; }
+// ── Tegning af vandet på stranden ──────────────────────
+export function tegnTunger(c, sk){
+  c.save();
+  for (const s of sk.st){
+    const { tu, tau, f } = s;
+    if (f < 0.05) continue;
+    const tynd = s.op ? 1 : 1 - tu.p * (tau - OP_ANDEL) / (1 - OP_ANDEL);
+    const h0 = tu.h0 * Math.max(0.35, tynd);
+    c.beginPath();
+    c.moveTo(px(XS - 0.5), py(bundZ(XS - 0.5)));
+    for (let x = XS; x <= XS + f; x += 0.25) c.lineTo(px(x), py(bundZ(x)));
+    for (let x = XS + f; x >= XS - 0.5; x -= 0.25){
+      const xi = Math.max(0, (x - XS) / f);
+      c.lineTo(px(x), py(bundZ(x) + h0 * Math.pow(1 - Math.min(1, xi), 0.5)) - 1);
+    }
+    c.closePath();
+    c.fillStyle = s.op ? 'rgba(127,203,236,.95)' : 'rgba(88,176,222,.92)';
+    c.fill();
+    c.lineWidth = 1.5; c.strokeStyle = '#17211F'; c.stroke();
+
+    // skumkant forrest i opskyllet
+    if (s.op){
+      const yf = py(bundZ(XS + f)) - 2;
+      c.fillStyle = '#fff'; c.strokeStyle = 'rgba(23,33,31,.55)'; c.lineWidth = 1;
+      for (let i = 0; i < 3; i++){
+        c.beginPath();
+        c.arc(px(XS + f) - i * 3.4, yf - i * 1.4, 2.4 - i * 0.5, 0, 6.284);
+        c.fill(); c.stroke();
+      }
+    }
+  }
+  c.restore();
+}
+
+// Nedsivningen: små streger ned i sandet, mens tilbageskyllet løber.
+// Antallet følger den andel af vandet, der når at synke ned.
+export function tegnNedsivning(c, sk){
+  c.save();
+  c.strokeStyle = '#12628F'; c.lineWidth = 2; c.lineCap = 'round';
+  for (const s of sk.st){
+    const { tu, tau } = s;
+    if (s.op || tu.p < 0.02) continue;
+    const q = (tau - OP_ANDEL) / (1 - OP_ANDEL);     // 0 → 1 gennem tilbageskyllet
+    const n = Math.max(1, Math.round(tu.p * 18));
+    c.globalAlpha = Math.max(0, 1 - q);
+    for (let i = 0; i < n; i++){
+      const x = XS + tu.R * (0.18 + 0.72 * (i + 0.5) / n);
+      if (x > XS + s.f + tu.R * 0.05) {              // kun dér, hvor vandet lige har ligget
+        const y = py(bundZ(x)) + 4 + q * 12;
+        c.beginPath(); c.moveTo(px(x), y); c.lineTo(px(x), y + 6); c.stroke();
+        c.beginPath(); c.moveTo(px(x) - 2.5, y + 3.5); c.lineTo(px(x), y + 6.5); c.lineTo(px(x) + 2.5, y + 3.5); c.stroke();
+      }
+    }
+  }
+  c.restore();
+}
+
+// Hvor nyt opskyl møder gammelt tilbageskyl: sprøjt og skum.
+export function tegnMoede(c, sk){
+  if (sk.moede === null) return;
+  const x = XS + sk.moede, y = py(bundZ(x)) - 5;
+  c.save();
+  c.fillStyle = '#fff'; c.strokeStyle = 'rgba(23,33,31,.6)'; c.lineWidth = 1;
+  for (let i = 0; i < 7; i++){
+    const r = 2 + Math.random() * 3.5;
+    c.beginPath();
+    c.arc(px(x) + (Math.random() - 0.5) * 16, y - Math.random() * 12, r, 0, 6.284);
+    c.fill(); c.stroke();
+  }
+  c.restore();
+}
 
 // ── Sandkornene ────────────────────────────────────────
+// Kornene rider op og ned med vandet, og samtidig driver de langsomt den
+// vej, modellen siger: op mod opskyllets øverste kant (bermen), eller ned
+// forbi kystlinjen og ud til revlen — og tilbage igen.
 const korn = [];
+
 export function saaKorn(){
   korn.length = 0;
-  const xs = kystlinje();
-  for (let i = 0; i < 130; i++){
-    const x = 0.55 * xs + Math.random() * (KLIT_X - 0.55 * xs);
-    korn.push({ x, d: (Math.random() - 0.5) * 5, r: 1.6 + Math.random() * 1.4 });
+  for (let i = 0; i < 70; i++){
+    const hav = i < 28;
+    korn.push({
+      x: hav ? revleX() + (Math.random() - 0.5) * 14 : XS + 0.5 + Math.random() * 11,
+      hav, v: 0.7 + Math.random() * 0.6, j: Math.random() - 0.5, vis: 0,
+      r: 2 + Math.random() * 1.4
+    });
   }
 }
 
-export function flytKorn(dt, m, sk, pr){
-  const xs = kystlinje();
+export function flytKorn(dt, t, m, sk){
+  const nyeste = sk.st.length ? sk.st[sk.st.length - 1] : null;
+  const R = raekkevidde(m.opskylsHoejde);
   for (const k of korn){
-    if (k.x > xs){
-      // på stranden: op med opskyllet, ud med tilbageskyllet
-      if (k.x < xs + sk.front){
-        k.x += (sk.moede !== null && k.x < xs + sk.moede)
-             ? -m.vTil * dt * 0.5
-             : (dt * (Math.random() < 0.5 ? m.vOp * 0.55 : -m.vTil * m.svaev * 1.5));
+    if (!k.hav){
+      const s = k.x - XS;
+      if (s < R){
+        // netto drift: pr. bølge flyttes kornet en stump, der følger balancen
+        k.x += dt * k.v * 0.35 * Math.max(R, 3) * m.balance / m.T;
+        k.x = Math.min(k.x, XS + R);
       }
+      // kornet rider med vandet, mens det er dækket
+      const f = nyeste ? nyeste.f : 0;
+      k.vis = (nyeste && f > s) ? Math.min(2.2, 0.12 * R) * frontAndel(nyeste.tau) * k.v : 0;
+      if (k.x < XS - 1.2){ k.hav = true; k.vis = 0; }
     } else {
-      // i brændingen: turbulensen hvirvler sandet op og fører det ud mod revlen
-      const p = pr.punkter[Math.min(pr.punkter.length - 1,
-                 Math.round(k.x / pr.xs * (pr.punkter.length - 1)))];
-      const uro = p && p.bryder ? 1 : 0.15;
-      k.x -= dt * uro * m.svaev * 6;
-      k.d += (Math.random() - 0.5) * uro * 2;
+      const b = m.balance, fart = (0.3 + 2 * Math.abs(b)) * k.v;
+      if (b > 0.04){
+        k.x += dt * fart;
+        if (k.x >= XS - 1.2){ k.hav = false; k.x = XS - 0.8; }
+      } else if (b < -0.04){
+        const maal = revleX() + k.j * 16;
+        if (Math.abs(k.x - maal) > 0.3) k.x += Math.sign(maal - k.x) * dt * fart;
+      }
     }
-    k.d = Math.max(-6, Math.min(6, k.d));
-    if (k.x < 0.45 * xs) k.x = KLIT_X - Math.random() * 6;
-    if (k.x > KLIT_X)    k.x = 0.45 * xs + Math.random() * 8;
   }
 }
 
 export function tegnKorn(c){
-  c.save(); c.fillStyle = '#6B4F1E';
+  c.save(); c.fillStyle = '#5E4318';
   for (const k of korn){
-    c.fillRect(px(k.x) - k.r / 2, py(bundZ(k.x)) - 1 + k.d * 0.35, k.r, k.r);
+    const x = k.x + k.vis;
+    c.fillRect(px(x) - k.r / 2, py(bundZ(x)) - k.r - 0.5, k.r, k.r);
   }
   c.restore();
 }
 
-// ── Tegning af strandens vandkant ──────────────────────
-export function tegnOpskyl(c, m, sk){
-  const xs = kystlinje();
-  const slut = xs + Math.max(1.5, sk.front);
-  const tyk = 0.10 + 0.06 * m.u0;          // vandlagets tykkelse i meter
-  c.save();
-  c.beginPath();
-  c.moveTo(px(xs), py(bundZ(xs)));
-  for (let x = xs; x <= slut; x += 1) c.lineTo(px(x), py(bundZ(x)));
-  for (let x = slut; x >= xs; x -= 1){
-    const t = (x - xs) / (slut - xs);
-    c.lineTo(px(x), py(bundZ(x) + tyk * Math.pow(1 - t, 0.55)));
-  }
-  c.closePath();
-  c.fillStyle = 'rgba(112,196,233,.92)'; c.fill();
-  c.lineWidth = 1.6; c.strokeStyle = '#17211F'; c.stroke();
-
-  // skumkanten forrest i opskyllet
-  const yf = py(bundZ(slut)) - 2;
-  c.fillStyle = '#fff'; c.strokeStyle = 'rgba(23,33,31,.55)'; c.lineWidth = 1;
-  for (let i = 0; i < 3; i++){
-    c.beginPath();
-    c.arc(px(slut) - i * 3.4, yf - i * 1.6, 2.4 - i * 0.5, 0, 6.284);
-    c.fill(); c.stroke();
-  }
-
-  // dér hvor det nye opskyl løber ind i det forrige tilbageskyl
-  if (sk.moede !== null){
-    const x = xs + sk.moede, y = py(bundZ(x)) - 4;
-    for (let i = 0; i < 5; i++){
-      const r = 2 + Math.random() * 3.5;
-      c.beginPath();
-      c.arc(px(x) + (Math.random() - 0.5) * 14, y - Math.random() * 7, r, 0, 6.284);
-      c.fill(); c.stroke();
-    }
-  }
-  c.restore();
-}
-
-// To pile over stranden: opskyllets og tilbageskyllets strømhastighed
-// side om side. Længden er hastigheden, så de kan sammenlignes direkte.
-export function tegnPile(c, m){
-  const xs = kystlinje();
-  const xm = xs + Math.min(strandbredde() * 0.55, 34);
-  const x0 = Math.max(105, Math.min(795, px(xm)));
-  const y  = Math.max(46, py(bundZ(xm)) - 30);
-  const sk = 12, maks = 92;
-  pil(c, x0, y - 24, Math.max(10, Math.min(maks, m.vOp  * sk)),  1, '#5FB030', 'OPSKYL');
-  pil(c, x0, y,      Math.max(10, Math.min(maks, m.vTil * sk)), -1, '#FF6A3D', 'TILBAGESKYL');
-}
-
-function pil(c, x, y, laengde, retning, farve, maerkat){
-  c.save();
-  c.lineWidth = 4.5; c.lineCap = 'round';
-  c.strokeStyle = '#17211F';
-  c.beginPath(); c.moveTo(x, y); c.lineTo(x + retning * laengde, y); c.stroke();
-  c.lineWidth = 2.6; c.strokeStyle = farve;
-  c.beginPath(); c.moveTo(x, y); c.lineTo(x + retning * laengde, y); c.stroke();
-  const sp = x + retning * laengde;
-  c.fillStyle = farve; c.strokeStyle = '#17211F'; c.lineWidth = 1.4;
-  c.beginPath();
-  c.moveTo(sp + retning * 7, y);
-  c.lineTo(sp, y - 5); c.lineTo(sp, y + 5); c.closePath();
-  c.fill(); c.stroke();
-  c.font = "600 9.5px 'IBM Plex Mono', ui-monospace, monospace";
-  c.fillStyle = '#17211F';
-  c.textAlign = retning > 0 ? 'left' : 'right';
-  c.fillText(maerkat, x, y - 9);
-  c.restore();
+// Til mærkaterne: hvor er den nyeste tunge, og hvilken vej løber den?
+export function forreste(sk){
+  if (!sk.st.length) return null;
+  const s = sk.st[sk.st.length - 1];
+  return { x: XS + s.f, op: s.op };
 }

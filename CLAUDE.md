@@ -14,6 +14,15 @@ python3 -m http.server 8777       # og åbn http://localhost:8777/...
 Sider linker til `/geografi.html`, `/contact.html` osv. med rod-relative stier,
 så de kun virker rigtigt over en server — ikke via `file://`.
 
+## Simuleringer: gerne flere filer
+
+Alle nye simuleringer — og simuleringer, der lægges om — må deles op i flere
+filer: siden selv (`<navn>.html` med CSS og markup) plus ES-moduler i en
+undermappe med sidens navn (`<navn>/side.js`, `<navn>/model.js` osv.). Ingen
+build og ingen npm-pakker; modulerne kræver en server, ligesom siderne i
+forvejen gør. Se afsnit 0 i `design_rules.md` for, hvordan der deles, og
+`geografi/boelger/` eller `biologi/membran/` som forlæg.
+
 ## Øvelsesvejledninger (`Øvelser/`)
 
 Quarto-projekt med én mappe pr. øvelse under `Biologi/` og `Geografi/`. Filen
