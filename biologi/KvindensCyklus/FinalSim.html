@@ -178,8 +178,8 @@ h1{
   letter-spacing:0.12em;text-transform:uppercase;color:#5A4451;
   font-variant-numeric:tabular-nums;
 }
-.who-fase{
-  background:#fff;border:1.5px solid var(--ink);border-radius:12px;padding:1px 9px;color:var(--ink);
+.who.aflaest{
+  background:var(--ink);color:#FFF6E0;border-radius:12px;padding:1px 9px;
 }
 .spacer{margin-left:auto}
 .btn-mini{
@@ -204,7 +204,7 @@ h1{
 }
 .stage-in{
   /* Højdebudget: figuren må ikke blive højere end --fig. */
-  max-width:calc(var(--fig)*1000/520);margin-inline:auto;
+  max-width:calc(var(--fig)*1000/532);margin-inline:auto;
   overflow-x:auto;overflow-y:hidden;
 }
 #scene{
@@ -212,18 +212,27 @@ h1{
   border:2px solid var(--ink);border-radius:12px;
   background:#fff;
 }
-.haendelse{
-  border-top:2px solid var(--ink);background:#FFE9DC;
-  padding:8px 15px;min-height:2.4em;
-  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.08em;
-  text-transform:uppercase;color:var(--ink);
-  display:flex;align-items:center;gap:9px;
+#scene:focus-visible{outline-offset:-3px}
+/* «Hvad sker der nu?» — fasen i ord, eller den seneste hændelse */
+.forklaring{
+  border-top:2px solid var(--ink);background:#FFF6EF;
+  padding:10px 15px;
+  display:flex;align-items:center;gap:14px;
+  transition:background .3s;
 }
-.haendelse::before{
-  content:'';flex:none;width:9px;height:9px;border-radius:2px;
-  background:var(--ink);transform:rotate(45deg);
+.forklaring.ny{background:#FFE9DC}
+.fase-navn{
+  flex:none;min-width:14.5em;text-align:center;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:var(--ink);color:#FFF6E0;border-radius:14px;padding:4px 10px;
 }
-.haendelse.ny::before{animation:pulse 1s ease-in-out 3}
+.forklaring p{font-size:0.98rem;line-height:1.45;max-width:78ch}
+.forklaring.ny p::before{
+  content:'';display:inline-block;width:8px;height:8px;margin-right:8px;
+  background:var(--ink);transform:rotate(45deg);vertical-align:1px;
+  animation:pulse 1s ease-in-out 3;
+}
 
 /* figurens dele */
 .svg-mono{
@@ -261,6 +270,12 @@ h1{
 .nu-skilt{fill:var(--ink)}
 .nu-tekst{fill:#FFF6E0;font-size:8.5px}
 .skillelinje{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 4}
+.fase-ramme{fill:#fff;stroke:var(--ink);stroke-width:1.5}
+.fase-flade{stroke:var(--ink);stroke-width:1}
+.fase-tekst{font-size:8px;letter-spacing:.1em}
+.lup-linje{stroke:var(--grape);stroke-width:2}
+.lup-skilt{fill:var(--grape);stroke:var(--ink);stroke-width:1.2}
+.lup-tekst{fill:#fff;font-size:8.5px}
 
 .kasse{fill:#fff;stroke:var(--ink);stroke-width:2}
 .ovarie{fill:#FDE6D8;stroke:var(--ink);stroke-width:2}
@@ -413,7 +428,8 @@ body[data-projektor="1"] .knobs{padding:10px 15px 12px}
 body[data-projektor="1"] .btn{font-size:1rem;padding:6px 14px}
 body[data-projektor="1"] .facts{padding:8px 15px}
 body[data-projektor="1"] .fact{font-size:0.7rem;padding:2px 11px}
-body[data-projektor="1"] .haendelse{font-size:0.8rem}
+body[data-projektor="1"] .fase-navn{font-size:0.75rem}
+body[data-projektor="1"] .forklaring p{font-size:1.08rem;max-width:none}
 
 /* ── Responsivt ────────────────────────────────────────── */
 @media (max-width:960px){
@@ -427,6 +443,8 @@ body[data-projektor="1"] .haendelse{font-size:0.8rem}
 }
 @media (max-width:620px){
   body{font-size:16px}
+  .forklaring{flex-direction:column;align-items:flex-start;gap:7px}
+  .fase-navn{min-width:0}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
   .head{padding-top:24px;padding-bottom:18px}
   .rig{border-radius:14px;box-shadow:var(--hard)}
@@ -551,7 +569,6 @@ body[data-projektor="1"] .haendelse{font-size:0.8rem}
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
         <span class="who" id="who-dag">Cyklus 1 · dag 1</span>
-        <span class="who who-fase" id="who-fase">menstruation</span>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-start" aria-pressed="false">Start</button>
         <button type="button" class="btn-mini" id="btn-dag" title="Gå et døgn frem">+1 døgn</button>
@@ -563,15 +580,18 @@ body[data-projektor="1"] .haendelse{font-size:0.8rem}
 
       <div class="stage">
         <div class="stage-in">
-          <svg id="scene" viewBox="0 0 1000 520" role="img"
+          <svg id="scene" viewBox="0 0 1000 532" role="img" tabindex="0"
                aria-labelledby="scene-titel scene-desc">
             <title id="scene-titel">Hormonaksen og kurverne over cyklussen</title>
-            <desc id="scene-desc">Til venstre: hypothalamus og hypofysen sender FSH og LH ned til ovariet, hvor en follikel vokser og bliver til et gult legeme. Ovariet sender østrogen og progesteron videre til livmoderens slimhinde og tilbage op til hypofysen som negativ og positiv feedback. Til højre: fire kurver over de seneste 42 døgn — FSH og LH, folliklen og det gule legeme, østradiol og progesteron, og slimhindens tykkelse med blødningerne.</desc>
-            <line x1="392" x2="392" y1="14" y2="506" class="skillelinje"/>
+            <desc id="scene-desc">Til venstre: hypothalamus og hypofysen sender FSH og LH ned til ovariet, hvor en follikel vokser og bliver til et gult legeme. Ovariet sender østrogen og progesteron videre til livmoderens slimhinde og tilbage op til hypofysen som negativ og positiv feedback. Til højre: fire kurver over de seneste uger — FSH og LH, folliklen og det gule legeme, østradiol og progesteron, og slimhindens tykkelse med blødningerne — med cyklussens faser og cyklusdagene under. Peg på kurverne, eller brug piletasterne, for at aflæse en bestemt dag i instrumenterne.</desc>
+            <line x1="392" x2="392" y1="14" y2="518" class="skillelinje"/>
           </svg>
         </div>
       </div>
-      <p class="haendelse" id="haendelse" aria-hidden="true"></p>
+      <div class="forklaring" id="forklaring" aria-hidden="true">
+        <span class="fase-navn" id="fase-navn">Menstruation</span>
+        <p id="forklaring-tekst"></p>
+      </div>
 
       <dl class="gauges">
         <div class="gauge g-hyp">
@@ -628,8 +648,8 @@ body[data-projektor="1"] .haendelse{font-size:0.8rem}
     </section>
 
     <!-- Instrumenterne opdateres mange gange i sekundet og kan derfor ikke
-         selv være aria-live. Hændelserne (ægløsning, menstruation …) læses
-         op her i stedet. -->
+         selv være aria-live. Faseskift og hændelser (ægløsning,
+         menstruation …) læses op her i stedet. -->
     <p class="sr" id="sr-status" aria-live="polite"></p>
   </div>
 </main>

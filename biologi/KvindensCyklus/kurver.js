@@ -7,6 +7,8 @@
      Ovariets      østradiol (venstre akse) og progesteron
      hormoner      (højre akse)
      Livmoderen    slimhindens tykkelse og blødningerne
+   Under dem en fasestribe og tidsaksen i cyklusdage, så figuren
+   læses som lærebogens (dag 1 = første blødningsdag).
    Kurverne ruller mod venstre; «nu» står fast.
    ═══════════════════════════════════════════════════════════ */
 
@@ -14,6 +16,7 @@ const NS = 'http://www.w3.org/2000/svg';
 export const X0 = 452, X1 = 948;
 export const VINDUE = 42;                /* døgn på tidsaksen */
 const NU = 0.8;                          /* hvor på aksen «nu» står */
+export const FORTID = NU * VINDUE;       /* døgn, der kan ses bagud */
 
 const R = {
   hyp:  {y0: 40,  y1: 132, maks: 70},    /* IU/L */
@@ -22,6 +25,17 @@ const R = {
   slim: {y0: 390, y1: 470, maks: 15},    /* mm */
 };
 const AKSE_Y = 470;
+const FASE = {y0: 474, y1: 490};         /* fasestriben under kurverne */
+
+/* faserne i striben: navn og lys flade (navnet er signalet, farven hjælper) */
+export const FASER = {
+  mens:    {navn:'menstruation', kort:'mens.',    fyld:'#FBD3E1'},
+  follikel:{navn:'follikelfase', kort:'follikel', fyld:'#C7E6F6'},
+  luteal:  {navn:'lutealfase',   kort:'luteal',   fyld:'#FFE7A6'},
+  grav:    {navn:'graviditet',   kort:'grav.',    fyld:'#D6EFC4'},
+  pille:   {navn:'p-pille',      kort:'pille',    fyld:'#E2D6F8'},
+  pause:   {navn:'pillepause',   kort:'pause',    fyld:'#FFFFFF'},
+};
 
 export const FARVE = {
   fsh:'#0E86C8', lh:'#7A4FD6', oe:'#E8336D', prog:'#B07A00', hcg:'#0FA593',
@@ -55,7 +69,7 @@ export function byggKurver(svg){
   ny('rect', {width:5, height:5, fill:'#C7E6F6'}, saed);
   ny('line', {x1:0, y1:0, x2:0, y2:5, stroke:'#0E86C8', 'stroke-width':1.4}, saed);
   const klip = ny('clipPath', {id:'klip-kurver'}, defs);
-  ny('rect', {x:X0, y:R.hyp.y0 - 30, width:X1 - X0, height:AKSE_Y - R.hyp.y0 + 30}, klip);
+  ny('rect', {x:X0, y:R.hyp.y0 - 30, width:X1 - X0, height:FASE.y1 - R.hyp.y0 + 30}, klip);
 
   /* rækkernes rammer, aksetal og titler */
   const ramme = ny('g', {class:'rammer'}, g);
@@ -94,11 +108,14 @@ export function byggKurver(svg){
     tal(X0 - 6, y, v, 'end');
   }
   enhed(ramme, X0 - 30, R.slim, 'mm');
-  tekst(ramme, X1, AKSE_Y + 30, 'døgn →', 'svg-enhed', {'text-anchor':'end'});
+  ny('rect', {x:X0, y:FASE.y0, width:X1 - X0, height:FASE.y1 - FASE.y0, class:'fase-ramme'}, ramme);
+  tekst(ramme, X0 - 6, FASE.y1 - 4, 'fase', 'svg-enhed', {'text-anchor':'end'});
+  tekst(ramme, X1, FASE.y1 + 26, 'cyklusdag →', 'svg-enhed', {'text-anchor':'end'});
 
   /* det, der tegnes om hvert billede */
   const levende = ny('g', {'clip-path':'url(#klip-kurver)'}, g);
   const lag = {
+    faser:   ny('g', {}, levende),
     baand:   ny('g', {}, levende),
     slim:    ny('path', {class:'slim-flade'}, levende),
     blod:    ny('g', {}, levende),
@@ -112,13 +129,44 @@ export function byggKurver(svg){
   }
   const akseTal = ny('g', {}, g);
   const nuX = X0 + NU * (X1 - X0);
-  ny('line', {x1:nuX, x2:nuX, y1:R.hyp.y0 - 4, y2:AKSE_Y, class:'nu-linje'}, g);
+  ny('line', {x1:nuX, x2:nuX, y1:R.hyp.y0 - 4, y2:FASE.y1, class:'nu-linje'}, g);
   const nuSkilt = ny('g', {transform:`translate(${nuX},${R.hyp.y0 - 4})`}, g);
   ny('rect', {x:-15, y:-16, width:30, height:15, rx:7, class:'nu-skilt'}, nuSkilt);
   tekst(nuSkilt, 0, -5.5, 'nu', 'svg-mono nu-tekst', {'text-anchor':'middle'});
 
-  return {lag, linje, akseTal};
+  /* aflæsning: en lodret streg og dagens nummer, når man peger */
+  const lup = ny('g', {class:'lup', visibility:'hidden'}, g);
+  const lupLinje = ny('line', {y1:R.hyp.y0, y2:FASE.y1, class:'lup-linje'}, lup);
+  const lupSkilt = ny('g', {}, lup);
+  ny('rect', {x:-26, y:0, width:52, height:15, rx:7, class:'lup-skilt'}, lupSkilt);
+  const lupTekst = tekst(lupSkilt, 0, 10.5, '', 'svg-mono lup-tekst', {'text-anchor':'middle'});
+
+  return {lag, linje, akseTal, lup, lupLinje, lupSkilt, lupTekst};
 }
+
+/* ── Aflæsning ──────────────────────────────────────────── */
+const vinduetsStart = s => s.t - NU * VINDUE;
+
+/* tiden under et punkt i figuren — null uden for kurverne */
+export function tidVed(x, y, s){
+  if (x < X0 || x > X1 || y < R.hyp.y0 - 20 || y > FASE.y1 + 20) return null;
+  return vinduetsStart(s) + (x - X0) / (X1 - X0) * VINDUE;
+}
+
+export function tegnLup(k, s, p){
+  const t0 = vinduetsStart(s);
+  const lx = p ? X0 + (p.t - t0) / VINDUE * (X1 - X0) : -1;
+  if (!p || lx < X0 || lx > X1){ k.lup.setAttribute('visibility', 'hidden'); return; }
+  k.lup.setAttribute('visibility', 'visible');
+  k.lupLinje.setAttribute('x1', lx.toFixed(1));
+  k.lupLinje.setAttribute('x2', lx.toFixed(1));
+  const sx = Math.min(X1 - 26, Math.max(X0 + 26, lx));
+  k.lupSkilt.setAttribute('transform', `translate(${sx.toFixed(1)},${R.hyp.y0 - 19})`);
+  k.lupTekst.textContent = 'dag ' + dagNr(p);
+}
+
+/* dagens nummer: i cyklussen, eller i pakken under p-piller */
+export const dagNr = p => p.pf ? Math.floor(p.pd + 1) : Math.floor(p.dag);
 
 /* ── Tegn ───────────────────────────────────────────────── */
 export function tegnKurver(k, spor, s){
@@ -150,6 +198,20 @@ export function tegnKurver(k, spor, s){
     for (const p of synlige) d += 'L' + x(p.t).toFixed(1) + ',' + yAf(R.slim, p.slim, R.slim.maks).toFixed(1);
     d += `L${x(synlige[synlige.length-1].t).toFixed(1)},${R.slim.y1}Z`;
     k.lag.slim.setAttribute('d', d);
+  }
+
+  /* fasestriben */
+  const fl = k.lag.faser;
+  fl.replaceChildren();
+  for (const [a, b, v] of stykker(synlige, p => p.fase, true)){
+    const f = FASER[v];
+    const bx = x(a), bb = Math.max(0, x(b) - x(a));
+    ny('rect', {x:bx, y:FASE.y0, width:bb, height:FASE.y1 - FASE.y0, fill:f.fyld, class:'fase-flade'}, fl);
+    /* navnet midt i den synlige del af fasen — forkortet, hvis der
+       ikke er plads til det hele */
+    const va = Math.max(bx, X0), vb = Math.min(bx + bb, X1);
+    const navn = [f.navn, f.kort].find(n => vb - va > n.length * 6 + 8);
+    if (navn) tekst(fl, (va + vb) / 2, FASE.y1 - 4.5, navn, 'svg-mono fase-tekst', {'text-anchor':'middle'});
   }
 
   /* bånd: blødninger, p-pillens pakke, sædceller og æg */
@@ -203,7 +265,7 @@ export function tegnKurver(k, spor, s){
     if (h.t < t0 || h.t > t1) continue;
     const hx = x(h.t);
     if (h.type === 'aegloesning'){
-      ny('line', {x1:hx, x2:hx, y1:R.hyp.y0, y2:R.slim.y1, class:'maerke-linje'}, mk);
+      ny('line', {x1:hx, x2:hx, y1:R.hyp.y0, y2:FASE.y1, class:'maerke-linje'}, mk);
       maerkat(mk, hx + 4, R.hyp.y0 + 11, 'ægløsning', 'start');
     } else if (h.type === 'menstruation'){
       maerkat(mk, hx + 2, R.slim.y0 + 11, 'dag 1', 'start');
@@ -215,12 +277,27 @@ export function tegnKurver(k, spor, s){
     }
   }
 
-  /* tidsaksen: hver 7. døgn */
+  /* tidsaksen i cyklusdage: dag 1 og hver 7. dag (i pakken under
+     p-piller). En cyklus på over 28 dage — fx ved graviditet —
+     fortsætter bare med 35, 42 … */
+  const streger = [];
+  let forrige = null;
+  for (const p of synlige){
+    const d = dagNr(p);
+    if (forrige !== null && d !== forrige && (d === 1 || d % 7 === 0)){
+      const tx = x(p.t);
+      if (tx >= X0 - 1 && tx <= X1 + 1){
+        const sidst = streger[streger.length - 1];
+        if (sidst && tx - sidst.x < 22){ if (d === 1) streger.pop(); else { forrige = d; continue; } }
+        streger.push({x: tx, d});
+      }
+    }
+    forrige = d;
+  }
   k.akseTal.replaceChildren();
-  for (let t = Math.ceil(t0 / 7) * 7; t <= t1; t += 7){
-    const tx = x(t);
-    ny('line', {x1:tx, x2:tx, y1:AKSE_Y, y2:AKSE_Y + 5, class:'akse-streg'}, k.akseTal);
-    tekst(k.akseTal, tx, AKSE_Y + 16, t, 'svg-tal', {'text-anchor':'middle', fill:'#566B68'});
+  for (const {x: tx, d} of streger){
+    ny('line', {x1:tx, x2:tx, y1:FASE.y1, y2:FASE.y1 + 5, class:'akse-streg'}, k.akseTal);
+    tekst(k.akseTal, tx, FASE.y1 + 16, d, 'svg-tal', {'text-anchor':'middle', fill: d === 1 ? '#17211F' : '#566B68'});
   }
 }
 
