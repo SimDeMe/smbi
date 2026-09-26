@@ -21,7 +21,8 @@ Lagt om indtil videre: forsiden, fagforsiderne, `born.html`, `admin.html`,
 `biologi/osmose.html`, `biologi/DNA_Simulering.html`, `biologi/enzymhastighed.html`,
 `geografi/Tidevand.html`, `geografi/boelger.html`, `biologi/membran.html`,
 `biologi/fotosyntese.html`, `biologi/bio-blocks/index.html`,
-`biologi/membran2d.html`, `navneApp/`, `tid/`
+`biologi/membran2d.html`, `biologi/KvindensCyklus/FinalSim.html`,
+`navneApp/`, `tid/`
 (brug dem som forlæg, når `--accent:var(--bio)` skal
 bruges). Resten af `geografi/`, `biologi/` og `style.css`-siderne kører
 stadig det gamle design — rør dem kun, når opgaven handler om dem.
