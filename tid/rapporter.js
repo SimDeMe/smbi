@@ -8,7 +8,7 @@ import { db } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { getSettings } from './indstillinger.js';
 import { erPause } from './pauser.js';
-import { normerFor, budgetTimer, fmtTimer } from './normer.js';
+import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
   forskydningFor, skoleaarForPeriode
@@ -382,7 +382,7 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
       ).join('')}</div>`
-    : '') + (normer ? faktorLinje(normer, wt) : '');
+    : '') + (!isChild && act.type === 'hold' ? faktorLinje(act, normer, wt) : '');
 
   return `<div class="rapport-act-row${isChild ? ' rapport-act-row-child' : ''}">
     <div class="rapport-act-top">
@@ -445,10 +445,14 @@ function normRows(n, wt, color, ownMins = 0) {
 // rettet. Uden registreret undervisning er der intet at måle mod.
 // Forholdstal gælder for enhver periode, så linjen står også under dag, uge
 // og måned.
-function faktorLinje(n, wt) {
+//
+// Forberedelsesfaktoren kræver kun skoleårets faktor og står derfor på alle
+// hold med registreret undervisning. Retningen kræver elever og
+// fordybelsestid og står kun, når holdet har et normgrundlag med dem.
+function faktorLinje(act, n, wt) {
   const u = wt.undervisning || 0;
-  if (u === 0 || n.undervisning <= 0) return '';
-  const faktor = (n.undervisning + n.forberedelse) / n.undervisning;
+  if (u === 0) return '';
+  const { faktor } = faktorerFor(act.schoolYear);
   const komma  = (v, d = 2) => v.toLocaleString('da-DK', { minimumFractionDigits: d, maximumFractionDigits: d });
   const dele   = [];
 
@@ -456,7 +460,7 @@ function faktorLinje(n, wt) {
   dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Forb.faktor</span>
     <b>${komma(realF)}</b> · budget ${komma(faktor)}</span>`);
 
-  if (n.retning > 0) {
+  if (n && n.retning > 0 && n.undervisning > 0) {
     const elevTimer = n.retning * 27 / faktor;          // elever × fordybelsestid × antal hold
     const andel     = u / (n.undervisning * 60);
     const realR     = (wt.retning || 0) / (elevTimer * andel);
