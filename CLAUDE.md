@@ -49,7 +49,9 @@ Se `Biologi/biodiversitet-i-graesplaenen/` som forlæg for begge.
 `biologi.html` eller `geografi.html` — ét kort pr. mappe under
 `Øvelser/Biologi/` og `Øvelser/Geografi/`, uden undtagelser. Kortet står
 alfabetisk, linker til `.html` og har `PDF`/`Word`-sublinks (samt link til
-simuleringen, hvis der findes en). Tælleren i stak-hovedet (`<span class="n">`)
+simuleringen, hvis der findes en). Kortet får øvelsens emne fra
+`Øvelser/oversigt.html` som tag — i `data-emne` og i `<span class="fag">` —
+så emneknapperne over staken kan filtrere på det. Tælleren i stak-hovedet (`<span class="n">`)
 rettes med, og sidens adresse skrives ind i `sitemap.xml`.
 
 `Øvelser/oversigt.html` opdateres **altid**, når en vejledning laves eller

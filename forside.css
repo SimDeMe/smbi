@@ -575,6 +575,23 @@ img{display:block;max-width:100%}
 .chip.c-bio{--c:var(--pink)}
 .chip.c-geo{--c:var(--blue)}
 
+/* Emneknapper over forsøgsvejledningerne (fag.js bygger dem ud fra
+   kortenes data-emne). Mindre end forsidens fagknapper og med antal. */
+.emne-filter{margin-bottom:16px}
+.emne-filter[hidden]{display:none}
+.emne-filter .chip{font-size:0.76rem;padding:5px 12px;display:inline-flex;align-items:center;gap:7px}
+.emne-filter .chip .antal{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  background:var(--t);color:var(--ink);border:1.5px solid var(--ink);border-radius:10px;padding:0 6px;
+}
+.emne-filter .chip[aria-pressed="true"] .antal{background:#fff}
+.emne-filter .chip:disabled{opacity:.45;cursor:default;transform:none;box-shadow:3px 3px 0 var(--ink)}
+.emne-tom{
+  background:#FFE9DC;border:2.5px solid var(--ink);border-radius:14px;
+  padding:12px 16px;box-shadow:3px 3px 0 var(--ink);margin-bottom:16px;font-size:0.92rem;
+}
+.emne-tom[hidden]{display:none}
+
 /* ── Værktøjer ─────────────────────────────────────────── */
 .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .tool{
