@@ -283,8 +283,11 @@ function openChildSheet(act, children) {
 }
 
 // ─── 1 Modul ──────────────────────────────────────────────
+// Et modul er altid 95 min (5 min pause medregnet) — længden står ét sted,
+// i skemaet, så "Nu" og "For … min siden" giver det samme som et modul
+// valgt fra skemaet
 function getModuleMins() {
-  return getSettings().moduleLengthMinutes ?? 90;
+  return skemaLaengde(MODULER[0]);
 }
 
 function openModulSheet() {

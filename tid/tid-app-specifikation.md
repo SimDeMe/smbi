@@ -87,7 +87,6 @@ Regler:
 {
   schoolYearStartMonth: 8,
   schoolYearStartDay: 1,
-  moduleLengthMinutes: 90,
   autoStopAfterMinutes: 240,
   autoShortBreaks: true,            // luk mellemrum under 30 min som "Kort pause"
   weekStartsOn: 1,
@@ -146,7 +145,7 @@ Faste tre, kan ikke ændres:
 
 **Specialknapper:**
 - **"Start arbejde"** — starter udefineret registrering (activityId: null). Brugeren kan senere redigere posten og knytte den til en aktivitet.
-- **"1 modul"** — kun for hold-aktiviteter. Spørg hvilket hold + "Hvornår startede modulet?" (Nu / For 90 min siden / Andet tidspunkt). Hvis "Nu": opret aktiv timer med automatisk slut 90 min senere. Hvis bagudrettet: opret færdig post.
+- **"1 modul"** — kun for hold-aktiviteter. Spørg hvilket hold + "Hvornår startede modulet?" (Nu / For 95 min siden / Andet tidspunkt). Hvis "Nu": opret aktiv timer med automatisk slut 95 min senere. Modulets længde hentes fra skemaet i `skema.js` (altid 95 min, 5 min pause medregnet) — der er ingen indstilling for den. Hvis bagudrettet: opret færdig post.
 
 ### 3. Skift mellem aktiviteter
 Tryk på en anden aktivitet mens en timer kører:
@@ -224,7 +223,6 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
 - Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35) og reduktion af årsnormen (default 0,9)
-- Modul-længde
 - Auto-stop-grænse
 - Ugestart
 - Log ud
@@ -285,7 +283,7 @@ Appen virker når:
 2. Bruger opretter første aktiviteter via onboarding
 3. Bruger trykker hold "3g Ng" → vælger arbejdstype "Undervisning" → timer starter
 4. Bruger trykker "Miljøudvalg" → forrige timer stopper, ny starter
-5. Bruger trykker "1 modul" → vælger hold → 90 min registreres
+5. Bruger trykker "1 modul" → vælger hold → 95 min registreres
 6. Bruger stopper timer
 7. Bruger ser dagens og ugens fordeling
 8. Bruger ser skoleårets fordeling med forbrugt vs budget pr. aktivitet

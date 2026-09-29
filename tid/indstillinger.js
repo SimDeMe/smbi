@@ -12,7 +12,6 @@ const DEFAULTS = {
   schoolYearStartMonth: 6,
   schoolYearStartDay:   1,
   normHours:            1650,
-  moduleLengthMinutes:  90,
   autoStopAfterMinutes: 600,
   autoShortBreaks:      true,
   normFaktorer:         {}      // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
@@ -63,7 +62,6 @@ function populateForm() {
   set('cfg-start-month',   s.schoolYearStartMonth ?? DEFAULTS.schoolYearStartMonth);
   set('cfg-start-day',     s.schoolYearStartDay   ?? DEFAULTS.schoolYearStartDay);
   set('cfg-norm-hours',    s.normHours            ?? DEFAULTS.normHours);
-  set('cfg-module-mins',   s.moduleLengthMinutes  ?? DEFAULTS.moduleLengthMinutes);
   set('cfg-autostop-mins', s.autoStopAfterMinutes ?? DEFAULTS.autoStopAfterMinutes);
   check('cfg-auto-breaks', s.autoShortBreaks ?? DEFAULTS.autoShortBreaks);
   visFaktorer(s.currentSchoolYear || getCurrentSchoolYear());
@@ -94,7 +92,6 @@ async function saveSettings() {
     schoolYearStartMonth: parseInt(document.getElementById('cfg-start-month').value)  || 6,
     schoolYearStartDay:   parseInt(document.getElementById('cfg-start-day').value)    || 1,
     normHours:            parseInt(document.getElementById('cfg-norm-hours').value)   || 1650,
-    moduleLengthMinutes:  parseInt(document.getElementById('cfg-module-mins').value)  || 90,
     autoStopAfterMinutes: parseInt(document.getElementById('cfg-autostop-mins').value)|| 600,
     autoShortBreaks:      document.getElementById('cfg-auto-breaks')?.checked ?? true,
     normFaktorer: {
