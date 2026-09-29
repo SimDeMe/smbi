@@ -105,7 +105,7 @@ Middelfart Gymnasiums holdoversigt regner et holds vejledende arbejdstid ud som
 
 Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr. arbejdstype:
 
-- **Undervisning** = årsnorm × reduktion + puljetimer
+- **Undervisning** = årsnorm × reduktion + puljetimer. Reduktionen er en reel nedskæring af timerne: holdet undervises kun i fx 90 % af årsnormen (grunden er ikke oplyst)
 - **Forberedelse** = undervisning × (faktor − 1)
 - **Retning** = elever × fordybelsestid / 27 × faktor
 - **Tillæg** står for sig og har ingen arbejdstype

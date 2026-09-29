@@ -15,6 +15,9 @@
 // Står flere ens hold som én aktivitet (fx tre NV-hold), ganges det hele med
 // antalHold — de har samme årsnorm, og på NV er fordybelsestiden 0, så
 // elevtallet ikke spiller ind.
+// Reduktionen er en reel nedskæring: holdet undervises kun i 90 % af
+// årsnormen (grunden er ikke oplyst), og forberedelsen regnes af de timer,
+// der faktisk undervises.
 // Faktoren og reduktionen skifter fra skoleår til skoleår og ligger derfor i
 // indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
 
