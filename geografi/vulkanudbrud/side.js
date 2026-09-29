@@ -4,8 +4,10 @@
    Siden har to tilstande:
      frit          — man flytter selv lupen og skruer på vandindholdet,
                      mens vulkanen skifter mellem hvile og udbrud
-     trin for trin — forløbet fra subduktionen til askesøjlen i trin (se
-                     trin-strato.js); hvert trin sætter lupen og udbruddet
+     trin for trin — forløbet fra der, hvor magmaet dannes, til udbruddet
+                     (se trin-strato.js); hvert trin sætter lupen og udbruddet
+
+   Vulkantyperne (strato-, skjold- og hotspot-vulkan) står i vulkaner.js.
 
    Udbruddets forløb (samme rækkefølge som i grundbogen):
      hvile   — magma strømmer ind i kammeret nedefra, overtrykket vokser,
@@ -69,6 +71,10 @@ function vaelgType(id, vand){
   document.querySelectorAll('#typer button').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === type.id));
   $('type-navn').textContent = type.navn;
   $('btn-trin').hidden = !type.trin;
+  if (type.trinTitel) $('btn-trin').title = type.trinTitel;
+  if (type.beskrivelse) snit.setAttribute('aria-label', type.beskrivelse);
+  // 75 %-mærket gælder kun sejt magma, hvor skummet kan sprænges
+  for (const el of document.querySelectorAll('#g-gas .mark, #g-gas .mark-lbl')) el.hidden = type.magma.fragmentering == null;
   trinvis = type.trin ? lavTrinvis({ trin: type.trin, ctx: tekstCtx, onSkift: gaaTilTrin }) : null;
   if (!trinvis && modus === 'trin') saetModus('frit');
   merkater();
@@ -80,7 +86,13 @@ if (VULKANER.length > 1){
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'btn-mini'; b.dataset.id = v.id;
     b.textContent = v.navn; b.title = v.kort + ' — fx ' + v.eksempler;
-    b.addEventListener('click', () => { vaelgType(v.id); if (modus === 'trin') gaaTilTrin(0, true); gemTilstand(); });
+    b.addEventListener('click', () => {
+      if (v.id === type.id) return;
+      vaelgType(v.id);
+      if (modus === 'trin'){ trinvis.vis(0, true); trinvis.laas(); gaaTilTrin(0, true); }
+      else { lupeZ = Math.min(lupeZ, S.Z_MAKS); merkater(); }
+      gemTilstand();
+    });
     boks.appendChild(b);
   }
   boks.hidden = false;
@@ -137,7 +149,7 @@ const aktivtTrin = () => modus === 'trin' && trinvis ? type.trin[trinvis.nu] : n
 function tekstCtx(){
   const magma = { ...type.magma };
   return {
-    magma, stam: type.stammagma, kammer: type.kammer, rhoKappe: M.RHO_KAPPE,
+    type, magma, stam: type.stammagma, kammer: type.kammer, rhoKappe: M.RHO_KAPPE,
     gr: M.graenser(magma),
     fart: z => M.fart(M.punkt(z, magma), magma, type.u0)
   };
@@ -186,13 +198,15 @@ function iLupen(z){
   return { slags: 'magma', z, iKanal, p, P: p.P, magma: tilst.magma, omg: OMG_KLIPPE };
 }
 
-// Lupen i oversigten: i den nedsynkende plade, i smeltezonen eller i magmaet
+// Lupen i oversigten: i den nedsynkende plade, i den faste kappe, i
+// smeltezonen eller i magmaet
 function iOversigt(lu){
   const P = M.trykDyb(lu.d), stam = type.stammagma;
   const omg = { rho: M.RHO_KAPPE, navn: lu.slags === 'plade' ? 'asthenosfæren' : 'kappen' };
-  if (lu.slags === 'plade') return { slags: 'plade', d: lu.d, P, rho: 3400, omg, magma: stam };
+  if (lu.slags === 'plade') return { slags: 'plade', d: lu.d, P, rho: lu.rho ?? 3400, omg, magma: stam, brod: lu.brod };
+  if (lu.slags === 'kappe') return { slags: 'kappe', d: lu.d, P, rho: lu.rho ?? M.RHO_KAPPE, omg, magma: stam, brod: lu.brod };
   const p = M.vedTryk(P, stam);
-  return { slags: lu.slags, d: lu.d, P, p, magma: stam, omg };
+  return { slags: lu.slags, d: lu.d, P, p, magma: stam, omg, brod: lu.brod };
 }
 
 // ── Mærkater på skyderne ───────────────────────────────
@@ -227,6 +241,7 @@ function aflaes(l){
   $('mk-rho-lbl').textContent = l.omg.navn;
   $('val-rho-s').textContent = l.slags === 'klippe' ? 'fast bjergart'
     : l.slags === 'plade' ? 'tungere end asthenosfæren'
+    : Math.abs(rho * 1000 - l.omg.rho) < 5 ? 'som ' + l.omg.navn + ' omkring'
     : (rho * 1000 < l.omg.rho ? 'lettere end ' : 'tungere end ') + l.omg.navn + ' omkring';
   $('bar-rho').style.background = l.p ? '' : '#8E8984';
 
@@ -283,7 +298,7 @@ function billede(nu){
   const gr = M.graenser(tilst.magma);
 
   if (trin && trin.visning === 'oversigt'){
-    // Oversigten over subduktionszonen
+    // Oversigten over, hvor magmaet dannes
     if (koerer) type.oversigt.opdater(dt, trin.fokus);
     const l = iOversigt(trin.lupe);
     if (koerer && l.slags === 'magma') L.stroem(0.04 * dt);
@@ -291,7 +306,7 @@ function billede(nu){
     type.oversigt.tegn(cs, trin.fokus, trin.lupe);
     L.tegn(cl, l, l.magma || tilst.magma, 'ca. ' + trin.lupe.d + ' km nede');
     aflaes(l);
-    $('fase').textContent = 'Subduktionszonen';
+    $('fase').textContent = type.oversigt.navn;
     requestAnimationFrame(billede);
     return;
   }

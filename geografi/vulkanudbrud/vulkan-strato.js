@@ -21,14 +21,17 @@
      u0           stigehastighed i kammerets top under udbrud, m/s
      kammer       { top, bund, halvbredde }    km, km, px
      daeklag      { top, bund } | null         km
+     trinTitel    knappen "Trin for trin"s forklaring
+     beskrivelse  tværsnittets aria-label
      kilde        tekst til tilførslen nederst
+     skorpe       [top, bund] — skorpens farver under bjerget (kan udelades)
      bjerg        { hoejde, radius, krater }   km, px, px
      overflade(x, geo)     bjergets overflade, y i px
      tegnBjerg(c, geo)     kegle og lag
      udbrud       { nulstil(), opdater(dt, geo, tilst), tegn(c, geo, tilst),
                     maerkater(geo, tilst) }
      stammagma    magmaet, som det dannes i kappen (samme felter som magma)
-     oversigt     { opdater(dt, fokus), tegn(c, fokus, lupe) } — hvor magmaet dannes
+     oversigt     { navn, opdater(dt, fokus), tegn(c, fokus, lupe) } — hvor magmaet dannes
      trin         listen over trin i "trin for trin" (se trin-strato.js)
 */
 
@@ -192,6 +195,8 @@ export default {
   navn: 'Stratovulkan',
   kort: 'Andesitisk magma · subduktionszone',
   eksempler: 'Mount St. Helens, Pinatubo, Vesuv',
+  trinTitel: 'Fra subduktionen til askesøjlen i otte trin',
+  beskrivelse: 'Tværsnit gennem en stratovulkan fra krateret og 12 km ned. Magma kommer nedefra gennem en fødegang og samles i et magmakammer under et tæt dæklag. Under et udbrud stiger magmaet op gennem kanalen til krateret, og over krateret står en askesøjle. To stiplede linjer i kanalen viser, hvor gasboblerne begynder at dannes, og hvor skummet sprænges. Træk op og ned i figuren for at flytte lupen.',
   magma: {
     navn: 'Andesitisk',
     SiO2: 60,            // vægt-% — sejt, kiselrigt magma

@@ -12,14 +12,19 @@
    en bøjning ned i dybhavsgraven og en fast hældning derefter — og først
    bagefter trækkes figuren 3 gange i højden. Undersiden og skorpens
    underkant ligger vinkelret under oversiden, målt i km, så pladen er
-   lige tyk hele vejen og vender rigtigt, også når den dykker. */
+   lige tyk hele vejen og vender rigtigt, også når den dykker.
+
+   Målestokken (Y0, PKM), dybdeaksen og klammerne deles med de andre
+   oversigter (spredning.js og hotspot.js), så de tre kan sammenlignes. */
 
 import { W, H, tegnMaerkater, tegnMarkoer, tegnFodnote } from './snit.js';
 
 const INK = '#17211F';
 const KAPPE = '#8A988A';              // lithosfærisk kappe — samme i begge plader
-const Y0 = 112;                       // px — havniveau
-const PKM = 2.6;                      // px pr. km lodret
+export const navn = 'Subduktionszonen';
+
+export const Y0 = 112;                // px — havniveau
+export const PKM = 2.6;               // px pr. km lodret
 export const yD = d => Y0 + d * PKM;
 export const dY = y => (y - Y0) / PKM;
 const PX = PKM / 3;                   // px pr. km vandret — lodret overhøjde 3×
@@ -226,21 +231,7 @@ export function tegn(c, fokus, lupe){
     c.restore();
   }
 
-  // dybdeakse
-  c.save();
-  c.strokeStyle = INK; c.fillStyle = INK; c.lineWidth = 2;
-  c.beginPath(); c.moveTo(30, yD(0)); c.lineTo(30, yD(150)); c.stroke();
-  c.font = "600 10px 'IBM Plex Mono', ui-monospace, monospace"; c.textBaseline = 'middle';
-  for (let d = 0; d <= 150; d += 50){
-    c.beginPath(); c.moveTo(25, yD(d)); c.lineTo(35, yD(d)); c.stroke();
-    const w = d >= 100 ? 25 : d >= 10 ? 19 : 12;
-    c.fillStyle = 'rgba(255,249,238,.9)'; c.fillRect(37, yD(d) - 7, w, 14);
-    c.fillStyle = INK; c.fillText(String(d), 39, yD(d) + 0.5);
-  }
-  for (let d = 25; d < 150; d += 50){ c.beginPath(); c.moveTo(27, yD(d)); c.lineTo(33, yD(d)); c.stroke(); }
-  c.translate(14, yD(75)); c.rotate(-Math.PI / 2); c.textAlign = 'center';
-  c.fillText('DYBDE · km', 0, 0);
-  c.restore();
+  tegnDybdeakse(c);
 
   // mærkater
   const m = [
@@ -271,9 +262,27 @@ export function tegn(c, fokus, lupe){
   if (lupe) tegnMarkoer(c, lupe.x, lupe.y, 'LUPEN', false);
 }
 
+// Dybdeaksen i venstre side, 0–150 km
+export function tegnDybdeakse(c){
+  c.save();
+  c.strokeStyle = INK; c.fillStyle = INK; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(30, yD(0)); c.lineTo(30, yD(150)); c.stroke();
+  c.font = "600 10px 'IBM Plex Mono', ui-monospace, monospace"; c.textBaseline = 'middle';
+  for (let d = 0; d <= 150; d += 50){
+    c.beginPath(); c.moveTo(25, yD(d)); c.lineTo(35, yD(d)); c.stroke();
+    const w = d >= 100 ? 25 : d >= 10 ? 19 : 12;
+    c.fillStyle = 'rgba(255,249,238,.9)'; c.fillRect(37, yD(d) - 7, w, 14);
+    c.fillStyle = INK; c.fillText(String(d), 39, yD(d) + 0.5);
+  }
+  for (let d = 25; d < 150; d += 50){ c.beginPath(); c.moveTo(27, yD(d)); c.lineTo(33, yD(d)); c.stroke(); }
+  c.translate(14, yD(75)); c.rotate(-Math.PI / 2); c.textAlign = 'center';
+  c.fillText('DYBDE · km', 0, 0);
+  c.restore();
+}
+
 // Lodret klamme med påskrift langs den — viser, hvad én plade består af
 // (side = 1: klammen favner det, der ligger til højre for den; -1: til venstre)
-function klamme(c, x, y0, y1, tekst, side, yTekst = (y0 + y1) / 2){
+export function klamme(c, x, y0, y1, tekst, side, yTekst = (y0 + y1) / 2){
   c.save();
   c.strokeStyle = INK; c.lineWidth = 2;
   c.beginPath();

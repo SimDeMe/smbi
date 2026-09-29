@@ -1,22 +1,23 @@
 /* trinvis.js — panelet til "trin for trin": tæller, overskrift,
-   forklaring, skemaet over basaltisk og andesitisk magma, knapper og
+   forklaring, skemaet, der sammenligner to slags magma, knapper og
    trinprikker. Hvad der sker i figuren, når man skifter trin, bestemmer
    side.js (onSkift). */
 
 const $ = id => document.getElementById(id);
 
-// Skemaet, der sammenligner stammagmaet med magmaet i kammeret
-function skema(stam, magma){
+// Skemaet, der sammenligner to slags magma: [[overskrift, magma], [overskrift, magma]]
+function skema([[navnA, a], [navnB, b]]){
   const r = (navn, a, b) => `<tr><th scope="row">${navn}</th><td>${a}</td><td>${b}</td></tr>`;
   const e = s => `<span class="enhed">${s}</span>`;
   const graf = m => m.fragmentering != null ? 'bliver fanget' : 'kan slippe ud';
-  return `<table class="skema"><caption class="sr">Basaltisk og andesitisk magma sammenlignet</caption>
-<thead><tr><td></td><th scope="col">${stam.navn}</th><th scope="col">${magma.navn}</th></tr></thead><tbody>
-${r(`Indhold af ${e('SiO₂')}`, `ca. ${stam.SiO2} %`, `ca. ${magma.SiO2} %`)}
-${r('Temperatur', `ca. ${stam.T.toLocaleString('da-DK')} ${e('°C')}`, `ca. ${magma.T.toLocaleString('da-DK')} ${e('°C')}`)}
-${r('Vand', `ca. ${stam.vand.toLocaleString('da-DK')} ${e('vægt-%')}`, `ca. ${magma.vand.toLocaleString('da-DK')} ${e('vægt-%')}`)}
-${r('Flydeevne', stam.flyder, magma.flyder)}
-${r('Gasboblerne', graf(stam), graf(magma))}
+  const T = m => `ca. ${m.T.toLocaleString('da-DK')} ${e('°C')}`, V = m => `ca. ${m.vand.toLocaleString('da-DK')} ${e('vægt-%')}`;
+  return `<table class="skema"><caption class="sr">To slags magma sammenlignet: ${navnA} og ${navnB}</caption>
+<thead><tr><td></td><th scope="col">${navnA}</th><th scope="col">${navnB}</th></tr></thead><tbody>
+${r(`Indhold af ${e('SiO₂')}`, `ca. ${a.SiO2} %`, `ca. ${b.SiO2} %`)}
+${r('Temperatur', T(a), T(b))}
+${r('Vand', V(a), V(b))}
+${r('Flydeevne', a.flyder, b.flyder)}
+${r('Gasboblerne', graf(a), graf(b))}
 </tbody></table>`;
 }
 
@@ -40,7 +41,11 @@ export function lavTrinvis({ trin, ctx, onSkift }){
     $('trin-tael').textContent = 'Trin ' + (nu + 1) + ' af ' + trin.length;
     $('trin-titel').textContent = t.titel;
     $('trin-tekst').innerHTML = t.tekst(c);
-    $('trin-skema').innerHTML = t.sammenlign ? skema(c.stam, c.magma) : '';
+    // sammenlign: true = stammagmaet mod magmaet i kammeret, eller en funktion,
+    // der selv vælger de to
+    const par = t.sammenlign === true ? [[c.stam.navn, c.stam], [c.magma.navn, c.magma]]
+              : t.sammenlign ? t.sammenlign(c) : null;
+    $('trin-skema').innerHTML = par ? skema(par) : '';
     $('trin-forrige').disabled = nu === 0;
     $('trin-naeste').disabled = nu === trin.length - 1;
     [...prikker.children].forEach((b, j) => b.setAttribute('aria-current', j === nu ? 'true' : 'false'));

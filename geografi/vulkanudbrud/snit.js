@@ -77,9 +77,10 @@ export function tegn(c, type, tilst, gr, lupeZ, foelger){
   c.fillStyle = hg; c.fillRect(0, 0, W, yFod + 1);
 
   // skorpen i bånd, mørkere brun øverst og grålig nedad — som i grundbogen
+  const [skorpeTop, skorpeBund] = type.skorpe || ['#76584A', '#8E8B88'];
   for (let z = type.bjerg.hoejde, i = 0; z < Z_MAKS + 2; z += 0.85, i++){
     const t = Math.min(1, (z - type.bjerg.hoejde) / 10);
-    const base = blend('#76584A', '#8E8B88', t);
+    const base = blend(skorpeTop, skorpeBund, t);
     c.fillStyle = i % 2 ? base : blend(base, '#FFFFFF', 0.07);
     c.fillRect(0, yZ(z), W, 0.85 * KM + 1);
   }

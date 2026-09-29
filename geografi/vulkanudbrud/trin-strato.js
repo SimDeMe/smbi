@@ -8,12 +8,16 @@
      visning             'oversigt' eller 'snit'
      fokus               hvad oversigten fremhæver
      lupe                hvor lupen står: { slags, x, y, d } i oversigten
-                         (x, y i px, d i km) eller { z } i tværsnittet
+                         (x, y i px, d i km) eller { z } i tværsnittet.
+                         I oversigten kan rho (kg/m³) og brod (lupens
+                         forklaring) sættes, hvis standarden ikke passer
      styr                udbruddets forløb i trinnet:
                          start  — fasen, trinnet begynder i (udelades: fortsæt)
                          loft   — overtrykket vokser ikke over dette (MPa)
                          gulv   — overtrykket falder ikke under dette (MPa)
-     sammenlign          vis skemaet over basaltisk og andesitisk magma */
+     sammenlign          vis skemaet: true sammenligner stammagmaet med
+                         magmaet i kammeret; en funktion ctx => [[navn,
+                         magma], [navn, magma]] vælger selv de to */
 
 import { iSkorpen, yD, X_VULKAN } from './subduktion.js';
 
@@ -79,6 +83,6 @@ export default [
     visning: 'snit', lupe: { z: 0.2 },
     styr: { start: 'udbrud', gulv: 6 },
     tekst: c => `<p>Ca. ${tal(c.gr.zFrag)} km under krateret fylder boblerne over 75 % af rumfanget, og skummet <b>sprænges</b> til gas og aske. Blandingen skyder ud af krateret med ca. ${hel(Math.round(c.fart(0) / 10) * 10)} ${enh('m/s')} og bliver til en askesøjle; større klumper kastes ud som bomber. Efterhånden tømmes kammeret, trykket falder, og udbruddet ebber ud.</p>
-<p>I tyndtflydende, basaltisk magma kan gassen slippe ud undervejs. Derfor er udbruddene på Hawaii så meget roligere: lava, der flyder, i stedet for aske.</p>`
+<p>I tyndtflydende, basaltisk magma kan gassen slippe ud undervejs. Derfor er udbruddene på Hawaii så meget roligere: lava, der flyder, i stedet for aske. Vælg <b>Skjoldvulkan</b> eller <b>Hotspot-vulkan</b> øverst, og se forskellen.</p>`
   }
 ];

@@ -4,7 +4,11 @@
    bygges ud fra listen, så snart der er mere end én. */
 
 import strato from './vulkan-strato.js';
+import skjold from './vulkan-skjold.js';
+import hotspot from './vulkan-hotspot.js';
 
 export const VULKANER = [
-  strato
+  strato,
+  skjold,
+  hotspot
 ];

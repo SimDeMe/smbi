@@ -37,12 +37,20 @@ const px = (x, y) => [CX + x * R, CY + y * R];
 
 // ── Tilstandens navn og forklaring ─────────────────────
 // l.slags: 'klippe' (størknet prop), 'plade' (den nedsynkende plade),
-// 'delvis' (kappe, der er begyndt at smelte) eller 'magma'.
+// 'kappe' (varm, fast kappe), 'delvis' (kappe, der er begyndt at smelte)
+// eller 'magma'. l.brod erstatter forklaringen, hvis trinnet har sin egen.
 export function tekst(l, magma){
+  const t = standardtekst(l, magma);
+  return l.brod ? { titel: t.titel, brod: l.brod } : t;
+}
+
+function standardtekst(l, magma){
   if (l.slags === 'klippe') return { titel: 'Fast bjergart',
     brod: 'Kanalen er lukket af størknet magma fra sidste udbrud. Det nye magma venter nede i kammeret.' };
   if (l.slags === 'plade') return { titel: 'Den nedsynkende plade',
     brod: 'Mineralkorn fra havbundens skorpe. Vandet (de blå prikker) sidder bundet i mineralerne — det kom med ned fra havbunden.' };
+  if (l.slags === 'kappe') return { titel: 'Varm, fast kappe',
+    brod: 'Olivin og pyroxen. Kappen er fast, men så varm og under så højt tryk, at den kan flyde meget langsomt — nogle centimeter om året, ligesom isen i en gletsjer.' };
   if (l.slags === 'delvis') return { titel: 'Delvis smeltning',
     brod: 'Kun en lille del af kappen smelter. Smelten sidder som tynde hinder mellem krystallerne og samler sig til basaltisk magma.' };
   const p = l.p, sejt = magma.fragmentering != null;
@@ -54,7 +62,7 @@ export function tekst(l, magma){
     brod: 'Trykket er faldet så meget, at smelten ikke kan holde på alt vandet. Resten går ud af opløsning som små gasbobler.' };
   return { titel: 'Boblerne vokser', brod: sejt
     ? `Jo lavere trykket bliver, jo mere udvider gassen sig. ${magma.navn} magma er så sejt, at boblerne ikke kan slippe ud — magmaet bliver til skum.`
-    : 'Jo lavere trykket bliver, jo mere udvider gassen sig. Magmaet er så tyndtflydende, at boblerne kan stige op gennem det og slippe ud.' };
+    : 'Jo lavere trykket bliver, jo mere udvider gassen sig. Magmaet er så tyndtflydende, at boblerne kan smelte sammen, stige op gennem det og slippe ud. Gassen river lavaklumper med sig, men smelten sprænges ikke til aske.' };
 }
 
 // ── Tegning ────────────────────────────────────────────
@@ -76,6 +84,7 @@ export function tegn(c, l, magma, zTekst){
   c.beginPath(); c.arc(CX, CY, R, 0, 2 * Math.PI); c.clip();
   if (l.slags === 'klippe') tegnKlippe(c, KLIPPE);
   else if (l.slags === 'plade') tegnKlippe(c, PLADE, true);
+  else if (l.slags === 'kappe') tegnKlippe(c, FAST_KAPPE);
   else if (l.slags === 'delvis') tegnDelvis(c, magma);
   else if (l.p.fragmenteret) tegnAske(c);
   else tegnSmelte(c, l.p, magma);
@@ -109,6 +118,7 @@ export function tegn(c, l, magma, zTekst){
 const KLIPPE = { bund: '#8E8984', farver: ['#9C9791', '#C7A698', '#E6E1D8', '#55504B', '#B4AFA8'] };
 const PLADE  = { bund: '#4C5A5E', farver: ['#5E6E66', '#7D8C78', '#3E4A50', '#A3B19A', '#6B7F86'] };
 const KAPPE  = ['#9DBB62', '#7FA04E', '#566F45', '#C3D39A', '#6E8A58'];   // olivin og pyroxen
+const FAST_KAPPE = { bund: '#5E7447', farver: KAPPE };
 
 const tegnKorn = (c, k, farve, skala = 1) => {
   const cx = k.x, cy = k.y;
@@ -249,6 +259,8 @@ function tegnForklaring(c, l){
     ? [['korn', 'Mineralkorn']]
     : l.slags === 'plade'
     ? [['korn', 'Mineralkorn'], ['bundet', 'Bundet vand']]
+    : l.slags === 'kappe'
+    ? [['olivin', 'Olivin og pyroxen']]
     : l.slags === 'delvis'
     ? [['olivin', 'Krystal'], ['smelte', 'Smelte'], ['vand', 'Opløst vand']]
     : l.p.fragmenteret
