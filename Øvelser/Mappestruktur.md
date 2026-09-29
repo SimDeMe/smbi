@@ -65,10 +65,23 @@ kort** i staken «Forsøgsvejledninger» på henholdsvis `biologi.html` og
 `geografi.html`. En ny øvelse er ikke færdig, før kortet er der.
 
 Kortet står alfabetisk blandt de andre og følger samme markup som naboerne: en
-`.item` med `data-sog` (søgeord i små bogstaver, inkl. `pdf word`), `<h4>` med
-link til `…/<øvelse>.html`, en enkelt sætning om hvad man gør, `<span
-class="fag">Forsøg</span>` og en `.sub` med `PDF`- og `Word`-links. Har øvelsen
-en simulering på sitet, kommer den med som et ekstra `.sub`-link.
+`.item` med `data-emne` og `data-sog` (søgeord i små bogstaver, inkl. `pdf
+word`), `<h4>` med link til `…/<øvelse>.html`, en enkelt sætning om hvad man
+gør, `<span class="fag">` med emnet og en `.sub` med `PDF`- og `Word`-links. Har
+øvelsen en simulering på sitet, kommer den med som et ekstra `.sub`-link.
+
+**Emnet er et tag, man kan filtrere efter.** `data-emne` og teksten i `<span
+class="fag">` er præcis det samme emne, som øvelsens række har i `oversigt.html`
+(fx `Krop og fysiologi`, `Hav og kyst`). `fag.js` bygger emneknapperne over
+staken ud fra kortenes `data-emne` — et nyt emne giver selv en ny knap, og
+tallene på knapperne tæller selv. Stavefejl giver altså et ekstra emne, så
+kopiér emnet fra `oversigt.html`. Et emne kan deles med `?emne=krop-og-fysiologi`.
+
+```html
+<div class="item" data-emne="Krop og fysiologi" data-sog="vitalkapacitet lungefunktion … pdf word">
+  …
+  <div class="item-meta"><span class="fag">Krop og fysiologi</span></div>
+```
 
 Tre ting følger med hver gang: tælleren i stak-hovedet
 (`<h3>Forsøgsvejledninger</h3><span class="n">…</span>`), rækken i
