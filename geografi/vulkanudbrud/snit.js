@@ -244,20 +244,27 @@ export function tegn(c, type, tilst, gr, lupeZ, foelger){
   maerk.push(...type.udbrud.maerkater(geo, tilst));
   tegnMaerkater(c, maerk);
 
-  // tilførslen nedefra
-  c.save();
-  c.font = "600 9.5px 'IBM Plex Mono', ui-monospace, monospace";
-  c.fillStyle = '#FFF6E0'; c.textAlign = 'left';
-  c.fillText('↑ ' + type.kilde, XC + 14, H - 10);
-  c.fillStyle = 'rgba(255,246,224,.75)';
-  c.fillText('SKEMATISK · KUN DYBDEN ER MÅLFAST', 48, H - 10);
-  c.restore();
+  // tilførslen nedefra og en note om målestokken
+  tegnFodnote(c, '↑ ' + type.kilde, W - 8, 'right');
+  tegnFodnote(c, 'SKEMATISK · KUN DYBDEN ER MÅLFAST', 48, 'left', 18);
 
   // ── lupen ──
   tegnLupemaerke(c, lupeZ, foelger, type, geo);
 }
 
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits: n, maximumFractionDigits: n });
+
+export function tegnFodnote(c, tekst, x, side, y = H - 9){
+  c.save();
+  c.font = "600 9.5px 'IBM Plex Mono', ui-monospace, monospace";
+  const w = c.measureText(tekst).width + 12;
+  const x0 = side === 'right' ? x - w : x;
+  c.fillStyle = 'rgba(23,33,31,.62)';
+  c.beginPath(); c.roundRect(x0, y - 11, w, 16, 8); c.fill();
+  c.fillStyle = '#FFF6E0'; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  c.fillText(tekst, x0 + 6, y + 0.5);
+  c.restore();
+}
 
 function tegnAkse(c){
   const x = 30;
@@ -283,19 +290,23 @@ function tegnAkse(c){
 
 function tegnLupemaerke(c, z, foelger, type, geo){
   const y = z <= 0.001 ? type.overflade(XC, geo) : yZ(z);
+  tegnMarkoer(c, XC, y, foelger ? 'MAGMAPAKKEN' : 'LUPEN', foelger);
+}
+
+// Ringen om det sted, lupen kigger på, med en stiplet streg over mod lupen
+export function tegnMarkoer(c, x, y, tekst, fremhaev){
   c.save();
   c.strokeStyle = INK; c.lineWidth = 1.6;
   c.setLineDash([2, 3]);
-  c.beginPath(); c.moveTo(XC + 13, y); c.lineTo(W - 6, y); c.stroke();
+  c.beginPath(); c.moveTo(x + 13, y); c.lineTo(W - 6, y); c.stroke();
   c.setLineDash([]);
   c.beginPath(); c.moveTo(W - 12, y - 5); c.lineTo(W - 4, y); c.lineTo(W - 12, y + 5); c.stroke();
-  c.beginPath(); c.arc(XC, y, 12, 0, 2 * Math.PI);
+  c.beginPath(); c.arc(x, y, 12, 0, 2 * Math.PI);
   c.lineWidth = 4; c.strokeStyle = '#FFF9EE'; c.stroke();
-  c.lineWidth = 2.2; c.strokeStyle = foelger ? '#7A4FD6' : INK; c.stroke();
+  c.lineWidth = 2.2; c.strokeStyle = fremhaev ? '#7A4FD6' : INK; c.stroke();
   c.font = "700 9px 'IBM Plex Mono', ui-monospace, monospace";
   c.textAlign = 'right';
   c.fillStyle = 'rgba(255,249,238,.94)';
-  const tekst = foelger ? 'MAGMAPAKKEN' : 'LUPEN';
   const w = c.measureText(tekst).width + 10;
   c.beginPath(); c.roundRect(W - 12 - w, y - 17, w, 13, 6); c.fill();
   c.fillStyle = INK; c.fillText(tekst, W - 17, y - 7.5);
@@ -303,7 +314,7 @@ function tegnLupemaerke(c, z, foelger, type, geo){
 }
 
 // Mærkater i sidens stil: pille med blækkant, evt. med en streg ind til det, de peger på
-function tegnMaerkater(c, maerk){
+export function tegnMaerkater(c, maerk){
   c.save();
   const brugt = [];
   for (const m of maerk){

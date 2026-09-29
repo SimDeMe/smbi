@@ -38,6 +38,13 @@ const R = 8.314, M_VAND = 0.018;      // J/(mol·K), kg/mol
 // Tryk i dybden z (km), MPa. Overtryk lægges til i kammeret.
 export const tryk = (z, overtryk = 0) => P0 + RHO_KLIPPE * G * z * 1e-3 + overtryk;
 
+// Tryk dybt nede, hvor lupen står i kappen (trin for trin), MPa.
+// Skorpen er 35 km tyk (2 700 kg/m³), kappen under den 3 300 kg/m³.
+export const RHO_KAPPE = 3300;
+const SKORPE_KM = 35;
+export const trykDyb = d => P0 + (RHO_KLIPPE * Math.min(d, SKORPE_KM)
+                                 + RHO_KAPPE * Math.max(0, d - SKORPE_KM)) * G * 1e-3;
+
 // Så meget vand kan smelten holde på ved trykket P (MPa), vægt-%
 export const oploeselighed = (P, k) => k * Math.sqrt(P * 10);
 
@@ -52,7 +59,11 @@ export const dybdeFraTryk = P => Math.max(0, (P - P0) / (RHO_KLIPPE * G * 1e-3))
             fragmentering (gasandel, hvor skummet sprænges, eller null,
             hvis boblerne kan slippe ud, som i et tyndtflydende magma) } */
 export function punkt(z, magma, overtryk = 0){
-  const P = tryk(z, overtryk);
+  return vedTryk(tryk(z, overtryk), magma, z);
+}
+
+// Det samme ud fra trykket direkte — bruges dybt nede i kappen
+export function vedTryk(P, magma, z = null){
   const maks = oploeselighed(P, magma.k);
   const oploest = Math.min(magma.vand, maks);
   const gas = magma.vand - oploest;                   // vægt-% frigjort som gas

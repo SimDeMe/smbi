@@ -146,6 +146,58 @@ h1{
 
 .btn-mini:disabled{opacity:.45;cursor:default;transform:none;box-shadow:2px 2px 0 var(--ink)}
 #typer{display:flex;gap:6px;flex-wrap:wrap}
+.modus{display:flex;gap:4px;margin-right:6px}
+body[data-modus="trin"] #btn-udbrud,
+body[data-modus="trin"] #btn-foelg{display:none}
+body[data-modus="trin"] #snit{cursor:default}
+.knobs[hidden],.trin[hidden]{display:none}
+
+/* ── Trin for trin ─────────────────────────────────────── */
+.trin{
+  border-top:2px solid var(--ink);background:var(--paper-2);padding:16px 18px 18px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto 262px;gap:14px 30px;
+}
+.trin-skema{align-self:end}
+.trin-skema:empty{display:none}
+.trin:has(.trin-skema:empty){grid-template-columns:minmax(0,1fr) 262px}
+.trin-kol{display:flex;flex-direction:column;gap:6px;min-width:0}
+.trin-tael{
+  align-self:flex-start;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;background:var(--ink);color:#FFF6E0;padding:3px 10px;border-radius:12px;
+}
+.trin h2{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:1.4rem;line-height:1.1;letter-spacing:-0.02em;
+}
+.trin-tekst p{max-width:74ch;font-size:0.98rem;line-height:1.55}
+.trin-tekst p+p{margin-top:6px}
+.trin-tekst b{font-weight:600}
+.skema{border-collapse:collapse;font-size:0.9rem;background:#fff;border:2px solid var(--ink)}
+.skema th,.skema td{border:1.5px solid var(--ink);padding:4px 11px;text-align:left}
+.skema thead th{font-family:var(--display);font-weight:800;background:#FFD9C9}
+.skema thead th:first-of-type{background:#FBD3E1}
+.skema tbody th{font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5A6C69}
+.trin-nav{display:flex;flex-direction:column;justify-content:flex-end;gap:12px}
+.nav{display:flex;gap:9px}
+.btn{
+  font-family:var(--display);font-size:0.88rem;font-weight:700;
+  border:2px solid var(--ink);border-radius:24px;padding:8px 17px;
+  background:#fff;color:var(--ink);cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s,background .15s;
+}
+.btn:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:2px 2px 0 var(--ink)}
+.btn-primaer{background:var(--accent);color:#fff;margin-left:auto}
+.prikker{display:flex;gap:6px;flex-wrap:wrap}
+.prikker button{
+  width:26px;height:26px;border-radius:50%;cursor:pointer;padding:0;
+  border:2px solid var(--ink);background:#fff;
+  font-family:var(--display);font-size:0.74rem;font-weight:800;color:var(--ink);
+  transition:background .15s,transform .12s;
+}
+.prikker button:hover{background:#C7E6F6}
+.prikker button[aria-current="true"]{background:var(--ink);color:var(--paper)}
 #typer[hidden]{display:none}
 
 /* Tværsnittet og lupen står side om side og er altid lige høje:
@@ -187,6 +239,7 @@ canvas{display:block;width:100%;height:auto;border:2px solid var(--ink);border-r
 .bar-h i{position:absolute;left:0;top:0;bottom:0;display:block;background:var(--bc,var(--grape));width:0;border-right:2px solid var(--ink);transition:width .12s linear}
 .bar-h b{position:absolute;right:5px;top:3px;font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#5A6C69;letter-spacing:.06em;background:rgba(255,255,255,.82);border-radius:5px;padding:0 3px}
 .bar-h .mark{position:absolute;top:-2px;bottom:-2px;width:2.5px;margin-left:-1px;background:var(--ink);z-index:2}
+.bar-h .mark-lbl.mark-lbl-v{margin-left:0;transform:translateX(calc(-100% - 5px))}
 .bar-h .mark-lbl{position:absolute;top:3px;margin-left:5px;font-family:var(--mono);font-size:0.5rem;font-weight:600;color:var(--ink);z-index:2}
 
 #bar-tryk{--bc:var(--blue)}
@@ -256,12 +309,17 @@ body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
 body[data-projektor="1"] .knob-val{font-size:1.05rem}
 body[data-projektor="1"] .fact{font-size:0.74rem}
 body[data-projektor="1"] .fact b{font-size:0.92rem}
+body[data-projektor="1"] .trin h2{font-size:1.9rem}
+body[data-projektor="1"] .trin-tekst p{font-size:1.25rem;max-width:none}
+body[data-projektor="1"] .skema{font-size:1.1rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
 @media (max-width:960px){
   .stage{grid-template-columns:1fr;max-width:calc(var(--fig)*640/560 + 20px)}
   .lupe-boks{width:100%;max-width:360px;margin-inline:auto}
   .gauges{grid-template-columns:1fr 1fr}
+  .trin,.trin:has(.trin-skema:empty){grid-template-columns:1fr}
+  .trin-skema{align-self:start;overflow-x:auto}
   .gauge:nth-child(3){border-left:none}
   .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
 }
@@ -284,7 +342,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   *{animation:none!important;transition:none!important}
 }
 @media print{
-  .top,.foot,.btn-mini{display:none!important}
+  .top,.foot,.btn-mini,.trin-nav{display:none!important}
   .rig{box-shadow:none;break-inside:avoid}
 }
 </style>
@@ -339,7 +397,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · vulkaner</span>
       <h1>Magmaets vej op <span class="hi" style="--hc:#FFD9C9">gennem vulkanen</span></h1>
-      <p class="lead">Flyt lupen op og ned gennem kammer og kanal — eller følg en portion magma hele vejen op — og se, hvordan trykfaldet får gassen til at danne bobler, der til sidst sprænger magmaet til aske.</p>
+      <p class="lead">Følg udbruddet trin for trin fra subduktionszonen til krateret — eller flyt selv lupen op og ned gennem kammer og kanal — og se, hvordan trykfaldet får gassen til at danne bobler, der til sidst sprænger magmaet til aske.</p>
     </div>
   </div>
 
@@ -349,10 +407,15 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono"><span id="type-navn">Stratovulkan</span> · <span id="fase">Hvile</span></span></span>
         <span id="typer" hidden></span>
+        <span class="modus" role="group" aria-label="Visning">
+          <button type="button" class="btn-mini" id="btn-frit" aria-pressed="true" title="Flyt selv lupen, og skru på vandindholdet">Frit</button>
+          <button type="button" class="btn-mini" id="btn-trin" aria-pressed="false" title="Fra subduktionen til askesøjlen i otte trin">Trin for trin</button>
+        </span>
         <button type="button" class="btn-mini" id="btn-udbrud" title="Lad kammerets loft revne nu i stedet for at vente på, at overtrykket bygger sig op">Udbrud nu</button>
         <button type="button" class="btn-mini" id="btn-foelg" aria-pressed="false" title="Lupen følger én portion magma fra fødegangen op til krateret">Følg magmaen</button>
         <span class="hoejre">
           <button type="button" class="btn-mini" id="btn-pause" aria-pressed="false">Pause</button>
+          <button type="button" class="btn-mini" id="btn-nulstil" title="Start forfra: vulkanen i hvile, vandindhold og lup som ved start">Nulstil</button>
           <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                   title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
         </span>
@@ -368,6 +431,22 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
                   aria-label="Lupen: et udsnit på 5 mm af magmaet i den valgte dybde, med smelte, krystaller, opløst vand, gasbobler eller aske. Hvad lupen viser, står i statusfeltet og i aflæsningerne under figuren."></canvas>
         </div>
       </div>
+
+      <section class="trin" id="trin" hidden aria-live="polite" aria-labelledby="trin-titel">
+        <div class="trin-kol">
+          <span class="trin-tael" id="trin-tael">Trin 1 af 8</span>
+          <h2 id="trin-titel">Pladerne mødes</h2>
+          <div class="trin-tekst" id="trin-tekst"></div>
+        </div>
+        <div class="trin-skema" id="trin-skema"></div>
+        <div class="trin-nav">
+          <div class="prikker" id="trin-prikker" role="group" aria-label="Gå til trin"></div>
+          <div class="nav">
+            <button type="button" class="btn" id="trin-forrige">◀ Forrige</button>
+            <button type="button" class="btn btn-primaer" id="trin-naeste">Næste ▶</button>
+          </div>
+        </div>
+      </section>
 
       <dl class="gauges">
         <div class="gauge g-tryk">
@@ -392,13 +471,13 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
         <div class="gauge g-rho">
           <dt>Massefylde</dt>
           <div class="g-viz">
-            <div class="bar-h"><i id="bar-rho"></i><span class="mark" style="left:90%"></span><span class="mark-lbl" style="left:auto;right:12%">klippe</span></div>
+            <div class="bar-h"><i id="bar-rho"></i><span class="mark" id="mk-rho"></span><span class="mark-lbl mark-lbl-v" id="mk-rho-lbl">klippen</span></div>
           </div>
           <dd id="val-rho">0 <span class="enhed">g/cm³</span><small id="val-rho-s">–</small></dd>
         </div>
       </dl>
 
-      <div class="knobs">
+      <div class="knobs" id="knobs">
         <label class="knob" for="inp-dybde">
           <span class="knob-top"><span class="mono">Lupens dybde</span><span class="knob-val" id="lbl-dybde">5,0 km</span></span>
           <input type="range" id="inp-dybde" min="0" max="12" step="0.1" value="7">

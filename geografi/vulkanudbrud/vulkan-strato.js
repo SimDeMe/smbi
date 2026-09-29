@@ -1,8 +1,9 @@
 /* vulkan-strato.js — stratovulkanen: sejt, gasrigt andesitisk magma.
 
    En stratovulkan (lagvulkan) ligger typisk over en subduktionszone.
-   Magmaet dannes i kappekilen over den nedsynkende plade, ca. 100 km
-   nede: vand, der presses ud af pladen, sænker kappens smeltepunkt.
+   Magmaet dannes i asthenosfæren over den nedsynkende plade (den såkaldte
+   kappekile), ca. 100 km nede: vand, der presses ud af pladen, sænker
+   smeltepunktet, så en lille del af kappen smelter til basaltisk magma.
    Magmaet samles i et kammer 5–10 km under vulkanen og får tid til at
    krystallisere delvist og blive mere kiselrigt og sejt (andesit).
 
@@ -24,8 +25,15 @@
      bjerg        { hoejde, radius, krater }   km, px, px
      overflade(x, geo)     bjergets overflade, y i px
      tegnBjerg(c, geo)     kegle og lag
-     udbrud       { nulstil(), opdater(dt, geo, tilst), tegn(c, geo, tilst) }
+     udbrud       { nulstil(), opdater(dt, geo, tilst), tegn(c, geo, tilst),
+                    maerkater(geo, tilst) }
+     stammagma    magmaet, som det dannes i kappen (samme felter som magma)
+     oversigt     { opdater(dt, fokus), tegn(c, fokus, lupe) } — hvor magmaet dannes
+     trin         listen over trin i "trin for trin" (se trin-strato.js)
 */
+
+import trin from './trin-strato.js';
+import * as oversigt from './subduktion.js';
 
 const BJERG = { hoejde: 1.6, radius: 215, krater: 15 };
 
@@ -193,13 +201,29 @@ export default {
     vandMin: 1, vandMaks: 6,
     k: 0.11,             // opløselighed: C = k·√P, P i bar
     krystaller: 0.25,    // andel krystaller i kammeret
-    fragmentering: 0.75  // sejt magma: skummet sprænges ved 75 % gas
+    fragmentering: 0.75, // sejt magma: skummet sprænges ved 75 % gas
+    flyder: 'sejtflydende',
+    farver: ['#FF9A3C', '#E9601F']
+  },
+  // Stammagmaet: det basaltiske magma, der smelter ud af kappen, før det
+  // i kammeret bliver til andesit. Bruges i de første trin.
+  stammagma: {
+    navn: 'Basaltisk',
+    SiO2: 50, T: 1200, rho: 2800,
+    vand: 2.0, vandMin: 1, vandMaks: 6,
+    k: 0.095,            // basalt kan holde på lidt mindre vand end andesit
+    krystaller: 0.05,
+    fragmentering: null, // tyndtflydende: boblerne kan slippe ud
+    flyder: 'tyndtflydende',
+    farver: ['#FF7A2E', '#D23A16']
   },
   u0: 0.5,               // m/s — magmaets fart i bunden af kanalen
   kammer: { top: 6.0, bund: 8.6, halvbredde: 118 },
   daeklag: { top: 5.1, bund: 5.7 },
-  kilde: 'FRA KAPPEKILEN, CA. 100 km NEDE',   // skrives som det skal stå (enheden med små)
+  kilde: 'FRA ASTHENOSFÆREN OVER DEN NEDSYNKENDE PLADE, CA. 100 km NEDE',   // skrives, som det skal stå (enheden med små)
   bjerg: BJERG,
   overflade, tegnBjerg,
-  udbrud: { nulstil, opdater, tegn, maerkater }
+  udbrud: { nulstil, opdater, tegn, maerkater },
+  oversigt,            // hvor magmaet dannes (tegnes i de første trin)
+  trin                 // udbruddet trin for trin
 };
