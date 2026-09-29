@@ -21,8 +21,9 @@ import * as F from './figur.js';
 
 const { xK, yD, INK, FARVE } = F;
 const HAVBUND = 5.5, GRAV = 10;             // km
-const T_PLADE = 70, T_SKORPE = 7;           // km
-const R_BOEJ = 220;                         // km — bøjningsradius
+const T_PLADE = 45, T_SKORPE = 7;           // km — oceanbundspladen er tyndere end
+                                            // kontinentets lithosfære (OEVRE_LITO)
+const R_BOEJ = 280;                         // km — bøjningsradius
 const smooth = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
 
 // ── Pladens geometri for en given hældning ─────────────
@@ -48,9 +49,30 @@ function plade(haeld){
     const p = punkt(u);
     s.push(u - sG);
     top.push([p.X, p.D]);
-    skorpe.push([p.X + T_SKORPE * p.nx, p.D + T_SKORPE * p.nd]);
-    bund.push([p.X + T_PLADE * p.nx, p.D + T_PLADE * p.nd]);
     if (p.D > 700) break;
+  }
+  /* Skorpen og undersiden lægges vinkelret på oversiden, som den ser ud
+     på skærmen (med overhøjden), så pladen ser lige tyk ud hele vejen —
+     også der, hvor den dykker. I rigtige km ville den vandrette del se
+     3 gange så tyk ud som den stejle. */
+  const skaerm = top.map(([X, D]) => [xK(X), yD(D)]);
+  skaerm.forEach(([x, y], i) => {
+    const [xa, ya] = skaerm[Math.max(0, i - 1)], [xb, yb] = skaerm[Math.min(skaerm.length - 1, i + 1)];
+    const l = Math.hypot(xb - xa, yb - ya) || 1;
+    const nx = -(yb - ya) / l, ny = (xb - xa) / l;            // normalen ind i pladen
+    const ud = t => [F.kX(x + nx * t * F.PKM), F.dY(y + ny * t * F.PKM)];
+    skorpe.push(ud(T_SKORPE));
+    bund.push(ud(T_PLADE));
+  });
+  // I bøjningen krummer undersiden så skarpt, at forskydningen slår en
+  // lille løkke. Punkterne i løkken lægges oven i det første punkt efter
+  // den, så den flade underside går direkte over i den skrå.
+  for (const linje of [skorpe, bund]){
+    let naeste = null, minX = Infinity;
+    for (let i = linje.length - 1; i >= 0; i--){
+      if (linje[i][0] <= minX){ minX = linje[i][0]; naeste = linje[i]; }
+      else linje[i] = [...naeste];
+    }
   }
   // Hvor langt fra graven er pladens overside d km nede?
   const xVed = d => { const i = top.findIndex(p => p[1] >= d); return i < 0 ? Infinity : top[i][0]; };
@@ -77,7 +99,7 @@ export function lavSubduktion(o){
   // To oceaniske plader er ens: samme havdybde og samme tykkelse
   const OEVRE_TOP = kont ? -0.5 : HAVBUND;   // km — overfladen langt fra graven
   const OEVRE_SKORPE = kont ? 35 : T_SKORPE;
-  const OEVRE_LITO = kont ? 75 : T_PLADE;    // km under overfladen
+  const OEVRE_LITO = kont ? 80 : T_PLADE;    // km under overfladen
   const BUE_HOEJDE = kont ? 4 : 7;           // km — bjergkæden/øbuen over overfladen omkring
   const BUE_BREDDE = kont ? 90 : 45;
   /* Øbuen bygges op af magmaet, der stiger op fra pladen: først
