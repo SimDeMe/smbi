@@ -1,0 +1,121 @@
+/* ─────────────────────────────────────────────────────────
+   Metamorfe bjergarter — omdannet af tryk og varme.
+
+   Én post pr. bjergart. Felterne er beskrevet i LÆS-MIG.md.
+   ───────────────────────────────────────────────────────── */
+
+export default [
+  {
+    id:'gnejs', kode:'ME-01', nr:[],
+    navn:'Gnejs', andreNavne:['øjegnejs'],
+    type:'Foldet · høj metamorfosegrad',
+    kort:'Stribet i lyse og mørke bånd — Skandinaviens grundfjeld.',
+    kendetegn:'Grovkornet med tydelige lyse bånd (kvarts og feldspat) og mørke bånd (biotit, hornblende). Båndene er ofte bølgede eller foldede. Øjegnejs har store feldspatkorn formet som øjne.',
+    kornstoerrelse:'1–10 mm', densitet:'2,6–2,9',
+    mineraler:[{id:'kvarts'},{id:'kalifeldspat'},{id:'plagioklas'},{id:'biotit'},{id:'hornblende'},{id:'granat'}],
+    dannelse:'Granit eller sedimenter, der er presset og opvarmet dybt nede i en bjergkæde (over ca. 600 °C). Mineralerne omkrystalliserer og sorteres i bånd vinkelret på trykket.',
+    findested:'Grundfjeldet i Sverige, Norge og Grønland — og derfor en af de mest almindelige ledeblokke i Danmark.',
+    anvendelse:'Bygningssten og skærver.',
+    forveksles:'Granit (samme mineraler, ingen bånd) og glimmerskifer (finere, mere glimmer).',
+    kend:{korn:['store'], syre:false, opbygning:['skifret'], haard:['glas'], farve:['spaettet']},
+    farver:['#D7C3B0','#2E2B28','#A89A8C','#EFE6DA'], tegning:'baand',
+    placering:'', billeder:[]
+  },
+  {
+    id:'glimmerskifer', kode:'ME-02', nr:[],
+    navn:'Glimmerskifer', andreNavne:['granatglimmerskifer'],
+    type:'Skifret · middel metamorfosegrad',
+    kort:'Glitrende og flaget — fyldt med glimmer, der ligger parallelt.',
+    kendetegn:'Glimter i sollys, fordi glimmerbladene ligger parallelt. Flækker ujævnt langs glimmeren. Ofte med små røde granater.',
+    kornstoerrelse:'0,5–5 mm', densitet:'2,7–3,0',
+    mineraler:[{id:'muskovit'},{id:'biotit'},{id:'kvarts'},{id:'granat'}],
+    dannelse:'Lersten og skifer, der udsættes for tryk og ca. 400–600 °C. Lermineralerne omdannes til glimmer, der vokser vinkelret på trykket.',
+    findested:'Norge, Sverige og Alperne. Som ledeblok.',
+    anvendelse:'Fliser og mursten.',
+    forveksles:'Gnejs (grovere, båndet) og tagskifer (tæt, uden synlig glimmer).',
+    kend:{korn:['store','fine'], syre:false, opbygning:['skifret'], haard:['kniv'], farve:['lys','spaettet']},
+    farver:['#A9A197','#CFC7BC','#6D655D'], tegning:'baand',
+    placering:'', billeder:[]
+  },
+  {
+    id:'tagskifer', kode:'ME-03', nr:[],
+    navn:'Tagskifer', andreNavne:['skifer','fyllit (glinsende udgave)'],
+    type:'Skifret · lav metamorfosegrad',
+    kort:'Tæt og mørk — kan kløves i tynde, plane plader.',
+    kendetegn:'Mørkegrå til sort og tæt. Kløver i helt plane, tynde plader (skifrighed), der ofte skærer lagdelingen. Fyllit har en silkeglinsende overflade.',
+    kornstoerrelse:'< 0,1 mm', densitet:'2,7–2,8',
+    mineraler:[{id:'muskovit',andel:'fine korn'},{id:'kvarts'},{navn:'klorit'}],
+    dannelse:'Lersten, der udsættes for tryk og lav temperatur (ca. 200–400 °C). Lermineralerne drejer sig vinkelret på trykket, og stenen får sine spalteflader.',
+    findested:'Wales, Norge, Spanien og Harzen.',
+    anvendelse:'Tagsten, gulvfliser og skoletavler.',
+    forveksles:'Lerskifer (blødere, flækker langs lagene, kan smuldre).',
+    kend:{korn:['fine'], syre:false, opbygning:['skifret'], haard:['kniv'], farve:['moerk']},
+    farver:['#34383C','#4C5156','#23262A'], tegning:'lag',
+    placering:'', billeder:[]
+  },
+  {
+    id:'marmor', kode:'ME-04', nr:[],
+    navn:'Marmor', andreNavne:[],
+    type:'Uden skifrighed · omdannet kalk',
+    kort:'Omdannet kalksten — sukkerkornet og bruser i syre.',
+    kendetegn:'Hvid, grå, grønlig eller rosa, ofte med årer. Sukkerkornet med glimtende calcitkorn. Ridses af kniv og bruser i syre.',
+    kornstoerrelse:'0,1–5 mm', densitet:'2,7',
+    mineraler:[{id:'calcit',andel:'> 90 %'},{navn:'dolomit'}],
+    dannelse:'Kalksten, der opvarmes under tryk. Calcitten omkrystalliserer til større, sammenvoksede korn, og fossilerne forsvinder.',
+    findested:'Carrara i Italien, Grækenland, Norge og Grønland (Marmorilik).',
+    anvendelse:'Skulpturer, bordplader, gulve og facader.',
+    forveksles:'Kvartsit (ridser glas, bruser ikke) og kalksten (tæt, ofte med fossiler).',
+    kend:{korn:['fine','store'], syre:true, opbygning:['massiv'], haard:['kniv'], farve:['lys']},
+    farver:['#F1EEE8','#D9D4CB','#FFFFFF','#B5AFA6'], tegning:'aarer',
+    placering:'', billeder:[]
+  },
+  {
+    id:'kvartsit', kode:'ME-05', nr:[],
+    navn:'Kvartsit', andreNavne:[],
+    type:'Uden skifrighed · omdannet sandsten',
+    kort:'Omdannet sandsten — meget hård, brækker gennem kornene.',
+    kendetegn:'Hvid, grå eller rødlig, sukkerkornet og meget hård. Ridser glas. Brækker tværs gennem sandkornene i stedet for mellem dem, så brudfladen er glat.',
+    kornstoerrelse:'0,1–2 mm', densitet:'2,65',
+    mineraler:[{id:'kvarts',andel:'> 90 %'},{id:'muskovit'},{id:'haematit'}],
+    dannelse:'Sandsten, der opvarmes under tryk. Kvartskornene vokser sammen til en tæt mosaik.',
+    findested:'Sverige, Norge og Finland. Almindelig som ledeblok og rullesten på stranden.',
+    anvendelse:'Skærver, bordplader og ildfaste materialer.',
+    forveksles:'Sandsten (ru, kornene løsner sig) og marmor (blødere, bruser i syre).',
+    kend:{korn:['fine'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['lys','roed']},
+    farver:['#E9DCD0','#D1BFB0','#F5EEE6'], tegning:'sand',
+    placering:'', billeder:[]
+  },
+  {
+    id:'eklogit', kode:'ME-06', nr:[],
+    navn:'Eklogit', andreNavne:[],
+    type:'Uden skifrighed · meget højt tryk',
+    kort:'Grøn og rød — oceanbund, der har været 50–100 km nede.',
+    kendetegn:'Grøn grundmasse (pyroxen) med røde granater. Tung i hånden.',
+    kornstoerrelse:'1–5 mm', densitet:'3,4–3,6',
+    mineraler:[{navn:'omfacit (grøn pyroxen)',andel:'40–60 %'},{id:'granat',andel:'30–50 %'},{id:'kvarts'}],
+    dannelse:'Basalt fra oceanbunden, der trækkes ned i en subduktionszone. Ved meget højt tryk omdannes plagioklas og augit til tættere mineraler, og pladen bliver tungere end kappen og synker videre.',
+    findested:'Vestnorge (Nordfjord), Alperne og Grønland.',
+    anvendelse:'Viser, hvor dybt bjergarter kan nå ned og komme op igen.',
+    forveksles:'Peridotit (grøn, uden granater) og granatamfibolit (sortgrøn).',
+    kend:{korn:['store'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['groen','spaettet','roed']},
+    farver:['#4F6B3C','#8E2A2E','#6F8A56'], tegning:'eklogit',
+    se:[{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'},{tekst:'Simulering: pladegrænser', href:'/geografi/pladegraenser.html'}],
+    placering:'', billeder:[]
+  },
+  {
+    id:'migmatit', kode:'ME-07', nr:[],
+    navn:'Migmatit', andreNavne:[],
+    type:'Delvis opsmeltet',
+    kort:'Halvt smeltet gnejs — lyse og mørke bånd, der flyder i hinanden.',
+    kendetegn:'Mørk gnejs med lyse, granitiske årer og bånd, der er stærkt foldede og ser ud til at have flydt.',
+    kornstoerrelse:'1–10 mm', densitet:'2,7',
+    mineraler:[{id:'kvarts'},{id:'kalifeldspat'},{id:'plagioklas'},{id:'biotit'},{id:'hornblende'}],
+    dannelse:'Gnejs, der bliver så varm (ca. 650–750 °C), at de lyse mineraler begynder at smelte. Smelten samler sig i årer, mens resten forbliver fast — på grænsen mellem metamorf og magmatisk.',
+    findested:'Bornholms klipper (Paradisbakkerne), Sverige og Finland. Almindelig ledeblok.',
+    anvendelse:'Bygningssten.',
+    forveksles:'Gnejs (mere regelmæssige bånd) og granit.',
+    kend:{korn:['store'], syre:false, opbygning:['skifret'], haard:['glas'], farve:['spaettet']},
+    farver:['#3C3835','#E7D6C6','#C99A82'], tegning:'migmatit',
+    placering:'', billeder:[]
+  }
+];
