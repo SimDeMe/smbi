@@ -10,6 +10,12 @@
    jordens magnetfelt, når den størkner, og feltet skifter retning med
    ujævne mellemrum (model.js). Striberne ligger spejlvendt på hver side.
 
+   Striberne følger med pladerne: havbund, der størknede for 10 mio. år
+   siden, ligger nu 10 mio. års pladebevægelse fra aksen, og for hvert
+   skridt tiden tager, glider den længere ud. Simulationens sidste
+   tidspunkt (tid.maks) er i dag, så ved slutningen ligger striberne
+   nærmest aksen efter den rigtige tidsskala.
+
    Hastigheden er spredningshastigheden: hvor hurtigt de to plader
    fjerner sig fra hinanden. Hver plade flytter sig halvt så hurtigt. */
 
@@ -18,6 +24,16 @@ import * as F from './figur.js';
 
 const { xK, yD, INK, FARVE } = F;
 const H_FOD = F.H - 9;
+const TID_MAKS = 100;                       // mio. år — simulationens "i dag"
+
+/* Striberne i den havbund, der er dannet siden t = 0, som [alder nu fra,
+   alder nu til, normal?]. Magnetfeltets historie er model.js' tidsskala,
+   regnet tilbage fra TID_MAKS: på tidspunktet τ havde feltet den
+   polaritet, der gjaldt TID_MAKS − τ mio. år før i dag. */
+function striberNu(t){
+  const D = TID_MAKS - t;
+  return M.striber(D, D + t).map(([a, b, pol]) => [a - D, b - D, pol]);
+}
 const KONT = 35, KONT_TOP = -0.4, MARGIN = 60, LITO_KONT = 120;
 const smooth = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
 
@@ -85,7 +101,7 @@ export default {
   beskrivelse: 'Tværsnit gennem en midtoceanisk ryg fra overfladen og 170 km ned. To plader glider fra hinanden. Under ryggen strømmer kappen op og smelter delvis, og magmaet størkner til ny havbund med magnetiske striber, der ligger spejlvendt på hver side. Havbunden bliver dybere og lithosfæren tykkere, jo ældre havbunden er. Ude til siderne ligger kontinenterne, der er flyttet fra hinanden. Træk målepunktet til siden for at aflæse havbundens alder.',
   kortTekst: 'Kort set ovenfra: den midtoceaniske ryg går lodret gennem kortet og er forskudt langs transformforkastninger. På hver side ligger havbunden i striber efter magnetisk polaritet, spejlvendt om ryggen. Kontinenterne ligger ude til siderne. Snitlinjen A–B viser, hvor tværsnittet går.',
 
-  tid: { maks: 100, skridt: 0.5, start: 0, tempo: 2, enhed: 'mio. år' },
+  tid: { maks: TID_MAKS, skridt: 0.5, start: 0, tempo: 2, enhed: 'mio. år' },
   fart: { min: 1, maks: 16, skridt: 0.5, start: 2.5, navn: 'Spredningshastighed' },
   maal: { start: 120 },
   skaelvRate: 1.6,
@@ -136,7 +152,7 @@ export default {
     F.flade(c, g.overflade, g.skorpeBund, FARVE.kontinent);
     // havbunden i striber — kun den del, der er dannet ved ryggen
     for (const s of [-1, 1]){
-      for (const [a, b, pol] of M.striber(0, ctx.t)){
+      for (const [a, b, pol] of striberNu(ctx.t)){
         const X0 = Math.min(s * a * g.hk, s * b * g.hk), X1 = Math.max(s * a * g.hk, s * b * g.hk);
         if (X1 < F.X_MIN || X0 > F.X_MAKS) continue;
         F.flade(c, g.overflade, X => g.overflade(X) + M.OCEANSKORPE, pol ? FARVE.normal : FARVE.omvendt,
@@ -200,7 +216,7 @@ export default {
       c.fillRect(F.kxK(s.off + g.E), y0, F.KW, y1 - y0);
       // striberne
       for (const side of [-1, 1]){
-        for (const [a, b, pol] of M.striber(0, ctx.t)){
+        for (const [a, b, pol] of striberNu(ctx.t)){
           const x0 = F.kxK(s.off + side * a * g.hk), x1 = F.kxK(s.off + side * b * g.hk);
           if (Math.max(x0, x1) < 0 || Math.min(x0, x1) > F.KW) continue;
           c.fillStyle = pol ? FARVE.normal : FARVE.omvendt;
@@ -246,10 +262,10 @@ export default {
     const g = lav(ctx), a = Math.abs(ctx.X), hav = g.hav(a);
     const alder = g.alder(a), E = g.E;
     const bredde = 2 * E;
-    const pol = M.polaritet(alder);
+    const pol = M.polaritet(alder + TID_MAKS - ctx.t);
     return [
       { navn: 'Havbundens alder', tal: hav ? alder : null, n: 1, enhed: 'mio. år',
-        lille: hav ? (pol ? 'normal magnetisering — som i dag' : 'omvendt magnetisering') : 'kontinent — ikke havbund',
+        lille: hav ? (pol ? 'normal magnetisering' : 'omvendt magnetisering') : 'kontinent — ikke havbund',
         andel: hav ? alder / 100 : 0, farve: pol ? FARVE.normal : '#9AA3AC' },
       { navn: 'Havdybde', tal: Math.max(0, g.overflade(ctx.X)), n: 1, enhed: 'km',
         lille: hav ? 'havbunden synker, når den køler af' : 'kontinentet',
