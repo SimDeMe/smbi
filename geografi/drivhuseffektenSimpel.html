@@ -164,6 +164,11 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#E7F4FB;
 }
+/* Versionsnummer — tælles op, hver gang simuleringen rettes */
+.version{
+  font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate);
+}
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
@@ -548,6 +553,7 @@ body[data-film="1"] *{transition:none!important}
     <section class="rig">
       <div class="rig-bar"></div>
       <div class="rig-head">
+        <span class="version" title="Simuleringens version">v1.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono" id="dhsTael">Trin 1 af 5</span></span>
         <div class="rig-tools">
           <button type="button" class="btn-mini" id="dhsAfspil" title="Tegn trinnet forfra">↻ Afspil trin</button>
