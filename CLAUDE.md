@@ -23,6 +23,34 @@ build og ingen npm-pakker; modulerne kræver en server, ligesom siderne i
 forvejen gør. Se afsnit 0 i `design_rules.md` for, hvordan der deles, og
 `geografi/boelger/` eller `biologi/membran/` som forlæg.
 
+## Versionsnummer på simuleringer
+
+Hver simulering har et versionsnummer, og **hver gang en simulering rettes,
+får den et nyt** — i samme commit som rettelsen. Nummeret står med småt i
+øverste venstre hjørne af simuleringens vindue: i nyt design som første
+element i `.rig-head`:
+
+```html
+<span class="version" title="Simuleringens version">v1.0</span>
+```
+
+```css
+.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate)}
+```
+
+(Ingen versaler — det skal stå `v1.0`, ikke `V1.0`.) I gammelt design
+sættes det tilsvarende i øverste venstre hjørne af simuleringens ramme.
+
+* Små rettelser (tekst, fejl, justeringer af layout eller farver) tæller
+  andet tal op: `v1.0` → `v1.1`.
+* Ny funktion, ændret model eller omlægning til nyt design tæller første
+  tal op: `v1.4` → `v2.0`.
+* En simulering, der endnu ikke har et nummer, får `v1.0`, første gang den
+  rettes.
+
+Nævn det nye nummer i commit-beskeden.
+
 ## Øvelsesvejledninger (`Øvelser/`)
 
 Quarto-projekt med én mappe pr. øvelse under `Biologi/` og `Geografi/`. Filen
