@@ -125,6 +125,7 @@
         <li>Hvor meget tid du samlet har brugt, og hvor det står i forhold til din norm for skoleåret</li>
         <li>Forbrug og budget pr. aktivitet, med en visuel bjælke i aktivitetens farve</li>
         <li>Fordelingen mellem undervisning / forberedelse / retning for dine hold</li>
+        <li>For hold med normgrundlag (se nedenfor): i skoleårs-rapporten står hver arbejdstype med forbrugt mod norm — fx <em>Retning 12t / 39,2t</em> — og om du er foran eller bagud, målt på samme måde som den samlede indikator</li>
       </ul>
       <p>Tryk <strong>"Eksportér CSV"</strong> for at få perioden som en fil, du kan åbne i Excel.</p>
     </div>
@@ -134,6 +135,13 @@
       <p>Her administrerer du dine hold og opgaver — grupperet efter type og skoleår.</p>
       <ul>
         <li>Opret en ny aktivitet med navn, type, timebudget og farve</li>
+        <li>Et hold kan få et <strong>normgrundlag</strong> fra skolens holdoversigt: årsnorm, antal elever, fordybelsestid, puljetimer og evt. tillæg (fx 15 t til intern NF-eksamen). Så regner appen budgettet ud med skolens formel og deler det op i tre normer:
+          <ul>
+            <li><strong>Undervisning</strong> = årsnorm × 0,9 + puljetimer</li>
+            <li><strong>Forberedelse</strong> = undervisningen × 1,35</li>
+            <li><strong>Retning</strong> = elever × fordybelsestid / 27 × 2,35</li>
+          </ul>
+          Lader du felterne stå tomme, bruger holdet bare det budget, du skriver ind.</li>
         <li>Opgaver kan have under-aktiviteter (fx "SRP" under "Eksamen og årsprøver") — tid registreret på en under-aktivitet tæller automatisk med på forælderen</li>
         <li><strong>"Importer fra tekst"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent</code>) for hurtig opsætning</li>
         <li><strong>"Kopiér til næste skoleår"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter</li>
@@ -143,6 +151,7 @@
     <div class="guide-section">
       <h2><span class="num">6</span> Indstillinger</h2>
       <p>Her justerer du skoleår, modul-længde, hvornår timeren stopper automatisk, ugestart og din samlede norm-timetal. Du kan også eksportere alle dine data som en JSON-fil (fuld backup), og logge ud.</p>
+      <p>Under <strong>Holdnormer</strong> står forberedelsesfaktoren (2,35 i 2025/26) og reduktionen af årsnormen (0,9) for det aktive skoleår. De skifter fra år til år, så hvert skoleår har sine egne — skriv et andet skoleår i feltet øverst for at se eller rette dét års tal. Retter du dem, følger alle holdenes normer det år med.</p>
     </div>
 
     <div class="guide-footer">

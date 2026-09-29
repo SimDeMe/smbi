@@ -8,6 +8,7 @@ import { db } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { getSettings } from './indstillinger.js';
 import { erPause } from './pauser.js';
+import { normerFor, budgetTimer, fmtTimer } from './normer.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
   forskydningFor, skoleaarForPeriode
@@ -180,7 +181,8 @@ function aggregate(acts) {
     const cs         = act.parentId ? [] : liveKids(act.id);
     const childMins  = cs.reduce((s, c) => s + (direct[c.id] || 0), 0);
     const totalMins  = (direct[act.id] || 0) + childMins;
-    const budgetMins = act.budgetHours != null ? act.budgetHours * 60 : null;
+    const budgetH    = budgetTimer(act);
+    const budgetMins = budgetH != null ? Math.round(budgetH * 60) : null;
     return {
       act, totalMins, budgetMins, isChild: !!act.parentId,
       diffMins: budgetMins != null ? budgetMins - totalMins : null
@@ -223,30 +225,42 @@ function renderPeriodeBar() {
   }
 }
 
+// ─── Forløbet del af skoleåret ────────────────────────────
+// 0 før skoleåret, 1 når det er slut. Både den samlede indikator og holdenes
+// normer måles mod den: er man 40 % inde i året, "burde" 40 % være brugt.
+function forloebAndel() {
+  const yStart = start(), yEnd = slut();
+  const total  = Math.max(1, (yEnd - yStart) / 86400000);
+  return Math.min(1, Math.max(0, (Date.now() - yStart.getTime()) / 86400000 / total));
+}
+
+const aaretAfsluttet = () => Date.now() >= slut().getTime();
+
+// Foran/bagud-chippen. Et afsluttet skoleår sammenlignes med hele normen,
+// ikke med "skema".
+function forloebChip(brugtM, normM, elapsed, lille = false) {
+  if (elapsed === 0) return '';
+  const diff  = brugtM - Math.round(normM * elapsed);
+  const diffH = Math.abs(Math.round(diff / 60));
+  const slut  = aaretAfsluttet();
+  const kl    = `forecast-chip${lille ? ' forecast-chip-sm' : ''}`;
+  return diff >= 0
+    ? `<span class="${kl} forecast-ahead">▲ ${diffH}t ${slut ? 'over norm' : 'foran skema'}</span>`
+    : `<span class="${kl} forecast-behind">▼ ${diffH}t ${slut ? 'under norm' : 'bagud skema'}</span>`;
+}
+
 // ─── Summary card ─────────────────────────────────────────
 function renderSummary(totalMins) {
   const year = skoleaarForPeriode(periodFilter, periodOffset);
   let extra  = '';
 
   if (periodFilter === 'skolear') {
-    const yStart  = start();
-    const yEnd    = slut();
-    const total   = Math.max(1, (yEnd - yStart) / 86400000);
-    const elapsed = Math.min(1, Math.max(0, (Date.now() - yStart.getTime()) / 86400000 / total));
+    const elapsed = forloebAndel();
     const NORM    = normHours();
     const normM   = NORM * 60;
-    const expM    = Math.round(normM * elapsed);
-    const diff    = totalMins - expM;
-    const diffH   = Math.abs(Math.round(diff / 60));
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
     const expPct  = Math.min(99, Math.round(elapsed * 100));
-    // Et afsluttet skoleår sammenlignes med hele normen, ikke med "skema"
-    const afsluttet = Date.now() >= yEnd.getTime();
-    const chip = elapsed === 0
-      ? ''
-      : diff >= 0
-        ? `<span class="forecast-chip forecast-ahead">▲ ${diffH}t ${afsluttet ? 'over norm' : 'foran skema'}</span>`
-        : `<span class="forecast-chip forecast-behind">▼ ${diffH}t ${afsluttet ? 'under norm' : 'bagud skema'}</span>`;
+    const chip    = forloebChip(totalMins, normM, elapsed);
 
     extra = `
       <div class="norm-progress-outer">
@@ -347,20 +361,24 @@ function renderActList(rows, uboundMins) {
 
 function actRow(act, totalMins, ownMins, wt, isChild) {
   const color  = act.color || 'var(--accent)';
-  const budget = act.budgetHours != null ? act.budgetHours * 60 : null;
-  const pct    = budget ? Math.min(100, Math.round(totalMins / budget * 100)) : null;
+  const budgetH = budgetTimer(act);
+  const budget  = budgetH != null ? Math.round(budgetH * 60) : null;
+  const pct     = budget ? Math.min(100, Math.round(totalMins / budget * 100)) : null;
 
   const progressHtml = budget != null ? `
     <div class="rapport-progress-bg">
       <div class="rapport-progress-fill" style="width:${pct ?? 0}%;background:${color}${pct >= 100 ? '' : ''}"></div>
     </div>
     <div class="rapport-act-budget-row">
-      <span>${totalMins > 0 ? fmtMins(totalMins) : '—'} / ${act.budgetHours}t</span>
+      <span>${totalMins > 0 ? fmtMins(totalMins) : '—'} / ${fmtTimer(budgetH)}t</span>
       <span>${pct ?? 0}%</span>
     </div>` : (totalMins > 0 ? `<div class="rapport-act-budget-row"><span>${fmtMins(totalMins)}</span></div>` : '');
 
+  const normer = !isChild && periodFilter === 'skolear' ? normerFor(act) : null;
   const wtKeys = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
-  const wtHtml = !isChild && wtKeys.length > 0
+  const wtHtml = normer
+    ? normRows(normer, wt, color)
+    : !isChild && wtKeys.length > 0
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
       ).join('')}</div>`
@@ -374,6 +392,33 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
     </div>
     ${progressHtml}${wtHtml}
   </div>`;
+}
+
+// ─── Holdets normer pr. arbejdstype ───────────────────────
+// Kun i skoleårs-rapporten: normerne gælder hele året, så en dag eller en uge
+// kan ikke måles mod dem. Hver arbejdstype får forbrugt mod norm og sin egen
+// foran/bagud-chip, målt mod den del af året, der er gået — som den samlede.
+// Tillægget har ingen arbejdstype og står bare med sit timetal.
+function normRows(n, wt, color) {
+  const elapsed = forloebAndel();
+  const linjer = ['undervisning', 'forberedelse', 'retning'].filter(t => n[t] > 0).map(t => {
+    const brugt = wt[t] || 0;
+    const normM = Math.round(n[t] * 60);
+    const pct   = normM > 0 ? Math.min(100, Math.round(brugt / normM * 100)) : 0;
+    return `<div class="rapport-norm-row">
+      <span class="rapport-wt-label">${capitalize(t)}</span>
+      <span class="rapport-norm-tal">${brugt > 0 ? fmtMins(brugt) : '0t'} / ${fmtTimer(n[t])}<span class="enhed">t</span></span>
+      <div class="rapport-norm-bar"><div class="rapport-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+      ${forloebChip(brugt, normM, elapsed, true)}
+    </div>`;
+  });
+  if (n.tillaeg > 0) {
+    linjer.push(`<div class="rapport-norm-row">
+      <span class="rapport-wt-label">Tillæg</span>
+      <span class="rapport-norm-tal">${fmtTimer(n.tillaeg)}<span class="enhed">t</span></span>
+    </div>`);
+  }
+  return `<div class="rapport-norm">${linjer.join('')}</div>`;
 }
 
 // ─── Afsluttede opgaver ───────────────────────────────────
@@ -415,7 +460,7 @@ function archivedRow(r) {
         <div class="rapport-progress-fill" style="width:${pct}%;background:${over ? 'var(--danger)' : color}"></div>
       </div>
       <div class="rapport-act-budget-row">
-        <span>${fmtMins(totalMins)} / ${act.budgetHours}t</span>
+        <span>${fmtMins(totalMins)} / ${fmtTimer(budgetMins / 60)}t</span>
         <span>${pct}%</span>
       </div>`;
     chip = diffMins > 0

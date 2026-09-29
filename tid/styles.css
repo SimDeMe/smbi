@@ -1140,6 +1140,42 @@ select.form-input{
 }
 .rapport-wt-label{color:var(--slate);text-transform:uppercase}
 
+/* Holdets normer pr. arbejdstype (kun skoleårs-rapporten) */
+.rapport-norm{
+  display:grid;gap:6px;margin-top:8px;padding-top:8px;
+  border-top:2px solid var(--rule);
+}
+.rapport-norm-row{
+  display:grid;grid-template-columns:7.5rem auto 1fr auto;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.1em;color:var(--text-2);
+}
+.rapport-norm-tal{white-space:nowrap}
+.rapport-norm-bar{
+  height:8px;background:var(--paper-2);border:1.5px solid var(--ink);border-radius:20px;overflow:hidden;
+}
+.rapport-norm-row .forecast-chip-sm{margin-top:0}
+.forecast-chip.forecast-chip-sm{
+  font-size:0.66rem;padding:1px 8px;border-width:1.5px;white-space:nowrap;
+}
+@media (max-width:420px){
+  .rapport-norm-row{grid-template-columns:1fr auto;row-gap:4px}
+  .rapport-norm-bar{grid-column:1}
+}
+
+/* Normgrundlag i aktivitetsformularen */
+.norm-felt{border:2px dashed var(--rule);border-radius:12px;padding:10px 12px 4px;margin-inline:0}
+.norm-felt legend{padding:0 6px}
+.norm-felt .form-group{margin-bottom:10px}
+.norm-udregning{
+  display:flex;flex-wrap:wrap;gap:4px 12px;margin-bottom:8px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.08em;color:var(--slate);
+}
+.norm-udregning:empty{display:none}
+.norm-udregning b{color:var(--ink)}
+.norm-udregning-sum{color:var(--ink)}
+.norm-udregning-fod{flex-basis:100%;font-weight:500}
+#act-budget[readonly]{background:var(--paper-2);color:var(--slate)}
+
 .rapport-archived-nobudget{
   font-family:var(--mono);font-size:0.58rem;font-weight:600;
   letter-spacing:0.1em;color:var(--slate);

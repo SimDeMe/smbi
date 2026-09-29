@@ -18,6 +18,7 @@ En privat webapp til at registrere arbejdstid på de aktiviteter, der står i en
   app.js
   styles.css
   firebase-config.js   (Firebase credentials)
+  normer.js            (holdnormernes formel)
   manifest.json
   service-worker.js
   icons/
@@ -49,13 +50,21 @@ Alt under `users/{userId}/`:
   schoolYear: "2026/27",
   order: 1,
   isArchived: false,
-  note: ""                          // valgfri kommentar fra opgavefordelingen, fx "5 stk"
+  note: "",                         // valgfri kommentar fra opgavefordelingen, fx "5 stk"
+  normGrundlag: null | {            // kun hold, valgfrit — fra skolens holdoversigt
+    aarsnorm: 65,                   // undervisningstimer (klokketimer), påkrævet hvis objektet findes
+    elever: 30,
+    fordybelsestid: 15,             // elevernes skriftlige tid inkl. terminsprøver
+    puljetimer: 0,
+    tillaeg: 0                      // fx 15 til intern NF-eksamen
+  }
 }
 ```
 
 Regler:
 - Hold må ikke have parentId (ingen hierarki for hold)
 - En under-aktivitets `schoolYear` skal matche forælderens
+- Har et hold `normGrundlag`, er budgettet og de tre delnormer regnet ud af det (se *Holdnormer*); `budgetHours` gemmes med som et øjebliksbillede, men det er normgrundlaget og skoleårets faktorer, der gælder. Hold uden `normGrundlag` (og alle ældre hold) bruger `budgetHours` som før
 
 **`entries/{entryId}`** — Tidsregistreringer:
 ```
@@ -81,9 +90,27 @@ Regler:
   autoStopAfterMinutes: 240,
   autoShortBreaks: true,            // luk mellemrum under 30 min som "Kort pause"
   weekStartsOn: 1,
-  currentSchoolYear: "2026/27"     // den aktive der vises som standard
+  currentSchoolYear: "2026/27",    // den aktive der vises som standard
+  normFaktorer: {                   // pr. skoleår; mangler et år, bruges 2,35 og 0,9
+    "2025/26": { faktor: 2.35, reduktion: 0.9 },
+    "2021/22": { faktor: 2.55, reduktion: 0.93 }
+  }
 }
 ```
+
+## Holdnormer
+Middelfart Gymnasiums holdoversigt regner et holds vejledende arbejdstid ud som
+
+    budget = (årsnorm × reduktion + elever × fordybelsestid / 27 + puljetimer) × faktor + tillæg
+
+Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr. arbejdstype:
+
+- **Undervisning** = årsnorm × reduktion + puljetimer
+- **Forberedelse** = undervisning × (faktor − 1)
+- **Retning** = elever × fordybelsestid / 27 × faktor
+- **Tillæg** står for sig og har ingen arbejdstype
+
+Formlen ligger ét sted, i `normer.js`. Kontrolleret mod holdoversigten 2025/26 (faktor 2,35, reduktion 0,9): 2x bi 176,64, 1p nf ge 200,36, nv4 ng 28,82 og 3g Ng1 325,30 — alle på decimalen.
 
 ## Forudefinerede aktiviteter
 Ingen aktiviteter oprettes automatisk. Ved første login vises en "kom-i-gang"-side hvor brugeren bliver bedt om at oprette sine første aktiviteter (eller indstillinger), inden hovedskærmen vises. Vis evt. en eksempel-liste baseret på en typisk opgavefordeling.
@@ -166,7 +193,7 @@ Intervallet bladres frem og tilbage med pile, så rapporten lige så gerne viser
 Vis for valgte interval:
 - **Samlet:** Total tid forbrugt, og hvis skoleår er valgt: forbrugt / norm (1650t for fuldtid — konfigurerbart i indstillinger). Procent og resterende.
 - **Pr. aktivitet:** Liste sorteret efter forbrug. For hver aktivitet: navn, forbrugt tid, budget, procent (fx "142t / 288t — 49%"), visuel progress bar i aktivitetens farve. Under-aktiviteter vises indrykket under deres parent. Parent viser eget forbrug + summen af children.
-- **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række.
+- **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet som forbrugt mod norm (fx "Retning 12t / 39,2t") med bjælke og sin egen foran/bagud-chip, målt mod den del af skoleåret, der er gået — samme regel som den samlede indikator. Tillægget står med sit timetal. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
 - **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema".
 - Simpel cirkel- eller søjlediagram af aktivitets-fordeling (lav i SVG, intet bibliotek).
 
@@ -174,7 +201,7 @@ Vis for valgte interval:
 Egen side "Aktiviteter":
 - Listet grupperet efter type (Hold / Opgaver) og skoleår
 - Skift mellem skoleår (dropdown)
-- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note
+- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
 - Tryk på en aktivitet: redigér eller slet
 - Under-aktiviteter vises indrykket under deres parent
 - **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne) — gør det nemt når et nyt skoleår begynder
@@ -192,6 +219,7 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 ### 9. Indstillinger
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
+- Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35) og reduktion af årsnormen (default 0,9)
 - Modul-længde
 - Auto-stop-grænse
 - Ugestart

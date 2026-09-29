@@ -2,6 +2,7 @@
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins } from './timer.js';
+import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal } from './normer.js';
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, writeBatch, serverTimestamp
@@ -168,7 +169,8 @@ const sectionHead = label =>
 
 function actRow(a, child = false, spentMins = 0) {
   const color  = a.color || COLOR_PALETTE[0];
-  const budgetMins = a.budgetHours != null ? a.budgetHours * 60 : null;
+  const budgetH    = budgetTimer(a);
+  const budgetMins = budgetH != null ? Math.round(budgetH * 60) : null;
 
   let stats;
   if (budgetMins != null) {
@@ -177,7 +179,7 @@ function actRow(a, child = false, spentMins = 0) {
       ? `<span class="act-stat-remain">${fmtMins(remain)} tilbage</span>`
       : `<span class="act-stat-remain act-stat-over">${fmtMins(-remain)} over</span>`;
     stats = `<span class="act-stat-used">${fmtMins(spentMins)}</span>` +
-            `<span class="act-stat-budget">/ ${a.budgetHours}t</span>` +
+            `<span class="act-stat-budget">/ ${fmtTimer(budgetH)}t</span>` +
             remainTxt;
   } else {
     stats = `<span class="act-stat-used">${fmtMins(spentMins)} brugt</span>`;
@@ -209,6 +211,10 @@ function openActSheet(actId) {
   document.getElementById('act-budget').value = a?.budgetHours ?? '';
   document.getElementById('act-year').value   = a?.schoolYear  || selectedYear;
   document.getElementById('act-note').value   = a?.note        || '';
+  const g = a?.normGrundlag || {};
+  NORM_FELTER.forEach(([id, key]) => {
+    document.getElementById(id).value = g[key] != null ? String(g[key]).replace('.', ',') : '';
+  });
 
   const typeVal = a?.type || 'opgave';
   const radio = document.querySelector(`input[name="act-type"][value="${typeVal}"]`);
@@ -216,6 +222,7 @@ function openActSheet(actId) {
   toggleParentField(typeVal);
   populateParentSelect(a?.schoolYear || selectedYear, a?.parentId || '');
   renderColorPicker(a?.color || '');
+  opdaterUdregning();
 
   document.getElementById('act-delete-btn').classList.toggle('hidden', !a);
 
@@ -228,6 +235,59 @@ function openActSheet(actId) {
 
 function toggleParentField(type) {
   document.getElementById('field-parent').style.display = type === 'opgave' ? '' : 'none';
+  document.getElementById('field-norm').style.display   = type === 'hold'   ? '' : 'none';
+}
+
+// ─── Normgrundlag (kun hold) ──────────────────────────────
+// Felt-id → nøgle i activity.normGrundlag. Se normer.js for formlen.
+const NORM_FELTER = [
+  ['act-aarsnorm',   'aarsnorm'],
+  ['act-elever',     'elever'],
+  ['act-fordybelse', 'fordybelsestid'],
+  ['act-pulje',      'puljetimer'],
+  ['act-tillaeg',    'tillaeg']
+];
+
+const formType = () => editingId
+  ? activities.find(x => x.id === editingId)?.type
+  : document.querySelector('input[name="act-type"]:checked')?.value;
+
+// Normgrundlaget, som det står i formularen — null, hvis årsnormen er tom
+function laesNormgrundlag() {
+  if (formType() !== 'hold') return null;
+  const g = {};
+  NORM_FELTER.forEach(([id, key]) => {
+    const v = tolkTal(document.getElementById(id).value);
+    if (v != null) g[key] = v;
+  });
+  return g.aarsnorm != null ? g : null;
+}
+
+// Er normgrundlaget udfyldt, er budgettet regnet ud og kan ikke skrives i
+// hånden; udregningen står under felterne, så man kan tjekke den mod arket.
+function opdaterUdregning() {
+  const ud     = document.getElementById('act-norm-udregning');
+  const budget = document.getElementById('act-budget');
+  const g      = laesNormgrundlag();
+  const aar    = document.getElementById('act-year').value.trim() || selectedYear;
+  const n      = g ? beregnNormer(g, faktorerFor(aar)) : null;
+
+  if (!n) {
+    if (budget.readOnly) budget.value = '';
+    budget.readOnly = false;
+    ud.innerHTML = '';
+    return;
+  }
+  budget.readOnly = true;
+  budget.value = Math.round(n.total * 100) / 100;
+  const { faktor, reduktion } = faktorerFor(aar);
+  ud.innerHTML = `
+    <span>Undervisning <b>${fmtTimer(n.undervisning)}</b></span>
+    <span>Forberedelse <b>${fmtTimer(n.forberedelse)}</b></span>
+    <span>Retning <b>${fmtTimer(n.retning)}</b></span>
+    ${n.tillaeg ? `<span>Tillæg <b>${fmtTimer(n.tillaeg)}</b></span>` : ''}
+    <span class="norm-udregning-sum">I alt <b>${fmtTimer(n.total)}</b> <span class="enhed">t</span></span>
+    <span class="norm-udregning-fod">Faktor ${String(faktor).replace('.', ',')} · reduktion ${String(reduktion).replace('.', ',')} (${esc(aar)})</span>`;
 }
 
 function populateParentSelect(year, selId) {
@@ -266,9 +326,15 @@ async function saveActivity(e) {
   const type       = isEditing ? existingA.type
                                : (document.querySelector('input[name="act-type"]:checked')?.value || 'opgave');
   const parentId   = type === 'opgave' ? (document.getElementById('act-parent').value || null) : null;
-  const budgetRaw  = document.getElementById('act-budget').value.trim();
-  const budgetHours = budgetRaw !== '' ? parseFloat(budgetRaw) : null;
   const schoolYear  = document.getElementById('act-year').value.trim() || selectedYear;
+  // Med normgrundlag gemmes det beregnede budget også i budgetHours, så
+  // holdet har et budget, selv hvor normerne ikke bliver regnet ud. Det er
+  // dog normgrundlaget, der gælder: skifter faktoren, følger budgettet med.
+  const normGrundlag = type === 'hold' ? laesNormgrundlag() : null;
+  const normer       = normGrundlag ? beregnNormer(normGrundlag, faktorerFor(schoolYear)) : null;
+  const budgetRaw    = document.getElementById('act-budget').value.trim();
+  const budgetHours  = normer ? Math.round(normer.total * 100) / 100
+                              : budgetRaw !== '' ? parseFloat(budgetRaw) : null;
   const note        = document.getElementById('act-note').value.trim();
   const color       = getSelectedColor() || autoColor();
 
@@ -277,11 +343,11 @@ async function saveActivity(e) {
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, parentId, budgetHours, color, schoolYear, note });
+        { name, parentId, budgetHours, normGrundlag, color, schoolYear, note });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),
-        { name, type, parentId, budgetHours, color, schoolYear, note, order: nextOrder(), isArchived: false });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, order: nextOrder(), isArchived: false });
       showToast('Aktivitet oprettet');
     }
     closeSheet('act-sheet', 'act-backdrop');
@@ -508,7 +574,12 @@ function bindListeners() {
     r.addEventListener('change', e => {
       toggleParentField(e.target.value);
       populateParentSelect(document.getElementById('act-year').value || selectedYear, '');
+      opdaterUdregning();
     })
+  );
+
+  [...NORM_FELTER.map(([id]) => id), 'act-year'].forEach(id =>
+    document.getElementById(id).addEventListener('input', opdaterUdregning)
   );
 
   // Import sheet

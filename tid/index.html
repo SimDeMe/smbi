@@ -31,6 +31,7 @@
   <link rel="modulepreload" href="app.js">
   <link rel="modulepreload" href="firebase-config.js">
   <link rel="modulepreload" href="indstillinger.js">
+  <link rel="modulepreload" href="normer.js">
   <link rel="modulepreload" href="activities.js">
   <link rel="modulepreload" href="timer.js">
   <link rel="modulepreload" href="skema.js">
@@ -323,6 +324,23 @@
           </div>
         </div>
 
+        <!-- Holdnormer -->
+        <div class="settings-section">
+          <div class="settings-section-title">Holdnormer · <span id="cfg-faktor-aar">2026/27</span></div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-faktor">Forberedelsesfaktor
+              <span class="settings-sub">Undervisning og elevtid ganges med den. 2,35 i 2025/26, 2,55 i 2021/22.</span>
+            </label>
+            <input type="text" inputmode="decimal" id="cfg-faktor" class="settings-input-sm" placeholder="2,35">
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-reduktion">Reduktion af årsnorm
+              <span class="settings-sub">Årsnormen ganges med den. 0,9 i 2025/26, 0,93 i 2021/22.</span>
+            </label>
+            <input type="text" inputmode="decimal" id="cfg-reduktion" class="settings-input-sm" placeholder="0,9">
+          </div>
+        </div>
+
         <!-- Timer -->
         <div class="settings-section">
           <div class="settings-section-title">Timer</div>
@@ -470,9 +488,37 @@
             <option value="">— Ingen (top-niveau) —</option>
           </select>
         </div>
+        <fieldset class="form-group norm-felt" id="field-norm">
+          <legend class="form-label">Normgrundlag <span class="form-optional">(valgfrit — fra holdoversigten)</span></legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="act-aarsnorm">Årsnorm <span class="enhed">t</span></label>
+              <input class="form-input" type="text" inputmode="decimal" id="act-aarsnorm" placeholder="fx 65">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="act-elever">Elever</label>
+              <input class="form-input" type="text" inputmode="decimal" id="act-elever" placeholder="fx 30">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="act-fordybelse">Fordybelsestid <span class="enhed">t</span></label>
+              <input class="form-input" type="text" inputmode="decimal" id="act-fordybelse" placeholder="fx 15">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="act-pulje">Puljetimer <span class="enhed">t</span></label>
+              <input class="form-input" type="text" inputmode="decimal" id="act-pulje" placeholder="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="act-tillaeg">Tillæg <span class="enhed">t</span> <span class="form-optional">(fx NF-eksamen 15)</span></label>
+            <input class="form-input" type="text" inputmode="decimal" id="act-tillaeg" placeholder="0">
+          </div>
+          <div class="norm-udregning" id="act-norm-udregning" aria-live="polite"></div>
+        </fieldset>
         <div class="form-group">
           <label class="form-label" for="act-budget">Budget (timer)</label>
-          <input class="form-input" type="number" id="act-budget" min="0" max="9999" step="1" placeholder="fx 288">
+          <input class="form-input" type="number" id="act-budget" min="0" max="9999" step="any" placeholder="fx 288">
         </div>
         <div class="form-group">
           <label class="form-label">Farve</label>

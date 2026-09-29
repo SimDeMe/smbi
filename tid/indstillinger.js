@@ -1,6 +1,7 @@
 // indstillinger.js — Trin 9: Indstillinger
 
 import { db, showToast, getCurrentSchoolYear, updateTopYear } from './app.js';
+import { STANDARD_FAKTORER, tolkTal } from './normer.js';
 import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── Defaults ─────────────────────────────────────────────
@@ -13,7 +14,8 @@ const DEFAULTS = {
   normHours:            1650,
   moduleLengthMinutes:  90,
   autoStopAfterMinutes: 600,
-  autoShortBreaks:      true
+  autoShortBreaks:      true,
+  normFaktorer:         {}      // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
 };
 
 let userId      = null;
@@ -64,6 +66,19 @@ function populateForm() {
   set('cfg-module-mins',   s.moduleLengthMinutes  ?? DEFAULTS.moduleLengthMinutes);
   set('cfg-autostop-mins', s.autoStopAfterMinutes ?? DEFAULTS.autoStopAfterMinutes);
   check('cfg-auto-breaks', s.autoShortBreaks ?? DEFAULTS.autoShortBreaks);
+  visFaktorer(s.currentSchoolYear || getCurrentSchoolYear());
+}
+
+// Holdnormernes faktorer hører til ét skoleår ad gangen — det, der står i
+// feltet "Aktivt skoleår". Skriver man et andet år, vises dét års faktorer.
+const kommatal = v => String(v).replace('.', ',');
+
+function visFaktorer(aar) {
+  const f = settings.normFaktorer?.[aar] || {};
+  const el = document.getElementById('cfg-faktor-aar');
+  if (el) el.textContent = aar;
+  set('cfg-faktor',    kommatal(f.faktor    ?? STANDARD_FAKTORER.faktor));
+  set('cfg-reduktion', kommatal(f.reduktion ?? STANDARD_FAKTORER.reduktion));
 }
 
 const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
@@ -81,7 +96,14 @@ async function saveSettings() {
     normHours:            parseInt(document.getElementById('cfg-norm-hours').value)   || 1650,
     moduleLengthMinutes:  parseInt(document.getElementById('cfg-module-mins').value)  || 90,
     autoStopAfterMinutes: parseInt(document.getElementById('cfg-autostop-mins').value)|| 600,
-    autoShortBreaks:      document.getElementById('cfg-auto-breaks')?.checked ?? true
+    autoShortBreaks:      document.getElementById('cfg-auto-breaks')?.checked ?? true,
+    normFaktorer: {
+      ...settings.normFaktorer,
+      [yearVal]: {
+        faktor:    tolkTal(document.getElementById('cfg-faktor').value)    ?? STANDARD_FAKTORER.faktor,
+        reduktion: tolkTal(document.getElementById('cfg-reduktion').value) ?? STANDARD_FAKTORER.reduktion
+      }
+    }
   };
 
   const btn = document.getElementById('cfg-save-btn');
@@ -104,4 +126,7 @@ function bindListeners() {
   if (listenersOk) return;
   listenersOk = true;
   document.getElementById('cfg-save-btn')?.addEventListener('click', saveSettings);
+  document.getElementById('cfg-school-year')?.addEventListener('input', e => {
+    if (/^\d{4}\/\d{2}$/.test(e.target.value.trim())) visFaktorer(e.target.value.trim());
+  });
 }
