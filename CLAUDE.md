@@ -84,3 +84,9 @@ Detaljerne står i `Øvelser/Mappestruktur.md` og `Øvelser/LÆS-MIG.md`.
 
 Danske, i bydeform, med en kort forklarende krop når ændringen er stor. Fx:
 `Stigningsregn i sidens nye design: samme model, pænere ramme`.
+
+**Arbejd direkte på `main`.** Commit og push direkte til `main` — ingen
+feature-grene og ingen pull requests, medmindre jeg selv beder om det. Det
+gælder også, når sessionen er sat op med en anden gren. GitHub Pages udgiver
+`main` med det samme, så test i browseren (se «Sådan ser man en side») før
+hvert push.
