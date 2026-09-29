@@ -166,6 +166,11 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#E7F4FB;
 }
+/* Versionsnummer — tælles op, hver gang simuleringen rettes */
+.version{
+  font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate);
+}
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
@@ -568,7 +573,7 @@ dialog::backdrop{background:rgba(23,33,31,.6)}
 
 /* ── SVG-scenen ────────────────────────────────────────── */
 .dh-scene text{font-family:var(--display)}
-.dh-el{transition:opacity .35s ease}
+/* Ingen CSS-overgang på figurens dele: bevægelsen kommer fra koreografien */
 .dh-el[data-vis="skjult"]{display:none}
 .dh-el[data-vis="tonet"]{opacity:.26}
 .dh-el[data-vis="fremhaevet"] .dh-glans{filter:drop-shadow(0 0 8px rgba(255,179,0,.9))}
@@ -764,6 +769,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
       <div class="rig-bar"></div>
 
       <div class="rig-head">
+        <span class="version" title="Simuleringens version">v2.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono" id="dhTael">Trin 1 af 8</span></span>
 
         <div class="rig-tilstande" role="group" aria-label="Vælg tilstand">
@@ -773,6 +779,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
         </div>
 
         <div class="rig-tools">
+          <button type="button" class="btn-mini" id="dhAfspil" title="Tegn trinnet forfra">↻ Afspil trin</button>
           <button type="button" class="btn-mini" id="dhProjektor" aria-pressed="false" title="Forstør al tekst til projektor">Projektor</button>
           <button type="button" class="btn-mini" id="dhOmModellen">Om modellen</button>
           <a class="btn-mini" href="drivhuseffektenSimpel.html">Forenklet version →</a>
@@ -1044,7 +1051,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
    ========================================================================== */
 
 const DATA = {
-  meta: { titel: "Drivhuseffekten trin for trin", version: "1.0", sprog: "da" },
+  meta: { titel: "Drivhuseffekten trin for trin", version: "2.0", sprog: "da" },
 
   constants: {
     solarkonstant: 1361,        // W/m²
@@ -1073,7 +1080,14 @@ const DATA = {
       fremhaev: ["pilInd"],
       temp: "ingen",
       budget: "te",
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      // Sollyset kommer ind, en del kastes tilbage, resten når ned og varmer
+      koreografi: [
+        { el: "pilInd",         fra: 0,    til: 0.8 },
+        { el: "pilReflekteret", fra: 0.75, til: 1.4 },
+        { el: "pilAbsorberet",  fra: 0.75, til: 1.6 },
+        { el: "overflade",      fra: 1.5,  til: 2.5, type: "puls" }
+      ]
     },
     {
       id: 2,
@@ -1085,7 +1099,12 @@ const DATA = {
       fremhaev: ["pilJordUdRum", "balanceIndikator"],
       temp: "ingen",
       budget: "te",
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      // Varmen går hele vejen ud, og så kan regnskabet gøres op
+      koreografi: [
+        { el: "pilJordUdRum",     fra: 0,   til: 1.3 },
+        { el: "balanceIndikator", fra: 1.2, til: 1.7 }
+      ]
     },
     {
       id: 3,
@@ -1098,7 +1117,10 @@ const DATA = {
       temp: "te",
       budget: "te",
       gab: true,
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      koreografi: [
+        { el: "termometer", fra: 0, til: 0.5 }
+      ]
     },
     {
       id: 4,
@@ -1113,7 +1135,13 @@ const DATA = {
       temp: "te",
       budget: "te",
       gab: true,
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      // Atmosfæren kommer til: lyset slipper (mest) igennem, varmen stopper i den
+      koreografi: [
+        { el: "atmosfaere",     fra: 0,   til: 0.6 },
+        { el: "pilAbsAtm",      fra: 0.5, til: 1.0 },
+        { el: "pilOverfladeUd", fra: 0.9, til: 1.6 }
+      ]
     },
     {
       id: 5,
@@ -1128,7 +1156,13 @@ const DATA = {
       temp: "te",
       budget: "model",
       gab: true,
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      // CO₂ sender ud i alle retninger — først derefter kommer tilbagestrålingen ned
+      koreografi: [
+        { el: "genudsendelse",       fra: 0,   til: 1.1 },
+        { el: "pilTilbagestraaling", fra: 1.0, til: 1.7 },
+        { el: "pilKonvektion",       fra: 1.7, til: 2.3 }
+      ]
     },
     {
       id: 6,
@@ -1142,7 +1176,11 @@ const DATA = {
       fremhaev: ["balanceIndikator", "termometer"],
       temp: "model",
       budget: "model",
-      kontroller: { co2: "laast", albedo: "laast" }
+      kontroller: { co2: "laast", albedo: "laast" },
+      koreografi: [
+        { el: "pilRummet",        fra: 0,   til: 0.8 },
+        { el: "balanceIndikator", fra: 0.7, til: 1.2 }
+      ]
     },
     {
       id: 7,
@@ -1414,8 +1452,10 @@ function tegnPil(gruppe, o) {
   const ned = o.y2 > o.y1;
   const hw = Math.max(8, Math.min(18, w * 1.05));
   const len = Math.max(15, Math.min(26, w * 1.35));
-  const spids = o.y2;
-  const basis = ned ? o.y2 - len : o.y2 + len;
+  // o.p < 1: koreografien tegner pilen frem, og spidsen sidder forrest
+  const p = o.p === undefined ? 1 : o.p;
+  const spids = p < 1 ? o.y1 + (o.y2 - o.y1) * glat(p) : o.y2;
+  const basis = ned ? spids - len : spids + len;
   const skaftSlut = ned ? basis + 1.5 : basis - 1.5;
 
   const kant = lav("line", {
@@ -1459,7 +1499,9 @@ function tegnPil(gruppe, o) {
       t.appendChild(l);
     });
     gruppe.appendChild(t);
+    if (p < 1) t.setAttribute("opacity", String(klem((p - 0.75) / 0.25)));
   }
+  if (p < 1) [kant, skaft, pilespids].forEach(d => d.setAttribute("opacity", String(klem(p / 0.12))));
 
   const titel = lav("title", {});
   titel.textContent = `Pil: ${o.aria}, ${o.vaerdi} watt pr. kvadratmeter`;
@@ -1469,6 +1511,8 @@ function tegnPil(gruppe, o) {
 }
 
 let sidsteSignatur = "";
+const pilMaal = {};   // hver pils fulde mål fra seneste optegning
+const pilGruppe = navn => svg.querySelector(`[data-el="${navn}"]`);
 let skjulPileTekst = false;
 
 function tegnScene(e, medAtm) {
@@ -1486,41 +1530,41 @@ function tegnScene(e, medAtm) {
   if (sig === sidsteSignatur) return;
   sidsteSignatur = sig;
 
-  const el = navn => svg.querySelector(`[data-el="${navn}"]`);
+  const pil = (navn, o) => { pilMaal[navn] = o; tegnPil(pilGruppe(navn), o); };
 
-  tegnPil(el("pilInd"), {
+  pil("pilInd", {
     x: 106, y1: 88, y2: 198, vaerdi: e.ind, farve: KORT,
     navn: "indstråling", aria: "indstråling fra Solen", labelSide: "hoejre"
   });
-  tegnPil(el("pilReflekteret"), {
+  pil("pilReflekteret", {
     x: 226, y1: 196, y2: 86, vaerdi: e.refl, farve: REFL,
     navn: "reflekteret", aria: "sollys der kastes tilbage til rummet", labelSide: "hoejre"
   });
-  tegnPil(el("pilAbsorberet"), {
+  pil("pilAbsorberet", {
     x: 106, y1: 202, y2: 396, vaerdi: e.solOverflade, farve: KORT,
     navn: ["optages ved", "overfladen"], aria: "sollys der optages ved jordoverfladen", labelSide: "hoejre"
   });
-  tegnPil(el("pilAbsAtm"), {
+  pil("pilAbsAtm", {
     x: 330, y1: 202, y2: 268, vaerdi: e.solAtm, farve: KORT,
     navn: ["optages i luften"], aria: "sollys der optages i atmosfæren", labelSide: "hoejre"
   });
-  tegnPil(el("pilJordUdRum"), {
+  pil("pilJordUdRum", {
     x: 430, y1: 394, y2: 84, vaerdi: e.u, farve: LANG, stiplet: true,
     navn: ["varmestråling ud"], aria: "langbølget varmestråling fra overfladen ud i rummet", labelSide: "hoejre"
   });
-  tegnPil(el("pilOverfladeUd"), {
+  pil("pilOverfladeUd", {
     x: 430, y1: 394, y2: 324, vaerdi: e.u, farve: LANG, stiplet: true,
     navn: ["overfladens", "udstråling"], aria: "langbølget udstråling fra jordoverfladen", labelSide: "venstre"
   });
-  tegnPil(el("pilKonvektion"), {
+  pil("pilKonvektion", {
     x: 300, y1: 394, y2: 324, vaerdi: e.konv || K.konvektion, farve: KONV,
     navn: ["fordampning", "og varm luft"], aria: "fordampning og opstigende varm luft", labelSide: "venstre"
   });
-  tegnPil(el("pilTilbagestraaling"), {
+  pil("pilTilbagestraaling", {
     x: 620, y1: 322, y2: 394, vaerdi: e.tilbage, farve: LANG, stiplet: true,
     navn: "tilbagestråling", aria: "tilbagestråling fra atmosfæren mod jordoverfladen", labelSide: "hoejre"
   });
-  tegnPil(el("pilRummet"), {
+  pil("pilRummet", {
     x: 760, y1: 206, y2: 86, vaerdi: e.udRum, farve: LANG, stiplet: true,
     navn: "ud i rummet", aria: "langbølget udstråling til rummet", labelSide: "venstre"
   });
@@ -1528,13 +1572,16 @@ function tegnScene(e, medAtm) {
 }
 
 // Genudsendelse i alle retninger (modvirker "låg"-fejlopfattelsen). Tegnes én gang.
-function tegnGenudsendelse() {
+// q (0–1) lader strålerne vokse ud fra molekylet; q = 0 tegner ingen.
+function tegnGenudsendelse(q = 1) {
   const g = $("dhGenud");
   g.textContent = "";
+  if (q <= 0) return;
+  const rr = 26 + 28 * q;
   [-90, -35, 0, 35, 90, 125, 180, -125].forEach(grader => {
     const r = grader * Math.PI / 180;
     const x1 = 556 + Math.cos(r) * 26, y1 = 266 + Math.sin(r) * 26;
-    const x2 = 556 + Math.cos(r) * 54, y2 = 266 + Math.sin(r) * 54;
+    const x2 = 556 + Math.cos(r) * rr, y2 = 266 + Math.sin(r) * rr;
     g.appendChild(lav("line", { x1, y1, x2, y2 }));
     const vr = r + Math.PI, s = 7;
     g.appendChild(lav("path", {
@@ -1607,6 +1654,88 @@ function maalTemperatur() {
 }
 
 /* ==========================================================================
+   6b. Koreografi — det nye i et trin tegnes i årsagsrækkefølge
+   --------------------------------------------------------------------------
+   Lægges oven på den færdige tegning efter hver render(), så modellen og
+   tallene er præcis de samme som uden. Går man ét trin frem, tegnes pilene
+   frem i den rækkefølge, energien bevæger sig; alle andre skift viser
+   trinnet færdigt. Med reduceret bevægelse springes den helt over.
+   ========================================================================== */
+
+const klem = x => Math.min(1, Math.max(0, x));
+const glat = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const udad = p => 1 - Math.pow(1 - p, 3);
+let koreo = null;       // { trin, t0 } mens et trin tegnes
+let koreoRaf = 0;
+
+function bland(a, b, p) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const k = s => Math.round(((x >> s) & 255) * (1 - p) + ((y >> s) & 255) * p);
+  return `rgb(${k(16)},${k(8)},${k(0)})`;
+}
+
+function koreoSlut(n) {
+  return (trinData(n).koreografi || []).reduce((m, c) => Math.max(m, c.til), 0);
+}
+
+function afspilTrin(n) {
+  stopKoreografi();
+  if (reduceret || state.mode !== "teach" || !trinData(n).koreografi) return;
+  koreo = { trin: n, t0: performance.now() };
+  const slut = koreoSlut(n);
+  koreoRaf = requestAnimationFrame(function ramme() {
+    if (!koreo) return;
+    const faerdig = (performance.now() - koreo.t0) / 1000 >= slut;
+    if (faerdig) koreo = null;
+    render();
+    if (!faerdig) koreoRaf = requestAnimationFrame(ramme);
+  });
+}
+
+function stopKoreografi() {
+  cancelAnimationFrame(koreoRaf);
+  koreo = null;
+  ryd();
+}
+
+// Det færdige billede: fulde pile, alle stråler, ingen puls eller indtoning
+function ryd() {
+  tegnGenudsendelse(1);
+  svg.querySelectorAll('[data-el="genudsendelse"] circle, [data-el="genudsendelse"] text')
+    .forEach(k => k.removeAttribute("opacity"));
+  svg.querySelector('[data-el="overflade"] .dh-glans').setAttribute("fill", "#5FB030");
+  ALLE_EL.forEach(n => {
+    const node = document.querySelector(`.dh-el[data-el="${n}"]`);
+    if (node) node.style.opacity = "";
+  });
+  if (sidsteSignatur.startsWith("koreo")) sidsteSignatur = "";
+}
+
+function anvendKoreografi() {
+  if (!koreo || koreo.trin !== state.trin || state.mode !== "teach") return;
+  const t = (performance.now() - koreo.t0) / 1000;
+  let delvisPil = false;
+  (trinData(koreo.trin).koreografi || []).forEach(c => {
+    const p = klem((t - c.fra) / (c.til - c.fra));
+    if (c.type === "puls") {
+      svg.querySelector('[data-el="overflade"] .dh-glans')
+        .setAttribute("fill", bland("#5FB030", "#FFB300", 0.8 * Math.sin(Math.PI * p)));
+    } else if (pilMaal[c.el]) {
+      if (p < 1) { tegnPil(pilGruppe(c.el), Object.assign({}, pilMaal[c.el], { p })); delvisPil = true; }
+    } else if (c.el === "genudsendelse") {
+      svg.querySelectorAll('[data-el="genudsendelse"] circle, [data-el="genudsendelse"] text')
+        .forEach(k => k.setAttribute("opacity", String(klem(p / 0.25))));
+      tegnGenudsendelse(udad(klem((p - 0.25) / 0.75)));
+    } else {
+      const node = document.querySelector(`.dh-el[data-el="${c.el}"]`);
+      if (node) node.style.opacity = p < 1 ? String(p) : "";
+    }
+  });
+  // En delvist tegnet pil skal tegnes fuldt igen ved næste render
+  if (delvisPil) sidsteSignatur = "koreo";
+}
+
+/* ==========================================================================
    7. Render
    ========================================================================== */
 
@@ -1655,6 +1784,7 @@ function render() {
 
   tegnScene(e, medAtm);
   saetSynlighed(synlige, fremhaev, tidligere, skjul);
+  anvendKoreografi();
 
   // ── Termometer ──
   const visC = tilC(state.visTempK);
@@ -1770,16 +1900,21 @@ function sloejfeSvg() {
 function saetTrin(n, animer) {
   n = Math.min(Math.max(n, 1), DATA.trin.length);
   const skift = n !== state.trin;
+  const fremad = n === state.trin + 1;
   state.trin = n;
   const t = trinData(n);
+  stopKoreografi();
   saetMaal(maalTemperatur(), animer !== false && skift);
+  if (animer !== false && fremad) afspilTrin(n);
   render();
   opdaterUrl();
   $("dhSrStatus").textContent = `Trin ${n} af ${DATA.trin.length}: ${t.overskrift}. ${t.kort}`;
 }
 
 function saetMode(m) {
+  stopKoreografi();
   state.mode = m;
+  $("dhAfspil").hidden = m !== "teach";
   app.dataset.mode = m;
   document.querySelectorAll("[data-tilstand]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.tilstand === m)));
@@ -2340,6 +2475,7 @@ function init() {
   app.dataset.projektor = state.projektor ? "1" : "0";
   $("dhProjektor").setAttribute("aria-pressed", String(state.projektor));
 
+  $("dhAfspil").addEventListener("click", () => afspilTrin(state.trin));
   $("dhOmModellen").addEventListener("click", omModellen);
   $("dhDialogLuk").addEventListener("click", () => {
     const d = $("dhDialog");
@@ -2367,6 +2503,7 @@ function init() {
   state.visTempK = state.maalTempK = maalTemperatur();
   render();
   laasRammehojde();
+  if (state.mode === "teach" && state.trin === 1) afspilTrin(1);   // første trin tegnes, når siden åbner
 
   // Skrifterne hentes udefra: er de ikke nået frem ved første optegning, er
   // linjerne brudt anderledes, end de bliver bagefter — så mål én gang til.
