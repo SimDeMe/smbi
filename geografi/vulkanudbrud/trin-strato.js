@@ -15,7 +15,7 @@
                          gulv   — overtrykket falder ikke under dette (MPa)
      sammenlign          vis skemaet over basaltisk og andesitisk magma */
 
-import { pladeTop, yD, X_VULKAN } from './subduktion.js';
+import { iSkorpen, yD, X_VULKAN } from './subduktion.js';
 
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits: n, maximumFractionDigits: n });
 const hel = v => Math.round(v).toLocaleString('da-DK');
@@ -23,13 +23,13 @@ const enh = e => `<span class="enhed">${e}</span>`;
 
 // Lupens plads i oversigten: i pladens skorpe 60 km nede, i smeltezonen
 // og i magmaet på vej op
-const X60 = 222 + Math.sqrt((yD(60) - yD(5)) / 0.0076);
+const I_SKORPEN = iSkorpen(60);
 
 export default [
   {
     id: 'plader', titel: 'Pladerne mødes',
     visning: 'oversigt', fokus: 'plader',
-    lupe: { slags: 'plade', x: X60 - 4, y: pladeTop(X60) + 9, d: 60 },
+    lupe: { slags: 'plade', x: I_SKORPEN.x, y: I_SKORPEN.y, d: 60 },
     tekst: () => `<p>Den oceaniske plade er kold og tung og glider ned under den lettere kontinentale plade. Det kaldes <b>subduktion</b>. Pladen flytter sig kun et par centimeter om året, men den tager havbundens skorpe med sig ned — og i skorpen sidder der vand, bundet i mineralerne.</p>`
   },
   {
