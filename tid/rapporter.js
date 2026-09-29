@@ -374,15 +374,15 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
       <span>${pct ?? 0}%</span>
     </div>` : (totalMins > 0 ? `<div class="rapport-act-budget-row"><span>${fmtMins(totalMins)}</span></div>` : '');
 
-  const normer = !isChild && periodFilter === 'skolear' ? normerFor(act) : null;
+  const normer = !isChild ? normerFor(act) : null;
   const wtKeys = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
-  const wtHtml = normer
+  const wtHtml = (normer && periodFilter === 'skolear'
     ? normRows(normer, wt, color, ownMins)
     : !isChild && wtKeys.length > 0
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
       ).join('')}</div>`
-    : '';
+    : '') + (normer ? faktorLinje(normer, wt) : '');
 
   return `<div class="rapport-act-row${isChild ? ' rapport-act-row-child' : ''}">
     <div class="rapport-act-top">
@@ -429,6 +429,42 @@ function normRows(n, wt, color, ownMins = 0) {
     </div>`);
   }
   return `<div class="rapport-norm">${linjer.join('')}</div>`;
+}
+
+// ─── Realiseret faktor ────────────────────────────────────
+// Holdets egne tal målt med skolens mål, så de kan holdes op mod budgettet:
+//
+//   forberedelsesfaktor = (undervisning + forberedelse) / undervisning
+//                         — budgettet er skoleårets faktor, fx 2,35
+//   retning             = minutter pr. elev pr. fordybelsestime
+//                         — budgettet er faktor / 27 × 60, fx 5,2 min
+//
+// Hvor meget fordybelsestid der er rettet indtil nu, ved appen ikke. Den
+// skønnes ud fra, hvor stor en del af årets undervisning der er registreret:
+// har man holdt 40 % af undervisningen, regnes 40 % af fordybelsestiden for
+// rettet. Uden registreret undervisning er der intet at måle mod.
+// Forholdstal gælder for enhver periode, så linjen står også under dag, uge
+// og måned.
+function faktorLinje(n, wt) {
+  const u = wt.undervisning || 0;
+  if (u === 0 || n.undervisning <= 0) return '';
+  const faktor = (n.undervisning + n.forberedelse) / n.undervisning;
+  const komma  = (v, d = 2) => v.toLocaleString('da-DK', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const dele   = [];
+
+  const realF = (u + (wt.forberedelse || 0)) / u;
+  dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Forb.faktor</span>
+    <b>${komma(realF)}</b> · budget ${komma(faktor)}</span>`);
+
+  if (n.retning > 0) {
+    const elevTimer = n.retning * 27 / faktor;          // elever × fordybelsestid × antal hold
+    const andel     = u / (n.undervisning * 60);
+    const realR     = (wt.retning || 0) / (elevTimer * andel);
+    const budgetR   = faktor / 27 * 60;
+    dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Retning</span>
+      <b>${komma(realR, 1)}</b> · budget ${komma(budgetR, 1)} <span class="enhed">min</span> pr. elev pr. fordybelsestime</span>`);
+  }
+  return `<div class="rapport-wt-row rapport-faktor">${dele.join('')}</div>`;
 }
 
 // ─── Afsluttede opgaver ───────────────────────────────────

@@ -1150,6 +1150,8 @@ select.form-input{
   font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.1em;color:var(--text-2);
 }
 .rapport-norm-tal{white-space:nowrap}
+.rapport-faktor{border-top-style:dashed}
+.rapport-faktor b{font-family:var(--display);font-size:0.8rem;color:var(--ink)}
 .rapport-norm-bar{
   height:8px;background:var(--paper-2);border:1.5px solid var(--ink);border-radius:20px;overflow:hidden;
 }
