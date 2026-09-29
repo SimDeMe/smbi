@@ -74,23 +74,30 @@ function plade(haeld){
 export function lavSubduktion(o){
   // o.oevre: 'kontinent' eller 'ocean' — den plade, der ligger øverst
   const kont = o.oevre === 'kontinent';
-  const OEVRE_TOP = kont ? -0.5 : 3.5;       // km — overfladen langt fra graven
-  const OEVRE_SKORPE = kont ? 35 : 7;
-  const OEVRE_LITO = kont ? 75 : 55;
-  const BUE_HOEJDE = kont ? 4 : 5.2;         // km — bjergkæden/øbuen over overfladen omkring
+  // To oceaniske plader er ens: samme havdybde og samme tykkelse
+  const OEVRE_TOP = kont ? -0.5 : HAVBUND;   // km — overfladen langt fra graven
+  const OEVRE_SKORPE = kont ? 35 : T_SKORPE;
+  const OEVRE_LITO = kont ? 75 : T_PLADE;    // km under overfladen
+  const BUE_HOEJDE = kont ? 4 : 7;           // km — bjergkæden/øbuen over overfladen omkring
   const BUE_BREDDE = kont ? 90 : 45;
+  /* Øbuen bygges op af magmaet, der stiger op fra pladen: først
+     undersøiske vulkaner, så øer. Jo mere plade der er gledet ned, jo
+     mere magma er der kommet op. Den er færdig, når 600 km havbund er
+     forsvundet i graven. Kontinentets bjergkæde står der fra start. */
+  const BUE_FAERDIG = 600;                   // km
+  const vaekst = ctx => kont ? 1 : Math.min(1, M.km(ctx.v, ctx.t) / BUE_FAERDIG);
 
   // Den øverste plades overflade, skorpens og lithosfærens underside, X ≥ 0
-  function oevre(g){
-    const XV = g.X_VULK;
-    const bue = X => BUE_HOEJDE * Math.exp(-(((X - XV) / BUE_BREDDE) ** 2));
+  function oevre(g, ctx){
+    const XV = g.X_VULK, v = vaekst(ctx);
+    const bue = X => v * BUE_HOEJDE * Math.exp(-(((X - XV) / BUE_BREDDE) ** 2));
     const overflade = X => {
       const land = GRAV + (OEVRE_TOP - GRAV) * smooth(X / (kont ? 110 : 70));
       return land - bue(X);
     };
     const skorpeBund = X => Math.min(g.topVed(X),
       overflade(X) + (OEVRE_SKORPE + (kont ? 12 : 13) * bue(X) / BUE_HOEJDE) * smooth(X / 60 + 0.15));
-    const litoBund = X => Math.min(g.topVed(X), OEVRE_LITO);
+    const litoBund = X => Math.min(g.topVed(X), kont ? OEVRE_LITO : OEVRE_TOP + OEVRE_LITO);
     return { overflade, skorpeBund, litoBund, bue };
   }
 
@@ -149,7 +156,7 @@ export function lavSubduktion(o){
     },
 
     tegnSnit(c, ctx){
-      const g = plade(ctx.e.haeld), ov = oevre(g);
+      const g = plade(ctx.e.haeld), ov = oevre(g, ctx);
       F.himmelOgKappe(c);
 
       // den øverste plade — kun over den dykkende plade
@@ -221,14 +228,14 @@ export function lavSubduktion(o){
         c.beginPath(); c.ellipse(xK(XV) + k.dx * (k.d - 20) / 90, yD(k.d), k.r * 0.8, k.r, 0, 0, 2 * Math.PI);
         c.fill(); c.stroke();
       }
-      F.vulkanTegn(c, xK(XV), yD(ov.overflade(XV)) - 3, 1.1);
+      if (vaekst(ctx) > 0.04) F.vulkanTegn(c, xK(XV), yD(ov.overflade(XV)) - 3, 0.5 + 0.6 * vaekst(ctx));
 
       F.tegnDybdeakse(c);
       F.retningspil(c, xK(-200), 58, 1);
 
       const m = [
         { tekst: 'DYBHAVSGRAV', x: xK(-40), y: 82, mod: yD(GRAV) - 2, modX: xK(0) },
-        { tekst: kont ? 'VULKANSK BJERGKÆDE' : 'VULKANSK ØBUE', x: xK(XV) + 10, y: 30, mod: yD(ov.overflade(XV)) - 10, modX: xK(XV) },
+        { tekst: kont ? 'VULKANSK BJERGKÆDE' : ov.overflade(XV) < 0 ? 'VULKANSK ØBUE' : 'UNDERSØISKE VULKANER', x: xK(XV) + 10, y: 30, mod: yD(ov.overflade(XV)) - 10, modX: xK(XV) },
         { tekst: 'OCEANISK PLADE', x: xK(-270), y: yD(40) + 5 },
         { tekst: kont ? 'KONTINENTAL SKORPE' : 'OCEANISK SKORPE', x: xK(Math.min(F.X_MAKS - 60, XV + 110)), y: yD(kont ? 20 : 12) + 5 },
         { tekst: 'ASTHENOSFÆREN', x: xK(-230), y: yD(135) },
@@ -244,7 +251,7 @@ export function lavSubduktion(o){
     },
 
     tegnKort(c, ctx){
-      const g = plade(ctx.e.haeld), ov = oevre(g);
+      const g = plade(ctx.e.haeld), ov = oevre(g, ctx);
       const ky = Y => F.KY_SNIT + Y * F.KPX;
       const xG = F.kxK(0);
       // den dykkende plade med striber, der glider mod graven
@@ -270,7 +277,20 @@ export function lavSubduktion(o){
       // vulkanerne
       for (let y = 18; y < F.KH; y += 38){
         const x = F.kxK(g.X_VULK) + 6 * Math.sin(y * 0.7);
-        if (!kont){ c.fillStyle = '#D9B892'; c.strokeStyle = INK; c.lineWidth = 1.2; c.beginPath(); c.ellipse(x, y, 10, 7, 0, 0, 2 * Math.PI); c.fill(); c.stroke(); }
+        if (!kont){
+          // øerne dukker op, når vulkanerne når over havet; før da er de undersøiske
+          const top = -ov.overflade(g.X_VULK);
+          if (vaekst(ctx) < 0.04) continue;
+          if (top > 0){
+            const r = 4 + 7 * Math.min(1, top / 1.5);
+            c.fillStyle = '#D9B892'; c.strokeStyle = INK; c.lineWidth = 1.2;
+            c.beginPath(); c.ellipse(x, y, r * 1.4, r, 0, 0, 2 * Math.PI); c.fill(); c.stroke();
+          } else {
+            c.save(); c.strokeStyle = INK; c.lineWidth = 1.2; c.setLineDash([2, 2]);
+            c.beginPath(); c.arc(x, y, 3 + 6 * vaekst(ctx), 0, 2 * Math.PI); c.stroke(); c.restore();
+            continue;
+          }
+        }
         F.vulkanTegn(c, x, y, 0.85);
       }
       F.tegnSkaelvKort(c, ctx.skaelv, ky);
@@ -293,14 +313,18 @@ export function lavSubduktion(o){
       const slugt = M.km(ctx.v, ctx.t);
       const tidNed = (g.sVed(M.SMELTEDYBDE)) / (ctx.v * M.KM_PR_MIO);
       const tal0 = v => Math.round(v).toLocaleString('da-DK');
+      const topHoejde = -oevre(g, ctx).overflade(g.X_VULK);
       return [
         { navn: 'Pladen under målepunktet', tal: under, n: 0, enhed: 'km nede',
           lille: ctx.X < 0 ? 'målepunktet er før graven' : tal0(ctx.X) + ' km fra graven',
           andel: (under ?? 0) / 250, farve: FARVE.oceanskorpe, maerke: { andel: M.SMELTEDYBDE / 250, tekst: 'smelter' } },
         { navn: 'Vulkanerne ligger', tal: g.X_VULK, n: 0, enhed: 'km fra graven',
           lille: 'der, hvor pladen er ' + M.SMELTEDYBDE + ' km nede', andel: g.X_VULK / 400, farve: FARVE.magma },
-        { navn: 'Tid ned til ' + M.SMELTEDYBDE + ' km', tal: tidNed, n: 1, enhed: 'mio. år',
-          lille: 'fra graven, ad pladen', andel: tidNed / 20, farve: '#7A4FD6' },
+        kont ? { navn: 'Tid ned til ' + M.SMELTEDYBDE + ' km', tal: tidNed, n: 1, enhed: 'mio. år',
+          lille: 'fra graven, ad pladen', andel: tidNed / 20, farve: '#7A4FD6' }
+        : { navn: 'Øbuens top', tal: Math.abs(topHoejde) * 1000, n: -2, enhed: topHoejde >= 0 ? 'm over havet' : 'm under havet',
+          lille: topHoejde >= 0 ? 'vulkanøerne er dukket op' : vaekst(ctx) > 0.04 ? 'undersøiske vulkaner vokser' : 'magmaet er ikke nået op endnu',
+          andel: vaekst(ctx), farve: '#7A4FD6' },
         { navn: 'Havbund forsvundet i graven', tal: slugt, n: 0, enhed: 'km',
           lille: 'siden tid 0', andel: slugt / 6000, farve: '#0FA593' }
       ];

@@ -201,7 +201,7 @@ export function tegnMaalepunkt(c, X, dTop, dBund){
   c.beginPath(); c.moveTo(x, yD(dTop)); c.lineTo(x, yD(dBund)); c.stroke();
   c.setLineDash([]);
   // grebet
-  const y = Math.min(yD(dTop), Y0) - 30;
+  const y = Math.max(16, Math.min(yD(dTop), Y0) - 30);
   c.fillStyle = '#FFF9EE'; c.strokeStyle = INK; c.lineWidth = 2;
   c.beginPath(); c.roundRect(x - 34, y - 11, 68, 20, 10); c.fill(); c.stroke();
   c.beginPath(); c.moveTo(x, y + 9); c.lineTo(x, yD(dTop)); c.stroke();

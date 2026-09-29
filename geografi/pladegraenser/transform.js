@@ -13,7 +13,7 @@ import * as M from './model.js';
 import * as F from './figur.js';
 
 const { xK, yD, INK, FARVE } = F;
-const SKORPE = 30, LITO = 90, TOP = -0.5;
+const SKORPE = 30;                          // km — skorpens tykkelse
 const OVERDRIV = 1000;
 const KORT_KM = 100;                        // kortets bredde i km
 const KPX = F.KW / KORT_KM;                 // px pr. km på kortet
@@ -28,7 +28,7 @@ export default {
   gruppe: 'Bevarende',
   kort: 'Pladerne glider forbi hinanden — i ryk',
   eksempler: 'San Andreas-forkastningen og Den Nordanatolske Forkastning',
-  beskrivelse: 'Tværsnit på tværs af en transformforkastning fra overfladen og 170 km ned. Den venstre plade bevæger sig ud mod os, den højre væk fra os. Forkastningen går lodret ned gennem skorpen og er låst fast de øverste 15 km. Der er ingen vulkaner, og alle jordskælv er lave.',
+  beskrivelse: 'Blokdiagram i 3/4-perspektiv af en transformforkastning, 100 km langt og 40 km dybt. Den venstre blok bevæger sig væk fra os, den højre mod os. Forreste halvdel af den højre blok er skåret væk, så man ser forkastningsplanet: det er låst fast de øverste 15 km, hvor spændingen bygges op og jordskælvene sker, og kryber længere nede. Vejene på overfladen bøjes mellem jordskælvene og forskydes ved forkastningen. Der er ingen vulkaner.',
   kortTekst: 'Kort set ovenfra, 100 km bredt: forkastningen går lodret gennem kortet. Tre veje krydser den. Mellem jordskælvene bøjes vejene i en blød S-bue; ved et jordskælv springer de, så de er skarpt forskudt ved forkastningen. Forskydningen er overdrevet 1 000 gange.',
 
   tid: { maks: 1000, skridt: 5, start: 0, tempo: 25, enhed: 'år' },
@@ -51,47 +51,117 @@ export default {
     return { X: (Math.random() - 0.5) * 3, d: 1 + Math.random() * (M.LAASEDYBDE - 1), Y: (Math.random() - 0.5) * KORT_KM * 1.4 };
   },
 
+  /* Blokdiagram i 3/4-perspektiv: to blokke af skorpen med forkastningen
+     imellem. Forreste halvdel af den højre blok er skåret væk, så man kan
+     se ind på forkastningsplanet, hvor jordskælvene sker. Vejene på
+     overfladen er de samme som på kortet: bøjet mellem skælvene og
+     forskudt ved forkastningen (overdrevet 1 000 gange). */
   tegnSnit(c, ctx){
-    F.himmelOgKappe(c);
-    F.flade(c, () => SKORPE, () => LITO, FARVE.kappe);
-    F.flade(c, () => TOP, () => SKORPE, FARVE.kontinent, F.X_MIN - 5, 0);
-    F.flade(c, () => TOP, () => SKORPE, '#CDAE8C', 0, F.X_MAKS + 5);
-    F.kurve(c, () => LITO, F.X_MIN - 5, F.X_MAKS + 5, 1.5);
-    F.kurve(c, () => SKORPE, F.X_MIN - 5, F.X_MAKS + 5, 1, [4, 4]);
-    F.kurve(c, () => TOP, F.X_MIN - 5, F.X_MAKS + 5, 2);
+    const tl = M.transform(ctx.t, ctx.v);
+    // x på tværs af forkastningen (km), y langs den (0 forrest, 100 bagerst), z dybde (km)
+    const L = 60, LY = 100, D = 40, KLIP = 50, GAB = 10;
+    const P = (x, y, z) => [58 + (x + L) * 3 + (x > 0 ? GAB : 0) + y * 1.55, 285 - y * 1.3 + z * 5.9];
+    const poly = (pkt, farve, streg = true) => {
+      c.beginPath(); pkt.forEach(([x, y, z], i) => { const [u, v] = P(x, y, z); i ? c.lineTo(u, v) : c.moveTo(u, v); });
+      c.closePath(); if (farve){ c.fillStyle = farve; c.fill(); }
+      if (streg){ c.strokeStyle = INK; c.lineWidth = 2; c.lineJoin = 'round'; c.stroke(); }
+    };
+    const linje = (pkt, bredde = 1.2, streg = []) => {
+      c.save(); c.strokeStyle = INK; c.lineWidth = bredde; c.setLineDash(streg);
+      c.beginPath(); pkt.forEach(([x, y, z], i) => { const [u, v] = P(x, y, z); i ? c.lineTo(u, v) : c.moveTo(u, v); });
+      c.stroke(); c.restore();
+    };
 
-    // forkastningen: låst foroven, kryber forneden
-    c.save(); c.strokeStyle = INK; c.lineWidth = 3;
-    c.beginPath(); c.moveTo(xK(0), yD(TOP)); c.lineTo(xK(0), yD(M.LAASEDYBDE)); c.stroke();
-    c.lineWidth = 1.8; c.setLineDash([5, 4]);
-    c.beginPath(); c.moveTo(xK(0), yD(M.LAASEDYBDE)); c.lineTo(xK(0), yD(LITO)); c.stroke();
+    // baggrund
+    const hg = c.createLinearGradient(0, 0, 0, F.H);
+    hg.addColorStop(0, '#CFE9F7'); hg.addColorStop(0.55, '#F3FAFE'); hg.addColorStop(1, '#FFF9EE');
+    c.fillStyle = hg; c.fillRect(0, 0, F.W, F.H);
+
+    const blok = (x0, x1, y0, top, siden) => {
+      const x0e = x0 === 0 ? 1e-6 : x0, x1e = x1 === 0 ? -1e-6 : x1;
+      // forsiden: skorpe og kappe
+      poly([[x0e, y0, 0], [x1e, y0, 0], [x1e, y0, SKORPE], [x0e, y0, SKORPE]], siden);
+      poly([[x0e, y0, SKORPE], [x1e, y0, SKORPE], [x1e, y0, D], [x0e, y0, D]], FARVE.kappe);
+      // højre side
+      poly([[x1e, y0, 0], [x1e, LY, 0], [x1e, LY, SKORPE], [x1e, y0, SKORPE]], siden);
+      poly([[x1e, y0, SKORPE], [x1e, LY, SKORPE], [x1e, LY, D], [x1e, y0, D]], FARVE.kappe);
+      // toppen
+      poly([[x0e, y0, 0], [x1e, y0, 0], [x1e, LY, 0], [x0e, LY, 0]], top);
+    };
+
+    // venstre blok, hele vejen
+    blok(-L, 0, 0, '#E3D6B4', FARVE.kontinent);
+    // forkastningsplanet på venstre blok: låst foroven, kryber forneden
+    const spaend = Math.min(1, tl.opsparet / tl.naeste);
+    poly([[0, 0, 0], [0, KLIP, 0], [0, KLIP, M.LAASEDYBDE], [0, 0, M.LAASEDYBDE]], `rgba(232,51,109,${0.15 + 0.55 * spaend})`);
+    poly([[0, 0, M.LAASEDYBDE], [0, KLIP, M.LAASEDYBDE], [0, KLIP, D], [0, 0, D]], '#A8B3A8');
+    linje([[0, 0, M.LAASEDYBDE], [0, KLIP, M.LAASEDYBDE]], 1.4, [5, 4]);
+    linje([[0, 0, SKORPE], [0, KLIP, SKORPE]], 1, [3, 3]);
+    // jordskælvene sidder på planet
+    for (const s of ctx.skaelv){
+      const y = 4 + (s.Y / 140 + 0.5) * (KLIP - 8);
+      if (y < 0 || y > KLIP) continue;
+      const [u, v] = P(0, y, s.d);
+      F.skaelvTegn(c, u, v, s.d, Math.min(1, (F.SKAELV_LEVETID - s.alder) / 1.5), s.stort ? 1.8 : 1);
+      F.skaelvRing(c, u, v, s.alder);
+    }
+    // højre blok, med forreste halvdel skåret væk
+    blok(0, L, KLIP, '#EADFC2', '#CDAE8C');
+    // Moho på forsider og sider
+    linje([[-L, 0, SKORPE], [0, 0, SKORPE]], 1, [4, 4]);
+
+    // vejene på toppen (de ligger bag det bortskårne stykke)
+    const dy = X => M.vejForskydning(X, tl) / 1000 * OVERDRIV;   // km
+    for (const y0 of [62, 78, 92]){
+      for (const side of [-1, 1]){
+        const pkt = [];
+        for (let X = side * 0.05; Math.abs(X) <= L; X += side * 0.6){
+          const y = y0 + dy(X);
+          if (y < (side > 0 ? KLIP : 0) + 1 || y > LY - 1){ if (pkt.length) break; continue; }
+          pkt.push(P(X, y, 0));
+        }
+        if (pkt.length < 2) continue;
+        c.save(); c.lineCap = 'round';
+        for (const [b, f] of [[6, INK], [3.8, '#6F6A63']]){
+          c.strokeStyle = f; c.lineWidth = b;
+          c.beginPath(); pkt.forEach(([u, v], i) => i ? c.lineTo(u, v) : c.moveTo(u, v)); c.stroke();
+        }
+        c.restore();
+      }
+    }
+    // forkastningen på overfladen
+    c.save(); c.strokeStyle = '#C21F4B'; c.lineWidth = 3;
+    const [a1, b1] = P(-1e-6, 0, 0), [a2, b2] = P(-1e-6, LY, 0);
+    c.beginPath(); c.moveTo(a1, b1); c.lineTo(a2, b2); c.stroke(); c.restore();
+
+    // pile på toppen: venstre blok væk fra os, højre mod os
+    const pil3 = (x, y, ret) => {
+      const l = 16 * ret, b = 3.5, h = 7;
+      poly([[x - b, y - l, 0], [x + b, y - l, 0], [x + b, y + l * 0.4, 0], [x + h, y + l * 0.4, 0], [x, y + l, 0], [x - h, y + l * 0.4, 0], [x - b, y + l * 0.4, 0]], '#FFF9EE');
+    };
+    pil3(-32, 30, 1); pil3(32, 72, -1);
+
+    // dybdeskala på forreste venstre kant
+    c.save(); c.font = "600 10px 'IBM Plex Mono', ui-monospace, monospace"; c.fillStyle = INK; c.strokeStyle = INK; c.lineWidth = 1.5;
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (const z of [0, M.LAASEDYBDE, SKORPE, D]){
+      const [u, v] = P(-L, 0, z);
+      c.beginPath(); c.moveTo(u - 6, v); c.lineTo(u, v); c.stroke();
+      c.fillText(z + ' km', u - 9, v);
+    }
     c.restore();
 
-    // ud af skærmen (⊙) og ind i skærmen (⊗)
-    const symbol = (x, y, ud) => {
-      c.save(); c.fillStyle = '#FFF9EE'; c.strokeStyle = INK; c.lineWidth = 2;
-      c.beginPath(); c.arc(x, y, 13, 0, 2 * Math.PI); c.fill(); c.stroke();
-      c.fillStyle = INK; c.lineWidth = 2.4;
-      if (ud){ c.beginPath(); c.arc(x, y, 3.8, 0, 2 * Math.PI); c.fill(); }
-      else { c.beginPath(); c.moveTo(x - 6, y - 6); c.lineTo(x + 6, y + 6); c.moveTo(x + 6, y - 6); c.lineTo(x - 6, y + 6); c.stroke(); }
-      c.restore();
-    };
-    for (const X of [-240, -100]) symbol(xK(X), yD(60), true);
-    for (const X of [100, 240]) symbol(xK(X), yD(60), false);
-
-    F.tegnDybdeakse(c);
     const m = [
-      { tekst: 'FORKASTNINGEN', x: xK(0), y: 36, mod: yD(TOP) - 2, modX: xK(0) },
-      { tekst: 'LÅST', enhed: '0–15 km', x: xK(0) + 80, y: yD(8) + 5, mod: yD(8), modX: xK(0) + 2 },
-      { tekst: 'KRYBER', x: xK(0) + 80, y: yD(45) + 5, mod: yD(45), modX: xK(0) + 2 },
-      { tekst: 'KONTINENTAL SKORPE', x: xK(-230), y: yD(15) + 5 },
-      { tekst: 'ASTHENOSFÆREN', x: xK(-230), y: yD(135) },
-      { tekst: '⊙ MOD OS', x: xK(-170), y: yD(82) },
-      { tekst: '⊗ VÆK FRA OS', x: xK(170), y: yD(82) }
+      { tekst: 'FORKASTNINGEN', x: P(0, LY, 0)[0] - 10, y: 58, mod: P(0, LY, 0)[1] - 2, modX: P(0, LY, 0)[0] },
+      { tekst: 'LÅST', enhed: 'spænding bygges op', x: 520, y: P(0, 20, 7)[1] + 40, mod: P(0, 25, 7)[1], modX: P(0, 25, 7)[0] + 2, kant: '#E8336D' },
+      { tekst: 'KRYBER', x: 520, y: P(0, 20, 28)[1] + 40, mod: P(0, 25, 26)[1], modX: P(0, 25, 26)[0] + 2 },
+      { tekst: 'SKORPE', x: P(-40, 0, 12)[0], y: P(-40, 0, 12)[1] + 5 },
+      { tekst: 'KAPPE', x: P(-40, 0, 35)[0], y: P(-40, 0, 35)[1] + 5 },
+      { tekst: 'VEJ', x: P(L, 92, 0)[0] + 24, y: P(L, 92, 0)[1] + 4 },
+      { tekst: 'STYKKE SKÅRET VÆK', x: P(40, 12, 0)[0], y: P(40, 12, 0)[1] + 6 }
     ];
-    F.tegnMaerkater(c, m);
-    F.tegnFodnote(c, 'SKEMATISK · LODRET OVERHØJDE 3×', 48, 'left');
-    F.tegnSkaelvSnit(c, ctx.skaelv);
+    F.tegnMaerkater(c, m, F.W, 8);
+    F.tegnFodnote(c, 'SKEMATISK · 100 km LANGT UDSNIT · FORSKYDNING ×1 000', 8, 'left');
   },
 
   tegnKort(c, ctx){

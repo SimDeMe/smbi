@@ -21,10 +21,11 @@
 
 import * as M from './model.js';
 import * as F from './figur.js';
+import * as A from './atlanterhavet.js';
 
 const { xK, yD, INK, FARVE } = F;
 const H_FOD = F.H - 9;
-const TID_MAKS = 100;                       // mio. år — simulationens "i dag"
+const TID_MAKS = 180;                       // mio. år — simulationens "i dag"
 
 /* Striberne i den havbund, der er dannet siden t = 0, som [alder nu fra,
    alder nu til, normal?]. Magnetfeltets historie er model.js' tidsskala,
@@ -37,14 +38,6 @@ function striberNu(t){
 const KONT = 35, KONT_TOP = -0.4, MARGIN = 60, LITO_KONT = 120;
 const smooth = u => { u = Math.max(0, Math.min(1, u)); return u * u * (3 - 2 * u); };
 
-// Ryggen er delt i segmenter, forskudt langs transformforkastninger
-// (km langs grænsen, og hvor meget aksen er skubbet til siden)
-const SEGMENTER = [
-  { y0: -700, y1: -380, off: -48 },
-  { y0: -380, y1: -130, off: 30 },
-  { y0: -130, y1: 240, off: 0 },          // snitlinjen går gennem dette
-  { y0: 240, y1: 700, off: -36 }
-];
 
 // ── Geometrien i tværsnittet, i km ─────────────────────
 function lav(ctx){
@@ -99,9 +92,9 @@ export default {
   kort: 'Pladerne glider fra hinanden, og der dannes ny havbund',
   eksempler: 'Midtatlanterhavsryggen og Island',
   beskrivelse: 'Tværsnit gennem en midtoceanisk ryg fra overfladen og 170 km ned. To plader glider fra hinanden. Under ryggen strømmer kappen op og smelter delvis, og magmaet størkner til ny havbund med magnetiske striber, der ligger spejlvendt på hver side. Havbunden bliver dybere og lithosfæren tykkere, jo ældre havbunden er. Ude til siderne ligger kontinenterne, der er flyttet fra hinanden. Træk målepunktet til siden for at aflæse havbundens alder.',
-  kortTekst: 'Kort set ovenfra: den midtoceaniske ryg går lodret gennem kortet og er forskudt langs transformforkastninger. På hver side ligger havbunden i striber efter magnetisk polaritet, spejlvendt om ryggen. Kontinenterne ligger ude til siderne. Snitlinjen A–B viser, hvor tværsnittet går.',
+  kortTekst: 'Globus over Atlanterhavet. Ved tid 0 ligger Amerika, Europa og Afrika samlet. Efterhånden som tiden går, drejer Nord- og Sydamerika væk fra Europa og Afrika, og havbunden imellem dem farves efter alder: yngst ved ryggen i midten, ældst ude ved kysterne. Snitlinjen A–B i Sydatlanten viser, hvor tværsnittet går.',
 
-  tid: { maks: TID_MAKS, skridt: 0.5, start: 0, tempo: 2, enhed: 'mio. år' },
+  tid: { maks: TID_MAKS, skridt: 0.5, start: 0, tempo: 4, enhed: 'mio. år' },
   fart: { min: 1, maks: 16, skridt: 0.5, start: 2.5, navn: 'Spredningshastighed' },
   maal: { start: 120 },
   skaelvRate: 1.6,
@@ -114,18 +107,9 @@ export default {
     flyt(dt, g, 0.6 + ctx.v / 10);
   },
 
-  skaelv(ctx){
-    // Lave skælv i ryggens akse og langs transformforkastningerne mellem segmenterne
-    const r = Math.random();
-    if (r < 0.7){
-      const s = SEGMENTER[Math.floor(Math.random() * SEGMENTER.length)];
-      return { X: (Math.random() - 0.5) * 8, d: 1 + Math.random() * 8,
-               KX: s.off + (Math.random() - 0.5) * 8, Y: s.y0 + Math.random() * (s.y1 - s.y0) };
-    }
-    const i = 1 + Math.floor(Math.random() * (SEGMENTER.length - 1));
-    const a = SEGMENTER[i - 1].off, b = SEGMENTER[i].off;
-    const X = a + Math.random() * (b - a);
-    return { X: X - SEGMENTER[2].off, d: 1 + Math.random() * 10, KX: X, Y: SEGMENTER[i].y0, sn: false };
+  skaelv(){
+    // Lave skælv i ryggens akse — på kortet et tilfældigt sted langs ryggen
+    return { X: (Math.random() - 0.5) * 8, d: 1 + Math.random() * 8, u: Math.random() };
   },
 
   tegnSnit(c, ctx){
@@ -199,63 +183,18 @@ export default {
     F.tegnFodnote(c, 'SKEMATISK · LODRET OVERHØJDE 3×', 48, 'left', H_FOD);
     F.tegnFodnote(c, 'STRIBER: NORMAL ▮ OMVENDT ▯', F.W - 8, 'right', H_FOD);
 
-    F.tegnSkaelvSnit(c, ctx.skaelv.filter(s => s.sn !== false));
+    F.tegnSkaelvSnit(c, ctx.skaelv);
     F.tegnMaalepunkt(c, ctx.X, Math.max(0, g.overflade(ctx.X)), g.litoBund(ctx.X));
   },
 
   tegnKort(c, ctx){
     const g = lav(ctx);
-    const ky = Y => F.KY_SNIT + Y * F.KPX;
-    c.fillStyle = FARVE.hav; c.fillRect(0, 0, F.KW, F.KH);
-    for (const s of SEGMENTER){
-      const y0 = ky(s.y0), y1 = ky(s.y1);
-      c.save(); c.beginPath(); c.rect(0, y0, F.KW, y1 - y0); c.clip();
-      // kontinenterne
-      c.fillStyle = '#D9B892';
-      c.fillRect(0, y0, F.kxK(s.off - g.E), y1 - y0);
-      c.fillRect(F.kxK(s.off + g.E), y0, F.KW, y1 - y0);
-      // striberne
-      for (const side of [-1, 1]){
-        for (const [a, b, pol] of striberNu(ctx.t)){
-          const x0 = F.kxK(s.off + side * a * g.hk), x1 = F.kxK(s.off + side * b * g.hk);
-          if (Math.max(x0, x1) < 0 || Math.min(x0, x1) > F.KW) continue;
-          c.fillStyle = pol ? FARVE.normal : FARVE.omvendt;
-          c.fillRect(Math.min(x0, x1), y0, Math.abs(x1 - x0) + 0.3, y1 - y0);
-        }
-      }
-      // kysterne
-      c.strokeStyle = INK; c.lineWidth = 1.5;
-      for (const X of [s.off - g.E, s.off + g.E]){ c.beginPath(); c.moveTo(F.kxK(X), y0); c.lineTo(F.kxK(X), y1); c.stroke(); }
-      // ryggens akse: dobbeltstreg
-      c.strokeStyle = '#C21F4B'; c.lineWidth = 2;
-      for (const d of [-2.5, 2.5]){ c.beginPath(); c.moveTo(F.kxK(s.off) + d, y0); c.lineTo(F.kxK(s.off) + d, y1); c.stroke(); }
-      c.restore();
-    }
-    // brudzonerne: transformforkastningen mellem akserne er aktiv (fuldt optrukket),
-    // resten er en død ar i havbunden (stiplet)
-    for (let i = 1; i < SEGMENTER.length; i++){
-      const y = ky(SEGMENTER[i].y0), a = SEGMENTER[i - 1].off, b = SEGMENTER[i].off;
-      c.save(); c.strokeStyle = INK; c.lineWidth = 1.2; c.setLineDash([3, 3]);
-      c.beginPath(); c.moveTo(F.kxK(Math.min(a, b) - g.E), y); c.lineTo(F.kxK(Math.max(a, b) + g.E), y); c.stroke();
-      c.setLineDash([]); c.lineWidth = 2.5;
-      c.beginPath(); c.moveTo(F.kxK(a), y); c.lineTo(F.kxK(b), y); c.stroke();
-      c.restore();
-    }
-
-    F.tegnSkaelvKort(c, ctx.skaelv.map(s => ({ ...s, X: s.KX })), ky);
-    F.tegnSnitlinje(c);
-    // målepunktet
-    c.fillStyle = '#7A4FD6'; c.strokeStyle = INK; c.lineWidth = 1.5;
-    c.beginPath(); c.arc(F.kxK(ctx.X), F.KY_SNIT, 5, 0, 2 * Math.PI); c.fill(); c.stroke();
-
-    F.retningspil(c, F.KXC - 70, 470, -1, 40);
-    F.retningspil(c, F.KXC + 70, 470, 1, 40);
-    F.kortOverskrift(c, 'SET OVENFRA');
-    F.tegnMaalestok(c, 200 * F.KPX, '200 km');
-    F.tegnMaerkater(c, [
-      { tekst: 'RYGGEN', x: F.KXC + 50, y: 62, mod: 70, modX: F.kxK(0) + 2 },
-      { tekst: 'TRANSFORMFORKASTNING', x: F.KXC + 60, y: ky(-130) - 20, mod: ky(-130), modX: F.kxK(12) }
-    ], F.KW, 4);
+    c.fillStyle = '#FFF9EE'; c.fillRect(0, 0, F.KW, F.KH);
+    const f = Math.min(1.4, 2 * g.E / A.BREDDE_I_DAG);
+    A.tegn(c, { f, t: ctx.t, maalX: ctx.X, skaelv: ctx.skaelv });
+    A.tegnSkala(c, ctx.t, 440);
+    F.kortOverskrift(c, 'ATLANTERHAVET SET OVENFRA');
+    F.tegnFodnote(c, 'A–B: TVÆRSNITTET · ▬ RYGGEN', 12, 'left', F.KH - 14);
   },
 
   aflaes(ctx){
@@ -274,7 +213,7 @@ export default {
         lille: hav ? 'vokser, efterhånden som kappen køler' : 'kontinentets lithosfære',
         andel: (g.litoBund(ctx.X) - Math.max(0, g.overflade(ctx.X))) / 130, farve: FARVE.kappe },
       { navn: 'Havets bredde', tal: bredde, n: 0, enhed: 'km',
-        lille: 'Atlanterhavet i dag: ca. 5.000 km',
+        lille: 'Atlanterhavet i dag: ca. 4.500 km',
         andel: bredde / 6000, farve: '#0FA593' }
     ];
   },
