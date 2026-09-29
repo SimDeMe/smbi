@@ -370,7 +370,8 @@ dialog::backdrop{background:rgba(23,33,31,.6)}
 
 /* ── SVG-scenen ────────────────────────────────────────── */
 .dhs-scene text{font-family:var(--display)}
-.dhs-el{transition:opacity .35s ease}
+/* Ingen CSS-overgange på figurens dele: al bevægelse kommer fra koreografien
+   i scriptet, som er en ren funktion af tiden og derfor kan spoles og optages */
 .dhs-el[data-vis="skjult"]{display:none}
 .dhs-el[data-vis="tonet"]{opacity:.26}
 .dhs-el[data-vis="fremhaevet"] .dhs-glans{filter:drop-shadow(0 0 8px rgba(255,179,0,.9))}
@@ -406,6 +407,17 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 body[data-projektor="1"] .fact-txt{font-size:1rem}
 body[data-projektor="1"] .termo dt{font-size:0.78rem}
 body[data-projektor="1"] .punkt b{font-size:1.05rem}
+
+/* ── Filmtilstand (?film=1): forløbet spiller af sig selv ─
+   Til skærmoptagelse og videorendering. Oven på projektortilstanden
+   forsvinder også betjeningen; trinprikkerne bliver stående som tidslinje. */
+body[data-film="1"] .nav,
+body[data-film="1"] .stopop,
+body[data-film="1"] .rig-tools,
+body[data-film="1"] .dhs-scene-rul{display:none}
+body[data-film="1"] .prikker{margin-top:auto;pointer-events:none}
+/* hvert billede skal være færdigt, når det tages — ingen overgange, der halter */
+body[data-film="1"] *{transition:none!important}
 
 /* ── Responsivt ────────────────────────────────────────── */
 @media (max-width:960px){
@@ -538,6 +550,7 @@ body[data-projektor="1"] .punkt b{font-size:1.05rem}
       <div class="rig-head">
         <span class="rig-live"><span class="dot"></span><span class="mono" id="dhsTael">Trin 1 af 5</span></span>
         <div class="rig-tools">
+          <button type="button" class="btn-mini" id="dhsAfspil" title="Tegn trinnet forfra">↻ Afspil trin</button>
           <button type="button" class="btn-mini" id="dhsProjektor" aria-pressed="false" title="Forstør al tekst til projektor">Projektor</button>
           <button type="button" class="btn-mini" id="dhsOm">Om figuren</button>
           <a class="btn-mini" href="drivhuseffekten.html">Udvidet version →</a>
@@ -787,7 +800,14 @@ const TRIN = [
            "rammer jordoverfladen. Her bliver den optaget og varmer overfladen op.",
     stopOp: "Solen skinner på en mark, en skov og en sneflade. Hvor bliver der varmest — og hvorfor?",
     synlige: ["solIs", "solSky", "solNed"],
-    fremhaev: ["solIs", "solSky", "solNed"]
+    fremhaev: ["solIs", "solSky", "solNed"],
+    // Sollyset når ned, og først da bliver overfladen varm
+    koreografi: [
+      { el: "solNed",    fra: 0,    til: 1.2 },
+      { el: "solSky",    fra: 0.3,  til: 1.05 },
+      { el: "solIs",     fra: 0.15, til: 1.15 },
+      { el: "overflade", fra: 1.05, til: 2.1, type: "puls" }
+    ]
   },
   {
     overskrift: "En del kastes tilbage med det samme",
@@ -800,7 +820,13 @@ const TRIN = [
             "betyder mest der, hvor der er is og sne. Derfor mærkes en ændring i albedoen kraftigst ved polerne.",
     stopOp: "Hvad sker der med Jordens albedo, hvis noget af isen ved polerne smelter?",
     synlige: ["solIs", "solSky", "solNed", "reflIs", "reflSky", "reflMaerkat"],
-    fremhaev: ["reflIs", "reflSky"]
+    fremhaev: ["reflIs", "reflSky"],
+    // Skyen kaster mest tilbage, så den kommer først
+    koreografi: [
+      { el: "reflSky",     fra: 0.15, til: 0.95 },
+      { el: "reflIs",      fra: 0.4,  til: 1.3 },
+      { el: "reflMaerkat", fra: 1.05, til: 1.5 }
+    ]
   },
   {
     overskrift: "Jorden sender selv varme ud",
@@ -811,7 +837,13 @@ const TRIN = [
     stopOp: "Hvorfor kan vi se sollyset, men ikke den varmestråling, jordoverfladen sender ud?",
     synlige: ["solIs", "solSky", "solNed", "reflIs", "reflSky", "reflMaerkat", "overfladeUd", "udRum"],
     tonet: ["solIs", "solSky", "reflIs", "reflSky", "reflMaerkat"],
-    fremhaev: ["overfladeUd"]
+    fremhaev: ["overfladeUd"],
+    // Sollyset tones ned, overfladen er varm, og varmen stråler op
+    koreografi: [
+      { el: "overflade",   fra: 0.2, til: 1.1, type: "puls" },
+      { el: "overfladeUd", fra: 0.6, til: 1.4 },
+      { el: "udRum",       fra: 1.5, til: 2.2 }
+    ]
   },
   {
     overskrift: "Atmosfæren sender varmen tilbage",
@@ -827,10 +859,17 @@ const TRIN = [
     synlige: ["solIs", "solSky", "solNed", "reflIs", "reflSky", "reflMaerkat", "overfladeUd", "udRum",
               "drivhusgasser", "genudsendelse", "modstraaling"],
     tonet: ["solIs", "solSky", "reflIs", "reflSky", "reflMaerkat"],
-    fremhaev: ["genudsendelse", "modstraaling"]
+    fremhaev: ["genudsendelse", "modstraaling"],
+    // Gasserne dukker op, CO₂ sender ud i alle retninger — og først bagefter
+    // kommer modstrålingen ned. Rækkefølgen er selve pointen: ikke et låg.
+    koreografi: [
+      { el: "drivhusgasser", fra: 0,   til: 0.5 },
+      { el: "genudsendelse", fra: 0.5, til: 1.6 },
+      { el: "modstraaling",  fra: 1.5, til: 2.3 }
+    ]
   },
   {
-    overskrift: "Derfor +15 °C og ikke −18 °C",
+    overskrift: "Derfor +15\u00a0°C og ikke −18\u00a0°C",
     kort: "Modstrålingen gør jordoverfladen ca. 33 grader varmere.",
     tekst: "Uden atmosfære ville al varmestrålingen forsvinde direkte ud i rummet, og Jordens middeltemperatur " +
            "ville være ca. <b>−18 °C</b> — en frossen planet. Med drivhusgasserne får jordoverfladen varme fra to " +
@@ -841,7 +880,11 @@ const TRIN = [
     stopOp: "Hvad tror I, der sker med temperaturen, hvis der kommer flere drivhusgasser i atmosfæren?",
     synlige: ["solIs", "solSky", "solNed", "reflIs", "reflSky", "reflMaerkat", "overfladeUd", "udRum",
               "drivhusgasser", "genudsendelse", "modstraaling"],
-    termometer: true
+    termometer: true,
+    // Punktet glider fra −18 °C til +15 °C, og gabet vokser med
+    koreografi: [
+      { el: "termo", fra: 0.3, til: 2.0 }
+    ]
   }
 ];
 
@@ -914,7 +957,11 @@ const svg = $("dhsSvg");
  * stiplet = langbølget) og spids. Kanten er stiplet efter samme mønster som
  * skaftet, så de stiplede pile får blækrand om hver enkelt streg.
  */
-function tegnPil(gruppe, o) {
+/**
+ * Pilens geometri, når den er nået brøkdelen p (0–1) af vejen frem. Spidsen
+ * sidder altid forrest, så en pil, der tegnes, ligner stråling på vej.
+ */
+function pilGeometri(o, p) {
   const dx = o.x2 - o.x1, dy = o.y2 - o.y1;
   const L = Math.hypot(dx, dy) || 1;
   const ux = dx / L, uy = dy / L;         // retning
@@ -922,18 +969,28 @@ function tegnPil(gruppe, o) {
 
   const hw = Math.max(8, o.w * 1.05);     // spidsens halve bredde
   const hl = Math.max(15, o.w * 1.6);     // spidsens længde
-  const bx = o.x2 - ux * hl, by = o.y2 - uy * hl;
-  const sx = bx + ux * 1.5, sy = by + uy * 1.5;   // skaftet stopper inde i spidsen
+  const ex = o.x1 + dx * p, ey = o.y1 + dy * p;   // hvor spidsen er nået til
+  const bx = ex - ux * hl, by = ey - uy * hl;
+  const s = Math.max(0, L * p - hl + 1.5);        // skaftet stopper inde i spidsen
+  return {
+    sx: o.x1 + ux * s, sy: o.y1 + uy * s,
+    spids: (bx + px * hw) + "," + (by + py * hw) + " " +
+           (bx - px * hw) + "," + (by - py * hw) + " " + ex + "," + ey
+  };
+}
+
+function tegnPil(gruppe, o) {
+  const g = pilGeometri(o, 1);
 
   const kant = lav("line", {
-    x1: o.x1, y1: o.y1, x2: sx, y2: sy,
+    x1: o.x1, y1: o.y1, x2: g.sx, y2: g.sy,
     stroke: BLAEK, "stroke-width": o.w + 4, "stroke-linecap": "butt"
   });
   if (o.stiplet) kant.setAttribute("stroke-dasharray", "13 8");
   gruppe.appendChild(kant);
 
   const skaft = lav("line", {
-    x1: o.x1, y1: o.y1, x2: sx, y2: sy,
+    x1: o.x1, y1: o.y1, x2: g.sx, y2: g.sy,
     stroke: o.farve, "stroke-width": o.w, "stroke-linecap": "butt"
   });
   skaft.setAttribute("class", "dhs-glans");
@@ -941,12 +998,12 @@ function tegnPil(gruppe, o) {
   gruppe.appendChild(skaft);
 
   const spids = lav("polygon", {
-    points: (bx + px * hw) + "," + (by + py * hw) + " " +
-            (bx - px * hw) + "," + (by - py * hw) + " " + o.x2 + "," + o.y2,
+    points: g.spids,
     fill: o.farve, stroke: BLAEK, "stroke-width": "2.5", "stroke-linejoin": "round"
   });
   spids.setAttribute("class", "dhs-glans");
   gruppe.appendChild(spids);
+  o.dele = { kant: kant, skaft: skaft, spids: spids };
 
   // Mærkaterne står vandret og placeres manuelt, så de aldrig lander oven i en pil
   if (o.maerkat) {
@@ -961,6 +1018,7 @@ function tegnPil(gruppe, o) {
       t.appendChild(l);
     });
     gruppe.appendChild(t);
+    o.dele.maerkat = t;
   }
 
   const titel = lav("title", {});
@@ -974,21 +1032,36 @@ function el(navn) { return svg.querySelector('[data-el="' + navn + '"]'); }
 
 Object.keys(PILE).forEach(function (navn) { tegnPil(el(navn), PILE[navn]); });
 
-// Genudsendelse i alle retninger — små pile ud fra CO₂-molekylet
+// Genudsendelse i alle retninger — små pile ud fra CO₂-molekylet.
+// saetStraaler(q) lader dem vokse ud fra molekylet (q = 0–1).
+const STRAALER = [];
+function saetStraaler(q) {
+  const cx = 596, cy = 268, rr = 25 + 28 * q;
+  STRAALER.forEach(function (s) {
+    const x2 = cx + Math.cos(s.r) * rr, y2 = cy + Math.sin(s.r) * rr;
+    s.linje.setAttribute("x2", x2);
+    s.linje.setAttribute("y2", y2);
+    const vr = s.r + Math.PI, a = 7;
+    s.spids.setAttribute("d",
+      "M" + (x2 + Math.cos(vr + 0.45) * a) + "," + (y2 + Math.sin(vr + 0.45) * a) +
+      " L" + x2 + "," + y2 +
+      " L" + (x2 + Math.cos(vr - 0.45) * a) + "," + (y2 + Math.sin(vr - 0.45) * a));
+    const o = q > 0 ? "1" : "0";
+    s.linje.setAttribute("opacity", o);
+    s.spids.setAttribute("opacity", o);
+  });
+}
 (function tegnStraaler() {
   const g = $("dhsStraaler"), cx = 596, cy = 268;
   [-90, -45, 0, 45, 90, 135, 180, -135].forEach(function (grader) {
     const r = grader * Math.PI / 180;
-    const x1 = cx + Math.cos(r) * 25, y1 = cy + Math.sin(r) * 25;
-    const x2 = cx + Math.cos(r) * 53, y2 = cy + Math.sin(r) * 53;
-    g.appendChild(lav("line", { x1: x1, y1: y1, x2: x2, y2: y2 }));
-    const vr = r + Math.PI, s = 7;
-    g.appendChild(lav("path", {
-      d: "M" + (x2 + Math.cos(vr + 0.45) * s) + "," + (y2 + Math.sin(vr + 0.45) * s) +
-         " L" + x2 + "," + y2 +
-         " L" + (x2 + Math.cos(vr - 0.45) * s) + "," + (y2 + Math.sin(vr - 0.45) * s)
-    }));
+    const linje = lav("line", { x1: cx + Math.cos(r) * 25, y1: cy + Math.sin(r) * 25 });
+    const spids = lav("path", {});
+    g.appendChild(linje);
+    g.appendChild(spids);
+    STRAALER.push({ r: r, linje: linje, spids: spids });
   });
+  saetStraaler(1);
 })();
 
 /* ==========================================================================
@@ -1053,6 +1126,136 @@ function visTrin(n, stille) {
   }
 }
 
+/* ==========================================================================
+   3b. Koreografi — det nye i et trin tegnes i årsagsrækkefølge
+   --------------------------------------------------------------------------
+   saetTid(n, t) viser trin n, t sekunder inde i trinnet. Den er en ren
+   funktion af (n, t): samme tal giver altid samme billede. Derfor kan
+   forløbet både spilles i browseren og renderes billede for billede til
+   video (window.dhsFilm nederst). t = Infinity er trinnets færdige billede.
+   ========================================================================== */
+
+const TONETID = 0.45;   // sekunder om at tone det gamle ned ved trinskift
+const klem = function (x) { return Math.min(1, Math.max(0, x)); };
+const glat = function (p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+const ud   = function (p) { return 1 - Math.pow(1 - p, 3); };
+
+const overfladeFlade = svg.querySelector('[data-el="overflade"] .dhs-glans');
+const co2Kerne = svg.querySelectorAll('[data-el="genudsendelse"] circle, [data-el="genudsendelse"] text');
+const termoMed = document.querySelector('#dhsTermo .punkt:not([data-type])');
+const termoGab = document.querySelector('#dhsTermo .gab');
+const TERMO_FRA = 17.1, TERMO_TIL = 64.3;
+
+// Blander to #rrggbb-farver
+function bland(a, b, p) {
+  const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16);
+  const k = function (s) {
+    return Math.round(((x >> s) & 255) * (1 - p) + ((y >> s) & 255) * p);
+  };
+  return "rgb(" + k(16) + "," + k(8) + "," + k(0) + ")";
+}
+
+function saetPil(o, p) {
+  const g = pilGeometri(o, glat(p));
+  ["kant", "skaft"].forEach(function (d) {
+    o.dele[d].setAttribute("x2", g.sx);
+    o.dele[d].setAttribute("y2", g.sy);
+  });
+  o.dele.spids.setAttribute("points", g.spids);
+  const synlig = String(klem(p / 0.12));
+  o.dele.kant.setAttribute("opacity", synlig);
+  o.dele.skaft.setAttribute("opacity", synlig);
+  o.dele.spids.setAttribute("opacity", synlig);
+  if (o.dele.maerkat) o.dele.maerkat.setAttribute("opacity", String(klem((p - 0.75) / 0.25)));
+}
+
+function saetTermo(p) {
+  const e = glat(p);
+  termoMed.style.left = (TERMO_FRA + (TERMO_TIL - TERMO_FRA) * e) + "%";
+  termoGab.style.width = ((TERMO_TIL - TERMO_FRA) * e) + "%";
+  const tekst = String(klem((p - 0.85) / 0.15));
+  termoMed.querySelector("b").style.opacity = tekst;
+  termoGab.querySelector("b").style.opacity = tekst;
+}
+
+// Én bevægelse i koreografien, p = 0–1
+function anvend(c, p) {
+  if (c.type === "puls") {
+    overfladeFlade.setAttribute("fill", bland("#5FB030", "#FFB300", 0.8 * Math.sin(Math.PI * p)));
+  } else if (PILE[c.el]) {
+    saetPil(PILE[c.el], p);
+  } else if (c.el === "genudsendelse") {
+    const kerne = String(klem(p / 0.25));
+    co2Kerne.forEach(function (k) { k.setAttribute("opacity", kerne); });
+    saetStraaler(ud(klem((p - 0.25) / 0.75)));
+  } else if (c.el === "termo") {
+    saetTermo(p);
+  } else {
+    el(c.el).setAttribute("opacity", String(p));
+  }
+}
+
+// Alt tilbage til færdigt billede, før koreografien lægges ovenpå
+function nulstil() {
+  Object.keys(PILE).forEach(function (navn) { saetPil(PILE[navn], 1); });
+  co2Kerne.forEach(function (k) { k.removeAttribute("opacity"); });
+  saetStraaler(1);
+  saetTermo(1);
+  overfladeFlade.setAttribute("fill", "#5FB030");
+  ALLE_EL.forEach(function (navn) {
+    const g = el(navn);
+    if (g) { g.removeAttribute("opacity"); g.style.opacity = ""; }
+  });
+}
+
+function koreoSlut(n) {
+  return (TRIN[n - 1].koreografi || []).reduce(function (m, c) { return Math.max(m, c.til); }, TONETID);
+}
+
+function saetTid(n, t) {
+  nulstil();
+  (TRIN[n - 1].koreografi || []).forEach(function (c) {
+    anvend(c, klem((t - c.fra) / (c.til - c.fra)));
+  });
+  // Det, der tones ned eller op i dette trin, glider i stedet for at springe
+  const foer = n > 1 ? (TRIN[n - 2].tonet || []) : [];
+  const nuTonet = TRIN[n - 1].tonet || [];
+  const p = klem(t / TONETID);
+  if (p < 1) {
+    nuTonet.forEach(function (navn) {
+      if (foer.indexOf(navn) === -1) el(navn).style.opacity = String(1 - 0.74 * glat(p));
+    });
+    foer.forEach(function (navn) {
+      if (nuTonet.indexOf(navn) === -1) el(navn).style.opacity = String(0.26 + 0.74 * glat(p));
+    });
+  }
+}
+
+const REDUCER = window.matchMedia("(prefers-reduced-motion: reduce)");
+let raf = 0;
+
+function afspil(n) {
+  cancelAnimationFrame(raf);
+  if (REDUCER.matches) { saetTid(n, Infinity); return; }
+  const slut = koreoSlut(n);
+  let t0 = null;
+  saetTid(n, 0);
+  raf = requestAnimationFrame(function ramme(tid) {
+    if (t0 === null) t0 = tid;
+    const t = (tid - t0) / 1000;
+    saetTid(n, t);
+    if (t < slut) raf = requestAnimationFrame(ramme);
+  });
+}
+
+// Ét trin frem tegnes; alle andre spring viser trinnet færdigt med det samme
+function gaaTil(n) {
+  const fra = nu;
+  visTrin(n);
+  if (nu === fra + 1) afspil(nu);
+  else { cancelAnimationFrame(raf); saetTid(nu, Infinity); }
+}
+
 /* Rammen skal stå stille, når man klikker sig igennem: ellers bestemmer
    mængden af tekst i hvert trin panelets højde, og figuren, knapperne og
    trinprikkerne flytter sig for hvert klik. Vi måler alle trin én gang og
@@ -1092,12 +1295,13 @@ TRIN.forEach(function (t, i) {
   b.type = "button";
   b.textContent = String(i + 1);
   b.setAttribute("aria-label", "Trin " + (i + 1) + ": " + t.overskrift);
-  b.addEventListener("click", function () { visTrin(i + 1); });
+  b.addEventListener("click", function () { gaaTil(i + 1); });
   prikker.appendChild(b);
 });
 
-$("dhsForrige").addEventListener("click", function () { visTrin(nu - 1); });
-$("dhsNaeste").addEventListener("click", function () { visTrin(nu + 1); });
+$("dhsForrige").addEventListener("click", function () { gaaTil(nu - 1); });
+$("dhsNaeste").addEventListener("click", function () { gaaTil(nu + 1); });
+$("dhsAfspil").addEventListener("click", function () { afspil(nu); });
 
 // Tastatur: piletaster, mellemrum, Home/End. Springes over, når fokus står i
 // en knap eller et felt, der selv bruger tasten.
@@ -1105,13 +1309,13 @@ document.addEventListener("keydown", function (e) {
   if (e.target.closest("dialog, summary, input, textarea, select")) return;
   if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
     if (e.target.tagName === "BUTTON" && e.key === " ") return;
-    e.preventDefault(); visTrin(nu + 1);
+    e.preventDefault(); gaaTil(nu + 1);
   } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
-    e.preventDefault(); visTrin(nu - 1);
+    e.preventDefault(); gaaTil(nu - 1);
   } else if (e.key === "Home") {
-    e.preventDefault(); visTrin(1);
+    e.preventDefault(); gaaTil(1);
   } else if (e.key === "End") {
-    e.preventDefault(); visTrin(TRIN.length);
+    e.preventDefault(); gaaTil(TRIN.length);
   }
 });
 
@@ -1151,6 +1355,42 @@ if (/mode=teach|projektor=1/.test(location.search)) {
 visTrin(startTrin());
 laasRammehojde();
 
+/* Filmtilstand. window.dhsFilm.saet(T) viser forløbet T sekunder inde —
+   hvert trin tegnes og står derefter stille i HOLD sekunder. Et
+   videoværktøj, der renderer billede for billede (fx HyperFrames eller
+   Playwright + ffmpeg), kan kalde saet(T) med ?film=styret, så siden ikke
+   selv spiller. ?film=1 spiller forløbet i løkke, til skærmoptagelse. */
+const HOLD = 5;
+const filmTrin = TRIN.map(function (_, i) { return koreoSlut(i + 1) + HOLD; });
+window.dhsFilm = {
+  varighed: filmTrin.reduce(function (a, b) { return a + b; }, 0),
+  saet: function (T) {
+    let n = 1, t = Math.max(0, T);
+    while (n < TRIN.length && t >= filmTrin[n - 1]) { t -= filmTrin[n - 1]; n++; }
+    if (n !== nu) visTrin(n, true);
+    saetTid(n, t);
+  }
+};
+
+const film = /film=(1|styret)/.exec(location.search);
+if (film) {
+  document.body.setAttribute("data-film", "1");
+  document.body.setAttribute("data-projektor", "1");
+  projektor.setAttribute("aria-pressed", "true");
+  laasRammehojde();
+  window.dhsFilm.saet(0);
+  if (film[1] === "1") {
+    let t0 = null;
+    requestAnimationFrame(function ramme(tid) {
+      if (t0 === null) t0 = tid;
+      window.dhsFilm.saet(((tid - t0) / 1000) % window.dhsFilm.varighed);
+      requestAnimationFrame(ramme);
+    });
+  }
+} else if (nu === 1) {
+  afspil(1);        // første trin tegnes, når siden åbner
+}
+
 // Skrifterne hentes udefra: er de ikke nået frem ved første optegning, er
 // linjerne brudt anderledes, end de bliver bagefter — så mål én gang til.
 if (document.fonts && document.fonts.ready) {
@@ -1165,7 +1405,7 @@ window.addEventListener("resize", function () {
 
 window.addEventListener("hashchange", function () {
   const n = startTrin();
-  if (n !== nu) visTrin(n);
+  if (n !== nu) gaaTil(n);
 });
 
 })();
