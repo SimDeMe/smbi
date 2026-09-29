@@ -205,7 +205,9 @@ function openActSheet(actId) {
   const a = actId ? activities.find(x => x.id === actId) : null;
 
   document.getElementById('act-sheet-title').textContent = a ? 'Redigér aktivitet' : 'Ny aktivitet';
-  document.getElementById('field-type').style.display    = a ? 'none' : '';
+  // Typen kan skiftes på en eksisterende aktivitet, så længe den står alene —
+  // fx en opgave, der i virkeligheden er hold. Tiden på den følger med.
+  document.getElementById('field-type').style.display    = a && !kanSkifteType(a) ? 'none' : '';
 
   document.getElementById('act-name').value   = a?.name       || '';
   document.getElementById('act-budget').value = a?.budgetHours ?? '';
@@ -245,12 +247,21 @@ const NORM_FELTER = [
   ['act-elever',     'elever'],
   ['act-fordybelse', 'fordybelsestid'],
   ['act-pulje',      'puljetimer'],
-  ['act-tillaeg',    'tillaeg']
+  ['act-tillaeg',    'tillaeg'],
+  ['act-antal-hold', 'antalHold']
 ];
 
-const formType = () => editingId
-  ? activities.find(x => x.id === editingId)?.type
-  : document.querySelector('input[name="act-type"]:checked')?.value;
+// Hold kan ikke have under-aktiviteter, så kun en aktivitet uden børn og
+// uden forælder kan skifte type
+const kanSkifteType = a =>
+  !a.parentId && !activities.some(c => c.parentId === a.id);
+
+const formType = () => {
+  const a = editingId ? activities.find(x => x.id === editingId) : null;
+  return a && !kanSkifteType(a)
+    ? a.type
+    : document.querySelector('input[name="act-type"]:checked')?.value;
+};
 
 // Normgrundlaget, som det står i formularen — null, hvis årsnormen er tom
 function laesNormgrundlag() {
@@ -287,7 +298,7 @@ function opdaterUdregning() {
     <span>Retning <b>${fmtTimer(n.retning)}</b></span>
     ${n.tillaeg ? `<span>Tillæg <b>${fmtTimer(n.tillaeg)}</b></span>` : ''}
     <span class="norm-udregning-sum">I alt <b>${fmtTimer(n.total)}</b> <span class="enhed">t</span></span>
-    <span class="norm-udregning-fod">Faktor ${String(faktor).replace('.', ',')} · reduktion ${String(reduktion).replace('.', ',')} (${esc(aar)})</span>`;
+    <span class="norm-udregning-fod">${g.antalHold > 1 ? `${String(g.antalHold).replace('.', ',')} hold · ` : ''}Faktor ${String(faktor).replace('.', ',')} · reduktion ${String(reduktion).replace('.', ',')} (${esc(aar)})</span>`;
 }
 
 function populateParentSelect(year, selId) {
@@ -323,8 +334,7 @@ async function saveActivity(e) {
 
   const isEditing  = !!editingId;
   const existingA  = isEditing ? activities.find(x => x.id === editingId) : null;
-  const type       = isEditing ? existingA.type
-                               : (document.querySelector('input[name="act-type"]:checked')?.value || 'opgave');
+  const type       = formType() || existingA?.type || 'opgave';
   const parentId   = type === 'opgave' ? (document.getElementById('act-parent').value || null) : null;
   const schoolYear  = document.getElementById('act-year').value.trim() || selectedYear;
   // Med normgrundlag gemmes det beregnede budget også i budgetHours, så
@@ -343,7 +353,7 @@ async function saveActivity(e) {
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, parentId, budgetHours, normGrundlag, color, schoolYear, note });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),

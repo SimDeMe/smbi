@@ -12,6 +12,9 @@
 //   retning      = elever × fordybelsestid / 27 × faktor
 //
 // og et tillæg (fx +15 t til intern NF-eksamen), der står for sig.
+// Står flere ens hold som én aktivitet (fx tre NV-hold), ganges det hele med
+// antalHold — de har samme årsnorm, og på NV er fordybelsestiden 0, så
+// elevtallet ikke spiller ind.
 // Faktoren og reduktionen skifter fra skoleår til skoleår og ligger derfor i
 // indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
 
@@ -38,10 +41,11 @@ export const harNormgrundlag = a =>
 export function beregnNormer(g, { faktor, reduktion }) {
   if (!g || !Number.isFinite(g.aarsnorm)) return null;
   const tal = v => Number.isFinite(v) ? v : 0;
-  const undervisning = g.aarsnorm * reduktion + tal(g.puljetimer);
+  const antal = Number.isFinite(g.antalHold) && g.antalHold > 0 ? g.antalHold : 1;
+  const undervisning = (g.aarsnorm * reduktion + tal(g.puljetimer)) * antal;
   const forberedelse = undervisning * (faktor - 1);
-  const retning      = tal(g.elever) * tal(g.fordybelsestid) / 27 * faktor;
-  const tillaeg      = tal(g.tillaeg);
+  const retning      = tal(g.elever) * tal(g.fordybelsestid) / 27 * faktor * antal;
+  const tillaeg      = tal(g.tillaeg) * antal;
   return {
     undervisning, forberedelse, retning, tillaeg,
     total: undervisning + forberedelse + retning + tillaeg

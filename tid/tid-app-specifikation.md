@@ -56,7 +56,8 @@ Alt under `users/{userId}/`:
     elever: 30,
     fordybelsestid: 15,             // elevernes skriftlige tid inkl. terminsprøver
     puljetimer: 0,
-    tillaeg: 0                      // fx 15 til intern NF-eksamen
+    tillaeg: 0,                     // fx 15 til intern NF-eksamen
+    antalHold: 1                    // flere ens hold samlet som én aktivitet, fx 3 NV-hold
   }
 }
 ```
@@ -109,6 +110,8 @@ Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr.
 - **Forberedelse** = undervisning × (faktor − 1)
 - **Retning** = elever × fordybelsestid / 27 × faktor
 - **Tillæg** står for sig og har ingen arbejdstype
+
+Er `antalHold` større end 1, ganges alle fire med det. Det bruges til ens hold, der registreres som én aktivitet — fx tre NV-hold (11,25 t, pulje 2,1375, fordybelsestid 0 → 3 × 28,82 = 86,45 t). Tid registreret uden arbejdstype på et hold med normer (fx fra før en opgave blev lavet om til hold) står i rapporten som "Uden arbejdstype" og tæller med i holdets total.
 
 Formlen ligger ét sted, i `normer.js`. Kontrolleret mod holdoversigten 2025/26 (faktor 2,35, reduktion 0,9): 2x bi 176,64, 1p nf ge 200,36, nv4 ng 28,82 og 3g Ng1 325,30 — alle på decimalen.
 
@@ -202,7 +205,7 @@ Egen side "Aktiviteter":
 - Listet grupperet efter type (Hold / Opgaver) og skoleår
 - Skift mellem skoleår (dropdown)
 - Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
-- Tryk på en aktivitet: redigér eller slet
+- Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
 - Under-aktiviteter vises indrykket under deres parent
 - **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne) — gør det nemt når et nyt skoleår begynder
 - **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?` der parses og oprettes. Sparer tid ved opsætning.

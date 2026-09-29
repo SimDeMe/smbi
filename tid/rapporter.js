@@ -377,7 +377,7 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
   const normer = !isChild && periodFilter === 'skolear' ? normerFor(act) : null;
   const wtKeys = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
   const wtHtml = normer
-    ? normRows(normer, wt, color)
+    ? normRows(normer, wt, color, ownMins)
     : !isChild && wtKeys.length > 0
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
@@ -398,8 +398,10 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
 // Kun i skoleårs-rapporten: normerne gælder hele året, så en dag eller en uge
 // kan ikke måles mod dem. Hver arbejdstype får forbrugt mod norm og sin egen
 // foran/bagud-chip, målt mod den del af året, der er gået — som den samlede.
-// Tillægget har ingen arbejdstype og står bare med sit timetal.
-function normRows(n, wt, color) {
+// Tillægget har ingen arbejdstype og står bare med sit timetal. Tid uden
+// arbejdstype — fx registreret, mens holdet endnu var en opgave — tælles i
+// holdets total og står for sig, så intet forsvinder.
+function normRows(n, wt, color, ownMins = 0) {
   const elapsed = forloebAndel();
   const linjer = ['undervisning', 'forberedelse', 'retning'].filter(t => n[t] > 0).map(t => {
     const brugt = wt[t] || 0;
@@ -416,6 +418,14 @@ function normRows(n, wt, color) {
     linjer.push(`<div class="rapport-norm-row">
       <span class="rapport-wt-label">Tillæg</span>
       <span class="rapport-norm-tal">${fmtTimer(n.tillaeg)}<span class="enhed">t</span></span>
+    </div>`);
+  }
+  const udenType = ownMins - ['undervisning', 'forberedelse', 'retning']
+    .reduce((s, t) => s + (wt[t] || 0), 0);
+  if (udenType > 0) {
+    linjer.push(`<div class="rapport-norm-row">
+      <span class="rapport-wt-label">Uden arbejdstype</span>
+      <span class="rapport-norm-tal">${fmtMins(udenType)}</span>
     </div>`);
   }
   return `<div class="rapport-norm">${linjer.join('')}</div>`;
