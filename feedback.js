@@ -1,4 +1,6 @@
 /* feedback.js — én feedback-knap på hvert kort og på hver side.
+ * På en simulering sidder sidens knap inde i panelets .rig-head i stedet for
+ * i sidefoden, så den også er der, når figuren ligger i en iframe.
  *
  * Indsættes med  <script src="/feedback.js" defer></script>  før </body>.
  * Siden skal ikke have markup eller ID'er: knapperne sættes ind herfra, og
@@ -32,7 +34,8 @@ if (!MODTAGER){
   console.info('feedback.js: ingen modtager sat — knapperne springes over. Se feedback/LÆS-MIG.md.');
   return;
 }
-if (window.top !== window.self) return;              /* figuren ligger i en iframe */
+/* I en iframe er sidens krom skjult; kun knappen i simuleringen kommer med. */
+var iIframe = (function(){ try { return window.top !== window.self; } catch (e){ return true; } })();
 
 var soeg = new URLSearchParams(location.search);
 if (soeg.get('projektor') === '1' || soeg.get('mode') === 'teach') return;   /* tavlen */
@@ -83,6 +86,9 @@ var CSS = [
 '  border-radius:12px;padding:2px 8px;line-height:1.7;',
 '  position:relative;z-index:2;transition:background .15s,color .15s}',
 '.fb-knap:hover{background:var(--ink,#17211F);color:#FFF6E0}',
+/* Knappen i simuleringens .rig-head låner sidens egen .btn-mini og skal
+   bare holde sig væk fra tavlen. */
+'body[data-projektor="1"] .fb-knap-rig{display:none}',
 '.fb-knap-side{',
 '  position:fixed;right:16px;bottom:16px;z-index:60;',
 '  font-size:0.6rem;padding:8px 14px;border-width:2px;border-radius:999px;',
@@ -341,13 +347,44 @@ function knapperPaaKort(){
   });
 }
 
-function knapPaaSiden(){
-  var sag = {
+/* Tilstanden læses, når der trykkes — ikke da siden blev indlæst. */
+function sidensSag(kilde){
+  return {
     noegle:   sidensNoegle(),
     titel:    sidensTitel(),
-    kilde:    'siden selv',
+    kilde:    kilde,
     tilstand: tilstand()
   };
+}
+
+/* Simuleringer: knappen bor i panelet, efter den sidste .btn-mini i samme
+   række (inde i .rig-tools/.hoejre, hvis knapperne står dér). */
+function knapISimuleringen(){
+  var hoved = document.querySelector('.rig .rig-head');
+  if (!hoved) return false;
+  if (!sidensNoegle()) return false;        /* forsidens panel er en smagsprøve */
+  if (hoved.querySelector('.fb-knap-rig')) return true;
+
+  var kilde = iIframe ? 'simuleringen i en iframe' +
+      (document.referrer ? ' på ' + noegle(document.referrer) : '') : 'simuleringen';
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn-mini fb-knap-rig';
+  b.textContent = 'Feedback';
+  b.title = 'Giv feedback om simuleringen';
+  b.addEventListener('click', function(){ aabn(sidensSag(kilde)); });
+
+  var knapper = Array.prototype.filter.call(hoved.querySelectorAll('.btn-mini'), function(k){
+    return !k.closest('[role="group"]');                  /* ikke ind i en knapgruppe */
+  });
+  var sidste = knapper[knapper.length - 1];
+  if (sidste) sidste.parentNode.insertBefore(b, sidste.nextSibling);
+  else hoved.appendChild(b);
+  return true;
+}
+
+function knapPaaSiden(){
+  var sag = sidensSag('siden selv');
   var knap = lavKnap(sag, 'fb-knap-side');
   knap.textContent = 'Giv feedback';
 
@@ -357,6 +394,8 @@ function knapPaaSiden(){
 }
 
 function start(){
+  if (knapISimuleringen()) return;          /* én knap pr. side: i panelet */
+  if (iIframe) return;
   knapperPaaKort();
   knapPaaSiden();
 }

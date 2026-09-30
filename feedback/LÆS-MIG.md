@@ -100,10 +100,17 @@ kunne læse sig til, hvad der virkede.
 * **Kort** — alle `.sim` og `.item` med et link i `<h4>`, altså både
   simuleringer, forsøgsvejledninger og opgaver. Knappen sættes ind i `.sub`-rækken
   ved siden af `PDF` og `Word`, og et nyt kort får sin knap af sig selv.
-* **Siden selv** — en pille i sidefoden. Har siden ingen `.foot` (de gamle sider),
-  lægger den sig nederst til højre i stedet.
-* **Ikke** i en iframe, ikke i projektortilstand (`?projektor=1`, `?mode=teach`),
-  ikke på print — og ikke inde i øvelsesvejledningerne, se nedenfor.
+* **Simuleringer** — en `.btn-mini` i panelets `.rig-head`, efter den sidste
+  knap i rækken. Så er knappen der også, når figuren ligger i en iframe, hvor
+  sidens krom er skjult. Siden får så ingen pille i sidefoden — én knap pr.
+  side. Det gælder alle sider med `.rig .rig-head` undtagen forsiden, hvis
+  panel kun er en smagsprøve. Knappen skjules i projektortilstand
+  (`body[data-projektor="1"]`), og i arket står der, om den kom fra en iframe.
+* **Siden selv** — på alle andre sider en pille i sidefoden. Har siden ingen
+  `.foot` (de gamle sider), lægger den sig nederst til højre i stedet.
+* **Ikke** i projektortilstand (`?projektor=1`, `?mode=teach`), ikke på print,
+  ikke i en iframe (bortset fra simuleringens egen knap) — og ikke inde i
+  øvelsesvejledningerne, se nedenfor.
 
 ## Øvelsesvejledningerne har ingen knap
 
