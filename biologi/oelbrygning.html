@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ølbrygning — fra malt til glas — smbi.dk</title>
+<meta name="description" content="Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/biologi/oelbrygning.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/oelbrygning.html">
+<meta property="og:title" content="Ølbrygning — fra malt til glas">
+<meta property="og:description" content="Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Ølbrygning — smbi.dk's fælles design
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;
+  --paper-2:#FFF3DC;
+  --panel:#FFFFFF;
+  --ink:#17211F;
+  --slate:#566B68;
+
+  --pink:#E8336D;
+  --blue:#0E86C8;
+  --lime:#5FB030;
+  --amber:#FFB300;
+  --grape:#7A4FD6;
+  --coral:#FF6A3D;
+  --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--bio);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --fig:540px;         /* figurens højdebudget — sættes af
+                        scriptet "Højdebudget" nederst */
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+/* Enheder og formler skrives, som de staves — versalerne i mono-mærkaterne
+   må ikke lave CO₂ om til CO2 eller pH om til PH. */
+.enhed{text-transform:none;letter-spacing:0.04em}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);
+  backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#FBD3E1;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#FFE3A0;filter:blur(70px);opacity:.65;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:64ch}
+
+/* ── Signaturpanel ─────────────────────────────────────── */
+.rig{
+  position:relative;
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);
+  margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);
+  background:#FBD3E1;
+}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+}
+.who{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:#5A4451;
+  font-variant-numeric:tabular-nums;
+}
+.seg{display:flex;gap:5px;flex-wrap:wrap}
+.spacer{margin-left:auto}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;white-space:nowrap;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--accent);color:#fff;
+  transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+.btn-mini[disabled]{
+  opacity:.42;box-shadow:none;cursor:not-allowed;
+  transform:none;background:#fff;color:var(--ink);
+}
+/* ── Scenen ────────────────────────────────────────────── */
+.stage{
+  position:relative;
+  padding:10px;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+.stage-in{
+  /* Højdebudget: figuren må ikke blive højere end --fig. */
+  max-width:calc(var(--fig)*1040/500);margin-inline:auto;
+  overflow-x:auto;overflow-y:hidden;
+}
+#scene{
+  display:block;width:100%;height:auto;
+  border:2px solid var(--ink);border-radius:12px;
+  background:#FFFDF6;
+  aspect-ratio:1040/500;
+}
+.hint{
+  position:absolute;right:24px;bottom:24px;z-index:2;pointer-events:none;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink);
+  background:rgba(255,249,238,.94);border:1.5px solid var(--ink);border-radius:14px;
+  padding:5px 11px;transition:opacity .3s;max-width:calc(100% - 48px);
+}
+.hint.gone{opacity:0}
+.hint.raab{background:#FFE9DC;border-width:2px}
+
+/* ── Ligningerne ───────────────────────────────────────── */
+.ligninger{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:2px solid var(--ink);
+}
+.lign{
+  padding:12px 15px 13px;border-left:2px solid var(--ink);
+  display:flex;flex-direction:column;gap:6px;background:#fff;
+  transition:background .2s;
+}
+.lign:first-child{border-left:none}
+.lign-top{display:flex;align-items:center;gap:8px}
+.lign-top .mono{color:#5A6C69;font-size:0.58rem}
+.lign-stand{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:0.55rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:#5A6C69;
+}
+.lign-stand::before{
+  content:'';width:9px;height:9px;border:2px solid var(--ink);border-radius:2px;background:#fff;
+}
+.lign-formel{
+  font-family:var(--display);font-variation-settings:'wdth' 106;
+  font-weight:700;font-size:1rem;line-height:1.35;letter-spacing:-0.005em;
+}
+.lign-formel .pil{font-family:var(--mono);font-weight:600;margin:0 6px}
+.lign-formel .lys{color:#8A6B1E}
+.lign[data-aktiv="true"]{background:var(--tone,#EDF8E4)}
+.lign[data-aktiv="true"] .lign-stand{color:var(--ink)}
+.lign[data-aktiv="true"] .lign-stand::before{background:var(--ink);animation:pulse 1.4s ease-in-out infinite}
+
+/* ── Instrumenter ──────────────────────────────────────── */
+.gauges{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:2px solid var(--ink);
+}
+.gauge{
+  padding:13px 15px 14px;border-left:2px solid var(--ink);
+  display:flex;flex-direction:column;gap:9px;
+}
+.gauge:first-child{border-left:none}
+.g-pink{background:#FFEDF3}
+.g-teal{background:#E3F6F2}
+.g-lilla{background:#F1ECFC}
+.g-gul{background:#FFF6DF}
+.g-blaa{background:#E7F4FB}
+.g-groen{background:#EDF8E4}
+.gauge dt{
+  font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;
+}
+.gauge dd{
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1.28rem;line-height:1.1;font-variant-numeric:tabular-nums;
+}
+.gauge dd small{font-size:0.6em;font-weight:700;color:#5A6C69;margin-left:4px;text-transform:none}
+.g-viz{display:flex;align-items:flex-end;gap:10px;height:34px}
+.col{
+  position:relative;width:100%;height:34px;flex:1;
+  border:2px solid var(--ink);border-radius:9px;overflow:hidden;
+  background:
+    repeating-linear-gradient(90deg,rgba(23,33,31,.09) 0 1.5px,transparent 1.5px 20%),
+    #fff;
+}
+.col i{
+  position:absolute;left:0;bottom:0;top:0;display:block;
+  background:var(--cc,linear-gradient(90deg,#8FE07A,#5FB030));width:0%;
+  border-right:2px solid var(--ink);
+  transition:width .2s linear;
+}
+/* NPP kan være negativ — søjlen vokser til begge sider fra midten */
+.col.midt::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--ink);opacity:.55}
+.col.midt i{left:50%;transition:width .2s linear,left .2s linear}
+
+/* ── Kontrolpanel ──────────────────────────────────────── */
+.knobs{
+  border-top:2px solid var(--ink);background:var(--paper-2);
+  padding:18px 15px 20px;
+  display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:20px 22px;align-content:start;
+}
+.knob{display:flex;flex-direction:column;gap:7px}
+.knob-top{display:flex;align-items:baseline;gap:10px}
+.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-val{
+  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;
+  white-space:nowrap;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;
+  background:var(--track,#fff);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));
+  box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range]::-moz-range-track{
+  height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff);
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
+}
+input[type=range][disabled]{opacity:.45;cursor:not-allowed}
+.knob-knap{justify-content:flex-start}
+.btn{
+  align-self:flex-start;
+  font-family:var(--display);font-size:0.9rem;font-weight:800;
+  background:var(--accent);color:#fff;border:2.5px solid var(--ink);border-radius:22px;
+  padding:7px 18px;cursor:pointer;box-shadow:var(--hard);
+  transition:transform .12s,box-shadow .12s;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+
+/* ── Nøgletal og signatur ──────────────────────────────── */
+.facts{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  padding:12px 15px;border-top:2px solid var(--ink);background:#fff;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+}
+.fact svg{display:block;overflow:visible}
+.fact b{font-family:var(--display);font-size:0.78rem;font-weight:800;font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+
+
+/* ── Version, faner og ur ──────────────────────────────── */
+.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate)}
+.faner{display:flex;gap:5px;flex-wrap:wrap}
+.fane{display:inline-flex;align-items:center;gap:6px}
+.fane-nr{
+  display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;
+  border:1.5px solid var(--ink);font-size:0.62rem;background:#fff;color:var(--ink);
+}
+.fane[aria-current="step"]{background:var(--ink);color:#FFF6E0;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.fane.gjort .fane-nr{background:var(--lime)}
+.fane[disabled]{opacity:.42;box-shadow:none;cursor:not-allowed;transform:none}
+.btn-mini.klar{
+  background:var(--accent);color:#fff;
+  animation:kalder 1.7s ease-in-out infinite;
+}
+@keyframes kalder{
+  0%,100%{box-shadow:2px 2px 0 var(--ink)}
+  50%{box-shadow:2px 2px 0 var(--ink),0 0 0 5px rgba(232,51,109,.26)}
+}
+.btn-mini.skjult{visibility:hidden}
+
+/* ── Bryggejournalen ───────────────────────────────────── */
+.journal{
+  margin-top:26px;background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:var(--hard);
+}
+.journal-head{
+  display:flex;align-items:center;gap:10px;padding:10px 15px;
+  border-bottom:2px solid var(--ink);background:var(--paper-2);
+}
+.journal-head h2{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:1.05rem;letter-spacing:-0.01em;
+}
+.journal-rul{overflow-x:auto}
+.journal table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.journal th,.journal td{padding:7px 12px;text-align:left;white-space:nowrap;font-size:0.9rem}
+.journal thead th{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5A6C69;border-bottom:2px solid var(--ink);
+}
+.journal tbody tr+tr td,.journal tbody tr+tr th{border-top:1px solid #E1E6E4}
+.journal tbody th{font-family:var(--display);font-weight:800}
+
+/* ── Projektortilstand ─────────────────────────────────── */
+body[data-projektor="1"] .top,
+body[data-projektor="1"] .head,
+body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
+body[data-projektor="1"] .gauge dt{font-size:0.74rem}
+body[data-projektor="1"] .gauge dd{font-size:1.9rem}
+body[data-projektor="1"] .lign-formel{font-size:1.3rem}
+body[data-projektor="1"] .journal{display:none}
+body[data-projektor="1"] .lign-top .mono{font-size:0.74rem}
+body[data-projektor="1"] .knob-top .mono{font-size:0.82rem}
+body[data-projektor="1"] .knob-val{font-size:1.05rem}
+body[data-projektor="1"] .fact{font-size:0.74rem}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:960px){
+  .gauges{grid-template-columns:repeat(2,1fr)}
+  .gauge:nth-child(3){border-left:none}
+  .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
+}
+@media (max-width:700px){
+  #scene{min-width:760px}
+  .ligninger{grid-template-columns:1fr}
+  .lign{border-left:none}
+  .lign+.lign{border-top:2px solid var(--ink)}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding:24px 0 18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .knobs{grid-template-columns:1fr;padding:16px}
+  .journal{box-shadow:var(--hard)}
+  .gauges{grid-template-columns:1fr}
+  .gauge{border-left:none;border-top:2px solid var(--ink)}
+  .gauge:first-child{border-top:none}
+  .gauge dd{font-size:1.1rem}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  .top,.foot,.faner,.rig-head .btn-mini,.knobs,.hint,.journal .btn-mini{display:none!important}
+  .rig{box-shadow:none}
+}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--pink);border-color:var(--pink)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+</style>
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Ølbrygning — fra malt til glas",
+      "url": "https://smbi.dk/biologi/oelbrygning.html",
+      "inLanguage": "da-DK",
+      "description": "Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {
+        "@type": "Person",
+        "name": "Simon Messell"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "smbi.dk",
+        "url": "https://smbi.dk/"
+      },
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": {
+        "@id": "https://smbi.dk/#website"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Ølbrygning, enzymer og gæring"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Forside",
+          "item": "https://smbi.dk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Biologi",
+          "item": "https://smbi.dk/biologi.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Ølbrygning",
+          "item": "https://smbi.dk/biologi/oelbrygning.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Biologi B · bioteknologi</span>
+      <h1>Fra malt til <span class="hi" style="--hc:#FFE3A0">øl</span></h1>
+      <p class="lead">Brygg én batch gennem fire stationer: Mæsk maltens stivelse til sukker med to enzymer, kog urten med humle, og lad gæren lave sukkeret om til ethanol og CO₂. Det, du vælger ved hver station, kan smages i glasset til sidst.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="rig" aria-label="Ølbrygning">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="version" title="Simuleringens version">v1.0</span>
+        <span class="rig-live"><span class="dot"></span><span class="who" id="who">Mæskning · 0 min</span></span>
+        <nav class="faner" id="faner" aria-label="Brygningens stationer"></nav>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" id="btn-koer" aria-pressed="false">Start</button>
+        <button type="button" class="btn-mini" id="btn-hurtig" aria-pressed="false"
+                title="Lad tiden gå fire gange så hurtigt">Hurtigt</button>
+        <button type="button" class="btn-mini" id="btn-videre" disabled>Til kogning →</button>
+        <button type="button" class="btn-mini" id="btn-nulstil" title="Smid batchen ud og start forfra">Nulstil</button>
+        <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
+                title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
+      </div>
+
+      <div class="stage">
+        <div class="stage-in">
+          <canvas id="scene" width="1040" height="500" role="img"
+                  aria-label="Brygningens aktuelle station: til venstre gryden eller gærballonen, i midten en lup, der viser molekylerne, og til højre en graf over tiden."></canvas>
+        </div>
+        <p class="hint" id="hint"></p>
+      </div>
+
+      <div class="ligninger" id="ligninger"></div>
+      <dl class="gauges" id="gauges"></dl>
+      <div class="knobs" id="knobs"></div>
+      <div class="facts" id="facts"></div>
+    </section>
+
+    <!-- Instrumenterne opdateres mange gange i sekundet og kan derfor ikke selv
+         være aria-live. Aflæsningen opsummeres her med jævne mellemrum. -->
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+
+    <section class="journal" id="journal" hidden aria-labelledby="journal-titel">
+      <div class="journal-head">
+        <h2 id="journal-titel">Bryggejournal</h2>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" id="btn-ryd">Ryd</button>
+      </div>
+      <div class="journal-rul">
+        <table>
+          <thead>
+            <tr><th scope="col">Bryg</th><th scope="col">Mæskning</th><th scope="col">Malt</th>
+                <th scope="col">Humle <span class="enhed">g/min</span></th><th scope="col">Gæring</th>
+                <th scope="col">OG</th><th scope="col">FG</th><th scope="col">Alkohol</th>
+                <th scope="col">IBU</th><th scope="col">Forgæring</th></tr>
+          </thead>
+          <tbody id="journal-krop"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Ølbrygning · enzymer, humle og gæring</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="oelbrygning/side.js"></script>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+<!-- ── Højdebudget ──────────────────────────────────────
+     Figuren blev før målt efter spaltens bredde alene, og så voksede
+     panelet ud over skærmen: figur, instrumenter og skydere kunne ikke
+     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
+     andet end figuren, og resten af skærmhøjden lægges i --fig.
+     Budgettet kan kun gøre figuren mindre — aldrig større end spalten
+     i forvejen tillod — og det rører den slet ikke, hvis panelet
+     alligevel ikke kan komme til at passe.                          -->
+<script>
+(function(){
+  const rig = document.querySelector('.rig');
+  const fig = document.querySelector('#scene');
+  if(!rig || !fig) return;
+  const bjaelke = document.querySelector('.top');
+  const MIN = 250, MAKS = 620, LUFT = 16;
+  let sidst = 0, panel = 0, ventende = false;
+
+  function saet(h){
+    if(h === sidst) return;
+    sidst = h;
+    rig.style.setProperty('--fig', h + 'px');
+    /* Sider, der selv sætter lærredets størrelse, skal måle om. */
+    if(window.tilpasFigur) window.tilpasFigur();
+  }
+
+  function maal(){
+    /* Først slippes figuren fri: så er "alt andet end figuren" det
+       samme tal, uanset hvad budgettet gav sidste gang. Uden det ville
+       en sidespalte, der er højere end figuren, presse budgettet i bund. */
+    saet(MAKS);
+    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
+               ? bjaelke.getBoundingClientRect().height : 0;   /* den klæbende topbjælke */
+    const rum  = innerHeight - krom - LUFT;                    /* det, panelet må fylde */
+    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    const h    = Math.round(rum - fast);
+    if(h < MAKS){
+      saet(Math.max(MIN, h));
+      /* Hjalp det ikke — fx fordi en sidespalte er højere end figuren —
+         så får figuren pladsen igen. */
+      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    }
+    panel = rig.getBoundingClientRect().height;
+  }
+
+  function planlaeg(){
+    if(ventende) return;
+    ventende = true;
+    requestAnimationFrame(function(){ ventende = false; maal(); });
+  }
+
+  maal();
+  addEventListener('resize', planlaeg);
+  addEventListener('load', planlaeg);            /* moduler indlæses efter dette script */
+  if(document.fonts) document.fonts.ready.then(planlaeg);
+  /* Panelets faste dele kan skifte højde undervejs (trin, tekst, projektor).
+     Vores egne ændringer springes over — dem kender vi højden på. */
+  new ResizeObserver(function(){
+    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+  }).observe(rig);
+})();
+</script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
