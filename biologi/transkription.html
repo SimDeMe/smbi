@@ -163,6 +163,11 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#FBD3E1;
 }
+/* Versionsnummer — tælles op, hver gang simuleringen rettes */
+.version{
+  font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate);
+}
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
@@ -525,10 +530,8 @@ dialog::backdrop{background:rgba(23,33,31,.6)}
 .cd-klik{cursor:pointer}
 .cd-klik .cd-flade{transition:filter .12s}
 .cd-klik:hover .cd-flade{filter:brightness(.92)}
-.cd-lag{transition:opacity .3s ease}
-.cd-lag[data-vis="skjult"]{opacity:0;pointer-events:none}
-.cd-mrna-lag{transition:transform .55s ease,opacity .3s ease}
-.cd-glid{transition:transform .5s ease}
+/* Polymerase, ribosom, tRNA og mRNA flyttes af koreografien i scriptet —
+   ingen CSS-overgange, så hvert billede er en ren funktion af tiden. */
 
 /* ── Projektortilstand ─────────────────────────────────── */
 body[data-projektor="1"] .top,
@@ -683,6 +686,7 @@ body[data-projektor="1"] .fact{font-size:0.72rem}
     <section class="rig" id="rig">
       <div class="rig-bar"></div>
       <div class="rig-head">
+        <span class="version" title="Simuleringens version">v1.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono" id="cdTael">Trin 1 af 5</span></span>
         <div class="rig-tools">
           <button type="button" class="btn-mini" id="cdAfspil">↻ Afspil trinnet</button>
@@ -704,14 +708,14 @@ body[data-projektor="1"] .fact{font-size:0.72rem}
 
               <!-- Lagene tegnes af scriptet, så baser og kodoner kan bygges ud fra genet -->
               <g id="cdLagKerne"></g>
-              <g id="cdLagRibosom" class="cd-lag"></g>
+              <g id="cdLagRibosom"></g>
               <g id="cdLagPromotor"></g>
               <g id="cdLagStiger"></g>
               <g id="cdLagKodende"></g>
               <g id="cdLagSkabelon"></g>
-              <g id="cdLagPolymerase" class="cd-lag"></g>
-              <g id="cdLagMrna" class="cd-mrna-lag"></g>
-              <g id="cdLagTrna" class="cd-lag"></g>
+              <g id="cdLagPolymerase"></g>
+              <g id="cdLagMrna"></g>
+              <g id="cdLagTrna"></g>
               <g id="cdLagProtein"></g>
               <g id="cdLagTekst"></g>
             </svg>
@@ -996,8 +1000,10 @@ const state = {
   trin: 1,
   kodende: GEN_START.split(""),   // den kodende streng, som eleven kan ændre
   muteret: -1,                    // indeks på den ændrede base, -1 = uændret
-  tProg: 0,                       // antal mRNA-baser bygget (0–24)
-  pProg: 0,                       // antal kodoner læst (0–8)
+  tProg: 0,                       // mRNA-baser bygget (0–24); brøkdele midt i en bevægelse
+  pProg: 0,                       // kodoner læst (0–8); brøkdele midt i en bevægelse
+  polyInd: 1,                     // polymerasen toner frem på promotoren (0–1)
+  udProg: 1,                      // mRNA'ets vej ud af kernen (0–1)
   tempo: 1
 };
 
@@ -1031,6 +1037,9 @@ function kodonTrin(m) {
   if (!m.start) return 0;
   return m.stopIdx >= 0 ? m.stopIdx + 1 : m.kodoner.length;
 }
+/* Hvor mange kodoner ribosomet står på under translationen. Uden startkodon
+   sætter det sig forgæves på det første og kommer ikke videre. */
+function riboTrin(m) { return m.start ? kodonTrin(m) : 1; }
 
 /* ==========================================================================
    3. Scenen — geometrien
@@ -1196,7 +1205,33 @@ tekst(lagTekst, X0, 552, "PROTEIN · AMINOSYREKÆDE");
    4. Optegning ud fra state
    ========================================================================== */
 
-function saetLag(lag, synlig) { lag.setAttribute("data-vis", synlig ? "vis" : "skjult"); }
+const klem = function (x) { return Math.min(1, Math.max(0, x)); };
+const glat = function (p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; };
+const ud   = function (p) { return 1 - Math.pow(1 - p, 3); };
+
+/* Et lag er skjult (og kan ikke klikkes), når det er helt tonet ud */
+function saetLag(lag, grad) {
+  lag.style.opacity = grad >= 1 ? "" : String(grad);
+  lag.setAttribute("visibility", grad > 0 ? "visible" : "hidden");
+}
+/* Forskyder en del fra dens færdige plads; (0, 0, 1) er færdigt billede */
+function saetFlyt(g, dx, dy, grad) {
+  if (dx || dy) g.setAttribute("transform", "translate(" + dx + "," + dy + ")");
+  else g.removeAttribute("transform");
+  g.style.opacity = grad >= 1 ? "" : String(grad);
+}
+
+/* Translationens cyklus pr. kodon, i brøkdele af cyklussen */
+const FASE = { slip: 0.25, ribo: 0.3, ind: 0.65, bind: 0.85 };
+
+/* q er antal kodoner læst, med brøkdel: kodon k er i gang, f inde i sin
+   cyklus. Et kodon regnes for læst, når ribosomet står på det. */
+function kodonCyklus(q, maks) {
+  if (maks <= 0) return { k: -1, f: 1, laest: 0 };
+  if (q >= maks) return { k: maks - 1, f: 1, laest: maks };
+  const k = Math.floor(q), f = q - k;
+  return { k: k, f: f, laest: k + (f >= FASE.ribo ? 1 : 0) };
+}
 
 function tegn() {
   const t = state.trin;
@@ -1219,30 +1254,36 @@ function tegn() {
       "Skabelonstreng, base " + (i + 1) + " af 24: " + s + ". Klik for at bytte basen ud.");
   }
 
-  /* — mRNA'et: kun de baser, der er nået at blive bygget — */
-  const vist = (t === 1) ? 0 : (t === 2 ? state.tProg : m.mrna.length);
+  /* — mRNA'et: kun de baser, der er nået at blive bygget. Midt i
+     transkriptionen er byg en brøk: basen, polymerasen står over, er ved at
+     blive sat på og falder ned på plads under skabelonstrengen. — */
+  const byg = (t === 1) ? 0 : (t === 2 ? state.tProg : m.mrna.length);
+  const vist = Math.floor(byg);                 // færdige baser, til instrumentet
   for (let i = 0; i < m.mrna.length; i++) {
     const b = m.mrna[i];
+    const p = klem(byg - i);
     cMrna[i].txt.textContent = b;
     cMrna[i].rect.setAttribute("fill", BASEFARVE[b]);
-    cMrna[i].g.setAttribute("visibility", i < vist ? "visible" : "hidden");
-    cMrna[i].ring.setAttribute("visibility", (state.muteret === i && i < vist) ? "visible" : "hidden");
+    cMrna[i].g.setAttribute("visibility", p > 0 ? "visible" : "hidden");
+    saetFlyt(cMrna[i].g, 0, -40 * (1 - ud(p)), klem(p / 0.4));
+    cMrna[i].ring.setAttribute("visibility", (state.muteret === i && p >= 1) ? "visible" : "hidden");
   }
   klammer.forEach(function (kl, k) {
     /* klammerne hører til translationen — de dukker først op i cytoplasmaet */
     kl.setAttribute("visibility", (t >= 4 && 3 * k + 2 < vist) ? "visible" : "hidden");
   });
-  lagMrna.setAttribute("transform", t >= 3 ? "translate(0," + (Y_MRNA_UD - Y_MRNA) + ")" : "translate(0,0)");
-  lagMrna.setAttribute("opacity", vist ? "1" : "0");
-  lblMrna.setAttribute("y", t >= 3 ? Y_MRNA_UD - 8 : Y_MRNA - 8);
-  lblMrna.setAttribute("visibility", vist ? "visible" : "hidden");
+  const udY = (t >= 3 ? glat(state.udProg) : 0) * (Y_MRNA_UD - Y_MRNA);
+  lagMrna.setAttribute("transform", "translate(0," + udY + ")");
+  lagMrna.setAttribute("opacity", byg > 0 ? "1" : "0");
+  lblMrna.setAttribute("y", Y_MRNA - 8 + udY);
+  lblMrna.setAttribute("visibility", byg > 0 ? "visible" : "hidden");
 
-  /* — RNA-polymerasen: står på promotoren og kører hen over genet — */
+  /* — RNA-polymerasen: toner frem på promotoren og glider hen over genet — */
   const polySynlig = (t === 2);
-  saetLag(lagPolymerase, polySynlig);
-  const polyX = state.tProg === 0
-    ? X0 + promBredde / 2
-    : baseMidt(Math.min(state.tProg, m.mrna.length) - 1) + 8;
+  saetLag(lagPolymerase, polySynlig ? state.polyInd : 0);
+  const polyX = byg < 1
+    ? X0 + promBredde / 2 + (baseMidt(0) + 8 - X0 - promBredde / 2) * byg
+    : baseMidt(Math.min(byg, m.mrna.length) - 1) + 8;
   if (polySynlig) polyG.setAttribute("transform", "translate(" + polyX + ",0)");
   /* Inde i polymerasen er strengene skilt ad — så der er ingen stigetrin */
   cStiger.forEach(function (l, i) {
@@ -1250,23 +1291,50 @@ function tegn() {
     l.setAttribute("visibility", inde ? "hidden" : "visible");
   });
 
-  /* — Ribosomet og tRNA'et — */
-  const laest = (t === 4) ? state.pProg : (t === 5 ? kodonTrin(m) : 0);
-  const aktivt = laest - 1;                     // det kodon, der lige er læst
+  /* — Ribosomet, tRNA'et og kæden. Hvert kodon er én cyklus (kodonCyklus):
+     ribosomet rykker frem, det gamle tRNA slipper, et nyt kommer ind med sin
+     aminosyre, og peptidbindingen knytter den til kæden. — */
+  const maks = (t === 4) ? riboTrin(m) : kodonTrin(m);
+  const q = (t === 4) ? state.pProg : (t === 5 ? maks : 0);
+  const cyk = kodonCyklus(q, maks);
+  const laest = cyk.laest;
+  const aktivt = laest - 1;                     // det kodon, ribosomet læser
+
   /* På det sidste trin bliver ribosomet stående på stopkodonet — der er ingen
      tRNA, der passer, og det er netop derfor kæden slippes. */
-  const riboSynlig = (t === 4 && laest > 0) || t === 5;
-  saetLag(lagRibosom, riboSynlig);
-  if (riboSynlig) {
-    riboG.setAttribute("transform", "translate(" + kodonMidt(Math.max(0, aktivt)) + ",0)");
+  if (q <= 0) {
+    /* uden startkodon står ribosomet forgæves ved genets begyndelse */
+    saetLag(lagRibosom, t === 5 ? 1 : 0);
+    riboG.setAttribute("transform", "translate(" + kodonMidt(0) + ",0)");
+  } else if (cyk.k === 0) {
+    const p = klem(cyk.f / FASE.ribo);
+    saetLag(lagRibosom, p);
+    riboG.setAttribute("transform", "translate(" + kodonMidt(0) + "," + (-18 * (1 - ud(p))) + ")");
+  } else {
+    const p = glat(klem(cyk.f / FASE.ribo));
+    saetLag(lagRibosom, 1);
+    riboG.setAttribute("transform",
+      "translate(" + (kodonMidt(cyk.k - 1) + (kodonMidt(cyk.k) - kodonMidt(cyk.k - 1)) * p) + ",0)");
   }
 
-  const stopHer = (aktivt >= 0 && aktivt === m.stopIdx);
-  const trnaSynlig = t === 4 && aktivt >= 0 && !stopHer && m.start;
-  saetLag(lagTrna, trnaSynlig);
-  if (trnaSynlig) {
-    trnaG.setAttribute("transform", "translate(" + kodonMidt(aktivt) + ",0)");
-    const kodon = m.kodoner[aktivt];
+  /* Højst ét tRNA ad gangen: det gamle er ude, før det nye kommer ind. */
+  let trnaK = -1, dx = 0, dy = 0, trnaInd = 0;
+  if (t === 4 && m.start && q > 0) {
+    if (cyk.f < FASE.ribo) {
+      const forrige = cyk.k - 1;
+      if (forrige >= 0 && forrige !== m.stopIdx) {
+        const p = klem(cyk.f / FASE.slip);
+        trnaK = forrige; dx = -40 * ud(p); trnaInd = 1 - p;
+      }
+    } else if (cyk.k !== m.stopIdx) {
+      const p = ud(klem((cyk.f - FASE.ribo) / (FASE.ind - FASE.ribo)));
+      trnaK = cyk.k; dx = 55 * (1 - p); dy = 30 * (1 - p); trnaInd = klem(p / 0.5);
+    }
+  }
+  saetLag(lagTrna, trnaInd);
+  if (trnaK >= 0) {
+    trnaG.setAttribute("transform", "translate(" + (kodonMidt(trnaK) + dx) + "," + dy + ")");
+    const kodon = m.kodoner[trnaK];
     for (let i = 0; i < 3; i++) {
       const a = KOMPL_RNA[kodon[i]];
       cAnti[i].txt.textContent = a;
@@ -1281,14 +1349,26 @@ function tegn() {
   for (let k = 0; k < ANTAL_KODONER; k++) {
     const p = perler[k];
     let vis = false, erStop = false, txt = "";
+    let fx = 0, fy = 0, ind = 1, binding = 1;
     if (!m.start && k === 0 && t >= 4) {
       vis = true; erStop = true; txt = "INGEN START";
     } else if (m.start && k < laest) {
       vis = true;
       if (k === m.stopIdx) { erStop = true; txt = "STOP"; }
       else { txt = m.as[k]; }
+      if (t === 4 && k === cyk.k && cyk.f < 1) {
+        const f = cyk.f;
+        if (erStop) {
+          ind = klem((f - FASE.ribo) / (FASE.ind - FASE.ribo));
+        } else {
+          /* aminosyren sidder på tRNA'et og kommer ind sammen med det */
+          fx = dx; fy = dy; ind = trnaInd;
+        }
+        binding = klem((f - FASE.ind) / (FASE.bind - FASE.ind));
+      }
     }
     p.g.setAttribute("visibility", vis ? "visible" : "hidden");
+    saetFlyt(p.g, fx, fy, ind);
     p.perle.setAttribute("visibility", vis && !erStop ? "visible" : "hidden");
     p.stop.setAttribute("visibility", erStop ? "visible" : "hidden");
     p.stop.setAttribute("width", txt === "INGEN START" ? 88 : 54);
@@ -1300,8 +1380,12 @@ function tegn() {
     p.ring.setAttribute("visibility", aendret ? "visible" : "hidden");
     p.g.setAttribute("aria-label", vis ? (erStop ? txt : "Aminosyre " + kodonTilNavn(m.kodoner[k])) : "");
     if (k > 0) {
-      const forbundet = m.start && k < laest && k <= (m.stopIdx < 0 ? 99 : m.stopIdx);
-      kaedeLinjer[k - 1].setAttribute("visibility", forbundet ? "visible" : "hidden");
+      const forbundet = m.start && k < laest && k <= (m.stopIdx < 0 ? 99 : m.stopIdx) && binding > 0;
+      const linje = kaedeLinjer[k - 1];
+      linje.setAttribute("visibility", forbundet ? "visible" : "hidden");
+      /* peptidbindingen trækkes fra kæden hen til den nye aminosyre */
+      const x1 = kodonMidt(k - 1) + 19;
+      linje.setAttribute("x2", x1 + (kodonMidt(k) - 19 - x1) * glat(binding));
     }
   }
 
@@ -1327,39 +1411,76 @@ function opdaterInstrumenter(vist, laest, m) {
    5. Trinnene
    ========================================================================== */
 
-let ur = null;
-function stopUr() { if (ur) { clearTimeout(ur); ur = null; } }
+/* --------------------------------------------------------------------------
+   Koreografi — det nye i et trin tegnes i den rækkefølge, det sker.
+   saetTid(n, t) viser trin n, t sekunder inde i trinnet. Den er en ren
+   funktion af (n, t) og genet: samme tal giver altid samme billede.
+   t = Infinity er trinnets færdige billede. Tempo-skyderen bestemmer, hvor
+   hurtigt t løber.
+   -------------------------------------------------------------------------- */
 
-/* Transkriptionen og translationen kører af sig selv, når man kommer til
-   trinnet. Tempoet styres af skyderen. */
-function afspil() {
-  stopUr();
-  const t = state.trin;
-  if (t === 2) {
-    state.tProg = 0;
-    tegn();
-    const tik = function () {
-      state.tProg++;
-      tegn();
-      if (state.tProg < nu.mrna.length) ur = setTimeout(tik, 210 / state.tempo);
-      else { ur = null; sig("Transkriptionen er færdig. mRNA'et er 24 baser langt."); }
-    };
-    ur = setTimeout(tik, 420 / state.tempo);
-  } else if (t === 4) {
-    state.pProg = 0;
-    tegn();
-    const maks = kodonTrin(nu);
-    const tik = function () {
-      state.pProg++;
-      tegn();
-      if (state.pProg < maks) ur = setTimeout(tik, 950 / state.tempo);
-      else { ur = null; sig("Translationen er færdig. Proteinet er " + nu.as.length + " aminosyrer langt."); }
-    };
-    ur = setTimeout(tik, 500 / state.tempo);
-  } else if (t === 3) {
-    /* mRNA'et glider ud gennem membranen — ren overgang, intet at tælle */
-    tegn();
+const KOREO = {
+  2: { start: 0.45, enhed: 0.21 },   // polymerasen toner frem, så én base ad gangen
+  3: { start: 0,    enhed: 1.1 },    // mRNA'et glider ud af kernen
+  4: { start: 0.5,  enhed: 0.95 }    // én cyklus pr. kodon
+};
+
+function antalEnheder(n) {
+  if (n === 2) return nu.mrna.length;
+  if (n === 4) return riboTrin(nu);
+  return 1;
+}
+function koreoSlut(n) {
+  const k = KOREO[n];
+  return k ? k.start + antalEnheder(n) * k.enhed : 0;
+}
+
+function saetTid(n, t) {
+  const k = KOREO[n];
+  const x = k ? Math.min(antalEnheder(n), Math.max(0, (t - k.start) / k.enhed)) : 0;
+  if (n === 2) {
+    state.polyInd = klem(t / 0.35);
+    state.tProg = x;
+  } else if (n === 3) {
+    state.udProg = x;
+  } else if (n === 4) {
+    state.pProg = x;
   }
+  tegnDispatch();
+}
+
+/* Med reduceret bevægelse springer billedet fra hvilestilling til
+   hvilestilling — én base eller ét kodon ad gangen — uden at glide. */
+function hak(n, t) {
+  const k = KOREO[n];
+  if (t < k.start) return k.start;
+  return k.start + Math.floor((t - k.start) / k.enhed) * k.enhed;
+}
+
+const REDUCER = window.matchMedia("(prefers-reduced-motion: reduce)");
+let raf = 0;
+function stopAfspil() { cancelAnimationFrame(raf); raf = 0; }
+
+function afspil() {
+  stopAfspil();
+  const n = state.trin;
+  const slut = koreoSlut(n);
+  if (!slut) { saetTid(n, Infinity); return; }
+  let t = 0, sidst = null;
+  saetTid(n, 0);
+  raf = requestAnimationFrame(function ramme(tid) {
+    if (sidst !== null) t += (tid - sidst) / 1000 * state.tempo;
+    sidst = tid;
+    if (t >= slut) {
+      raf = 0;
+      saetTid(n, Infinity);
+      if (n === 2) sig("Transkriptionen er færdig. mRNA'et er 24 baser langt.");
+      if (n === 4) sig("Translationen er færdig. Proteinet er " + nu.as.length + " aminosyrer langt.");
+      return;
+    }
+    saetTid(n, REDUCER.matches ? hak(n, t) : t);
+    raf = requestAnimationFrame(ramme);
+  });
 }
 
 /* Skærmlæseren skal ikke have besked om de tilstande, vi kigger forbi,
@@ -1370,13 +1491,16 @@ function sig(txt) { if (!maaler) $("cdStatus").textContent = txt; }
 /* stille = true bruges kun, når højden måles: så skal hverken adresselinjen,
    skærmlæseren eller afspilningen have besked om de trin, vi kigger forbi. */
 function visTrin(n, stille) {
+  const fra = state.trin;
   state.trin = Math.min(Math.max(n, 1), TRIN.length);
   const t = TRIN[state.trin - 1];
 
-  if (!stille) stopUr();
+  if (!stille) stopAfspil();
   /* Alt før det aktuelle trin står færdigt */
   state.tProg = state.trin === 1 ? 0 : nu.mrna.length;
-  state.pProg = state.trin >= 4 ? kodonTrin(nu) : 0;
+  state.pProg = state.trin >= 4 ? riboTrin(nu) : 0;
+  state.polyInd = 1;
+  state.udProg = 1;
 
   const tael = "Trin " + state.trin + " af " + TRIN.length;
   $("cdTael").textContent = tael;
@@ -1406,7 +1530,7 @@ function visTrin(n, stille) {
   }
   gaugeDts[3].textContent = erOev ? "Fejl" : "Genet";
 
-  $("cdAfspil").disabled = !(state.trin === 2 || state.trin === 4);
+  $("cdAfspil").disabled = !KOREO[state.trin];
 
   $("cdForrige").disabled = state.trin === 1;
   const naeste = $("cdNaeste");
@@ -1421,7 +1545,9 @@ function visTrin(n, stille) {
 
   if (stille) { tegnDispatch(); return; }
 
-  if (state.trin === 2 || state.trin === 4) afspil(); else tegnDispatch();
+  /* Ét trin frem tegnes i årsagsrækkefølge; alle andre spring — og
+     reduceret bevægelse — viser trinnet færdigt med det samme. */
+  if (state.trin === fra + 1 && !REDUCER.matches) afspil(); else tegnDispatch();
 
   sig(tael + ": " + t.overskrift + ". " + t.kort);
   if (location.hash !== "#trin=" + state.trin) {
@@ -1448,7 +1574,8 @@ function laasRammehojde() {
     rigBody.style.minHeight = "";
     return;
   }
-  const gemtTrin = state.trin, gemtT = state.tProg, gemtP = state.pProg;
+  const gemtTrin = state.trin, gemtT = state.tProg, gemtP = state.pProg,
+        gemtPoly = state.polyInd, gemtUd = state.udProg;
   maaler = true;
   rigBody.style.minHeight = "0px";
   let hojest = 0;
@@ -1501,6 +1628,7 @@ function laasRammehojde() {
   }
   visTrin(gemtTrin, true);          /* sætter også mutationsteksten på plads igen */
   state.tProg = gemtT; state.pProg = gemtP;
+  state.polyInd = gemtPoly; state.udProg = gemtUd;
   tegnDispatch();
   rigBody.style.minHeight = hojest + "px";
   maaler = false;
@@ -1589,10 +1717,12 @@ function saetBase(i, ny) {
   nu = afled(state.kodende);
   $("cdNulstilGen").disabled = state.muteret < 0;
 
-  /* Kæden regnes forfra med det nye gen: står vi i et trin med afspilning,
-     kører det igen, ellers vises resultatet med det samme. */
+  /* Kæden regnes forfra med det nye gen, og resultatet vises med det samme —
+     også hvis trinnet var ved at blive tegnet. */
+  stopAfspil();
+  state.polyInd = 1; state.udProg = 1;
   state.tProg = state.trin === 1 ? 0 : nu.mrna.length;
-  state.pProg = state.trin >= 4 ? kodonTrin(nu) : 0;
+  state.pProg = state.trin >= 4 ? riboTrin(nu) : 0;
   if (state.trin === 5) tegnMutation();
   tegn();
 }
@@ -1602,8 +1732,10 @@ function nulstilGen() {
   state.muteret = -1;
   nu = afled(state.kodende);
   $("cdNulstilGen").disabled = true;
+  stopAfspil();
+  state.polyInd = 1; state.udProg = 1;
   state.tProg = state.trin === 1 ? 0 : nu.mrna.length;
-  state.pProg = state.trin >= 4 ? kodonTrin(nu) : 0;
+  state.pProg = state.trin >= 4 ? riboTrin(nu) : 0;
   if (state.trin === 5) tegnMutation();
   tegn();
   sig("Genet er sat tilbage til udgangspunktet.");
@@ -2181,7 +2313,6 @@ if (/mode=teach|projektor=1/.test(location.search)) {
 
 visTrin(startTrin());
 laasRammehojde();
-if (state.trin === 2 || state.trin === 4) afspil();
 
 /* Skrifterne hentes udefra: er de ikke nået frem ved første optegning, er
    linjerne brudt anderledes, end de bliver bagefter — så mål én gang til. */

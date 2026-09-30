@@ -13,9 +13,6 @@ det nye i et trin tegnes frem i den rækkefølge, det sker, når man går ét tr
 frem. Figurens færdige billeder og modellen skal være uændrede, og med
 reduceret bevægelse vises trinnene færdige.
 
-- `biologi/transkription.html` — polymerasen glider hen ad DNA'et, og mRNA'et
-  vokser frem base for base; i translationen læser ribosomet ét kodon ad gangen,
-  og aminosyrekæden bygges på.
 - `geografi/pladegraenser.html` — glid mellem grænsetyperne, så det ses, at det
   er samme plader med en anden bevægelsesretning.
 - `geografi/TermiskTryk3.html` — har allerede bløde overgange i «Trin for trin»;
