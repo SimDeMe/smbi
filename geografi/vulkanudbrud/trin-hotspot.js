@@ -38,7 +38,7 @@ export default [
     visning: 'snit', lupe: { z: 3 },
     styr: { start: 'hvile', overtryk: 6, loft: 12 },
     sammenlign: c => [['Basaltisk · her', c.magma], ['Andesitisk · stratovulkan', strato.magma]],
-    tekst: c => `<p>Magmaet samles i et kammer kun ${tal(c.kammer.top)}–${tal(c.kammer.bund)} km under toppen — altså inde i selve vulkanen, der rejser sig ca. ${hel(c.type.bjerg.hoejde)} km fra havbunden. Det er stadig <b>basaltisk</b> og tyndtflydende og indeholder kun ca. ${tal(c.magma.vand)} vægt-% vand.</p>
+    tekst: c => `<p>Vulkanen er ca. ${hel(c.type.bjerg.hoejde)} km størknet lava oven på havbunden (den stiplede linje). Magmaet samles i et kammer kun ${tal(c.kammer.top)}–${tal(c.kammer.bund)} km under toppen — inde i selve vulkanen og højere oppe end havbunden omkring den. Det er stadig <b>basaltisk</b> og tyndtflydende med kun ca. ${tal(c.magma.vand)} vægt-% vand.</p>
 <p>Målt fra havbunden er Mauna Kea og Mauna Loa på Hawaii over 9 km høje — højere end Mount Everest.</p>`
   },
   {

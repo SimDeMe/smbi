@@ -38,7 +38,7 @@ const tilst = { fase: 'hvile', overtryk: START_OVERTRYK, brud: BRUD, front: 0, i
 
 let koerer = !roligt, foelger = false, sidst = 0;
 let lupeZ = 7;                             // km — lupens dybde; skyderen viser den afrundet
-let modus = 'frit', trinvis = null;
+let modus = 'trin', trinvis = null;
 
 // ── Skarpt billede på skærme med høj pixeltæthed ───────
 function tilpasKanvas(){
@@ -463,11 +463,15 @@ function laesTilstand(){
   if (isFinite(vand)) inpVand.value = Math.max(+inpVand.min, Math.min(+inpVand.max, vand));
   if (isFinite(dybde)) inpDybde.value = Math.max(0, Math.min(S.Z_MAKS, dybde));
   lupeZ = +inpDybde.value;
-  if (trinvis && isFinite(trin)){
-    trinvis.vis(trin - 1, true);
+  // Siden åbner i "trin for trin". Kun en adresse, der er gemt i "frit"
+  // (den har vand eller dybde med), åbner dér.
+  const frit = !isFinite(trin) && (p.has('vand') || p.has('dybde'));
+  if (trinvis && !frit){
+    trinvis.vis(isFinite(trin) ? trin - 1 : 0, true);
     saetModus('trin');
-  }
+  } else saetModus('frit');
   hashSidste = tilstandStreng();
+  clearTimeout(hashTimer);                 // adressen røres først, når man selv gør noget
 }
 
 // ── Start ──────────────────────────────────────────────

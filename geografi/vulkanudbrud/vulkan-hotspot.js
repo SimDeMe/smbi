@@ -11,7 +11,10 @@
    udbruddene er rolige: lavafontæner, lavasøer og lavastrømme, der kan
    løbe helt ud i havet. Formen er et skjold — en hotspot-vulkan er altså
    også en skjoldvulkan. Den rejser sig fra havbunden ca. 5 km nede, og
-   magmakammeret ligger inde i selve vulkanen.
+   magmakammeret ligger inde i selve vulkanen — højere oppe end havbunden
+   omkring den. Det ser forkert ud, hvis man læser bjerget som havbund, så
+   figuren viser, at det er lava hele vejen ned: lagene går helt til foden,
+   og en stiplet linje trækker havbundens niveau ind under vulkanen.
 
    Tværsnittet er Kīlauea: toppen ligger ca. 1,2 km over havet, og
    kammeret ca. 2–4 km under toppen.
@@ -57,16 +60,24 @@ function tegnBjerg(c, geo){
   c.fillStyle = '#4B4441';
   c.fill();
   c.clip();
-  for (let i = 1; i < 22; i++){
+  // Lava lag på lag, helt ned til havbunden — svagere i dybden
+  const lag = Math.ceil((yFod - geo.Y_KRATER) / 3);
+  for (let i = 1; i < lag; i++){
     c.beginPath();
     for (let x = x0; x <= x1; x += 3){
       const y = overflade(x, geo) + i * 3;
       if (x === x0) c.moveTo(x, y); else c.lineTo(x, y);
     }
+    c.globalAlpha = i < 22 ? 1 : 0.4;
     c.strokeStyle = i % 2 ? '#6C625C' : '#322C2A';
     c.lineWidth = 1;
     c.stroke();
   }
+  c.restore();
+  // havbundens niveau, trukket ind under vulkanen
+  c.save();
+  c.strokeStyle = 'rgba(255,246,224,.8)'; c.lineWidth = 1.6; c.setLineDash([7, 5]);
+  c.beginPath(); c.moveTo(x0, yFod); c.lineTo(x1, yFod); c.stroke();
   c.restore();
   // havniveauet
   c.save();
@@ -76,11 +87,12 @@ function tegnBjerg(c, geo){
 }
 
 const udbrud = lavUdbrud({ overflade, radius: BJERG.radius, hav: havY });
-// Mærkaterne for havet og havbunden står fast; udbruddets egne kommer oveni
+// Mærkaterne for havet, havbunden og selve bjerget står fast; udbruddets egne kommer oveni
 const udbrudsMaerkater = udbrud.maerkater;
 udbrud.maerkater = (geo, tilst) => [
   { tekst: 'HAVNIVEAU', x: 96, y: havY(geo) - 6 },
   { tekst: 'HAVBUND', enhed: 'ca. 5 km under havet', x: 150, y: geo.yZ(BJERG.hoejde) - 8 },
+  { tekst: 'LAVA FRA TIDLIGERE UDBRUD', x: geo.XC + 150, y: geo.yZ(BJERG.hoejde - 0.9) },
   ...udbrudsMaerkater(geo, tilst)
 ];
 
@@ -90,7 +102,7 @@ export default {
   kort: 'Basaltisk magma · hotspot midt på en plade',
   eksempler: 'Kīlauea og Mauna Loa (Hawaii)',
   trinTitel: 'Fra kappediapiren til lavastrømmen i syv trin',
-  beskrivelse: 'Tværsnit gennem en hotspot-vulkan som Kīlauea på Hawaii, fra krateret og 12 km ned. Vulkanen rejser sig fra havbunden ca. 6 km under toppen, og havniveauet ligger 1,2 km under toppen. Magma kommer nedefra gennem en fødegang og samles i et magmakammer inde i selve vulkanen. Under et udbrud slipper gassen ud i en lavafontæne, og lavastrømme løber ned ad flankerne og ud i havet. En stiplet linje i kanalen viser, hvor gasboblerne begynder at dannes. Træk op og ned i figuren for at flytte lupen.',
+  beskrivelse: 'Tværsnit gennem en hotspot-vulkan som Kīlauea på Hawaii, fra krateret og 12 km ned. Vulkanen er bygget af lava lag på lag og rejser sig fra havbunden ca. 6 km under toppen; en stiplet linje viser havbundens niveau under vulkanen, og havniveauet ligger 1,2 km under toppen. Magma kommer nedefra gennem en fødegang og samles i et magmakammer inde i selve vulkanen, højere oppe end havbunden omkring den. Under et udbrud slipper gassen ud i en lavafontæne, og lavastrømme løber ned ad flankerne og ud i havet. En stiplet linje i kanalen viser, hvor gasboblerne begynder at dannes. Træk op og ned i figuren for at flytte lupen.',
   magma: {
     navn: 'Basaltisk',
     SiO2: 50,            // vægt-%
