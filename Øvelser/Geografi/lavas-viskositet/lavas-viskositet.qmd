@@ -17,13 +17,13 @@ Lava er smeltet sten, der bryder ud fra en vulkan. Nogle vulkaner udbryder lava,
 
 ## Baggrund
 
-En væskes sejhed kaldes dens **viskositet**. Jo større viskositet en væske har, jo mere tyktflydende er den, og jo langsommere flyder den ned ad en skråning. Vand har en lille viskositet, sirup en stor.
+En væskes sejhed kaldes dens viskositet. Jo større viskositet en væske har, jo mere tyktflydende er den, og jo langsommere flyder den ned ad en skråning. Vand har en lille viskositet, sirup en stor.
 
 Lava er en væske ligesom dem, I undersøger. Når den flyder ud af vulkanen, køler den af og størkner til sidst til fast sten. Hvor langt den når, inden den størkner, afhænger blandt andet af dens viskositet.
 
 ## Hypotese
 
-Sæt de fire væsker i rækkefølge fra den mest tyndtflydende til den mest tyktflydende, **inden** I måler. Begrund kort jeres bud.
+Sæt de fire væsker i rækkefølge fra den mest tyndtflydende til den mest tyktflydende, inden I måler. Begrund kort jeres bud.
 
 Mest tyndtflydende \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ mest tyktflydende
 
@@ -41,8 +41,8 @@ Mest tyndtflydende \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ < \_\_\_\_\_\_\_\_\_\_\_\_\_
 
 ## Fremgangsmåde
 
-1. Tegn med linealen en vandret streg øverst på papiret, og skriv 0 cm ved den. Det er **startlinjen**.
-2. Mål 25 cm ned fra startlinjen, og tegn endnu en vandret streg. Skriv 25 cm ved den. Det er **målstregen**.
+1. Tegn med linealen en vandret streg øverst på papiret, og skriv 0 cm ved den. Det er startlinjen.
+2. Mål 25 cm ned fra startlinjen, og tegn endnu en vandret streg. Skriv 25 cm ved den. Det er målstregen.
 3. Tape papiret fast på skærebrættet. Stil brættet skråt op ad klodsen med den nederste ende i bakken (@fig-opstilling). Brættet skal have samme hældning i hele forsøget.
 4. Kom en skefuld af den første væske på startlinjen, og start stopuret i samme øjeblik.
 5. Stop uret, når væskens forreste kant når målstregen. Skriv tiden i @tbl-1.

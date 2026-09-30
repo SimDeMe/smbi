@@ -129,12 +129,12 @@ def tsunami():
 # ------------------------------------------------------------- opstilling.svg
 def opstilling():
     ud = [
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" '
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 430" width="640" height="430" role="img" '
         'aria-label="Opstillingen i to trin: karret løftes i den ene ende, og når det sættes ned, løber en bølge '
         'frem og tilbage mellem enderne, mens man tager tid på fem banelængder">',
-        '  <title>Opstillingen: vandkar, der løftes og sættes ned</title>',
-        '  <desc>Øverst står karret med den venstre ende A løftet ca. 5 cm på en klods. Vandet samler sig i den højre '
-        'ende B. Nederst er karret sat ned igen. En bølge starter i ende B og løber mod A, bliver kastet tilbage, og '
+        '  <title>Opstillingen: bedroller med vand, der løftes og sættes ned</title>',
+        '  <desc>Øverst står karret med den venstre ende A løftet ca. 5 cm på en klods. Vandoverfladen er stadig '
+        'vandret, så vandet er dybest i den højre ende B og lavest i ende A. Nederst er karret sat ned igen. En bølge starter i ende B og løber mod A, bliver kastet tilbage, og '
         'sådan fortsætter den. Karrets længde L er én banelængde, og vanddybden d måles med tommestokken. Fem pile '
         'viser de fem banelængder, man tager tid på: B til A, A til B, B til A, A til B og B til A.</desc>',
         markoerer('o'),
@@ -144,12 +144,12 @@ def opstilling():
     # --- trin 1: karret løftes
     ud.append(tekst(20, 22, '1 · Løft ende A ca. 5 cm, og vent, til vandet står stille', 13, weight=700))
     bord = 150
-    x0, x1, loeft, h = 90, 560, 24, 46
+    # målestok: løftet på 24 px er 5 cm; karret er ca. 15 cm højt, vandet 5 cm dybt
+    x0, x1, loeft, h, d = 90, 560, 24, 72, 24
     yb = lambda x: bord - loeft + (x - x0) / (x1 - x0) * loeft     # karrets bund
-    niveau = bord - 12
-    xv = x0 + (niveau - (bord - loeft)) / loeft * (x1 - x0)
-    ud.append(f'  <path d="M{xv:.1f} {niveau} L{x1} {niveau} L{x1} {bord} Z" fill="{VAND}"/>')
-    ud.append(f'  <path d="M{xv:.1f} {niveau} H{x1}" stroke="{VANDKANT}" stroke-width="1.4"/>')
+    niveau = bord - d - loeft / 2        # vandret overflade, samme rumfang vand
+    ud.append(f'  <path d="M{x0} {niveau} L{x1} {niveau} L{x1} {bord} L{x0} {bord - loeft} Z" fill="{VAND}"/>')
+    ud.append(f'  <path d="M{x0} {niveau} H{x1}" stroke="{VANDKANT}" stroke-width="1.4"/>')
     ud.append(f'  <path d="M{x0} {yb(x0) - h} L{x0} {yb(x0)} L{x1} {yb(x1)} L{x1} {yb(x1) - h}" fill="none" '
               f'stroke="{INK}" stroke-width="2.4" stroke-linejoin="round"/>')
     ud.append(f'  <rect x="{x0 - 4}" y="{yb(x0) + 1:.1f}" width="44" height="{bord - yb(x0) - 1:.1f}" fill="{LAND}" stroke="{INK}" stroke-width="1.6"/>')
@@ -158,14 +158,14 @@ def opstilling():
     ud.append(tekst(62, yb(x0) + 16, 'ca. 5 cm', 12, anchor='end'))
     ud.append(tekst(x0, yb(x0) - h - 8, 'A', 14, weight=700, anchor='middle'))
     ud.append(tekst(x1, yb(x1) - h - 8, 'B', 14, weight=700, anchor='middle'))
-    ud.append(tekst(330, bord + 20, 'vandet samler sig i ende B', 12, GRAA, 'middle'))
+    ud.append(tekst(330, bord + 20, 'overfladen er stadig vandret — vandet er dybest i ende B', 12, GRAA, 'middle'))
 
     # --- trin 2: karret sat ned
     oy = 186
     ud.append(tekst(20, oy + 22, '2 · Sæt karret ned — tag tid, mens bølgen løber fem banelængder', 13, weight=700))
-    bund = oy + 108
+    bund = oy + 130
     top = bund - h
-    s = bund - 14
+    s = bund - d
     bolge = [(x, s - 9 * math.exp(-((x - 470) / 26) ** 2)) for x in range(x0, x1 + 1, 2)]
     ud.append(f'  <path d="{sti(bolge)} L{x1} {bund} L{x0} {bund} Z" fill="{VAND}"/>')
     ud.append(f'  <path d="{sti(bolge)}" fill="none" stroke="{VANDKANT}" stroke-width="1.6"/>')
