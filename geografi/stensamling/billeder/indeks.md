@@ -14,7 +14,6 @@ samlingsnummeret på sedlen eller på den orange prik på stenen.
 | --- | --- | --- | --- | --- | --- |
 | `MA-01-granit-1.jpg` | Granit | «Granit (magm.)» | | IMG_0082 | |
 | `MA-05-peridotit-1.jpg` | Peridotit | ingen seddel | | IMG_0101 | Tre løse, grønne sten |
-| `MA-05-peridotit-2.jpg` | Peridotit? | ingen seddel | 23 (prik) | IMG_0094 | **Usikker.** Grøn olivin med mørke og rødbrune korn |
 | `MA-07-rhyolit-1.jpg` | Rhyolit | «Rhyolit (magm.)» | | IMG_0083 | |
 | `MA-09-basalt-1.jpg` | Basalt | «Basalt?» | | IMG_0085 | Spørgsmålstegnet står på sedlen |
 | `MA-10-obsidian-1.jpg` | Obsidian | ingen seddel | | IMG_0088 | |
@@ -28,6 +27,7 @@ samlingsnummeret på sedlen eller på den orange prik på stenen.
 | `MI-02-kalifeldspat-1.jpg` | Kalifeldspat | «Alkalifeldspat (kødfarvet)» | | IMG_0090 | |
 | `MI-02-kalifeldspat-2.jpg` | Kalifeldspat (mikroklin) | «Grå feldspat (mikroklin)» | samling 9 | IMG_0091 | |
 | `MI-06-hornblende-1.jpg` | Hornblende | «Hornblende» | klassesæt 7, samling 24(?) | IMG_0089 | Samlingsnummeret er utydeligt |
+| `MI-08-olivin-1.jpg` | Olivin | ingen seddel | 23 (prik) | IMG_0094 | Opgivet som olivin. Grønne olivinkorn med mørke og rødbrune korn imellem |
 | `MI-10-calcit-1.jpg` | Calcit | «Kalkspat» (trykt) | 15 (prik) | IMG_0099 | Med en klar dobbeltspat bagerst |
 | `MI-11-gips-1.jpg` | Gips | «Gips» | klassesæt 43 | IMG_0095 | |
 | `MI-11-gips-2.jpg` | Gips | «Gips (hvidt mineral)» | klassesæt 12 | IMG_0096 | |
