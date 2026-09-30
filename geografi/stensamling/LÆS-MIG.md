@@ -20,21 +20,36 @@ binder det hele sammen. En ny sten kræver kun en ny post i den rigtige datafil.
   Den er gruppens to bogstaver plus næste ledige nummer i gruppen. Et nummer
   **genbruges aldrig**, heller ikke når en post slettes. Så holder gamle
   links og etiketter.
-* **`nr`** er de numre, der står skrevet på de fysiske sten, fx
-  `nr:['17']` eller `nr:['17','42']`, hvis der er flere eksemplarer.
-  Står der intet nummer på stenen, er listen tom: `nr:[]`.
+* **`nr`** er de gamle numre, der står på stenene, på de orange prikker
+  eller på sedlerne i kasserne. De kommer fra to nummereringer, der ikke
+  har noget med hinanden at gøre, og som kun dækker en del af samlingen:
+
+  | System | Skrives | Stammer fra |
+  | --- | --- | --- |
+  | Gymnasiesamling | `'gymnasiesamling-2'` | gamle dokumenter om en «standard gymnasiesamling» («Samling nr. …» på sedlerne) |
+  | Klassesæt | `'klassesæt-13'` | ukendt baggrund («Klassesæt nr. …»; de orange prikker bruger samme numre) |
+
+  Skriv altid systemet med, for det samme tal kan stå på to forskellige
+  sten: 9 er stensalt i klassesættet, men kalifeldspat i
+  gymnasiesamlingen. Flere numre på samme post: `nr:['klassesæt-12','klassesæt-43']`.
+  Intet nummer: `nr:[]`. Numrene er kun en ekstra reference; det er
+  `kode`, der er samlingens egen.
 
 Man kan slå op på begge dele i søgefeltet (skriv og tryk Enter) og i
-adressen:
+adressen. Et bart tal finder stenen i alle systemer; peger det på flere,
+vises de i listen. Med systemet foran («klassesæt 13», «samling 2», «ks13»)
+er svaret entydigt.
 
 ```
-stensamling.html#sten=MA-09     samlingens kode
-stensamling.html?nr=17          nummeret på stenen — god til en QR-kode på etiketten
+stensamling.html#sten=MA-09             samlingens kode
+stensamling.html?nr=13                  alle sten med 13 på — god til en QR-kode
+stensamling.html?nr=klassesæt-13        kun klassesættets nr. 13
 stensamling.html?gruppe=metamorf&noegle=1
 ```
 
-Står det samme nummer på to poster, eller passer en kode ikke til sin
-gruppe, skriver siden en advarsel i browserens konsol.
+Står det samme nummer i samme system på to poster, kan et nummer ikke
+læses, eller passer en kode ikke til sin gruppe, skriver siden en advarsel
+i browserens konsol.
 
 ## En ny post
 
@@ -45,7 +60,7 @@ eller mangler, bliver bare ikke vist.
 {
   id:'basalt',              // små bogstaver uden æøå — bruges i links mellem poster
   kode:'MA-09',             // se ovenfor
-  nr:[],                    // numre skrevet på stenen
+  nr:[],                    // gamle numre, fx ['klassesæt-13'] — se ovenfor
   navn:'Basalt',
   andreNavne:['diabas'],
   type:'Dagbjergart · basisk',

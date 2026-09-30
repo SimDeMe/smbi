@@ -8,7 +8,7 @@
 
 export default [
   {
-    id:'kvarts', kode:'MI-01', nr:[],
+    id:'kvarts', kode:'MI-01', nr:['klassesæt-13'],
     navn:'Kvarts', andreNavne:['bjergkrystal','røgkvarts','ametyst'],
     type:'Silikat',
     kort:'Jordskorpens mest almindelige mineral — hårdt, glasglinsende og uden spaltning.',
@@ -27,7 +27,7 @@ export default [
     ]
   },
   {
-    id:'kalifeldspat', kode:'MI-02', nr:[],
+    id:'kalifeldspat', kode:'MI-02', nr:['gymnasiesamling-9'],
     navn:'Kalifeldspat', andreNavne:['ortoklas','mikroklin'],
     type:'Silikat',
     kort:'Den laksefarvede feldspat, der giver granit sin røde farve.',
@@ -94,7 +94,7 @@ export default [
     placering:'', billeder:[]
   },
   {
-    id:'hornblende', kode:'MI-06', nr:[],
+    id:'hornblende', kode:'MI-06', nr:['klassesæt-7'],
     navn:'Hornblende', andreNavne:['amfibol'],
     type:'Silikat · amfibol',
     kort:'Sort, stængelformet mineral med to spalteretninger i 124°.',
@@ -128,7 +128,7 @@ export default [
     placering:'', billeder:[]
   },
   {
-    id:'olivin', kode:'MI-08', nr:[],
+    id:'olivin', kode:'MI-08', nr:['klassesæt-23'],
     navn:'Olivin', andreNavne:['peridot','krysolit'],
     type:'Silikat',
     kort:'Olivengrønne, glasagtige korn — hovedmineralet i Jordens kappe.',
@@ -162,7 +162,7 @@ export default [
     placering:'', billeder:[]
   },
   {
-    id:'calcit', kode:'MI-10', nr:[],
+    id:'calcit', kode:'MI-10', nr:['klassesæt-15'],
     navn:'Calcit', andreNavne:['kalkspat','dobbeltspat'],
     type:'Karbonat',
     kort:'Kalkens mineral — bruser i syre og kløver i skæve terninger.',
@@ -180,7 +180,7 @@ export default [
     ]
   },
   {
-    id:'gips', kode:'MI-11', nr:[],
+    id:'gips', kode:'MI-11', nr:['klassesæt-12', 'klassesæt-43'],
     navn:'Gips', andreNavne:['alabast','marieglas','ørkenrose'],
     type:'Sulfat',
     kort:'Så blødt, at det kan ridses med en fingernegl.',
@@ -199,7 +199,7 @@ export default [
     ]
   },
   {
-    id:'halit', kode:'MI-12', nr:[],
+    id:'halit', kode:'MI-12', nr:['klassesæt-9', 'gymnasiesamling-2'],
     navn:'Halit', andreNavne:['stensalt','køkkensalt'],
     type:'Halogenid',
     kort:'Stensalt — kløver i terninger og smager salt.',

@@ -43,24 +43,62 @@ export function normKode(s){
   const m = String(s).trim().toUpperCase().match(/^([A-ZÆØÅ]{2})[\s\-]*0*(\d+)$/);
   return m ? m[1] + '-' + m[2].padStart(2, '0') : null;
 }
-const normNr = s => String(s).trim().toLowerCase().replace(/^(nr\.?|#)\s*/, '');
+/* Numrene på stenene stammer fra to gamle nummereringer, der ikke
+   har noget med hinanden at gøre. I data skrives systemet foran:
+   'klassesæt-13', 'gymnasiesamling-2'. Den samme værdi kan derfor
+   godt stå på to sten — 9 er stensalt i klassesættet, men
+   kalifeldspat i gymnasiesamlingen. */
+export const nummersystemer = [
+  {id:'klassesæt',       navn:'Klassesæt',       alias:['klassesæt','klassesaet','klassesat','ks']},
+  {id:'gymnasiesamling', navn:'Gymnasiesamling', alias:['gymnasiesamling','samling','gs']}
+];
 
-/* Slå en sten op på kode eller på nummeret skrevet på stenen. */
+/* «Klassesæt nr. 13», «ks13», «samling-2» og bare «13» → {system, tal}.
+   Uden system er `system` null og passer på alle systemer. */
+export function delNr(s){
+  const t = String(s).trim().toLowerCase().replace(/(^|\s)(nr\.?|#)\s*/g, ' ').trim();
+  const m = t.match(/^([a-zæøå]*)[\s\-.]*0*(\d+[a-z]?)$/);
+  if(!m) return null;
+  if(!m[1]) return {system:null, tal:m[2]};
+  const sys = nummersystemer.find(x => x.alias.includes(m[1]));
+  return sys ? {system:sys.id, tal:m[2]} : null;
+}
+
+export function visNr(v){
+  const d = delNr(v);
+  if(!d) return String(v);
+  const sys = nummersystemer.find(x => x.id === d.system);
+  return sys ? `${sys.navn} ${d.tal}` : d.tal;
+}
+
+/* Alle sten, som nummeret kan pege på. */
+export function findNr(s){
+  const q = delNr(s);
+  if(!q) return [];
+  return alle.filter(p => (p.nr || []).some(v => {
+    const d = delNr(v);
+    return d && d.tal === q.tal && (!q.system || !d.system || q.system === d.system);
+  }));
+}
+
+/* Slå en sten op på kode eller nummer. Peger nummeret på flere
+   sten, er svaret null — så viser søgningen dem i listen. */
 export function findKodeEllerNr(s){
   const k = normKode(s);
   if(k){ const p = alle.find(x => x.kode === k); if(p) return p; }
-  const n = normNr(s);
-  if(!n) return null;
-  return alle.find(x => (x.nr || []).some(v => normNr(v) === n)) || null;
+  const hits = findNr(s);
+  return hits.length === 1 ? hits[0] : null;
 }
 
-/* Fritekstsøgning: navn, andre navne, type og mineraler. */
+/* Fritekstsøgning: navn, andre navne, type, mineraler og numre. */
 export function soeg(tekst){
   const q = tekst.trim().toLowerCase();
   if(!q) return null;
-  const hit = findKodeEllerNr(q);
-  return alle.filter(p => p === hit || [
-    p.navn, p.kode, p.type, ...(p.andreNavne || []), ...(p.nr || []).map(String),
+  const kode = findKodeEllerNr(q), numre = findNr(q);
+  /* et bart tal er et nummer fra en sten — ikke «09» i MA-09 */
+  if(/^\d+$/.test(q)) return numre;
+  return alle.filter(p => p === kode || numre.includes(p) || [
+    p.navn, p.kode, p.type, ...(p.andreNavne || []),
     ...(p.mineraler || []).map(m => m.id ? (efterId[m.id]?.navn || m.id) : m.navn)
   ].some(t => t && String(t).toLowerCase().includes(q)));
 }
@@ -76,7 +114,9 @@ export function soeg(tekst){
     if(normKode(p.kode) !== p.kode || !p.kode.startsWith(g.prefiks + '-'))
       console.warn('Stensamling: koden passer ikke til gruppen', g.prefiks, '→', p.kode);
     for(const n of p.nr || []){
-      const k = normNr(n);
+      const d = delNr(n);
+      if(!d){ console.warn('Stensamling: nummeret kan ikke læses:', n, 'på', p.kode); continue; }
+      const k = d.system + '-' + d.tal;
       if(numre.has(k)) console.warn('Stensamling: nummer', n, 'står både på', numre.get(k), 'og', p.kode);
       numre.set(k, p.kode);
     }

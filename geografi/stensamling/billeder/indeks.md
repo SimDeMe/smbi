@@ -5,8 +5,10 @@ datafilerne (se `../LÆS-MIG.md`). Sten uden post har kun `<navn>-<n>.jpg`. Skal
 (4:3), JPEG under 300 kB, uden EXIF-data. Originalerne (`IMG_0082`–`IMG_0101`)
 ligger i commit `5233f0a`.
 
-«Etiket» er det, der står på sedlen i kassen; «Nr.» er klassesæt- eller
-samlingsnummeret på sedlen eller på den orange prik på stenen.
+«Etiket» er det, der står på sedlen i kassen. «Nr.» er klassesætnummeret
+eller gymnasiesamlingens nummer («Samling nr.») på sedlen eller på den
+orange prik på stenen. Prikkerne bruger klassesættets numre, hvor begge
+dele findes. Numrene er skrevet ind i postens `nr`.
 
 ## Magmatiske bjergarter
 
@@ -25,13 +27,13 @@ samlingsnummeret på sedlen eller på den orange prik på stenen.
 | `MI-01-kvarts-1.jpg` | Kvarts | «Kvartskrystal» (trykt) | | IMG_0097 | Mælkekvarts |
 | `MI-01-kvarts-2.jpg` | Kvarts | «Kvarts» | klassesæt 13 | IMG_0098 | |
 | `MI-02-kalifeldspat-1.jpg` | Kalifeldspat | «Alkalifeldspat (kødfarvet)» | | IMG_0090 | |
-| `MI-02-kalifeldspat-2.jpg` | Kalifeldspat (mikroklin) | «Grå feldspat (mikroklin)» | samling 9 | IMG_0091 | |
-| `MI-06-hornblende-1.jpg` | Hornblende | «Hornblende» | klassesæt 7, samling 24(?) | IMG_0089 | Samlingsnummeret er utydeligt |
-| `MI-08-olivin-1.jpg` | Olivin | ingen seddel | 23 (prik) | IMG_0094 | Opgivet som olivin. Grønne olivinkorn med mørke og rødbrune korn imellem |
-| `MI-10-calcit-1.jpg` | Calcit | «Kalkspat» (trykt) | 15 (prik) | IMG_0099 | Med en klar dobbeltspat bagerst |
+| `MI-02-kalifeldspat-2.jpg` | Kalifeldspat (mikroklin) | «Grå feldspat (mikroklin)» | gymnasiesamling 9 | IMG_0091 | |
+| `MI-06-hornblende-1.jpg` | Hornblende | «Hornblende» | klassesæt 7, gymnasiesamling 24(?) | IMG_0089 | Gymnasiesamlingens nummer er utydeligt og ikke skrevet ind |
+| `MI-08-olivin-1.jpg` | Olivin | ingen seddel | klassesæt 23 (prik) | IMG_0094 | Opgivet som olivin. Grønne olivinkorn med mørke og rødbrune korn imellem |
+| `MI-10-calcit-1.jpg` | Calcit | «Kalkspat» (trykt) | klassesæt 15 (prik) | IMG_0099 | Med en klar dobbeltspat bagerst |
 | `MI-11-gips-1.jpg` | Gips | «Gips» | klassesæt 43 | IMG_0095 | |
 | `MI-11-gips-2.jpg` | Gips | «Gips (hvidt mineral)» | klassesæt 12 | IMG_0096 | |
-| `MI-12-halit-1.jpg` | Halit | «Stensalt» | klassesæt 9, samling 2 | IMG_0093 | |
+| `MI-12-halit-1.jpg` | Halit | «Stensalt» | klassesæt 9, gymnasiesamling 2 | IMG_0093 | |
 | `MI-16-jernspat-1.jpg` | Jernspat (siderit) | «Jernspat» (trykt) | | IMG_0092 | Nummeret på den håndskrevne seddel er skjult |
 
 ## Metamorfe bjergarter

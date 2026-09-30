@@ -6,7 +6,7 @@
    tegning.js tegner en sten, der endnu ikke er fotograferet.
    ───────────────────────────────────────────────────────── */
 
-import {grupper, gruppe, alle, efterId, bjergarterMed, findKodeEllerNr, soeg} from './samling.js';
+import {grupper, gruppe, alle, efterId, bjergarterMed, findKodeEllerNr, soeg, delNr, visNr} from './samling.js';
 import {spoergsmaal, passer, antalPrSvar} from './noegle.js';
 import {tegnSten} from './tegning.js';
 
@@ -92,7 +92,10 @@ function figur(post){
 }
 
 function kort(p){
-  const nr = p.nr?.length ? `<span class="kort-nr" title="Nummer på stenen">nr. ${esc(p.nr.join(', '))}</span>` : '';
+  /* på kortet kun tallet, som det står på stenen — systemet står i detaljen */
+  const nr = p.nr?.length
+    ? `<span class="kort-nr" title="${esc(p.nr.map(visNr).join(', '))}">nr. ${esc(p.nr.map(v => delNr(v)?.tal ?? v).join(', '))}</span>`
+    : '';
   return `<li><button type="button" class="kort" data-id="${p.id}" style="--gf:${gruppe[p.gruppe].flade}"
       aria-pressed="${tilstand.valgt === p}">
     <span class="kort-fig">${figur(p)}</span>
@@ -198,8 +201,8 @@ function tegnDetalje(){
     : '';
 
   const nr = p.nr?.length
-    ? `<span class="d-pille"><span class="mono">Nr. på stenen</span> <b>${esc(p.nr.join(', '))}</b></span>`
-    : `<span class="d-pille tom"><span class="mono">Intet nr. på stenen endnu</span></span>`;
+    ? p.nr.map(v => `<span class="d-pille"><span class="mono">Nr.</span> <b>${esc(visNr(v))}</b></span>`).join('')
+    : `<span class="d-pille tom"><span class="mono">Intet nr. registreret</span></span>`;
   const sted = p.placering
     ? `<span class="d-pille"><span class="mono">Står</span> <b>${esc(p.placering)}</b></span>`
     : `<span class="d-pille tom"><span class="mono">Placering ikke registreret</span></span>`;
@@ -276,6 +279,8 @@ function laesAdresse(){
   /* ?nr=17 er tænkt til en QR-kode på stenens etiket */
   const s = p.get('sten') || p.get('nr');
   tilstand.valgt = s ? findKodeEllerNr(s) : null;
+  /* peger nummeret på flere sten, vises de i listen */
+  if(s && !tilstand.valgt && p.get('nr')){ tilstand.tekst = el.soeg.value = s; }
 }
 
 /* ── Samlet ─────────────────────────────────────────────── */
