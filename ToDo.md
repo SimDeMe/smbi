@@ -34,5 +34,10 @@ i `drivhuseffektenSimpel.html` (`?film=1` / `?film=styret`).
 - Korte klip (20–40 s) til Lectio, Teams og PowerPoint, og små løkker som
   forhåndsvisning på kortene på fagsiderne.
 
+## Feedbackknap i alle simuleringer
+
+Alle simuleringer skal have en feedbackknap inde i selve simuleringen — ikke
+kun i sidens krom, så den også er der, når figuren ligger i en iframe.
+
 
 
