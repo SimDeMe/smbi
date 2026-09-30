@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beskær stensamlingens fotos — smbi.dk</title>
+<meta name="description" content="Lokalt værktøj til at vælge udsnittet af stensamlingens fotos.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<!--
+  Beskæringsværktøj — virker kun sammen med beskaer.py, som skærer
+  billederne til. Start det fra repoets rod:
+      python3 geografi/stensamling/beskaer.py
+-->
+<style>
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--geo);
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px}
+:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
+.mono{font-family:var(--mono);font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:0.13em}
+.rainbow{height:7px;background:linear-gradient(90deg,var(--pink),var(--coral),var(--amber),var(--lime),var(--teal),var(--blue),var(--grape))}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:22px 22px 40px}
+h1{font-family:var(--display);font-weight:800;font-variation-settings:var(--wide);letter-spacing:-0.02em;
+  font-size:1.9rem;margin:0 0 4px}
+.lead{margin:0 0 18px;color:var(--slate);max-width:62ch}
+
+.rig{background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;box-shadow:var(--hard-lg);overflow:clip}
+.rig-bar{height:9px;background:var(--accent)}
+.rig-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 15px;
+  border-bottom:2px solid var(--ink);background:#E7F4FB}
+.rig-head .status{margin-left:auto;color:var(--slate)}
+.rig-body{display:grid;grid-template-columns:200px 1fr 290px;min-height:560px}
+
+/* liste */
+.liste{border-right:2px solid var(--ink);overflow:auto;max-height:78vh;padding:10px;display:flex;flex-direction:column;gap:8px}
+.liste button{display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center;text-align:left;
+  background:#fff;border:2px solid var(--ink);border-radius:10px;padding:5px;cursor:pointer;font:inherit}
+.liste button[aria-current="true"]{background:#C7E6F6;box-shadow:2px 2px 0 var(--ink)}
+.liste img{width:64px;height:48px;object-fit:cover;border-radius:6px;border:1.5px solid var(--ink);display:block;background:#eee}
+.liste .n{font-family:var(--display);font-weight:700;font-size:0.72rem;line-height:1.2;word-break:break-word}
+.liste .s{display:block;font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);margin-top:2px}
+.liste .s.ok{color:#2E7A12}
+
+/* scene */
+.stage{display:grid;place-items:center;padding:16px;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px}
+.billede{position:relative;display:inline-block;border:2px solid var(--ink);border-radius:12px;overflow:hidden;
+  touch-action:none;user-select:none;-webkit-user-select:none;line-height:0}
+.billede img{display:block;max-width:100%;max-height:72vh;pointer-events:none}
+.ramme{position:absolute;border:2px solid #fff;outline:2px solid var(--ink);
+  box-shadow:0 0 0 9999px rgba(23,33,31,0.55);cursor:move}
+.ramme::before,.ramme::after{content:"";position:absolute;background:rgba(255,255,255,0.45);pointer-events:none}
+.ramme::before{left:33.33%;right:33.33%;top:0;bottom:0;border-left:1px solid;border-right:1px solid;background:none;color:rgba(255,255,255,0.5)}
+.ramme::after{top:33.33%;bottom:33.33%;left:0;right:0;border-top:1px solid;border-bottom:1px solid;background:none;color:rgba(255,255,255,0.5)}
+.greb{position:absolute;width:18px;height:18px;background:#fff;border:2px solid var(--ink);border-radius:50%;z-index:1}
+.greb[data-h="nv"]{left:-10px;top:-10px;cursor:nwse-resize}
+.greb[data-h="no"]{right:-10px;top:-10px;cursor:nesw-resize}
+.greb[data-h="sv"]{left:-10px;bottom:-10px;cursor:nesw-resize}
+.greb[data-h="so"]{right:-10px;bottom:-10px;cursor:nwse-resize}
+
+/* sidespalte */
+.side{border-left:2px solid var(--ink);background:var(--paper-2);padding:14px;display:flex;flex-direction:column;gap:12px}
+.side h2{font-family:var(--display);font-weight:800;font-size:1.05rem;margin:0;word-break:break-word}
+.forhaand{aspect-ratio:4/3;border:2px solid var(--ink);border-radius:8px;background:#ddd no-repeat;overflow:hidden}
+.tal{font-family:var(--mono);font-size:0.68rem;color:var(--slate);line-height:1.6}
+.knapper{display:flex;flex-wrap:wrap;gap:8px}
+.btn,.btn-mini{font-family:var(--display);font-weight:700;border:2px solid var(--ink);color:var(--ink);background:#fff;cursor:pointer;
+  transition:transform .12s,box-shadow .12s}
+.btn{font-size:0.9rem;padding:8px 16px;border-radius:22px;box-shadow:var(--hard)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primaer{background:var(--accent);color:#fff}
+.btn:disabled{opacity:.45;cursor:default;transform:none;box-shadow:var(--hard)}
+.btn-mini{font-size:0.72rem;padding:4px 11px;border-radius:18px;box-shadow:2px 2px 0 var(--ink)}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.besked{font-size:0.88rem;min-height:2.6em;margin:0}
+.besked.fejl{color:#B3261E}
+.hjaelp{font-size:0.82rem;color:var(--slate);margin:auto 0 0;line-height:1.45}
+kbd{font-family:var(--mono);font-size:0.7rem;border:1.5px solid var(--ink);border-radius:4px;padding:0 4px;background:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tom{padding:40px;text-align:center}
+
+@media (max-width:960px){
+  .rig-body{grid-template-columns:1fr}
+  .liste{flex-direction:row;overflow:auto;max-height:none;border-right:none;border-bottom:2px solid var(--ink)}
+  .liste button{grid-template-columns:64px;min-width:80px}
+  .liste .n,.liste .s{display:none}
+  .side{border-left:none;border-top:2px solid var(--ink)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="rainbow"></div>
+<main class="wrap">
+  <span class="mono">Stensamlingen · værktøj</span>
+  <h1>Beskær fotoene</h1>
+  <p class="lead">Træk rammen hen over det, der skal vises, og tryk «Gem udsnit». Rammen er altid 4:3 — det format, siden viser billederne i. Står fotoet på højkant, kan du dreje det, så det ligger ned.</p>
+
+  <section class="rig" aria-label="Beskæring">
+    <div class="rig-bar"></div>
+    <div class="rig-head">
+      <button type="button" class="btn-mini" id="forrige">← Forrige</button>
+      <button type="button" class="btn-mini" id="naeste">Næste →</button>
+      <span class="mono status" id="status" aria-live="polite"></span>
+    </div>
+    <div class="rig-body">
+      <nav class="liste" id="liste" aria-label="Billeder"></nav>
+      <div class="stage">
+        <div class="billede" id="billede">
+          <img id="img" alt="">
+          <div class="ramme" id="ramme" tabindex="0" role="slider" aria-label="Udsnit — flyt med piletasterne, forstør og formindsk med + og −">
+            <span class="greb" data-h="nv"></span><span class="greb" data-h="no"></span>
+            <span class="greb" data-h="sv"></span><span class="greb" data-h="so"></span>
+          </div>
+        </div>
+      </div>
+      <aside class="side">
+        <h2 id="navn">—</h2>
+        <div class="forhaand" id="forhaand" role="img" aria-label="Sådan kommer billedet til at se ud"></div>
+        <div class="tal" id="tal"></div>
+        <div class="knapper">
+          <button type="button" class="btn primaer" id="gem">Gem udsnit</button>
+          <button type="button" class="btn-mini" id="venstre" aria-label="Drej billedet mod uret">↺ Drej</button>
+          <button type="button" class="btn-mini" id="hoejre" aria-label="Drej billedet med uret">↻ Drej</button>
+          <button type="button" class="btn-mini" id="stoerst">Størst muligt</button>
+          <button type="button" class="btn-mini" id="fortryd">Fortryd</button>
+        </div>
+        <p class="besked" id="besked" aria-live="polite"></p>
+        <p class="hjaelp">Træk i rammen for at flytte den, i hjørnerne for at ændre størrelsen.
+          Tastatur: <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> flytter (med <kbd>⇧</kbd> hurtigere),
+          <kbd>+</kbd> <kbd>−</kbd> ændrer størrelsen, <kbd>R</kbd> drejer (med <kbd>⇧</kbd> mod uret), <kbd>Enter</kbd> gemmer,
+          <kbd>[</kbd> <kbd>]</kbd> skifter billede.</p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const el = {liste:$('#liste'), img:$('#img'), billede:$('#billede'), ramme:$('#ramme'), navn:$('#navn'),
+  forhaand:$('#forhaand'), tal:$('#tal'), gem:$('#gem'), besked:$('#besked'), status:$('#status')};
+
+let billeder = [], i = 0;
+let u = null;          // {x, y, b} — brøkdele af billedets bredde og højde
+let gemt = null;       // det senest gemte udsnit for billedet, med drej
+let drej = 0;          // grader med uret: 0, 90, 180, 270
+
+const aktuel = () => billeder[i];
+const paaSiden = () => drej % 180 !== 0;
+const bredde = () => paaSiden() ? aktuel().hoejde : aktuel().bredde;
+const hoejde = () => paaSiden() ? aktuel().bredde : aktuel().hoejde;
+const forhold = () => bredde() / hoejde();                        // W/H efter drejning
+const hoejdeAf = b => b * forhold() * 3 / 4;                     // rammens højde som brøkdel
+const maksB = () => Math.min(1, 4 / 3 / forhold());
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function stoerst(){
+  const b = maksB();
+  return {x:(1 - b) / 2, y:(1 - hoejdeAf(b)) / 2, b};
+}
+
+function klem(v){
+  const b = Math.min(Math.max(v.b, 0.08), maksB());
+  const h = hoejdeAf(b);
+  return {b, x:Math.min(Math.max(v.x, 0), 1 - b), y:Math.min(Math.max(v.y, 0), 1 - h)};
+}
+
+const ens = (a, b) => a && b && ['x','y','b'].every(k => Math.abs(a[k] - b[k]) < 0.0015);
+/* ændret i forhold til det gemte — eller til udgangspunktet, hvis intet er gemt */
+const aendret = () => !!u && (drej !== (gemt?.drej || 0) || !ens(u, gemt ?? stoerst()));
+
+function tegn(){
+  const h = hoejdeAf(u.b), r = el.ramme.style;
+  r.left = u.x * 100 + '%'; r.top = u.y * 100 + '%';
+  r.width = u.b * 100 + '%'; r.height = h * 100 + '%';
+  const f = el.forhaand.style;
+  f.backgroundSize = 100 / u.b + '% auto';
+  f.backgroundPosition = `${u.b < 0.999 ? u.x / (1 - u.b) * 100 : 0}% ${h < 0.999 ? u.y / (1 - h) * 100 : 0}%`;
+  const W = bredde(), px = Math.round(u.b * W);
+  el.tal.innerHTML = `Udsnit ${px} × ${Math.round(px * 3 / 4)} px af ${W} × ${hoejde()}`
+    + (drej ? ` · drejet ${drej}°` : '') + '<br>'
+    + `Webfil ${Math.min(1200, px)} × ${Math.round(Math.min(1200, px) * 3 / 4)} px`
+    + (aktuel().original ? '' : '<br>Ingen original — skærer i webfilen');
+  const ae = aendret();
+  el.gem.disabled = !ae && !!gemt;
+  el.ramme.setAttribute('aria-valuetext', `venstre ${Math.round(u.x*100)} %, top ${Math.round(u.y*100)} %, bredde ${Math.round(u.b*100)} %`);
+  el.status.textContent = `${i + 1} af ${billeder.length}` + (ae ? ' · ændret, ikke gemt' : '');
+}
+
+function tegnListe(){
+  el.liste.innerHTML = billeder.map((b, n) => `
+    <button type="button" data-n="${n}" aria-current="${n === i}">
+      ${b.web ? `<img src="/web/${encodeURIComponent(b.navn)}?v=${b.aendret}" alt="" loading="lazy">` : '<img alt="">'}
+      <span><span class="n">${esc(b.navn)}</span>
+      <span class="s${b.udsnit ? ' ok' : ''}">${b.udsnit ? 'Beskåret ✓' : b.web ? 'Ikke beskåret' : 'Ny — ingen webfil'}</span></span>
+    </button>`).join('');
+}
+
+function vis(n){
+  if(aendret() && !confirm('Udsnittet er ikke gemt. Skift billede alligevel?')) return;
+  i = (n + billeder.length) % billeder.length;
+  const b = aktuel();
+  drej = b.udsnit?.drej || 0;
+  gemt = b.udsnit ? {...klem(b.udsnit), drej} : null;
+  u = gemt ? klem(gemt) : stoerst();
+  el.navn.textContent = b.navn + '.jpg';
+  el.besked.textContent = ''; el.besked.className = 'besked';
+  visBillede();
+  el.liste.querySelectorAll('button').forEach(x => x.setAttribute('aria-current', +x.dataset.n === i));
+  el.liste.querySelector(`[data-n="${i}"]`)?.scrollIntoView({block:'nearest', inline:'nearest'});
+  tegn();
+}
+
+function visBillede(){
+  const src = `/visning/${encodeURIComponent(aktuel().navn)}?drej=${drej}&v=${aktuel().aendret}`;
+  el.img.src = src;
+  el.forhaand.style.backgroundImage = `url("${src}")`;
+}
+
+/* drejer billedet en kvart omgang; rammen starter forfra, for den gamle passer ikke længere */
+function drejBillede(grader){
+  drej = (drej + grader + 360) % 360;
+  u = gemt && gemt.drej === drej ? klem(gemt) : stoerst();
+  visBillede();
+  tegn();
+}
+
+/* ── mus og finger ─────────────────────────────────────── */
+let traek = null;
+el.ramme.addEventListener('pointerdown', e => {
+  const r = el.img.getBoundingClientRect();
+  const hj = e.target.dataset.h;
+  traek = {hj, r, start:{...u}, px:e.clientX, py:e.clientY};
+  if(hj){
+    /* det modsatte hjørne ligger fast */
+    const h = hoejdeAf(u.b);
+    traek.ax = hj.includes('v') ? u.x + u.b : u.x;
+    traek.ay = hj.includes('n') ? u.y + h : u.y;
+  }
+  el.ramme.setPointerCapture(e.pointerId);
+  el.ramme.focus({preventScroll:true});
+  e.preventDefault();
+});
+el.ramme.addEventListener('pointermove', e => {
+  if(!traek) return;
+  const {r} = traek;
+  if(!traek.hj){
+    u = klem({...traek.start, x:traek.start.x + (e.clientX - traek.px) / r.width,
+                              y:traek.start.y + (e.clientY - traek.py) / r.height});
+  } else {
+    const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+    const venstre = traek.hj.includes('v'), op = traek.hj.includes('n');
+    /* plads til rammen på den side af det faste hjørne, der trækkes mod */
+    const pladsB = venstre ? traek.ax : 1 - traek.ax;
+    const pladsH = op ? traek.ay : 1 - traek.ay;
+    let b = Math.max(Math.abs(fx - traek.ax), Math.abs(fy - traek.ay) / (forhold() * 3 / 4));
+    b = Math.min(b, pladsB, pladsH / (forhold() * 3 / 4), maksB());
+    b = Math.max(b, 0.08);
+    const h = hoejdeAf(b);
+    u = klem({b, x: venstre ? traek.ax - b : traek.ax, y: op ? traek.ay - h : traek.ay});
+  }
+  tegn();
+});
+const slip = () => { traek = null; };
+el.ramme.addEventListener('pointerup', slip);
+el.ramme.addEventListener('pointercancel', slip);
+
+/* ── tastatur ──────────────────────────────────────────── */
+function skaler(faktor){
+  const h = hoejdeAf(u.b), cx = u.x + u.b / 2, cy = u.y + h / 2;
+  const b = Math.min(Math.max(u.b * faktor, 0.08), maksB());
+  u = klem({b, x:cx - b / 2, y:cy - hoejdeAf(b) / 2});
+  tegn();
+}
+el.ramme.addEventListener('keydown', e => {
+  const d = e.shiftKey ? 0.05 : 0.01;
+  const flyt = {ArrowLeft:[-d,0], ArrowRight:[d,0], ArrowUp:[0,-d], ArrowDown:[0,d]}[e.key];
+  if(flyt){ u = klem({...u, x:u.x + flyt[0], y:u.y + flyt[1] * forhold()}); tegn(); e.preventDefault(); return; }
+  if(e.key === '+' || e.key === '='){ skaler(1.04); e.preventDefault(); }
+  if(e.key === '-' || e.key === '_'){ skaler(1 / 1.04); e.preventDefault(); }
+});
+document.addEventListener('keydown', e => {
+  if(e.target.matches('input,textarea')) return;
+  if(e.key === 'r' || e.key === 'R'){ drejBillede(e.shiftKey ? -90 : 90); e.preventDefault(); }
+  if(e.key === '[') vis(i - 1);
+  if(e.key === ']') vis(i + 1);
+  if(e.key === 'Enter' && e.target === el.ramme){ gem(); e.preventDefault(); }
+});
+
+/* ── knapper ───────────────────────────────────────────── */
+$('#forrige').onclick = () => vis(i - 1);
+$('#naeste').onclick = () => vis(i + 1);
+$('#stoerst').onclick = () => { u = stoerst(); tegn(); };
+$('#venstre').onclick = () => drejBillede(-90);
+$('#hoejre').onclick = () => drejBillede(90);
+$('#fortryd').onclick = () => {
+  const d = gemt?.drej || 0;
+  if(d !== drej){ drej = d; visBillede(); }
+  u = gemt ? klem(gemt) : stoerst(); tegn();
+};
+el.liste.addEventListener('click', e => {
+  const b = e.target.closest('button[data-n]');
+  if(b) vis(+b.dataset.n);
+});
+el.gem.onclick = gem;
+
+async function gem(){
+  const b = aktuel();
+  el.gem.disabled = true;
+  el.besked.className = 'besked'; el.besked.textContent = 'Gemmer …';
+  try{
+    const svar = await fetch('/api/beskaer', {method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({navn:b.navn, ...u, drej})});
+    const d = await svar.json();
+    if(!svar.ok) throw new Error(d.fejl || svar.status);
+    b.udsnit = {...u, drej}; b.web = true; b.original = true; b.aendret = Date.now();
+    gemt = {...u, drej};
+    el.besked.textContent = `Gemt: ${b.navn}.jpg — ${d.bredde} × ${d.hoejde} px, ${d.kb} kB.`;
+    tegnListe();
+    el.liste.querySelector(`[data-n="${i}"]`)?.setAttribute('aria-current', 'true');
+    tegn();
+  } catch(err){
+    el.besked.className = 'besked fejl';
+    el.besked.textContent = 'Kunne ikke gemme: ' + err.message;
+    el.gem.disabled = false;
+  }
+}
+
+addEventListener('beforeunload', e => { if(aendret()) e.preventDefault(); });
+
+(async function start(){
+  try{
+    billeder = await (await fetch('/api/billeder', {cache:'no-store'})).json();
+  } catch{
+    document.querySelector('.rig-body').innerHTML = `<p class="tom">Værktøjet skal startes fra repoets rod med<br>
+      <kbd>python3 geografi/stensamling/beskaer.py</kbd></p>`;
+    return;
+  }
+  if(!billeder.length){ document.querySelector('.rig-body').innerHTML = '<p class="tom">Ingen billeder fundet.</p>'; return; }
+  tegnListe();
+  /* start ved det første billede, der ikke er beskåret endnu */
+  const n = billeder.findIndex(b => !b.udsnit);
+  vis(n < 0 ? 0 : n);
+})();
+</script>
+</body>
+</html>

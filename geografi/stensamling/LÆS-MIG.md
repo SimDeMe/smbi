@@ -110,3 +110,23 @@ forsvinder, når der er et foto, og kommer igen, hvis filen ikke kan hentes.
   størrelsen.
 * Fotografér en frisk brudflade, hvis stenen har en — forvitret overflade
   skjuler farve og korn.
+
+### Beskæring
+
+Webfilerne skæres til med værktøjet `beskaer.py`. Kør det fra repoets rod:
+
+```bash
+python3 geografi/stensamling/beskaer.py
+```
+
+Det åbner i browseren. Træk 4:3-rammen hen over det, der skal vises, drej
+evt. fotoet med ↺/↻, og tryk «Gem udsnit». Værktøjet skærer fra originalen i
+`billeder/originaler/` og skriver webfilen i `billeder/` (højst 1200 × 900 px,
+under 300 kB, uden EXIF). Udsnit og drejning gemmes i `billeder/udsnit.json`,
+så man kan åbne billedet og flytte rammen igen senere.
+
+`billeder/originaler/` er ikke i git (se `.gitignore`) — originalerne fylder
+for meget til at blive udgivet. De første 19 kan hentes fra commit `5233f0a`.
+Et nyt foto: læg originalen i `originaler/` med webfilens navn
+(`MA-04-gabbro-1.jpeg`), beskær den, og commit webfilen og `udsnit.json`.
+Kræver Pillow (`pip install pillow`).
