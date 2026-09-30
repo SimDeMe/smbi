@@ -71,7 +71,7 @@ eller mangler, bliver bare ikke vist.
 
   se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'}],
   placering:'Geo-lab, skab 2, skuffe 3',
-  billeder:[{fil:'MA-09-1.jpg', tekst:'Basalt fra Island', foto:'SM'}]
+  billeder:[{fil:'MA-09-basalt-1.jpg', tekst:'Basalt fra Island', foto:'SM'}]
 }
 ```
 
@@ -85,8 +85,9 @@ spørgsmål helt, bliver posten ikke sorteret fra på det spørgsmål.
 
 ## Billeder
 
-Læg fotos i `billeder/`, og navngiv dem efter koden: `MA-09-1.jpg`,
-`MA-09-2.jpg` osv. Det første billede i listen er hovedbilledet. Tegningen
+Læg fotos i `billeder/`, og navngiv dem efter koden og navnet:
+`MA-09-basalt-1.jpg`, `MA-09-basalt-2.jpg` osv. Skriv hvert nyt billede ind i
+`billeder/indeks.md`. Det første billede i listen er hovedbilledet. Tegningen
 forsvinder, når der er et foto, og kommer igen, hvis filen ikke kan hentes.
 
 * Formatforhold 4:3, ca. 1200 × 900 px, JPEG under 300 kB.
