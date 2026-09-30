@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" role="img" aria-label="Opstillingen set fra siden og oppefra: et skråt skærebræt med papir, støttet af en træklods, står i en bakke, og væskerne løber fra startlinjen ved 0 cm mod målstregen ved 25 cm">
+  <title>Opstillingen: skråt bræt med papir, startlinje og målstreg</title>
+  <desc>Til venstre ses opstillingen fra siden. Skærebrættet står skråt med den øverste ende hvilende på en træklods, og den nederste ende står i en bakke med køkkenrulle. Papiret er tapet fast på brættet. Til højre ses papiret oppefra med startlinjen 0 cm øverst og målstregen 25 cm længere nede. Fire væsker er kommet på ved startlinjen, og de er nået forskellig afstand ned ad papiret.</desc>
+  <defs>
+    <marker id="o-pil" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#26332B"/></marker>
+  </defs>
+  <text x="20" y="22" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">1 · Set fra siden</text>
+  <path d="M30 216 L40 240 H300 L310 216" fill="#E7E2D6" stroke="#26332B" stroke-width="2" stroke-linejoin="round"/>
+  <text x="170" y="258" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66" text-anchor="middle">bakke med køkkenrulle</text>
+  <rect x="214" y="120" width="70" height="120" fill="#D9C39A" stroke="#26332B" stroke-width="2"/>
+  <text x="249" y="184" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#26332B" text-anchor="middle">klods</text>
+  <path d="M58 236 L272 112 L276.5 119.8 L62.5 243.8 Z" fill="#D9C39A" stroke="#26332B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M72 227.5 L262 117.5" stroke="#6B7A66" stroke-width="3"/>
+  <text x="30" y="100" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#26332B">papir, tapet på skærebrættet</text>
+  <path d="M60 106 L100 200" stroke="#26332B" stroke-width="1"/>
+  <ellipse cx="238" cy="134" rx="9" ry="4" fill="#B8743A" stroke="#26332B" stroke-width="1" transform="rotate(-31 238 134)"/>
+  <text x="236" y="104" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#A8402C" text-anchor="middle">start</text>
+  <path d="M206 136 L160 163" stroke="#1F5F8B" stroke-width="2.2" marker-end="url(#o-pil)"/>
+  <text x="200" y="124" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#1F5F8B" text-anchor="end">væsken løber ned</text>
+  <text x="360" y="22" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">2 · Papiret set oppefra</text>
+  <rect x="368" y="32" width="254" height="256" rx="6" fill="#D9C39A" stroke="#26332B" stroke-width="2"/>
+  <rect x="380" y="40" width="230" height="240" fill="#FFFFFF" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="390" y="34" width="30" height="12" fill="#F4EFC8" opacity="0.9"/>
+  <rect x="570" y="34" width="30" height="12" fill="#F4EFC8" opacity="0.9"/>
+  <path d="M388 70 H602" stroke="#26332B" stroke-width="1.6"/>
+  <path d="M388 250 H602" stroke="#A8402C" stroke-width="1.6"/>
+  <text x="392" y="64" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#26332B">0 cm · start</text>
+  <text x="392" y="266" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#A8402C">25 cm · mål</text>
+  <path d="M410 66 Q411 199.0 418 256 Q425 199.0 426 66 Z" fill="#9CC7E0" stroke="#26332B" stroke-width="1"/>
+  <text x="430" y="161" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#26332B">vand</text>
+  <path d="M462 66 Q463 150.0 470 186 Q477 150.0 478 66 Z" fill="#E8C75A" stroke="#26332B" stroke-width="1"/>
+  <text x="470" y="202" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#26332B" text-anchor="middle">olie</text>
+  <path d="M514 66 Q515 122.0 522 146 Q529 122.0 530 66 Z" fill="#8FC98A" stroke="#26332B" stroke-width="1"/>
+  <text x="522" y="162" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#26332B" text-anchor="middle">sæbe</text>
+  <path d="M566 66 Q567 91.2 574 102 Q581 91.2 582 66 Z" fill="#B8743A" stroke="#26332B" stroke-width="1"/>
+  <text x="574" y="118" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#26332B" text-anchor="middle">sirup</text>
+</svg>

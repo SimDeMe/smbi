@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>læs-mig</title>
+<title>Lavas viskositet</title>
 <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -2179,6 +2179,44 @@ window.MathJax = {
 };
 </script>
 
+  
+  
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -2186,89 +2224,258 @@ window.MathJax = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="LÆS-MIG.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="LÆS-MIG.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
+<div class="quarto-alternate-formats"><h2>Andre formater</h2><ul><li><a href="lavas-viskositet.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li><li><a href="lavas-viskositet.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 <div class="doc-banner">
-  <span class="doc-banner-fag"></span>
+  <span class="doc-banner-fag">Naturgeografi</span>
   <span class="doc-banner-hold"></span>
+</div>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lavas viskositet</h1>
+<p class="subtitle lead">Hvorfor er nogle vulkaner høje og andre brede?</p>
 </div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="øvelsesvejledninger-quarto-sådan-virker-skabelonen" class="level1">
-<h1>Øvelsesvejledninger (Quarto) — sådan virker skabelonen</h1>
-<p>Dette er en <strong>Quarto-skabelon</strong> til øvelsesvejledninger i biologi og naturgeografi. Du skriver indholdet i almindelig markdown i en <code>.qmd</code>-fil, og Quarto bygger automatisk en pænt opsat PDF, Word-fil (.docx) og webside (.html) ud fra samme kilde — alle tre i samme stil (skovgrøn, sidehoved med fag og hold, sidetal, samme figur-/tabelopsætning).</p>
-<section id="sådan-hænger-det-sammen" class="level2">
-<h2 class="anchored" data-anchor-id="sådan-hænger-det-sammen">Sådan hænger det sammen</h2>
-<p>Den fælles opsætning ligger som <strong>6 filer direkte i toppen af <code>Øvelser/</code></strong>:</p>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Dato:</strong> ____________________      <strong>Gruppe / navne:</strong> ________________________________________</p>
+<section id="om-øvelsen" class="level2">
+<h2 class="anchored" data-anchor-id="om-øvelsen">Om øvelsen</h2>
+<p>Lava er smeltet sten, der bryder ud fra en vulkan. Nogle vulkaner udbryder lava, der er meget tyndtflydende og kan strømme over store afstande. Andre udbryder lava, der er sej og næsten ikke flyder. I denne øvelse lader I fire væsker løbe ned ad en skrå plade og måler, hvor hurtigt de flyder. Bagefter bruger I resultaterne til at forklare, hvorfor vulkaner har så forskellige former.</p>
+</section>
+<section id="baggrund" class="level2">
+<h2 class="anchored" data-anchor-id="baggrund">Baggrund</h2>
+<p>En væskes sejhed kaldes dens <strong>viskositet</strong>. Jo større viskositet en væske har, jo mere tyktflydende er den, og jo langsommere flyder den ned ad en skråning. Vand har en lille viskositet, sirup en stor.</p>
+<p>Lava er en væske ligesom dem, I undersøger. Når den flyder ud af vulkanen, køler den af og størkner til sidst til fast sten. Hvor langt den når, inden den størkner, afhænger blandt andet af dens viskositet.</p>
+</section>
+<section id="hypotese" class="level2">
+<h2 class="anchored" data-anchor-id="hypotese">Hypotese</h2>
+<p>Sæt de fire væsker i rækkefølge fra den mest tyndtflydende til den mest tyktflydende, <strong>inden</strong> I måler. Begrund kort jeres bud.</p>
+<p>Mest tyndtflydende ________________ &lt; ________________ &lt; ________________ &lt; ________________ mest tyktflydende</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Materialer (pr. gruppe)
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><code>_quarto.yml</code> — fælles indstillinger (papirstørrelse, marginer, sidehoved/-fod, farver). Ret her, hvis noget skal ændres for <em>alle</em> vejledninger på én gang.</li>
-<li><code>styles.scss</code> — udseendet for HTML-versionen.</li>
-<li><code>page.typ</code> / <code>typst-template.typ</code> — udseendet for PDF-versionen (Typst).</li>
-<li><code>reference.docx</code> — udseendet for Word-versionen. Bruges kun som “stilskabelon” — dens eget indhold vises aldrig.</li>
-<li><code>fix-docx-tables.py</code> — kører automatisk efter hver rendering og sørger for, at tabeller i Word-filen aldrig bliver delt af et sideskift.</li>
+<li>Skærebræt eller bageplade</li>
+<li>Træklods eller andet til at støtte brættet, så det står skråt</li>
+<li>Papir, tape, lineal og blyant</li>
+<li>Fire væsker med forskellig viskositet: vand, madolie, opvaskemiddel og sirup eller honning</li>
+<li>En spiseske eller et måleske-sæt, så I bruger samme mængde hver gang</li>
+<li>Bakke og køkkenrulle til at samle væsken op</li>
+<li>Stopur, fx i mobiltelefonen</li>
 </ul>
-<p>Fordi <code>_quarto.yml</code> ligger i toppen af <code>Øvelser/</code>, gælder opsætningen automatisk for <strong>enhver</strong> <code>.qmd</code>-fil, uanset hvor dybt nede den ligger under <code>Biologi/</code> eller <code>Geografi/</code> — Quarto leder selv opad efter <code>_quarto.yml</code>, uanset hvor mange undermapper der er imellem.</p>
-<p><strong>Der er ingen særlig skabelonmappe, man skal ligge inde i.</strong> En ny øvelse er bare en almindelig undermappe under <code>Biologi/</code> eller <code>Geografi/</code> (eller et evt. nyt fag), med sin egen <code>.qmd</code>-fil (samme navn som mappen) og en <code>figurer/</code>-mappe, hvis den har billeder.</p>
+</div>
+</div>
 </section>
-<section id="eksempel-på-struktur" class="level2">
-<h2 class="anchored" data-anchor-id="eksempel-på-struktur">Eksempel på struktur</h2>
-<pre><code>Øvelser/
-├── _quarto.yml, styles.scss, reference.docx, page.typ, typst-template.typ, banner.html, fix-docx-tables.py   (fælles, rør kun hvis alle vejledninger skal ændres)
-├── Biologi/
-│   ├── mikroskopi-af-celler/
-│   │   └── mikroskopi-af-celler.qmd (+ evt. figurer/)
-│   └── osmose-i-kartofler/
-│       └── osmose-i-kartofler.qmd (+ evt. figurer/)
-└── Geografi/
-    └── opmaaling-af-terraenprofil/
-        ├── opmaaling-af-terraenprofil.qmd
-        └── figurer/</code></pre>
-</section>
-<section id="sådan-laver-du-en-ny-vejledning" class="level2">
-<h2 class="anchored" data-anchor-id="sådan-laver-du-en-ny-vejledning">Sådan laver du en ny vejledning</h2>
+<section id="fremgangsmåde" class="level2">
+<h2 class="anchored" data-anchor-id="fremgangsmåde">Fremgangsmåde</h2>
 <ol type="1">
-<li><p>Kopiér en eksisterende øvelsesmappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>) til en ny mappe med et sigende navn, under det rigtige fag (fx <code>Geografi/kysterosion/</code> eller <code>Biologi/enzymforsog/</code>).</p></li>
-<li><p>Slet de gamle figurer i <code>figurer/</code>, og ret <code>.qmd</code>-filen: titel, tekst, fremgangsmåde, materialer og skema. Husk et afsnit om sikkerhed, hvis der bruges kemikalier.</p></li>
-<li><p>Tag de to faste afsnit med (se nedenfor): <strong>Databehandling</strong> og <strong>Journalspørgsmål</strong>.</p></li>
-<li><p>Skriv øvelsen ind i <code>oversigt.html</code> — også når du kun retter i en, der findes i forvejen.</p></li>
-<li><p>Giv øvelsen et kort på <code>biologi.html</code> eller <code>geografi.html</code> under «Forsøgsvejledninger», så den kan findes fra sitet. Alle øvelser skal have ét. Kortet får samme emne som i <code>oversigt.html</code> i <code>data-emne</code> og i <code>&lt;span class=&quot;fag&quot;&gt;</code> — det er det, emneknapperne filtrerer efter.</p></li>
-<li><p>Claude renderer selv vejledningen til PDF/Word/HTML, hver gang <code>.qmd</code>-filen er rettet — du skal ikke bede om det. Vil du gøre det i hånden, står Quarto klar på maskinen; kør inde i øvelsens egen mappe:</p>
-<pre><code>quarto render &lt;øvelse&gt;.qmd --to typst   # PDF
-quarto render &lt;øvelse&gt;.qmd --to docx    # Word
-quarto render &lt;øvelse&gt;.qmd --to html    # webside</code></pre>
-<p>Filen hedder det samme som mappen (fx <code>oliens-migration.qmd</code>), så den downloadede vejledning er til at kende igen på skrivebordet.</p>
-<p>Skal <strong>alle</strong> vejledninger igennem på én gang, så kør scriptet i toppen af <code>Øvelser/</code>:</p>
-<pre><code>./render-alle.sh              # alle 28, i alle tre formater
-./render-alle.sh osmose       # kun dem, hvis sti indeholder «osmose»
-./render-alle.sh Geografi     # kun geografi-øvelserne</code></pre>
-<p>En vejledning, der fejler, stopper ikke de andre — fejlene samles til sidst med Quartos egen fejlbesked. Kør det efter ændringer i <code>_quarto.yml</code>, <code>styles.scss</code> eller Typst-skabelonen, hvor alle vejledninger skal følge med.</p>
-<p><strong>Kør ikke bare <code>quarto render</code> inde i <code>Øvelser/</code>.</strong> Den ville også tage <code>LÆS-MIG.md</code>, <code>Mappestruktur.md</code>, <code>Forsogsvejledninger.md</code>, <code>Bio-C-forsog-oversigt.md</code> og <code>forsøgsliste2109.md</code> med og lave <code>.pdf</code>- og <code>.docx</code>-udgaver af arbejdsdokumenter, der kun skal findes som websider.</p></li>
+<li>Tegn med linealen en vandret streg øverst på papiret, og skriv 0 cm ved den. Det er <strong>startlinjen</strong>.</li>
+<li>Mål 25 cm ned fra startlinjen, og tegn endnu en vandret streg. Skriv 25 cm ved den. Det er <strong>målstregen</strong>.</li>
+<li>Tape papiret fast på skærebrættet. Stil brættet skråt op ad klodsen med den nederste ende i bakken (<a href="#fig-opstilling" class="quarto-xref">Figur 1</a>). Brættet skal have samme hældning i hele forsøget.</li>
+<li>Kom en skefuld af den første væske på startlinjen, og start stopuret i samme øjeblik.</li>
+<li>Stop uret, når væskens forreste kant når målstregen. Skriv tiden i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.</li>
+<li>Gentag trin 4–5, så I har tre målinger for hver væske. Brug et nyt stykke papir, eller hold sporene adskilt, så væskerne ikke løber i hinandens spor.</li>
+<li>Gør det samme med de tre andre væsker.</li>
+</ol>
+<div id="fig-opstilling" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-opstilling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img role="img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMzAwIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjMwMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJPcHN0aWxsaW5nZW4gc2V0IGZyYSBzaWRlbiBvZyBvcHBlZnJhOiBldCBza3LDpXQgc2vDpnJlYnLDpnQgbWVkIHBhcGlyLCBzdMO4dHRldCBhZiBlbiB0csOma2xvZHMsIHN0w6VyIGkgZW4gYmFra2UsIG9nIHbDpnNrZXJuZSBsw7hiZXIgZnJhIHN0YXJ0bGluamVuIHZlZCAwIGNtIG1vZCBtw6Vsc3RyZWdlbiB2ZWQgMjUgY20iPgogIDx0aXRsZT5PcHN0aWxsaW5nZW46IHNrcsOldCBicsOmdCBtZWQgcGFwaXIsIHN0YXJ0bGluamUgb2cgbcOlbHN0cmVnPC90aXRsZT4KICA8ZGVzYz5UaWwgdmVuc3RyZSBzZXMgb3BzdGlsbGluZ2VuIGZyYSBzaWRlbi4gU2vDpnJlYnLDpnR0ZXQgc3TDpXIgc2tyw6V0IG1lZCBkZW4gw7h2ZXJzdGUgZW5kZSBodmlsZW5kZSBww6UgZW4gdHLDpmtsb2RzLCBvZyBkZW4gbmVkZXJzdGUgZW5kZSBzdMOlciBpIGVuIGJha2tlIG1lZCBrw7hra2VucnVsbGUuIFBhcGlyZXQgZXIgdGFwZXQgZmFzdCBww6UgYnLDpnR0ZXQuIFRpbCBow7hqcmUgc2VzIHBhcGlyZXQgb3BwZWZyYSBtZWQgc3RhcnRsaW5qZW4gMCBjbSDDuHZlcnN0IG9nIG3DpWxzdHJlZ2VuIDI1IGNtIGzDpm5nZXJlIG5lZGUuIEZpcmUgdsOmc2tlciBlciBrb21tZXQgcMOlIHZlZCBzdGFydGxpbmplbiwgb2cgZGUgZXIgbsOlZXQgZm9yc2tlbGxpZyBhZnN0YW5kIG5lZCBhZCBwYXBpcmV0LjwvZGVzYz4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9Im8tcGlsIiB2aWV3Qm94PSIwIDAgMTIgMTIiIHJlZlg9IjciIHJlZlk9IjYiIG1hcmtlcldpZHRoPSI0LjUiIG1hcmtlckhlaWdodD0iNC41IiBvcmllbnQ9ImF1dG8tc3RhcnQtcmV2ZXJzZSI+PHBhdGggZD0iTTEsMSBMMTEsNiBMMSwxMSB6IiBmaWxsPSIjMjYzMzJCIi8+PC9tYXJrZXI+CiAgPC9kZWZzPgogIDx0ZXh0IHg9IjIwIiB5PSIyMiIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzI2MzMyQiI+MSDCtyBTZXQgZnJhIHNpZGVuPC90ZXh0PgogIDxwYXRoIGQ9Ik0zMCAyMTYgTDQwIDI0MCBIMzAwIEwzMTAgMjE2IiBmaWxsPSIjRTdFMkQ2IiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDx0ZXh0IHg9IjE3MCIgeT0iMjU4IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNkI3QTY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5iYWtrZSBtZWQga8O4a2tlbnJ1bGxlPC90ZXh0PgogIDxyZWN0IHg9IjIxNCIgeT0iMTIwIiB3aWR0aD0iNzAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRDlDMzlBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDx0ZXh0IHg9IjI0OSIgeT0iMTg0IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjMjYzMzJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5rbG9kczwvdGV4dD4KICA8cGF0aCBkPSJNNTggMjM2IEwyNzIgMTEyIEwyNzYuNSAxMTkuOCBMNjIuNSAyNDMuOCBaIiBmaWxsPSIjRDlDMzlBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik03MiAyMjcuNSBMMjYyIDExNy41IiBzdHJva2U9IiM2QjdBNjYiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjMwIiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMyNjMzMkIiPnBhcGlyLCB0YXBldCBww6Ugc2vDpnJlYnLDpnR0ZXQ8L3RleHQ+CiAgPHBhdGggZD0iTTYwIDEwNiBMMTAwIDIwMCIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8ZWxsaXBzZSBjeD0iMjM4IiBjeT0iMTM0IiByeD0iOSIgcnk9IjQiIGZpbGw9IiNCODc0M0EiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIxIiB0cmFuc2Zvcm09InJvdGF0ZSgtMzEgMjM4IDEzNCkiLz4KICA8dGV4dCB4PSIyMzYiIHk9IjEwNCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0E4NDAyQyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+c3RhcnQ8L3RleHQ+CiAgPHBhdGggZD0iTTIwNiAxMzYgTDE2MCAxNjMiIHN0cm9rZT0iIzFGNUY4QiIgc3Ryb2tlLXdpZHRoPSIyLjIiIG1hcmtlci1lbmQ9InVybCgjby1waWwpIi8+CiAgPHRleHQgeD0iMjAwIiB5PSIxMjQiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMxRjVGOEIiIHRleHQtYW5jaG9yPSJlbmQiPnbDpnNrZW4gbMO4YmVyIG5lZDwvdGV4dD4KICA8dGV4dCB4PSIzNjAiIHk9IjIyIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjYzMzJCIj4yIMK3IFBhcGlyZXQgc2V0IG9wcGVmcmE8L3RleHQ+CiAgPHJlY3QgeD0iMzY4IiB5PSIzMiIgd2lkdGg9IjI1NCIgaGVpZ2h0PSIyNTYiIHJ4PSI2IiBmaWxsPSIjRDlDMzlBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxyZWN0IHg9IjM4MCIgeT0iNDAiIHdpZHRoPSIyMzAiIGhlaWdodD0iMjQwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMS40Ii8+CiAgPHJlY3QgeD0iMzkwIiB5PSIzNCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjRjRFRkM4IiBvcGFjaXR5PSIwLjkiLz4KICA8cmVjdCB4PSI1NzAiIHk9IjM0IiB3aWR0aD0iMzAiIGhlaWdodD0iMTIiIGZpbGw9IiNGNEVGQzgiIG9wYWNpdHk9IjAuOSIvPgogIDxwYXRoIGQ9Ik0zODggNzAgSDYwMiIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEuNiIvPgogIDxwYXRoIGQ9Ik0zODggMjUwIEg2MDIiIHN0cm9rZT0iI0E4NDAyQyIgc3Ryb2tlLXdpZHRoPSIxLjYiLz4KICA8dGV4dCB4PSIzOTIiIHk9IjY0IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBmaWxsPSIjMjYzMzJCIj4wIGNtIMK3IHN0YXJ0PC90ZXh0PgogIDx0ZXh0IHg9IjM5MiIgeT0iMjY2IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBmaWxsPSIjQTg0MDJDIj4yNSBjbSDCtyBtw6VsPC90ZXh0PgogIDxwYXRoIGQ9Ik00MTAgNjYgUTQxMSAxOTkuMCA0MTggMjU2IFE0MjUgMTk5LjAgNDI2IDY2IFoiIGZpbGw9IiM5Q0M3RTAiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPHRleHQgeD0iNDMwIiB5PSIxNjEiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiMyNjMzMkIiPnZhbmQ8L3RleHQ+CiAgPHBhdGggZD0iTTQ2MiA2NiBRNDYzIDE1MC4wIDQ3MCAxODYgUTQ3NyAxNTAuMCA0NzggNjYgWiIgZmlsbD0iI0U4Qzc1QSIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8dGV4dCB4PSI0NzAiIHk9IjIwMiIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzI2MzMyQiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+b2xpZTwvdGV4dD4KICA8cGF0aCBkPSJNNTE0IDY2IFE1MTUgMTIyLjAgNTIyIDE0NiBRNTI5IDEyMi4wIDUzMCA2NiBaIiBmaWxsPSIjOEZDOThBIiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMSIvPgogIDx0ZXh0IHg9IjUyMiIgeT0iMTYyIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjExIiBmaWxsPSIjMjYzMzJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5zw6ZiZTwvdGV4dD4KICA8cGF0aCBkPSJNNTY2IDY2IFE1NjcgOTEuMiA1NzQgMTAyIFE1ODEgOTEuMiA1ODIgNjYgWiIgZmlsbD0iI0I4NzQzQSIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8dGV4dCB4PSI1NzQiIHk9IjExOCIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzI2MzMyQiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+c2lydXA8L3RleHQ+Cjwvc3ZnPgo=" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-opstilling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur 1: Opstillingen. Brættet står skråt op ad klodsen med den nederste ende i en bakke (1). Væskerne kommes på ved startlinjen, og I tager tid, til den forreste kant når målstregen (2).
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sirup og honning kan være meget længe om at nå målstregen. Når en væske ikke er nået frem efter 5 minutter, så stop uret og mål, hvor langt den er nået. Skriv både tiden og afstanden i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>.</p>
+</div>
+</div>
+</section>
+<section id="registrering-af-målinger" class="level2">
+<h2 class="anchored" data-anchor-id="registrering-af-målinger">Registrering af målinger</h2>
+<div id="tbl-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 1: Rådata: tiden for at løbe fra startlinjen til målstregen.
+</figcaption>
+<div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Væske</th>
+<th style="text-align: center;">Tid, måling 1 (s)</th>
+<th style="text-align: center;">Tid, måling 2 (s)</th>
+<th style="text-align: center;">Tid, måling 3 (s)</th>
+<th style="text-align: center;">Afstand, hvis ikke 25 cm (cm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Vand</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Olie</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opvaskemiddel</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sirup / honning</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="databehandling" class="level2">
+<h2 class="anchored" data-anchor-id="databehandling">Databehandling</h2>
+<ol type="1">
+<li><p>Beregn gennemsnittet <span class="math inline">\(\bar{t}\)</span> af de tre tider for hver væske.</p></li>
+<li><p>Beregn væskens gennemsnitlige fart ned ad brættet, hvor <span class="math inline">\(s\)</span> er den afstand, væsken har løbet (normalt 25 cm):</p></li>
+</ol>
+<p><span class="math display">\[v = \frac{s}{\bar{t}}\]</span></p>
+<ol start="3" type="1">
+<li>Beregn, hvor mange gange langsommere hver væske er end vand:</li>
+</ol>
+<p><span class="math display">\[\text{gange langsommere end vand} = \frac{v_\text{vand}}{v_\text{væske}}\]</span></p>
+<div id="tbl-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabel 2: Beregnede værdier og væskernes rækkefølge.
+</figcaption>
+<div aria-describedby="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Væske</th>
+<th style="text-align: center;">Gennemsnitstid <span class="math inline">\(\bar{t}\)</span> (s)</th>
+<th style="text-align: center;">Fart <span class="math inline">\(v\)</span> (cm/s)</th>
+<th style="text-align: center;">Gange langsommere end vand</th>
+<th style="text-align: center;">Placering (1 = mest tyndtflydende)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Vand</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Olie</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opvaskemiddel</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sirup / honning</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<ol start="4" type="1">
+<li>Tegn et søjlediagram med de fire væsker på x-aksen og farten i cm/s på y-aksen.</li>
+<li>Sammenlign jeres rækkefølge i <a href="#tbl-2" class="quarto-xref">Tabel 2</a> med jeres hypotese.</li>
 </ol>
 </section>
-<section id="de-to-faste-afsnit" class="level2">
-<h2 class="anchored" data-anchor-id="de-to-faste-afsnit">De to faste afsnit</h2>
-<p>Hver vejledning slutter med to afsnit, der gør den til mere end en opskrift:</p>
-<p><strong><code>## Databehandling</code></strong> — hvad eleverne selv skal regne, tegne og vurdere ud fra deres rådata: gennemsnit, procentberegninger, en graf, en sammenligning på tværs af grupper. Skriv formlerne som rigtig matematik (<code>$$…$$</code>), og lav et lille skema til de udregnede tal, hvis der er mere end et par stykker. Afsnittet springes kun over, hvis øvelsen er rent kvalitativ — er der tal, skal der regnes på dem.</p>
-<p><strong><code>## Journalspørgsmål</code></strong> — nummererede forslag til faglige refleksionsspørgsmål, der binder resultaterne sammen med teorien: forklar begrebet, vurdér metodens fejlkilder, sammenlign med en anden situation, diskutér hvor repræsentativt resultatet er. Det er forslag, du kan skære i eller bytte ud, ikke en facitliste.</p>
-<p><code>Biologi/biodiversitet-i-graesplaenen/</code> viser begge afsnit, som de skal se ud.</p>
-</section>
-<section id="genbrugelige-byggeklodser-i-en-.qmd" class="level2">
-<h2 class="anchored" data-anchor-id="genbrugelige-byggeklodser-i-en-.qmd">Genbrugelige byggeklodser i en <code>.qmd</code></h2>
-<ul>
-<li><code>## Overskrift</code> → grøn sektionsoverskrift med streg i venstre side.</li>
-<li><code>![Billedtekst](figurer/billede.png)</code> → nummereret figur med billedtekst.</li>
-<li><code>::: {.callout-tip} ## Tip ... :::</code> → grøn tip-boks.</li>
-<li><code>::: {.callout-note} ## Materialer (pr. gruppe) ... :::</code> → blå boks (fx til materialeliste).</li>
-<li>Almindelig markdown-tabel med <code>: Billedtekst {#tbl-1}</code> under → nummereret tabel/skema med grønt overskriftsfelt, som der kan henvises til med <code>@tbl-1</code>.</li>
-<li><code>$$\\frac{a}{b}$$</code> → formel på egen linje, til databehandlingsafsnittet.</li>
-</ul>
-</section>
-<section id="hvis-du-vil-rendere-selv-uden-claude" class="level2">
-<h2 class="anchored" data-anchor-id="hvis-du-vil-rendere-selv-uden-claude">Hvis du vil rendere selv (uden Claude)</h2>
-<p>Quarto er allerede installeret (1.10.18). Kør kommandoerne ovenfor i Terminal, stående i vejledningens egen undermappe (fx <code>Geografi/opmaaling-af-terraenprofil/</code>).</p>
-</section>
+<section id="journalspørgsmål" class="level2">
+<h2 class="anchored" data-anchor-id="journalspørgsmål">Journalspørgsmål</h2>
+<div id="fig-vulkaner" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-vulkaner-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img role="img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgMjUwIiB3aWR0aD0iNjQwIiBoZWlnaHQ9IjI1MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJUbyB2dWxrYW5lciBpIHByb2ZpbDogZW4gYnJlZCwgZmxhZCBza2pvbGR2dWxrYW4gbWVkIHN2YWdlIHNrcsOlbmluZ2VyIG9nIGVuIGjDuGosIHN0ZWpsIGtlZ2xldnVsa2FuIj4KICA8dGl0bGU+VG8gdnVsa2FudHlwZXI6IHNram9sZHZ1bGthbiBvZyBrZWdsZXZ1bGthbjwvdGl0bGU+CiAgPGRlc2M+VGlsIHZlbnN0cmUgZW4gc2tqb2xkdnVsa2FuIHNvbSBNYXVuYSBMb2EgcMOlIEhhd2FpaTogbWVnZXQgYnJlZCBvZyBmbGFkIG1lZCBzdmFnZSBza3LDpW5pbmdlci4gVGlsIGjDuGpyZSBlbiBrZWdsZXZ1bGthbiAoc3RyYXRvdnVsa2FuKSBzb20gTW91bnQgU3QuIEhlbGVucyBpIFVTQTogc21hbCBvZyBow7hqIG1lZCBzdGVqbGUgc2tyw6VuaW5nZXIuIFNraXRzZW4gZXIgaWtrZSBtw6VsZmFzdC48L2Rlc2M+CiAgPGRlZnM+CiAgICA8bWFya2VyIGlkPSJ2LXBpbCIgdmlld0JveD0iMCAwIDEyIDEyIiByZWZYPSI3IiByZWZZPSI2IiBtYXJrZXJXaWR0aD0iNC41IiBtYXJrZXJIZWlnaHQ9IjQuNSIgb3JpZW50PSJhdXRvLXN0YXJ0LXJldmVyc2UiPjxwYXRoIGQ9Ik0xLDEgTDExLDYgTDEsMTEgeiIgZmlsbD0iIzI2MzMyQiIvPjwvbWFya2VyPgogIDwvZGVmcz4KICA8cGF0aCBkPSJNMjAuMCAyMTAuMCBMMjQuMCAyMDkuMyBMMjguMCAyMDguNSBMMzIuMCAyMDcuNyBMMzYuMCAyMDYuNyBMNDAuMCAyMDUuOCBMNDQuMCAyMDQuOCBMNDguMCAyMDMuOCBMNTIuMCAyMDIuOCBMNTYuMCAyMDEuNyBMNjAuMCAyMDAuNyBMNjQuMCAxOTkuNiBMNjguMCAxOTguNSBMNzIuMCAxOTcuNCBMNzYuMCAxOTYuMiBMODAuMCAxOTUuMSBMODQuMCAxOTQuMCBMODguMCAxOTIuOCBMOTIuMCAxOTEuNiBMOTYuMCAxOTAuNSBMMTAwLjAgMTg5LjMgTDEwNC4wIDE4OC4xIEwxMDguMCAxODYuOSBMMTEyLjAgMTg1LjcgTDExNi4wIDE4NC40IEwxMjAuMCAxODMuMiBMMTI0LjAgMTgyLjAgTDEyOC4wIDE4MC43IEwxMzIuMCAxNzkuNSBMMTM2LjAgMTc4LjIgTDE0MC4wIDE3Ny4wIEwxNDQuMCAxNzUuNyBMMTQ4LjAgMTc0LjQgTDE1Mi4wIDE3My4xIEwxNTYuMCAxNzEuOCBMMTYwLjAgMTcwLjUgTDE2NC4wIDE2OS4yIEwxNjguMCAxNjcuOSBMMTcyLjAgMTY2LjYgTDE3Ni4wIDE2NS4zIEwxODAuMCAxNjQuMCBMMTg0LjAgMTY1LjMgTDE4OC4wIDE2Ni42IEwxOTIuMCAxNjcuOSBMMTk2LjAgMTY5LjIgTDIwMC4wIDE3MC41IEwyMDQuMCAxNzEuOCBMMjA4LjAgMTczLjEgTDIxMi4wIDE3NC40IEwyMTYuMCAxNzUuNyBMMjIwLjAgMTc3LjAgTDIyNC4wIDE3OC4yIEwyMjguMCAxNzkuNSBMMjMyLjAgMTgwLjcgTDIzNi4wIDE4Mi4wIEwyNDAuMCAxODMuMiBMMjQ0LjAgMTg0LjQgTDI0OC4wIDE4NS43IEwyNTIuMCAxODYuOSBMMjU2LjAgMTg4LjEgTDI2MC4wIDE4OS4zIEwyNjQuMCAxOTAuNSBMMjY4LjAgMTkxLjYgTDI3Mi4wIDE5Mi44IEwyNzYuMCAxOTQuMCBMMjgwLjAgMTk1LjEgTDI4NC4wIDE5Ni4yIEwyODguMCAxOTcuNCBMMjkyLjAgMTk4LjUgTDI5Ni4wIDE5OS42IEwzMDAuMCAyMDAuNyBMMzA0LjAgMjAxLjcgTDMwOC4wIDIwMi44IEwzMTIuMCAyMDMuOCBMMzE2LjAgMjA0LjggTDMyMC4wIDIwNS44IEwzMjQuMCAyMDYuNyBMMzI4LjAgMjA3LjcgTDMzMi4wIDIwOC41IEwzMzYuMCAyMDkuMyBMMzQwLjAgMjEwLjAgWiIgZmlsbD0iIzhDNkE0RSIgc3Ryb2tlPSIjMjYzMzJCIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8cGF0aCBkPSJNMTcwIDE2NSBoMjAiIHN0cm9rZT0iI0E4NDAyQyIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHBhdGggZD0iTTQwMC4wIDIxMC4wIEw0MDIuMCAyMDkuMyBMNDA0LjAgMjA4LjMgTDQwNi4wIDIwNy4wIEw0MDguMCAyMDUuNiBMNDEwLjAgMjA0LjEgTDQxMi4wIDIwMi41IEw0MTQuMCAyMDAuNyBMNDE2LjAgMTk4LjkgTDQxOC4wIDE5Ny4wIEw0MjAuMCAxOTUuMCBMNDIyLjAgMTkyLjkgTDQyNC4wIDE5MC44IEw0MjYuMCAxODguNiBMNDI4LjAgMTg2LjMgTDQzMC4wIDE4NC4wIEw0MzIuMCAxODEuNyBMNDM0LjAgMTc5LjMgTDQzNi4wIDE3Ni44IEw0MzguMCAxNzQuMyBMNDQwLjAgMTcxLjcgTDQ0Mi4wIDE2OS4xIEw0NDQuMCAxNjYuNSBMNDQ2LjAgMTYzLjggTDQ0OC4wIDE2MS4wIEw0NTAuMCAxNTguMyBMNDUyLjAgMTU1LjQgTDQ1NC4wIDE1Mi42IEw0NTYuMCAxNDkuNyBMNDU4LjAgMTQ2LjggTDQ2MC4wIDE0My44IEw0NjIuMCAxNDAuOCBMNDY0LjAgMTM3LjggTDQ2Ni4wIDEzNC43IEw0NjguMCAxMzEuNiBMNDcwLjAgMTI4LjUgTDQ3Mi4wIDEyNS40IEw0NzQuMCAxMjIuMiBMNDc2LjAgMTE4LjkgTDQ3OC4wIDExNS43IEw0ODAuMCAxMTIuNCBMNDgyLjAgMTA5LjEgTDQ4NC4wIDEwNS44IEw0ODYuMCAxMDIuNCBMNDg4LjAgOTkuMCBMNDkwLjAgOTUuNiBMNDkyLjAgOTIuMiBMNDk0LjAgODguNyBMNDk2LjAgODUuMiBMNDk4LjAgODEuNyBMNTAwLjAgNzguMSBMNTAyLjAgNzQuNSBMNTA0LjAgNzAuOSBMNTA2LjAgNjguMCBMNTA4LjAgNjguMCBMNTEwLjAgNjguMCBMNTEyLjAgNjguMCBMNTE0LjAgNjguMCBMNTE2LjAgNzAuOSBMNTE4LjAgNzQuNSBMNTIwLjAgNzguMSBMNTIyLjAgODEuNyBMNTI0LjAgODUuMiBMNTI2LjAgODguNyBMNTI4LjAgOTIuMiBMNTMwLjAgOTUuNiBMNTMyLjAgOTkuMCBMNTM0LjAgMTAyLjQgTDUzNi4wIDEwNS44IEw1MzguMCAxMDkuMSBMNTQwLjAgMTEyLjQgTDU0Mi4wIDExNS43IEw1NDQuMCAxMTguOSBMNTQ2LjAgMTIyLjIgTDU0OC4wIDEyNS40IEw1NTAuMCAxMjguNSBMNTUyLjAgMTMxLjYgTDU1NC4wIDEzNC43IEw1NTYuMCAxMzcuOCBMNTU4LjAgMTQwLjggTDU2MC4wIDE0My44IEw1NjIuMCAxNDYuOCBMNTY0LjAgMTQ5LjcgTDU2Ni4wIDE1Mi42IEw1NjguMCAxNTUuNCBMNTcwLjAgMTU4LjMgTDU3Mi4wIDE2MS4wIEw1NzQuMCAxNjMuOCBMNTc2LjAgMTY2LjUgTDU3OC4wIDE2OS4xIEw1ODAuMCAxNzEuNyBMNTgyLjAgMTc0LjMgTDU4NC4wIDE3Ni44IEw1ODYuMCAxNzkuMyBMNTg4LjAgMTgxLjcgTDU5MC4wIDE4NC4wIEw1OTIuMCAxODYuMyBMNTk0LjAgMTg4LjYgTDU5Ni4wIDE5MC44IEw1OTguMCAxOTIuOSBMNjAwLjAgMTk1LjAgTDYwMi4wIDE5Ny4wIEw2MDQuMCAxOTguOSBMNjA2LjAgMjAwLjcgTDYwOC4wIDIwMi41IEw2MTAuMCAyMDQuMSBMNjEyLjAgMjA1LjYgTDYxNC4wIDIwNy4wIEw2MTYuMCAyMDguMyBMNjE4LjAgMjA5LjMgTDYyMC4wIDIxMC4wIFoiIGZpbGw9IiM5QThGODYiIHN0cm9rZT0iIzI2MzMyQiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHBhdGggZD0iTTUwMCA2OCBoMjAiIHN0cm9rZT0iI0E4NDAyQyIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHBhdGggZD0iTTE0IDIxMCBINjI2IiBzdHJva2U9IiMyNjMzMkIiIHN0cm9rZS13aWR0aD0iMiIvPgogIDx0ZXh0IHg9IjE4MCIgeT0iMTEwIiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMjYzMzJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5BIMK3IFNram9sZHZ1bGthbjwvdGV4dD4KICA8dGV4dCB4PSIxODAiIHk9IjEyNiIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzZCN0E2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+ZnggTWF1bmEgTG9hLCBIYXdhaWk8L3RleHQ+CiAgPHRleHQgeD0iNTEwIiB5PSIyMiIgZm9udC1mYW1pbHk9IkNhcmxpdG8sQ2FsaWJyaSxIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzI2MzMyQiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QiDCtyBLZWdsZXZ1bGthbiAoc3RyYXRvdnVsa2FuKTwvdGV4dD4KICA8dGV4dCB4PSI1MTAiIHk9IjM4IiBmb250LWZhbWlseT0iQ2FybGl0byxDYWxpYnJpLEhlbHZldGljYSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNkI3QTY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5meCBNb3VudCBTdC4gSGVsZW5zLCBVU0E8L3RleHQ+CiAgPHRleHQgeD0iNjI2IiB5PSIyMzAiIGZvbnQtZmFtaWx5PSJDYXJsaXRvLENhbGlicmksSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM2QjdBNjYiIHRleHQtYW5jaG9yPSJlbmQiPnNraXRzZSDigJQgaWtrZSBtw6VsZmFzdDwvdGV4dD4KPC9zdmc+Cg==" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vulkaner-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figur 2: To vulkantyper: A er en bred og flad skjoldvulkan, B er en høj og stejl keglevulkan.
+</figcaption>
+</figure>
+</div>
+<ol type="1">
+<li>Hvilken af væskerne havde den største viskositet, og hvilken havde den mindste? Passede det med jeres hypotese?</li>
+<li><a href="#fig-vulkaner" class="quarto-xref">Figur 2</a> viser to vulkantyper. Var den lava, der byggede hver af dem op, tyndtflydende eller tyktflydende? Brug jeres resultater til at forklare, hvordan lavaens viskositet bestemmer vulkanens form.</li>
+<li>Magma indeholder gasser, der slipper ud, når magmaet når op mod overfladen. Vil en tyktflydende eller en tyndtflydende lava give et eksplosivt udbrud, og hvilken vil give et roligt udbrud? Forklar hvorfor. Tænk på, hvor let det er at puste bobler gennem vand og gennem sirup med et sugerør.</li>
+<li>Lavas viskositet afhænger især af dens temperatur og af, hvor meget kisel (SiO₂) den indeholder. Undersøg, hvilken lavatype der er tyndtflydende, og hvilken der er sej. Ved hvilke pladegrænser, eller hvilke andre steder, finder man typisk skjoldvulkaner, og hvor finder man keglevulkaner?</li>
+<li>Hvad tror I, der ville ske med jeres resultater, hvis sirupen blev varmet op først? Hvad betyder det for lava, at den afkøles, mens den flyder ned ad vulkanen?</li>
+<li>Vurdér jeres fejlkilder. Tænk fx på, om I brugte præcis samme mængde hver gang, hvornår I startede og stoppede uret, om papiret sugede noget af væsken, og om brættet havde samme hældning hele tiden.</li>
+<li>Diskutér, hvor godt forsøget er som model af rigtig lava. Hvad ligner, og hvad er forskelligt?</li>
+</ol>
 </section>
 
 </main>
