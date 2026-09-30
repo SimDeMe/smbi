@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ølbrygning — fra malt til glas — smbi.dk</title>
-<meta name="description" content="Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.">
+<meta name="description" content="Brygg en øl fra malt til glas: vælg opskrift og malt, kør et mæskeprogram, skyl urten fra, kog med bitter- og aromahumle, og vælg gærtype til gæringen.">
 <!-- Deling, ikoner og kanonisk adresse -->
 <link rel="canonical" href="https://smbi.dk/biologi/oelbrygning.html">
 <meta property="og:type" content="website">
@@ -12,7 +12,7 @@
 <meta property="og:locale" content="da_DK">
 <meta property="og:url" content="https://smbi.dk/biologi/oelbrygning.html">
 <meta property="og:title" content="Ølbrygning — fra malt til glas">
-<meta property="og:description" content="Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.">
+<meta property="og:description" content="Brygg en øl fra malt til glas: vælg opskrift og malt, kør et mæskeprogram, skyl urten fra, kog med bitter- og aromahumle, og vælg gærtype til gæringen.">
 <meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -126,7 +126,7 @@ a{color:inherit}
 
 /* ── Sidehoved ─────────────────────────────────────────── */
 .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head{padding-top:34px;padding-bottom:22px;position:relative;overflow:hidden}
 .head::before{
   content:'';position:absolute;width:380px;height:380px;border-radius:50%;
   background:#FFE3A0;filter:blur(70px);opacity:.65;top:-200px;right:-120px;z-index:0;
@@ -164,7 +164,10 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#FBD3E1;
 }
-.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live{display:flex;align-items:center;gap:7px;flex:1 1 0;min-width:110px;overflow:hidden}
+.rig-live .dot{flex-shrink:0}
+/* Statusteksten afkortes hellere end at skubbe knapperne ned på en ny linje. */
+.rig-live .who{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
   width:9px;height:9px;border-radius:50%;background:var(--accent);
@@ -331,6 +334,19 @@ input[type=range]::-moz-range-thumb{
   border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink);
 }
 input[type=range][disabled]{opacity:.45;cursor:not-allowed}
+.knob{grid-column:span var(--sp,1);min-width:0}
+.knob-valg select{
+  -webkit-appearance:none;appearance:none;width:100%;
+  font-family:var(--display);font-variation-settings:'wdth' 106;font-weight:700;font-size:0.9rem;
+  color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:16px;
+  padding:4px 34px 4px 12px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2317211F' stroke-width='2.2'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.knob-valg select[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.knob-malt .knob-top .mono{font-size:0.56rem;letter-spacing:0.1em}
+.knob-malt .knob-val{font-size:0.86rem;padding:0 8px}
+.ligninger[hidden],.gauges[hidden]{display:none}
 .knob-knap{justify-content:flex-start}
 .btn{
   align-self:flex-start;
@@ -367,6 +383,12 @@ input[type=range][disabled]{opacity:.45;cursor:not-allowed}
 }
 .fane[aria-current="step"]{background:var(--ink);color:#FFF6E0;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 .fane.gjort .fane-nr{background:var(--lime)}
+/* Kun den aktuelle station står med navn; de andre viser nummeret
+   (navnet står stadig i knappen til skærmlæsere og i title). */
+.fane:not([aria-current="step"]){padding-left:5px;padding-right:5px}
+.fane:not([aria-current="step"]) .fane-navn{
+  position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}
 .fane[disabled]{opacity:.42;box-shadow:none;cursor:not-allowed;transform:none}
 .btn-mini.klar{
   background:var(--accent);color:#fff;
@@ -418,6 +440,8 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
 @media (max-width:960px){
+  .knobs{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .knob{grid-column:auto}
   .gauges{grid-template-columns:repeat(2,1fr)}
   .gauge:nth-child(3){border-left:none}
   .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
@@ -431,7 +455,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 @media (max-width:620px){
   body{font-size:16px}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
-  .head{padding:24px 0 18px}
+  .head{padding-top:24px;padding-bottom:18px}
   .rig{border-radius:14px;box-shadow:var(--hard)}
   .knobs{grid-template-columns:1fr;padding:16px}
   .journal{box-shadow:var(--hard)}
@@ -467,7 +491,6 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 .foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
 .foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
 </style>
-</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -477,7 +500,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
       "name": "Ølbrygning — fra malt til glas",
       "url": "https://smbi.dk/biologi/oelbrygning.html",
       "inLanguage": "da-DK",
-      "description": "Brygg en øl fra malt til glas: styr mæsketemperaturen og se α- og β-amylase klippe stivelsen, kog med humle, og følg gæren omsætte sukker til ethanol og CO₂.",
+      "description": "Brygg en øl fra malt til glas: vælg opskrift og malt, kør et mæskeprogram, skyl urten fra, kog med bitter- og aromahumle, og vælg gærtype til gæringen.",
       "learningResourceType": "interaktiv simulering",
       "educationalLevel": "Gymnasialt niveau (stx, hf)",
       "isAccessibleForFree": true,
@@ -546,7 +569,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Biologi B · bioteknologi</span>
       <h1>Fra malt til <span class="hi" style="--hc:#FFE3A0">øl</span></h1>
-      <p class="lead">Brygg én batch gennem fire stationer: Mæsk maltens stivelse til sukker med to enzymer, kog urten med humle, og lad gæren lave sukkeret om til ethanol og CO₂. Det, du vælger ved hver station, kan smages i glasset til sidst.</p>
+      <p class="lead">Brygg hele vejen: vælg en opskrift eller din egen malt, mæsk stivelsen til sukker, skyl urten fra, kog med humle, og lad den valgte gær lave sukkeret om til ethanol og CO₂. Det, du vælger undervejs, kan smages i glasset til sidst.</p>
     </div>
   </div>
 
@@ -554,14 +577,14 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
     <section class="rig" aria-label="Ølbrygning">
       <div class="rig-bar"></div>
       <div class="rig-head">
-        <span class="version" title="Simuleringens version">v1.0</span>
+        <span class="version" title="Simuleringens version">v2.0</span>
         <span class="rig-live"><span class="dot"></span><span class="who" id="who">Mæskning · 0 min</span></span>
         <nav class="faner" id="faner" aria-label="Brygningens stationer"></nav>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-koer" aria-pressed="false">Start</button>
         <button type="button" class="btn-mini" id="btn-hurtig" aria-pressed="false"
                 title="Lad tiden gå fire gange så hurtigt">Hurtigt</button>
-        <button type="button" class="btn-mini" id="btn-videre" disabled>Til kogning →</button>
+        <button type="button" class="btn-mini" id="btn-videre" disabled>Til mæskning →</button>
         <button type="button" class="btn-mini" id="btn-nulstil" title="Smid batchen ud og start forfra">Nulstil</button>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
@@ -570,7 +593,7 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
       <div class="stage">
         <div class="stage-in">
           <canvas id="scene" width="1040" height="500" role="img"
-                  aria-label="Brygningens aktuelle station: til venstre gryden eller gærballonen, i midten en lup, der viser molekylerne, og til højre en graf over tiden."></canvas>
+                  aria-label="Brygningens aktuelle station: til venstre karret, gryden eller gærballonen, i midten en lup, der viser molekylerne, og til højre en graf over tiden eller opskriftens maltskema."></canvas>
         </div>
         <p class="hint" id="hint"></p>
       </div>
@@ -594,10 +617,11 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
       <div class="journal-rul">
         <table>
           <thead>
-            <tr><th scope="col">Bryg</th><th scope="col">Mæskning</th><th scope="col">Malt</th>
+            <tr><th scope="col">Bryg</th><th scope="col">Opskrift</th><th scope="col">Malt</th>
+                <th scope="col">Mæskning</th><th scope="col">Skylning</th>
                 <th scope="col">Humle <span class="enhed">g/min</span></th><th scope="col">Gæring</th>
                 <th scope="col">OG</th><th scope="col">FG</th><th scope="col">Alkohol</th>
-                <th scope="col">IBU</th><th scope="col">Forgæring</th></tr>
+                <th scope="col">IBU</th><th scope="col">EBC</th></tr>
           </thead>
           <tbody id="journal-krop"></tbody>
         </table>

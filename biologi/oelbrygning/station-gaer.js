@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
-   station-gaer.js — 3 · Gæring.
+   station-gaer.js — 5 · Gæring.
 
-   Den kogte urt er kølet og iltet, og gæren er tilsat. Gæren
+   Den kogte urt er kølet og iltet, og gæren er tilsat. Man
+   vælger gærtype — overgær til ale, hvedeøl og saison, undergær
+   til pilsner — og gæringstemperatur. Gæren
    bruger først ilten til at formere sig og gærer derefter
    sukkeret til ethanol og CO₂. CO₂'en bobler ud gennem gærlåsen,
    og vægtfylden falder. Luppen viser gærcellerne, der optager
@@ -67,16 +69,29 @@ function tegnPartikel(g, p, rt){
 
 /* ── Stationen ─────────────────────────────────────────── */
 export default {
-  id:'gaer', nr:3, navn:'Gæring',
-  tid:{maks:21 * 24, fart:12, skridt:0.1, proeve:2, enhed:'døgn',
+  id:'gaer', nr:5, navn:'Gæring',
+  tid:{maks:21 * 24, fart:12, skridt:0.1, proeve:2, enhed:'døgn', auto:14 * 24,
        tekst:t => 'dag ' + komma(t / 24, 1)},
 
   knapper:[
-    {id:'temp', navn:'Gæringstemperatur', min:4, max:42, step:1, vaerdi:20, enhed:'°C',
-     track:'linear-gradient(90deg,#9BE0F5,#D6EFC4 40%,#FFB300 70%,#FF6A3D)', kc:'var(--coral)'},
-    {id:'gaer', navn:'Tørgær', min:2, max:30, step:0.5, vaerdi:11.5, enhed:'g', decimaler:1,
-     laasVedStart:true, track:'linear-gradient(90deg,#FFF6E0,#E6D2A2)', kc:'#E6D2A2'},
+    {id:'type', type:'valg', navn:'Gærtype', vaerdi:'ale', laas:true, genstart:true, adr:'gaertype',
+     valg:B.GAERTYPER.map(y => ({id:y.id, navn:y.navn}))},
+    {id:'temp', navn:'Gæringstemperatur', min:4, max:42, step:1, vaerdi:19, enhed:'°C', genstart:true, adr:'gaering',
+     /* Banen viser gærtypens temperaturområde som et grønt bånd. */
+     track:v => {
+       const y = B.gaertype(v.type), p = T => ((T - 4) / 38 * 100).toFixed(1) + '%';
+       return `linear-gradient(90deg,#E7F4FB ${p(y.Tmin - 0.5)},#8FD16A ${p(y.Tmin - 0.5)} ${p(y.Tmax + 0.5)},#FFE9DC ${p(y.Tmax + 0.5)})`;
+     }, kc:'var(--coral)'},
+    {id:'gaer', navn:'Tørgær', min:2, max:40, step:0.5, vaerdi:11.5, enhed:'g', decimaler:1, adr:'gaer',
+     laas:true, genstart:true, track:'linear-gradient(90deg,#FFF6E0,#E6D2A2)', kc:'#E6D2A2'},
   ],
+
+  /* Ny gærtype: dens egen temperatur og dosis som udgangspunkt. */
+  vedValg(id, v){
+    if(id !== 'type') return;
+    const y = B.gaertype(v.type);
+    v.temp = y.Topt; v.gaer = y.dosis;
+  },
 
   ligninger:[
     {id:'aand', titel:'Respiration · med ilt · gæren formerer sig', tone:'#EDF8E4',
@@ -92,7 +107,11 @@ export default {
     {id:'co2', navn:'CO₂ ud gennem gærlåsen', klasse:'g-groen', cc:'linear-gradient(90deg,#D6EFC4,#5FB030)'},
   ],
 
-  signatur:`
+  signatur(v){
+    const y = B.gaertype(v.type);
+    return `<span class="fact">${y.navn} <b>${y.Tmin}–${y.Tmax}</b> <span class="enhed">°C</span> · ${y.smag}</span>` + this.signaturFast;
+  },
+  signaturFast:`
     <span class="fact"><svg width="26" height="18" viewBox="-13 -9 26 18" aria-hidden="true"><ellipse rx="11" ry="8" fill="${FARVE.gaer}" stroke="#17211F" stroke-width="1.6"/><circle cx="-3" cy="1" r="2.6" fill="#D9C08A" stroke="#17211F" stroke-width="1"/></svg>Gærcelle</span>
     <span class="fact"><svg width="24" height="14" viewBox="-12 -7 24 14" aria-hidden="true"><path d="M-5 0h10" stroke="#17211F" stroke-width="2"/><circle cx="-5" cy="0" r="4.4" fill="${FARVE.sukkerLys}" stroke="#17211F" stroke-width="1.3"/><circle cx="5" cy="0" r="4.4" fill="${FARVE.sukkerLys}" stroke="#17211F" stroke-width="1.3"/></svg>Maltose</span>
     <span class="fact"><svg width="24" height="14" viewBox="-12 -7 24 14" aria-hidden="true"><path d="M-6 2L0 -2L6 2" stroke="#17211F" stroke-width="1.5" fill="none"/><circle cx="-6" cy="2" r="3.3" fill="${C}" stroke="#17211F"/><circle cx="0" cy="-2" r="3.3" fill="${C}" stroke="#17211F"/><circle cx="6" cy="2" r="3" fill="${O}" stroke="#17211F"/></svg><span class="enhed">C₂H₅OH</span> ethanol</span>
@@ -101,7 +120,7 @@ export default {
 
   start(batch, v){
     const urt = batch.urtKogt;
-    const g = B.nyGaering(urt, v.gaer, v.temp);
+    const g = B.nyGaering(urt, v.gaer, v.temp, v.type);
     const st = {
       g, urt, v, gaer0:g.gaer, sukker0:g.sukker,
       temperaturer:[v.temp],
@@ -184,7 +203,7 @@ export default {
       }
     }
 
-    const fart = 10 + 16 * B.gaerTempo(g.T);
+    const fart = 10 + 16 * B.gaerTempo(g.T, g.y);
     for(const p of L){
       drift(p, dt, r, p.type === 'gaer' || p.type === 'doed' ? fart * 0.35 : fart);
       if(p.blink) p.blink = Math.max(0, p.blink - dt * 2.5);
@@ -209,14 +228,16 @@ export default {
     const fase = B.fase(gg);
     const aktivitet = Math.min(1, gg.co2Rate / 1.2);
     const i_bund = fase === 'hvile' || fase === 'død';
+    const flok = gg.y.flok, under = gg.y.slags === 'undergær';
     tegnBallon(g, {
       vaeske:ebcFarve(urt.ebc), rt, T:gg.T,
-      uklar:i_bund ? 0.15 : 0.35 + 0.6 * aktivitet,
-      skum:aktivitet,
+      uklar:i_bund ? 0.15 + 0.6 * (1 - flok) : 0.35 + 0.6 * aktivitet,
+      skum:aktivitet * (under ? 0.45 : 1),
       bundfald:Math.min(1, (gg.doed + (i_bund ? gg.gaer : gg.gaer * 0.15)) / 4),
       boblerIGaerlaas:st.laas,
     });
     maerkat(g, 'Gærballon · ' + komma(gg.V, 1) + ' L', BALLON.x, BALLON.y + BALLON.h + 22, {størrelse:10.5, stort:true});
+    maerkat(g, gg.y.navn, BALLON.x, BALLON.y + BALLON.h + 40, {størrelse:9, farve:SLATE});
     skilt(g, komma(gg.T, 0) + ' °C', BALLON.x + BALLON.b / 2 - 27, BALLON.y + 114, {stort:false, størrelse:11});
 
     lup(g, LUP_FRA, '#FFFCF3', (g2) => {
@@ -274,7 +295,7 @@ export default {
   },
 
   afslut(st, batch){
-    batch.gaering = {temperaturer:st.temperaturer.slice(), gaer:st.v.gaer, tid:st.g.t, fase:B.fase(st.g)};
+    batch.gaering = {type:st.v.type, temperaturer:st.temperaturer.slice(), gaer:st.v.gaer, tid:st.g.t, fase:B.fase(st.g)};
     batch.oel = B.resultat(batch.urtKogt, st.g);
   },
 };

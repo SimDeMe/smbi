@@ -106,7 +106,7 @@ export function boks(g, x, y, b, h, r){
 
 /* Versaler i mærkaterne — men enheder og græske bogstaver staves, som de
    staves: «3 kW» må ikke blive «3 KW», og α må ikke blive til Α. */
-const ENHED = /^(kW|MJ\/kg|kJ\/K|mL|g\/L|mg\/L|°C|°P|kg|g|min|pH|mio\.\/mL|%)$/;
+const ENHED = /^(kW|MJ\/kg|kJ\/K|L|L\/kg|mL|g\/L|mg\/L|°C|°P|kg|g|min|pH|mio\.\/mL|%|EBC)$/;
 export function versal(t){
   return t.split(' ').map(o => ENHED.test(o) ? o : o.replace(/[a-zæøåé]/g, c => c.toUpperCase())).join(' ');
 }
@@ -159,8 +159,8 @@ export const komma = (n, d = 0) => Number(n).toFixed(d).replace('.', ',').replac
  * En cirkel, der forstørrer et udsnit af kedlen op til molekyleniveau.
  * `fra` er det sted i kedlen, luppen kigger på; tegn() kaldes med
  * lærredet klippet til cirklen og origo i midten.                 */
-export function lup(g, fra, baggrund, tegnIndhold){
-  const {x, y, r} = LUP;
+export function lup(g, fra, baggrund, tegnIndhold, sted = LUP){
+  const {x, y, r} = sted;
   /* De to tangenter fra udsnittet til luppen. */
   const dx = x - fra.x, dy = y - fra.y, d = Math.hypot(dx, dy);
   const v = Math.atan2(dy, dx), a = Math.asin(Math.min(1, (r - fra.r) / d));

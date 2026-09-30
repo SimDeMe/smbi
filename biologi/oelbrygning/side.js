@@ -2,9 +2,10 @@
    side.js — indgangen.
 
    Binder oelbrygning.html sammen med stationerne: fanerne, uret,
-   skyderne, instrumenterne, bryggejournalen, adressefeltet og
-   projektortilstanden. Fagligheden står i brygning.js, figurerne i
-   station-*.js og udstyr.js — her står kun betjeningen.
+   skyderne og valglisterne, opskrifterne, instrumenterne,
+   bryggejournalen, adressefeltet og projektortilstanden.
+   Fagligheden står i brygning.js, opskrifterne i opskrifter.js,
+   figurerne i station-*.js og udstyr.js — her står kun betjeningen.
 
    Batchen er det, der flyder fra station til station. Går man
    tilbage til en tidligere station, brygges der videre derfra med
@@ -13,33 +14,93 @@
 import {STATIONER} from './stationer.js';
 import {byggLaerred, komma} from './model.js';
 import {tegnGraf} from './graf.js';
+import * as B from './brygning.js';
+import {opskrift} from './opskrifter.js';
 
 const el = id => document.getElementById(id);
 const lærred = byggLaerred(el('scene'));
 
 /* Enheder og græske bogstaver må ikke komme med i mono-mærkaternes
    versaler: α-amylase må ikke blive til «Α-AMYLASE». */
-const beskyt = t => t.replace(/([αβ]|\b(?:mL|g\/L|kW|°C|°P|IBU|EBC|OG|FG|mio\.\/mL)\b|[A-Z][a-z]?[₀-₉]+[A-Za-z₀-₉]*)/g,
+const beskyt = t => t.replace(/([αβ]|\b(?:mL|g\/L|mg\/L|L\/kg|kW|°C|°P|IBU|EBC|OG|FG|mio\.\/mL)\b|[A-Z][a-z]?[₀-₉]+[A-Za-z₀-₉]*)/g,
                               '<span class="enhed">$1</span>');
 
 /* ── Tilstand ──────────────────────────────────────────── */
-const vaerdier = {};
-for(const s of STATIONER) vaerdier[s.id] = Object.fromEntries(s.knapper.map(k => [k.id, k.vaerdi]));
+const STANDARD = {};
+for(const s of STATIONER) STANDARD[s.id] = Object.fromEntries(s.knapper.map(k => [k.id, k.vaerdi]));
+const kopi = o => JSON.parse(JSON.stringify(o));
+
+/** Alle stationers værdier, som en opskrift sætter dem. */
+function fraOpskrift(id){
+  const v = kopi(STANDARD);
+  const o = opskrift(id);
+  v.indmaesk.opskrift = o ? o.id : 'egen';
+  v.kog.plan = o ? 'opskrift' : 'selv';
+  if(!o) return v;
+  for(const m of B.MALTE) v.indmaesk['m-' + m.id] = o.malt[m.id] || 0;
+  Object.assign(v.indmaesk, {vand:o.vand, vandT:o.vandT});
+  Object.assign(v.maesk, {program:o.program, rast:o.rast, tid:o.tid});
+  Object.assign(v.skyl, {skylT:o.skylT, urtV:o.urtV});
+  Object.assign(v.kog, {sort:o.humle[0].sort, portion:Math.max(5, Math.round(o.humle[0].g / 5) * 5)});
+  Object.assign(v.gaer, {type:o.gaer, temp:o.gaeringT, gaer:o.gaerG});
+  return v;
+}
+
+const vaerdier = fraOpskrift(STANDARD.indmaesk.opskrift);
+
+/** Har man ændret i opskriften? (Humlesort og portion er kun betjening.) */
+function afviger(){
+  const id = vaerdier.indmaesk.opskrift;
+  if(!opskrift(id)) return false;
+  const ref = fraOpskrift(id);
+  return STATIONER.some(s => s.knapper.some(k =>
+    k.id !== 'sort' && k.id !== 'portion' && ref[s.id][k.id] !== vaerdier[s.id][k.id]));
+}
 
 let batch = {};
 let nr = 0, st = null;
 let koerer = false, hurtig = false, rt = 0, proeveUr = 0;
 const journal = [];
 const station = () => STATIONER[nr];
+const indeks = id => STATIONER.findIndex(s => s.id === id);
 
 /* ── Rækkerne under figuren ────────────────────────────── */
+function knapHtml(s, k){
+  const v = vaerdier[s.id];
+  const sp = k.spaend ? ` style="--sp:${k.spaend}"` : '';
+  const kl = k.klasse ? ' ' + k.klasse : '';
+  if(k.type === 'valg'){
+    return `
+    <label class="knob knob-valg${kl}" for="k-${k.id}"${sp}>
+      <span class="knob-top"><span class="mono">${beskyt(k.navn)}</span></span>
+      <select id="k-${k.id}" data-knap="${k.id}">${k.valg.map(o =>
+        `<option value="${o.id}"${o.id === v[k.id] ? ' selected' : ''}>${o.navn}</option>`).join('')}</select>
+    </label>`;
+  }
+  const track = typeof k.track === 'function' ? k.track(v) : k.track;
+  return `
+    <label class="knob${kl}" for="k-${k.id}"${sp}>
+      <span class="knob-top"><span class="mono">${beskyt(k.navn)}</span>
+        <span class="knob-val"><span id="kv-${k.id}">${komma(v[k.id], k.decimaler ?? 0)}</span> ${k.enhed}</span></span>
+      <input type="range" id="k-${k.id}" min="${k.min}" max="${k.max}" step="${k.step}" value="${v[k.id]}"
+             style="--track:${track};--kc:${k.kc}" data-knap="${k.id}">
+    </label>`;
+}
+
+function signatur(s, b){
+  if(s.id === 'smag') return opskriftPiller(b);
+  return typeof s.signatur === 'function' ? s.signatur(vaerdier[s.id], b) : s.signatur;
+}
+
 function byggRaekker(s, b){
+  el('ligninger').hidden = !s.ligninger.length;
   el('ligninger').innerHTML = s.ligninger.map(l => `
     <div class="lign" data-lign="${l.id}" style="--tone:${l.tone}">
       <span class="lign-top"><span class="mono">${beskyt(l.titel)}</span><span class="lign-stand">Hviler</span></span>
       <span class="lign-formel">${typeof l.html === 'function' ? (b.oel ? l.html(b) : '') : l.html}</span>
     </div>`).join('');
 
+  el('gauges').hidden = !s.maalere.length;
   el('gauges').innerHTML = s.maalere.map(m => `
     <div class="gauge ${m.klasse}">
       <dt>${beskyt(m.navn)}</dt>
@@ -47,13 +108,7 @@ function byggRaekker(s, b){
       <dd><span data-tal="${m.id}">–</span><small data-enhed="${m.id}"></small></dd>
     </div>`).join('');
 
-  let knobs = s.knapper.map(k => `
-    <label class="knob" for="k-${k.id}">
-      <span class="knob-top"><span class="mono">${beskyt(k.navn)}</span>
-        <span class="knob-val"><span id="kv-${k.id}">${komma(vaerdier[s.id][k.id], k.decimaler ?? 0)}</span> ${k.enhed}</span></span>
-      <input type="range" id="k-${k.id}" min="${k.min}" max="${k.max}" step="${k.step}" value="${vaerdier[s.id][k.id]}"
-             style="--track:${k.track};--kc:${k.kc}" data-knap="${k.id}">
-    </label>`).join('');
+  let knobs = s.knapper.map(k => knapHtml(s, k)).join('');
   knobs += (s.handlinger || []).map(h => `
     <div class="knob knob-knap">
       <span class="knob-top"><span class="mono">${h.navn}</span></span>
@@ -62,28 +117,26 @@ function byggRaekker(s, b){
   if(s.id === 'smag'){
     knobs = `
       <div class="knob knob-knap"><span class="knob-top"><span class="mono">Samme urt, ny gær</span></span>
-        <button type="button" class="btn" data-igen="2">Gær igen</button></div>
-      <div class="knob knob-knap"><span class="knob-top"><span class="mono">Samme mæsk, ny humle</span></span>
-        <button type="button" class="btn" data-igen="1">Kog igen</button></div>
+        <button type="button" class="btn" data-igen="${indeks('gaer')}">Gær igen</button></div>
+      <div class="knob knob-knap"><span class="knob-top"><span class="mono">Samme urt, ny humle</span></span>
+        <button type="button" class="btn" data-igen="${indeks('kog')}">Kog igen</button></div>
       <div class="knob knob-knap"><span class="knob-top"><span class="mono">Helt forfra</span></span>
         <button type="button" class="btn" data-igen="0">Nyt bryg</button></div>`;
   }
   el('knobs').innerHTML = knobs;
-  el('knobs').style.setProperty('--n', Math.max(2, el('knobs').children.length));
+  const spalter = s.knapper.reduce((n, k) => n + (k.spaend || 1), 0) + (s.handlinger || []).length;
+  el('knobs').style.setProperty('--n', s.kolonner || Math.max(2, s.id === 'smag' ? 3 : spalter));
 
-  el('facts').innerHTML = s.id === 'smag' ? opskriftPiller(b) : s.signatur;
+  el('facts').innerHTML = signatur(s, b) || '';
 }
 
 function opskriftPiller(b){
-  if(!b.maesk) return '';
-  const r = b.oel;
-  const humle = b.kog.humle.length
-    ? b.kog.humle.map(h => `${h.g} g ved ${Math.floor(h.tid)} min`).join(', ')
-    : 'ingen';
-  return `
-    <span class="fact">Mæsk <b>${b.maesk.temperaturer.join(' → ')}</b> <span class="enhed">°C</span> · ${Math.round(b.maesk.tid)} <span class="enhed">min</span></span>
-    <span class="fact">Humle <b>${humle}</b></span>
-    <span class="fact">Gæring <b>${b.gaering.temperaturer.join(' → ')}</b> <span class="enhed">°C</span> · ${komma(b.gaering.tid / 24, 1)} døgn</span>
+  if(!b.oel) return '';
+  const r = b.oel, o = opskrift(b.opskrift);
+  const maal = o ? `<span class="fact">${o.navn} sigter mod <b>OG ${komma(o.maal.og, 3)} · FG ${komma(o.maal.fg, 3)} · ${komma(o.maal.ibu)} IBU · ${komma(o.maal.abv, 1)} %</b></span>`
+                 : '<span class="fact">Egen opskrift</span>';
+  return `${maal}
+    <span class="fact">Malt <b>${komma(B.maltKg(b.indmaesk.malt), 2)}</b> <span class="enhed">kg</span> · skyllet ud <b>${komma(b.skyl.udbytte * 100)} %</b></span>
     <span class="fact">Forgæring <b>${komma(r.forgaering * 100)} %</b></span>`;
 }
 
@@ -97,6 +150,12 @@ function aflaes(){
     tal.textContent = v.tal;
     document.querySelector(`[data-enhed="${id}"]`).textContent = v.enhed;
     document.querySelector(`[data-bar="${id}"]`).style.width = (Math.max(0, Math.min(1, v.andel)) * 100).toFixed(1) + '%';
+  }
+  if(s.lignTekst){
+    for(const [id, html] of Object.entries(s.lignTekst(st))){
+      const f = document.querySelector(`[data-lign="${id}"] .lign-formel`);
+      if(f && f.dataset.h !== html){ f.dataset.h = html; f.innerHTML = html; }
+    }
   }
   const aktiv = s.aktiv(st);
   for(const felt of document.querySelectorAll('[data-lign]')){
@@ -113,7 +172,7 @@ const btnKoer = el('btn-koer'), btnHurtig = el('btn-hurtig'), btnVidere = el('bt
 function opdaterKnapper(){
   const s = station();
   const nu = s.tid ? s.nu(st) : 0;
-  const slut = s.tid && nu >= s.tid.maks - 1e-6;
+  const slut = s.tid && (nu >= s.tid.maks - 1e-6 || !!s.stop?.(st));
   btnKoer.disabled = !s.tid || slut;
   btnKoer.textContent = koerer ? 'Pause' : nu > 0 && !slut ? 'Fortsæt' : 'Start';
   btnKoer.setAttribute('aria-pressed', koerer ? 'true' : 'false');
@@ -131,9 +190,12 @@ function opdaterKnapper(){
     f.setAttribute('aria-current', i === nr ? 'step' : 'false');
     f.classList.toggle('gjort', i < nr);
   });
+  const v = vaerdier[s.id];
   for(const k of s.knapper){
     const input = el('k-' + k.id);
-    if(input) input.disabled = !!(k.laasVedStart && nu > 0);
+    if(!input) continue;
+    const laas = typeof k.laas === 'function' ? k.laas(v) : !!k.laas;
+    input.disabled = (laas && nu > 0) || !!k.deaktiv?.(v, vaerdier);
   }
   el('hint').classList.toggle('gone', !s.tid || nu > 0);
 }
@@ -161,20 +223,50 @@ el('faner').addEventListener('click', ev => {
   if(i !== nr) gaaTil(i);
 });
 
-/* ── Skydere og handlinger under figuren ───────────────── */
-el('knobs').addEventListener('input', ev => {
-  const input = ev.target.closest('[data-knap]');
-  if(!input) return;
+/* ── Skydere, valglister og handlinger under figuren ───── */
+function genopbyg(){
+  byggRaekker(station(), batch);
+  aflaes(); opdaterKnapper(); fyldOp();
+}
+
+function anvendOpskrift(id){
+  if(opskrift(id)){
+    const ny = fraOpskrift(id);
+    for(const sid of Object.keys(ny)) Object.assign(vaerdier[sid], ny[sid]);
+  } else {
+    vaerdier.indmaesk.opskrift = 'egen';
+    vaerdier.kog.plan = 'selv';
+  }
+  st = station().start(batch, vaerdier[station().id]);
+  genopbyg();
+}
+
+function nyVaerdi(input){
   const s = station(), k = s.knapper.find(k => k.id === input.dataset.knap);
-  const v = parseFloat(input.value);
-  vaerdier[s.id][k.id] = v;
-  el('kv-' + k.id).textContent = komma(v, k.decimaler ?? 0);
-  /* Før uret er startet, er temperatur og mængder startbetingelser:
-     mæsken røres ud ved den valgte temperatur, gæren kommer i ved
-     gæringstemperaturen. (Humleportionen er ikke — den bruges først,
-     når man tilsætter.) */
-  if(s.tid && s.nu(st) === 0 && (k.laasVedStart || k.id === 'temp')) st = s.start(batch, {...vaerdier[s.id]});
+  if(!k) return;
+  const v = vaerdier[s.id];
+  if(k.type === 'valg'){
+    v[k.id] = input.value;
+    if(k.id === 'opskrift'){ anvendOpskrift(input.value); gemTilstand(); return; }
+  } else {
+    v[k.id] = parseFloat(input.value);
+    el('kv-' + k.id).textContent = komma(v[k.id], k.decimaler ?? 0);
+  }
+  s.vedValg?.(k.id, v);
+  /* Før uret er startet, er værdierne startbetingelser: stationen
+     begynder forfra med dem. */
+  if(s.tid && s.nu(st) === 0 && k.genstart) st = s.start(batch, v);
+  if(k.type === 'valg' || s.vedValg) genopbyg();
+  else el('facts').innerHTML = signatur(s, batch) || '';
   gemTilstand();
+}
+el('knobs').addEventListener('input', ev => {
+  const input = ev.target.closest('input[data-knap]');
+  if(input) nyVaerdi(input);
+});
+el('knobs').addEventListener('change', ev => {
+  const input = ev.target.closest('select[data-knap]');
+  if(input) nyVaerdi(input);
 });
 el('knobs').addEventListener('click', ev => {
   const h = ev.target.closest('[data-handling]');
@@ -185,21 +277,26 @@ el('knobs').addEventListener('click', ev => {
     return;
   }
   const igen = ev.target.closest('[data-igen]');
-  if(igen) gaaTil(+igen.dataset.igen);
+  if(igen){
+    if(+igen.dataset.igen === 0) batch = {};
+    gaaTil(+igen.dataset.igen);
+  }
 });
 
 /* ── Skift af station ──────────────────────────────────── */
 const HINT = {
-  maesk:'Vælg temperatur, og tryk Start — skift gerne temperatur undervejs',
-  kog:'Tryk Start, og tilsæt humle, når du vil: tidligt giver bitterhed, sent giver aroma',
-  gaer:'Vælg gæringstemperatur og mængde gær, og tryk Start',
+  indmaesk:'Vælg en opskrift — eller skru selv på malt og vand — og tryk Start',
+  maesk:'Vælg et mæskeprogram, og tryk Start — eller styr temperaturen selv',
+  skyl:'Tryk Start for at åbne hanen: forurten løber fra, og skyllevandet vasker efter',
+  kog:'Tryk Start: humleplanen følges, eller tilsæt selv — tidligt giver bitterhed, sent aroma',
+  gaer:'Vælg gærtype og temperatur, og tryk Start',
 };
 
 function gaaTil(i, {stille = false} = {}){
   nr = i;
   koerer = false; proeveUr = 0;
   const s = station();
-  st = s.start(batch, {...vaerdier[s.id]});
+  st = s.start(batch, vaerdier[s.id]);
   byggRaekker(s, batch);
   el('hint').textContent = HINT[s.id] || '';
   if(s.id === 'smag' && !stille) skrivJournal();
@@ -207,7 +304,7 @@ function gaaTil(i, {stille = false} = {}){
   aflaes();
   gemTilstand();
   if(!stille) fortael(true);
-  laasRaekker();
+  fyldOp();
 }
 
 /* ── Løkken ────────────────────────────────────────────── */
@@ -218,14 +315,14 @@ lærred.naarSkridt(dt => {
   if(koerer && s.tid){
     const T = s.tid;
     let rest = Math.min(dt * T.fart * (hurtig ? 4 : 1), T.maks - s.nu(st));
-    while(rest > 1e-9){
+    while(rest > 1e-9 && !s.stop?.(st)){
       const d = Math.min(T.skridt, rest);
       s.skridt(st, d, vaerdier[s.id]);
       rest -= d;
       proeveUr += d;
       if(proeveUr >= T.proeve){ proeveUr = 0; s.maal(st); }
     }
-    if(s.nu(st) >= T.maks - 1e-6){
+    if(s.nu(st) >= T.maks - 1e-6 || s.stop?.(st)){
       s.maal(st);
       koerer = false;
       fortael(true);
@@ -253,20 +350,22 @@ function fortael(tving){
 
 /* ── Bryggejournalen ───────────────────────────────────── */
 function skrivJournal(){
-  const b = batch, r = b.oel;
+  const b = batch, r = b.oel, o = opskrift(b.opskrift);
   journal.push({
     nr:journal.length + 1,
+    opskrift:(o ? o.navn : 'Egen') + (o && afviger() ? ' · ændret' : ''),
+    malt:komma(B.maltKg(b.indmaesk.malt), 2) + ' kg',
     maesk:b.maesk.temperaturer.join('→') + ' °C · ' + Math.round(b.maesk.tid) + ' min',
-    malt:komma(b.maesk.malt, 1) + ' kg',
-    humle:b.kog.humle.length ? b.kog.humle.map(h => h.g + ' g/' + Math.floor(h.tid)).join(', ') : '—',
-    gaering:b.gaering.temperaturer.join('→') + ' °C · ' + komma(b.gaering.tid / 24, 1) + ' d',
+    skyl:b.skyl.skylT + ' °C · ' + komma(b.skyl.udbytte * 100) + ' %',
+    humle:b.kog.humle.length ? b.kog.humle.map(h => h.g + ' g ' + B.humlesort(h.sort).kort + '/' + Math.floor(h.tid)).join(', ') : '—',
+    gaering:B.gaertype(b.gaering.type).navn.split(' ')[0] + ' · ' + b.gaering.temperaturer.join('→') + ' °C · ' + komma(b.gaering.tid / 24, 1) + ' d',
     og:komma(r.og, 3), fg:komma(r.fg, 3), abv:komma(r.abv, 1) + ' %',
-    ibu:komma(r.ibu), forg:komma(r.forgaering * 100) + ' %',
+    ibu:komma(r.ibu), ebc:komma(r.ebc),
   });
-  const krop = el('journal-krop');
-  krop.innerHTML = journal.slice().reverse().map(j => `
-    <tr><th scope="row">${j.nr}</th><td>${j.maesk}</td><td>${j.malt}</td><td>${j.humle}</td>
-    <td>${j.gaering}</td><td>${j.og}</td><td>${j.fg}</td><td><b>${j.abv}</b></td><td>${j.ibu}</td><td>${j.forg}</td></tr>`).join('');
+  el('journal-krop').innerHTML = journal.slice().reverse().map(j => `
+    <tr><th scope="row">${j.nr}</th><td>${j.opskrift}</td><td>${j.malt}</td><td>${j.maesk}</td><td>${j.skyl}</td>
+    <td>${j.humle}</td><td>${j.gaering}</td><td>${j.og}</td><td>${j.fg}</td><td><b>${j.abv}</b></td>
+    <td>${j.ibu}</td><td>${j.ebc}</td></tr>`).join('');
   el('journal').hidden = false;
 }
 el('btn-ryd').addEventListener('click', () => {
@@ -276,44 +375,65 @@ el('btn-ryd').addEventListener('click', () => {
 });
 
 /* ── Rammen står stille ────────────────────────────────── *
- * Stationerne har forskellig mængde tekst i rækkerne. Alle måles én
- * gang, og hver række låses til den højeste, så figuren og knapperne
- * ikke hopper, når man går videre. Kun i det brede layout.       */
+ * Stationerne har forskellig mængde tekst og forskelligt antal
+ * knapper i rækkerne under figuren. Alle måles én gang, og den
+ * plads, en station har til overs i forhold til den højeste, samles
+ * nederst i knaprækken — så figuren og knapperne ikke hopper, når
+ * man går videre. Kun i det brede layout.                         */
 const RÆKKER = ['ligninger', 'gauges', 'knobs', 'facts'];
-let eksempel = null;
+const bred = () => matchMedia('(min-width:961px)').matches;
+const raekkeHoejde = () => RÆKKER.reduce((h, id) => h + el(id).getBoundingClientRect().height, 0);
+let eksempel = null, maksHoejde = 0;
+
 function laasRaekker(){
-  for(const id of RÆKKER) el(id).style.minHeight = '';
-  if(!matchMedia('(min-width:961px)').matches) return;
+  el('knobs').style.minHeight = '';
+  maksHoejde = 0;
+  if(!bred()) return;
   eksempel ??= autobryg(STATIONER.length - 1, {}, true);
-  const maks = Object.fromEntries(RÆKKER.map(id => [id, 0]));
   for(const s of STATIONER){
     byggRaekker(s, s.id === 'smag' ? (batch.oel ? batch : eksempel) : batch);
-    for(const id of RÆKKER) maks[id] = Math.max(maks[id], el(id).getBoundingClientRect().height);
+    maksHoejde = Math.max(maksHoejde, raekkeHoejde());
   }
   byggRaekker(station(), batch);
-  for(const id of RÆKKER) el(id).style.minHeight = Math.ceil(maks[id]) + 'px';
-  aflaes(); opdaterKnapper();
+  aflaes(); opdaterKnapper(); fyldOp();
+}
+function fyldOp(){
+  const k = el('knobs');
+  k.style.minHeight = '';
+  if(!maksHoejde || !bred()) return;
+  const mangler = maksHoejde - raekkeHoejde();
+  if(mangler > 0.5) k.style.minHeight = Math.ceil(k.getBoundingClientRect().height + mangler) + 'px';
 }
 let resizeUr = 0;
 addEventListener('resize', () => { clearTimeout(resizeUr); resizeUr = setTimeout(laasRaekker, 150); });
 if(document.fonts) document.fonts.ready.then(laasRaekker);
 
-/* ── Automatisk brygning (til adresser, der peger på en senere station) ── */
-const STANDARDTID = {maesk:60, kog:60, gaer:14 * 24};
-const STANDARDHUMLE = [{g:20, tid:0}, {g:20, tid:55}];
+/* ── Automatisk brygning (til adresser, der peger på en senere station) ── *
+ * Hver station køres med de valgte værdier, til dens program stopper
+ * eller dens standardtid er gået (tid.auto). Har man ingen opskrift
+ * og ingen humle i adressen, humles der med 20 g Cascade ved start
+ * og 20 g 5 minutter før slut.                                    */
+const STANDARDHUMLE = [{sort:'cascade', g:20, tid:0}, {sort:'cascade', g:20, tid:55}];
 
-function autobryg(til, {humle = STANDARDHUMLE} = {}, egen = false){
+function autobryg(til, {humle} = {}, egen = false){
   const b = {};
   for(let i = 0; i < til; i++){
     const s = STATIONER[i];
     const v = {...vaerdier[s.id]};
+    let ventende = [];
+    if(s.id === 'kog'){
+      if(humle){ v.plan = 'selv'; ventende = humle.slice(); }
+      else if(!opskrift(b.opskrift) || v.plan === 'selv'){ v.plan = 'selv'; ventende = STANDARDHUMLE.slice(); }
+      ventende.sort((a, c) => a.tid - c.tid);
+    }
     const x = s.start(b, v);
-    const ventende = s.id === 'kog' ? humle.slice().sort((a, c) => a.tid - c.tid) : [];
-    while(s.nu(x) < STANDARDTID[s.id] - 1e-9){
+    const slut = s.tid.auto;
+    while(s.nu(x) < slut - 1e-9 && !s.stop?.(x)){
       while(ventende.length && ventende[0].tid <= s.nu(x) + 1e-9){
-        s.handling('humle', x, {portion:ventende.shift().g});
+        const h = ventende.shift();
+        s.handling('humle', x, {portion:h.g, sort:h.sort});
       }
-      s.skridt(x, Math.min(s.tid.skridt, STANDARDTID[s.id] - s.nu(x)), v);
+      s.skridt(x, Math.min(s.tid.skridt, slut - s.nu(x)), v);
     }
     s.afslut(x, b);
   }
@@ -331,27 +451,32 @@ function saetProjektor(til){
 btnProjektor.addEventListener('click', () => saetProjektor(document.body.getAttribute('data-projektor') !== '1'));
 
 /* ── Deling: stationen og opskriften ligger i adressen ─── *
- * #station=gaer&maesk=65&malt=4,5&humle=20@0,20@55&gaering=20&gaer=11,5
- * Peger adressen på en senere station, brygges stationerne før den
- * automatisk med opskriftens tal (mæsk 60 min, kog 60 min, gæring
- * 14 døgn), så man lander med den rigtige urt i gryden.            */
-const ADRESSE = {maesk:{temp:'maesk', malt:'malt'}, kog:{portion:'portion'}, gaer:{temp:'gaering', gaer:'gaer'}};
-
+ * #station=kog&opskrift=apa&rast=68&humle=cascade:40@0,cascade:35@55
+ * Kun det, der afviger fra opskriften, skrives i adressen. Peger
+ * adressen på en senere station, brygges stationerne før den
+ * automatisk, så man lander med den rigtige urt i gryden.         */
 function humleNu(){
   const h = station().id === 'kog' ? st.k.humle : batch.kog?.humle;
-  return h && h.length ? h.map(x => x.g + '@' + Math.floor(x.tid)).join(',') : null;
+  if(!h || !h.length) return null;
+  return h.map(x => x.sort + ':' + x.g + '@' + Math.floor(x.tid)).join(',');
 }
 
 let hashUr = 0;
 function gemTilstand(){
   const p = new URLSearchParams();
   p.set('station', station().id);
-  for(const [sid, felter] of Object.entries(ADRESSE)){
-    for(const [kid, navn] of Object.entries(felter)) p.set(navn, String(vaerdier[sid][kid]));
+  const id = vaerdier.indmaesk.opskrift;
+  p.set('opskrift', id);
+  const ref = fraOpskrift(id);
+  for(const s of STATIONER){
+    for(const k of s.knapper){
+      if(!k.adr || k.id === 'opskrift') continue;
+      if(vaerdier[s.id][k.id] !== ref[s.id][k.id]) p.set(k.adr, String(vaerdier[s.id][k.id]));
+    }
   }
   const h = humleNu();
-  if(h) p.set('humle', h);
-  const streng = '#' + p.toString().replace(/%40/g, '@').replace(/%2C/g, ',');
+  if(h && (vaerdier.kog.plan === 'selv' || !opskrift(id) || nr > indeks('kog'))) p.set('humle', h);
+  const streng = '#' + p.toString().replace(/%40/g, '@').replace(/%2C/g, ',').replace(/%3A/g, ':');
   clearTimeout(hashUr);
   hashUr = setTimeout(() => { if(location.hash !== streng) history.replaceState(null, '', streng); }, 400);
 }
@@ -359,22 +484,35 @@ function gemTilstand(){
 function laesTilstand(){
   const p = new URLSearchParams(location.search);
   new URLSearchParams(location.hash.replace(/^#/, '')).forEach((v, k) => p.set(k, v));
+  const id = p.get('opskrift');
+  if(id && (opskrift(id) || id === 'egen')){
+    const ny = fraOpskrift(id);
+    for(const sid of Object.keys(ny)) Object.assign(vaerdier[sid], ny[sid]);
+  }
   for(const s of STATIONER){
     for(const k of s.knapper){
-      const navn = ADRESSE[s.id]?.[k.id];
-      const raa = navn && p.get(navn);
+      const raa = k.adr && k.id !== 'opskrift' ? p.get(k.adr) : null;
       if(raa == null) continue;
+      if(k.type === 'valg'){
+        if(k.valg.some(o => o.id === raa)) vaerdier[s.id][k.id] = raa;
+        continue;
+      }
       const v = parseFloat(raa.replace(',', '.'));
-      if(Number.isFinite(v)) vaerdier[s.id][k.id] = Math.max(k.min, Math.min(k.max, Math.round(v / k.step) * k.step));
+      if(Number.isFinite(v)){
+        const trin = Math.round((Math.max(k.min, Math.min(k.max, v)) - k.min) / k.step);
+        vaerdier[s.id][k.id] = +(k.min + trin * k.step).toFixed(4);
+      }
     }
   }
   let humle;
   if(p.get('humle')){
-    humle = p.get('humle').split(',').map(x => x.split('@').map(Number))
-      .filter(([g, t]) => g > 0 && g <= 200 && t >= 0 && t <= 90)
-      .map(([g, t]) => ({g, tid:t}));
+    humle = p.get('humle').split(',').map(x => {
+      const [sort, rest] = x.includes(':') ? x.split(':') : ['cascade', x];
+      const [g, t] = rest.split('@').map(Number);
+      return {sort:B.humlesort(sort).id, g, tid:t};
+    }).filter(h => h.g > 0 && h.g <= 200 && h.tid >= 0 && h.tid <= 90);
   }
-  const i = Math.max(0, STATIONER.findIndex(s => s.id === p.get('station')));
+  const i = Math.max(0, indeks(p.get('station')));
   if(i > 0) autobryg(i, {humle});
   if(/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
   return i;
@@ -382,8 +520,8 @@ function laesTilstand(){
 
 /* ── Faner ─────────────────────────────────────────────── */
 el('faner').innerHTML = STATIONER.map((s, i) => `
-  <button type="button" class="btn-mini fane" data-nr="${i}" aria-current="false">
-    <span class="fane-nr">${s.nr}</span>${s.navn}</button>`).join('');
+  <button type="button" class="btn-mini fane" data-nr="${i}" aria-current="false" title="${s.navn}">
+    <span class="fane-nr">${s.nr}</span><span class="fane-navn">${s.navn}</span></button>`).join('');
 
 /* ── Start ─────────────────────────────────────────────── */
 gaaTil(laesTilstand(), {stille:true});

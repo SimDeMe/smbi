@@ -10,10 +10,11 @@ import {INK, SLATE, FARVE, PAPIR, BLØDT, blaek, boks, maerkat, skilt, komma} fr
 /* ── Gryden (mæskekar og kogekar) ──────────────────────── */
 export const GRYDE = {x:52, y:150, b:250, h:250};
 
-/** Væskens overflade i gryden, når den rummer V liter (maks 26 L). */
+/** Væskens overflade i gryden, når den rummer V liter (maks 34 L). */
+export const GRYDE_L = 34;
 export function grydeNiveau(V){
   const {y, h} = GRYDE;
-  return y + h - (h - 28) * Math.min(1, V / 26);
+  return y + h - (h - 22) * Math.min(1, V / GRYDE_L);
 }
 
 export function tegnGryde(g, {vaeske, niveau, uklar = 0, rt = 0, bobler = 0, korn = 0}){
@@ -71,7 +72,7 @@ export function tegnGryde(g, {vaeske, niveau, uklar = 0, rt = 0, bobler = 0, kor
   g.lineWidth = 5; g.strokeStyle = INK; g.lineCap = 'round'; g.stroke();
   g.lineCap = 'butt';
   /* literskala */
-  for(const L of [10, 15, 20, 25]){
+  for(const L of [10, 20, 30]){
     const ly = grydeNiveau(L);
     g.beginPath(); g.moveTo(x + b - 14, ly); g.lineTo(x + b - 4, ly);
     g.lineWidth = 1.6; g.strokeStyle = INK; g.stroke();
@@ -301,4 +302,144 @@ export function tegnHydrometer(g, x, y, sg, {vaeske, titel}){
   g.lineWidth = 1.6; g.strokeStyle = INK; g.stroke();
   maerkat(g, titel, x, y - 14, {størrelse:9.5, farve:SLATE});
   skilt(g, komma(sg, 3), x, y + h + 18, {størrelse:11, stort:false});
+}
+
+/* ── Maltsækken ────────────────────────────────────────── *
+ * En sæk pr. maltsort i opskriften: mængden står på sækken, og en
+ * lille bunke korn i maltens farve viser, hvor lys eller mørk den er. */
+export function tegnSaek(g, x, y, {navn, kg, farve, fyld = 1, tom = false}){
+  const b = 96, h = 84;
+  const top = y + h * (1 - 0.75 * fyld);
+  g.beginPath();
+  g.moveTo(x - b / 2 + 8, top);
+  g.quadraticCurveTo(x - b / 2 - 4, y + h * 0.6, x - b / 2 + 4, y + h);
+  g.lineTo(x + b / 2 - 4, y + h);
+  g.quadraticCurveTo(x + b / 2 + 4, y + h * 0.6, x + b / 2 - 8, top);
+  g.quadraticCurveTo(x, top - 8, x - b / 2 + 8, top);
+  blaek(g, tom ? '#F4F1E8' : '#E9DCC0', 2);
+  /* kornbunke i toppen */
+  if(!tom){
+    g.beginPath(); g.ellipse(x, top + 2, b / 2 - 12, 7, 0, 0, Math.PI * 2);
+    blaek(g, farve, 1.4);
+  }
+  maerkat(g, navn, x, y + h * 0.62, {størrelse:8.5, spær:0.6});
+  maerkat(g, komma(kg, kg < 1 ? 2 : 1) + ' kg', x, y + h * 0.84, {størrelse:9.5, stort:false, spær:0.3, vægt:600});
+}
+
+/** En stråle, der falder fra (x, y0) ned til y1. */
+export function tegnStraale(g, x, y0, y1, farve, rt, bredde = 5){
+  g.save();
+  g.beginPath();
+  g.moveTo(x - bredde / 2, y0);
+  for(let yy = y0; yy <= y1; yy += 6) g.lineTo(x - bredde / 2 + Math.sin(yy * 0.2 + rt * 12) * 0.8, yy);
+  g.lineTo(x + bredde / 2, y1);
+  g.lineTo(x + bredde / 2, y0);
+  g.closePath();
+  g.fillStyle = farve; g.fill();
+  g.lineWidth = 1; g.strokeStyle = 'rgba(23,33,31,.5)'; g.stroke();
+  g.restore();
+}
+
+/* ── Skylning: skyllevandsgryden, mæskekarret som sikar og kogekarret ── */
+export const HLT = {x:24, y:44, b:140, h:96};
+export const SIKAR = {x:84, y:196, b:228, h:162};
+export const KAR2 = {x:318, y:372, b:262, h:108};
+
+export function tegnSkyllevand(g, andel, T){
+  const {x, y, b, h} = HLT;
+  g.save();
+  boks(g, x, y, b, h, 12); g.clip();
+  g.fillStyle = '#F4F6F5'; g.fillRect(x, y, b, h);
+  const top = y + h - (h - 12) * Math.max(0, Math.min(1, andel));
+  g.fillStyle = '#CFEAF7'; g.fillRect(x, top, b, h);
+  g.restore();
+  boks(g, x, y, b, h, 12); blaek(g, null, 3);
+  g.beginPath(); g.moveTo(x - 5, y); g.lineTo(x + b + 5, y);
+  g.lineWidth = 5; g.strokeStyle = INK; g.lineCap = 'round'; g.stroke(); g.lineCap = 'butt';
+  maerkat(g, 'Skyllevand', x + 6, y - 16, {justering:'left', størrelse:10});
+  skilt(g, komma(T, 0) + ' °C', x + b - 30, y + 22, {stort:false, størrelse:11, fyld:T > 80 ? '#FFD9C9' : PAPIR});
+  /* røret til sprederen over sikarret */
+  g.beginPath();
+  g.moveTo(x + b, y + h - 14); g.lineTo(SIKAR.x + SIKAR.b / 2 + 40, y + h - 14);
+  g.lineTo(SIKAR.x + SIKAR.b / 2 + 40, SIKAR.y - 22);
+  g.lineTo(SIKAR.x + 26, SIKAR.y - 22);
+  g.lineWidth = 7; g.strokeStyle = INK; g.stroke();
+  g.lineWidth = 3.5; g.strokeStyle = '#DCE3E1'; g.stroke();
+}
+
+/** Sprederen drypper, når der eftergydes. */
+export function tegnSpreder(g, aktiv, rt){
+  const y = SIKAR.y - 22;
+  for(let i = 0; i < 9; i++){
+    const x = SIKAR.x + 30 + i * 20;
+    g.beginPath(); g.arc(x, y + 4, 2, 0, Math.PI * 2); g.fillStyle = INK; g.fill();
+    if(!aktiv) continue;
+    const f = (((BLØDT ? rt : 0) * 1.6 + i * 0.37) % 1);
+    g.beginPath(); g.ellipse(x, y + 8 + f * 26, 1.8, 3, 0, 0, Math.PI * 2);
+    g.fillStyle = '#9BD7F3'; g.fill();
+  }
+}
+
+/** Sikarret: kornlag på en falsk bund, fri væske over, hane i bunden. */
+export function tegnSikar(g, {kg, vaeskeTop, vaeske, rt, loeber}){
+  const {x, y, b, h} = SIKAR;
+  const bund = y + h - 14;
+  const lagTop = bund - Math.min(h - 40, 20 + kg * 17);
+  g.save();
+  boks(g, x, y, b, h, 14); g.clip();
+  g.fillStyle = '#F4F6F5'; g.fillRect(x, y, b, h);
+  /* væsken — over og mellem kornene */
+  g.fillStyle = vaeske; g.fillRect(x, vaeskeTop, b, bund - vaeskeTop);
+  /* kornlaget */
+  const tilfaeldig = n => { const t = Math.sin(n * 12.9898) * 43758.5453; return t - Math.floor(t); };
+  for(let i = 0; i < 170; i++){
+    const u = tilfaeldig(i + 1), v = tilfaeldig(i + 500);
+    const kx = x + 8 + u * (b - 16), ky = lagTop + 4 + v * (bund - lagTop - 8);
+    g.save(); g.translate(kx, ky); g.rotate(tilfaeldig(i + 900) * Math.PI);
+    g.beginPath(); g.ellipse(0, 0, 5, 2.4, 0, 0, Math.PI * 2);
+    g.fillStyle = '#C99A4B'; g.fill();
+    g.lineWidth = 0.9; g.strokeStyle = 'rgba(23,33,31,.45)'; g.stroke();
+    g.restore();
+  }
+  /* falsk bund med huller */
+  g.fillStyle = '#DCE3E1'; g.fillRect(x, bund, b, 14);
+  g.restore();
+  g.beginPath(); g.moveTo(x, bund); g.lineTo(x + b, bund);
+  g.setLineDash([6, 4]); g.lineWidth = 2; g.strokeStyle = INK; g.stroke(); g.setLineDash([]);
+  boks(g, x, y, b, h, 14); blaek(g, null, 3);
+  g.beginPath(); g.moveTo(x - 5, y); g.lineTo(x + b + 5, y);
+  g.lineWidth = 5; g.strokeStyle = INK; g.lineCap = 'round'; g.stroke(); g.lineCap = 'butt';
+  /* hanen */
+  const hy = y + h - 7;
+  boks(g, x + b - 2, hy - 5, 36, 10, 3); blaek(g, '#DCE3E1', 2);
+  boks(g, x + b + 26, hy - 5, 8, 18, 2); blaek(g, '#DCE3E1', 2);
+  g.beginPath(); g.arc(x + b + 16, hy - 10, 5, 0, Math.PI * 2);
+  blaek(g, loeber ? '#5FB030' : '#FFFFFF', 2);
+  maerkat(g, 'Kornlag', x + 10, lagTop + 12, {justering:'left', størrelse:8.5, farve:INK});
+  return {lagTop, bund, hane:{x:x + b + 30, y:hy + 13}};
+}
+
+/** Det lille kogekar under hanen. */
+export const KAR2_L = 36;
+export function kar2Niveau(V){ return KAR2.y + KAR2.h - (KAR2.h - 12) * Math.min(1, V / KAR2_L); }
+export function tegnKar2(g, V, vaeske, rt){
+  const {x, y, b, h} = KAR2;
+  g.save();
+  boks(g, x, y, b, h, 12); g.clip();
+  g.fillStyle = '#F4F6F5'; g.fillRect(x, y, b, h);
+  const top = kar2Niveau(V);
+  g.beginPath(); g.moveTo(x, top);
+  for(let i = 0; i <= 16; i++) g.lineTo(x + b * i / 16, top + Math.sin(rt * 3 + i) * 1.2);
+  g.lineTo(x + b, y + h); g.lineTo(x, y + h); g.closePath();
+  g.fillStyle = vaeske; g.fill();
+  g.restore();
+  boks(g, x, y, b, h, 12); blaek(g, null, 3);
+  g.beginPath(); g.moveTo(x - 5, y); g.lineTo(x + b + 5, y);
+  g.lineWidth = 5; g.strokeStyle = INK; g.lineCap = 'round'; g.stroke(); g.lineCap = 'butt';
+  for(const L of [10, 20, 30]){
+    const ly = kar2Niveau(L);
+    g.beginPath(); g.moveTo(x + b - 14, ly); g.lineTo(x + b - 4, ly);
+    g.lineWidth = 1.6; g.strokeStyle = INK; g.stroke();
+    maerkat(g, L + ' L', x + b - 18, ly, {størrelse:8.5, justering:'right', stort:false, spær:0.3, farve:SLATE});
+  }
 }

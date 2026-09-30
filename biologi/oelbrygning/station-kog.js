@@ -1,9 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
-   station-kog.js — 2 · Kogning med humle.
+   station-kog.js — 4 · Kogning med humle.
 
    Urten koger, vand damper af, og humlen giver bitterhed og
-   aroma. Man tilsætter humle, når man vil; hver portion husker
-   sit tidspunkt. Tidlig humle når at blive til bitterstof
+   aroma. Man vælger humlesort og tilsætter humle, når man vil —
+   eller lader opskriftens humleplan gøre det; hver portion husker
+   sit tidspunkt og sin sort. Tidlig humle når at blive til bitterstof
    (iso-α-syre), sen humle beholder sin duft. Luppen viser
    α-syrerne, der lukker ringen om, og aromaolierne, der
    forsvinder med dampen.
@@ -13,6 +14,7 @@ import {INK, SLATE, FARVE, BLØDT, blaek, maerkat, skilt, komma,
         lup, termometer, drift, juster, tilfaeldigPlads, ebcFarve} from './model.js';
 import {GRYDE, grydeNiveau, tegnGryde, tegnBlus, tegnDamp, tegnHumle} from './udstyr.js';
 import {nySerie, tilfoej} from './graf.js';
+import {humleplan, opskrift} from './opskrifter.js';
 
 const LUP_FRA = {x:GRYDE.x + 110, y:0, r:18};   /* y følger overfladen */
 
@@ -57,12 +59,17 @@ function tegnMolekyle(g, p){
 
 /* ── Stationen ─────────────────────────────────────────── */
 export default {
-  id:'kog', nr:2, navn:'Kogning',
-  tid:{maks:90, fart:4, skridt:0.1, proeve:1, enhed:'min',
+  id:'kog', nr:4, navn:'Kogning',
+  tid:{maks:90, fart:4, skridt:0.1, proeve:1, enhed:'min', auto:60,
        tekst:t => Math.floor(t + 1e-6) + ' min'},
 
   knapper:[
-    {id:'portion', navn:'Humleportion', min:5, max:50, step:5, vaerdi:20, enhed:'g',
+    {id:'plan', type:'valg', navn:'Humleplan', vaerdi:'opskrift', adr:'plan',
+     valg:[{id:'opskrift', navn:'Følg opskriften'}, {id:'selv', navn:'Tilsæt selv'}],
+     deaktiv:(v, alle) => !opskrift(alle.indmaesk.opskrift)},
+    {id:'sort', type:'valg', navn:'Humlesort', vaerdi:'cascade', adr:'sort',
+     valg:B.HUMLER.map(h => ({id:h.id, navn:`${h.navn} · ${komma(h.alfa * 100, 1)} %`}))},
+    {id:'portion', navn:'Humleportion', min:5, max:80, step:5, vaerdi:20, enhed:'g', adr:'portion',
      track:'linear-gradient(90deg,#F1F8EA,#5FB030)', kc:'var(--lime)'},
   ],
   handlinger:[
@@ -83,17 +90,23 @@ export default {
     {id:'aroma', navn:'Humlearoma tilbage', klasse:'g-teal', cc:'linear-gradient(90deg,#8FE0D4,#0FA593)'},
   ],
 
-  signatur:`
+  signatur(v){
+    const h = B.humlesort(v.sort);
+    return `
+    <span class="fact">${h.navn} <b>${komma(h.alfa * 100, 1)} %</b> <span class="enhed">α</span>-syre · ${h.rolle} · ${h.aroma}</span>` + this.signaturFast;
+  },
+  signaturFast:`
     <span class="fact"><svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><path d="M7 0L3.5 6.1H-3.5L-7 0L-3.5 -6.1H3.5Z" fill="${FARVE.humleLys}" stroke="#17211F" stroke-width="1.5"/></svg><span><span class="enhed">α</span>-syre · fra humlen</span></span>
     <span class="fact"><svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><path d="M0 -7L6.7 -2.2L4.1 5.7H-4.1L-6.7 -2.2Z" fill="#FFD66B" stroke="#17211F" stroke-width="1.5"/></svg><span>iso-<span class="enhed">α</span>-syre · bitter</span></span>
     <span class="fact"><svg width="14" height="16" viewBox="-7 -9 14 16" aria-hidden="true"><path d="M0 -8Q6 0 0 6Q-6 0 0 -8Z" fill="#9FE3D8" stroke="#17211F" stroke-width="1.4"/></svg>Aromaolie</span>
-    <span class="fact"><span><span class="enhed">IBU = mg</span> iso-<span class="enhed">α</span>-syre pr. <span class="enhed">L</span></span></span>
-    <span class="fact"><span>Humle med <b>8 %</b> <span class="enhed">α</span>-syre</span></span>`,
+    <span class="fact"><span><span class="enhed">IBU = mg</span> iso-<span class="enhed">α</span>-syre pr. <span class="enhed">L</span></span></span>`,
 
-  start(batch){
+  start(batch, v){
     const k = B.nyKog(batch.urt);
+    const o = opskrift(batch.opskrift);
     const st = {
-      k, urt:batch.urt,
+      k, urt:batch.urt, v,
+      plan:v.plan === 'opskrift' && o ? humleplan(o).sort((a, b) => a.tid - b.tid) : [],
       serier:{
         ibu:nySerie('bitterhed (IBU)', '#8BA81E', {stil:'fuld', tykkelse:3.4}),
         sg:nySerie('vægtfylde', INK, {stil:'prik', akse:'h', tykkelse:2.4}),
@@ -105,7 +118,14 @@ export default {
     return st;
   },
 
-  skridt(st, dt){ B.skridtKog(st.k, dt); },
+  skridt(st, dt, v){
+    /* Opskriftens humleplan: portionerne kommer i, når tiden er inde. */
+    while(v.plan === 'opskrift' && st.plan.length && st.plan[0].tid <= st.k.t + 1e-9){
+      const h = st.plan.shift();
+      this.handling('humle', st, {portion:h.g, sort:h.sort});
+    }
+    B.skridtKog(st.k, dt);
+  },
 
   maal(st){
     tilfoej(st.serier.ibu, st.k.t, B.ibu(st.k));
@@ -114,14 +134,14 @@ export default {
 
   handling(id, st, v){
     if(id !== 'humle') return;
-    B.tilsaetHumle(st.k, v.portion);
+    B.tilsaetHumle(st.k, v.portion, v.sort);
     const n = Math.max(1, Math.round(v.portion / 10));
     for(let i = 0; i < n; i++){
       st.kogler.push({x:GRYDE.x + 50 + Math.random() * (GRYDE.b - 100), y:GRYDE.y - 70 - i * 18,
                       v:Math.random() * 6, vy:0, flyder:false});
     }
     st.kogler = st.kogler.slice(-28);
-    return `${v.portion} g humle tilsat efter ${Math.floor(st.k.t + 1e-6)} minutter.`;
+    return `${v.portion} g ${B.humlesort(v.sort).navn} tilsat efter ${Math.floor(st.k.t + 1e-6)} minutter.`;
   },
 
   animer(st, dt, rt){
@@ -157,7 +177,7 @@ export default {
     }
     juster(L, 'iso', Math.round(iso * skala), () => ({type:'iso', ...tilfaeldigPlads(r, 30),
       v:Math.random() * 6, vr:(Math.random() - 0.5) * 0.8, radius:17}));
-    juster(L, 'olie', Math.min(14, Math.round(B.aroma(k) / 3)), () => ({type:'olie', ...tilfaeldigPlads(r, 30),
+    juster(L, 'olie', Math.min(14, Math.round(B.aroma(k) / k.V / 1.2)), () => ({type:'olie', ...tilfaeldigPlads(r, 30),
       v:0, vr:0, radius:10}), liste => {
         const p = liste[0]; st.flygter.push({...p}); return p;
       });
@@ -181,7 +201,7 @@ export default {
     const {k} = st;
     const niveau = grydeNiveau(k.V);
     tegnDamp(g, rt, 1);
-    tegnGryde(g, {vaeske:ebcFarve(B.farveEBC(k.urt.malt, k.V) * 0.9), niveau, rt, bobler:1});
+    tegnGryde(g, {vaeske:ebcFarve(B.farveEBC(k.urt.malt, k.V) * 0.9), niveau, rt, bobler:st.k.t > 0 ? 1 : 0.2});
     for(const c of st.kogler) tegnHumle(g, c.x, c.y, 0.9, c.v * 0.3 + Math.sin(rt + c.v) * 0.15);
     tegnBlus(g, rt);
     termometer(g, GRYDE.x + GRYDE.b - 62, GRYDE.y - 40, 170, 100, {min:40, max:110});
@@ -200,16 +220,20 @@ export default {
     maerkat(g, 'Lup · humlens stoffer i urten', 462, 116, {størrelse:9.5, farve:SLATE});
 
     /* humleskemaet under luppen */
-    const x0 = 350, y0 = 408;
-    maerkat(g, 'Humle tilsat', x0, y0 - 8, {justering:'left', størrelse:9.5, farve:SLATE});
-    if(!k.humle.length){
+    const x0 = 350, y0 = 404;
+    maerkat(g, st.plan.length ? 'Humle · tilsat og planlagt' : 'Humle tilsat', x0, y0 - 8, {justering:'left', størrelse:9.5, farve:SLATE});
+    const vis = [...k.humle.map(h => ({...h, ventende:false})), ...st.plan.map(h => ({...h, ventende:true}))].slice(-6);
+    if(!vis.length){
       maerkat(g, 'Ingen endnu', x0, y0 + 18, {justering:'left', størrelse:10, farve:SLATE});
     }
-    k.humle.slice(-6).forEach((h, i) => {
-      const x = x0 + 16 + i * 40, y = y0 + 22;
+    vis.forEach((h, i) => {
+      const x = x0 + 18 + i * 42, y = y0 + 22;
+      g.save(); if(h.ventende) g.globalAlpha = 0.4;
       tegnHumle(g, x, y, 0.8, 0);
       maerkat(g, h.g + ' g', x, y + 22, {størrelse:8.5, stort:false, spær:0.2});
-      maerkat(g, Math.floor(h.tid) + ' min', x, y + 34, {størrelse:8, stort:false, spær:0.2, farve:SLATE});
+      maerkat(g, B.humlesort(h.sort).kort, x, y + 33, {størrelse:7.5, stort:false, spær:0.1});
+      maerkat(g, Math.floor(h.tid) + ' min', x, y + 44, {størrelse:7.5, stort:false, spær:0.2, farve:SLATE});
+      g.restore();
     });
   },
 
@@ -229,12 +253,12 @@ export default {
   aflaes(st){
     const {k} = st;
     const sg = B.kogSG(k), i = B.ibu(k), a = B.aroma(k) / k.V;
-    const ord = a > 1 ? 'kraftig' : a > 0.4 ? 'tydelig' : a > 0.1 ? 'svag' : 'ingen';
+    const ord = a > 10 ? 'kraftig' : a > 4 ? 'tydelig' : a > 1 ? 'svag' : 'ingen';
     return {
-      vol:{tal:komma(k.V, 1), enhed:'L', andel:k.V / 26},
+      vol:{tal:komma(k.V, 1), enhed:'L', andel:k.V / 36},
       sg:{tal:komma(sg, 3), enhed:komma(B.plato(sg), 1) + ' °P', andel:(sg - 1) / 0.1},
       ibu:{tal:komma(i), enhed:'IBU', andel:i / 100},
-      aroma:{tal:ord, enhed:komma(a, 1) + ' g/L', andel:Math.min(1, a / 2)},
+      aroma:{tal:ord, enhed:komma(a, 1) + ' mg/L', andel:Math.min(1, a / 20)},
     };
   },
 
@@ -254,7 +278,7 @@ export default {
   },
 
   afslut(st, batch){
-    batch.kog = {tid:st.k.t, humle:st.k.humle.map(h => ({...h}))};
+    batch.kog = {tid:st.k.t, humle:st.k.humle.map(h => ({...h})), plan:st.v.plan};
     batch.urtKogt = B.urtAfKog(st.k);
   },
 };

@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
-   station-maesk.js — 1 · Mæskning.
+   station-maesk.js — 2 · Mæskning.
 
-   Malten røres ud i varmt vand, og maltens egne amylaser
-   klipper stivelsen i stykker. Temperaturen bestemmer, hvilket
-   af de to enzymer der vinder — og dermed hvor meget af sukkeret
-   gæren senere kan bruge. Luppen viser kæderne af glukose og de
-   to enzymer; jodprøverne under luppen viser, hvornår stivelsen
-   er væk.
+   Maltens egne amylaser klipper stivelsen i stykker. Temperaturen
+   bestemmer, hvilket af de to enzymer der vinder — og dermed hvor
+   meget af sukkeret gæren senere kan bruge. Man vælger et
+   mæskeprogram (en eller flere raster og til sidst udmæskning ved
+   78 °C), eller styrer temperaturen selv. Luppen viser kæderne af
+   glukose og de to enzymer; jodprøverne under luppen viser,
+   hvornår stivelsen er væk.
    ═══════════════════════════════════════════════════════════ */
 import * as B from './brygning.js';
 import {INK, SLATE, FARVE, BLØDT, blaek, boks, maerkat, skilt, komma,
@@ -121,15 +122,19 @@ function tegnJodplade(g, st){
 
 /* ── Stationen ─────────────────────────────────────────── */
 export default {
-  id:'maesk', nr:1, navn:'Mæskning',
-  tid:{maks:90, fart:3, skridt:0.05, proeve:0.5, enhed:'min',
+  id:'maesk', nr:2, navn:'Mæskning',
+  tid:{maks:150, fart:3, skridt:0.05, proeve:0.5, enhed:'min', auto:150,
        tekst:t => Math.floor(t + 1e-6) + ' min'},
 
   knapper:[
-    {id:'temp', navn:'Mæsketemperatur', min:50, max:80, step:1, vaerdi:65, enhed:'°C',
+    {id:'program', type:'valg', navn:'Mæskeprogram', vaerdi:'infusion', laas:true, genstart:true, adr:'program',
+     valg:B.PROGRAMMER.map(p => ({id:p.id, navn:p.navn}))},
+    {id:'rast', navn:'Rasttemperatur', min:50, max:80, step:1, vaerdi:66, enhed:'°C', adr:'rast',
+     laas:v => v.program === 'infusion', genstart:true, deaktiv:v => v.program === 'trin',
      track:'linear-gradient(90deg,#9BE0F5,#FFB300 45%,#FF6A3D)', kc:'var(--coral)'},
-    {id:'malt', navn:'Malt i gryden', min:2, max:7, step:0.5, vaerdi:4.5, enhed:'kg', decimaler:1,
-     laasVedStart:true, track:'linear-gradient(90deg,#FFF3C4,#D99B3A)', kc:'#D99B3A'},
+    {id:'tid', navn:'Rasttid', min:20, max:90, step:5, vaerdi:60, enhed:'min', adr:'rasttid',
+     laas:true, genstart:true, deaktiv:v => v.program !== 'infusion',
+     track:'linear-gradient(90deg,#FFF3C4,#D99B3A)', kc:'#D99B3A'},
   ],
 
   ligninger:[
@@ -155,16 +160,22 @@ export default {
     <span class="fact"><svg width="30" height="14" viewBox="0 0 30 14" aria-hidden="true"><path d="M2 7l3-5 3 10 3-10 3 10 3-10 3 10 3-10 3 10 2-5" fill="none" stroke="#9AA6A4" stroke-width="2.4"/></svg>Denatureret</span>`,
 
   start(batch, v){
-    const m = B.nyMaesk(v.malt, v.temp);
+    const ind = batch.indmaesk;
+    const m = B.nyMaesk(ind.malt, ind.vand, ind.T);
+    const prog = B.program(v.program);
+    const trin = prog.trin ? prog.trin(v) : null;
     const st = {
-      m, S0:m.stivelse, v,
+      m, S0:Math.max(1, m.stivelse), v, prog, p:B.nyKoersel(trin),
+      tMaks:Math.min(150, Math.max(60, Math.ceil((B.programTid(trin, ind.T, m.kg, m.vand) + 8) / 30) * 30)),
+      maalT:trin ? trin[0].T : v.rast,
       jod:JOD_TIDER.map(() => null),
-      temperaturer:[v.temp],
+      temperaturer:[Math.round(ind.T)],
       serier:{
         stivelse:nySerie('stivelse', FARVE.stivelse, {stil:'fuld'}),
         dextrin:nySerie('dextriner', FARVE.dextrin, {stil:'stiplet'}),
         sukker:nySerie('gærbart sukker', FARVE.sukker, {stil:'fuld', tykkelse:3.6}),
         temp:nySerie('temperatur', FARVE.varme, {stil:'prik', akse:'h', tykkelse:2.4}),
+        maal:nySerie('program', '#B9C4C2', {stil:'stiplet', akse:'h', tykkelse:1.8}),
       },
       lup:[], blink:[],
     };
@@ -175,8 +186,10 @@ export default {
   /* Et skridt i modellen. v er skydernes værdier lige nu. */
   skridt(st, dt, v){
     const {m} = st;
-    if(v.temp !== st.temperaturer[st.temperaturer.length - 1]) st.temperaturer.push(v.temp);
-    B.skridtMaesk(m, dt, v.temp);
+    const maal = st.p.trin ? B.programMaal(st.p, m, dt) : v.rast;
+    if(maal != null) st.maalT = maal;
+    if(maal != null && maal !== st.temperaturer[st.temperaturer.length - 1]) st.temperaturer.push(maal);
+    B.skridtMaesk(m, dt, maal);
     JOD_TIDER.forEach((t, i) => {
       if(st.jod[i] == null && m.t >= t) st.jod[i] = B.jodproeve(m, st.S0).rest;
     });
@@ -188,6 +201,7 @@ export default {
     tilfoej(serier.dextrin, m.t, m.dextrin + m.graense);
     tilfoej(serier.sukker, m.t, m.sukker);
     tilfoej(serier.temp, m.t, m.T);
+    tilfoej(serier.maal, m.t, st.maalT);
   },
 
   /* Luppens molekyler følger modellens puljer. Kører også, når uret står. */
@@ -254,11 +268,13 @@ export default {
     const {m} = st;
     const omsat = 1 - m.stivelse / st.S0;
     const væske = `rgb(${Math.round(236 - 8 * omsat)},${Math.round(224 - 44 * omsat)},${Math.round(196 - 110 * omsat)})`;
-    tegnGryde(g, {vaeske:væske, niveau:grydeNiveau(m.malt * 3.5 + m.malt * 0.7),
-                  uklar:(1 - omsat) * 0.6, rt, korn:Math.min(1, m.malt / 5)});
+    tegnGryde(g, {vaeske:væske, niveau:grydeNiveau(m.vand + m.kg * B.KORN_VOL),
+                  uklar:(1 - omsat) * 0.6, rt, korn:Math.min(1, m.kg / 5)});
     tegnVarmeplade(g, m.varmer, rt);
     /* termometer i gryden */
-    termometer(g, GRYDE.x + GRYDE.b - 62, GRYDE.y - 40, 170, m.T, {min:40, max:90, maal:st.v.temp});
+    termometer(g, GRYDE.x + GRYDE.b - 62, GRYDE.y - 40, 170, m.T, {min:40, max:90, maal:st.p.faerdig ? null : st.maalT});
+    const tr = this.trin(st);
+    if(tr) skilt(g, tr, GRYDE.x + GRYDE.b / 2 - 20, GRYDE.y + 22, {fyld:'#FFF3DC'});
     skilt(g, komma(m.T, 1) + ' °C', GRYDE.x + GRYDE.b - 62, GRYDE.y - 56, {stort:false, størrelse:11.5});
     maerkat(g, 'Mæskekar', GRYDE.x + 8, GRYDE.y - 18, {justering:'left', størrelse:10.5});
 
@@ -293,7 +309,7 @@ export default {
     const maks = Math.ceil(st.S0 * 1.05 / 500) * 500;
     return {
       titel:'Kulhydraterne i mæsken',
-      tMaks:90, tTrin:15, tNavn:'tid (min)',
+      tMaks:st.tMaks, tTrin:st.tMaks > 90 ? 30 : 15, tNavn:'tid (min)',
       venstre:{min:0, maks, trin:500, navn:'gram'},
       hoejre:{min:40, maks:90, trin:10, navn:'°C'},
       serier:Object.values(st.serier),
@@ -321,9 +337,22 @@ export default {
   },
 
   nu(st){ return st.m.t; },
-  faerdig(st){ return st.m.t >= 60; },
+  faerdig(st){ return st.p.trin ? st.p.faerdig : st.m.t >= 60; },
+  stop(st){ return !!st.p.trin && st.p.faerdig; },
 
-  status(st){ return 'Mæskning · ' + Math.floor(st.m.t + 1e-6) + ' min · ' + komma(st.m.T, 0) + ' °C'; },
+  /** Hvilket trin i programmet mæsken er nået til — til skiltet og statusfeltet. */
+  trin(st){
+    const {p} = st;
+    if(!p.trin) return null;
+    if(p.faerdig) return 'Programmet er færdigt';
+    const tr = p.trin[p.i];
+    return tr.navn + ' ' + tr.T + ' °C · ' + (p.ur > 0 ? Math.floor(p.ur) + '/' + tr.min + ' min' : 'varmer op');
+  },
+
+  status(st){
+    const tr = this.trin(st);
+    return 'Mæskning · ' + Math.floor(st.m.t + 1e-6) + ' min · ' + komma(st.m.T, 0) + ' °C' + (tr ? ' · ' + tr : '');
+  },
 
   fortael(st){
     const a = this.aflaes(st);
@@ -335,10 +364,11 @@ export default {
 
   afslut(st, batch){
     batch.maesk = {
-      temperaturer:st.temperaturer.slice(), tid:st.m.t, malt:st.m.malt,
+      program:st.prog.id, temperaturer:st.temperaturer.slice(), tid:st.m.t,
       jodNegativ:!B.jodproeve(st.m, st.S0).positiv,
       stivelseRest:st.m.stivelse / st.S0,
+      gaerbar:st.m.sukker / Math.max(1, st.m.sukker + st.m.dextrin + st.m.graense + st.m.andet),
     };
-    batch.urt = B.urtAfMaesk(st.m);
+    batch.maeskUd = {...st.m, malt:{...st.m.malt}};
   },
 };
