@@ -21,7 +21,7 @@ På overfladen af røde blodlegemer kan der sidde A- og B-antigener. Blodtype A 
 
 ![Skematisk oversigt over A-, B- og D-antigener på røde blodlegemer. ABO-type og RhD-type bestemmes uafhængigt af hinanden.](figurer/blodtype-antigener.svg){#fig-blodtype-antigener width="95%"}
 
-Når et passende antistof binder til antigener på flere røde blodlegemer, kan cellerne danne synlige klumper. Det kaldes **agglutination**. Reaktion med anti-A viser A-antigen; reaktion med anti-B viser B-antigen; reaktion med anti-D tyder på D-antigen. Hvis en reaktion er uklar, kan blodtypen ikke bestemmes sikkert ud fra prøven.
+Når et passende antistof binder til antigener på flere røde blodlegemer, kan cellerne danne synlige klumper. Det kaldes agglutination. Reaktion med anti-A viser A-antigen; reaktion med anti-B viser B-antigen; reaktion med anti-D tyder på D-antigen. Hvis en reaktion er uklar, kan blodtypen ikke bestemmes sikkert ud fra prøven.
 
 ![Anti-A binder til A-antigener på to røde blodlegemer og kan forbinde dem. Anti-B passer ikke til A-antigenet, så cellerne forbliver adskilte. Tegningen er skematisk.](figurer/agglutination.svg){#fig-agglutination width="95%"}
 
@@ -49,10 +49,10 @@ ABO-systemet har tre almindelige alleler: $I^A$, $I^B$ og $i$. $I^A$ og $I^B$ er
 
 ## Fremgangsmåde
 
-1. Fordel spotpladens 12 fordybninger mellem højst fire forsøgspersoner: **tre fordybninger pr. person**. Aftal på forhånd, hvilke tre der hører til hvem, og mærk eller tegn en oversigt over placeringen. Betegn hver persons fordybninger **A**, **B** og **D**.
+1. Fordel spotpladens 12 fordybninger mellem højst fire forsøgspersoner: tre fordybninger pr. person. Aftal på forhånd, hvilke tre der hører til hvem, og mærk eller tegn en oversigt over placeringen. Betegn hver persons fordybninger **A**, **B** og **D**.
 2. Placér anti-A, anti-B og anti-D i de tilsvarende fordybninger. Læg én ubrugt rørepind ved hver fordybning. Hold flaskespidser fri af blod og undgå, at væske løber mellem fordybningerne.
 3. Forsøgspersonen vasker hænder, renser fingeren og lader den tørre. Prik med en steril engangslancet efter lærerens instruktion. Undgå at berøre fordybningen med fingeren.
-4. Fordel små bloddråber i personens tre fordybninger efter reagensernes anvisning. Bland hver fordybning med **sin egen** rørepind. Brug aldrig samme pind i to fordybninger eller til to personer.
+4. Fordel små bloddråber i personens tre fordybninger efter reagensernes anvisning. Bland hver fordybning med sin egen rørepind. Brug aldrig samme pind i to fordybninger eller til to personer.
 5. Vip spotpladen roligt, og aflæs inden for den tid, der står på reagensernes vejledning. Se efter tydelige klumper i den tynde blodfilm; en jævnt fordelt film regnes som negativ.
 6. Notér **+**, **−** eller **uklar** for hver fordybning i @tbl-resultat. Tag evt. et foto. Ved uklar reaktion: skriv *kan ikke bestemmes*, og spørg læreren før en eventuel ny test.
 
@@ -92,6 +92,6 @@ $$\text{Andel i procent} = \frac{\text{antal med blodtypen}}{N}\cdot 100\,\%$$
 1. Forklar med jeres egne observationer, hvorfor en positiv reaktion med anti-A betyder, at de røde blodlegemer har A-antigen. Hvad viser en negativ reaktion med anti-B?
 2. Hvilke ABO-genotyper er mulige for hver af typerne A, B, AB og 0? Forklar kodominans og recessivitet med et eksempel.
 3. En forælder har blodtype A og den anden B. Hvilke blodtyper kan et barn få, hvis begge forældre er heterozygote? Vis et krydsningsskema.
-4. Hvilke ABO- og RhD-typer kan en person med jeres bestemte blodtype som udgangspunkt modtage **røde blodlegemer** fra? Forklar med antigener og antistoffer. Hvorfor må en klasseøvelse ikke afgøre en virkelig transfusion?
+4. Hvilke ABO- og RhD-typer kan en person med jeres bestemte blodtype som udgangspunkt modtage røde blodlegemer fra? Forklar med antigener og antistoffer. Hvorfor må en klasseøvelse ikke afgøre en virkelig transfusion?
 5. Hvilke praktiske fejl kan give falsk eller tvivlsom agglutination? Brug fremgangsmåden til at foreslå, hvordan I mindsker mindst to af dem.
 6. Hvor godt ligner klassens fordeling referencefordelingen?

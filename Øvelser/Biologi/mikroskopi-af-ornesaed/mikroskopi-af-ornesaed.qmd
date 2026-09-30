@@ -26,7 +26,7 @@ Selve sædvæsken kommer overvejende fra sædblæren og indeholder sukkerarten f
 1. Tænd for lyset, og drej det mindste objektiv (4×) i indgreb.
 2. Læg præparatet på objektbordet, og hold det fast med klemmerne.
 3. Kør objektbordet helt op, og sænk det derefter langsomt med grovskruen, indtil billedet er skarpt.
-4. Justér lysstyrke og blænde. Ufarvede sædceller er næsten gennemsigtige, så skru lyset **ned**, indtil cellerne træder tydeligt frem.
+4. Justér lysstyrke og blænde. Ufarvede sædceller er næsten gennemsigtige, så skru lyset ned, indtil cellerne træder tydeligt frem.
 5. Skift trinvist til større forstørrelse (10× og dernæst 40×), og find skarpt billede igen. Ved de store forstørrelser må I kun bruge finskruen — har mikroskopet ingen finskrue, så gå meget langsomt frem med grovskruen.
 
 ### A. Ufarvet præparat — bevægelse
@@ -49,7 +49,7 @@ Selve sædvæsken kommer overvejende fra sædblæren og indeholder sukkerarten f
 ::: {.callout-tip}
 ## Tip
 
-Sædcellerne er tunge og synker ned mod objektglasset, så det er typisk i det **nederste** fokusplan, I finder flest. Kør derfor langsomt gennem dybden med skruen, før I konkluderer, at der ikke er noget at se.
+Sædcellerne er tunge og synker ned mod objektglasset, så det er typisk i det nederste fokusplan, I finder flest. Kør derfor langsomt gennem dybden med skruen, før I konkluderer, at der ikke er noget at se.
 
 Er I færdige før tid, kan I undersøge, hvordan temperaturen påvirker bevægelsen: lav et nyt ufarvet præparat, hold en isterning mod undersiden af objektglasset i et minut, og se, hvad der sker med bevægelsesmønsteret.
 :::
@@ -71,7 +71,7 @@ Er I færdige før tid, kan I undersøge, hvordan temperaturen påvirker bevæge
 ::: {.callout-important}
 ## Sikkerhed og håndtering af prøven
 
-- Ornesæd er **biologisk materiale**. Brug kittel og engangshandsker, og vask hænder grundigt efter øvelsen. Spis og drik ikke i laboratoriet.
+- Ornesæd er biologisk materiale. Brug kittel og engangshandsker, og vask hænder grundigt efter øvelsen. Spis og drik ikke i laboratoriet.
 - Brugte objektglas, dækglas, pipetter og handsker lægges direkte i den anviste beholder til biologisk affald — de må ikke skylles i vasken eller genbruges.
 - **Methylenblåt** farver kraftigt og er sundhedsskadeligt ved indtagelse. Håndteres kun med pipette, og det pletter tøj og hud.
 - **Ethanol 70 %** er meget brandfarlig. Holdes væk fra åben ild.
@@ -90,7 +90,7 @@ Er I færdige før tid, kan I undersøge, hvordan temperaturen påvirker bevæge
 
 : Iagttagelser af det levende og det farvede præparat. {#tbl-1}
 
-Tæl i det farvede præparat mindst **25 celler pr. synsfelt** i fire forskellige synsfelter, og notér for hvert synsfelt, hvor mange af de talte celler der var normale, og hvor mange der var abnorme. Flyt objektglasset et lille stykke mellem hver optælling, så I ikke tæller de samme celler igen.
+Tæl i det farvede præparat mindst 25 celler pr. synsfelt i fire forskellige synsfelter, og notér for hvert synsfelt, hvor mange af de talte celler der var normale, og hvor mange der var abnorme. Flyt objektglasset et lille stykke mellem hver optælling, så I ikke tæller de samme celler igen.
 
 | Synsfelt | Antal normale celler | Antal abnorme celler | Talt i alt |
 |:--------:|:-------------------:|:--------------------:|:----------:|

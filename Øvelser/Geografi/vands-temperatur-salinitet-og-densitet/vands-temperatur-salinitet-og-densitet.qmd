@@ -13,7 +13,7 @@ format:
 
 ## Om øvelsen
 
-Havvands **densitet** (massefylde) afhænger af to ting: temperaturen og saltholdigheden (salinitet). Begge dele afgør, hvordan vandmasser lægger sig i forhold til hinanden — og dermed hvordan havstrømme som Grønlandspumpen holdes i gang.
+Havvands densitet (massefylde) afhænger af to ting: temperaturen og saltholdigheden (salinitet). Begge dele afgør, hvordan vandmasser lægger sig i forhold til hinanden — og dermed hvordan havstrømme som Grønlandspumpen holdes i gang.
 
 I denne øvelse undersøger I de to drivkræfter hver for sig, i et kar med en skilleplade: først en ren temperaturforskel, så en ren saltforskel. Hold øje med, hvad der sker i grænsezonen, når skillepladen trækkes op — og hvor hurtigt det går.
 
@@ -27,13 +27,13 @@ Koldt vand er tungere end varmt vand, og salt vand er tungere end fersk vand. To
 
 ![Koldt vand er tungere end varmt, og salt vand er tungere end fersk. Det tungeste vand i Nordatlanten er derfor det, der er både iskoldt og ekstra salt.](figurer/densitet.svg){#fig-densitet width="92%"}
 
-Et sted, hvor de to effekter mødes i virkeligheden, er ved havis: når havvand fryser, bygges saltionerne ikke ind i iskrystallerne — de efterlades i vandet under isen, som derfor bliver både koldt **og** ekstra salt:
+Et sted, hvor de to effekter mødes i virkeligheden, er ved havis: når havvand fryser, bygges saltionerne ikke ind i iskrystallerne — de efterlades i vandet under isen, som derfor bliver både koldt og ekstra salt:
 
 ![Når havis dannes, efterlades saltet i vandet nedenunder. Det vand er både iskoldt og ekstra salt og bliver dermed det tungeste vand i Nordatlanten.](figurer/havis.svg){#fig-havis width="100%"}
 
 ## Hypotese
 
-Skriv jeres bud, **inden** I går i gang, og begrund med densitet.
+Skriv jeres bud, inden I går i gang, og begrund med densitet.
 
 Hvad tror I sker, når koldt vand møder varmt vand?
 
@@ -74,7 +74,7 @@ Hvad tror I sker, når ferskvand møder saltvand?
 
 **Formål:** at se, hvad en saltforskel alene gør — uden temperaturforskel.
 
-1. Skyl karret, sæt skillepladen i igen, og fyld begge sider med **lunkent vand af samme temperatur**. Det er afgørende: ellers blander I temperatur- og saltforskellen sammen og kan ikke afgøre, hvad der drev bevægelsen.
+1. Skyl karret, sæt skillepladen i igen, og fyld begge sider med lunkent vand af samme temperatur. Det er afgørende: ellers blander I temperatur- og saltforskellen sammen og kan ikke afgøre, hvad der drev bevægelsen.
 2. Opløs salt i den ene side ("havsiden"), så saltholdigheden svarer til havvand — ca. 35 gram pr. liter vand i den side. Rør, til saltet er helt opløst.
 3. Tilsæt rød frugtfarve til havsiden. Kystsiden er almindeligt fersk, lunkent vand.
 4. Lad vandet falde til ro, træk skillepladen op, og start stopuret.

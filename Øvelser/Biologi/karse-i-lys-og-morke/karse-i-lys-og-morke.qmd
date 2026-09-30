@@ -21,7 +21,7 @@ Hver gruppe får to bakker med vat og karsefrø: den ene skal stå lyst, den and
 
 ## Hypotese
 
-Skriv hypoteserne ned, **før** I sætter forsøget i gang.
+Skriv hypoteserne ned, før I sætter forsøget i gang.
 
 **1. Karsens højdevækst som funktion af tid:**
 
@@ -41,22 +41,22 @@ Tænk også over, hvilken farve planterne får under de to betingelser.
 
 ### A. Opstilling (dag 0)
 
-1. Læg et lag vat i hver af de to bakker, og fugt vattet med vand fra hanen, indtil det er vådt hele vejen igennem. Brug **samme mængde vat og vand** i de to bakker — hvorfor er det vigtigt?
+1. Læg et lag vat i hver af de to bakker, og fugt vattet med vand fra hanen, indtil det er vådt hele vejen igennem. Brug samme mængde vat og vand i de to bakker — hvorfor er det vigtigt?
 2. Fordel karsefrøene jævnt i de to bakker. Brug også her samme mængde i begge bakker.
 3. Mærk bakkerne med gruppens navn og med "lys" og "mørke".
-4. Stil den ene bakke lyst, fx i en vindueskarm, og den anden mørkt i et skab eller en lukket kasse. Bakken i mørke må **ikke** få lys undervejs.
+4. Stil den ene bakke lyst, fx i en vindueskarm, og den anden mørkt i et skab eller en lukket kasse. Bakken i mørke må ikke få lys undervejs.
 5. Mål højden i begge bakker med det samme (den er 0 cm), og skriv dato og klokkeslæt i skemaet.
 
 ### B. Daglige målinger (dag 1–14)
 
-1. Vand begge bakker, så vattet holdes vådt. Planterne skal **ikke** gødes.
+1. Vand begge bakker, så vattet holdes vådt. Planterne skal ikke gødes.
 2. Mål planternes højde i hver bakke med en lineal, og notér målingerne i skemaet sammen med dato, klokkeslæt og en kort observation (farve, udseende, hvor mange frø der er spiret).
 3. Tag fotos af begge bakker undervejs — ikke nødvendigvis hver dag — som dokumentation. Skriv i skemaet, hvornår I har taget billeder.
 
 ::: {.callout-tip}
 ## Tip
 
-- Mål så vidt muligt på samme tidspunkt hver dag, så der går ca. 24 timer mellem målingerne, og brug **samme lineal** hele forsøget igennem. Det er en del af variabelkontrollen.
+- Mål så vidt muligt på samme tidspunkt hver dag, så der går ca. 24 timer mellem målingerne, og brug samme lineal hele forsøget igennem. Det er en del af variabelkontrollen.
 - Aftal i gruppen, om begge bakker står hos den samme elev hele forsøget, eller om de går på tur. Bakkerne skal passes hver dag — også i weekenden.
 - Fordampningen kan være stor i en vindueskarm med fuld sol. Er I hjemmefra i mere end 8 timer, så vand, før I tager i skole. Tørrer vattet ud, dør planterne.
 - Vil I have flere data at behandle, kan I tælle et fast antal frø op i hver bakke (fx 100) og undervejs tælle, hvor mange der er spiret. Så kan I også beregne en spiringsprocent.

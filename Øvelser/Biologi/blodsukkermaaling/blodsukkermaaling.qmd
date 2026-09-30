@@ -18,7 +18,7 @@ I dag skal I undersøge, hvordan forskellige kulhydratholdige fødevarer påvirk
 ## Fremgangsmåde
 
 1. Beregn, hvor meget forsøgspersonen skal indtage af fødevaren (se boks med beregningseksempel), og afvej denne mængde.
-2. Mål forsøgspersonens blodsukker med glykometeret, **inden** fødevaren indtages, og notér værdien ved T₀ (se boks om brug af glykometer).
+2. Mål forsøgspersonens blodsukker med glykometeret, inden fødevaren indtages, og notér værdien ved T₀ (se boks om brug af glykometer).
 3. Forsøgspersonen indtager den afvejede fødevare i naturligt, jævnt tempo og drikker undervejs 300 mL vand (dog ikke sammen med en flydende fødevare som cola).
 4. Mål forsøgspersonens blodsukker igen 15 minutter efter, fødevaren er indtaget, og gentag dette hvert 15. minut frem til 90 minutter (T₁₅, T₃₀, T₄₅, T₆₀, T₇₅, T₉₀). Hold tidspunkterne så præcist som muligt, så resultaterne fra forskellige forsøgspersoner kan sammenlignes.
 5. Notér tid og blodsukkerværdi ved hver måling i skemaet nedenfor eller i et fælles regneark.
@@ -26,7 +26,7 @@ I dag skal I undersøge, hvordan forskellige kulhydratholdige fødevarer påvirk
 ::: {.callout-tip}
 ## Beregning af kulhydratindtag
 
-Forsøgspersonen skal indtage 0,75 g kulhydrat pr. kg kropsvægt, dog **højst 70 g kulhydrat** i alt.
+Forsøgspersonen skal indtage 0,75 g kulhydrat pr. kg kropsvægt, dog højst 70 g kulhydrat i alt.
 
 **Eksempel:** En person på 50 kg skal indtage 0,75 g/kg × 50 kg = 37,5 g kulhydrat. Hvis fødevaren indeholder 44 g kulhydrat pr. 100 g, skal personen indtage 37,5 g ÷ 44 g × 100 g ≈ 85 g af fødevaren.
 

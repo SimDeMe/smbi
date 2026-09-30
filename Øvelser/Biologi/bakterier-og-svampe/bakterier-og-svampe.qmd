@@ -48,7 +48,7 @@ Spring dette trin over, hvis I får udleveret færdigstøbte petriskåle.
 
 1. Luk alle fem petriskåle til med tape, og skriv gruppens navn og klasse på bunden.
 2. Stil skålene i varmeskab ved 37 °C i ca. 2 døgn.
-3. Tag skålene ud af varmeskabet. **Skålene må ikke åbnes** — kolonierne skal tælles og markeres gennem det lukkede låg.
+3. Tag skålene ud af varmeskabet. Skålene må ikke åbnes — kolonierne skal tælles og markeres gennem det lukkede låg.
 4. Tæl kolonierne på hver plade, og sæt en prik med tusch ud for hver talt koloni. Fotografér pladerne.
 
 ::: {.callout-tip}
@@ -74,7 +74,7 @@ Petriskålens areal findes med $A = \pi r^2$, hvor $r$ er halvdelen af skålens 
 ## Sikkerhed
 
 - Smeltet agar er meget varm — pas på ikke at brænde jer, når I hælder den i petriskålene.
-- Efter inkubation ved 37 °C kan pladerne indeholde mikroorganismer, som trives ved kropstemperatur, herunder eventuelle opportunistiske arter. **Skålene må derfor ikke åbnes** efter inkubation.
+- Efter inkubation ved 37 °C kan pladerne indeholde mikroorganismer, som trives ved kropstemperatur, herunder eventuelle opportunistiske arter. Skålene må derfor ikke åbnes efter inkubation.
 - Vask hænder grundigt efter håndtering af petriskålene, både før og efter inkubation.
 - Uåbnede petriskåle bortskaffes samlet i den anviste affaldsbeholder — spørg jeres lærer, hvis I er i tvivl.
 - Spis og drik ikke i laboratoriet.

@@ -15,13 +15,13 @@ format:
 
 ## Om øvelsen
 
-Danmark ligger nordligere end det meste af Labrador, Canada og er alligevel langt varmere om vinteren. Forklaringen er havstrømmen **Golfstrømmen** og dens forlængelse mod nordøst, som fører varmt overfladevand nordpå mod Nordvesteuropa. Strømmen skyldes for det meste vinden og Jordens rotation, men den bliver forstærket af **Grønlandspumpen**: ude for Grønland har vandet afgivet sin varme til luften, så det er blevet koldt og tungt og synker til bunds — og det trækker nyt, varmt overfladevand nordpå i stedet.
+Danmark ligger nordligere end det meste af Labrador, Canada og er alligevel langt varmere om vinteren. Forklaringen er havstrømmen Golfstrømmen og dens forlængelse mod nordøst, som fører varmt overfladevand nordpå mod Nordvesteuropa. Strømmen skyldes for det meste vinden og Jordens rotation, men den bliver forstærket af Grønlandspumpen: ude for Grønland har vandet afgivet sin varme til luften, så det er blevet koldt og tungt og synker til bunds — og det trækker nyt, varmt overfladevand nordpå i stedet.
 
 I denne øvelse bygger I en model af pumpen i ét gennemsigtigt kar med is i den ene ende og en varmekilde i den anden. Farven viser jer, hvor vandet bevæger sig hen — men hvor løber det, og hvad sker der i den varme ende? Det skal I selv observere og konkludere ud fra forsøget.
 
 ## Baggrund
 
-Vandets **densitet** (massefylde) er massen pr. rumfang:
+Vandets densitet (massefylde) er massen pr. rumfang:
 
 $$\rho = \frac{m }{V}$$
 
@@ -38,7 +38,7 @@ Når havis dannes i virkeligheden, bygges saltionerne ikke ind i iskrystallerne,
 
 ![Når havis dannes, efterlades saltet i vandet nedenunder. Det vand er både iskoldt og ekstra salt og bliver dermed det tungeste vand i Nordatlanten.](figurer/havis.svg){#fig-havis width="100%"}
 
-Det tunge vand, der dannes ved Grønland, synker helt til bunds og løber sydpå som **nordatlantisk dybvand**. Når noget synker, skal noget andet rykke ind i stedet — og det er Golfstrømmen og dens forlængelse, der fører varmt overfladevand nordpå igen:
+Det tunge vand, der dannes ved Grønland, synker helt til bunds og løber sydpå som nordatlantisk dybvand. Når noget synker, skal noget andet rykke ind i stedet — og det er Golfstrømmen og dens forlængelse, der fører varmt overfladevand nordpå igen:
 
 ![Den termohaline cirkulation i Nordatlanten. Varmt overfladevand føres nordpå, bliver koldt ved Grønland, synker og løber sydpå langs bunden.](figurer/pumpen.svg){#fig-pumpen width="100%"}
 
@@ -48,7 +48,7 @@ Det tunge vand, der dannes ved Grønland, synker helt til bunds og løber sydpå
 
 ## Hypotese
 
-Skriv jeres bud, **inden** I går i gang, og begrund med densitet.
+Skriv jeres bud, inden I går i gang, og begrund med densitet.
 
 Tegn med pile ind på @fig-opstilling, hvor I tror det blå vand løber hen, når is og varmekilde begge er sat i gang — og hvad der så må ske henne ved den varme ende.
 
@@ -79,10 +79,10 @@ Vandet i flasken må godt være kogende — pas blot på ikke at skolde jer, nå
 
 ## Fremgangsmåde
 
-1. Fyld karret med **lunkent** vand, til vandet står lige over isholderpladens nederste kant.
-2. Sæt isholderpladen i den ene ende, så **udskæringen vender nedad** — se @fig-opstilling. Det er gennem den, det afkølede vand slipper ud langs bunden.
+1. Fyld karret med lunkent vand, til vandet står lige over isholderpladens nederste kant.
+2. Sæt isholderpladen i den ene ende, så udskæringen vender nedad — se @fig-opstilling. Det er gennem den, det afkølede vand slipper ud langs bunden.
 3. Læg et lag knust is på pladen.
-4. Dryp et par dråber blå frugtfarve **ned på isen** — ikke ned i karret. Farven skal følge smeltevandet og det afkølede vand, ikke lægge sig et tilfældigt sted.
+4. Dryp et par dråber blå frugtfarve ned på isen — ikke ned i karret. Farven skal følge smeltevandet og det afkølede vand, ikke lægge sig et tilfældigt sted.
 5. Stil en lukket flaske med varmt vand i den modsatte ende som varmekilde.
 6. Observér, hvad der sker med det blå, afkølede vand, både ved bunden og ved overfladen. Notér i @tbl-1.
 7. Fotografér både opstillingen og resultatet, og tegn det, I så, oven i jeres pile på @fig-opstilling — brug en anden farve end gættet.

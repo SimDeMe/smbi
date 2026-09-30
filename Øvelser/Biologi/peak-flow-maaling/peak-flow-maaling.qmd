@@ -13,7 +13,7 @@ format:
 
 ## Om øvelsen
 
-Vitalkapaciteten fortæller, hvor meget luft lungerne kan rumme, men ikke hvor let luften kan komme ud af dem. Har man astma, er bronkiegrenene forsnævrede, og så kan vitalkapaciteten godt være normal, selvom ventilationsevnen er nedsat. Ventilationsevnen måles i stedet som luftens største strømningshastighed under en kraftig udånding — **Peak Flow** — i liter pr. minut.
+Vitalkapaciteten fortæller, hvor meget luft lungerne kan rumme, men ikke hvor let luften kan komme ud af dem. Har man astma, er bronkiegrenene forsnævrede, og så kan vitalkapaciteten godt være normal, selvom ventilationsevnen er nedsat. Ventilationsevnen måles i stedet som luftens største strømningshastighed under en kraftig udånding — Peak Flow — i liter pr. minut.
 
 I skal måle jeres eget Peak Flow med et peakflow-meter, sammenligne det med den værdi, der er forventet for jeres køn, alder og højde, og til sidst samle klassens tal, så I kan sammenligne kønnene.
 
@@ -23,9 +23,9 @@ I skal måle jeres eget Peak Flow med et peakflow-meter, sammenligne det med den
 2. Sæt et nyt engangsmundstykke på peakflow-metrets rør, og skub viseren tilbage til nul i bunden af skalaen.
 3. Stå oprejst, og hold apparatet vandret. Pas på ikke at dække skalaen eller blokere viseren med fingrene.
 4. Tag en så dyb indånding som muligt, og luk læberne tæt om mundstykket.
-5. Blæs ud så kraftigt og så hurtigt, som det overhovedet er muligt — ét kort, eksplosivt pust. Her tæller **hastigheden**, ikke hvor længe I kan blive ved.
+5. Blæs ud så kraftigt og så hurtigt, som det overhovedet er muligt — ét kort, eksplosivt pust. Her tæller hastigheden, ikke hvor længe I kan blive ved.
 6. Aflæs viserens position på skalaen (L/min), og notér værdien.
-7. Nulstil viseren, og gentag i alt tre gange. Jeres Peak Flow er den **højeste** af de tre værdier.
+7. Nulstil viseren, og gentag i alt tre gange. Jeres Peak Flow er den højeste af de tre værdier.
 8. Aflæs jeres forventede Peak Flow i @fig-diagram, og beregn afvigelsen mellem den målte og den forventede værdi (se afsnittet Registrering af målinger).
 9. Tør mundstykket og apparatet af med sprit og papir efter brug.
 
@@ -37,7 +37,7 @@ I skal måle jeres eget Peak Flow med et peakflow-meter, sammenligne det med den
 - Læberne skal slutte helt tæt om mundstykket, og tungen må ikke sidde foran hullet. Et "host" ned i apparatet giver et falsk højt udslag — det skal være et rent, kraftigt pust.
 - Hold en pause på et halvt minut mellem de tre pust, så I ikke bliver svimle.
 - Findes jeres præcise højde ikke som kurve i diagrammet, så aflæs mellem de to nærmeste kurver.
-- Alle i klassen skal måle på **samme** peakflow-meter — forskellige apparater kan være kalibreret lidt forskelligt.
+- Alle i klassen skal måle på samme peakflow-meter — forskellige apparater kan være kalibreret lidt forskelligt.
 :::
 
 ::: {.callout-note}

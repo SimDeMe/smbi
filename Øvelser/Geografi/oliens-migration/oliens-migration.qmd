@@ -43,7 +43,7 @@ Placér nu prøverne i skemaet, så stratigrafien passer i forhold til oliedanne
 
 **Formål:** at opnå viden om oliens migration og at knytte den til densitet.
 
-**Hypotese:** Hvad forventer I vil ske, og hvorfor? Skriv det ned, **inden** I går i gang.
+**Hypotese:** Hvad forventer I vil ske, og hvorfor? Skriv det ned, inden I går i gang.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -90,7 +90,7 @@ Tegn til sidst glasset af, som det ser ud ved forsøgets slutning, og sæt navn 
 
 ### Konklusion og diskussion af resultater
 
-1. Beskriv, hvad I ser. Relatér derefter øvelsen til teorien om oliedannelse, migration, kildebjergarter, reservoirbjergarter og oliefælder: **hvilke af de begreber har vi i vores forsøg, og hvilke har vi ikke?**
+1. Beskriv, hvad I ser. Relatér derefter øvelsen til teorien om oliedannelse, migration, kildebjergarter, reservoirbjergarter og oliefælder: hvilke af de begreber har vi i vores forsøg, og hvilke har vi ikke?
 2. Diskutér, hvilke energimæssige og miljømæssige konsekvenser det ville have haft, hvis oliens massefylde havde været større end vands. Hvor ville vores Nordsøolie så befinde sig i dag, og hvad ville det betyde for vores muligheder for at bruge den?
 3. Hvilke problemer er der forbundet med olie som energiråstof?
 
