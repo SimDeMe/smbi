@@ -21,7 +21,10 @@ export default [
     forveksles:'Calcit (ridses af kniv og bruser i syre) og feldspat (har plane spalteflader).',
     kend:{korn:['krystal'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['lys']},
     farver:['#EDEAE3','#D8D4CC','#F7F5F0'], tegning:'krystal',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-01-kvarts-1.jpg', tekst:'Hvid mælkekvarts og små, klare kvartskrystaller'},
+      {fil:'MI-01-kvarts-2.jpg', tekst:'Grålig kvarts med rødlige pletter. Klassesæt nr. 13'}
+    ]
   },
   {
     id:'kalifeldspat', kode:'MI-02', nr:[],
@@ -37,7 +40,10 @@ export default [
     forveksles:'Plagioklas (oftest hvid-grå med fine parallelle striber på spaltefladen) og kvarts (ingen spalteflader).',
     kend:{korn:['krystal'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['lys','roed']},
     farver:['#E9A58A','#F3C4AE','#D9876B'], tegning:'krystal',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-02-kalifeldspat-1.jpg', tekst:'Kødfarvet kalifeldspat med blanke spalteflader'},
+      {fil:'MI-02-kalifeldspat-2.jpg', tekst:'Grå kalifeldspat (mikroklin). Samling nr. 9'}
+    ]
   },
   {
     id:'plagioklas', kode:'MI-03', nr:[],
@@ -101,7 +107,9 @@ export default [
     forveksles:'Augit (kortere, næsten retvinklet spaltning) og biotit (blød, flager).',
     kend:{korn:['krystal'], syre:false, opbygning:['massiv'], haard:['glas','kniv'], farve:['moerk']},
     farver:['#23302A','#35463C','#141A17'], tegning:'staengler',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-06-hornblende-1.jpg', tekst:'Sorte, blanke stykker hornblende. Klassesæt nr. 7'}
+    ]
   },
   {
     id:'augit', kode:'MI-07', nr:[],
@@ -133,7 +141,9 @@ export default [
     forveksles:'Grønt glas og grøn kvarts (hårdere, ikke kornet).',
     kend:{korn:['krystal','store'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['groen']},
     farver:['#7F9A3A','#9DB451','#5E7629'], tegning:'korn',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-08-olivin-1.jpg', tekst:'Grønne olivinkorn med mørke og rødbrune korn imellem. Nr. 23'}
+    ]
   },
   {
     id:'granat', kode:'MI-09', nr:[],
@@ -165,7 +175,9 @@ export default [
     forveksles:'Kvarts (ridser glas, bruser ikke) og gips (ridses af negl).',
     kend:{korn:['krystal'], syre:true, opbygning:['massiv'], haard:['kniv'], farve:['lys']},
     farver:['#F3EFE6','#E3DCCB','#FFFFFF'], tegning:'krystal',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-10-calcit-1.jpg', tekst:'Kalkspat, nr. 15 — bagerst et klart stykke dobbeltspat'}
+    ]
   },
   {
     id:'gips', kode:'MI-11', nr:[],
@@ -181,7 +193,10 @@ export default [
     forveksles:'Calcit (hårdere, bruser i syre) og halit (smager salt, kløver i terninger).',
     kend:{korn:['krystal'], syre:false, opbygning:['skifret'], haard:['negl'], farve:['lys']},
     farver:['#F5F1EA','#E7DFD2','#FFFFFF'], tegning:'blade',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-11-gips-1.jpg', tekst:'Gips. Klassesæt nr. 43'},
+      {fil:'MI-11-gips-2.jpg', tekst:'Hvid og grå gips med blanke flader. Klassesæt nr. 12'}
+    ]
   },
   {
     id:'halit', kode:'MI-12', nr:[],
@@ -197,7 +212,9 @@ export default [
     forveksles:'Calcit (kløver skævt, bruser i syre) og gips (ridses af negl, smager ikke salt).',
     kend:{korn:['krystal'], syre:false, opbygning:['massiv'], haard:['negl','kniv'], farve:['lys']},
     farver:['#F4EEEA','#E8D6CF','#FFFFFF'], tegning:'krystal',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-12-halit-1.jpg', tekst:'Klare til grålige stykker stensalt. Klassesæt nr. 9'}
+    ]
   },
   {
     id:'pyrit', kode:'MI-13', nr:[],
@@ -261,6 +278,8 @@ export default [
     forveksles:'Calcit (lys, lettere og bruser kraftigt i kold syre) og hæmatit (rødbrun streg).',
     kend:{korn:['krystal'], opbygning:['massiv'], haard:['kniv'], farve:['moerk']},
     farver:['#6E4A2A','#8C6239','#3F2A17'], tegning:'krystal',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MI-16-jernspat-1.jpg', tekst:'Brune spaltestykker af jernspat med rustbrune flader'}
+    ]
   }
 ];

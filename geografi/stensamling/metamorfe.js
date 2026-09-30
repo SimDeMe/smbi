@@ -100,7 +100,9 @@ export default [
     kend:{korn:['store'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['groen','spaettet','roed']},
     farver:['#4F6B3C','#8E2A2E','#6F8A56'], tegning:'eklogit',
     se:[{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'},{tekst:'Simulering: pladegrænser', href:'/geografi/pladegraenser.html'}],
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'ME-06-eklogit-1.jpg', tekst:'Røde granater i en grøn grundmasse'}
+    ]
   },
   {
     id:'migmatit', kode:'ME-07', nr:[],

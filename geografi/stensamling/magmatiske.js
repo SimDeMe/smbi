@@ -22,7 +22,9 @@ export default [
     kend:{korn:['store'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['spaettet','lys','roed']},
     farver:['#D98E73','#EFE7DC','#2B2724','#B8B2A8'], tegning:'grovkornet',
     se:[{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'}],
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MA-01-granit-1.jpg', tekst:'Grovkornet granit — lyse korn med spredte sorte'}
+    ]
   },
   {
     id:'pegmatit', kode:'MA-02', nr:[],
@@ -87,7 +89,9 @@ export default [
     kend:{korn:['store','fine'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['groen','moerk']},
     farver:['#6E8036','#8FA14A','#3F4A24'], tegning:'finkornet',
     se:[{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'}],
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MA-05-peridotit-1.jpg', tekst:'Tre stykker grøn peridotit'}
+    ]
   },
   {
     id:'rhombeporfyr', kode:'MA-06', nr:[],
@@ -120,7 +124,9 @@ export default [
     kend:{korn:['fine'], syre:false, opbygning:['massiv','lagdelt','porfyr'], haard:['glas'], farve:['lys','roed']},
     farver:['#C98B7A','#E3B9A8','#9E6556'], tegning:'finkornet',
     se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'}],
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MA-07-rhyolit-1.jpg', tekst:'Lysegrå, finkornet rhyolit — enkelte med små lyse krystaller'}
+    ]
   },
   {
     id:'andesit', kode:'MA-08', nr:[],
@@ -154,7 +160,9 @@ export default [
     kend:{korn:['fine'], syre:false, opbygning:['massiv','huller'], haard:['glas'], farve:['moerk']},
     farver:['#2B2C2E','#3F4144','#1A1B1C'], tegning:'finkornet',
     se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'},{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'}],
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MA-09-basalt-1.jpg', tekst:'Mørk, finkornet basalt — nogle stykker med rustbrun overflade'}
+    ]
   },
   {
     id:'obsidian', kode:'MA-10', nr:[],
@@ -170,7 +178,9 @@ export default [
     forveksles:'Flint (mat, ikke glasblank) og slagger fra industrien (ofte med bobler).',
     kend:{korn:['ingen'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['moerk']},
     farver:['#111214','#2A2C31','#050506'], tegning:'glas',
-    placering:'', billeder:[]
+    placering:'', billeder:[
+      {fil:'MA-10-obsidian-1.jpg', tekst:'Sort, glasblank obsidian med muslet brud'}
+    ]
   },
   {
     id:'pimpsten', kode:'MA-11', nr:[],
