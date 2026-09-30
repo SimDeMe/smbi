@@ -246,5 +246,21 @@ export default [
     kend:{korn:['krystal','fine'], syre:false, opbygning:['massiv'], haard:['kniv','glas'], farve:['roed','metal']},
     farver:['#6B2F24','#8E4032','#3B1E1A'], tegning:'massiv',
     placering:'', billeder:[]
+  },
+  {
+    id:'jernspat', kode:'MI-16', nr:[],
+    navn:'Jernspat', andreNavne:['siderit'],
+    type:'Karbonat',
+    kort:'Jernets karbonat — brun, tung og kløver i skæve terninger som calcit.',
+    kendetegn:'Lys- til mørkebrun, ofte med rustbrune flader, hvor overfladen er forvitret. Kløver i rhomber ligesom calcit, men føles tung i hånden. Ridses af kniv. Bruser kun svagt eller slet ikke i kold, fortyndet saltsyre — tydeligt først i varm syre.',
+    formel:'FeCO₃', haardhed:'3,5–4,5', densitet:'3,9', streg:'hvid', glans:'glasglans til perleglans',
+    spaltning:'perfekt i tre retninger (rhomber)',
+    dannelse:'Udfældes fra varmt vand i hydrotermale gange og i iltfrit mudder, hvor jern bliver i opløsning i stedet for at ruste. Ved overfladen ilter jernet, og stenen får en brun skorpe af rust.',
+    findested:'Kryolitbruddet ved Ivittuut i Sydvestgrønland, hvor den sad sammen med kryolitten. Store malmforekomster ved Erzberg i Østrig. Som knolde (lerjernsten) i ler og kullag.',
+    anvendelse:'Jernmalm.',
+    forveksles:'Calcit (lys, lettere og bruser kraftigt i kold syre) og hæmatit (rødbrun streg).',
+    kend:{korn:['krystal'], opbygning:['massiv'], haard:['kniv'], farve:['moerk']},
+    farver:['#6E4A2A','#8C6239','#3F2A17'], tegning:'krystal',
+    placering:'', billeder:[]
   }
 ];
