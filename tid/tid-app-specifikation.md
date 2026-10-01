@@ -53,14 +53,11 @@ Alt under `users/{userId}/`:
   order: 1,
   isArchived: false,
   note: "",                         // valgfri kommentar fra opgavefordelingen, fx "5 stk"
-  normGrundlag: null | {            // kun hold, valgfrit — fra skolens holdoversigt
-    moduler: 41,                    // årsnormen i moduler à 95 min fra Lectio (reduktion trukket fra); påkrævet hvis objektet findes
-                                    // (ældre hold har i stedet aarsnorm: 65 i klokketimer — den bruges uændret)
-    elever: 30,
-    fordybelsestid: 15,             // elevernes skriftlige tid inkl. terminsprøver
-    puljetimer: 0,
-    tillaeg: 0,                     // fx 15 til intern NF-eksamen
-    antalHold: 1                    // flere ens hold samlet som én aktivitet, fx 3 NV-hold
+  normGrundlag: null | {            // kun hold, valgfrit — fra Lectio; budgetHours er fagfordelingens
+    moduler: 41,                    // årsnormen i moduler à 95 min (reduktion trukket fra); påkrævet hvis objektet findes
+    elever: 28,
+    fordybelsestid: 15              // elevtimer pr. elev
+                                    // (ældre hold: aarsnorm i timer, puljetimer, tillaeg, antalHold — se Holdnormer)
   },
   rettedeSaet: [                    // kun hold — se *Akkordregnskab*
     { id: "…", dato: "2026-09-20", elevtimer: 2, navn: "Rapport 1" }
@@ -73,7 +70,7 @@ Alt under `users/{userId}/`:
 Regler:
 - Hold må ikke have parentId (ingen hierarki for hold)
 - En under-aktivitets `schoolYear` skal matche forælderens
-- Har et hold `normGrundlag`, er budgettet og de tre delnormer regnet ud af det (se *Holdnormer*); `budgetHours` gemmes med som et øjebliksbillede, men det er normgrundlaget og skoleårets faktorer, der gælder. Hold uden `normGrundlag` (og alle ældre hold) bruger `budgetHours` som før
+- Et holds budget er altid `budgetHours` fra fagfordelingen. Har holdet et `normGrundlag`, deles budgettet op i undervisning, forberedelse og retning (se *Holdnormer*). Ældre hold med normgrundlaget i timer får budgettet regnet ud af formlen, til de gemmes igen
 
 **`entries/{entryId}`** — Tidsregistreringer:
 ```
@@ -108,24 +105,22 @@ Regler:
 ```
 
 ## Holdnormer
-Middelfart Gymnasiums holdoversigt regner et holds vejledende arbejdstid ud som
+Læreren skal ikke selv forholde sig til skolens formel eller reduktion. Et hold får tal fra to kilder:
 
-    budget = (årsnorm × reduktion + elever × fordybelsestid / 27 + puljetimer) × faktor + tillæg
+- **Budget** i timer — fra fagfordelingen. Skrives altid i hånden.
+- **Årsnorm i moduler** à 95 min, **elever** og **elevtimer pr. elev** — fra Lectio. Lectios moduler er dem, holdet faktisk undervises i; skolens reduktion er allerede trukket fra.
 
-Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr. arbejdstype:
+Med dem og skoleårets forberedelsesfaktor deler appen budgettet op:
 
-Årsnormen tastes i **moduler à 95 min, som den står i Lectio** — ikke i klokketimer. Lectios moduler er dem, holdet faktisk undervises i, så reduktionen er allerede trukket fra: *årsnorm × reduktion* i formlen erstattes af *moduler × 95 / 60*, og reduktionen bruges ikke. Udregningen under felterne viser modulerne omregnet til timer. Et hold gemt med årsnormen i timer fra holdoversigten (`aarsnorm`) regnes som hidtil, med reduktion, og vises i formularen som moduler med reduktionen trukket fra; rettes feltet ikke, gemmes timerne uændret.
-
-- **Undervisning** = årsnorm × reduktion + puljetimer. Reduktionen er en reel nedskæring af timerne: holdet undervises kun i fx 90 % af årsnormen (grunden er ikke oplyst)
+- **Undervisning** = moduler × 95 / 60
 - **Forberedelse** = undervisning × (faktor − 1)
-- **Retning** = elever × fordybelsestid / 27 × faktor
-- **Tillæg** står for sig og har ingen arbejdstype
+- **Retning** = resten af budgettet, også regnet om til **minutter pr. elevtime**: retning × 60 / (elever × elevtimer pr. elev). Den holdes op mod skolens formel, faktor / 27 × 60 (≈ 5,2 min ved 2,35)
 
-Er `antalHold` større end 1, ganges alle fire med det. Det bruges til ens hold, der registreres som én aktivitet — fx tre NV-hold (11,25 t, pulje 2,1375, fordybelsestid 0 → 3 × 28,82 = 86,45 t). Tid registreret uden arbejdstype på et hold med normer (fx fra før en opgave blev lavet om til hold) står i rapporten som "Uden arbejdstype" og tæller med i holdets total.
+Opdelingen står under budgettet i formularen. Er budgettet mindre end undervisning og forberedelse, er retningen 0, og formularen siger, hvor meget der mangler. Uden budget deles intet op, og holdet tæller som aktivitet uden budget. Indstillingerne har kun forberedelsesfaktoren pr. skoleår.
 
-Tillægget tælles ikke med i akkordregnskabet: eksamen og årsprøve oprettes som opgaver for sig, i det skoleår de betales (se *Akkordregnskab*).
+Ældre hold har normgrundlaget fra holdoversigten (`aarsnorm` i timer, puljetimer, tillæg, antal hold) og regnes stadig med skolens fulde formel, `budget = (årsnorm × reduktion + elever × fordybelsestid / 27 + puljetimer) × faktor + tillæg`, med den gemte reduktion. Åbnes et sådant hold, vises det omsat til Lectio-formen (undervisningen i moduler, alle hold samlet, det gemte budget), og det gemmes sådan. Et tillæg havner så i retningen — eksamen hører hjemme som opgave (se *Akkordregnskab*), så budgettet bør rettes til fagfordelingens tal for holdet.
 
-Formlen ligger ét sted, i `normer.js`. Kontrolleret mod holdoversigten 2025/26 (faktor 2,35, reduktion 0,9): 2x bi 176,64, 1p nf ge 200,36, nv4 ng 28,82 og 3g Ng1 325,30 — alle på decimalen.
+Formlen ligger ét sted, i `normer.js`.
 
 ## Forudefinerede aktiviteter
 Ingen aktiviteter oprettes automatisk. Ved første login vises en "kom-i-gang"-side hvor brugeren bliver bedt om at oprette sine første aktiviteter (eller indstillinger), inden hovedskærmen vises. Vis evt. en eksempel-liste baseret på en typisk opgavefordeling.
@@ -210,7 +205,7 @@ Vis for valgte interval:
 - **Samlet:** Total tid forbrugt, og hvis skoleår er valgt: forbrugt / norm (1650t for fuldtid — konfigurerbart i indstillinger). Procent og resterende.
 - **Pr. aktivitet:** Liste sorteret efter forbrug. For hver aktivitet: navn, forbrugt tid, budget, procent (fx "142t / 288t — 49%"), visuel progress bar i aktivitetens farve. Under-aktiviteter vises indrykket under deres parent. Parent viser eget forbrug + summen af children.
 - **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet med akkorden: undervisningen i moduler (*10 af 36,9 moduler*), forberedelse og retning som brugt og optjent mod normen med en saldochip. Bjælken er brugt mod norm, og en blækstreg i den markerer det optjente. Retningen viser også *rettet 5 af 15 elevtimer*. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
-- **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elev pr. fordybelsestime mod faktor / 27 × 60 (fx 5,2 min); måles mod de rettede sæt, der er afsluttet i perioden: tiden brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt, skønnes den rettede fordybelsestid ud fra den andel af årets undervisningsnorm, der er registreret, og tallet mærkes *skønnet*; har holdet sæt, men ingen i perioden, vises retningen ikke. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
+- **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elevtime mod holdets eget budget pr. elevtime (resten af budgettet ÷ elevtimer, ≈ 5,2 min ved skolens formel); måles mod de rettede sæt, der er afsluttet i perioden: tiden brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt, skønnes den rettede fordybelsestid ud fra den andel af årets undervisningsnorm, der er registreret, og tallet mærkes *skønnet*; har holdet sæt, men ingen i perioden, vises retningen ikke. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
 - **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema". Det er timeløns-tallet; akkordregnskabet står under det.
 - **Akkordregnskab (kun skoleår):** se *Akkordregnskab* nedenfor.
 - **Fælles tid:** ubundet tid og pauser står samlet nederst i listen, hver for sig. I skoleåret kommer opgaver uden budget med.
@@ -220,7 +215,7 @@ Vis for valgte interval:
 Egen side "Aktiviteter":
 - Listet grupperet efter type (Hold / Opgaver) og skoleår
 - Skift mellem skoleår (dropdown)
-- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm i moduler, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
+- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få tal fra Lectio (årsnorm i moduler, elever, elevtimer pr. elev); så deles budgettet op, og opdelingen vises under budgetfeltet
 - Opgaver har en optjeningsmåde: *Løbende*, *Ved afslutning* eller *Manuelt* (med et felt for procent færdig) — se *Akkordregnskab*
 - Et gemt hold viser sine rettede sæt med dato, navn og elevtimer og summen mod normen (*Rettet 5 af 15 elevtimer*). Et sæt slettes med krydset og registreres igen, hvis det er tastet forkert
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
@@ -241,7 +236,7 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 ### 9. Indstillinger
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
-- Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35) og reduktion af årsnormen (default 0,9)
+- Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35). Reduktionen står ikke længere på siden; den gemte bruges kun på ældre hold
 - Auto-stop-grænse
 - Ugestart
 - Log ud
@@ -263,10 +258,10 @@ Læreren er både timelønnet (normen, 1650 t) og akkordlønnet (hver linje i op
 
 **Hold med normgrundlag** optjener pr. arbejdstype:
 
-- *Undervisning* = registreret undervisning, højst normen. Tælles i moduler à 95 min (normens klokketimer × 60 / 95). Mere undervisning end normen tæller som brugt og giver en neutral besked (*2 moduler over normen*); mindre er normalt (sygedage, omsorgsdage) og giver ingen besked
+- *Undervisning* = registreret undervisning, højst normen. Tælles i moduler à 95 min, som årsnormen fra Lectio. Mere undervisning end normen tæller som brugt og giver en neutral besked (*2 moduler over normen*); mindre er normalt (sygedage, omsorgsdage) og giver ingen besked
 - *Forberedelse* = den undervist andel af undervisningsnormen × forberedelsesnormen, altså (faktor − 1) time pr. undervist time — 2 t 8 min pr. modul med faktor 2,35
-- *Retning* = rettede elevtimer × elever / 27 × faktor, højst normen. Retteakkorden er fordybelsestid × antal hold elevtimer (fx 15)
-- *Tillæg* tælles ikke; holdet viser en note om at oprette eksamen som opgave
+- *Retning* = holdets retning (resten af budgettet) × rettede elevtimer / holdets elevtimer pr. elev, højst normen. Retteakkorden er elevtimerne pr. elev (fx 15)
+- *Tillæg* på ældre hold tælles ikke; holdet viser en note om at oprette eksamen som opgave
 
 Hold uden normgrundlag optjener deres budget løbende.
 

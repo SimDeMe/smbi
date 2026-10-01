@@ -1,45 +1,41 @@
-// normer.js — et holds vejledende arbejdstid, delt op i de tre arbejdstyper
+// normer.js — et holds budget delt op i undervisning, forberedelse og retning
 //
-// Skolens holdoversigt regner et holds budget ud med én formel:
+// Læreren taster tal fra to kilder og skal ikke selv regne:
+//
+//   budget                 — holdets timer i fagfordelingen
+//   årsnorm i moduler      — fra Lectio: de moduler à 95 min, holdet faktisk
+//                            undervises i (skolens reduktion er trukket fra)
+//   elever, elevtimer pr. elev — fra Lectio (elevernes fordybelsestid)
+//
+// Appen deler budgettet op med skoleårets forberedelsesfaktor:
+//
+//   undervisning = moduler × 95 / 60
+//   forberedelse = undervisning × (faktor − 1)
+//   retning      = resten af budgettet
+//
+// og regner retningen om til minutter pr. elevtime,
+//
+//   retning × 60 / (elever × elevtimer pr. elev),
+//
+// som kan holdes op mod skolens formel, faktor / 27 × 60 (≈ 5,2 min ved 2,35).
+// Er budgettet mindre end undervisning og forberedelse, er der ingen retning,
+// og manglen står i formularen.
+//
+// Ældre hold har normgrundlaget fra holdoversigten — årsnorm i timer,
+// puljetimer, tillæg og antal hold — og regnes stadig med skolens fulde formel:
 //
 //   budget = (årsnorm × reduktion + elever × fordybelsestid / 27 + puljetimer)
-//            × forberedelsesfaktor + tillæg
+//            × faktor + tillæg
 //
-// Skolen deler ikke budgettet op, men formlen kan læses som tre normer:
-//
-//   undervisning = årsnorm × reduktion + puljetimer
-//   forberedelse = undervisning × (faktor − 1)
-//   retning      = elever × fordybelsestid / 27 × faktor
-//
-// og et tillæg (fx +15 t til intern NF-eksamen), der står for sig.
-// Står flere ens hold som én aktivitet (fx tre NV-hold), ganges det hele med
-// antalHold — de har samme årsnorm, og på NV er fordybelsestiden 0, så
-// elevtallet ikke spiller ind.
-// Reduktionen er en reel nedskæring: holdet undervises kun i 90 % af
-// årsnormen (grunden er ikke oplyst), og forberedelsen regnes af de timer,
-// der faktisk undervises. Årsnormen i moduler fra Lectio har den allerede
-// trukket fra (se undervistTimer).
-// Faktoren og reduktionen skifter fra skoleår til skoleår og ligger derfor i
-// indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
+// Retter man et sådant hold, gemmes det i den nye form.
+// Faktoren (og den gamle reduktion) skifter fra skoleår til skoleår og ligger
+// i indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
 
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaLaengde } from './skema.js';
 
-// Årsnormen tastes i moduler à 95 min, som den står i Lectio. Lectios
-// moduler er dem, holdet faktisk undervises i — reduktionen er allerede
-// trukket fra — så de omregnes bare til klokketimer: 1 modul = 95/60 t.
-// Ældre hold har årsnormen gemt i timer (aarsnorm) fra holdoversigten; her
-// er reduktionen ikke trukket fra, og den ganges på som hidtil.
-const MODUL_TIMER = skemaLaengde(MODULER[0]) / 60;
-
-// De timer, holdet undervises i, før puljetimerne — eller null
-export function undervistTimer(g, reduktion) {
-  if (Number.isFinite(g?.moduler))  return g.moduler * MODUL_TIMER;
-  if (Number.isFinite(g?.aarsnorm)) return g.aarsnorm * reduktion;
-  return null;
-}
-
-// Timer → moduler, til at vise en ældre årsnorm i formularen
+const MODUL_TIMER = skemaLaengde(MODULER[0]) / 60;     // 95 min
+export const modulerTilTimer = m => m * MODUL_TIMER;
 export const timerTilModuler = t => t / MODUL_TIMER;
 
 export const STANDARD_FAKTORER = { faktor: 2.35, reduktion: 0.9 };
@@ -53,36 +49,64 @@ export function faktorerFor(skoleaar) {
   };
 }
 
-// Har holdet et normgrundlag? Årsnormen (moduler eller ældre timer) er det eneste, der skal være udfyldt;
-// resten tæller som 0, hvis det mangler (et NV-hold har ingen fordybelsestid).
-export const harNormgrundlag = a =>
-  a?.type === 'hold' && undervistTimer(a.normGrundlag, 1) != null;
+// Den nye form har årsnormen i moduler; den gamle i timer
+export const erModulform = g => Number.isFinite(g?.moduler);
+const erTimeform = g => !erModulform(g) && Number.isFinite(g?.aarsnorm);
 
-// De tre normer og tillægget i timer — eller null, hvis holdet ikke har
-// et normgrundlag og bare har et budget skrevet ind i hånden
-export function beregnNormer(g, { faktor, reduktion }) {
-  const undervist = undervistTimer(g, reduktion);
-  if (undervist == null) return null;
+// Har holdet et normgrundlag? Årsnormen er det eneste, der skal være udfyldt;
+// resten tæller som 0, hvis det mangler (et NV-hold har ingen elevtimer).
+export const harNormgrundlag = a =>
+  a?.type === 'hold' && (erModulform(a.normGrundlag) || erTimeform(a.normGrundlag));
+
+// Holdets dele i timer — eller null. Den nye form kræver budgettet.
+//   undervisning, forberedelse, retning, tillaeg, total
+//   elevtimer        elever × elevtimer pr. elev (× antal hold)
+//   minPrElevtime    retningen i minutter pr. elevtime
+//   mangler          timer, budgettet er for lille til undervisning og forberedelse
+export function beregnNormer(g, { faktor, reduktion }, budget = null) {
   const tal = v => Number.isFinite(v) ? v : 0;
+
+  if (erModulform(g)) {
+    if (!Number.isFinite(budget)) return null;
+    const undervisning = modulerTilTimer(g.moduler);
+    const forberedelse = undervisning * (faktor - 1);
+    const rest         = budget - undervisning - forberedelse;
+    const retning      = Math.max(0, rest);
+    const elevtimer    = tal(g.elever) * tal(g.fordybelsestid);
+    return {
+      undervisning, forberedelse, retning, tillaeg: 0,
+      total: undervisning + forberedelse + retning,
+      elevtimer,
+      minPrElevtime: elevtimer > 0 ? retning * 60 / elevtimer : null,
+      mangler: Math.max(0, -rest)
+    };
+  }
+
+  if (!erTimeform(g)) return null;
   const antal = Number.isFinite(g.antalHold) && g.antalHold > 0 ? g.antalHold : 1;
-  const undervisning = (undervist + tal(g.puljetimer)) * antal;
+  const undervisning = (g.aarsnorm * reduktion + tal(g.puljetimer)) * antal;
   const forberedelse = undervisning * (faktor - 1);
   const retning      = tal(g.elever) * tal(g.fordybelsestid) / 27 * faktor * antal;
   const tillaeg      = tal(g.tillaeg) * antal;
   return {
     undervisning, forberedelse, retning, tillaeg,
-    total: undervisning + forberedelse + retning + tillaeg
+    total: undervisning + forberedelse + retning + tillaeg,
+    elevtimer: tal(g.elever) * tal(g.fordybelsestid) * antal,
+    minPrElevtime: faktor / 27 * 60,
+    mangler: 0
   };
 }
 
 export const normerFor = a =>
-  harNormgrundlag(a) ? beregnNormer(a.normGrundlag, faktorerFor(a.schoolYear)) : null;
+  harNormgrundlag(a)
+    ? beregnNormer(a.normGrundlag, faktorerFor(a.schoolYear), a.budgetHours ?? null)
+    : null;
 
-// Aktivitetens budget i timer: beregnet ud fra normgrundlaget, hvis der er
-// et, ellers det indtastede budget (eller null)
+// Aktivitetens budget i timer: det indtastede fra fagfordelingen — eller,
+// på et ældre hold med normgrundlag i timer, det beregnede
 export function budgetTimer(a) {
-  const n = normerFor(a);
-  return n ? n.total : (a?.budgetHours ?? null);
+  if (erTimeform(a?.normGrundlag) && a?.type === 'hold') return normerFor(a).total;
+  return a?.budgetHours ?? null;
 }
 
 // 176.64 → "176,6" — normerne er brøker, og én decimal er nok

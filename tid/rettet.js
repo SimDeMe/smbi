@@ -13,7 +13,7 @@
 
 import { db, showToast, getCurrentSchoolYear } from './app.js';
 import { getLoadedActivities } from './activities.js';
-import { faktorerFor, tolkTal, fmtTimer } from './normer.js';
+import { normerFor, tolkTal, fmtTimer } from './normer.js';
 import { datoInput, langDato } from './periode.js';
 import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
@@ -100,8 +100,13 @@ function opdaterUdregning() {
     ud.innerHTML = `<span>Holdet har intet elevtal i normgrundlaget — sættet gemmes, men optjener først retning, når elevtallet er skrevet ind.</span>`;
     return;
   }
-  const { faktor } = faktorerFor(hold.schoolYear);
-  const timer = v * elever / 27 * faktor;
+  // Sættets andel af retteakkorden: elevtimerne mod holdets elevtimer pr. elev
+  const n = normerFor(hold);
+  if (!n || !n.elevtimer) {
+    ud.innerHTML = `<span>Holdet mangler budget eller elevtimer — sættet gemmes, men optjener først retning, når de er skrevet ind.</span>`;
+    return;
+  }
+  const timer = n.retning * v * elever / n.elevtimer;
   ud.innerHTML = `
     <span><b>${komma(v)}</b> elevtimer × ${elever} elever</span>
     <span class="norm-udregning-sum">Optjener <b>${fmtTimer(timer)}</b> <span class="enhed">t</span> retning</span>`;
@@ -143,7 +148,8 @@ export function renderSaetListe(act) {
   if (!vis) return;
 
   const g      = act.normGrundlag || {};
-  const antal  = Number(g.antalHold) > 0 ? Number(g.antalHold) : 1;
+  // Den nye form har elevtimerne for hele aktiviteten; den gamle pr. hold
+  const antal  = Number.isFinite(g.moduler) || !(Number(g.antalHold) > 0) ? 1 : Number(g.antalHold);
   const norm   = (Number(g.fordybelsestid) || 0) * antal;
   const saet   = [...(act.rettedeSaet || [])].sort((a, b) => b.dato.localeCompare(a.dato));
   const rettet = saet.reduce((s, x) => s + (Number(x.elevtimer) || 0), 0);

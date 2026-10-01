@@ -2,7 +2,7 @@
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins } from './timer.js';
-import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, undervistTimer, timerTilModuler } from './normer.js';
+import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, timerTilModuler, erModulform } from './normer.js';
 import { optjeningFor } from './akkord.js';
 import { renderSaetListe } from './rettet.js';
 import {
@@ -219,7 +219,7 @@ function openActSheet(actId) {
   NORM_FELTER.forEach(([id, key]) => {
     document.getElementById(id).value = g[key] != null ? String(g[key]).replace('.', ',') : '';
   });
-  visAeldreAarsnorm(g, a?.schoolYear || selectedYear);
+  visAeldreNormgrundlag(a);
 
   const typeVal = a?.type || 'opgave';
   const radio = document.querySelector(`input[name="act-type"][value="${typeVal}"]`);
@@ -274,10 +274,7 @@ function visOptjening() {
 const NORM_FELTER = [
   ['act-aarsnorm',   'moduler'],
   ['act-elever',     'elever'],
-  ['act-fordybelse', 'fordybelsestid'],
-  ['act-pulje',      'puljetimer'],
-  ['act-tillaeg',    'tillaeg'],
-  ['act-antal-hold', 'antalHold']
+  ['act-fordybelse', 'fordybelsestid']
 ];
 
 // Hold kan ikke have under-aktiviteter, så kun en aktivitet uden børn og
@@ -300,58 +297,48 @@ function laesNormgrundlag() {
     const v = tolkTal(document.getElementById(id).value);
     if (v != null) g[key] = v;
   });
-  // En ældre årsnorm i timer, som ikke er rørt, gemmes uændret — så
-  // flytter budgettet sig ikke en brøkdel, fordi modulerne er afrundet
-  const felt = document.getElementById('act-aarsnorm');
-  if (felt.dataset.timer && felt.value === felt.dataset.vist) {
-    delete g.moduler;
-    g.aarsnorm = Number(felt.dataset.timer);
-  }
-  return g.moduler != null || g.aarsnorm != null ? g : null;
+  return g.moduler != null ? g : null;
 }
 
-// Et hold gemt før årsnormen blev tastet i moduler, har den i timer fra
-// holdoversigten, uden reduktion. Den vises som moduler med reduktionen
-// trukket fra, som i Lectio; rettes feltet, gemmes modulerne.
-function visAeldreAarsnorm(g, aar) {
-  const felt = document.getElementById('act-aarsnorm');
-  delete felt.dataset.timer;
-  delete felt.dataset.vist;
-  if (Number.isFinite(g.moduler) || !Number.isFinite(g.aarsnorm)) return;
-  const m = Math.round(timerTilModuler(undervistTimer(g, faktorerFor(aar).reduktion)) * 100) / 100;
-  felt.value = String(m).replace('.', ',');
-  felt.dataset.timer = String(g.aarsnorm);
-  felt.dataset.vist  = felt.value;
+// Et ældre hold har normgrundlaget fra holdoversigten (årsnorm i timer,
+// puljetimer, tillæg, antal hold). Det vises omsat til Lectio-formen —
+// de moduler, holdet undervises i, og alle hold samlet — og gemmes sådan,
+// når holdet gemmes. Budgettet er det, der stod.
+function visAeldreNormgrundlag(a) {
+  const g = a?.normGrundlag;
+  if (a?.type !== 'hold' || !g || erModulform(g) || !Number.isFinite(g.aarsnorm)) return;
+  const n     = beregnNormer(g, faktorerFor(a.schoolYear));
+  const antal = Number(g.antalHold) > 0 ? Number(g.antalHold) : 1;
+  const komma = v => String(Math.round(v * 100) / 100).replace('.', ',');
+  document.getElementById('act-aarsnorm').value = komma(timerTilModuler(n.undervisning));
+  if (Number.isFinite(g.elever)) document.getElementById('act-elever').value = komma(g.elever * antal);
+  document.getElementById('act-budget').value = Math.round((a.budgetHours ?? n.total) * 100) / 100;
 }
 
-// Er normgrundlaget udfyldt, er budgettet regnet ud og kan ikke skrives i
-// hånden; udregningen står under felterne, så man kan tjekke den mod arket.
+// Budgettet kommer fra fagfordelingen og skrives altid i hånden. Med
+// årsnorm og elevtimer fra Lectio deler appen det op (se normer.js), og
+// delene står under budgettet, så de kan tjekkes.
 function opdaterUdregning() {
-  const ud     = document.getElementById('act-norm-udregning');
-  const budget = document.getElementById('act-budget');
-  const g      = laesNormgrundlag();
-  const aar    = document.getElementById('act-year').value.trim() || selectedYear;
-  const n      = g ? beregnNormer(g, faktorerFor(aar)) : null;
+  const ud  = document.getElementById('act-norm-udregning');
+  const g   = laesNormgrundlag();
+  const aar = document.getElementById('act-year').value.trim() || selectedYear;
+  if (!g) { ud.innerHTML = ''; return; }
 
+  const { faktor } = faktorerFor(aar);
+  const n = beregnNormer(g, { faktor, reduktion: 1 }, tolkTal(document.getElementById('act-budget').value));
   if (!n) {
-    if (budget.readOnly) budget.value = '';
-    budget.readOnly = false;
-    ud.innerHTML = '';
+    ud.innerHTML = `<span>Skriv budgettet fra fagfordelingen, så deler appen det op i undervisning, forberedelse og retning.</span>`;
     return;
   }
-  budget.readOnly = true;
-  budget.value = Math.round(n.total * 100) / 100;
-  const { faktor, reduktion } = faktorerFor(aar);
+  const k = (v, d = 1) => v.toLocaleString('da-DK', { maximumFractionDigits: d });
   ud.innerHTML = `
-    <span class="norm-udregning-fod">${g.moduler != null
-      ? `Årsnorm ${fmtTimer(g.moduler)} moduler à 95 min = ${fmtTimer(undervistTimer(g, 1))} <span class="enhed">t</span> undervisning`
-      : `Årsnorm ${fmtTimer(g.aarsnorm)} <span class="enhed">t</span> × reduktion = ${fmtTimer(undervistTimer(g, faktorerFor(aar).reduktion))} <span class="enhed">t</span> undervisning`}</span>
-    <span>Undervisning <b>${fmtTimer(n.undervisning)}</b></span>
-    <span>Forberedelse <b>${fmtTimer(n.forberedelse)}</b></span>
-    <span>Retning <b>${fmtTimer(n.retning)}</b></span>
-    ${n.tillaeg ? `<span>Tillæg <b>${fmtTimer(n.tillaeg)}</b></span>` : ''}
-    <span class="norm-udregning-sum">I alt <b>${fmtTimer(n.total)}</b> <span class="enhed">t</span></span>
-    <span class="norm-udregning-fod">${g.antalHold > 1 ? `${String(g.antalHold).replace('.', ',')} hold · ` : ''}Faktor ${String(faktor).replace('.', ',')}${g.moduler != null ? '' : ` · reduktion ${String(reduktion).replace('.', ',')}`} (${esc(aar)})</span>`;
+    <span>Undervisning <b>${fmtTimer(n.undervisning)}</b> <span class="enhed">t</span> · ${k(g.moduler, 2)} moduler à 95 min</span>
+    <span>Forberedelse <b>${fmtTimer(n.forberedelse)}</b> <span class="enhed">t</span> · undervisning × ${k(faktor - 1, 2)}</span>
+    <span>Retning <b>${fmtTimer(n.retning)}</b> <span class="enhed">t</span>${n.minPrElevtime != null
+      ? ` · <b>${k(n.minPrElevtime)}</b> <span class="enhed">min</span> pr. elevtime (skolens formel ${k(faktor / 27 * 60)})`
+      : ' · resten af budgettet'}</span>
+    ${n.mangler > 0 ? `<span class="norm-udregning-advarsel">Budgettet er ${fmtTimer(n.mangler)} <span class="enhed">t</span> mindre end undervisning og forberedelse — tjek tallene</span>` : ''}
+    <span class="norm-udregning-fod">Forberedelsesfaktor ${k(faktor, 2)} (${esc(aar)})</span>`;
 }
 
 function populateParentSelect(year, selId) {
@@ -390,14 +377,10 @@ async function saveActivity(e) {
   const type       = formType() || existingA?.type || 'opgave';
   const parentId   = type === 'opgave' ? (document.getElementById('act-parent').value || null) : null;
   const schoolYear  = document.getElementById('act-year').value.trim() || selectedYear;
-  // Med normgrundlag gemmes det beregnede budget også i budgetHours, så
-  // holdet har et budget, selv hvor normerne ikke bliver regnet ud. Det er
-  // dog normgrundlaget, der gælder: skifter faktoren, følger budgettet med.
+  // Budgettet er altid det indtastede fra fagfordelingen; normgrundlaget
+  // fra Lectio bruges kun til at dele det op
   const normGrundlag = type === 'hold' ? laesNormgrundlag() : null;
-  const normer       = normGrundlag ? beregnNormer(normGrundlag, faktorerFor(schoolYear)) : null;
-  const budgetRaw    = document.getElementById('act-budget').value.trim();
-  const budgetHours  = normer ? Math.round(normer.total * 100) / 100
-                              : budgetRaw !== '' ? parseFloat(budgetRaw) : null;
+  const budgetHours  = tolkTal(document.getElementById('act-budget').value);
   const note        = document.getElementById('act-note').value.trim();
   const color       = getSelectedColor() || autoColor();
   const optjening   = type === 'opgave' ? formOptjening() : null;
@@ -651,7 +634,7 @@ function bindListeners() {
     r.addEventListener('change', visOptjening)
   );
 
-  [...NORM_FELTER.map(([id]) => id), 'act-year'].forEach(id =>
+  [...NORM_FELTER.map(([id]) => id), 'act-year', 'act-budget'].forEach(id =>
     document.getElementById(id).addEventListener('input', opdaterUdregning)
   );
 

@@ -126,8 +126,8 @@
         <li>Hvor meget tid du samlet har brugt, og hvor det står i forhold til din norm for skoleåret</li>
         <li>Forbrug og budget pr. aktivitet, med en visuel bjælke i aktivitetens farve</li>
         <li>Fordelingen mellem undervisning / forberedelse / retning for dine hold</li>
-        <li>For hold med normgrundlag (se nedenfor): i skoleårs-rapporten står hver arbejdstype med brugt og optjent mod normen (se Akkordregnskabet herunder)</li>
-        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elev pr. fordybelsestime mod budgettets ca. 5,2 min. Retningen kræver, at holdet har et normgrundlag, og måles mod de sæt, du har registreret som rettet i perioden. Har holdet ingen sæt endnu, skønnes den ud fra, hvor stor en del af årets undervisning du har registreret</li>
+        <li>For hold med tal fra Lectio (se Aktiviteter): i skoleårs-rapporten står hver arbejdstype med brugt og optjent mod normen (se Akkordregnskabet herunder)</li>
+        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elevtime mod holdets eget budget (ca. 5,2 min). Retningen kræver tallene fra Lectio, og måles mod de sæt, du har registreret som rettet i perioden. Har holdet ingen sæt endnu, skønnes den ud fra, hvor stor en del af årets undervisning du har registreret</li>
       </ul>
       <p><strong>Akkordregnskabet.</strong> Under skoleåret står også, hvor meget af dine akkorder
       du har leveret. <strong>Optjent</strong> er den del af budgetterne, dit arbejde indtil nu er
@@ -149,13 +149,13 @@
       <p>Her administrerer du dine hold og opgaver — grupperet efter type og skoleår.</p>
       <ul>
         <li>Opret en ny aktivitet med navn, type, timebudget og farve</li>
-        <li>Et hold kan få et <strong>normgrundlag</strong> fra skolens holdoversigt: årsnorm (i moduler, som den står i Lectio — reduktionen er allerede trukket fra, og appen regner selv om til timer), antal elever, fordybelsestid, puljetimer og evt. tillæg. Tillægget tæller ikke med i akkordregnskabet — opret i stedet eksamen eller årsprøve som en opgave i det skoleår, den betales. Så regner appen budgettet ud med skolens formel og deler det op i tre normer:
+        <li>Et hold har et <strong>budget</strong> i timer, som du skriver af fra fagfordelingen. Skriver du også tallene fra <strong>Lectio</strong> ind — årsnormen i moduler, antal elever og elevtimer pr. elev — deler appen selv budgettet op. Du skal ikke regne noget:
           <ul>
-            <li><strong>Undervisning</strong> = Lectio-modulerne × 95 min + puljetimer</li>
-            <li><strong>Forberedelse</strong> = undervisningen × 1,35</li>
-            <li><strong>Retning</strong> = elever × fordybelsestid / 27 × 2,35</li>
+            <li><strong>Undervisning</strong> = modulerne × 95 min</li>
+            <li><strong>Forberedelse</strong> = undervisningen × 1,35 (forberedelsesfaktoren 2,35 minus 1)</li>
+            <li><strong>Retning</strong> = resten af budgettet — appen viser også, hvor mange minutter det giver pr. elevtime, mod skolens ca. 5,2</li>
           </ul>
-          Har du flere ens hold samlet som én aktivitet — fx tre NV-hold — så skriv antallet i <strong>Antal hold</strong>, og normerne ganges op. Lader du felterne stå tomme, bruger holdet bare det budget, du skriver ind.</li>
+          Opdelingen står under budgetfeltet. Lader du Lectio-felterne stå tomme, bruger holdet bare budgettet.</li>
         <li>Har du oprettet noget som opgave, der i virkeligheden er et hold, kan du skifte typen, når du redigerer det. Tiden, der allerede er registreret, følger med og står i rapporten som <em>uden arbejdstype</em>.</li>
         <li>En opgave har en <strong>optjeningsmåde</strong>: <em>Løbende</em> (budgettet optjenes jævnt over året, fx udvalg), <em>Ved afslutning</em> (intet, til du trykker "Afslut opgave" — fx eksamen og SRP) eller <em>Manuelt</em> (du skriver selv, hvor mange procent der er færdige)</li>
         <li>Når du redigerer et hold, ser du dets <strong>rettede sæt</strong>. Har du tastet et forkert, så slet det med krydset og registrér det igen</li>
@@ -168,7 +168,7 @@
     <div class="guide-section">
       <h2><span class="num">6</span> Indstillinger</h2>
       <p>Her justerer du skoleår, modul-længde, hvornår timeren stopper automatisk, ugestart og din samlede norm-timetal. Du kan også eksportere alle dine data som en JSON-fil (fuld backup), og logge ud.</p>
-      <p>Under <strong>Holdnormer</strong> står forberedelsesfaktoren (2,35 i 2025/26) og reduktionen af årsnormen (0,9 — bruges kun på hold, hvis årsnorm er gemt i timer) for det aktive skoleår. De skifter fra år til år, så hvert skoleår har sine egne — skriv et andet skoleår i feltet øverst for at se eller rette dét års tal. Retter du dem, følger alle holdenes normer det år med.</p>
+      <p>Under <strong>Holdnormer</strong> står forberedelsesfaktoren for det aktive skoleår (2,35 i 2025/26). Den skifter fra år til år, så hvert skoleår har sin egen — skriv et andet skoleår i feltet øverst for at se eller rette dét års tal. Retter du den, deles alle holdenes budgetter det år op på ny.</p>
     </div>
 
     <div class="guide-footer">

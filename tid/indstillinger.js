@@ -77,7 +77,6 @@ function visFaktorer(aar) {
   const el = document.getElementById('cfg-faktor-aar');
   if (el) el.textContent = aar;
   set('cfg-faktor',    kommatal(f.faktor    ?? STANDARD_FAKTORER.faktor));
-  set('cfg-reduktion', kommatal(f.reduktion ?? STANDARD_FAKTORER.reduktion));
 }
 
 const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
@@ -101,7 +100,9 @@ async function saveSettings() {
       ...settings.normFaktorer,
       [yearVal]: {
         faktor:    tolkTal(document.getElementById('cfg-faktor').value)    ?? STANDARD_FAKTORER.faktor,
-        reduktion: tolkTal(document.getElementById('cfg-reduktion').value) ?? STANDARD_FAKTORER.reduktion
+        // Reduktionen bruges kun på ældre hold med årsnormen i timer og står
+        // ikke længere på siden — den gemte følger med uændret
+        reduktion: settings.normFaktorer?.[yearVal]?.reduktion ?? STANDARD_FAKTORER.reduktion
       }
     }
   };

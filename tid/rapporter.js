@@ -575,8 +575,10 @@ function akkordType(navn, tal, brugt, norm, optjent, color, chip) {
 //
 //   forberedelsesfaktor = (undervisning + forberedelse) / undervisning
 //                         — budgettet er skoleårets faktor, fx 2,35
-//   retning             = minutter pr. elev pr. fordybelsestime
-//                         — budgettet er faktor / 27 × 60, fx 5,2 min
+//   retning             = minutter pr. elevtime
+//                         — budgettet er holdets retning (resten af budgettet
+//                           efter undervisning og forberedelse) pr. elevtime,
+//                           ved skolens formel faktor / 27 × 60, fx 5,2 min
 //
 // Retningen måles mod de rettede sæt, der er afsluttet i perioden: tiden
 // brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt endnu,
@@ -588,7 +590,7 @@ function akkordType(navn, tal, brugt, norm, optjent, color, chip) {
 //
 // Forberedelsesfaktoren kræver kun skoleårets faktor og står derfor på alle
 // hold med registreret undervisning. Retningen kræver elever og
-// fordybelsestid og står kun, når holdet har et normgrundlag med dem.
+// elevtimer og står kun, når holdet har et normgrundlag med dem.
 function faktorLinje(act, n, wt) {
   const u = wt.undervisning || 0;
   if (u === 0) return '';
@@ -600,22 +602,21 @@ function faktorLinje(act, n, wt) {
   dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Forb.faktor</span>
     <b>${komma2(realF)}</b> · budget ${komma2(faktor)}</span>`);
 
-  if (n && n.retning > 0 && n.undervisning > 0) {
+  if (n && n.retning > 0 && n.undervisning > 0 && n.elevtimer > 0) {
     const elever  = Number(act.normGrundlag?.elever) || 0;
-    const budgetR = faktor / 27 * 60;
+    const budgetR = n.minPrElevtime;
     let realR = null, skoen = false;
     if ((act.rettedeSaet || []).length) {
       const et = rettedeElevtimer(act, datoInput(start()), datoInput(slut()));
       if (et > 0 && elever > 0) realR = (wt.retning || 0) / (et * elever);
     } else {
-      const elevTimer = n.retning * 27 / faktor;          // elever × fordybelsestid × antal hold
-      const andel     = u / (n.undervisning * 60);
-      realR = (wt.retning || 0) / (elevTimer * andel);
+      const andel = u / (n.undervisning * 60);
+      realR = (wt.retning || 0) / (n.elevtimer * andel);
       skoen = true;
     }
     if (realR != null) {
       dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Retning${skoen ? ' (skønnet)' : ''}</span>
-        <b>${komma2(realR, 1)}</b> · budget ${komma2(budgetR, 1)} <span class="enhed">min</span> pr. elev pr. fordybelsestime</span>`);
+        <b>${komma2(realR, 1)}</b> · budget ${komma2(budgetR, 1)} <span class="enhed">min</span> pr. elevtime</span>`);
     }
   }
   return `<div class="rapport-wt-row rapport-faktor">${dele.join('')}</div>`;

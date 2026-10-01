@@ -1262,7 +1262,10 @@ select.form-input{
 .norm-udregning b{color:var(--ink)}
 .norm-udregning-sum{color:var(--ink)}
 .norm-udregning-fod{flex-basis:100%;font-weight:500}
-#act-budget[readonly]{background:var(--paper-2);color:var(--slate)}
+#act-norm-udregning{flex-direction:column;gap:3px}
+.norm-udregning-advarsel{
+  color:#B8321A;padding:4px 8px;background:#FFE9DC;border:1.5px solid var(--ink);border-radius:8px;
+}
 
 .rapport-archived-nobudget{
   font-family:var(--mono);font-size:0.58rem;font-weight:600;

@@ -332,15 +332,9 @@
           <div class="settings-section-title">Holdnormer · <span id="cfg-faktor-aar">2026/27</span></div>
           <div class="settings-row">
             <label class="settings-label" for="cfg-faktor">Forberedelsesfaktor
-              <span class="settings-sub">Undervisning og elevtid ganges med den. 2,35 i 2025/26, 2,55 i 2021/22.</span>
+              <span class="settings-sub">Bruges til at dele holdenes budget op: forberedelse = undervisning × (faktor − 1), og resten er retning. 2,35 i 2025/26, 2,55 i 2021/22.</span>
             </label>
             <input type="text" inputmode="decimal" id="cfg-faktor" class="settings-input-sm" placeholder="2,35">
-          </div>
-          <div class="settings-row">
-            <label class="settings-label" for="cfg-reduktion">Reduktion af årsnorm
-              <span class="settings-sub">Holdet undervises kun i denne andel af årsnormen. 0,9 i 2025/26, 0,93 i 2021/22. Bruges kun på hold, hvis årsnorm er gemt i timer — modulerne fra Lectio har den allerede trukket fra.</span>
-            </label>
-            <input type="text" inputmode="decimal" id="cfg-reduktion" class="settings-input-sm" placeholder="0,9">
           </div>
         </div>
 
@@ -496,41 +490,27 @@
           </select>
         </div>
         <fieldset class="form-group norm-felt" id="field-norm">
-          <legend class="form-label">Normgrundlag <span class="form-optional">(valgfrit — fra holdoversigten)</span></legend>
+          <legend class="form-label">Fra Lectio <span class="form-optional">(valgfrit — så deler appen budgettet op)</span></legend>
+          <div class="form-group">
+            <label class="form-label" for="act-aarsnorm">Årsnorm <span class="enhed">moduler</span></label>
+            <input class="form-input" type="text" inputmode="decimal" id="act-aarsnorm" placeholder="fx 41">
+          </div>
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="act-aarsnorm">Årsnorm <span class="enhed">moduler</span> <span class="form-optional">(fra Lectio)</span></label>
-              <input class="form-input" type="text" inputmode="decimal" id="act-aarsnorm" placeholder="fx 41">
-            </div>
             <div class="form-group">
               <label class="form-label" for="act-elever">Elever</label>
-              <input class="form-input" type="text" inputmode="decimal" id="act-elever" placeholder="fx 30">
+              <input class="form-input" type="text" inputmode="decimal" id="act-elever" placeholder="fx 28">
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="act-fordybelse">Fordybelsestid <span class="enhed">t</span></label>
+              <label class="form-label" for="act-fordybelse">Elevtimer <span class="form-optional">(pr. elev)</span></label>
               <input class="form-input" type="text" inputmode="decimal" id="act-fordybelse" placeholder="fx 15">
             </div>
-            <div class="form-group">
-              <label class="form-label" for="act-pulje">Puljetimer <span class="enhed">t</span></label>
-              <input class="form-input" type="text" inputmode="decimal" id="act-pulje" placeholder="0">
-            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="act-tillaeg">Tillæg <span class="enhed">t</span> <span class="form-optional">(tælles ikke i akkorden — opret eksamen som opgave)</span></label>
-            <input class="form-input" type="text" inputmode="decimal" id="act-tillaeg" placeholder="0">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="act-antal-hold">Antal hold <span class="form-optional">(ens hold samlet her, fx 3 NV-hold)</span></label>
-            <input class="form-input" type="text" inputmode="numeric" id="act-antal-hold" placeholder="1">
-          </div>
-          <div class="norm-udregning" id="act-norm-udregning" aria-live="polite"></div>
         </fieldset>
         <div class="form-group">
-          <label class="form-label" for="act-budget">Budget (timer)</label>
-          <input class="form-input" type="number" id="act-budget" min="0" max="9999" step="any" placeholder="fx 288">
+          <label class="form-label" for="act-budget">Budget <span class="enhed">t</span> <span class="form-optional">(fra fagfordelingen)</span></label>
+          <input class="form-input" type="number" id="act-budget" min="0" max="9999" step="any" placeholder="fx 189">
         </div>
+        <div class="norm-udregning" id="act-norm-udregning" aria-live="polite"></div>
         <div class="form-group" id="field-optjening">
           <label class="form-label" id="act-optjening-label">Optjenes</label>
           <div class="segmented" role="radiogroup" aria-labelledby="act-optjening-label">

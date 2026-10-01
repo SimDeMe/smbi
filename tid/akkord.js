@@ -13,10 +13,12 @@
 //   undervisning = den undervisning, der er registreret, højst normen
 //   forberedelse = den undervist andel af undervisningsnormen × forberedelsesnormen
 //                  — altså (faktor − 1) time for hver undervist time
-//   retning      = rettede elevtimer × elever / 27 × faktor, højst normen.
-//                  Elevtimerne kommer fra holdets rettede sæt (se rettet.js)
+//   retning      = retteakkorden × rettede elevtimer / holdets elevtimer pr. elev,
+//                  højst normen. Elevtimerne kommer fra holdets rettede sæt
+//                  (se rettet.js); retteakkorden er resten af holdets budget
+//                  (se normer.js)
 //
-// Tillægget i normgrundlaget er ikke med: eksamen og årsprøve er opgaver for
+// Tillægget på ældre hold er ikke med: eksamen og årsprøve er opgaver for
 // sig, i det skoleår de betales. Et hold uden normgrundlag optjener sit budget
 // jævnt over året, ligesom en løbende opgave.
 //
@@ -32,7 +34,7 @@
 //
 // Alle tal er i minutter.
 
-import { normerFor, budgetTimer, faktorerFor } from './normer.js';
+import { normerFor, budgetTimer } from './normer.js';
 import { MODULER, skemaLaengde } from './skema.js';
 import { erPause } from './pauser.js';
 
@@ -63,7 +65,8 @@ function holdNormer(a) {
     undervisning: n.undervisning * 60,
     forberedelse: n.forberedelse * 60,
     retning:      n.retning * 60,
-    tillaeg:      n.tillaeg * 60
+    tillaeg:      n.tillaeg * 60,
+    elevtimer:    n.elevtimer
   };
 }
 
@@ -181,18 +184,16 @@ function enhed(a, brugt, wt, budget, andel) {
 }
 
 function holdOptjening(a, n, wt) {
-  const g      = a.normGrundlag || {};
-  const elever = Number(g.elever) || 0;
-  const antal  = Number(g.antalHold) > 0 ? Number(g.antalHold) : 1;
-  const { faktor } = faktorerFor(a.schoolYear);
+  const elever = Number(a.normGrundlag?.elever) || 0;
 
   const uBrugt   = wt.undervisning || 0;
   const uOptjent = Math.min(uBrugt, n.undervisning);
   const uAndel   = n.undervisning > 0 ? uOptjent / n.undervisning : 0;
 
+  // Retteakkorden i elevtimer pr. elev, og den andel, de rettede sæt dækker
   const rettet     = rettedeElevtimer(a);
-  const rettetNorm = (Number(g.fordybelsestid) || 0) * antal;
-  const rOptjent   = Math.min(n.retning, rettet * elever / 27 * faktor * 60);
+  const rettetNorm = elever > 0 ? n.elevtimer / elever : 0;
+  const rOptjent   = rettetNorm > 0 ? Math.min(n.retning, n.retning * rettet / rettetNorm) : 0;
 
   const brugtTyper = ['undervisning', 'forberedelse', 'retning']
     .reduce((s, t) => s + (wt[t] || 0), 0);
