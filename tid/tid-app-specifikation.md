@@ -54,7 +54,8 @@ Alt under `users/{userId}/`:
   isArchived: false,
   note: "",                         // valgfri kommentar fra opgavefordelingen, fx "5 stk"
   normGrundlag: null | {            // kun hold, valgfrit — fra skolens holdoversigt
-    aarsnorm: 65,                   // undervisningstimer (klokketimer), påkrævet hvis objektet findes
+    moduler: 41,                    // årsnormen i moduler à 95 min, som læreren taster den; påkrævet hvis objektet findes
+                                    // (ældre hold har i stedet aarsnorm: 65 i klokketimer — den bruges uændret)
     elever: 30,
     fordybelsestid: 15,             // elevernes skriftlige tid inkl. terminsprøver
     puljetimer: 0,
@@ -112,6 +113,8 @@ Middelfart Gymnasiums holdoversigt regner et holds vejledende arbejdstid ud som
     budget = (årsnorm × reduktion + elever × fordybelsestid / 27 + puljetimer) × faktor + tillæg
 
 Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr. arbejdstype:
+
+Årsnormen tastes i **moduler à 95 min**, ikke i klokketimer. Formlen regner i timer, så appen omregner: årsnorm (timer) = moduler × 95 / 60. Udregningen under felterne viser begge tal, så de kan holdes op mod holdoversigten. Et hold gemt med årsnormen i timer (`aarsnorm`) vises omregnet til moduler; rettes feltet ikke, gemmes timerne uændret.
 
 - **Undervisning** = årsnorm × reduktion + puljetimer. Reduktionen er en reel nedskæring af timerne: holdet undervises kun i fx 90 % af årsnormen (grunden er ikke oplyst)
 - **Forberedelse** = undervisning × (faktor − 1)
@@ -217,7 +220,7 @@ Vis for valgte interval:
 Egen side "Aktiviteter":
 - Listet grupperet efter type (Hold / Opgaver) og skoleår
 - Skift mellem skoleår (dropdown)
-- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
+- Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm i moduler, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
 - Opgaver har en optjeningsmåde: *Løbende*, *Ved afslutning* eller *Manuelt* (med et felt for procent færdig) — se *Akkordregnskab*
 - Et gemt hold viser sine rettede sæt med dato, navn og elevtimer og summen mod normen (*Rettet 5 af 15 elevtimer*). Et sæt slettes med krydset og registreres igen, hvis det er tastet forkert
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med

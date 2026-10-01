@@ -22,6 +22,21 @@
 // indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
 
 import { getSettings } from './indstillinger.js';
+import { MODULER, skemaLaengde } from './skema.js';
+
+// Årsnormen tastes i moduler à 95 min, som læreren kender den. Formlen
+// regner i klokketimer, så modulerne omregnes: 1 modul = 95/60 t.
+// Ældre hold har årsnormen gemt i timer (aarsnorm) og bruger den uændret.
+const MODUL_TIMER = skemaLaengde(MODULER[0]) / 60;
+
+export function aarsnormTimer(g) {
+  if (Number.isFinite(g?.moduler))  return g.moduler * MODUL_TIMER;
+  if (Number.isFinite(g?.aarsnorm)) return g.aarsnorm;
+  return null;
+}
+
+// Timer → moduler, til at vise en ældre årsnorm i formularen
+export const timerTilModuler = t => t / MODUL_TIMER;
 
 export const STANDARD_FAKTORER = { faktor: 2.35, reduktion: 0.9 };
 
@@ -34,18 +49,19 @@ export function faktorerFor(skoleaar) {
   };
 }
 
-// Har holdet et normgrundlag? Årsnormen er det eneste, der skal være udfyldt;
+// Har holdet et normgrundlag? Årsnormen (moduler eller ældre timer) er det eneste, der skal være udfyldt;
 // resten tæller som 0, hvis det mangler (et NV-hold har ingen fordybelsestid).
 export const harNormgrundlag = a =>
-  a?.type === 'hold' && Number.isFinite(a.normGrundlag?.aarsnorm);
+  a?.type === 'hold' && aarsnormTimer(a.normGrundlag) != null;
 
 // De tre normer og tillægget i timer — eller null, hvis holdet ikke har
 // et normgrundlag og bare har et budget skrevet ind i hånden
 export function beregnNormer(g, { faktor, reduktion }) {
-  if (!g || !Number.isFinite(g.aarsnorm)) return null;
+  const aarsnorm = aarsnormTimer(g);
+  if (aarsnorm == null) return null;
   const tal = v => Number.isFinite(v) ? v : 0;
   const antal = Number.isFinite(g.antalHold) && g.antalHold > 0 ? g.antalHold : 1;
-  const undervisning = (g.aarsnorm * reduktion + tal(g.puljetimer)) * antal;
+  const undervisning = (aarsnorm * reduktion + tal(g.puljetimer)) * antal;
   const forberedelse = undervisning * (faktor - 1);
   const retning      = tal(g.elever) * tal(g.fordybelsestid) / 27 * faktor * antal;
   const tillaeg      = tal(g.tillaeg) * antal;

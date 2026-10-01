@@ -2,7 +2,7 @@
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins } from './timer.js';
-import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal } from './normer.js';
+import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, aarsnormTimer, timerTilModuler } from './normer.js';
 import { optjeningFor } from './akkord.js';
 import { renderSaetListe } from './rettet.js';
 import {
@@ -219,6 +219,7 @@ function openActSheet(actId) {
   NORM_FELTER.forEach(([id, key]) => {
     document.getElementById(id).value = g[key] != null ? String(g[key]).replace('.', ',') : '';
   });
+  visAeldreAarsnorm(g);
 
   const typeVal = a?.type || 'opgave';
   const radio = document.querySelector(`input[name="act-type"][value="${typeVal}"]`);
@@ -271,7 +272,7 @@ function visOptjening() {
 // ─── Normgrundlag (kun hold) ──────────────────────────────
 // Felt-id → nøgle i activity.normGrundlag. Se normer.js for formlen.
 const NORM_FELTER = [
-  ['act-aarsnorm',   'aarsnorm'],
+  ['act-aarsnorm',   'moduler'],
   ['act-elever',     'elever'],
   ['act-fordybelse', 'fordybelsestid'],
   ['act-pulje',      'puljetimer'],
@@ -299,7 +300,27 @@ function laesNormgrundlag() {
     const v = tolkTal(document.getElementById(id).value);
     if (v != null) g[key] = v;
   });
-  return g.aarsnorm != null ? g : null;
+  // En ældre årsnorm i timer, som ikke er rørt, gemmes uændret — så
+  // flytter budgettet sig ikke en brøkdel, fordi modulerne er afrundet
+  const felt = document.getElementById('act-aarsnorm');
+  if (felt.dataset.timer && felt.value === felt.dataset.vist) {
+    delete g.moduler;
+    g.aarsnorm = Number(felt.dataset.timer);
+  }
+  return g.moduler != null || g.aarsnorm != null ? g : null;
+}
+
+// Et hold gemt før årsnormen blev tastet i moduler, har den i timer.
+// Den vises omregnet til moduler; rettes feltet, gemmes modulerne.
+function visAeldreAarsnorm(g) {
+  const felt = document.getElementById('act-aarsnorm');
+  delete felt.dataset.timer;
+  delete felt.dataset.vist;
+  if (Number.isFinite(g.moduler) || !Number.isFinite(g.aarsnorm)) return;
+  const m = Math.round(timerTilModuler(g.aarsnorm) * 100) / 100;
+  felt.value = String(m).replace('.', ',');
+  felt.dataset.timer = String(g.aarsnorm);
+  felt.dataset.vist  = felt.value;
 }
 
 // Er normgrundlaget udfyldt, er budgettet regnet ud og kan ikke skrives i
@@ -321,6 +342,7 @@ function opdaterUdregning() {
   budget.value = Math.round(n.total * 100) / 100;
   const { faktor, reduktion } = faktorerFor(aar);
   ud.innerHTML = `
+    <span class="norm-udregning-fod">Årsnorm ${g.moduler != null ? `${fmtTimer(g.moduler)} moduler à 95 min = ` : ''}${fmtTimer(aarsnormTimer(g))} <span class="enhed">t</span></span>
     <span>Undervisning <b>${fmtTimer(n.undervisning)}</b></span>
     <span>Forberedelse <b>${fmtTimer(n.forberedelse)}</b></span>
     <span>Retning <b>${fmtTimer(n.retning)}</b></span>
