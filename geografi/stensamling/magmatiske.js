@@ -56,9 +56,7 @@ export default [
     forveksles:'Gabbro (mørkere, pyroxen) og granit (lysere, kvarts og rød feldspat).',
     kend:{korn:['store'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['spaettet']},
     farver:['#ECECE8','#23262A','#8E9290'], tegning:'grovkornet',
-    placering:'skuffen «Udbrudsprodukter 1»', billeder:[
-      {fil:'MA-03-diorit-1.jpg', tekst:'Grå, middel- til finkornet bjergart med sorte og hvide korn (bestemmelsen er usikker)'}
-    ]
+    placering:'', billeder:[]
   },
   {
     id:'gabbro', kode:'MA-04', nr:[],
@@ -151,22 +149,21 @@ export default [
   },
   {
     id:'basalt', kode:'MA-09', nr:[],
-    navn:'Basalt', andreNavne:['diabas (grovere gangudgave)'],
+    navn:'Basalt', andreNavne:[],
     type:'Dagbjergart · basisk',
     kort:'Sort, finkornet og tung — oceanbundens bjergart.',
     kendetegn:'Mørkegrå til sort og så finkornet, at kornene ikke kan ses. Ofte med små huller efter gasbobler og grønne korn af olivin. Tungere end granit.',
     kornstoerrelse:'< 1 mm', densitet:'2,9–3,0',
     mineraler:[{id:'plagioklas',andel:'45–55 %'},{id:'augit',andel:'30–40 %'},{id:'olivin'},{id:'magnetit'}],
     dannelse:'Tyndtflydende, kiselfattig magma fra kappen, der størkner hurtigt på overfladen. Dannes ved de midtoceaniske rygge og ved hotspots — ved skjoldvulkaner som på Island og Hawaii.',
-    findested:'Island, Færøerne, Hawaii og Grønland. Diabasgange på Bornholm. Basaltsøjler ved Giant’s Causeway i Nordirland.',
+    findested:'Island, Færøerne, Hawaii og Grønland. Basaltsøjler ved Giant’s Causeway i Nordirland.',
     anvendelse:'Stenuld (Rockwool smelter basalt), skærver og brosten.',
-    forveksles:'Andesit (lysere) og gabbro (grovkornet).',
+    forveksles:'Andesit (lysere), gabbro (grovkornet) og diabas (samme mineraler, men grovere korn).',
     kend:{korn:['fine'], syre:false, opbygning:['massiv','huller'], haard:['glas'], farve:['moerk']},
     farver:['#2B2C2E','#3F4144','#1A1B1C'], tegning:'finkornet',
     se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'},{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'}],
     placering:'skuffen «Udbrudsprodukter 1»', billeder:[
-      {fil:'MA-09-basalt-1.jpg', tekst:'Mørk, finkornet basalt — nogle stykker med rustbrun overflade'},
-      {fil:'MA-09-basalt-2.jpg', tekst:'Diabas fra Bornholm — den grovere gangudgave af basalt'}
+      {fil:'MA-09-basalt-1.jpg', tekst:'Mørk, finkornet basalt — nogle stykker med rustbrun overflade'}
     ]
   },
   {
@@ -238,8 +235,7 @@ export default [
     placering:'skuffen «Udbrudsprodukter 1»', billeder:[
       {fil:'MA-13-porfyr-1.jpg', tekst:'Rundslidt porfyr med gullige feldspatkrystaller i mørk, rødbrun grundmasse'},
       {fil:'MA-13-porfyr-2.jpg', tekst:'Olivenbrun grundmasse med lyse, aflange krystaller og små gasblærer'},
-      {fil:'MA-13-porfyr-3.jpg', tekst:'Lillabrun porfyr — krystallerne ligger tæt og i alle retninger'},
-      {fil:'MA-13-porfyr-4.jpg', tekst:'Samme slags porfyr slået i stykker: rødlig, ens grundmasse med huller og enkelte krystaller'}
+      {fil:'MA-13-porfyr-3.jpg', tekst:'Lillabrun porfyr — krystallerne ligger tæt og i alle retninger'}
     ]
   },
   {
@@ -259,6 +255,61 @@ export default [
     placering:'skuffen «Udbrudsprodukter 1»', billeder:[
       {fil:'MA-14-paaskallavikporfyr-1.jpg', tekst:'Påskallavik porfyr, som sedlen lyder — med orange prik nr. 110'},
       {fil:'MA-14-paaskallavikporfyr-2.jpg', tekst:'Samme sten fra siden: frisk brudflade forrest, forvitret overflade bagved'}
+    ]
+  },
+  {
+    id:'oestersoekvartsporfyr', kode:'MA-15', nr:[],
+    navn:'Østersøkvartsporfyr', andreNavne:['Østersøporfyr'],
+    type:'Porfyr · ledeblok',
+    kort:'Rødbrun, tæt porfyr fra Østersøens område — en klassisk dansk ledeblok.',
+    kendetegn:'Rødbrun til lillabrun, finkornet grundmasse, hvor der kan ses enkelte lyse feldspatkorn og kvartskorn. Ofte med små huller, og den friske brudflade er rødlig og ensartet.',
+    kornstoerrelse:'grundmasse < 1 mm, krystaller op til ca. 5 mm', densitet:'2,6–2,7',
+    mineraler:[{id:'kvarts'},{id:'kalifeldspat'},{id:'plagioklas'}],
+    dannelse:'Kiselrig lava og ganglava i det prækambriske grundfjeld, hvor de første krystaller voksede i smelten, før resten størknede til en tæt grundmasse.',
+    findested:'Fast klippe på bunden af Østersøen og i det omkringliggende grundfjeld. Almindelig som ledeblok i Danmark, ført hertil af isen.',
+    anvendelse:'Ledeblok, der viser isens vej.',
+    forveksles:'Andre porfyrer, f.eks. rhombeporfyr og Påskallavikporfyr, og rød granit (grovkornet).',
+    kend:{korn:['fine'], syre:false, opbygning:['porfyr','huller'], haard:['glas'], farve:['roed','moerk']},
+    farver:['#8A5A55','#D8A598','#5E3B3B'], tegning:'porfyr',
+    placering:'skuffen «Udbrudsprodukter 1»', billeder:[
+      {fil:'MA-15-oestersoekvartsporfyr-1.jpg', tekst:'Østersøkvartsporfyr slået midt over: ensartet rødlig brudflade og små gasblærer'}
+    ]
+  },
+  {
+    id:'diabas', kode:'MA-16', nr:[],
+    navn:'Diabas', andreNavne:['dolerit'],
+    type:'Gangbjergart · basisk',
+    kort:'Mørkegrå og tæt — basalt, der er størknet langsomt i en sprække.',
+    kendetegn:'Mørkegrå til sortgrå og mat, med små korn, der kun lige kan skimtes uden lup. Grovere end basalt, men finere end gabbro. Tung i hånden, og den forvitrede overflade er lysere og brunlig.',
+    kornstoerrelse:'0,5–2 mm', densitet:'2,9–3,0',
+    mineraler:[{id:'plagioklas',andel:'45–55 %'},{id:'augit',andel:'30–40 %'},{id:'olivin'},{id:'magnetit'}],
+    dannelse:'Samme basiske magma som basalt, men den størkner i en sprække i skorpen og ikke på overfladen. Her afkøler den langsommere end lava, så kornene når at vokse sig lidt større.',
+    findested:'Gange i granit og gnejs på Bornholm, i Sverige og i Skotland.',
+    anvendelse:'Skærver, brosten og vejbelægning.',
+    forveksles:'Basalt (finere korn), gabbro (grovere korn) og kinnediabas (en svensk diabas, der er ledeblok i Danmark).',
+    kend:{korn:['fine'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['moerk']},
+    farver:['#34373A','#55595C','#1F2123'], tegning:'finkornet',
+    se:[{tekst:'Øvelse: bjergarternes densitet', href:'/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html'}],
+    placering:'skuffen «Udbrudsprodukter 1»', billeder:[
+      {fil:'MA-16-diabas-1.jpg', tekst:'Diabas fra Bornholm — sedlen ligger ved siden af'}
+    ]
+  },
+  {
+    id:'kinnediabas', kode:'MA-17', nr:[],
+    navn:'Kinnediabas', andreNavne:[],
+    type:'Gangbjergart · basisk · ledeblok',
+    kort:'Grå, middelkornet diabas fra Kinnekulle i Sverige — en dansk ledeblok.',
+    kendetegn:'Mørk til middelgrå, jævn og middelkornet sten med små, tæt pakkede korn af lys plagioklas og mørk pyroxen. Den forvitrede overflade er lysere, grålig og ofte brunlig af rust, mens den friske brudflade er mørkere.',
+    kornstoerrelse:'0,5–2 mm', densitet:'2,9–3,0',
+    mineraler:[{id:'plagioklas',andel:'45–55 %'},{id:'augit',andel:'30–40 %'},{id:'olivin'},{id:'magnetit'}],
+    dannelse:'Basisk magma, der er trængt ind mellem lagene i den sedimentære bjergart ved Kinnekulle og er størknet der. Her afkølede den langsommere end lava på overfladen, så kornene fik tid til at vokse sig lidt større end i basalt.',
+    findested:'Fast klippe ved Kinnekulle i Västergötland, Sverige. Som ledeblok i Danmark, ført hertil af isen.',
+    anvendelse:'Ledeblok, der viser isens vej. Skærver.',
+    forveksles:'Diabas fra Bornholm, basalt og diorit (mere spættet «salt og peber»).',
+    kend:{korn:['fine'], syre:false, opbygning:['massiv'], haard:['glas'], farve:['moerk','spaettet']},
+    farver:['#6E7170','#3F4244','#8E8F8B'], tegning:'finkornet',
+    placering:'skuffen «Udbrudsprodukter 1»', billeder:[
+      {fil:'MA-17-kinnediabas-1.jpg', tekst:'Kinnediabas i to stykker — lys, forvitret overflade og mørk brudflade'}
     ]
   }
 ];
