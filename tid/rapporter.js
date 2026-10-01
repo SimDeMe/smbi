@@ -4,7 +4,7 @@
 // skoleår. Man bladrer frem og tilbage med pilene, så man kan se, hvordan i
 // går, ugen før eller sidste skoleår så ud — ikke kun den periode man står i.
 
-import { db } from './app.js';
+import { db, COLOR_PALETTE } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { getSettings, gemIndstilling } from './indstillinger.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
@@ -150,56 +150,47 @@ function aggregate(acts) {
   });
 
   const showAll = periodFilter === 'skolear';
-  const topActs = acts.filter(a => a.schoolYear === year && !a.isArchived && !a.parentId);
-  // Kun aktive under-opgaver medregnes hos forælderen. En afsluttet under-opgave
-  // tæller som sin egen afsluttede opgave (se archivedRows) og trækkes dermed ud
-  // af forælderens total, så ingen tid tælles to gange.
-  const liveKids = id =>
-    acts.filter(c => c.schoolYear === year && c.parentId === id && !c.isArchived);
+  // Alle under-opgaver står under deres forælder — også de afsluttede — og
+  // forælderens bjælke er dens egen tid plus alle børnenes, målt mod hele
+  // dens budget (der rummer børnenes). Så tælles ingen tid to gange.
+  const kids = id => acts.filter(c => c.schoolYear === year && c.parentId === id);
+  const topRow = act => {
+    const cs        = kids(act.id);
+    const childMins = cs.reduce((s, c) => s + (direct[c.id] || 0), 0);
+    return {
+      act,
+      ownMins:   direct[act.id] || 0,
+      totalMins: (direct[act.id] || 0) + childMins,
+      wt:        wtMap[act.id] || {},
+      kidIds:    cs.map(c => c.id),
+      children:  cs
+        .map(c => ({ act: c, totalMins: direct[c.id] || 0 }))
+        .filter(c => showAll || c.totalMins > 0)
+        .sort((a, b) => b.totalMins - a.totalMins)
+    };
+  };
 
-  const rows = topActs
-    .map(act => {
-      const cs        = liveKids(act.id);
-      const childMins = cs.reduce((s, c) => s + (direct[c.id] || 0), 0);
-      const totalMins = (direct[act.id] || 0) + childMins;
-      return {
-        act,
-        ownMins:  direct[act.id] || 0,
-        totalMins,
-        wt:       wtMap[act.id] || {},
-        children: cs
-          .map(c => ({ act: c, totalMins: direct[c.id] || 0 }))
-          .filter(c => showAll || c.totalMins > 0)
-          .sort((a, b) => b.totalMins - a.totalMins)
-      };
-    })
+  const rows = acts
+    .filter(a => a.schoolYear === year && !a.isArchived && !a.parentId)
+    .map(topRow)
     .filter(r => showAll || r.totalMins > 0)
     .sort((a, b) => b.totalMins - a.totalMins);
 
-  // Afsluttede opgaver — kun i skoleårs-rapporten. Inkluderer både afsluttede
-  // topopgaver og afsluttede under-opgaver (hver som sin egen post).
+  // Afsluttede topopgaver — kun i skoleårs-rapporten — med deres
+  // under-opgaver under sig
+  const medBudget = (act, totalMins) => {
+    const budgetH    = budgetTimer(act);
+    const budgetMins = budgetH != null ? Math.round(budgetH * 60) : null;
+    return { budgetMins, diffMins: budgetMins != null ? budgetMins - totalMins : null };
+  };
   const archivedRows = (showAll
-    ? acts.filter(a => a.schoolYear === year && a.isArchived)
+    ? acts.filter(a => a.schoolYear === year && a.isArchived && !a.parentId)
     : []
   ).map(act => {
-    // Topopgave: rul kun de aktive under-opgaver ind. Under-opgave: står alene.
-    const cs         = act.parentId ? [] : liveKids(act.id);
-    const childMins  = cs.reduce((s, c) => s + (direct[c.id] || 0), 0);
-    const totalMins  = (direct[act.id] || 0) + childMins;
-    // En topopgaves budget rummer under-opgavernes. De afsluttede
-    // under-opgaver står som egne rækker med eget budget, så topopgaven har
-    // kun det, der er tilbage — ellers tælles deres budget to gange i
-    // "Ubrugt tid i alt". Samme regel som i akkordregnskabet.
-    const fordeltH = act.parentId ? 0 : acts
-      .filter(c => c.schoolYear === year && c.parentId === act.id && c.isArchived)
-      .reduce((s, c) => s + (budgetTimer(c) ?? 0), 0);
-    let   budgetH    = budgetTimer(act);
-    if (budgetH != null && fordeltH > 0) budgetH = Math.max(0, budgetH - fordeltH);
-    const budgetMins = budgetH != null ? Math.round(budgetH * 60) : null;
+    const r = topRow(act);
     return {
-      act, totalMins, budgetMins, isChild: !!act.parentId,
-      fordeltMins: Math.round(fordeltH * 60),
-      diffMins: budgetMins != null ? budgetMins - totalMins : null
+      ...r, ...medBudget(act, r.totalMins),
+      children: r.children.map(c => ({ ...c, ...medBudget(c.act, c.totalMins) }))
     };
   }).sort((a, b) => b.totalMins - a.totalMins);
 
@@ -407,8 +398,8 @@ function renderActList(rows, uboundMins, pauseMins, ak) {
   }
 
   let html = `<div class="rapport-act-section"><div class="rapport-act-head">Pr. aktivitet</div>`;
-  rows.forEach(r => {
-    html += actRow(r.act, r.totalMins, r.ownMins, r.wt, false, ak, r.children.map(c => c.act.id));
+  rows.map(skelneligeFarver).forEach(r => {
+    html += actRow(r.act, r.totalMins, r.ownMins, r.wt, false, ak, r.kidIds, stykker(r));
     r.children.forEach(c => html += actRow(c.act, c.totalMins, c.totalMins, {}, true, ak));
   });
 
@@ -450,16 +441,54 @@ function faellesRow(uboundMins, pauseMins, ak) {
   </div>`;
 }
 
-function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = []) {
+// ─── Barometer ────────────────────────────────────────────
+// En opgave med under-opgaver får sin bjælke delt op: først dens egen tid i
+// dens farve, så hver under-opgave i sin farve, adskilt af blækstreger. Er
+// der brugt mere end budgettet, fylder stykkerne hele bjælken i forhold til
+// hinanden. Farven er ikke eneste signal: hvert stykke har navn og tid som
+// title, og under-opgaverne står med samme farveprik lige nedenunder.
+function stykker(r) {
+  if (!r.children?.some(c => c.totalMins > 0)) return null;
+  return [
+    { navn: r.act.name, mins: r.ownMins, color: r.act.color || 'var(--accent)' },
+    ...r.children.map(c => ({ navn: c.act.name, mins: c.totalMins, color: c.act.color }))
+  ].filter(d => d.mins > 0);
+}
+
+// Har under-opgaverne samme farve som forælderen eller hinanden, kan
+// stykkerne ikke skelnes. I rapporten får hver under-opgave så den næste
+// ledige farve fra paletten — både i bjælken og på sin egen række.
+function skelneligeFarver(r) {
+  const brugt = new Set([r.act.color || COLOR_PALETTE[0]]);
+  r.children = r.children.map(c => {
+    let color = c.act.color;
+    if (!color || brugt.has(color)) color = COLOR_PALETTE.find(f => !brugt.has(f)) || color;
+    brugt.add(color);
+    return color === c.act.color ? c : { ...c, act: { ...c.act, color } };
+  });
+  return r;
+}
+
+function barometer(dele, budgetMins, color, pct) {
+  if (!dele) return `<div class="rapport-progress-bg">
+      <div class="rapport-progress-fill" style="width:${pct}%;background:${color}"></div>
+    </div>`;
+  const total  = dele.reduce((s, d) => s + d.mins, 0);
+  const naevner = Math.max(budgetMins || 0, total) || 1;
+  return `<div class="rapport-progress-bg rapport-progress-stak">${dele.map(d =>
+    `<div class="rapport-progress-stykke" style="width:${(d.mins / naevner * 100).toFixed(2)}%;background:${d.color}"
+       title="${esc(d.navn)} · ${fmtMins(d.mins)}"></div>`).join('')}
+    </div>`;
+}
+
+function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = [], dele = null) {
   const color  = act.color || 'var(--accent)';
   const budgetH = budgetTimer(act);
   const budget  = budgetH != null ? Math.round(budgetH * 60) : null;
   const pct     = budget ? Math.min(100, Math.round(totalMins / budget * 100)) : null;
 
   const progressHtml = budget != null ? `
-    <div class="rapport-progress-bg">
-      <div class="rapport-progress-fill" style="width:${pct ?? 0}%;background:${color}"></div>
-    </div>
+    ${barometer(dele, budget, color, pct ?? 0)}
     <div class="rapport-act-budget-row">
       <span>${totalMins > 0 ? fmtMins(totalMins) : '—'} / ${fmtTimer(budgetH)}t</span>
       <span>${pct ?? 0}%</span>
@@ -482,6 +511,7 @@ function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = []) {
     <div class="rapport-act-top">
       <div class="act-color-dot" style="background:${color}"></div>
       <div class="rapport-act-name">${esc(act.name)}</div>
+      ${act.isArchived ? '<span class="act-row-archived-badge">Afsluttet</span>' : ''}
       <div class="rapport-act-time">${totalMins > 0 ? fmtMins(totalMins) : '—'}</div>
     </div>
     ${progressHtml}${wtHtml}${akHtml}
@@ -651,12 +681,15 @@ function renderArchivedList(rows, ak) {
   let html = `<div class="rapport-act-section rapport-archived-section">
     <div class="rapport-act-head">Afsluttede opgaver</div>
     ${netLine}`;
-  rows.forEach(r => { html += archivedRow(r, ak); });
+  rows.map(skelneligeFarver).forEach(r => {
+    html += archivedRow(r, ak, false, r.kidIds, stykker(r));
+    r.children.forEach(c => { html += archivedRow(c, ak, true); });
+  });
   return html + '</div>';
 }
 
-function archivedRow(r, ak) {
-  const { act, totalMins, budgetMins, diffMins, isChild, fordeltMins } = r;
+function archivedRow(r, ak, isChild, kidIds = [], dele = null) {
+  const { act, totalMins, budgetMins, diffMins } = r;
   const color = act.color || 'var(--accent)';
 
   let bar = '';
@@ -666,14 +699,11 @@ function archivedRow(r, ak) {
     const pct  = budgetMins > 0 ? Math.min(100, Math.round(totalMins / budgetMins * 100)) : 0;
     const over = diffMins < 0;
     bar = `
-      <div class="rapport-progress-bg">
-        <div class="rapport-progress-fill" style="width:${pct}%;background:${over ? 'var(--danger)' : color}"></div>
-      </div>
+      ${barometer(dele, budgetMins, over ? 'var(--danger)' : color, pct)}
       <div class="rapport-act-budget-row">
         <span>${fmtMins(totalMins)} / ${fmtTimer(budgetMins / 60)}t</span>
         <span>${pct}%</span>
-      </div>
-      ${fordeltMins > 0 ? `<div class="rapport-archived-nobudget">${fmtTimer(fordeltMins / 60)}t af budgettet står på under-opgaverne</div>` : ''}`;
+      </div>`;
     chip = diffMins > 0
       ? `<span class="forecast-chip forecast-ahead">✓ Sparet ${fmtMins(diffMins)}</span>`
       : diffMins < 0
@@ -683,9 +713,10 @@ function archivedRow(r, ak) {
     chip = `<div class="rapport-archived-nobudget">Intet budget · ${fmtMins(totalMins)} brugt</div>`;
   }
 
-  // Med fordelt fælles tid står opgavens andel her, så saldoen kan ses
-  const u   = ak?.enheder[act.id];
-  const fae = u && u.budget != null && u.faelles > 0
+  // Med fordelt fælles tid står opgavens andel her, så saldoen kan ses. En
+  // topopgave lægger sine under-opgavers akkorder sammen med sin egen.
+  const u   = ak ? samletEnhed([ak.enheder[act.id], ...kidIds.map(id => ak.enheder[id])]) : null;
+  const fae = u && u.faelles > 0
     ? `<div class="rapport-akkord">
          <span>Fælles <b>${fmtMins(u.faelles)}</b></span>
          <span class="rapport-akkord-maade">Saldo med fælles tid</span>
