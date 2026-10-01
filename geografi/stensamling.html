@@ -270,6 +270,17 @@ h1{
   background:var(--gf);border:2px solid var(--ink);border-radius:12px;overflow:hidden;
   aspect-ratio:4/3;max-height:270px;margin-inline:auto;display:grid;place-items:center;
 }
+.d-fig{position:relative}
+.d-pil{
+  position:absolute;top:50%;translate:0 -50%;width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--ink);background:var(--panel);box-shadow:2px 2px 0 var(--ink);
+  font:800 1.3rem/1 var(--display);padding:0 0 3px;cursor:pointer;color:var(--ink);
+}
+.d-pil[data-retning="-1"]{left:8px}
+.d-pil[data-retning="1"]{right:8px}
+.d-pil:hover{background:#FFE9A8}
+.d-pil:active{translate:1px calc(-50% + 1px);box-shadow:1px 1px 0 var(--ink)}
+.d-taeller{position:absolute;right:8px;bottom:8px;background:var(--panel);border:2px solid var(--ink);border-radius:999px;padding:2px 8px;font-size:0.58rem}
 .d-fig svg{width:100%;height:100%;padding:10px}
 .d-fig img{width:100%;height:100%;object-fit:cover;display:block}
 .d-miniaturer{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -394,6 +405,7 @@ h1{
   .rig-body{display:block}
   .detalje{position:static;max-height:none;overflow:visible;border:none}
   .d-fig{max-width:60%}
+  .d-pil,.d-taeller{display:none!important}
 }
 </style>
 <script type="application/ld+json">
@@ -482,7 +494,7 @@ h1{
     <section class="rig" aria-label="Stensamlingen">
       <div class="rig-bar"></div>
       <div class="rig-head">
-        <span class="version" title="Simuleringens version">v2.0</span>
+        <span class="version" title="Simuleringens version">v2.1</span>
         <span class="seg" id="grupper" role="group" aria-label="Vis gruppe"></span>
         <span class="soeg">
           <label for="soeg">Søg</label>

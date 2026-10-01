@@ -18,6 +18,7 @@ const el = {
 };
 
 const BILLEDMAPPE = 'stensamling/billeder/';
+let billedeNr = 0;           // det viste billede i detaljens karrusel
 
 const tilstand = {gruppe:'alle', tekst:'', valg:{}, valgt:null, noegle:false};
 
@@ -162,8 +163,13 @@ function tegnDetalje(){
   }
   const g = gruppe[p.gruppe];
   const foto = p.billeder?.length;
+  const pile = foto > 1
+    ? `<button type="button" class="d-pil" data-retning="-1" aria-label="Forrige billede">‹</button>
+       <button type="button" class="d-pil" data-retning="1" aria-label="Næste billede">›</button>
+       <span class="d-taeller mono" id="d-taeller" aria-hidden="true">1 / ${foto}</span>`
+    : '';
   const fig = foto
-    ? `<img src="${BILLEDMAPPE}${esc(p.billeder[0].fil)}" alt="${esc(p.billeder[0].tekst || p.navn)}" data-id="${p.id}" id="d-foto">`
+    ? `<img src="${BILLEDMAPPE}${esc(p.billeder[0].fil)}" alt="${esc(p.billeder[0].tekst || p.navn)}" data-id="${p.id}" id="d-foto">${pile}`
     : tegnSten(p);
   const miniaturer = foto > 1
     ? `<div class="d-miniaturer" role="group" aria-label="Flere billeder">${p.billeder.map((b, i) =>
@@ -207,6 +213,7 @@ function tegnDetalje(){
     ? `<span class="d-pille"><span class="mono">Står</span> <b>${esc(p.placering)}</b></span>`
     : `<span class="d-pille tom"><span class="mono">Placering ikke registreret</span></span>`;
 
+  billedeNr = 0;
   el.detalje.innerHTML = `
     <div class="d-fig" style="--gf:${g.flade}">${fig}</div>
     ${miniaturer}${billedtekst}
@@ -233,18 +240,29 @@ function tegnDetalje(){
     </div>`;
 }
 
+/* Karrusellen: pilene og miniaturerne viser billede nr. i. */
+function visBillede(i){
+  const b = tilstand.valgt.billeder[i];
+  billedeNr = i;
+  const foto = el.detalje.querySelector('#d-foto');
+  if(foto){ foto.src = BILLEDMAPPE + b.fil; foto.alt = b.tekst || tilstand.valgt.navn; }
+  el.detalje.querySelectorAll('.d-miniaturer button').forEach((x, k) => x.setAttribute('aria-pressed', k === i));
+  const t = el.detalje.querySelector('#d-billedtekst');
+  if(t) t.innerHTML = esc(b.tekst || '') + (b.foto ? ` <span class="mono">Foto: ${esc(b.foto)}</span>` : '');
+  const tael = el.detalje.querySelector('#d-taeller');
+  if(tael) tael.textContent = `${i + 1} / ${tilstand.valgt.billeder.length}`;
+}
+
 el.detalje.addEventListener('click', e => {
   const l = e.target.closest('.d-link');
   if(l){ vaelg(efterId[l.dataset.id], true); el.detalje.querySelector('#d-navn')?.focus({preventScroll:true}); return; }
 
   const m = e.target.closest('.d-miniaturer button');
-  if(m){
-    const b = tilstand.valgt.billeder[+m.dataset.i];
-    const foto = el.detalje.querySelector('#d-foto');
-    if(foto){ foto.src = BILLEDMAPPE + b.fil; foto.alt = b.tekst || tilstand.valgt.navn; }
-    el.detalje.querySelectorAll('.d-miniaturer button').forEach(x => x.setAttribute('aria-pressed', x === m));
-    const t = el.detalje.querySelector('#d-billedtekst');
-    if(t) t.innerHTML = esc(b.tekst || '') + (b.foto ? ` <span class="mono">Foto: ${esc(b.foto)}</span>` : '');
+  if(m){ visBillede(+m.dataset.i); return; }
+  const pil = e.target.closest('.d-pil');
+  if(pil){
+    const n = tilstand.valgt.billeder.length;
+    visBillede((billedeNr + +pil.dataset.retning + n) % n);
     return;
   }
 
