@@ -293,5 +293,24 @@ export default [
     placering:'skuffen «Udbrudsprodukter 1»', billeder:[
       {fil:'MA-17-kinnediabas-1.jpg', tekst:'Kinnediabas i to stykker — lys, forvitret overflade og mørk brudflade'}
     ]
+  },
+  {
+    id:'scoria', kode:'MA-18', nr:['klassesæt-48'],
+    navn:'Scoria', andreNavne:['vulkansk slagge','lavaslagge'],
+    type:'Dagbjergart · vulkansk',
+    kort:'Rød eller sort lava fuld af gasblærer — tungere og mere grovporet end pimpsten.',
+    kendetegn:'Rødbrun til sort, ru og fuld af uregelmæssige huller af forskellig størrelse. Blærerne er åbne, så stenen synker i vand. Ofte med en glat, skinnende skorpe på de ydre flader. Den røde farve skyldes jern, der er iltet af luften.',
+    kornstoerrelse:'glas og små krystaller med blærer', densitet:'1,0–2,0 (med luft)',
+    mineraler:[{navn:'vulkansk glas'},{id:'plagioklas'},{id:'augit'},{id:'olivin'}],
+    dannelse:'Gasrig, basisk lava, der slynges op af en udbrudskegle eller flyder ud og størkner, mens gassen boblede ud af den. Hullerne er de gasbobler, der blev fanget i lavaen. Jernet i lavaen iltes og farver stenen rød.',
+    findested:'Vulkaner som Etna og Vesuv, Island og De Kanariske Øer. Findes som lag omkring askekegler.',
+    anvendelse:'Lavasten til grill og have, drænlag og letbeton.',
+    forveksles:'Pimpsten (lysere, mere finporet og flyder på vand) og basalt (tættere, med få huller).',
+    kend:{korn:['ingen'], syre:false, opbygning:['huller'], haard:['glas'], farve:['moerk','roed']},
+    farver:['#B5533A','#7C3524','#D98466'], tegning:'blaerer',
+    se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'}],
+    placering:'', billeder:[
+      {fil:'MA-18-scoria-1.jpg', tekst:'Rød, blæret lava — scoria'}
+    ]
   }
 ];

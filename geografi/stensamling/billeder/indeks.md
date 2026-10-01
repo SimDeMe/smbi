@@ -28,6 +28,7 @@ dele findes. Numrene er skrevet ind i postens `nr`.
 | `MA-15-oestersoekvartsporfyr-1.jpg` | Østersøkvartsporfyr | ingen seddel | | IMG_0116 | Sten slået midt over: rødlig brudflade. Bestemt af SM |
 | `MA-16-diabas-1.jpg` | Diabas | «Diabas, Bornholm» | orange prik (nr. ulæseligt) | IMG_0119 | |
 | `MA-17-kinnediabas-1.jpg` | Kinnediabas | ingen seddel | | IMG_0108 | Grå sten i to stykker. Bestemt af SM |
+| `MA-18-scoria-1.jpg` | Scoria | «Lava (rød)» | klassesæt 48 | IMG_0087 | Rød, blæret lava |
 
 ## Mineraler
 
@@ -55,7 +56,6 @@ dele findes. Numrene er skrevet ind i postens `nr`.
 
 | Fil | Sten | Etiket | Nr. | Original | Bemærkning |
 | --- | --- | --- | --- | --- | --- |
-| `scorie-1.jpg` | Scorie | «Lava (rød)» | klassesæt 48 | IMG_0087 | Rød, blæret lava |
 | `porfyr-diverse-1.jpg` | Diverse porfyrer | «Porfyr» | klassesæt 123 / 54 | IMG_0086 | Blandet kasse. Stenene fotograferes hver for sig og bestemmes senere |
 
 ## Sedimentære bjergarter
