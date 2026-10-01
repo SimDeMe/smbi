@@ -3,6 +3,8 @@
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins } from './timer.js';
 import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal } from './normer.js';
+import { optjeningFor } from './akkord.js';
+import { renderSaetListe } from './rettet.js';
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, writeBatch, serverTimestamp
@@ -221,6 +223,10 @@ function openActSheet(actId) {
   const typeVal = a?.type || 'opgave';
   const radio = document.querySelector(`input[name="act-type"][value="${typeVal}"]`);
   if (radio) radio.checked = true;
+  const optRadio = document.querySelector(`input[name="act-optjening"][value="${optjeningFor(a)}"]`);
+  if (optRadio) optRadio.checked = true;
+  document.getElementById('act-fremdrift').value = a?.fremdrift ?? '';
+  renderSaetListe(a);
   toggleParentField(typeVal);
   populateParentSelect(a?.schoolYear || selectedYear, a?.parentId || '');
   renderColorPicker(a?.color || '');
@@ -236,8 +242,30 @@ function openActSheet(actId) {
 }
 
 function toggleParentField(type) {
-  document.getElementById('field-parent').style.display = type === 'opgave' ? '' : 'none';
-  document.getElementById('field-norm').style.display   = type === 'hold'   ? '' : 'none';
+  document.getElementById('field-parent').style.display    = type === 'opgave' ? '' : 'none';
+  document.getElementById('field-norm').style.display      = type === 'hold'   ? '' : 'none';
+  document.getElementById('field-optjening').style.display = type === 'opgave' ? '' : 'none';
+  // Sættene hører til et gemt hold — et nyt hold har ingen endnu
+  const gemt = editingId ? activities.find(x => x.id === editingId) : null;
+  document.getElementById('field-saet').style.display =
+    type === 'hold' && gemt?.type === 'hold' ? '' : 'none';
+  visOptjening();
+}
+
+// ─── Optjening (kun opgaver) ──────────────────────────────
+// Hvordan opgavens budget tælles som optjent i akkordregnskabet — se akkord.js
+const OPTJENING_HJAELP = {
+  loebende:   'Budgettet optjenes jævnt hen over skoleåret — fx udvalg og teamledelse.',
+  afslutning: 'Intet er optjent, før du trykker «Afslut opgave» — så er hele budgettet optjent. Fx eksamen og SRP.',
+  manuel:     'Du skriver selv, hvor stor en del af opgaven der er færdig.'
+};
+const formOptjening = () =>
+  document.querySelector('input[name="act-optjening"]:checked')?.value || 'loebende';
+
+function visOptjening() {
+  const m = formOptjening();
+  document.getElementById('act-optjening-hint').textContent = OPTJENING_HJAELP[m];
+  document.getElementById('field-fremdrift').style.display = m === 'manuel' ? '' : 'none';
 }
 
 // ─── Normgrundlag (kun hold) ──────────────────────────────
@@ -347,17 +375,22 @@ async function saveActivity(e) {
                               : budgetRaw !== '' ? parseFloat(budgetRaw) : null;
   const note        = document.getElementById('act-note').value.trim();
   const color       = getSelectedColor() || autoColor();
+  const optjening   = type === 'opgave' ? formOptjening() : null;
+  const fremdriftV  = tolkTal(document.getElementById('act-fremdrift').value);
+  const fremdrift   = optjening === 'manuel' && fremdriftV != null
+    ? Math.min(100, Math.max(0, fremdriftV)) : null;
 
   const btn = document.getElementById('act-save-btn');
   btn.disabled = true;
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, order: nextOrder(), isArchived: false });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift,
+          order: nextOrder(), isArchived: false });
       showToast('Aktivitet oprettet');
     }
     closeSheet('act-sheet', 'act-backdrop');
@@ -510,15 +543,16 @@ async function doCopy() {
     const colRef = collection(db, `users/${userId}/activities`);
     const idMap  = {};
 
+    // Kun strukturen følger med — rettede sæt og fremdrift er det gamle års
     for (const a of source.filter(a => !a.parentId)) {
       const newRef = doc(colRef);
       idMap[a.id] = newRef.id;
-      const { id, ...rest } = a;
+      const { id, rettedeSaet, fremdrift, ...rest } = a;
       batch.set(newRef, { ...rest, schoolYear: targetYear, parentId: null });
     }
     for (const a of source.filter(a => a.parentId)) {
       const newRef = doc(colRef);
-      const { id, ...rest } = a;
+      const { id, rettedeSaet, fremdrift, ...rest } = a;
       batch.set(newRef, { ...rest, schoolYear: targetYear, parentId: idMap[a.parentId] || null });
     }
 
@@ -586,6 +620,10 @@ function bindListeners() {
       populateParentSelect(document.getElementById('act-year').value || selectedYear, '');
       opdaterUdregning();
     })
+  );
+
+  document.querySelectorAll('input[name="act-optjening"]').forEach(r =>
+    r.addEventListener('change', visOptjening)
   );
 
   [...NORM_FELTER.map(([id]) => id), 'act-year'].forEach(id =>

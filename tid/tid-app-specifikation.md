@@ -19,6 +19,8 @@ En privat webapp til at registrere arbejdstid på de aktiviteter, der står i en
   styles.css
   firebase-config.js   (Firebase credentials)
   normer.js            (holdnormernes formel)
+  akkord.js            (akkordregnskabet: brugt, optjent og saldo)
+  rettet.js            (rettede sæt pr. hold)
   manifest.json
   service-worker.js
   icons/
@@ -58,7 +60,12 @@ Alt under `users/{userId}/`:
     puljetimer: 0,
     tillaeg: 0,                     // fx 15 til intern NF-eksamen
     antalHold: 1                    // flere ens hold samlet som én aktivitet, fx 3 NV-hold
-  }
+  },
+  rettedeSaet: [                    // kun hold — se *Akkordregnskab*
+    { id: "…", dato: "2026-09-20", elevtimer: 2, navn: "Rapport 1" }
+  ],
+  optjening: "loebende" | "afslutning" | "manuel",   // kun opgaver; mangler = løbende
+  fremdrift: null | 40              // kun ved manuel optjening, procent færdig
 }
 ```
 
@@ -78,7 +85,7 @@ Regler:
   note: "",
   isModule: false,
   autoStopped: false,
-  isBreak: false                    // true = kort pause, tæller ikke som arbejdstid
+  isBreak: false                    // true = kort pause; i rapporten fælles tid
 }
 ```
 
@@ -94,7 +101,8 @@ Regler:
   normFaktorer: {                   // pr. skoleår; mangler et år, bruges 2,35 og 0,9
     "2025/26": { faktor: 2.35, reduktion: 0.9 },
     "2021/22": { faktor: 2.55, reduktion: 0.93 }
-  }
+  },
+  fordelFaellesTid: true            // akkordregnskabet: fordel fælles tid på aktiviteterne
 }
 ```
 
@@ -111,6 +119,8 @@ Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr.
 - **Tillæg** står for sig og har ingen arbejdstype
 
 Er `antalHold` større end 1, ganges alle fire med det. Det bruges til ens hold, der registreres som én aktivitet — fx tre NV-hold (11,25 t, pulje 2,1375, fordybelsestid 0 → 3 × 28,82 = 86,45 t). Tid registreret uden arbejdstype på et hold med normer (fx fra før en opgave blev lavet om til hold) står i rapporten som "Uden arbejdstype" og tæller med i holdets total.
+
+Tillægget tælles ikke med i akkordregnskabet: eksamen og årsprøve oprettes som opgaver for sig, i det skoleår de betales (se *Akkordregnskab*).
 
 Formlen ligger ét sted, i `normer.js`. Kontrolleret mod holdoversigten 2025/26 (faktor 2,35, reduktion 0,9): 2x bi 176,64, 1p nf ge 200,36, nv4 ng 28,82 og 3g Ng1 325,30 — alle på decimalen.
 
@@ -146,6 +156,7 @@ Faste tre, kan ikke ændres:
 **Specialknapper:**
 - **"Start arbejde"** — starter udefineret registrering (activityId: null). Brugeren kan senere redigere posten og knytte den til en aktivitet.
 - **"1 modul"** — kun for hold-aktiviteter. Spørg hvilket hold + "Hvornår startede modulet?" (Nu / For 95 min siden / Andet tidspunkt). Hvis "Nu": opret aktiv timer med automatisk slut 95 min senere. Modulets længde hentes fra skemaet i `skema.js` (altid 95 min, 5 min pause medregnet) — der er ingen indstilling for den. Hvis bagudrettet: opret færdig post.
+- **"Rettet sæt"** — registrerer, at et sæt er rettet færdigt: hold, elevtimer (fordybelsestid pr. elev, typisk 1–4, med hurtigvalg), dato (i dag som standard) og evt. navn. Arket viser, hvad sættet optjener. Se *Akkordregnskab*
 
 ### 3. Skift mellem aktiviteter
 Tryk på en anden aktivitet mens en timer kører:
@@ -181,7 +192,7 @@ Under måneds- og årsvisningen står periodens fordeling på aktiviteter som é
 Tid må gerne lægges ind, før den er brugt — fx et modul, man ved man skal holde. Både formularen, kalenderen og "1 modul" tager imod tidspunkter frem i tiden, og arket viser en OBS-linje: *Du registrerer i fremtiden*. En post i fremtiden skal have en sluttid; uden en ville den blive oprettet som en igangværende timer, der først startede senere. Periodefiltrene i Historik og Rapporter har derfor både en start og en ende, så planlagt tid i næste uge ikke tælles med under "I dag".
 
 ### 5b. Korte pauser
-Et mellemrum på under 30 minutter mellem to registreringer er sjældent glemt tid — det er pausen mellem to moduler eller frokosten. Når en ny post oprettes, lukkes et sådant mellemrum automatisk med en pause-post (`isBreak: true`, ingen aktivitet). Længere mellemrum lades i fred. Pauser er almindelige poster, der kan redigeres og slettes, men de tæller ikke med i rapporter, norm eller CSV-eksport. Kan slås fra med `autoShortBreaks` under Indstillinger → Pauser.
+Et mellemrum på under 30 minutter mellem to registreringer er sjældent glemt tid — det er pausen mellem to moduler eller frokosten. Når en ny post oprettes, lukkes et sådant mellemrum automatisk med en pause-post (`isBreak: true`, ingen aktivitet). Længere mellemrum lades i fred. Pauser er almindelige poster, der kan redigeres og slettes, og i rapporten tæller de som fælles tid, ligesom ubundet tid — i den samlede tid, i akkordregnskabet og i CSV-eksporten, men på deres egen linje. Kalenderen holder dem stadig uden for dagens total. Kan slås fra med `autoShortBreaks` under Indstillinger → Pauser.
 
 ### 6. Rapporter
 Egen side. Vælg intervallets længde:
@@ -195,9 +206,11 @@ Intervallet bladres frem og tilbage med pile, så rapporten lige så gerne viser
 Vis for valgte interval:
 - **Samlet:** Total tid forbrugt, og hvis skoleår er valgt: forbrugt / norm (1650t for fuldtid — konfigurerbart i indstillinger). Procent og resterende.
 - **Pr. aktivitet:** Liste sorteret efter forbrug. For hver aktivitet: navn, forbrugt tid, budget, procent (fx "142t / 288t — 49%"), visuel progress bar i aktivitetens farve. Under-aktiviteter vises indrykket under deres parent. Parent viser eget forbrug + summen af children.
-- **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet som forbrugt mod norm (fx "Retning 12t / 39,2t") med bjælke og sin egen foran/bagud-chip, målt mod den del af skoleåret, der er gået — samme regel som den samlede indikator. Tillægget står med sit timetal. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
-- **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elev pr. fordybelsestime mod faktor / 27 × 60 (fx 5,2 min); den rettede fordybelsestid skønnes ud fra den andel af årets undervisningsnorm, der er registreret. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
-- **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema".
+- **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet med akkorden: undervisningen i moduler (*10 af 36,9 moduler*), forberedelse og retning som brugt og optjent mod normen med en saldochip. Bjælken er brugt mod norm, og en blækstreg i den markerer det optjente. Retningen viser også *rettet 5 af 15 elevtimer*. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
+- **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elev pr. fordybelsestime mod faktor / 27 × 60 (fx 5,2 min); måles mod de rettede sæt, der er afsluttet i perioden: tiden brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt, skønnes den rettede fordybelsestid ud fra den andel af årets undervisningsnorm, der er registreret, og tallet mærkes *skønnet*; har holdet sæt, men ingen i perioden, vises retningen ikke. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
+- **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema". Det er timeløns-tallet; akkordregnskabet står under det.
+- **Akkordregnskab (kun skoleår):** se *Akkordregnskab* nedenfor.
+- **Fælles tid:** ubundet tid og pauser står samlet nederst i listen, hver for sig. I skoleåret kommer opgaver uden budget med.
 - Simpel cirkel- eller søjlediagram af aktivitets-fordeling (lav i SVG, intet bibliotek).
 
 ### 7. Administration af aktiviteter
@@ -205,15 +218,18 @@ Egen side "Aktiviteter":
 - Listet grupperet efter type (Hold / Opgaver) og skoleår
 - Skift mellem skoleår (dropdown)
 - Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få et normgrundlag (årsnorm, elever, fordybelsestid, puljetimer, tillæg); er årsnormen udfyldt, regnes budgettet ud og kan ikke skrives i hånden, og udregningen vises under felterne
+- Opgaver har en optjeningsmåde: *Løbende*, *Ved afslutning* eller *Manuelt* (med et felt for procent færdig) — se *Akkordregnskab*
+- Et gemt hold viser sine rettede sæt med dato, navn og elevtimer og summen mod normen (*Rettet 5 af 15 elevtimer*). Et sæt slettes med krydset og registreres igen, hvis det er tastet forkert
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
 - Under-aktiviteter vises indrykket under deres parent
-- **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne) — gør det nemt når et nyt skoleår begynder
+- **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne; rettede sæt og fremdrift følger ikke med) — gør det nemt når et nyt skoleår begynder
 - **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?` der parses og oprettes. Sparer tid ved opsætning.
 
 ### 8. CSV-eksport
 Knap "Eksportér" i rapporter:
 - Eksportér aktuelt interval
 - Format: `dato;starttid;sluttid;varighed_minutter;aktivitet;arbejdstype;note`
+- Korte pauser er med, med aktiviteten "Kort pause"
 - Semikolon (dansk Excel)
 - Filnavn: `tidsregistrering-{periode}.csv` — fx `tidsregistrering-uge-34-2026.csv` eller `tidsregistrering-2026-09-01.csv`
 
@@ -227,6 +243,47 @@ Egen side:
 - Ugestart
 - Log ud
 - Eksport af alle data (JSON)
+
+### 10. Akkordregnskab
+Læreren er både timelønnet (normen, 1650 t) og akkordlønnet (hver linje i opgavefordelingen er et budget, der betales, uanset hvor lang tid arbejdet tager). Skoleårs-rapporten viser derfor ud over den samlede tid mod normen også, hvor meget af akkorderne der er leveret.
+
+**Tre tal og en saldo** — alle for hele skoleåret:
+
+| Tal | Betyder |
+|---|---|
+| Brugt | den registrerede tid, fælles tid medregnet |
+| Optjent | den del af budgetterne, der er leveret indtil nu |
+| Akkord i alt | summen af budgetterne (holdenes uden tillæg) |
+
+**Saldo = optjent − brugt.** Plus betyder, at arbejdet har taget mindre tid, end det betales med. Saldoen står stort i sammendraget med fortegn (og grøn/rød som gentagelse), under den en bjælke for leveret andel af akkorden med en streg for, hvor langt året er nået. Chippen "foran/bagud skema" over den er uændret.
+
+**Hold med normgrundlag** optjener pr. arbejdstype:
+
+- *Undervisning* = registreret undervisning, højst normen. Tælles i moduler à 95 min (normens klokketimer × 60 / 95). Mere undervisning end normen tæller som brugt og giver en neutral besked (*2 moduler over normen*); mindre er normalt (sygedage, omsorgsdage) og giver ingen besked
+- *Forberedelse* = den undervist andel af undervisningsnormen × forberedelsesnormen, altså (faktor − 1) time pr. undervist time — 2 t 8 min pr. modul med faktor 2,35
+- *Retning* = rettede elevtimer × elever / 27 × faktor, højst normen. Retteakkorden er fordybelsestid × antal hold elevtimer (fx 15)
+- *Tillæg* tælles ikke; holdet viser en note om at oprette eksamen som opgave
+
+Hold uden normgrundlag optjener deres budget løbende.
+
+**Rettede sæt** registreres for sig selv med knappen "Rettet sæt" på Hjem — ikke sammen med retningstiden. Læreren skriver de elevtimer, opgaven dækker pr. elev; appen ganger med holdets elevtal. Det, der var rettet, før appen kom i brug, lægges ind på samme måde med en tidligere dato. Sættene gemmes på holdet (`rettedeSaet`).
+
+**Opgaver** optjener efter `optjening`:
+
+- *Løbende* (standard): budgettet jævnt over året — udvalg, teamledelse
+- *Ved afslutning*: intet, til opgaven afsluttes med "Afslut opgave" — eksamen, SRP
+- *Manuelt*: `fremdrift` procent af budgettet
+
+En afsluttet opgave har altid optjent hele budgettet. Eksamen er en almindelig opgave i det skoleår, den betales — typisk året efter, holdet har kørt.
+
+**Under-opgaver.** En under-opgave med eget budget er sin egen akkord; en uden budget hører under forælderens, og dens tid regnes med dér. Forælderens egen akkord er dens budget minus børnenes. I rapporten står en opgave og dens aktive under-opgaver lagt sammen på opgavens række.
+
+**Fælles tid** er ubundet tid, korte pauser og tid på opgaver uden budget (de regnes med her, til de får et budget). Den tæller som brugt. Et flueben i sammendraget, *Fordel fælles tid på aktiviteterne* (`fordelFaellesTid`, standard til), bestemmer, hvor den står:
+
+- **Til:** fordeles på alle aktiviteter med budget — hold og opgaver, afsluttede med — vægtet efter hele årets budget, så tallene ikke springer, når en opgave afsluttes. Hver aktivitet viser sin andel som *Fælles* og har den med i sin saldo. Fælles-rækken viser kun fordelingen
+- **Fra:** fælles-rækken står for sig med optjent 0 og sin egen negative saldo; aktiviteternes saldi er kun deres egen tid
+
+Den samlede saldo er den samme begge veje. Regningen ligger i `akkord.js`; tid på aktiviteter fra et andet skoleår tælles ikke med, ligesom i rapportens samlede tid.
 
 ## UI-design
 

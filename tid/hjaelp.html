@@ -56,6 +56,7 @@
         <li>Skifter du til en anden aktivitet, mens en timer kører, stopper den gamle automatisk, og en ny starter — ingen bekræftelse nødvendig.</li>
         <li><strong>"Start arbejde"</strong> — brug den, hvis du ikke ved præcis hvilken aktivitet det er endnu. Du kan koble den til den rigtige aktivitet bagefter under Historik.</li>
         <li><strong>"1 modul"</strong> — kun for hold. Vælg hold, og vælg så <strong>1., 2., 3. eller 4. modul</strong>: tiden hentes fra skemaet. Er modulet slut, gemmes det som en færdig post; kører det stadig, starter timeren ved modulets starttid og stopper af sig selv, når modulet er forbi. Du kan stadig vælge "Nu", "For 95 min siden" eller et selvvalgt tidspunkt. Et modul er altid 95 min, som i skemaet.</li>
+        <li><strong>"Rettet sæt"</strong> — tryk på den, når du har rettet et sæt opgaver færdigt. Vælg holdet, og skriv hvor mange elevtimer opgaven dækker pr. elev (typisk 1–4). Appen ganger selv med holdets elevtal og viser, hvor meget retning sættet optjener. Det, du har rettet, før du begyndte at bruge appen, lægger du ind på samme måde med en tidligere dato.</li>
       </ul>
       <div class="badge-row">
         <span class="badge">1. modul <b>08:10–09:45</b></span>
@@ -106,8 +107,8 @@
       <p><strong>Korte pauser.</strong> Går der under 30 minutter fra en registrering slutter, til
       den næste begynder, gemmer appen selv mellemrummet som en post med navnet
       <strong>Kort pause</strong> — fx frokosten eller kvarteret mellem to moduler. Pausen står
-      dæmpet i kalenderen og i listen, kan redigeres og slettes som enhver anden post, og tæller
-      <em>ikke</em> med i din arbejdstid. Vil du hellere selv bestemme, kan du slå det fra under
+      dæmpet i kalenderen og i listen og kan redigeres og slettes som enhver anden post. I
+      rapporten tæller pauser som <em>fælles tid</em>, ligesom ubundet tid (se Rapporter). Vil du hellere selv bestemme, kan du slå det fra under
       <strong>Indstillinger → Pauser</strong>.</p>
       <div class="badge-row">
         <span class="badge">Dæmpet, stiplet blok = kort pause</span>
@@ -125,9 +126,21 @@
         <li>Hvor meget tid du samlet har brugt, og hvor det står i forhold til din norm for skoleåret</li>
         <li>Forbrug og budget pr. aktivitet, med en visuel bjælke i aktivitetens farve</li>
         <li>Fordelingen mellem undervisning / forberedelse / retning for dine hold</li>
-        <li>For hold med normgrundlag (se nedenfor): i skoleårs-rapporten står hver arbejdstype med forbrugt mod norm — fx <em>Retning 12t / 39,2t</em> — og om du er foran eller bagud, målt på samme måde som den samlede indikator</li>
-        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elev pr. fordybelsestime mod budgettets ca. 5,2 min. Retningen kræver, at holdet har et normgrundlag. Hvor meget fordybelsestid du har rettet, skønnes ud fra hvor stor en del af årets undervisning du har registreret</li>
+        <li>For hold med normgrundlag (se nedenfor): i skoleårs-rapporten står hver arbejdstype med brugt og optjent mod normen (se Akkordregnskabet herunder)</li>
+        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elev pr. fordybelsestime mod budgettets ca. 5,2 min. Retningen kræver, at holdet har et normgrundlag, og måles mod de sæt, du har registreret som rettet i perioden. Har holdet ingen sæt endnu, skønnes den ud fra, hvor stor en del af årets undervisning du har registreret</li>
       </ul>
+      <p><strong>Akkordregnskabet.</strong> Under skoleåret står også, hvor meget af dine akkorder
+      du har leveret. <strong>Optjent</strong> er den del af budgetterne, dit arbejde indtil nu er
+      værd; <strong>saldoen</strong> er optjent minus brugt. Plus betyder, at arbejdet har taget
+      mindre tid, end det betales med.</p>
+      <ul>
+        <li><strong>Undervisning</strong> optjenes modul for modul og står som fx <em>10 af 36,9 moduler</em></li>
+        <li><strong>Forberedelse</strong> følger undervisningen: hvert modul giver 2 t 8 min forberedelse (med faktor 2,35)</li>
+        <li><strong>Retning</strong> optjenes med de sæt, du registrerer med "Rettet sæt" — fx <em>rettet 5 af 15 elevtimer</em></li>
+        <li><strong>Opgaver</strong> optjenes løbende over året, først når du afslutter dem, eller med en procent, du selv sætter (se Aktiviteter)</li>
+        <li><strong>Fælles tid</strong> — ubundet tid, pauser og opgaver uden budget — kan fordeles på alle aktiviteter efter deres budget. Det styrer du med fluebenet i sammendraget. Saldoen øverst er den samme begge veje</li>
+      </ul>
+      <p>På holdene er bjælken brugt tid mod normen, og den sorte streg i den er det optjente. Står bjælken forbi stregen, har arbejdet taget længere tid, end det betales med.</p>
       <p>Tryk <strong>"Eksportér CSV"</strong> for at få perioden som en fil, du kan åbne i Excel.</p>
     </div>
 
@@ -136,7 +149,7 @@
       <p>Her administrerer du dine hold og opgaver — grupperet efter type og skoleår.</p>
       <ul>
         <li>Opret en ny aktivitet med navn, type, timebudget og farve</li>
-        <li>Et hold kan få et <strong>normgrundlag</strong> fra skolens holdoversigt: årsnorm, antal elever, fordybelsestid, puljetimer og evt. tillæg (fx 15 t til intern NF-eksamen). Så regner appen budgettet ud med skolens formel og deler det op i tre normer:
+        <li>Et hold kan få et <strong>normgrundlag</strong> fra skolens holdoversigt: årsnorm, antal elever, fordybelsestid, puljetimer og evt. tillæg. Tillægget tæller ikke med i akkordregnskabet — opret i stedet eksamen eller årsprøve som en opgave i det skoleår, den betales. Så regner appen budgettet ud med skolens formel og deler det op i tre normer:
           <ul>
             <li><strong>Undervisning</strong> = årsnorm × 0,9 + puljetimer — holdet undervises reelt kun i 90 % af årsnormen</li>
             <li><strong>Forberedelse</strong> = undervisningen × 1,35</li>
@@ -144,6 +157,8 @@
           </ul>
           Har du flere ens hold samlet som én aktivitet — fx tre NV-hold — så skriv antallet i <strong>Antal hold</strong>, og normerne ganges op. Lader du felterne stå tomme, bruger holdet bare det budget, du skriver ind.</li>
         <li>Har du oprettet noget som opgave, der i virkeligheden er et hold, kan du skifte typen, når du redigerer det. Tiden, der allerede er registreret, følger med og står i rapporten som <em>uden arbejdstype</em>.</li>
+        <li>En opgave har en <strong>optjeningsmåde</strong>: <em>Løbende</em> (budgettet optjenes jævnt over året, fx udvalg), <em>Ved afslutning</em> (intet, til du trykker "Afslut opgave" — fx eksamen og SRP) eller <em>Manuelt</em> (du skriver selv, hvor mange procent der er færdige)</li>
+        <li>Når du redigerer et hold, ser du dets <strong>rettede sæt</strong>. Har du tastet et forkert, så slet det med krydset og registrér det igen</li>
         <li>Opgaver kan have under-aktiviteter (fx "SRP" under "Eksamen og årsprøver") — tid registreret på en under-aktivitet tæller automatisk med på forælderen</li>
         <li><strong>"Importer fra tekst"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent</code>) for hurtig opsætning</li>
         <li><strong>"Kopiér til næste skoleår"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter</li>

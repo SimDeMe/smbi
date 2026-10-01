@@ -11,6 +11,7 @@ import { initTimerView, refreshQuickStart } from './timer.js';
 import { initHistorikView, refreshHistorik } from './historik.js';
 import { initKalenderView, refreshKalender } from './kalender.js';
 import { initRapporterView, refreshRapporter } from './rapporter.js';
+import { initRettet } from './rettet.js';
 import { initIndstillingerView, refreshIndstillinger, getSettings } from './indstillinger.js';
 
 // ─── Firebase init ────────────────────────────────────────
@@ -120,6 +121,7 @@ onAuthStateChanged(auth, async user => {
       updateTopYear();
       initActivitiesView(user.uid);
       initTimerView(user.uid);
+      initRettet(user.uid);
       initHistorikView(user.uid);
       initKalenderView(user.uid);
       initRapporterView(user.uid);

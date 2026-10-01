@@ -2,7 +2,7 @@
 
 import { db, showToast, getCurrentSchoolYear, updateTopYear } from './app.js';
 import { STANDARD_FAKTORER, tolkTal } from './normer.js';
-import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── Defaults ─────────────────────────────────────────────
 // currentSchoolYear er tom som default, så getCurrentSchoolYear() falder
@@ -14,7 +14,8 @@ const DEFAULTS = {
   normHours:            1650,
   autoStopAfterMinutes: 600,
   autoShortBreaks:      true,
-  normFaktorer:         {}      // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
+  normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
+  fordelFaellesTid:     true    // akkordregnskabet: fordel fælles tid på aktiviteterne — se akkord.js
 };
 
 let userId      = null;
@@ -87,7 +88,9 @@ async function saveSettings() {
   const yearVal = document.getElementById('cfg-school-year').value.trim();
   if (!/^\d{4}\/\d{2}$/.test(yearVal)) { showToast('Angiv et gyldigt skoleår (fx 2026/27)'); return; }
 
+  // Felter, formularen ikke har (fx rapportens flueben), følger med uændret
   const updated = {
+    ...settings,
     currentSchoolYear:    yearVal,
     schoolYearStartMonth: parseInt(document.getElementById('cfg-start-month').value)  || 6,
     schoolYearStartDay:   parseInt(document.getElementById('cfg-start-day').value)    || 1,
@@ -115,6 +118,19 @@ async function saveSettings() {
     showToast('Kunne ikke gemme — prøv igen');
   } finally {
     if (btn) btn.disabled = false;
+  }
+}
+
+// ─── Én indstilling ad gangen ─────────────────────────────
+// Til valg, der sættes andre steder end på indstillingssiden — fx fluebenet
+// i rapporten. Tallet slår igennem med det samme; skrivningen følger efter.
+export async function gemIndstilling(noegle, vaerdi) {
+  settings = { ...settings, [noegle]: vaerdi };
+  try {
+    await updateDoc(doc(db, `users/${userId}/settings/config`), { [noegle]: vaerdi });
+  } catch (err) {
+    console.error('Gem indstilling fejl:', err);
+    showToast('Kunne ikke gemme valget — prøv igen');
   }
 }
 

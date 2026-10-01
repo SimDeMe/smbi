@@ -1164,6 +1164,92 @@ select.form-input{
   .rapport-norm-bar{grid-column:1}
 }
 
+/* Akkordregnskabet (kun skoleårs-rapporten) — se akkord.js */
+.akkord{margin-top:18px;padding-top:14px;border-top:2px solid var(--ink)}
+.akkord-head{
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;
+  letter-spacing:0.13em;text-transform:uppercase;color:var(--slate);margin-bottom:6px;
+}
+.akkord-saldo{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px}
+.akkord-saldo-tal{
+  font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.05;
+  letter-spacing:-0.03em;font-variant-numeric:tabular-nums;
+  font-variation-settings:var(--wide);
+}
+/* Fortegnet står i tallet selv — farven er kun en gentagelse */
+.akkord-saldo-tal.is-pos{color:#2C7A2C}
+.akkord-saldo-tal.is-neg{color:#B8321A}
+.akkord-saldo-sub{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);
+}
+.akkord-tal{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 0 14px}
+.akkord-tal dt{
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);
+}
+.akkord-tal dd{font-family:var(--display);font-weight:800;font-size:1.05rem;font-variant-numeric:tabular-nums}
+/* Leveret akkord: skraveret, så den ikke kan forveksles med normbjælken over den */
+.akkord-fill{background:repeating-linear-gradient(-45deg,var(--accent) 0 6px,#0B8577 6px 9px)}
+.akkord-fordel{
+  display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:10px 12px;cursor:pointer;
+  background:var(--paper-2);border:2px solid var(--ink);border-radius:12px;
+  font-family:var(--display);font-weight:700;font-size:0.88rem;
+}
+.akkord-fordel input{flex-shrink:0;margin-top:1px}
+.akkord-fordel small{
+  display:block;margin-top:2px;
+  font-family:var(--mono);font-size:0.56rem;font-weight:500;letter-spacing:0.06em;color:var(--slate);
+}
+
+/* Akkordlinjen under en aktivitet */
+.rapport-akkord{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:8px;padding-top:8px;
+  border-top:2px dotted var(--rule);
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.1em;color:var(--text-2);
+}
+.rapport-akkord b{font-family:var(--display);font-size:0.8rem;color:var(--ink)}
+.rapport-akkord-maade{color:var(--slate);text-transform:uppercase;margin-right:auto}
+.rapport-akkord .forecast-chip-sm{margin-top:0}
+.rapport-akkord-note{color:var(--slate);text-transform:none;letter-spacing:0.04em}
+.rapport-act-row-faelles{background:var(--paper-2);border-style:dashed}
+
+/* Holdets arbejdstyper: navn og saldo øverst, tallene, så bjælken */
+.akkord-type{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 8px;
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.1em;color:var(--text-2);
+}
+.akkord-type + .akkord-type{margin-top:6px}
+.akkord-type .forecast-chip-sm{margin-top:0;justify-self:end}
+.akkord-type-tal,.akkord-type .rapport-norm-bar{grid-column:1 / -1}
+.akkord-type-tal b{font-family:var(--display);font-size:0.8rem;color:var(--ink)}
+.akkord-type .rapport-norm-bar{position:relative}
+/* Det optjente: en blækstreg på tværs af bjælken */
+.akkord-streg{
+  position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1.5px;
+  background:var(--ink);border-radius:2px;
+}
+
+/* Optjening og rettede sæt i aktivitetsformularen */
+.form-hint{
+  margin-top:6px;font-size:0.85rem;color:var(--text-2);line-height:1.4;
+}
+.form-fremdrift{margin:10px 0 0;max-width:10rem}
+.saet-sum{font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.08em;color:var(--slate);margin-bottom:8px}
+.saet-sum b{font-family:var(--display);font-size:0.9rem;color:var(--ink)}
+.saet-liste{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:6px}
+.saet-row{
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;
+  padding:4px 4px 4px 10px;background:var(--panel);border:2px solid var(--ink);border-radius:10px;
+  font-size:0.88rem;
+}
+.saet-dato{font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.08em;color:var(--slate)}
+.saet-navn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saet-et{font-family:var(--display);font-weight:700;white-space:nowrap}
+.saet-et .enhed{font-family:var(--mono);font-size:0.56rem;font-weight:600;color:var(--slate)}
+.saet-tom{font-size:0.88rem;color:var(--text-2)}
+.saet-et-row{margin-bottom:8px}
+
 /* Normgrundlag i aktivitetsformularen */
 .norm-felt{border:2px dashed var(--rule);border-radius:12px;padding:10px 12px 4px;margin-inline:0}
 .norm-felt legend{padding:0 6px}

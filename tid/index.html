@@ -42,6 +42,8 @@
   <link rel="modulepreload" href="kalender-akse.js">
   <link rel="modulepreload" href="kalender-oversigt.js">
   <link rel="modulepreload" href="rapporter.js">
+  <link rel="modulepreload" href="akkord.js">
+  <link rel="modulepreload" href="rettet.js">
   <title>Tid — smbi.dk</title>
   <meta name="description" content="Registrér din arbejdstid på hold og opgaver, og se forbruget mod budgettet for skoleåret.">
   <meta name="robots" content="noindex, follow">
@@ -167,6 +169,7 @@
         <div class="special-btns">
           <button id="btn-start-arbejde" class="btn btn-secondary btn-full">▷ Start arbejde</button>
           <button id="btn-1-modul" class="btn btn-secondary btn-full">⏱ 1 modul</button>
+          <button id="btn-rettet-saet" class="btn btn-secondary btn-full">✓ Rettet sæt</button>
         </div>
 
       </div>
@@ -357,7 +360,7 @@
           <div class="settings-section-title">Pauser</div>
           <div class="settings-row">
             <label class="settings-label" for="cfg-auto-breaks">Registrér korte pauser
-              <span class="settings-sub">Mellemrum under 30 minutter mellem to registreringer gemmes som &#34;Kort pause&#34;. Pauser tæller ikke med i arbejdstiden.</span>
+              <span class="settings-sub">Mellemrum under 30 minutter mellem to registreringer gemmes som &#34;Kort pause&#34;. I rapporten tæller pauser som fælles tid, ligesom ubundet tid.</span>
             </label>
             <div class="settings-row-right">
               <input type="checkbox" id="cfg-auto-breaks" class="settings-check">
@@ -505,7 +508,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label" for="act-tillaeg">Tillæg <span class="enhed">t</span> <span class="form-optional">(fx NF-eksamen 15)</span></label>
+            <label class="form-label" for="act-tillaeg">Tillæg <span class="enhed">t</span> <span class="form-optional">(tælles ikke i akkorden — opret eksamen som opgave)</span></label>
             <input class="form-input" type="text" inputmode="decimal" id="act-tillaeg" placeholder="0">
           </div>
           <div class="form-group">
@@ -518,6 +521,24 @@
           <label class="form-label" for="act-budget">Budget (timer)</label>
           <input class="form-input" type="number" id="act-budget" min="0" max="9999" step="any" placeholder="fx 288">
         </div>
+        <div class="form-group" id="field-optjening">
+          <label class="form-label" id="act-optjening-label">Optjenes</label>
+          <div class="segmented" role="radiogroup" aria-labelledby="act-optjening-label">
+            <label class="seg-opt"><input type="radio" name="act-optjening" value="loebende" checked><span>Løbende</span></label>
+            <label class="seg-opt"><input type="radio" name="act-optjening" value="afslutning"><span>Ved afslutning</span></label>
+            <label class="seg-opt"><input type="radio" name="act-optjening" value="manuel"><span>Manuelt</span></label>
+          </div>
+          <p class="form-hint" id="act-optjening-hint"></p>
+          <div class="form-group form-fremdrift" id="field-fremdrift">
+            <label class="form-label" for="act-fremdrift">Færdig <span class="enhed">%</span></label>
+            <input class="form-input" type="number" id="act-fremdrift" min="0" max="100" step="1" placeholder="fx 40">
+          </div>
+        </div>
+        <fieldset class="form-group norm-felt" id="field-saet">
+          <legend class="form-label">Rettede sæt</legend>
+          <p class="saet-sum" id="saet-sum" aria-live="polite"></p>
+          <ul class="saet-liste" id="saet-liste"></ul>
+        </fieldset>
         <div class="form-group">
           <label class="form-label">Farve</label>
           <div class="color-picker" id="act-color-picker"></div>
@@ -749,6 +770,48 @@ Vejledning; opgave; 40</div>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ── Rettet sæt sheet ─────────────────────────────── -->
+  <div id="saet-backdrop" class="sheet-backdrop hidden"></div>
+  <div id="saet-sheet" class="sheet hidden">
+    <div class="sheet-handle-bar"></div>
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <h3>Rettet sæt</h3>
+        <button id="saet-close" class="btn-icon" aria-label="Luk">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div id="saet-step-hold">
+        <p class="sheet-desc">Hvilket hold har du rettet et sæt for?</p>
+        <div id="saet-hold-list" class="modul-hold-list"></div>
+      </div>
+
+      <form id="saet-form" class="hidden" novalidate>
+        <div id="saet-hold-label" class="modul-hold-name-label"></div>
+        <div class="form-group">
+          <label class="form-label" for="saet-elevtimer">Elevtimer <span class="form-optional">(fordybelsestid pr. elev, som opgaven dækker)</span></label>
+          <div id="saet-et-row" class="skema-row saet-et-row" role="group" aria-label="Hurtigvalg af elevtimer"></div>
+          <input class="form-input" type="text" inputmode="decimal" id="saet-elevtimer" placeholder="fx 2">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="saet-dato">Rettet færdig</label>
+            <input class="form-input" type="date" id="saet-dato" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="saet-navn">Navn <span class="form-optional">(valgfrit)</span></label>
+            <input class="form-input" type="text" id="saet-navn" placeholder="fx Rapport 3" autocomplete="off">
+          </div>
+        </div>
+        <div class="norm-udregning" id="saet-udregning" aria-live="polite"></div>
+        <div class="form-actions">
+          <button type="submit" id="saet-save-btn" class="btn btn-primary btn-full">Registrér sæt</button>
+        </div>
+      </form>
     </div>
   </div>
 

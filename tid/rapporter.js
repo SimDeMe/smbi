@@ -6,12 +6,15 @@
 
 import { db } from './app.js';
 import { getLoadedActivities } from './activities.js';
-import { getSettings } from './indstillinger.js';
-import { erPause } from './pauser.js';
+import { getSettings, gemIndstilling } from './indstillinger.js';
+import { erPause, PAUSE_NAVN } from './pauser.js';
+import {
+  beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
+} from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
-  forskydningFor, skoleaarForPeriode
+  forskydningFor, skoleaarForPeriode, datoInput
 } from './periode.js';
 import {
   collection, query, orderBy, where, limit, onSnapshot, Timestamp
@@ -112,16 +115,16 @@ function setupEntriesListener() {
 }
 
 // ─── Period filtering ─────────────────────────────────────
-// Korte pauser er registreret tid, men ikke arbejdstid — de holdes ude af
-// både rapporterne og CSV-eksporten, så tallene svarer til det, der tælles med
-// i normen.
+// Korte pauser tæller med: i akkordregnskabet er de fælles tid, ligesom
+// ubundet tid, og de står derfor også i rapportens samlede tid og i
+// CSV-eksporten — men for sig, så de ikke blandes sammen med det ubundne.
 //
 // Perioden har både en start og en ende: tid registreret frem i tiden hører
 // til den dag, uge eller måned, den ligger i — ikke til den, man står i nu.
 function getPeriodEntries() {
   const fra = start(), til = slut();
   return entries.filter(e =>
-    e.durationMinutes != null && !erPause(e) && e.startTime &&
+    e.durationMinutes != null && e.startTime &&
     e.startTime.toDate() >= fra && e.startTime.toDate() < til
   );
 }
@@ -133,10 +136,12 @@ function aggregate(acts) {
   const direct   = {};
   const wtMap    = {};
   let uboundMins = 0;
+  let pauseMins  = 0;
 
   filtered.forEach(e => {
     const m = e.durationMinutes || 0;
-    if (!e.activityId) { uboundMins += m; return; }
+    if (erPause(e))     { pauseMins  += m; return; }
+    if (!e.activityId)  { uboundMins += m; return; }
     direct[e.activityId] = (direct[e.activityId] || 0) + m;
     if (e.workType) {
       if (!wtMap[e.activityId]) wtMap[e.activityId] = {};
@@ -191,8 +196,8 @@ function aggregate(acts) {
 
   const archivedMins = archivedRows.reduce((s, r) => s + r.totalMins, 0);
 
-  const totalMins = rows.reduce((s, r) => s + r.totalMins, 0) + uboundMins + archivedMins;
-  return { rows, uboundMins, totalMins, archivedRows, archivedMins };
+  const totalMins = rows.reduce((s, r) => s + r.totalMins, 0) + uboundMins + pauseMins + archivedMins;
+  return { rows, uboundMins, pauseMins, totalMins, archivedRows, archivedMins, filtered, year };
 }
 
 // ─── Main render ──────────────────────────────────────────
@@ -201,13 +206,21 @@ function renderReport() {
   const el = document.getElementById('rapport-content');
   if (!el) return;
   const acts = getLoadedActivities();
-  const { rows, uboundMins, totalMins, archivedRows, archivedMins } = aggregate(acts);
+  const { rows, uboundMins, pauseMins, totalMins, archivedRows, archivedMins, filtered, year } = aggregate(acts);
+
+  // Akkordregnskabet gælder hele skoleåret — budgetterne er årets
+  const ak = periodFilter === 'skolear'
+    ? beregnAkkord({ acts, entries: filtered, aar: year, andel: forloebAndel(), fordel: fordelFaelles() })
+    : null;
+
   el.innerHTML =
-    renderSummary(totalMins) +
-    renderDonut(rows, uboundMins, totalMins, archivedMins) +
-    renderActList(rows, uboundMins) +
-    renderArchivedList(archivedRows);
+    renderSummary(totalMins, ak) +
+    renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
+    renderActList(rows, uboundMins, pauseMins, ak) +
+    renderArchivedList(archivedRows, ak);
 }
+
+const fordelFaelles = () => getSettings().fordelFaellesTid !== false;
 
 // ─── Periodenavigation ────────────────────────────────────
 const NU_TEKST = { dag:'I dag', uge:'Denne uge', maaned:'Denne måned', skolear:'I år' };
@@ -250,7 +263,7 @@ function forloebChip(brugtM, normM, elapsed, lille = false) {
 }
 
 // ─── Summary card ─────────────────────────────────────────
-function renderSummary(totalMins) {
+function renderSummary(totalMins, ak) {
   const year = skoleaarForPeriode(periodFilter, periodOffset);
   let extra  = '';
 
@@ -273,7 +286,8 @@ function renderSummary(totalMins) {
           <span>${pct}%</span>
         </div>
       </div>
-      ${chip}`;
+      ${chip}
+      ${ak ? renderAkkord(ak, elapsed) : ''}`;
   }
 
   return `<div class="rapport-summary">
@@ -281,6 +295,49 @@ function renderSummary(totalMins) {
     <div class="rapport-total-sub">Samlet tid${periodFilter === 'skolear' ? ` · ${year}` : ''}</div>
     ${extra}
   </div>`;
+}
+
+// ─── Akkordregnskabet ─────────────────────────────────────
+// Saldoen er optjent − brugt for hele skoleåret. Bjælken viser, hvor stor en
+// del af akkorderne der er leveret, og stregen, hvor langt året er nået.
+// Fluebenet flytter kun den fælles tid; saldoen øverst er den samme.
+function renderAkkord(ak, elapsed) {
+  const pct = ak.akkord > 0 ? Math.min(100, Math.round(ak.optjent / ak.akkord * 100)) : 0;
+  const kal = Math.min(99, Math.round(elapsed * 100));
+  return `<div class="akkord">
+    <div class="akkord-head">Akkord</div>
+    <div class="akkord-saldo">
+      <span class="akkord-saldo-tal ${ak.saldo >= 0 ? 'is-pos' : 'is-neg'}">${fmtSaldo(ak.saldo)}</span>
+      <span class="akkord-saldo-sub">Saldo · optjent − brugt</span>
+    </div>
+    <dl class="akkord-tal">
+      <div><dt>Optjent</dt><dd>${fmtMins(ak.optjent)}</dd></div>
+      <div><dt>Brugt</dt><dd>${fmtMins(ak.brugt)}</dd></div>
+      <div><dt>Akkord i alt</dt><dd>${fmtMins(ak.akkord)}</dd></div>
+    </dl>
+    <div class="norm-progress-bg" role="img"
+         aria-label="Leveret ${pct} procent af akkorderne. ${kal} procent af skoleåret er gået.">
+      <div class="norm-progress-fill akkord-fill" style="width:${pct}%"></div>
+      <div class="norm-progress-marker" style="left:${kal}%"></div>
+    </div>
+    <div class="norm-progress-labels">
+      <span>Leveret ${pct}%</span>
+      <span>Året er ${kal}% gået</span>
+    </div>
+    <label class="akkord-fordel">
+      <input type="checkbox" id="akkord-fordel" class="settings-check"${ak.fordelt || fordelFaelles() ? ' checked' : ''}>
+      <span>Fordel fælles tid på aktiviteterne<small>Ubundet tid, pauser og opgaver uden budget, vægtet efter budget</small></span>
+    </label>
+  </div>`;
+}
+
+// Saldochip: plus = arbejdet har taget mindre tid, end det betales med
+function saldoChip(m, lille = true) {
+  const kl = `forecast-chip${lille ? ' forecast-chip-sm' : ''}`;
+  if (Math.round(m) === 0) return `<span class="${kl} forecast-neutral">± 0m</span>`;
+  return m > 0
+    ? `<span class="${kl} forecast-ahead">${fmtSaldo(m)}</span>`
+    : `<span class="${kl} forecast-behind">${fmtSaldo(m)}</span>`;
 }
 
 // ─── Donut chart ──────────────────────────────────────────
@@ -292,7 +349,7 @@ function renderDonut(rows, uboundMins, totalMins, archivedMins = 0) {
   const segs = [
     ...rows.filter(r => r.totalMins > 0).slice(0, 6)
       .map(r => ({ name: r.act.name, mins: r.totalMins, color: r.act.color || 'var(--accent)' })),
-    ...(uboundMins > 0 ? [{ name: 'Ubundet', mins: uboundMins, color: 'var(--text-3)' }] : []),
+    ...(uboundMins > 0 ? [{ name: 'Ubundet og pauser', mins: uboundMins, color: 'var(--text-3)' }] : []),
     ...(archivedMins > 0 ? [{ name: 'Afsluttet', mins: archivedMins, color: 'var(--border)' }] : []),
   ];
   const restMins = rows.slice(6).reduce((s, r) => s + r.totalMins, 0);
@@ -335,31 +392,56 @@ function renderDonut(rows, uboundMins, totalMins, archivedMins = 0) {
 }
 
 // ─── Activity list ────────────────────────────────────────
-function renderActList(rows, uboundMins) {
-  if (!rows.length && !uboundMins) {
+function renderActList(rows, uboundMins, pauseMins, ak) {
+  if (!rows.length && !uboundMins && !pauseMins) {
     return `<div class="hist-empty">Ingen registreringer i denne periode</div>`;
   }
 
   let html = `<div class="rapport-act-section"><div class="rapport-act-head">Pr. aktivitet</div>`;
   rows.forEach(r => {
-    html += actRow(r.act, r.totalMins, r.ownMins, r.wt, false);
-    r.children.forEach(c => html += actRow(c.act, c.totalMins, c.totalMins, {}, true));
+    html += actRow(r.act, r.totalMins, r.ownMins, r.wt, false, ak, r.children.map(c => c.act.id));
+    r.children.forEach(c => html += actRow(c.act, c.totalMins, c.totalMins, {}, true, ak));
   });
 
-  if (uboundMins > 0) {
-    html += `<div class="rapport-act-row">
-      <div class="rapport-act-top">
-        <div class="act-color-dot" style="background:var(--text-3)"></div>
-        <div class="rapport-act-name">Ubundet tid</div>
-        <div class="rapport-act-time">${fmtMins(uboundMins)}</div>
-      </div>
-    </div>`;
-  }
-
+  html += faellesRow(uboundMins, pauseMins, ak);
   return html + '</div>';
 }
 
-function actRow(act, totalMins, ownMins, wt, isChild) {
+// ─── Fælles tid ───────────────────────────────────────────
+// Ubundet tid og pauser — i skoleåret også opgaver uden budget. Er den
+// fordelt, står den her kun som oversigt; ellers bærer den sin egen saldo.
+function faellesRow(uboundMins, pauseMins, ak) {
+  const dele = ak
+    ? [['Ubundet tid', ak.faelles.ubundet], ['Pauser', ak.faelles.pauser],
+       ['Opgaver uden budget', ak.faelles.udenBudget]]
+    : [['Ubundet tid', uboundMins], ['Pauser', pauseMins]];
+  const total = dele.reduce((s, [, m]) => s + m, 0);
+  if (total === 0) return '';
+
+  const navn = ak ? 'Fælles tid' : dele[1][1] > 0 ? 'Ubundet tid og pauser' : 'Ubundet tid';
+  const fod  = !ak ? ''
+    : ak.fordelt
+      ? `<div class="rapport-akkord"><span class="rapport-akkord-maade">Fordelt på aktiviteterne efter budget</span></div>`
+      : `<div class="rapport-akkord">
+           <span class="rapport-akkord-maade">Står for sig selv</span>
+           <span>Optjent <b>0m</b></span>
+           ${saldoChip(ak.faellesSaldo)}
+         </div>`;
+
+  return `<div class="rapport-act-row rapport-act-row-faelles">
+    <div class="rapport-act-top">
+      <div class="act-color-dot" style="background:var(--text-3)"></div>
+      <div class="rapport-act-name">${navn}</div>
+      <div class="rapport-act-time">${fmtMins(total)}</div>
+    </div>
+    <div class="rapport-wt-row">${dele.filter(([, m]) => m > 0).map(([n, m]) =>
+      `<span class="rapport-wt-item"><span class="rapport-wt-label">${n}</span> ${fmtMins(m)}</span>`).join('')}
+    </div>
+    ${fod}
+  </div>`;
+}
+
+function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = []) {
   const color  = act.color || 'var(--accent)';
   const budgetH = budgetTimer(act);
   const budget  = budgetH != null ? Math.round(budgetH * 60) : null;
@@ -367,22 +449,25 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
 
   const progressHtml = budget != null ? `
     <div class="rapport-progress-bg">
-      <div class="rapport-progress-fill" style="width:${pct ?? 0}%;background:${color}${pct >= 100 ? '' : ''}"></div>
+      <div class="rapport-progress-fill" style="width:${pct ?? 0}%;background:${color}"></div>
     </div>
     <div class="rapport-act-budget-row">
       <span>${totalMins > 0 ? fmtMins(totalMins) : '—'} / ${fmtTimer(budgetH)}t</span>
       <span>${pct ?? 0}%</span>
     </div>` : (totalMins > 0 ? `<div class="rapport-act-budget-row"><span>${fmtMins(totalMins)}</span></div>` : '');
 
-  const normer = !isChild ? normerFor(act) : null;
-  const wtKeys = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
-  const wtHtml = (normer && periodFilter === 'skolear'
-    ? normRows(normer, wt, color, ownMins)
+  // I skoleåret står holdets arbejdstyper med akkorden: brugt, optjent og norm
+  const enhed   = ak?.enheder[act.id];
+  const wtKeys  = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
+  const wtHtml  = (enhed?.hold
+    ? holdAkkord(enhed, act, color, ownMins)
     : !isChild && wtKeys.length > 0
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
       ).join('')}</div>`
-    : '') + (!isChild && act.type === 'hold' ? faktorLinje(act, normer, wt) : '');
+    : '') + (!isChild && act.type === 'hold' ? faktorLinje(act, normerFor(act), wt) : '');
+
+  const akHtml = ak && !enhed?.hold ? akkordLinje(act, ak, kids) : '';
 
   return `<div class="rapport-act-row${isChild ? ' rapport-act-row-child' : ''}">
     <div class="rapport-act-top">
@@ -390,45 +475,99 @@ function actRow(act, totalMins, ownMins, wt, isChild) {
       <div class="rapport-act-name">${esc(act.name)}</div>
       <div class="rapport-act-time">${totalMins > 0 ? fmtMins(totalMins) : '—'}</div>
     </div>
-    ${progressHtml}${wtHtml}
+    ${progressHtml}${wtHtml}${akHtml}
   </div>`;
 }
 
-// ─── Holdets normer pr. arbejdstype ───────────────────────
-// Kun i skoleårs-rapporten: normerne gælder hele året, så en dag eller en uge
-// kan ikke måles mod dem. Hver arbejdstype får forbrugt mod norm og sin egen
-// foran/bagud-chip, målt mod den del af året, der er gået — som den samlede.
-// Tillægget har ingen arbejdstype og står bare med sit timetal. Tid uden
-// arbejdstype — fx registreret, mens holdet endnu var en opgave — tælles i
-// holdets total og står for sig, så intet forsvinder.
-function normRows(n, wt, color, ownMins = 0) {
-  const elapsed = forloebAndel();
-  const linjer = ['undervisning', 'forberedelse', 'retning'].filter(t => n[t] > 0).map(t => {
-    const brugt = wt[t] || 0;
-    const normM = Math.round(n[t] * 60);
-    const pct   = normM > 0 ? Math.min(100, Math.round(brugt / normM * 100)) : 0;
-    return `<div class="rapport-norm-row">
-      <span class="rapport-wt-label">${capitalize(t)}</span>
-      <span class="rapport-norm-tal">${brugt > 0 ? fmtMins(brugt) : '0t'} / ${fmtTimer(n[t])}<span class="enhed">t</span></span>
-      <div class="rapport-norm-bar"><div class="rapport-progress-fill" style="width:${pct}%;background:${color}"></div></div>
-      ${forloebChip(brugt, normM, elapsed, true)}
+// ─── Akkordlinjen under en opgave ─────────────────────────
+// Optjeningsmåde, optjent, fælles tid og saldo. En opgave og dens aktive
+// under-opgaver står i én række, så deres akkorder lægges sammen dér.
+const MAADE_TEKST = { ...OPTJENING, afsluttet: 'Afsluttet', hold: 'Hold' };
+
+function akkordLinje(act, ak, kids = []) {
+  const egen = ak.enheder[act.id];
+  if (!egen) return '';                        // under forælderens budget
+  if (egen.budget == null) {
+    return `<div class="rapport-akkord">
+      <span class="rapport-akkord-maade">Uden budget · tælles som fælles tid</span>
     </div>`;
-  });
-  if (n.tillaeg > 0) {
-    linjer.push(`<div class="rapport-norm-row">
-      <span class="rapport-wt-label">Tillæg</span>
-      <span class="rapport-norm-tal">${fmtTimer(n.tillaeg)}<span class="enhed">t</span></span>
-    </div>`);
   }
-  const udenType = ownMins - ['undervisning', 'forberedelse', 'retning']
-    .reduce((s, t) => s + (wt[t] || 0), 0);
-  if (udenType > 0) {
-    linjer.push(`<div class="rapport-norm-row">
-      <span class="rapport-wt-label">Uden arbejdstype</span>
-      <span class="rapport-norm-tal">${fmtMins(udenType)}</span>
-    </div>`);
+  const u = samletEnhed([egen, ...kids.map(id => ak.enheder[id])]);
+  const maade = egen.maade === 'manuel'
+    ? `${MAADE_TEKST.manuel} ${Math.round(Number(act.fremdrift) || 0)}%`
+    : act.type === 'hold' ? 'Løbende · uden normgrundlag' : MAADE_TEKST[egen.maade];
+  return `<div class="rapport-akkord">
+    <span class="rapport-akkord-maade">${maade}</span>
+    <span>Optjent <b>${fmtMins(u.optjent)}</b></span>
+    ${u.faelles > 0 ? `<span>Fælles <b>${fmtMins(u.faelles)}</b></span>` : ''}
+    ${saldoChip(u.saldo)}
+  </div>`;
+}
+
+// ─── Holdets akkord pr. arbejdstype ───────────────────────
+// Kun i skoleårs-rapporten: normerne gælder hele året. Undervisningen tælles
+// i moduler (95 min). Forberedelsen optjenes med hvert modul, retningen med
+// hvert rettet sæt. Bjælken er brugt mod norm, og stregen i den er det
+// optjente — står bjælken forbi stregen, har arbejdet taget længere tid,
+// end det er betalt med. Tillægget tælles ikke: eksamen er en opgave for sig.
+// Tid uden arbejdstype — fx registreret, mens holdet endnu var en opgave —
+// tæller i holdets total og står for sig, så intet forsvinder.
+function holdAkkord(u, act, color, ownMins) {
+  const h = u.hold;
+  const linjer = [];
+
+  const over = h.overNorm > 0
+    ? `<span class="forecast-chip forecast-chip-sm forecast-neutral">${komma(h.overNorm / MODUL_MIN, 1)} moduler over normen</span>`
+    : '';
+  linjer.push(akkordType('Undervisning',
+    `<b>${komma(h.moduler, 1)}</b> af ${komma(h.modulerNorm, 1)} moduler`,
+    h.undervisning.brugt, h.undervisning.norm, null, color, over));
+
+  linjer.push(akkordType('Forberedelse',
+    `brugt <b>${fmtMins(h.forberedelse.brugt)}</b> · optjent <b>${fmtMins(h.forberedelse.optjent)}</b> af ${fmtTimer(h.forberedelse.norm / 60)}<span class="enhed">t</span>`,
+    h.forberedelse.brugt, h.forberedelse.norm, h.forberedelse.optjent, color,
+    saldoChip(h.forberedelse.optjent - h.forberedelse.brugt)));
+
+  if (h.retning.norm > 0) {
+    linjer.push(akkordType('Retning',
+      `rettet <b>${komma(h.rettet, 1)}</b> af ${komma(h.rettetNorm, 1)} elevtimer · brugt <b>${fmtMins(h.retning.brugt)}</b> · optjent <b>${fmtMins(h.retning.optjent)}</b>`,
+      h.retning.brugt, h.retning.norm, h.retning.optjent, color,
+      saldoChip(h.retning.optjent - h.retning.brugt)));
+  } else if (h.retning.brugt > 0) {
+    linjer.push(akkordType('Retning', `brugt <b>${fmtMins(h.retning.brugt)}</b> · ingen retteakkord`,
+      0, 0, null, color, saldoChip(-h.retning.brugt)));
   }
-  return `<div class="rapport-norm">${linjer.join('')}</div>`;
+
+  const udenType = ownMins - h.brugtTyper;
+  const ekstra = [];
+  if (udenType > 0)
+    ekstra.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Uden arbejdstype</span> ${fmtMins(udenType)}</span>`);
+  if (u.faelles > 0)
+    ekstra.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Fælles tid</span> ${fmtMins(u.faelles)}</span>`);
+  if (h.tillaeg > 0)
+    ekstra.push(`<span class="rapport-wt-item rapport-akkord-note">Tillæg ${fmtTimer(h.tillaeg / 60)}<span class="enhed">t</span> tælles ikke — opret eksamen som opgave</span>`);
+
+  return `<div class="rapport-norm">${linjer.join('')}</div>
+    ${ekstra.length ? `<div class="rapport-wt-row">${ekstra.join('')}</div>` : ''}
+    <div class="rapport-akkord">
+      <span class="rapport-akkord-maade">Holdets akkord</span>
+      <span>Optjent <b>${fmtMins(u.optjent)}</b> af ${fmtTimer(u.budget / 60)}<span class="enhed">t</span></span>
+      ${saldoChip(u.saldo)}
+    </div>`;
+}
+
+function akkordType(navn, tal, brugt, norm, optjent, color, chip) {
+  const pct  = v => norm > 0 ? Math.min(100, v / norm * 100) : 0;
+  const bar  = norm > 0 ? `<div class="rapport-norm-bar">
+      <div class="rapport-progress-fill" style="width:${pct(brugt).toFixed(1)}%;background:${color}"></div>
+      ${optjent != null ? `<div class="akkord-streg" style="left:${pct(optjent).toFixed(1)}%"></div>` : ''}
+    </div>` : '';
+  return `<div class="akkord-type">
+    <span class="rapport-wt-label">${navn}</span>
+    ${chip || '<span></span>'}
+    <span class="akkord-type-tal">${tal}</span>
+    ${bar}
+  </div>`;
 }
 
 // ─── Realiseret faktor ────────────────────────────────────
@@ -439,10 +578,11 @@ function normRows(n, wt, color, ownMins = 0) {
 //   retning             = minutter pr. elev pr. fordybelsestime
 //                         — budgettet er faktor / 27 × 60, fx 5,2 min
 //
-// Hvor meget fordybelsestid der er rettet indtil nu, ved appen ikke. Den
-// skønnes ud fra, hvor stor en del af årets undervisning der er registreret:
-// har man holdt 40 % af undervisningen, regnes 40 % af fordybelsestiden for
-// rettet. Uden registreret undervisning er der intet at måle mod.
+// Retningen måles mod de rettede sæt, der er afsluttet i perioden: tiden
+// brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt endnu,
+// skønnes den rettede fordybelsestid ud fra, hvor stor en del af årets
+// undervisning der er registreret, og tallet mærkes "skønnet". Har holdet
+// sæt, men ingen i perioden, er der intet at måle mod.
 // Forholdstal gælder for enhver periode, så linjen står også under dag, uge
 // og måned.
 //
@@ -453,26 +593,36 @@ function faktorLinje(act, n, wt) {
   const u = wt.undervisning || 0;
   if (u === 0) return '';
   const { faktor } = faktorerFor(act.schoolYear);
-  const komma  = (v, d = 2) => v.toLocaleString('da-DK', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const komma2 = (v, d = 2) => v.toLocaleString('da-DK', { minimumFractionDigits: d, maximumFractionDigits: d });
   const dele   = [];
 
   const realF = (u + (wt.forberedelse || 0)) / u;
   dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Forb.faktor</span>
-    <b>${komma(realF)}</b> · budget ${komma(faktor)}</span>`);
+    <b>${komma2(realF)}</b> · budget ${komma2(faktor)}</span>`);
 
   if (n && n.retning > 0 && n.undervisning > 0) {
-    const elevTimer = n.retning * 27 / faktor;          // elever × fordybelsestid × antal hold
-    const andel     = u / (n.undervisning * 60);
-    const realR     = (wt.retning || 0) / (elevTimer * andel);
-    const budgetR   = faktor / 27 * 60;
-    dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Retning</span>
-      <b>${komma(realR, 1)}</b> · budget ${komma(budgetR, 1)} <span class="enhed">min</span> pr. elev pr. fordybelsestime</span>`);
+    const elever  = Number(act.normGrundlag?.elever) || 0;
+    const budgetR = faktor / 27 * 60;
+    let realR = null, skoen = false;
+    if ((act.rettedeSaet || []).length) {
+      const et = rettedeElevtimer(act, datoInput(start()), datoInput(slut()));
+      if (et > 0 && elever > 0) realR = (wt.retning || 0) / (et * elever);
+    } else {
+      const elevTimer = n.retning * 27 / faktor;          // elever × fordybelsestid × antal hold
+      const andel     = u / (n.undervisning * 60);
+      realR = (wt.retning || 0) / (elevTimer * andel);
+      skoen = true;
+    }
+    if (realR != null) {
+      dele.push(`<span class="rapport-wt-item"><span class="rapport-wt-label">Retning${skoen ? ' (skønnet)' : ''}</span>
+        <b>${komma2(realR, 1)}</b> · budget ${komma2(budgetR, 1)} <span class="enhed">min</span> pr. elev pr. fordybelsestime</span>`);
+    }
   }
   return `<div class="rapport-wt-row rapport-faktor">${dele.join('')}</div>`;
 }
 
 // ─── Afsluttede opgaver ───────────────────────────────────
-function renderArchivedList(rows) {
+function renderArchivedList(rows, ak) {
   if (!rows.length) return '';
 
   // Netto ubrugt budget på tværs af afsluttede opgaver — overforbrug på én
@@ -491,11 +641,11 @@ function renderArchivedList(rows) {
   let html = `<div class="rapport-act-section rapport-archived-section">
     <div class="rapport-act-head">Afsluttede opgaver</div>
     ${netLine}`;
-  rows.forEach(r => { html += archivedRow(r); });
+  rows.forEach(r => { html += archivedRow(r, ak); });
   return html + '</div>';
 }
 
-function archivedRow(r) {
+function archivedRow(r, ak) {
   const { act, totalMins, budgetMins, diffMins, isChild } = r;
   const color = act.color || 'var(--accent)';
 
@@ -522,13 +672,23 @@ function archivedRow(r) {
     chip = `<div class="rapport-archived-nobudget">Intet budget · ${fmtMins(totalMins)} brugt</div>`;
   }
 
+  // Med fordelt fælles tid står opgavens andel her, så saldoen kan ses
+  const u   = ak?.enheder[act.id];
+  const fae = u && u.budget != null && u.faelles > 0
+    ? `<div class="rapport-akkord">
+         <span>Fælles <b>${fmtMins(u.faelles)}</b></span>
+         <span class="rapport-akkord-maade">Saldo med fælles tid</span>
+         ${saldoChip(u.saldo)}
+       </div>`
+    : '';
+
   return `<div class="rapport-act-row rapport-act-row-archived${isChild ? ' rapport-act-row-child' : ''}">
     <div class="rapport-act-top">
       <div class="act-color-dot" style="background:${color}"></div>
       <div class="rapport-act-name">${esc(act.name)}</div>
       <div class="rapport-act-time">${totalMins > 0 ? fmtMins(totalMins) : '—'}</div>
     </div>
-    ${bar}${chip}
+    ${bar}${chip}${fae}
   </div>`;
 }
 
@@ -552,7 +712,7 @@ export function exportCSV() {
       start ? fmtTime(start) : '',
       end   ? fmtTime(end)   : '',
       e.durationMinutes ?? '',
-      q(act?.name ?? ''),
+      q(erPause(e) ? PAUSE_NAVN : act?.name ?? ''),
       e.workType ?? '',
       q(e.note ?? '')
     ].join(';');
@@ -585,6 +745,15 @@ function bindListeners() {
 
   document.getElementById('btn-export-csv')
     ?.addEventListener('click', exportCSV);
+
+  // Fluebenet i akkordregnskabet tegnes med rapporten, så det fanges her
+  document.getElementById('rapport-content')
+    ?.addEventListener('change', e => {
+      if (e.target.id !== 'akkord-fordel') return;
+      gemIndstilling('fordelFaellesTid', e.target.checked);
+      renderReport();
+      document.getElementById('akkord-fordel')?.focus();
+    });
 }
 
 // ─── Formattering ─────────────────────────────────────────
@@ -600,8 +769,16 @@ function fmtTime(d) {
 }
 
 function fmtMins(m) {
+  m = Math.round(m || 0);
   if (!m) return '0m';
   if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60), r = m % 60;
   return r > 0 ? `${h}t ${r}m` : `${h}t`;
 }
+
+// Saldo med fortegn: "+3t 20m", "−1t 5m"
+const fmtSaldo = m => Math.round(m) === 0 ? '± 0m' : `${m > 0 ? '+' : '−'}${fmtMins(Math.abs(m))}`;
+
+// 23.4 → "23,4"
+const komma = (v, d = 1) => (Math.round(v * 10 ** d) / 10 ** d)
+  .toLocaleString('da-DK', { maximumFractionDigits: d });
