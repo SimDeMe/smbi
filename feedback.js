@@ -385,6 +385,20 @@ function knapISimuleringen(){
 
 function knapPaaSiden(){
   var sag = sidensSag('siden selv');
+
+  /* En side kan selv sige, hvor knappen skal stå, og låne sine egne
+     knapklasser — fx Tid-appen, hvor en svævende knap ville dække
+     bundnavigationen:
+       <div data-feedback-vaert data-feedback-klasse="btn btn-secondary"></div> */
+  var egen = document.querySelector('[data-feedback-vaert]');
+  if (egen){
+    var b = lavKnap(sag, '');
+    b.className = egen.getAttribute('data-feedback-klasse') || 'fb-knap';
+    b.textContent = 'Giv feedback';
+    egen.appendChild(b);
+    return;
+  }
+
   var knap = lavKnap(sag, 'fb-knap-side');
   knap.textContent = 'Giv feedback';
 

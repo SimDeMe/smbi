@@ -243,6 +243,7 @@ Egen side:
 - Ugestart
 - Log ud
 - Eksport af alle data (JSON)
+- Feedback: knappen fra `/feedback.js` står her (via `data-feedback-vaert`) og ikke som svævende knap, der ville dække bundmenuen
 
 ### 10. Akkordregnskab
 Læreren er både timelønnet (normen, 1650 t) og akkordlønnet (hver linje i opgavefordelingen er et budget, der betales, uanset hvor lang tid arbejdet tager). Skoleårs-rapporten viser derfor ud over den samlede tid mod normen også, hvor meget af akkorderne der er leveret.
