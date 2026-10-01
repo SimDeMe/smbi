@@ -15,6 +15,8 @@ format:
 
 En tsunami kan krydse et helt ocean på få timer. I denne øvelse undersøger I, hvordan en tsunamibølges hastighed afhænger af vanddybden. I laver bølger i et vandkar ved tre forskellige dybder, måler deres fart og sammenligner med den teoretiske formel. Bagefter bruger I formlen på det rigtige ocean.
 
+![En tsunami kan ved kysten vise sig som en bred strøm af indtrængende vand. På lavt vand falder bølgens hastighed, mens bølgehøjden kan vokse. AI-genereret illustration; ikke en bestemt hændelse eller en gengivelse i målestok.](figurer/tsunami-kyst.jpg){#fig-tsunami-kyst width="90%" fig-alt="Fotorealistisk illustration af en bred bølgefront, der bevæger sig ind mod en sandet klippekyst."}
+
 ## Baggrund
 
 En almindelig bølge skabes af vinden og bevæger kun vandet tæt ved overfladen. En tsunami opstår, når hele vandsøjlen fra bund til overflade flyttes på én gang — fx når et jordskælv løfter en del af havbunden lodret, eller når et stort skred eller et vulkanudbrud skubber vandet til side (@fig-tsunami, øverst).
@@ -42,6 +44,8 @@ Bølgen i vandkarret er også en bølge på lavt vand: den er meget længere, en
 :::
 
 ## Fremgangsmåde
+
+![Eksempel på forsøgsopstillingen: et aflangt, gennemsigtigt vandkar, en tommestok, en klods og en mobiltelefon til tidtagning. Her står karret vandret, som under målingen. AI-genereret illustration; mål altid længde og vanddybde i jeres eget kar.](figurer/vandkar-forsog.jpg){#fig-vandkar-foto width="90%" fig-alt="Fotorealistisk illustration af et lavt vandkar på et bord med en bølge i vandet, tommestok, træklods og mobiltelefon."}
 
 1. Mål karrets indvendige længde $L$. Det er én banelængde. Skriv den over @tbl-1.
 2. Stil karret på et vandret bord, og fyld vand i, til dybden er ca. 0,025 m (2,5 cm). Mål dybden så nøjagtigt som muligt, gerne et par steder i karret, og skriv den i @tbl-1.
