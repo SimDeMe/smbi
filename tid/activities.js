@@ -2,7 +2,7 @@
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins } from './timer.js';
-import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, aarsnormTimer, timerTilModuler } from './normer.js';
+import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, undervistTimer, timerTilModuler } from './normer.js';
 import { optjeningFor } from './akkord.js';
 import { renderSaetListe } from './rettet.js';
 import {
@@ -219,7 +219,7 @@ function openActSheet(actId) {
   NORM_FELTER.forEach(([id, key]) => {
     document.getElementById(id).value = g[key] != null ? String(g[key]).replace('.', ',') : '';
   });
-  visAeldreAarsnorm(g);
+  visAeldreAarsnorm(g, a?.schoolYear || selectedYear);
 
   const typeVal = a?.type || 'opgave';
   const radio = document.querySelector(`input[name="act-type"][value="${typeVal}"]`);
@@ -310,14 +310,15 @@ function laesNormgrundlag() {
   return g.moduler != null || g.aarsnorm != null ? g : null;
 }
 
-// Et hold gemt før årsnormen blev tastet i moduler, har den i timer.
-// Den vises omregnet til moduler; rettes feltet, gemmes modulerne.
-function visAeldreAarsnorm(g) {
+// Et hold gemt før årsnormen blev tastet i moduler, har den i timer fra
+// holdoversigten, uden reduktion. Den vises som moduler med reduktionen
+// trukket fra, som i Lectio; rettes feltet, gemmes modulerne.
+function visAeldreAarsnorm(g, aar) {
   const felt = document.getElementById('act-aarsnorm');
   delete felt.dataset.timer;
   delete felt.dataset.vist;
   if (Number.isFinite(g.moduler) || !Number.isFinite(g.aarsnorm)) return;
-  const m = Math.round(timerTilModuler(g.aarsnorm) * 100) / 100;
+  const m = Math.round(timerTilModuler(undervistTimer(g, faktorerFor(aar).reduktion)) * 100) / 100;
   felt.value = String(m).replace('.', ',');
   felt.dataset.timer = String(g.aarsnorm);
   felt.dataset.vist  = felt.value;
@@ -342,13 +343,15 @@ function opdaterUdregning() {
   budget.value = Math.round(n.total * 100) / 100;
   const { faktor, reduktion } = faktorerFor(aar);
   ud.innerHTML = `
-    <span class="norm-udregning-fod">Årsnorm ${g.moduler != null ? `${fmtTimer(g.moduler)} moduler à 95 min = ` : ''}${fmtTimer(aarsnormTimer(g))} <span class="enhed">t</span></span>
+    <span class="norm-udregning-fod">${g.moduler != null
+      ? `Årsnorm ${fmtTimer(g.moduler)} moduler à 95 min = ${fmtTimer(undervistTimer(g, 1))} <span class="enhed">t</span> undervisning`
+      : `Årsnorm ${fmtTimer(g.aarsnorm)} <span class="enhed">t</span> × reduktion = ${fmtTimer(undervistTimer(g, faktorerFor(aar).reduktion))} <span class="enhed">t</span> undervisning`}</span>
     <span>Undervisning <b>${fmtTimer(n.undervisning)}</b></span>
     <span>Forberedelse <b>${fmtTimer(n.forberedelse)}</b></span>
     <span>Retning <b>${fmtTimer(n.retning)}</b></span>
     ${n.tillaeg ? `<span>Tillæg <b>${fmtTimer(n.tillaeg)}</b></span>` : ''}
     <span class="norm-udregning-sum">I alt <b>${fmtTimer(n.total)}</b> <span class="enhed">t</span></span>
-    <span class="norm-udregning-fod">${g.antalHold > 1 ? `${String(g.antalHold).replace('.', ',')} hold · ` : ''}Faktor ${String(faktor).replace('.', ',')} · reduktion ${String(reduktion).replace('.', ',')} (${esc(aar)})</span>`;
+    <span class="norm-udregning-fod">${g.antalHold > 1 ? `${String(g.antalHold).replace('.', ',')} hold · ` : ''}Faktor ${String(faktor).replace('.', ',')}${g.moduler != null ? '' : ` · reduktion ${String(reduktion).replace('.', ',')}`} (${esc(aar)})</span>`;
 }
 
 function populateParentSelect(year, selId) {

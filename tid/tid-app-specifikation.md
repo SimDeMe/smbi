@@ -54,7 +54,7 @@ Alt under `users/{userId}/`:
   isArchived: false,
   note: "",                         // valgfri kommentar fra opgavefordelingen, fx "5 stk"
   normGrundlag: null | {            // kun hold, valgfrit — fra skolens holdoversigt
-    moduler: 41,                    // årsnormen i moduler à 95 min, som læreren taster den; påkrævet hvis objektet findes
+    moduler: 41,                    // årsnormen i moduler à 95 min fra Lectio (reduktion trukket fra); påkrævet hvis objektet findes
                                     // (ældre hold har i stedet aarsnorm: 65 i klokketimer — den bruges uændret)
     elever: 30,
     fordybelsestid: 15,             // elevernes skriftlige tid inkl. terminsprøver
@@ -114,7 +114,7 @@ Middelfart Gymnasiums holdoversigt regner et holds vejledende arbejdstid ud som
 
 Skolen deler ikke budgettet op, men appen læser formlen som tre normer, én pr. arbejdstype:
 
-Årsnormen tastes i **moduler à 95 min**, ikke i klokketimer. Formlen regner i timer, så appen omregner: årsnorm (timer) = moduler × 95 / 60. Udregningen under felterne viser begge tal, så de kan holdes op mod holdoversigten. Et hold gemt med årsnormen i timer (`aarsnorm`) vises omregnet til moduler; rettes feltet ikke, gemmes timerne uændret.
+Årsnormen tastes i **moduler à 95 min, som den står i Lectio** — ikke i klokketimer. Lectios moduler er dem, holdet faktisk undervises i, så reduktionen er allerede trukket fra: *årsnorm × reduktion* i formlen erstattes af *moduler × 95 / 60*, og reduktionen bruges ikke. Udregningen under felterne viser modulerne omregnet til timer. Et hold gemt med årsnormen i timer fra holdoversigten (`aarsnorm`) regnes som hidtil, med reduktion, og vises i formularen som moduler med reduktionen trukket fra; rettes feltet ikke, gemmes timerne uændret.
 
 - **Undervisning** = årsnorm × reduktion + puljetimer. Reduktionen er en reel nedskæring af timerne: holdet undervises kun i fx 90 % af årsnormen (grunden er ikke oplyst)
 - **Forberedelse** = undervisning × (faktor − 1)

@@ -17,21 +17,25 @@
 // elevtallet ikke spiller ind.
 // Reduktionen er en reel nedskæring: holdet undervises kun i 90 % af
 // årsnormen (grunden er ikke oplyst), og forberedelsen regnes af de timer,
-// der faktisk undervises.
+// der faktisk undervises. Årsnormen i moduler fra Lectio har den allerede
+// trukket fra (se undervistTimer).
 // Faktoren og reduktionen skifter fra skoleår til skoleår og ligger derfor i
 // indstillingerne pr. skoleår (2025/26: 2,35 og 0,9 — i 2021/22: 2,55 og 0,93).
 
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaLaengde } from './skema.js';
 
-// Årsnormen tastes i moduler à 95 min, som læreren kender den. Formlen
-// regner i klokketimer, så modulerne omregnes: 1 modul = 95/60 t.
-// Ældre hold har årsnormen gemt i timer (aarsnorm) og bruger den uændret.
+// Årsnormen tastes i moduler à 95 min, som den står i Lectio. Lectios
+// moduler er dem, holdet faktisk undervises i — reduktionen er allerede
+// trukket fra — så de omregnes bare til klokketimer: 1 modul = 95/60 t.
+// Ældre hold har årsnormen gemt i timer (aarsnorm) fra holdoversigten; her
+// er reduktionen ikke trukket fra, og den ganges på som hidtil.
 const MODUL_TIMER = skemaLaengde(MODULER[0]) / 60;
 
-export function aarsnormTimer(g) {
+// De timer, holdet undervises i, før puljetimerne — eller null
+export function undervistTimer(g, reduktion) {
   if (Number.isFinite(g?.moduler))  return g.moduler * MODUL_TIMER;
-  if (Number.isFinite(g?.aarsnorm)) return g.aarsnorm;
+  if (Number.isFinite(g?.aarsnorm)) return g.aarsnorm * reduktion;
   return null;
 }
 
@@ -52,16 +56,16 @@ export function faktorerFor(skoleaar) {
 // Har holdet et normgrundlag? Årsnormen (moduler eller ældre timer) er det eneste, der skal være udfyldt;
 // resten tæller som 0, hvis det mangler (et NV-hold har ingen fordybelsestid).
 export const harNormgrundlag = a =>
-  a?.type === 'hold' && aarsnormTimer(a.normGrundlag) != null;
+  a?.type === 'hold' && undervistTimer(a.normGrundlag, 1) != null;
 
 // De tre normer og tillægget i timer — eller null, hvis holdet ikke har
 // et normgrundlag og bare har et budget skrevet ind i hånden
 export function beregnNormer(g, { faktor, reduktion }) {
-  const aarsnorm = aarsnormTimer(g);
-  if (aarsnorm == null) return null;
+  const undervist = undervistTimer(g, reduktion);
+  if (undervist == null) return null;
   const tal = v => Number.isFinite(v) ? v : 0;
   const antal = Number.isFinite(g.antalHold) && g.antalHold > 0 ? g.antalHold : 1;
-  const undervisning = (aarsnorm * reduktion + tal(g.puljetimer)) * antal;
+  const undervisning = (undervist + tal(g.puljetimer)) * antal;
   const forberedelse = undervisning * (faktor - 1);
   const retning      = tal(g.elever) * tal(g.fordybelsestid) / 27 * faktor * antal;
   const tillaeg      = tal(g.tillaeg) * antal;
