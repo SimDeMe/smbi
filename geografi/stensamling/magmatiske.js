@@ -108,7 +108,10 @@ export default [
     kend:{korn:['fine','store'], syre:false, opbygning:['porfyr','massiv'], haard:['glas'], farve:['moerk','spaettet']},
     farver:['#5B4E45','#E6D9C4','#3E352F'], tegning:'porfyr',
     placering:'skuffen «Udbrudsprodukter 1»', billeder:[
-      {fil:'MA-06-rhombeporfyr-1.jpg', tekst:'Mørk grundmasse med rosa feldspatkrystaller — flere har rhombeform'}
+      {fil:'MA-06-rhombeporfyr-1.jpg', tekst:'Mørk grundmasse med rosa feldspatkrystaller — flere har rhombeform'},
+      {fil:'MA-06-rhombeporfyr-2.jpg', tekst:'Rundslidt rhombeporfyr med lyse, ofte rhombeformede krystaller i mørk, rødbrun grundmasse'},
+      {fil:'MA-06-rhombeporfyr-3.jpg', tekst:'Olivenbrun grundmasse med lyse krystaller og små gasblærer'},
+      {fil:'MA-06-rhombeporfyr-4.jpg', tekst:'Lillabrun rhombeporfyr — krystallerne ligger tæt og i alle retninger'}
     ]
   },
   {
@@ -216,27 +219,6 @@ export default [
     kend:{korn:['fine'], syre:false, opbygning:['massiv','lagdelt','huller'], haard:['kniv'], farve:['lys']},
     farver:['#D8CBAE','#B8A987','#EFE6D2'], tegning:'finkornet',
     placering:'', billeder:[]
-  },
-  {
-    id:'porfyr', kode:'MA-13', nr:[],
-    navn:'Porfyr', andreNavne:['kvartsporfyr', 'feldspatporfyr'],
-    type:'Dagbjergart · porfyrisk',
-    kort:'Tæt, brunlig grundmasse med lyse feldspatkrystaller som spredte pletter.',
-    kendetegn:'Rød-, lilla- eller olivenbrun grundmasse så finkornet, at kornene ikke kan ses, med skarpt afgrænsede, lyse krystaller på op til et par centimeter. Ofte med små huller. Som ledeblok er den tit rundslidt af is og vand.',
-    kornstoerrelse:'grundmasse < 1 mm, krystaller 0,5–3 cm', densitet:'2,6–2,7',
-    mineraler:[{id:'kalifeldspat',andel:'store krystaller'},{id:'plagioklas'},{id:'kvarts'}],
-    dannelse:'Kiselrig lava, der er begyndt at krystallisere i magmakammeret, så de første, store feldspatkrystaller flyder i smelten. Resten størkner hurtigt på overfladen til en tæt grundmasse. Hullerne er gasbobler, der blev fanget i lavaen.',
-    findested:'Fast klippe i Sverige, på Åland og i havbunden i Østersøen. Fundet i Danmark som ledeblok, ført hertil af isen.',
-    anvendelse:'Ledeblok, der viser isens vej. Pyntesten og skærver.',
-    forveksles:'Rhombeporfyr (rhombeformede krystaller i grå eller brun grundmasse) og granit (grovkornet hele vejen igennem).',
-    kend:{korn:['fine','store'], syre:false, opbygning:['porfyr','huller'], haard:['glas'], farve:['moerk','spaettet','roed']},
-    farver:['#6B4A4E','#D9CFA6','#4A3236'], tegning:'porfyr',
-    se:[{tekst:'Simulering: vulkanudbrud', href:'/geografi/vulkanudbrud.html'}],
-    placering:'skuffen «Udbrudsprodukter 1»', billeder:[
-      {fil:'MA-13-porfyr-1.jpg', tekst:'Rundslidt porfyr med gullige feldspatkrystaller i mørk, rødbrun grundmasse'},
-      {fil:'MA-13-porfyr-2.jpg', tekst:'Olivenbrun grundmasse med lyse, aflange krystaller og små gasblærer'},
-      {fil:'MA-13-porfyr-3.jpg', tekst:'Lillabrun porfyr — krystallerne ligger tæt og i alle retninger'}
-    ]
   },
   {
     id:'paaskallavikporfyr', kode:'MA-14', nr:['klassesæt-110'],

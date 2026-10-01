@@ -17,12 +17,12 @@ dele findes. Numrene er skrevet ind i postens `nr`.
 | `MA-01-granit-1.jpg` | Granit | «Granit (magm.)» | | IMG_0082 | |
 | `MA-05-peridotit-1.jpg` | Peridotit | ingen seddel | | IMG_0101 | Tre løse, grønne sten |
 | `MA-06-rhombeporfyr-1.jpg` | Rhombeporfyr | ingen seddel | | IMG_0109 | **Usikker.** Mørk grundmasse med rosa feldspatkrystaller, flere rhombeformede |
+| `MA-06-rhombeporfyr-2.jpg` | Rhombeporfyr | ingen seddel | | IMG_0110 | Rundslidt, mørk rødbrun grundmasse med lyse krystaller. Bestemt af SM |
+| `MA-06-rhombeporfyr-3.jpg` | Rhombeporfyr | ingen seddel | | IMG_0113 | Olivenbrun grundmasse |
+| `MA-06-rhombeporfyr-4.jpg` | Rhombeporfyr | ingen seddel | | IMG_0114 | Lillabrun. IMG_0115 er den samme sten fra en anden vinkel og er ikke brugt |
 | `MA-07-rhyolit-1.jpg` | Rhyolit | «Rhyolit (magm.)» | | IMG_0083 | |
 | `MA-09-basalt-1.jpg` | Basalt | «Basalt?» | | IMG_0085 | Spørgsmålstegnet står på sedlen |
 | `MA-10-obsidian-1.jpg` | Obsidian | ingen seddel | | IMG_0088 | |
-| `MA-13-porfyr-1.jpg` | Porfyr | ingen seddel | | IMG_0110 | Rundslidt, mørk rødbrun grundmasse med gullige krystaller |
-| `MA-13-porfyr-2.jpg` | Porfyr | ingen seddel | | IMG_0113 | Olivenbrun grundmasse |
-| `MA-13-porfyr-3.jpg` | Porfyr | ingen seddel | | IMG_0114 | Lillabrun. IMG_0115 er den samme sten fra en anden vinkel og er ikke brugt |
 | `MA-14-paaskallavikporfyr-1.jpg` | Påskallavikporfyr | «Påskallavik porfyr» | klassesæt 110 (prik) | IMG_0117 | |
 | `MA-14-paaskallavikporfyr-2.jpg` | Påskallavikporfyr | «Påskallavik porfyr» | klassesæt 110 (prik) | IMG_0118 | Samme sten fra siden |
 | `MA-15-oestersoekvartsporfyr-1.jpg` | Østersøkvartsporfyr | ingen seddel | | IMG_0116 | Sten slået midt over: rødlig brudflade. Bestemt af SM |
