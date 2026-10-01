@@ -24,14 +24,13 @@
 //
 // Opgaver optjener efter deres optjeningsmåde: løbende (jævnt over året), ved
 // afslutning (intet, til den afsluttes) eller manuelt (en procent). En
-// afsluttet aktivitet — opgave eller hold — har altid optjent hele sit budget,
-// og dens brugte tid er kun den, der faktisk er registreret på den.
+// afsluttet aktivitet — opgave eller hold — har altid optjent hele sit budget.
 //
 // Fælles tid er tid, der ikke hører til en akkord: ubundet tid, pauser og
 // opgaver uden budget. Den tæller som brugt og kan fordeles på alle
-// aktiviteter med budget, der stadig er i gang, vægtet efter budgettet. De
-// afsluttede får intet: de står kun med det, der faktisk blev brugt på dem.
-// Fordelingen flytter kun, hvor tiden står; den samlede saldo er den samme.
+// aktiviteter med budget, vægtet efter budgettet — også de afsluttede, så
+// tallene ikke springer, når en opgave afsluttes. Fordelingen flytter kun,
+// hvor tiden står; den samlede saldo er den samme.
 //
 // Alle tal er i minutter.
 
@@ -137,13 +136,10 @@ export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
   faelles.total = faelles.ubundet + faelles.pauser + faelles.udenBudget;
 
   // Fordelingen efter budget
-  // Fordelingen efter budget — kun på de aktiviteter, der stadig er i gang.
-  // En afsluttet aktivitet står med det, der faktisk blev brugt på den.
   const medBudget = Object.values(enheder).filter(u => u.budget > 0);
-  const iGang     = medBudget.filter(u => !u.act.isArchived);
-  const vaegt     = iGang.reduce((s, u) => s + u.budget, 0);
+  const vaegt     = medBudget.reduce((s, u) => s + u.budget, 0);
   const fordelt   = fordel && vaegt > 0;
-  iGang.forEach(u => {
+  medBudget.forEach(u => {
     u.faelles = fordelt ? faelles.total * u.budget / vaegt : 0;
   });
   Object.values(enheder).forEach(u => {
@@ -157,7 +153,7 @@ export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
 
   return {
     enheder, faelles, fordelt,
-    akkord:  medBudget.reduce((s, u) => s + u.budget, 0),   // summen af budgetterne
+    akkord:  vaegt,                 // summen af budgetterne
     optjent, brugt,
     saldo:   optjent - brugt,
     // Fælles tid, der står for sig selv, fordi den ikke er fordelt

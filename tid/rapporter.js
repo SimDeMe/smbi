@@ -217,7 +217,7 @@ function renderReport() {
     renderSummary(totalMins, ak) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
-    renderArchivedList(archivedRows);
+    renderArchivedList(archivedRows, ak);
 }
 
 const fordelFaelles = () => getSettings().fordelFaellesTid !== false;
@@ -623,7 +623,7 @@ function faktorLinje(act, n, wt) {
 }
 
 // ─── Afsluttede opgaver ───────────────────────────────────
-function renderArchivedList(rows) {
+function renderArchivedList(rows, ak) {
   if (!rows.length) return '';
 
   // Netto ubrugt budget på tværs af afsluttede opgaver — overforbrug på én
@@ -642,11 +642,11 @@ function renderArchivedList(rows) {
   let html = `<div class="rapport-act-section rapport-archived-section">
     <div class="rapport-act-head">Afsluttede opgaver</div>
     ${netLine}`;
-  rows.forEach(r => { html += archivedRow(r); });
+  rows.forEach(r => { html += archivedRow(r, ak); });
   return html + '</div>';
 }
 
-function archivedRow(r) {
+function archivedRow(r, ak) {
   const { act, totalMins, budgetMins, diffMins, isChild } = r;
   const color = act.color || 'var(--accent)';
 
@@ -673,6 +673,15 @@ function archivedRow(r) {
     chip = `<div class="rapport-archived-nobudget">Intet budget · ${fmtMins(totalMins)} brugt</div>`;
   }
 
+  // Med fordelt fælles tid står opgavens andel her, så saldoen kan ses
+  const u   = ak?.enheder[act.id];
+  const fae = u && u.budget != null && u.faelles > 0
+    ? `<div class="rapport-akkord">
+         <span>Fælles <b>${fmtMins(u.faelles)}</b></span>
+         <span class="rapport-akkord-maade">Saldo med fælles tid</span>
+         ${saldoChip(u.saldo)}
+       </div>`
+    : '';
 
   return `<div class="rapport-act-row rapport-act-row-archived${isChild ? ' rapport-act-row-child' : ''}">
     <div class="rapport-act-top">
@@ -680,7 +689,7 @@ function archivedRow(r) {
       <div class="rapport-act-name">${esc(act.name)}</div>
       <div class="rapport-act-time">${totalMins > 0 ? fmtMins(totalMins) : '—'}</div>
     </div>
-    ${bar}${chip}
+    ${bar}${chip}${fae}
   </div>`;
 }
 

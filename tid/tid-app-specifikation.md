@@ -273,13 +273,13 @@ Hold uden normgrundlag optjener deres budget løbende.
 - *Ved afslutning*: intet, til opgaven afsluttes med "Afslut opgave" — eksamen, SRP
 - *Manuelt*: `fremdrift` procent af budgettet
 
-En afsluttet aktivitet — opgave eller hold — har altid optjent hele sit budget og står kun med den tid, der faktisk er registreret på den; den får ingen andel af den fælles tid. Eksamen er en almindelig opgave i det skoleår, den betales — typisk året efter, holdet har kørt.
+En afsluttet aktivitet — opgave eller hold — har altid optjent hele budgettet. Eksamen er en almindelig opgave i det skoleår, den betales — typisk året efter, holdet har kørt.
 
 **Under-opgaver.** En under-opgave med eget budget er sin egen akkord; en uden budget hører under forælderens, og dens tid regnes med dér. Forælderens egen akkord er dens budget minus børnenes. I rapporten står en opgave og dens aktive under-opgaver lagt sammen på opgavens række.
 
 **Fælles tid** er ubundet tid, korte pauser og tid på opgaver uden budget (de regnes med her, til de får et budget). Den tæller som brugt. Et flueben i sammendraget, *Fordel fælles tid på aktiviteterne* (`fordelFaellesTid`, standard til), bestemmer, hvor den står:
 
-- **Til:** fordeles på de aktiviteter med budget, der stadig er i gang — hold og opgaver — vægtet efter deres budget. Hver aktivitet viser sin andel som *Fælles* og har den med i sin saldo. Fælles-rækken viser kun fordelingen. Afsluttede aktiviteter får ingen andel
+- **Til:** fordeles på alle aktiviteter med budget — hold og opgaver, afsluttede med — vægtet efter hele årets budget, så tallene ikke springer, når en opgave afsluttes. Hver aktivitet viser sin andel som *Fælles* og har den med i sin saldo. Fælles-rækken viser kun fordelingen
 - **Fra:** fælles-rækken står for sig med optjent 0 og sin egen negative saldo; aktiviteternes saldi er kun deres egen tid
 
 Den samlede saldo er den samme begge veje. Regningen ligger i `akkord.js`; tid på aktiviteter fra et andet skoleår tælles ikke med, ligesom i rapportens samlede tid.
