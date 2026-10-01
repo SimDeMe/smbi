@@ -186,10 +186,19 @@ function aggregate(acts) {
     const cs         = act.parentId ? [] : liveKids(act.id);
     const childMins  = cs.reduce((s, c) => s + (direct[c.id] || 0), 0);
     const totalMins  = (direct[act.id] || 0) + childMins;
-    const budgetH    = budgetTimer(act);
+    // En topopgaves budget rummer under-opgavernes. De afsluttede
+    // under-opgaver står som egne rækker med eget budget, så topopgaven har
+    // kun det, der er tilbage — ellers tælles deres budget to gange i
+    // "Ubrugt tid i alt". Samme regel som i akkordregnskabet.
+    const fordeltH = act.parentId ? 0 : acts
+      .filter(c => c.schoolYear === year && c.parentId === act.id && c.isArchived)
+      .reduce((s, c) => s + (budgetTimer(c) ?? 0), 0);
+    let   budgetH    = budgetTimer(act);
+    if (budgetH != null && fordeltH > 0) budgetH = Math.max(0, budgetH - fordeltH);
     const budgetMins = budgetH != null ? Math.round(budgetH * 60) : null;
     return {
       act, totalMins, budgetMins, isChild: !!act.parentId,
+      fordeltMins: Math.round(fordeltH * 60),
       diffMins: budgetMins != null ? budgetMins - totalMins : null
     };
   }).sort((a, b) => b.totalMins - a.totalMins);
@@ -647,7 +656,7 @@ function renderArchivedList(rows, ak) {
 }
 
 function archivedRow(r, ak) {
-  const { act, totalMins, budgetMins, diffMins, isChild } = r;
+  const { act, totalMins, budgetMins, diffMins, isChild, fordeltMins } = r;
   const color = act.color || 'var(--accent)';
 
   let bar = '';
@@ -663,7 +672,8 @@ function archivedRow(r, ak) {
       <div class="rapport-act-budget-row">
         <span>${fmtMins(totalMins)} / ${fmtTimer(budgetMins / 60)}t</span>
         <span>${pct}%</span>
-      </div>`;
+      </div>
+      ${fordeltMins > 0 ? `<div class="rapport-archived-nobudget">${fmtTimer(fordeltMins / 60)}t af budgettet står på under-opgaverne</div>` : ''}`;
     chip = diffMins > 0
       ? `<span class="forecast-chip forecast-ahead">✓ Sparet ${fmtMins(diffMins)}</span>`
       : diffMins < 0
