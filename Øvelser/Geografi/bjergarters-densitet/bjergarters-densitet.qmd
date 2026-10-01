@@ -113,10 +113,8 @@ $$\text{afvigelse} = \frac{\rho_\text{målt} - \rho_\text{tabel}}{\rho_\text{tab
 
 ## Journalspørgsmål
 
-1. Forklar med egne ord, hvorfor vægten viser massen af det fortrængte vand og ikke stenens masse, når stenen hænger i snoren. Hvad ville vægten vise, hvis stenen lå på bunden af skålen?
-2. Brug jeres målte densiteter til at forklare, hvorfor det altid er oceanbundspladen og aldrig kontinentet, der bliver presset ned i en subduktionszone.
-3. Basalten omdannes til eklogit, når den oceaniske plade er nået ned i dybden. Sammenlign eklogittens densitet med kappens (peridotittens). Hvad betyder forskellen for, om pladen synker videre af sig selv, og hvilken rolle spiller det som drivkraft for pladebevægelserne?
-4. De ældste bjergarter på kontinenterne er omkring 4 milliarder år gamle, mens den ældste oceanbund er under 200 millioner år gammel. Forklar forskellen ud fra jeres resultater.
-5. Kontinenterne ligger over havniveau, og oceanbunden ligger flere kilometer under. Hvordan kan forskellen i densitet være med til at forklare det?
-6. Vurdér jeres fejlkilder. Hvilke af dem giver for stor en densitet, og hvilke giver for lille? Tænk fx på luftbobler, en porøs sten, der suger vand, snoren og vægtens opløsning.
-7. Hvor godt repræsenterer én håndstor sten en hel del af Jorden? Diskutér, hvad der kunne gøre jeres resultat mere sikkert.
+1. Brug jeres målte densiteter til at forklare, hvorfor det altid er oceanbundspladen og aldrig kontinentet, der bliver presset ned i en subduktionszone.
+2. Basalten omdannes til eklogit, når den oceaniske plade er nået ned i dybden. Sammenlign eklogittens densitet med kappens (peridotittens). Hvad betyder forskellen for, om pladen synker videre af sig selv, og hvilken rolle spiller det som drivkraft for pladebevægelserne?
+3. De ældste bjergarter på kontinenterne er omkring 4 milliarder år gamle, mens den ældste oceanbund er under 200 millioner år gammel. Forklar forskellen ud fra jeres resultater.
+4. Kontinenterne ligger over havniveau, og oceanbunden ligger flere kilometer under. Hvordan kan forskellen i densitet være med til at forklare det?
+5. Hvor godt repræsenterer én håndstor sten en hel del af Jorden? Diskutér, hvad der kunne gøre jeres resultat mere sikkert.
