@@ -52,5 +52,6 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `faktorlinje.mjs` | «Retning (skønnet)» kun med registreret retning |
 | `version-og-cache.mjs` | versionen i Indstillinger, og at tid ikke sletter navneApps cache |
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
+| `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 
 Ret en fejl → lav en test, der fejler uden rettelsen, og læg den her.

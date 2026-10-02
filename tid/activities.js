@@ -486,6 +486,26 @@ async function toggleArchive() {
 }
 
 // ─── Import fra tekst ─────────────────────────────────────
+// Én linje pr. aktivitet: navn; type; budget; parent; optjening.
+// Optjeningen gælder kun opgaver og kan skrives, som den står i formularen.
+const OPTJENING_ORD = {
+  'løbende': 'loebende', 'loebende': 'loebende', 'lobende': 'loebende',
+  'afslutning': 'afslutning', 'ved afslutning': 'afslutning',
+  'manuel': 'manuel', 'manuelt': 'manuel'
+};
+
+export function tolkImport(raw) {
+  return raw.split('\n')
+    .map(l => l.trim()).filter(Boolean)
+    .map(line => {
+      const p = line.split(';').map(s => s.trim());
+      const optjening = OPTJENING_ORD[(p[4] || '').toLowerCase()] || null;
+      return { name: p[0], type: p[1]?.toLowerCase() === 'hold' && !p[3] ? 'hold' : 'opgave',
+               budget: tolkTal(p[2]), parent: p[3] || null,
+               optjening: optjening || 'loebende', angivet: !!optjening };
+    }).filter(p => p.name);
+}
+
 function openImportSheet() {
   document.getElementById('import-year').value = selectedYear;
   document.getElementById('import-text').value = '';
@@ -497,13 +517,7 @@ async function doImport() {
   const year = document.getElementById('import-year').value.trim() || selectedYear;
   if (!raw) { showToast('Ingen tekst at importere'); return; }
 
-  const parsed = raw.split('\n')
-    .map(l => l.trim()).filter(Boolean)
-    .map(line => {
-      const p = line.split(';').map(s => s.trim());
-      return { name: p[0], type: p[1]?.toLowerCase() === 'hold' ? 'hold' : 'opgave',
-               budget: p[2] ? parseFloat(p[2]) : null, parent: p[3] || null };
-    }).filter(p => p.name);
+  const parsed = tolkImport(raw);
 
   const btn = document.getElementById('btn-do-import');
   btn.disabled = true;
@@ -514,7 +528,8 @@ async function doImport() {
       const ref = await addDoc(collection(db, `users/${userId}/activities`), {
         name: p.name, type: p.type, parentId: null,
         budgetHours: p.budget, color: COLOR_PALETTE[(activities.length + i) % COLOR_PALETTE.length],
-        schoolYear: year, note: '', order: nextOrder() + i, isArchived: false
+        schoolYear: year, note: '', order: nextOrder() + i, isArchived: false,
+        optjening: p.type === 'opgave' ? p.optjening : null
       });
       nameToId[p.name] = ref.id;
       i++;
@@ -523,11 +538,17 @@ async function doImport() {
       await addDoc(collection(db, `users/${userId}/activities`), {
         name: p.name, type: 'opgave', parentId: nameToId[p.parent] || null,
         budgetHours: p.budget, color: COLOR_PALETTE[(activities.length + i) % COLOR_PALETTE.length],
-        schoolYear: year, note: '', order: nextOrder() + i, isArchived: false
+        schoolYear: year, note: '', order: nextOrder() + i, isArchived: false,
+        optjening: p.optjening
       });
       i++;
     }
-    showToast(`${parsed.length} aktiviteter importeret`);
+    // Opgaver uden femte kolonne optjener løbende — det er sjældent rigtigt
+    // for eksamen og SRP, så sig det, i stedet for at det sker i stilhed
+    const uden = parsed.filter(p => (p.type === 'opgave' || p.parent) && !p.angivet).length;
+    showToast(uden
+      ? `${parsed.length} aktiviteter importeret — ${uden} optjener løbende; ret dem, der først optjenes ved afslutning`
+      : `${parsed.length} aktiviteter importeret`, uden ? 6000 : 2800);
     closeSheet('import-sheet', 'import-backdrop');
   } catch (err) {
     console.error('Import fejl:', err);

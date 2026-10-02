@@ -63,12 +63,16 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   arbejdsdage (`ferie.js`): weekender, helligdage og ferien fra Indstillinger
   → Ferie (perioder pr. skoleår) springes over. Skolens plan for 2026/27 giver
   25 feriedage og 229 arbejdsdage.
-- [ ] **Import sætter ingen optjeningsmåde.** Alt bliver «Løbende». Tillad en
-  femte kolonne (`afslutning`) eller vis en huskeseddel efter import.
+- [x] **Import sætter ingen optjeningsmåde.** Femte kolonne
+  (`løbende`/`afslutning`/`manuel`, også som i formularen), og importen siger,
+  hvor mange opgaver der blev løbende, fordi kolonnen manglede. Budgetter med
+  komma (`20,5`) læses nu rigtigt.
 - [x] **Støj i holdets faktorlinje.** «Retning (skønnet)» står kun, når der
   er registreret retning.
-- [ ] **Ugevisningen bliver høj af en post hen over midnat.** Klip vinduet,
-  eller marker «…fortsætter» i stedet for at udvide aksen til 00.
+- [x] **Ugevisningen bliver høj af en post hen over midnat.** Enderne ved
+  midnat udvider ikke længere aksen: aftenen får sin første time med
+  («22:00–…»), og fortsættelsen efter midnat står som en stump øverst
+  («…–00:40») med den rigtige varighed.
 - [x] **Navne trunkeres i hurtigstart.** Navne står på op til to linjer, og
   lange navne (over 20 tegn eller et ord over 12) får hele bredden.
 
@@ -79,8 +83,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   tilbage ved lukning, appen bagved `inert`, Tab går rundt i arket, Escape
   lukker. Rækkerne i historik og aktiviteter kan tabbes til og åbnes med
   Enter.
-- [ ] **Små tryk-mål i måneds- og årsvisningen.** Ugenummer-knapperne er 32 px
-  brede, månedsrækkerne 24 px høje; specifikationen siger min. 44 pt.
+- [x] **Små tryk-mål i måneds- og årsvisningen.** Ugenumrene er 44 px brede
+  (38 px under 360 px), månedsrækkerne i året mindst 44 px høje.
 
 ### Dokumentation og kode
 

@@ -23,7 +23,7 @@ const SNAP_MIN   = 15;         // afrunding ved tryk på tom plads
 // ─── Dagsvisning ──────────────────────────────────────────
 export function tegnDag(rod, ctx) {
   const dag   = ctx.start;
-  const items = blokkeForDag(ctx, dag);
+  const items = kolonner(blokkeForDag(ctx, dag));
   const vin   = vindue([items], dag, FRA_H, TIL_H);
 
   rod.innerHTML = `<div class="kal-grid" style="height:${hoejde(vin, HOUR_H_DAG)}px">
@@ -39,13 +39,17 @@ export function tegnDag(rod, ctx) {
 // ─── Ugevisning ───────────────────────────────────────────
 export function tegnUge(rod, ctx) {
   const dage  = Array.from({ length: 7 }, (_, i) => addDays(ctx.start, i));
-  const items = dage.map(d => blokkeForDag(ctx, d));
-  const vin   = vindue(items, ctx.start, FRA_H_UGE, TIL_H_UGE);
+  const raa   = dage.map(d => blokkeForDag(ctx, d));
+  // En registrering hen over midnat må ikke trække hele ugens akse ud til 00 —
+  // dens klippede ender tæller ikke med i vinduet, og bagefter klippes den
+  // til vinduet og står med '…' ved kanten
+  const vin   = vindue(raa, ctx.start, FRA_H_UGE, TIL_H_UGE, true);
+  const items = raa.map(dag => kolonner(klipTilVindue(dag, vin)));
   const H     = HOUR_H_UGE;
 
   const hoved = dage.map((d, i) => {
     const total = items[i].filter(it => !it.isPause)
-                          .reduce((s, it) => s + (it.endMin - it.startMin), 0);
+                          .reduce((s, it) => s + it.durMin, 0);
     return `<button type="button" class="kal-dag-hoved${erIDag(d) ? ' er-i-dag' : ''}"
         data-dato="${d.getTime()}"
         aria-label="Vis ${DAGE_KORT[d.getDay()]}dag den ${d.getDate()}. som dagsvisning">
@@ -76,10 +80,10 @@ export function tegnUge(rod, ctx) {
 
 // ─── Blokke for én dag ────────────────────────────────────
 function blokkeForDag(ctx, dagStart) {
-  return kolonner(ctx.poster
+  return ctx.poster
     .map(e => tilBlok(e, dagStart, ctx))
     .filter(Boolean)
-    .sort((a, b) => a.startMin - b.startMin));
+    .sort((a, b) => a.startMin - b.startMin);
 }
 
 function tilBlok(e, dagStart, ctx) {
@@ -95,6 +99,8 @@ function tilBlok(e, dagStart, ctx) {
 
   const isPause = erPause(e);
   const raa     = { start: (s - dagStart) / 60000, end: (end - dagStart) / 60000 };
+  const startMin = Math.max(0, Math.round(raa.start));
+  const endMin   = Math.min(dagMin, Math.round(raa.end));
 
   return {
     id:        e.id,
@@ -106,8 +112,12 @@ function tilBlok(e, dagStart, ctx) {
     clipTop:    raa.start < 0,
     clipBottom: raa.end > dagMin,
     // Afrundes til hele minutter, så både placering og varigheder bliver pæne
-    startMin:  Math.max(0, Math.round(raa.start)),
-    endMin:    Math.min(dagMin, Math.round(raa.end)),
+    startMin,
+    endMin,
+    durMin:    endMin - startMin,   // dagens andel, også hvis blokken klippes til aksen
+    // Klippet af aksens vindue (kun ugevisningen) — som clipTop/clipBottom,
+    // men tiden ved kanten er stadig den rigtige
+    vinTop: false, vinBund: false,
     realStart: s,
     realEnd:   isActive ? null : end,
     col: 0, cols: 1
@@ -147,11 +157,15 @@ function kolonner(items) {
 
 // ─── Tidsvindue for aksen ─────────────────────────────────
 // Alle dage i visningen deler ét vindue, så kolonnerne kan sammenlignes
-function vindue(grupper, foersteDag, fraH, tilH) {
+// Med `klip` udvider en ende, der er klippet ved midnat, ikke vinduet; en
+// blok, der begynder om aftenen og fortsætter efter midnat, får dog sin
+// første time med, så man kan se, hvornår den begyndte.
+function vindue(grupper, foersteDag, fraH, tilH, klip = false) {
   let fra = fraH, til = tilH;
   grupper.forEach(items => items.forEach(it => {
-    fra = Math.min(fra, Math.floor(it.startMin / 60));
-    til = Math.max(til, Math.ceil(it.endMin / 60));
+    if (!(klip && it.clipTop))    fra = Math.min(fra, Math.floor(it.startMin / 60));
+    if (!(klip && it.clipBottom)) til = Math.max(til, Math.ceil(it.endMin / 60));
+    else if (!it.clipTop)         til = Math.max(til, Math.floor(it.startMin / 60) + 1);
   }));
   const idag = grupper.length === 1
     ? erIDag(foersteDag)
@@ -165,6 +179,20 @@ function vindue(grupper, foersteDag, fraH, tilH) {
   fra = Math.max(0, fra);
   til = Math.min(24, Math.max(til, fra + 4));
   return { fra, til };
+}
+
+// Blokke uden for vinduet trækkes ind til kanten. En blok, der helt ligger
+// før vinduet (fx 00:00–00:40 efter en aften, der løb over midnat), bliver en
+// stump øverst, så den stadig kan ses og trykkes på.
+function klipTilVindue(items, vin) {
+  const fra = vin.fra * 60, til = vin.til * 60;
+  return items.map(it => {
+    if (it.startMin >= fra && it.endMin <= til) return it;
+    const startMin = Math.min(Math.max(it.startMin, fra), til);
+    const endMin   = Math.max(Math.min(it.endMin, til), startMin);
+    return { ...it, startMin, endMin,
+             vinTop: it.startMin < fra, vinBund: it.endMin > til };
+  });
 }
 
 const hoejde = (vin, H) => (vin.til - vin.fra) * H;
@@ -186,13 +214,14 @@ function blokke(items, vin, H, bred) {
   return items.map(it => {
     // En pause må gerne blive lavere end en rigtig blok — den skal kunne ses,
     // men ikke skubbe til dagens arbejde
-    const h = Math.max(it.isPause ? 11 : 16, (it.endMin - it.startMin) * (H / 60));
+    const h = Math.min(Math.max(it.isPause ? 11 : 16, (it.endMin - it.startMin) * (H / 60)),
+                       Math.max(16, hoejde(vin, H) - yPos(it.startMin, vin, H)));
     const w = 100 / it.cols;
     // Varigheden er den del, der ligger inden for dagen — en registrering
     // hen over midnat vises derfor med '…' og kun dagens andel.
     const dur = it.isActive
       ? 'i gang'
-      : fmtMins(Math.max(0, Math.round(it.endMin - it.startMin)));
+      : fmtMins(Math.max(0, Math.round(it.durMin)));
     const tid = it.isActive
       ? fmtTime(it.realStart)
       : `${it.clipTop ? '…' : fmtTime(it.realStart)}–${it.clipBottom ? '…' : fmtTime(it.realEnd)}`;
@@ -204,8 +233,8 @@ function blokke(items, vin, H, bred) {
       bred ? '' : 'kal-block-smal',
       it.isPause ? 'kal-block-pause' : '',
       it.isActive ? 'kal-block-active' : '',
-      it.clipTop ? 'kal-block-clip-top' : '',
-      it.clipBottom ? 'kal-block-clip-bottom' : ''
+      it.clipTop || it.vinTop ? 'kal-block-clip-top' : '',
+      it.clipBottom || it.vinBund ? 'kal-block-clip-bottom' : ''
     ].filter(Boolean).join(' ');
 
     return `<button type="button" class="kal-block ${cls}" data-id="${it.id}"

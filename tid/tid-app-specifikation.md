@@ -225,7 +225,7 @@ Egen side "Aktiviteter":
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
 - Under-aktiviteter vises indrykket under deres parent
 - **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne; rettede sæt og fremdrift følger ikke med) — gør det nemt når et nyt skoleår begynder
-- **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?` der parses og oprettes. Sparer tid ved opsætning.
+- **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?; optjening?` der parses og oprettes. Optjening (`løbende`, `afslutning` eller `manuel`) gælder kun opgaver; uden den bliver opgaven løbende, og importen siger, hvor mange det gælder. Sparer tid ved opsætning.
 
 ### 8. CSV-eksport
 Knap "Eksportér" i rapporter:
