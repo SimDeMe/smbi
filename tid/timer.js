@@ -192,6 +192,10 @@ function tick() {
 }
 
 // ─── Quick-start ──────────────────────────────────────────
+// Et navn, der ikke kan stå på to linjer i en halv knap uden at et ord
+// skal deles, får hele bredden. Grænserne passer til en telefon på 390 px.
+const erLangtNavn = navn => navn.length > 20 || navn.split(/\s+/).some(o => o.length > 12);
+
 async function loadQuickStart() {
   const acts    = getLoadedActivities();
   const year    = getCurrentSchoolYear();
@@ -219,9 +223,9 @@ async function loadQuickStart() {
   grid.innerHTML = sorted.map(a => {
     const color = a.color || 'var(--accent)';
     const arrow = a.type === 'hold' || hasKids(a.id);
-    return `<button class="qs-btn" data-id="${a.id}" style="--act-color:${color}">
+    return `<button class="qs-btn${erLangtNavn(a.name) ? ' qs-lang' : ''}" data-id="${a.id}" style="--act-color:${color}">
       <div class="qs-dot"></div>
-      <div class="qs-name">${esc(a.name)}</div>
+      <div class="qs-name" title="${esc(a.name)}">${esc(a.name)}</div>
       ${arrow ? `<svg class="qs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>` : ''}
     </button>`;
   }).join('');

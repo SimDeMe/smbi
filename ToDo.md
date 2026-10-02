@@ -69,8 +69,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   er registreret retning.
 - [ ] **Ugevisningen bliver høj af en post hen over midnat.** Klip vinduet,
   eller marker «…fortsætter» i stedet for at udvide aksen til 00.
-- [ ] **Navne trunkeres i hurtigstart** («Eksamen …»). To linjer, eller fuld
-  bredde til lange navne.
+- [x] **Navne trunkeres i hurtigstart.** Navne står på op til to linjer, og
+  lange navne (over 20 tegn eller et ord over 12) får hele bredden.
 
 ### Tilgængelighed
 
