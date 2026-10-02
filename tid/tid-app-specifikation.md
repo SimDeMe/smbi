@@ -241,7 +241,7 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
 - Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35). Reduktionen står ikke længere på siden; den gemte bruges kun på ældre hold
-- Ferie pr. skoleår (se `ferie.js`)
+- Ferie pr. skoleår (se `ferie.js`). Skolens plan for lærerne står i `SKOLENS_FERIE` og bruges, indtil brugeren selv har gemt ferie for året
 - Auto-stop-grænse
 - Korte pauser til/fra
 - Appens version nederst

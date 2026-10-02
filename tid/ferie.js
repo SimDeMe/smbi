@@ -7,8 +7,8 @@
 //
 // Ferien gemmes pr. skoleår i indstillingerne:
 //   ferie: { "2026/27": [{ fra:"2026-07-06", til:"2026-07-27" }, …] }
-// Begge datoer er med. Ferie-fridagene (6. ferieuge) lægges ind på samme
-// måde, når de er aftalt.
+// Begge datoer er med. Ferie-fridagene (6. ferieuge) er med i normen og
+// hører ikke til her — de registreres som tid på en opgave.
 
 import { getSettings } from './indstillinger.js';
 import { datoInput, addDays } from './periode.js';
@@ -52,7 +52,21 @@ const erHverdag = d => d.getDay() !== 0 && d.getDay() !== 6;
 const erHelligdag = d => helligdage(d.getFullYear()).has(datoInput(d));
 
 // ─── Ferie ────────────────────────────────────────────────
-export const ferieFor = aarMaerkat => getSettings().ferie?.[aarMaerkat] || [];
+// Skolens ferieplan for lærerne (Middelfart Gymnasium), som den står i
+// «Forslag til lærernes ferie». Den bruges, indtil læreren selv har gemt
+// ferie for skoleåret — en gemt liste, også en tom, går forud.
+// Ret hvert år efter den nye plan.
+export const SKOLENS_FERIE = {
+  '2026/27': [
+    { fra: '2026-07-06', til: '2026-07-27' },   // sommer, 16 dage (planen skriver 2027, men mener 2026)
+    { fra: '2026-12-21', til: '2026-12-24' },   // jul, 4 dage
+    { fra: '2027-02-15', til: '2027-02-16' },   // vinter, uge 7, 2 dage
+    { fra: '2027-03-22', til: '2027-03-24' }    // påske, 3 dage — i alt 25
+  ]
+};
+
+export const ferieFor = (aarMaerkat, s = getSettings()) =>
+  s.ferie?.[aarMaerkat] ?? SKOLENS_FERIE[aarMaerkat] ?? [];
 
 // Alle feriedatoer som 'ÅÅÅÅ-MM-DD'
 function ferieDatoer(perioder) {

@@ -99,9 +99,10 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   er dermed én rettelse i `ark.js`.
 - [x] Testopsætningen (falsk Firebase + Playwright) ligger i `tid/test/` —
   `node tid/test/alle.mjs` kører det hele. Se `tid/test/README.md`.
-- [ ] **Tjek ferieplanerne igen.** Gennemgå skolens ferieplan for lærerne
-  hvert år, og ret perioderne under Indstillinger → Ferie, så de passer
-  (2026/27: 25 dage — planen skriver juli 2027, men mener 2026).
+- [ ] **Tjek ferieplanerne igen.** Skolens plan for 2026/27 (25 dage — planen
+  skriver juli 2027, men mener 2026) er skrevet ind i `SKOLENS_FERIE` i
+  `ferie.js` og bruges, til læreren selv gemmer ferie. Læg hvert år den nye
+  plan ind dér (2027/28 når den kommer).
 - [x] **6. ferieuge** er med i normen på 1650 t. Den lægges derfor ikke ind
   som ferie, men oprettes som en opgave «6. ferieuge» på 37 t, og hver
   fridag registreres som 7t 24m på den. Indstillinger og hjælpesiden siger

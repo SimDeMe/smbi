@@ -38,9 +38,21 @@ const chipTal = async page => {
   return [t, Number(t.match(/(\d+)t/)[1])];
 };
 
-// Uden ferie: weekender og helligdage springes over
+// Intet gemt: skolens plan for 2026/27 bruges af sig selv
 {
   const page = await side(browser, { seed: [settings, act('a1', 'SRP')] });
+  await page.waitForTimeout(400);
+  const [t, n] = await chipTal(page);
+  ok(n >= 526 && n <= 533, 'uden gemt ferie bruges skolens plan (73–74 af 229): ' + t);
+  await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
+  const sum = (await page.textContent('#cfg-ferie-sum')).replace(/\s+/g, ' ').trim();
+  ok(sum === '25 feriedage · 229 arbejdsdage', 'skolens plan står i indstillingerne: ' + sum);
+  await page.context().close();
+}
+
+// Uden ferie (gemt som tom liste): weekender og helligdage springes over
+{
+  const page = await side(browser, { seed: [['users/u1/settings/config', { currentSchoolYear: '2026/27', ferie: { '2026/27': [] } }], act('a1', 'SRP')] });
   await page.waitForTimeout(400);
   const [t, n] = await chipTal(page);
   ok(n >= 578 && n <= 585 && t.includes('bagud skema'), 'uden ferie (89–90 af 254 arbejdsdage): ' + t);

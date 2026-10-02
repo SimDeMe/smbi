@@ -2,7 +2,7 @@
 
 import { db, showToast, getCurrentSchoolYear, updateTopYear } from './app.js';
 import { STANDARD_FAKTORER, tolkTal } from './normer.js';
-import { taelFeriedage, arbejdsdageIPerioden, tilDato } from './ferie.js';
+import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieFor } from './ferie.js';
 import { skoleaarStart, kortDato, datoInput } from './periode.js';
 import { esc } from './format.js';
 import { doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
@@ -109,7 +109,7 @@ let ferieUdkast = [];
 
 function visFerie(aar) {
   ferieAar    = aar;
-  ferieUdkast = (settings.ferie?.[aar] || []).map(p => ({ ...p }));
+  ferieUdkast = ferieFor(aar, settings).map(p => ({ ...p }));
   const el = document.getElementById('cfg-ferie-aar');
   if (el) el.textContent = aar;
   tegnFerie();
