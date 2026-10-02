@@ -69,7 +69,7 @@
         <span class="badge">■ Stop stopper den aktive timer</span>
         <span class="badge">Pulserende prik = timer kører</span>
       </div>
-      <p>Kører en timer i mere end 4 timer, stopper den automatisk, og du får besked om det, næste gang du åbner appen.</p>
+      <p>Kører en timer længere end grænsen under <strong>Indstillinger → Timer</strong> (10 timer, hvis du ikke har ændret den), stopper den automatisk, og du får besked om det, næste gang du åbner appen.</p>
     </div>
 
     <div class="guide-section">
@@ -78,7 +78,7 @@
       <p>I <strong>listen</strong> ser du dine registreringer, nyeste først. Under «Alle» henter
       den de seneste 500 ad gangen — er der flere, står der <strong>Vis 500 mere</strong> nederst. Du kan:</p>
       <ul>
-        <li>Filtrere på dato-interval og aktivitet</li>
+        <li>Filtrere på periode — i dag, denne uge, denne måned eller alle — og på aktivitet</li>
         <li>Redigere en post (start, slut, aktivitet, arbejdstype, note) — fx koble en "Start arbejde"-post til den rigtige aktivitet</li>
         <li>Slette en post</li>
         <li>Oprette en post manuelt, hvis du glemte at trykke start</li>
@@ -132,7 +132,7 @@
         <li>Forbrug og budget pr. aktivitet, med en visuel bjælke i aktivitetens farve</li>
         <li>Fordelingen mellem undervisning / forberedelse / retning for dine hold</li>
         <li>For hold med tal fra Lectio (se Aktiviteter): i skoleårs-rapporten står hver arbejdstype med brugt og optjent mod normen (se Akkordregnskabet herunder)</li>
-        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elevtime mod holdets eget budget (ca. 5,2 min). Retningen kræver tallene fra Lectio, og måles mod de sæt, du har registreret som rettet i perioden. Har holdet ingen sæt endnu, skønnes den ud fra, hvor stor en del af årets undervisning du har registreret</li>
+        <li>For alle hold, i alle perioder: din <strong>realiserede forberedelsesfaktor</strong> — (undervisning + forberedelse) ÷ undervisning, holdt op mod skolens 2,35 — og din <strong>retning</strong> i minutter pr. elevtime mod holdets eget budget (ca. 5,2 min). Retningen kræver tallene fra Lectio, og måles mod de sæt, du har registreret som rettet i perioden. Har holdet ingen sæt endnu, men har du registreret retning, skønnes den ud fra, hvor stor en del af årets undervisning du har registreret</li>
       </ul>
       <p><strong>Foran og bagud.</strong> Under skoleåret viser en chip, om du er foran eller
       bagud i forhold til normen. Den regner med arbejdsdage: er 40 % af normperiodens
@@ -170,14 +170,14 @@
         <li>En opgave har en <strong>optjeningsmåde</strong>: <em>Løbende</em> (budgettet optjenes jævnt over året, fx udvalg), <em>Ved afslutning</em> (intet, til du trykker "Afslut opgave" — fx eksamen og SRP) eller <em>Manuelt</em> (du skriver selv, hvor mange procent der er færdige)</li>
         <li>Når du redigerer et hold, ser du dets <strong>rettede sæt</strong>. Har du tastet et forkert, så slet det med krydset og registrér det igen</li>
         <li>Opgaver kan have under-aktiviteter (fx "SRP" under "Eksamen og årsprøver") — tid registreret på en under-aktivitet tæller automatisk med på forælderen</li>
-        <li><strong>"Importer fra tekst"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent</code>) for hurtig opsætning</li>
-        <li><strong>"Kopiér til næste skoleår"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter</li>
+        <li><strong>"Importer"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent</code>) for hurtig opsætning</li>
+        <li><strong>"Kopiér til næste år"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter</li>
       </ul>
     </div>
 
     <div class="guide-section">
       <h2><span class="num">6</span> Indstillinger</h2>
-      <p>Her justerer du skoleår, modul-længde, hvornår timeren stopper automatisk, ugestart og din samlede norm-timetal. Du kan også eksportere alle dine data som en JSON-fil (fuld backup), og logge ud.</p>
+      <p>Her sætter du skoleåret — det aktive skoleår, den dag normperioden begynder (1. juni, medmindre du ændrer det), og din norm i timer for hele året (1650 t som udgangspunkt). Du sætter også ferien, holdnormerne, hvor længe en timer må køre, før den stopper af sig selv, og om korte pauser skal registreres. Du kan eksportere alle dine data som en JSON-fil (fuld backup) og logge ud. Nederst står den version af appen, du kører (fx <code>tid-v33</code>) — nyttig, hvis du melder en fejl.</p>
       <p>Under <strong>Ferie</strong> lægger du skoleårets ferie ind som perioder fra og til en
       dato — fx de 16 dage i juli, dagene før jul og dagene omkring påske, i alt 25 dage. Ferie-fridagene
       (6. ferieuge) lægges ind på samme måde, når du har aftalt dem med ledelsen. Weekender og

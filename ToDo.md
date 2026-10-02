@@ -84,9 +84,9 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 
 ### Dokumentation og kode
 
-- [ ] **Hjælpesiden er forældet.** `hjaelp.html` nævner «modul-længde» og
-  «ugestart», som ikke findes; specifikationen siger auto-stop 240 min, koden
-  600.
+- [x] **Hjælpesiden er forældet.** Indstillinger beskrevet, som de er;
+  auto-stop 10 timer; listefiltrene og knapnavnene i Aktiviteter passer.
+  Specifikationen er rettet til koden (600 min, start 1. juni, ferie).
 - [x] **Vis appens version** nederst i Indstillinger — navnet på den cache,
   appen kører fra (`tid-v32`). Samtidig rettet: tid og navneApp slettede
   hinandens caches, når den ene blev opdateret.

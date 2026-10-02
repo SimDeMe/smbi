@@ -91,11 +91,14 @@ Regler:
 **`settings/config`** — Indstillinger:
 ```
 {
-  schoolYearStartMonth: 8,
+  schoolYearStartMonth: 6,         // normperioden går fra 1. juni
   schoolYearStartDay: 1,
-  autoStopAfterMinutes: 240,
+  normHours: 1650,
+  autoStopAfterMinutes: 600,
   autoShortBreaks: true,            // luk mellemrum under 30 min som "Kort pause"
-  weekStartsOn: 1,
+  ferie: {                          // pr. skoleår, begge datoer med — se ferie.js
+    "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }]
+  },
   currentSchoolYear: "2026/27",    // den aktive der vises som standard
   normFaktorer: {                   // pr. skoleår; mangler et år, bruges 2,35 og 0,9
     "2025/26": { faktor: 2.35, reduktion: 0.9 },
@@ -164,7 +167,7 @@ Tryk på en anden aktivitet mens en timer kører:
 - Subtil toast som bekræftelse
 
 ### 4. Auto-pause
-- Timer der kører over 240 min (konfigurerbar): stop automatisk, marker `autoStopped: true`
+- Timer der kører over 600 min (konfigurerbar): stop automatisk, marker `autoStopped: true`
 - Vis advarsel næste gang appen åbnes
 
 ### 4a. Opstart
@@ -238,8 +241,10 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
 - Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35). Reduktionen står ikke længere på siden; den gemte bruges kun på ældre hold
+- Ferie pr. skoleår (se `ferie.js`)
 - Auto-stop-grænse
-- Ugestart
+- Korte pauser til/fra
+- Appens version nederst
 - Log ud
 - Eksport af alle data (JSON)
 - Feedback: knappen fra `/feedback.js` står her (via `data-feedback-vaert`) og ikke som svævende knap, der ville dække bundmenuen
