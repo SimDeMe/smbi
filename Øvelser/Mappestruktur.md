@@ -79,11 +79,13 @@ deles med `?emne=klima`.
 
 * **Biologi:** tagget er præcis emnet fra øvelsens række i `oversigt.html`
   (fx `Krop og fysiologi`).
-* **Geografi** (ændret 2026-10-02): de sammensatte emner «Vejr og klima» og
-  «Hav og kyst» er delt op i fire tags — `Vejr`, `Klima`, `Hav` og `Kyst` — og
-  kortet får dem, der passer (Havniveau og isafsmeltning har fx `Klima; Hav;
-  Kyst`). De øvrige emner (`Geologi og landskab`, `Vand og grundvand`,
-  `Energi og ressourcer`) bruges uændret som tags. `oversigt.html` grupperer
+* **Geografi** (ændret 2026-10-02): alle de sammensatte emner er delt op i
+  enkeltord, og kortet får de tags, der passer:
+  «Vejr og klima» → `Vejr`, `Klima` · «Hav og kyst» → `Hav`, `Kyst` ·
+  «Geologi og landskab» → `Geologi`, `Landskab` · «Vand og grundvand» →
+  `Vand`, `Grundvand` · «Energi og ressourcer» → `Energi`, `Ressourcer`.
+  Et kort kan også få et tag fra et andet emne, når det er relevant (Oliens
+  migration har fx `Energi; Ressourcer; Geologi`). `oversigt.html` grupperer
   stadig efter de gamle, sammensatte emner.
 
 Niveauet står som mærker til højre på kortet: `<span class="lvl lvl-C">C</span>`,

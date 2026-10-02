@@ -81,8 +81,9 @@ simuleringen, hvis der findes en). Kortet får ét eller flere emnetags — i
 `data-emne` adskilt af semikolon (`data-emne="Klima; Hav; Kyst"`) og som én
 `<span class="fag">` pr. tag — så emneknapperne over staken kan filtrere på
 dem. I biologi er tagget emnet fra `Øvelser/oversigt.html`; i geografi er
-«Vejr og klima» og «Hav og kyst» delt op i tagsene `Vejr`, `Klima`, `Hav` og
-`Kyst`, og kortet får dem, der er relevante. Niveauet står som mærker til
+alle de sammensatte «… og …»-emner delt op i enkeltord (`Vejr`, `Klima`,
+`Hav`, `Kyst`, `Geologi`, `Landskab`, `Vand`, `Grundvand`, `Energi`,
+`Ressourcer`), og kortet får dem, der er relevante. Niveauet står som mærker til
 højre (`<span class="lvl lvl-C">C</span>`, NV-øvelser også `lvl-NV`). Tælleren i stak-hovedet (`<span class="n">`)
 rettes med, og sidens adresse skrives ind i `sitemap.xml`.
 
