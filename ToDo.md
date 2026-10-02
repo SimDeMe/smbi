@@ -101,9 +101,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   `node tid/test/alle.mjs` kører det hele. Se `tid/test/README.md`.
 - [ ] **Tjek ferieplanerne igen.** Gennemgå skolens ferieplan for lærerne
   hvert år, og ret perioderne under Indstillinger → Ferie, så de passer
-  (2026/27: 25 dage — planen skriver juli 2027, men mener 2026). Og få styr på
-  **6. ferieuge**: Er de 37 timer ferie-fridage med i normen på 1650 t eller
-  ej? Er de *ikke* med (229 × 7,4 t ≈ 1695 t, 224 × 7,4 t ≈ 1658 t tyder på
-  det), lægges dagene ind som ferie, når de er aftalt med ledelsen. Er de
-  med, registreres de som tid i stedet. Overvej om appen skal have et felt
-  til det, så det ikke skal huskes.
+  (2026/27: 25 dage — planen skriver juli 2027, men mener 2026).
+- [x] **6. ferieuge** er med i normen på 1650 t. Den lægges derfor ikke ind
+  som ferie, men oprettes som en opgave «6. ferieuge» på 37 t, og hver
+  fridag registreres som 7t 24m på den. Indstillinger og hjælpesiden siger
+  det nu; intet ekstra felt i appen.
