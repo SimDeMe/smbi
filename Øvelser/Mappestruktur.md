@@ -1,6 +1,6 @@
 # Mappestruktur for Øvelser (Quarto)
 
-*Opdateret 2026-09-14.*
+*Opdateret 2026-10-02.*
 
 ## Arbejdsgang — vigtigt
 
@@ -70,17 +70,29 @@ word`), `<h4>` med link til `…/<øvelse>.html`, en enkelt sætning om hvad man
 gør, `<span class="fag">` med emnet og en `.sub` med `PDF`- og `Word`-links. Har
 øvelsen en simulering på sitet, kommer den med som et ekstra `.sub`-link.
 
-**Emnet er et tag, man kan filtrere efter.** `data-emne` og teksten i `<span
-class="fag">` er præcis det samme emne, som øvelsens række har i `oversigt.html`
-(fx `Krop og fysiologi`, `Hav og kyst`). `fag.js` bygger emneknapperne over
-staken ud fra kortenes `data-emne` — et nyt emne giver selv en ny knap, og
-tallene på knapperne tæller selv. Stavefejl giver altså et ekstra emne, så
-kopiér emnet fra `oversigt.html`. Et emne kan deles med `?emne=krop-og-fysiologi`.
+**Emnerne er tags, man kan filtrere efter.** `data-emne` rummer ét eller
+flere tags adskilt af semikolon, og hvert tag står som sin egen `<span
+class="fag">` på kortet. `fag.js` bygger emneknapperne over staken ud fra alle
+kortenes tags — et nyt tag giver selv en ny knap, og et kort med flere tags
+tæller med under hver af dem. Stavefejl giver altså et ekstra tag. Et tag kan
+deles med `?emne=klima`.
+
+* **Biologi:** tagget er præcis emnet fra øvelsens række i `oversigt.html`
+  (fx `Krop og fysiologi`).
+* **Geografi** (ændret 2026-10-02): de sammensatte emner «Vejr og klima» og
+  «Hav og kyst» er delt op i fire tags — `Vejr`, `Klima`, `Hav` og `Kyst` — og
+  kortet får dem, der passer (Havniveau og isafsmeltning har fx `Klima; Hav;
+  Kyst`). De øvrige emner (`Geologi og landskab`, `Vand og grundvand`,
+  `Energi og ressourcer`) bruges uændret som tags. `oversigt.html` grupperer
+  stadig efter de gamle, sammensatte emner.
+
+Niveauet står som mærker til højre på kortet: `<span class="lvl lvl-C">C</span>`,
+og NV-øvelserne har desuden `<span class="lvl lvl-NV">NV</span>` foran.
 
 ```html
-<div class="item" data-emne="Krop og fysiologi" data-sog="vitalkapacitet lungefunktion … pdf word">
+<div class="item" data-emne="Klima; Hav; Kyst" data-sog="havniveau isafsmeltning … nv pdf word">
   …
-  <div class="item-meta"><span class="fag">Krop og fysiologi</span></div>
+  <div class="item-meta"><span class="fag">Klima</span><span class="fag">Hav</span><span class="fag">Kyst</span><span class="lvl lvl-NV">NV</span><span class="lvl lvl-C">C</span></div>
 ```
 
 Tre ting følger med hver gang: tælleren i stak-hovedet

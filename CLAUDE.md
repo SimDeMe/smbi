@@ -77,9 +77,13 @@ Se `Biologi/biodiversitet-i-graesplaenen/` som forlæg for begge.
 `biologi.html` eller `geografi.html` — ét kort pr. mappe under
 `Øvelser/Biologi/` og `Øvelser/Geografi/`, uden undtagelser. Kortet står
 alfabetisk, linker til `.html` og har `PDF`/`Word`-sublinks (samt link til
-simuleringen, hvis der findes en). Kortet får øvelsens emne fra
-`Øvelser/oversigt.html` som tag — i `data-emne` og i `<span class="fag">` —
-så emneknapperne over staken kan filtrere på det. Tælleren i stak-hovedet (`<span class="n">`)
+simuleringen, hvis der findes en). Kortet får ét eller flere emnetags — i
+`data-emne` adskilt af semikolon (`data-emne="Klima; Hav; Kyst"`) og som én
+`<span class="fag">` pr. tag — så emneknapperne over staken kan filtrere på
+dem. I biologi er tagget emnet fra `Øvelser/oversigt.html`; i geografi er
+«Vejr og klima» og «Hav og kyst» delt op i tagsene `Vejr`, `Klima`, `Hav` og
+`Kyst`, og kortet får dem, der er relevante. Niveauet står som mærker til
+højre (`<span class="lvl lvl-C">C</span>`, NV-øvelser også `lvl-NV`). Tælleren i stak-hovedet (`<span class="n">`)
 rettes med, og sidens adresse skrives ind i `sitemap.xml`.
 
 `Øvelser/oversigt.html` opdateres **altid**, når en vejledning laves eller

@@ -18,13 +18,16 @@
   /* Hvert kort bærer sine søgeord i data-sog. Overskrift og brødtekst tages
      med automatisk, så nøgleordene kun skal dække det, der IKKE står på
      kortet — fx "orografisk" på stigningsregn. Forsøgsvejledningerne har
-     desuden et data-emne (samme emne som i Øvelser/oversigt.html). */
+     desuden et data-emne med ét eller flere tags adskilt af semikolon,
+     fx data-emne="Klima; Kyst". Hvert tag giver sin egen emneknap. */
   var kort = Array.prototype.map.call(
     document.querySelectorAll('[data-sog]'),
     function (el) {
       return {
         el: el,
-        emne: el.getAttribute('data-emne') || '',
+        emner: (el.getAttribute('data-emne') || '').split(';')
+                 .map(function (e) { return e.trim(); })
+                 .filter(function (e) { return e; }),
         tekst: (el.getAttribute('data-sog') + ' ' + el.textContent)
                  .toLowerCase().replace(/\s+/g, ' '),
         soeg: true
@@ -72,8 +75,12 @@
   /* ── Emneknapper ──────────────────────────────────────── */
   var emner = [];
   kort.forEach(function (k) {
-    if (k.emne && emner.indexOf(k.emne) === -1) emner.push(k.emne);
+    k.emner.forEach(function (e) {
+      if (emner.indexOf(e) === -1) emner.push(e);
+    });
   });
+
+  function harEmne(k, emne) { return k.emner.indexOf(emne) !== -1; }
   emner.sort(function (a, b) { return a.localeCompare(b, 'da'); });
 
   var knapper = [];
@@ -117,7 +124,7 @@
     kort.forEach(function (k) {
       k.soeg = ord.every(function (o) { return k.tekst.indexOf(o) !== -1; });
       // emnet gælder kun de kort, der har et
-      var emneOk = !valgtEmne || !k.emne || k.emne === valgtEmne;
+      var emneOk = !valgtEmne || !k.emner.length || harEmne(k, valgtEmne);
       k.el.hidden = !(k.soeg && emneOk);
       if (k.soeg) fundne++;
       if (!k.el.hidden) synlige++;
@@ -135,7 +142,7 @@
 
     knapper.forEach(function (kn) {
       var n = kort.filter(function (k) {
-        return k.emne && k.soeg && (!kn.emne || k.emne === kn.emne);
+        return k.emner.length && k.soeg && (!kn.emne || harEmne(k, kn.emne));
       }).length;
       kn.antal.textContent = n;
       kn.el.setAttribute('aria-pressed', String(kn.emne === valgtEmne));
@@ -145,7 +152,7 @@
 
     if (emneTom) {
       var ingenIEmne = valgtEmne && !kort.some(function (k) {
-        return k.emne === valgtEmne && !k.el.hidden;
+        return harEmne(k, valgtEmne) && !k.el.hidden;
       });
       emneTom.hidden = !ingenIEmne;
       emneTom.textContent = ingenIEmne
