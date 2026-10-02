@@ -1355,6 +1355,30 @@ select.form-input{
   background-repeat:no-repeat;background-position:right 11px center;
 }
 
+/* Ferie: én række pr. periode — datoerne får hele bredden, dagetallet
+   står under dem, så datofelterne ikke klippes på en telefon */
+.ferie-raekke{
+  display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;
+  align-items:center;gap:4px 6px;
+  padding:10px 0;border-bottom:2px solid var(--rule);
+}
+.ferie-raekke .settings-input-sm{width:100%;min-width:0;text-align:left;padding:8px 4px 8px 7px;font-size:0.84rem}
+.ferie-til{font-family:var(--mono);font-size:0.7rem;color:var(--slate)}
+.ferie-dage{
+  grid-column:1 / -1;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;color:var(--slate);
+}
+.ferie-dage:empty{display:none}
+.ferie-dage-fejl{color:var(--ink);font-weight:700}
+.ferie-bund{flex-direction:column;align-items:stretch;gap:10px}
+.ferie-sum{
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;
+  letter-spacing:0.04em;color:var(--slate);line-height:1.5;
+}
+.ferie-sum b{font-family:var(--display);font-size:0.9rem;color:var(--ink)}
+.ferie-advarsel{display:block;color:var(--ink);background:var(--tint-pasPaa);
+  border:2px solid var(--ink);border-radius:8px;padding:4px 8px;margin-top:6px}
+
 /* ─── Besked ────────────────────────────────────────────── */
 .toast{
   position:fixed;left:50%;z-index:210;

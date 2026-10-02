@@ -59,10 +59,10 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   mellemlinje («Pause 15m 09:35–09:50»), der stadig kan trykkes på og rettes.
 - [x] **Dobbelt timer på Hjem.** Banneret er skjult på Hjem og vises på de
   andre faner.
-- [ ] **«Bagud skema» er misvisende i efteråret.** Forløbet regnes lineært fra
-  1. juni, så sommerferien tæller som arbejdstid («▼ 323 t bagud» i oktober).
-  Spring ferien over, fx med en indstilling for ferieuger eller arbejdsuger
-  pr. år. Den største faglige svaghed i akkordregnskabet.
+- [x] **«Bagud skema» er misvisende i efteråret.** Forløbet regnes nu på
+  arbejdsdage (`ferie.js`): weekender, helligdage og ferien fra Indstillinger
+  → Ferie (perioder pr. skoleår) springes over. Skolens plan for 2026/27 giver
+  25 feriedage og 229 arbejdsdage.
 - [ ] **Import sætter ingen optjeningsmåde.** Alt bliver «Løbende». Tillad en
   femte kolonne (`afslutning`) eller vis en huskeseddel efter import.
 - [ ] **Støj i holdets faktorlinje.** Skjul «Retning (skønnet) 0,0», når der

@@ -9,6 +9,7 @@ import { getLoadedActivities } from './activities.js';
 import { getSettings, gemIndstilling } from './indstillinger.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
+import { forloebIArbejdsdage, ferieFor } from './ferie.js';
 import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
 } from './akkord.js';
@@ -241,11 +242,11 @@ function renderPeriodeBar() {
 
 // ─── Forløbet del af skoleåret ────────────────────────────
 // 0 før skoleåret, 1 når det er slut. Både den samlede indikator og holdenes
-// normer måles mod den: er man 40 % inde i året, "burde" 40 % være brugt.
+// normer måles mod den: er 40 % af årets arbejdsdage gået, "burde" 40 % være
+// brugt. Weekender, helligdage og ferien fra indstillingerne tæller ikke.
 function forloebAndel() {
-  const yStart = start(), yEnd = slut();
-  const total  = Math.max(1, (yEnd - yStart) / 86400000);
-  return Math.min(1, Math.max(0, (Date.now() - yStart.getTime()) / 86400000 / total));
+  const aar = skoleaarForPeriode(periodFilter, periodOffset);
+  return forloebIArbejdsdage(start(), slut(), ferieFor(aar));
 }
 
 const aaretAfsluttet = () => Date.now() >= slut().getTime();
