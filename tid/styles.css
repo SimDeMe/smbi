@@ -1549,3 +1549,9 @@ select.form-input{
   #main-content{overflow:visible;padding-bottom:0}
   #app{height:auto;overflow:visible}
 }
+
+/* Fælles tid i bjælken: skraveret, så den ikke forveksles med aktivitetens egen tid */
+.rapport-progress-faelles{
+  background:repeating-linear-gradient(-45deg,var(--ink) 0 2px,var(--paper-2) 2px 5px);
+}
+.rapport-faelles-maerke{white-space:nowrap}

@@ -63,7 +63,8 @@ Alt under `users/{userId}/`:
     { id: "…", dato: "2026-09-20", elevtimer: 2, navn: "Rapport 1" }
   ],
   optjening: "loebende" | "afslutning" | "manuel",   // kun opgaver; mangler = løbende
-  fremdrift: null | 40              // kun ved manuel optjening, procent færdig
+  fremdrift: null | 40,             // kun ved manuel optjening, procent færdig
+  udenFaellesTid: false             // true = får ingen andel af den fælles tid i akkordregnskabet
 }
 ```
 
@@ -279,7 +280,7 @@ En afsluttet aktivitet — opgave eller hold — har altid optjent hele budgette
 
 **Fælles tid** er ubundet tid, korte pauser og tid på opgaver uden budget (de regnes med her, til de får et budget). Den tæller som brugt. Et flueben i sammendraget, *Fordel fælles tid på aktiviteterne* (`fordelFaellesTid`, standard til), bestemmer, hvor den står:
 
-- **Til:** fordeles på alle aktiviteter med budget — hold og opgaver, afsluttede med — vægtet efter hele årets budget, så tallene ikke springer, når en opgave afsluttes. Hver aktivitet viser sin andel som *Fælles* og har den med i sin saldo. Fælles-rækken viser kun fordelingen
+- **Til:** fordeles på alle aktiviteter med budget — hold og opgaver, afsluttede med — vægtet efter hele årets budget, så tallene ikke springer, når en opgave afsluttes. Hver aktivitet viser sin andel som *Fælles* og har den med i sin saldo; i barometret står andelen som et skraveret stykke efter aktivitetens egen tid. En aktivitet kan holdes uden for fordelingen med fluebenet *Får andel af fælles tid* i aktivitetsformularen (`udenFaellesTid: true`); så deles tiden på de øvrige. Fælles-rækken viser kun fordelingen
 - **Fra:** fælles-rækken står for sig med optjent 0 og sin egen negative saldo; aktiviteternes saldi er kun deres egen tid
 
 Den samlede saldo er den samme begge veje. Regningen ligger i `akkord.js`; tid på aktiviteter fra et andet skoleår tælles ikke med, ligesom i rapportens samlede tid.

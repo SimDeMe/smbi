@@ -29,8 +29,9 @@
 // Fælles tid er tid, der ikke hører til en akkord: ubundet tid, pauser og
 // opgaver uden budget. Den tæller som brugt og kan fordeles på alle
 // aktiviteter med budget, vægtet efter budgettet — også de afsluttede, så
-// tallene ikke springer, når en opgave afsluttes. Fordelingen flytter kun,
-// hvor tiden står; den samlede saldo er den samme.
+// tallene ikke springer, når en opgave afsluttes. En aktivitet kan holdes
+// uden for fordelingen (udenFaellesTid); så deles tiden på de øvrige.
+// Fordelingen flytter kun, hvor tiden står; den samlede saldo er den samme.
 //
 // Alle tal er i minutter.
 
@@ -135,8 +136,8 @@ export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
   });
   faelles.total = faelles.ubundet + faelles.pauser + faelles.udenBudget;
 
-  // Fordelingen efter budget
-  const medBudget = Object.values(enheder).filter(u => u.budget > 0);
+  // Fordelingen efter budget, på de aktiviteter, der tager del i den
+  const medBudget = Object.values(enheder).filter(u => u.budget > 0 && !u.act.udenFaellesTid);
   const vaegt     = medBudget.reduce((s, u) => s + u.budget, 0);
   const fordelt   = fordel && vaegt > 0;
   medBudget.forEach(u => {

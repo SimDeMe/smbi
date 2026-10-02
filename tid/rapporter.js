@@ -469,36 +469,55 @@ function skelneligeFarver(r) {
   return r;
 }
 
-function barometer(dele, budgetMins, color, pct) {
-  if (!dele) return `<div class="rapport-progress-bg">
+// Med fordelt fælles tid får bjælken et skraveret stykke til sidst: den
+// andel af den fælles tid, der er lagt på aktiviteten. Skraveringen — ikke
+// farven — skiller den fra den tid, der er registreret på aktiviteten selv.
+function barometer(dele, budgetMins, color, pct, faelles = 0, navn = '', brugt = 0) {
+  if (!dele && !(faelles > 0)) return `<div class="rapport-progress-bg">
       <div class="rapport-progress-fill" style="width:${pct}%;background:${color}"></div>
     </div>`;
-  const total  = dele.reduce((s, d) => s + d.mins, 0);
+  const stk = [...(dele || [{ navn, mins: brugt, color }]),
+               ...(faelles > 0 ? [{ navn: 'Fælles tid', mins: faelles, faelles: true }] : [])]
+    .filter(d => d.mins > 0);
+  const total   = stk.reduce((s, d) => s + d.mins, 0);
   const naevner = Math.max(budgetMins || 0, total) || 1;
-  return `<div class="rapport-progress-bg rapport-progress-stak">${dele.map(d =>
-    `<div class="rapport-progress-stykke" style="width:${(d.mins / naevner * 100).toFixed(2)}%;background:${d.color}"
+  return `<div class="rapport-progress-bg rapport-progress-stak">${stk.map(d =>
+    `<div class="rapport-progress-stykke${d.faelles ? ' rapport-progress-faelles' : ''}" style="width:${(d.mins / naevner * 100).toFixed(2)}%${d.faelles ? '' : `;background:${d.color}`}"
        title="${esc(d.navn)} · ${fmtMins(d.mins)}"></div>`).join('')}
     </div>`;
 }
+
+// Tal under bjælken: brugt (+ fælles) / budget og procent af budgettet
+function budgetLinje(brugt, faelles, budgetMins) {
+  const i_alt = brugt + faelles;
+  const pct   = budgetMins > 0 ? Math.min(100, Math.round(i_alt / budgetMins * 100)) : 0;
+  return `<div class="rapport-act-budget-row">
+      <span>${brugt > 0 ? fmtMins(brugt) : '—'}${faelles > 0
+        ? ` <span class="rapport-faelles-maerke">+ ${fmtMins(faelles)} fælles</span>` : ''} / ${fmtTimer(budgetMins / 60)}t</span>
+      <span>${pct}%</span>
+    </div>`;
+}
+
+// Den fælles tid, der er lagt på en aktivitet (og dens under-opgaver)
+const faellesPaa = (ak, ids) =>
+  ak?.fordelt ? (samletEnhed(ids.map(id => ak.enheder[id]))?.faelles || 0) : 0;
 
 function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = [], dele = null) {
   const color  = act.color || 'var(--accent)';
   const budgetH = budgetTimer(act);
   const budget  = budgetH != null ? Math.round(budgetH * 60) : null;
   const pct     = budget ? Math.min(100, Math.round(totalMins / budget * 100)) : null;
+  const fae     = budget != null ? faellesPaa(ak, [act.id, ...kids]) : 0;
 
   const progressHtml = budget != null ? `
-    ${barometer(dele, budget, color, pct ?? 0)}
-    <div class="rapport-act-budget-row">
-      <span>${totalMins > 0 ? fmtMins(totalMins) : '—'} / ${fmtTimer(budgetH)}t</span>
-      <span>${pct ?? 0}%</span>
-    </div>` : (totalMins > 0 ? `<div class="rapport-act-budget-row"><span>${fmtMins(totalMins)}</span></div>` : '');
+    ${barometer(dele, budget, color, pct ?? 0, fae, act.name, totalMins)}
+    ${budgetLinje(totalMins, fae, budget)}` : (totalMins > 0 ? `<div class="rapport-act-budget-row"><span>${fmtMins(totalMins)}</span></div>` : '');
 
   // I skoleåret står holdets arbejdstyper med akkorden: brugt, optjent og norm
   const enhed   = ak?.enheder[act.id];
   const wtKeys  = ['undervisning', 'forberedelse', 'retning'].filter(t => wt[t]);
   const wtHtml  = (enhed?.hold
-    ? holdAkkord(enhed, act, color, ownMins)
+    ? holdAkkord(enhed, act, color, ownMins, ak)
     : !isChild && wtKeys.length > 0
     ? `<div class="rapport-wt-row">${wtKeys.map(t =>
         `<span class="rapport-wt-item"><span class="rapport-wt-label">${capitalize(t)}</span> ${fmtMins(wt[t])}</span>`
@@ -522,6 +541,7 @@ function actRow(act, totalMins, ownMins, wt, isChild, ak = null, kids = [], dele
 // Optjeningsmåde, optjent, fælles tid og saldo. En opgave og dens aktive
 // under-opgaver står i én række, så deres akkorder lægges sammen dér.
 const MAADE_TEKST = { ...OPTJENING, afsluttet: 'Afsluttet', hold: 'Hold' };
+const udenFaelles = (act, ak) => ak?.fordelt && act.udenFaellesTid ? ' · uden fælles tid' : '';
 
 function akkordLinje(act, ak, kids = []) {
   const egen = ak.enheder[act.id];
@@ -536,7 +556,7 @@ function akkordLinje(act, ak, kids = []) {
     ? `${MAADE_TEKST.manuel} ${Math.round(Number(act.fremdrift) || 0)}%`
     : act.type === 'hold' ? 'Løbende · uden normgrundlag' : MAADE_TEKST[egen.maade];
   return `<div class="rapport-akkord">
-    <span class="rapport-akkord-maade">${maade}</span>
+    <span class="rapport-akkord-maade">${maade}${udenFaelles(act, ak)}</span>
     <span>Optjent <b>${fmtMins(u.optjent)}</b></span>
     ${u.faelles > 0 ? `<span>Fælles <b>${fmtMins(u.faelles)}</b></span>` : ''}
     ${saldoChip(u.saldo)}
@@ -551,7 +571,7 @@ function akkordLinje(act, ak, kids = []) {
 // end det er betalt med. Tillægget tælles ikke: eksamen er en opgave for sig.
 // Tid uden arbejdstype — fx registreret, mens holdet endnu var en opgave —
 // tæller i holdets total og står for sig, så intet forsvinder.
-function holdAkkord(u, act, color, ownMins) {
+function holdAkkord(u, act, color, ownMins, ak) {
   const h = u.hold;
   const linjer = [];
 
@@ -589,7 +609,7 @@ function holdAkkord(u, act, color, ownMins) {
   return `<div class="rapport-norm">${linjer.join('')}</div>
     ${ekstra.length ? `<div class="rapport-wt-row">${ekstra.join('')}</div>` : ''}
     <div class="rapport-akkord">
-      <span class="rapport-akkord-maade">Holdets akkord</span>
+      <span class="rapport-akkord-maade">Holdets akkord${udenFaelles(act, ak)}</span>
       <span>Optjent <b>${fmtMins(u.optjent)}</b> af ${fmtTimer(u.budget / 60)}<span class="enhed">t</span></span>
       ${saldoChip(u.saldo)}
     </div>`;
@@ -698,12 +718,10 @@ function archivedRow(r, ak, isChild, kidIds = [], dele = null) {
   if (budgetMins != null) {
     const pct  = budgetMins > 0 ? Math.min(100, Math.round(totalMins / budgetMins * 100)) : 0;
     const over = diffMins < 0;
+    const fae  = faellesPaa(ak, [act.id, ...kidIds]);
     bar = `
-      ${barometer(dele, budgetMins, over ? 'var(--danger)' : color, pct)}
-      <div class="rapport-act-budget-row">
-        <span>${fmtMins(totalMins)} / ${fmtTimer(budgetMins / 60)}t</span>
-        <span>${pct}%</span>
-      </div>`;
+      ${barometer(dele, budgetMins, over ? 'var(--danger)' : color, pct, fae, act.name, totalMins)}
+      ${budgetLinje(totalMins, fae, budgetMins)}`;
     chip = diffMins > 0
       ? `<span class="forecast-chip forecast-ahead">✓ Sparet ${fmtMins(diffMins)}</span>`
       : diffMins < 0

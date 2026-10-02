@@ -227,6 +227,7 @@ function openActSheet(actId) {
   const optRadio = document.querySelector(`input[name="act-optjening"][value="${optjeningFor(a)}"]`);
   if (optRadio) optRadio.checked = true;
   document.getElementById('act-fremdrift').value = a?.fremdrift ?? '';
+  document.getElementById('act-faelles').checked = !a?.udenFaellesTid;
   renderSaetListe(a);
   toggleParentField(typeVal);
   populateParentSelect(a?.schoolYear || selectedYear, a?.parentId || '');
@@ -387,17 +388,18 @@ async function saveActivity(e) {
   const fremdriftV  = tolkTal(document.getElementById('act-fremdrift').value);
   const fremdrift   = optjening === 'manuel' && fremdriftV != null
     ? Math.min(100, Math.max(0, fremdriftV)) : null;
+  const udenFaellesTid = !document.getElementById('act-faelles').checked;
 
   const btn = document.getElementById('act-save-btn');
   btn.disabled = true;
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift,
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid,
           order: nextOrder(), isArchived: false });
       showToast('Aktivitet oprettet');
     }
