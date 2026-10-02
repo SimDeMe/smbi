@@ -32,6 +32,11 @@ let loesFoersteHentning;
 const foersteHentning = new Promise(r => { loesFoersteHentning = r; });
 export const aktiviteterHentet = () => foersteHentning;
 
+// Hjem tegner hurtigstart og timernavn ud fra aktiviteterne og skal derfor
+// have besked ved hvert snapshot — også når de ændres fra en anden enhed
+const lyttere = new Set();
+export function naarAktiviteterAendres(fn) { lyttere.add(fn); }
+
 // ─── Init (kaldes fra app.js efter login) ─────────────────
 export function initActivitiesView(uid) {
   if (userId === uid && unsub) return;
@@ -52,6 +57,7 @@ function startListener() {
       loesFoersteHentning(activities.length > 0);
       renderYearSelect();
       renderList();
+      lyttere.forEach(fn => fn(activities));
     },
     err => {
       console.error('Activities listener:', err);

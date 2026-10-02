@@ -1,12 +1,12 @@
 // timer.js — Trin 4+5+11: Hjem-skærm med timer, modul, start arbejde og auto-stop
 
 import { db, showToast, getCurrentSchoolYear } from './app.js';
-import { getLoadedActivities, isActivitiesLoaded, aktiviteterHentet } from './activities.js';
+import { getLoadedActivities, isActivitiesLoaded, aktiviteterHentet, naarAktiviteterAendres } from './activities.js';
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaDatoer, skemaLaengde, skemaInterval, skemaNu } from './skema.js';
 import { opretPost } from './pauser.js';
 import {
-  collection, doc, updateDoc,
+  collection, doc, updateDoc, deleteDoc,
   onSnapshot, query, where, limit, getDocs, orderBy,
   serverTimestamp, Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
@@ -30,7 +30,14 @@ export function initTimerView(uid) {
   userId = uid;
   setupActiveListener();
   bindListeners();
-  refreshQuickStart();
+  // Hurtigstarten og timerens navn hænger på aktiviteterne. Kommer de efter
+  // den igangværende post, eller ændres de, mens man står på Hjem, tegnes
+  // begge igen — ellers stod der «Ubundet tid» eller en forældet liste
+  naarAktiviteterAendres(() => {
+    if (!userId) return;
+    loadQuickStart();
+    renderTimerState();
+  });
 }
 
 export function refreshQuickStart() {
@@ -532,9 +539,18 @@ export async function stopActiveTimer() {
   catch (err) { console.error('Stop timer fejl:', err); showToast('Kunne ikke stoppe timer'); }
 }
 
+// En timer, der har kørt under ét minut, er et fejltryk eller et skift, man
+// fortrød — den slettes i stedet for at blive gemt som en post på 0 m
+const MIN_POST_MS = 60 * 1000;
+
 async function stopEntry(entry, showMsg) {
   const now      = Timestamp.fromDate(new Date());
   const startMs  = entry.startTime?.toDate()?.getTime() ?? Date.now();
+  if (Date.now() - startMs < MIN_POST_MS) {
+    await deleteDoc(doc(db, `users/${userId}/entries/${entry.id}`));
+    if (showMsg) showToast('Under ét minut · ikke gemt');
+    return 0;
+  }
   const duration = Math.max(0, Math.round((Date.now() - startMs) / 60000));
   await updateDoc(doc(db, `users/${userId}/entries/${entry.id}`), {
     endTime: now, durationMinutes: duration
