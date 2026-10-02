@@ -5,7 +5,7 @@ import { getLoadedActivities } from './activities.js';
 import { SKEMA, VARIGHEDER, minutterFraTid, skemaFraTider, skemaNu, skemaInterval } from './skema.js';
 import { opretPost, erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
-import { openSheet, closeSheet } from './ark.js';
+import { openSheet, closeSheet, somKnap } from './ark.js';
 import { datoInput } from './periode.js';
 import {
   collection, doc, updateDoc, deleteDoc,
@@ -223,7 +223,7 @@ function renderList() {
 
   el.innerHTML = html + flere;
   el.querySelectorAll('.entry-row, .entry-pause-line').forEach(row =>
-    row.addEventListener('click', () => openEntrySheet(row.dataset.id))
+    somKnap(row, () => openEntrySheet(row.dataset.id))
   );
   document.getElementById('hist-more-btn')?.addEventListener('click', visFlere);
 }

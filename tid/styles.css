@@ -483,6 +483,8 @@ img{display:block;max-width:100%}
   transition:transform .28s cubic-bezier(.32,.72,0,1);
 }
 .sheet.open{transform:translateY(0)}
+/* Arket får selv fokus ved åbning (se ark.js) — ringen hører til felterne i det */
+.sheet:focus{outline:none}
 
 .sheet-handle-bar{
   width:44px;height:5px;flex-shrink:0;

@@ -74,10 +74,11 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 
 ### Tilgængelighed
 
-- [ ] **Arkene har ingen tastaturhåndtering.** Intet `role="dialog"` /
-  `aria-modal`, Escape lukker ikke, og Tab går ud bag arket og
-  onboarding-overlayet. Mindst: Escape lukker, fokus i arket ved åbning,
-  resten af siden `inert`.
+- [x] **Arkene har ingen tastaturhåndtering.** Arkene og onboarding er nu
+  modale dialoger (`ark.js`): navngivet efter titlen, fokus ind ved åbning og
+  tilbage ved lukning, appen bagved `inert`, Tab går rundt i arket, Escape
+  lukker. Rækkerne i historik og aktiviteter kan tabbes til og åbnes med
+  Enter.
 - [ ] **Små tryk-mål i måneds- og årsvisningen.** Ugenummer-knapperne er 32 px
   brede, månedsrækkerne 24 px høje; specifikationen siger min. 44 pt.
 

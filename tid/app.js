@@ -12,6 +12,7 @@ import { initHistorikView, refreshHistorik } from './historik.js';
 import { initKalenderView, refreshKalender } from './kalender.js';
 import { initRapporterView, refreshRapporter } from './rapporter.js';
 import { initRettet } from './rettet.js';
+import { fangTab } from './ark.js';
 import { initIndstillingerView, refreshIndstillinger, getSettings } from './indstillinger.js';
 
 // ─── Firebase init ────────────────────────────────────────
@@ -148,18 +149,32 @@ $('btn-export-json')?.addEventListener('click', exportAllData);
 // en fuldskærms-overlay, så den lægger sig oven på Hjem, når den kommer.
 function visOnboardingHvisTom() {
   aktiviteterHentet().then(harAktiviteter => {
-    if (!harAktiviteter) onboardingScreen.classList.remove('hidden');
+    if (harAktiviteter) return;
+    onboardingScreen.classList.remove('hidden');
+    // Som et ark: appen bagved kan ikke nås, og fokus står i vinduet
+    appEl.inert = true;
+    btnOnbActs.focus();
   });
 }
 
-btnOnbActs.addEventListener('click', () => {
+function skjulOnboarding() {
   onboardingScreen.classList.add('hidden');
+  appEl.inert = false;
+}
+
+onboardingScreen.addEventListener('keydown', e => {
+  if (e.key === 'Escape') btnOnbSkip.click();
+  if (e.key === 'Tab') fangTab(e, onboardingScreen);
+});
+
+btnOnbActs.addEventListener('click', () => {
+  skjulOnboarding();
   navigateTo('aktiviteter');
   refreshAktiviteter();
 });
 
 btnOnbSkip.addEventListener('click', () => {
-  onboardingScreen.classList.add('hidden');
+  skjulOnboarding();
   navigateTo('hjem');
 });
 

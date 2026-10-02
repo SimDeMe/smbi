@@ -2,7 +2,7 @@
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins, esc } from './format.js';
-import { openSheet, closeSheet } from './ark.js';
+import { openSheet, closeSheet, somKnap } from './ark.js';
 import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, timerTilModuler, erModulform } from './normer.js';
 import { optjeningFor } from './akkord.js';
 import { renderSaetListe } from './rettet.js';
@@ -169,7 +169,7 @@ function renderList() {
 
   el.innerHTML = html;
   el.querySelectorAll('.act-row').forEach(row =>
-    row.addEventListener('click', () => openActSheet(row.dataset.id))
+    somKnap(row, () => openActSheet(row.dataset.id))
   );
 }
 
