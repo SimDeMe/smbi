@@ -422,6 +422,7 @@ img{display:block;max-width:100%}
 .lvl-A{background:var(--coral);color:#fff}
 .lvl-NF{background:#E2D6F8}
 .lvl-HF{background:#C7E6F6}
+.lvl-NV{background:#FFD9C9}
 
 /* ── Simuleringer (hovedsektionen) ─────────────────────── */
 .lede{font-size:1.04rem;color:#3E4E4C;max-width:58ch;margin:-14px 0 20px}
@@ -558,6 +559,7 @@ img{display:block;max-width:100%}
   border:2px solid var(--ink);border-radius:14px;padding:2px 9px;background:var(--t);
 }
 .item-meta .lvl{margin-left:auto}
+.item-meta .lvl+.lvl{margin-left:0}  /* flere niveauer står samlet til højre */
 
 /* ── Filterknapper ─────────────────────────────────────── */
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}

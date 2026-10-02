@@ -360,12 +360,13 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
             perspektivering»; nye hedder <code>## Journalspørgsmål</code>.</li>
         <li><b>Niveau med prikket streg</b> er <i>formodet</i> ud fra, hvilket forløb eller hvilken mappe
             filerne stammer fra — det står ikke i filerne. Kun
-            <code>poroesitet-og-permeabilitet-hf</code> har niveauet i sin egen metadata
-            (<code>fag: "Naturgeografi"</code>, <code>hold: "HF"</code>).</li>
+            <code>poroesitet-og-permeabilitet-hf</code> (<code>hold: "HF"</code>) og de fire
+            NV-vejledninger (<code>hold: "NV"</code>) har niveauet i deres egen metadata.</li>
       </ul>
       <h2>Det der mangler</h2>
       <ul>
-        <li>Alle geografi-vejledninger på nær HF-varianten har <b>tomme <code>fag</code>- og
+        <li>Alle geografi-vejledninger på nær HF-varianten og de fire NV-vejledninger
+            (<code>hold: "NV"</code>) har <b>tomme <code>fag</code>- og
             <code>hold</code>-felter</b> i deres YAML-hoved. Derfor står sidehovedet tomt i den
             renderede HTML og PDF. Biologi-øvelserne har alle <code>fag: "Biologi"</code>.</li>
         <li><b>Efterslæb efter standarden fra 14.&nbsp;september 2026:</b> begge afsnit —
@@ -681,6 +682,18 @@ const ØVELSER = [
 {fag:'geo',navn:'Lavas viskositet',emne:'Geologi og landskab',type:'Modelforsøg',sti:'Geografi/lavas-viskositet',fil:'lavas-viskositet',
  niveau:'Ng C · NV',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
  note:'Ny 2026-09-30. Bygger på en uploadet arbejdsseddel («Forsøg om viskositet — Hvorfor er nogle vulkaner høje og andre bredde?»), en oversat engelsk opgave, der ikke ligger i arkivet. Ikke sammenholdt med «Forsøg med vulkanudbrud» under NATURGEOGRAFI/08. Fire væsker ned ad et skråt bræt, 25 cm, tre tidtagninger. Nyt: hypotese, fart i cm/s, «gange langsommere end vand», søjlediagram og journalspørgsmål om eksplosive udbrud, SiO₂ og pladegrænser. Originalens engelske figurer er tegnet om på dansk. Kortet linker til simuleringen geografi/vulkanudbrud.html.'},
+{fag:'geo',navn:'Albedo og overfladetemperatur',emne:'Vejr og klima',original:'NATURGEOGRAFI/02 - Albedo-forsøg (inkl. IR-termometer)',type:'Laboratorie-/feltøvelse',sti:'Geografi/albedo-og-overfladetemperatur',fil:'albedo-og-overfladetemperatur',
+ niveau:'NV · C',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
+ note:'Ny 2026-10-02 som NV-version af forsøget i NV-forløbets modul 7 (NV/Modul 7 - Tilbagekoblinger/Opgaver og vejledninger/7 Øvelse - Albedo.docx), ikke sammenholdt med de mange arkivvarianter under NATURGEOGRAFI/02. Målinger på overflader omkring skolen + kontrolleret gråtoneforsøg (0/25/50/75/100 %) under lampe. Nyt: baggrund med albedo-formel, gennemsnit og ΔT i eget skema, journalspørgsmål om is-albedo-tilbagekoblingen og Golfstrømmen. Selvtegnet opstillingsfigur. Kort med NV- og C-mærke.'},
+{fag:'geo',navn:'Drivhuseffekt i miniature',emne:'Vejr og klima',type:'Modelforsøg',sti:'Geografi/drivhuseffekt-i-miniature',fil:'drivhuseffekt-i-miniature',
+ niveau:'NV · C',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
+ note:'Ny 2026-10-02 som NV-version af forsøget i NV-forløbets modul 4 (NV/Modul 4 - Klima og klimaforandringer/v1.0/Opgaver og vejledninger/4 Øvelse Drivhuseffekt modelforsøg.docx). Lampe, termometer og 0–4 lag viskestykke; temperatur ved ligevægt. Nyt: ΔT i forhold til 0 lag og pr. lag i eget skema, tendenslinje, og et journalspørgsmål om, at viskestykket mest stopper konvektion, ikke IR-stråling. Originalens metodespørgsmål (hypotese, kvantitativ, kontrolleret, repeterbar) er bevaret. Selvtegnet opstillingsfigur. Kortet linker til geografi/drivhuseffektenSimpel.html. Kort med NV- og C-mærke.'},
+{fag:'geo',navn:'Grønlandspumpen — NV-udgave',emne:'Hav og kyst',original:'NATURGEOGRAFI/10 - Grønlandspumpen',type:'Modelforsøg',sti:'Geografi/groenlandspumpen-nv',fil:'groenlandspumpen-nv',
+ niveau:'NV · C',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
+ note:'Ny 2026-10-02 som NV-version af forsøget i NV-forløbets modul 5 (NV/Modul 5 - Arktis og klimaforandringer/Opgaver og vejledninger/5 Grønlandspumpen.docx). Samler skillepladeforsøgene (koldt/varmt, salt/fersk) og hele pumpen i ét kar — dvs. indholdet af vands-temperatur-salinitet-og-densitet og groenlandspumpen-model i én vejledning, med NV-arkets metodespørgsmål. Databehandling: bundstrømmens fart v = s/t. Genbruger figurerne densitet, havis, pumpen og opstilling fra groenlandspumpen-model/figurer/. Kort med NV- og C-mærke.'},
+{fag:'geo',navn:'Havniveau og isafsmeltning',emne:'Hav og kyst',type:'Modelforsøg',sti:'Geografi/havniveau-og-isafsmeltning',fil:'havniveau-og-isafsmeltning',
+ niveau:'NV · C',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
+ note:'Ny 2026-10-02 som NV-version af forsøget i NV-forløbets modul 3 (NV/Modul 3 - Vandets kredsløb/Opgaver og vejledninger/Undersøgelse af havniveaustigninger.docx), der selv bygger på klimaforandringer.science.ku.dk. Is på land og is i havet i to kar under lampe. Nyt: isen vejes og karret måles, så den forventede stigning Δh = m/(ρ·A) kan sammenlignes med den målte. Arbejdsspørgsmålene om tilstandsformer og Golfstrømmen er lagt ind som journalspørgsmål. NV-arkets fotos og KU-figur er ikke genbrugt — selvtegnet opstillingsfigur. Kort med NV- og C-mærke.'},
 
 /* ---------------- NATURGEOGRAFI — kandidater (SM-DRIVE) ---------------- */
 {fag:'geo',navn:'Permeabilitet/porøsitet i jord (gamle udgaver)',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',
@@ -696,8 +709,8 @@ const ØVELSER = [
  niveau:'NF (hf)',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
  note:'Beslægtet med permeabilitetsøvelserne, men måler i marken. Brugt til NF-eksamen.'},
 {fag:'geo',navn:'Albedo-forsøg (inkl. IR-termometer)',emne:'Vejr og klima',original:'NATURGEOGRAFI/02 - Albedo-forsøg (inkl. IR-termometer)',type:'Laboratorieøvelse',kilde:'NV + NF + NF-eksamen',
- niveau:'NV / NF',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',
- note:'Mange varianter (gråtoner, farvet papir, arktis). Oplagt kandidat — bruges både i NV og til NF-eksamen.'},
+ niveau:'NV / NF',niveauFormodet:true,quarto:'daekket',data:'ukendt',spg:'ukendt',
+ note:'Delvist dækket af «Albedo og overfladetemperatur» (NV-udgaven, gråtoner + overflader ude). Arkivets øvrige varianter (farvet papir, arktis, NF-eksamen) er ikke gennemgået.'},
 {fag:'geo',navn:'Globale vindsystemer',emne:'Vejr og klima',original:'NATURGEOGRAFI/04 - Globale vindsystemer (øvelse)',type:'Opgaveøvelse',kilde:'NF + Ng',
  niveau:'NF / Ng',niveauFormodet:true,quarto:false,data:'ukendt',spg:'ukendt',note:'Opgave 1 og 2 findes hver for sig.'},
 {fag:'geo',navn:'Små klimaforsøg — opvarmning af vand og sand',emne:'Vejr og klima',original:'NATURGEOGRAFI/06 - Små klimaforsøg (opvarmning af vand og sand)',type:'Laboratorieøvelse',kilde:'NF',

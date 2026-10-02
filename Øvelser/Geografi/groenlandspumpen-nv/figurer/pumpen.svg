@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 316" width="640" height="316" role="img" aria-label="Tværsnit af Nordatlanten fra Danmark til Grønland med Golfstrømmen mod nord, synkende tungt vand ved Grønland og dybvand mod syd">
+  <title>Den termohaline cirkulation i Nordatlanten</title>
+  <desc>Tværsnit fra Danmark til venstre til Grønland til højre. En rød pil viser Golfstrømmens varme overfladevand mod nord, en blå pil viser tungt vand, der synker ned ud for Grønland, og en blå pil viser dybvandet, der løber sydpå langs havbunden i cirka 3000 meters dybde.</desc>
+  <defs>
+    <marker id="pil-varm" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#A8402C"/></marker>
+    <marker id="pil-kold" viewBox="0 0 12 12" refX="7" refY="6" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" fill="#1F5F8B"/></marker>
+  </defs>
+  <rect x="26" y="62" width="588" height="200" fill="#D9E9F0"/>
+  <rect x="26" y="162" width="588" height="100" fill="#C3DAE6"/>
+  <rect x="26" y="62" width="588" height="200" fill="none" stroke="#26332B" stroke-width="1.8"/>
+  <path d="M26,62 L26,28 L118,28 L142,62 Z" fill="#E3DFD2"/>
+  <path d="M26,28 L118,28 L142,62" fill="none" stroke="#26332B" stroke-width="1.8"/>
+  <path d="M614,62 L614,16 L468,16 L438,62 Z" fill="#E3DFD2"/>
+  <path d="M614,16 L468,16 L438,62" fill="none" stroke="#26332B" stroke-width="1.8"/>
+  <path d="M468,16 L448,40 L614,40 Z" fill="#FAFBF9"/>
+  <path d="M468,16 L448,40 L614,40" fill="none" stroke="#26332B" stroke-width="1.8"/>
+  <path d="M438,62 L438,140 L398,164 L398,262" fill="none" stroke="#26332B" stroke-width="1.8"/>
+  <text x="32" y="22" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">DANMARK</text>
+  <text x="494" y="12" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B">GRØNLAND</text>
+  <text x="470" y="34" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">indlandsis</text>
+  <path d="M70,88 H396" fill="none" stroke="#A8402C" stroke-width="7" stroke-linecap="round" marker-end="url(#pil-varm)"/>
+  <text x="76" y="80" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" fill="#26332B">Golfstrømmen — varmt, salt overfladevand</text>
+  <path d="M414,112 C414,152 404,178 402,222" fill="none" stroke="#1F5F8B" stroke-width="7" stroke-linecap="round" marker-end="url(#pil-kold)"/>
+  <text x="272" y="152" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" fill="#26332B">tungt vand synker</text>
+  <path d="M370,244 H62" fill="none" stroke="#1F5F8B" stroke-width="7" stroke-linecap="round" marker-end="url(#pil-kold)"/>
+  <text x="140" y="236" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" fill="#26332B">koldt dybvand mod syd</text>
+  <text x="32" y="284" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">havbunden, ca. 3000 meters dybde</text>
+  <text x="32" y="304" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">Rød = varmt overfladevand. Blå = koldt dybvand. Pilene viser strømretningen.</text>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" role="img" aria-label="To ens kar under en lampe. I kar A ligger isterningerne tørt oven på murstenene, i kar B flyder de på vandet">
+  <title>Opstillingen: is på land og is i havet</title>
+  <desc>To gennemsigtige kar står ved siden af hinanden under en lampe. I begge kar står to mursten som et kontinent, og vandet står lige højt. I kar A ligger isterningerne oven på murstenene, over vandspejlet, som en gletsjer på land. I kar B flyder isterningerne på vandet ved siden af murstenene som havis. En lineal er sat op ad hver kars væg, så vandstanden kan aflæses.</desc>
+  <path d="M320 0 V34" stroke="#26332B" stroke-width="2"/>
+  <path d="M278 62 L300 34 H340 L362 62 Z" fill="#E6E2D6" stroke="#26332B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M180 120 L282 64 H358 L460 120 Z" fill="#FFE9A8" opacity="0.55"/>
+  <text x="372" y="30" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">lampe, 50–60 W</text>
+  <rect x="60" y="196" width="230" height="54" fill="#D9E9F0"/>
+  <path d="M62 196 H288" stroke="#7FA8BC" stroke-width="1.6"/>
+  <rect x="74" y="216" width="96" height="34" fill="#B9A48C" stroke="#26332B" stroke-width="1.6"/>
+  <rect x="74" y="182" width="96" height="34" fill="#B9A48C" stroke="#26332B" stroke-width="1.6"/>
+  <rect x="78" y="166" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="102" y="166" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="126" y="166" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="150" y="166" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="90" y="150" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="116" y="150" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="140" y="150" width="20" height="16" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <path d="M60 128 V250 H290 V128" fill="none" stroke="#26332B" stroke-width="2.2" stroke-linejoin="round"/>
+  <rect x="274" y="140" width="8" height="110" fill="#F4EFC8" stroke="#26332B" stroke-width="1"/>
+  <path d="M274 244 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 236 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 228 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 220 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 212 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 204 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 196 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 188 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 180 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 172 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 164 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 156 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M274 148 h5" stroke="#26332B" stroke-width="0.8"/>
+  <text x="175" y="290" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B" text-anchor="middle">A · is på land (gletsjer)</text>
+  <rect x="350" y="196" width="230" height="54" fill="#D9E9F0"/>
+  <path d="M352 196 H578" stroke="#7FA8BC" stroke-width="1.6"/>
+  <rect x="364" y="216" width="96" height="34" fill="#B9A48C" stroke="#26332B" stroke-width="1.6"/>
+  <rect x="364" y="182" width="96" height="34" fill="#B9A48C" stroke="#26332B" stroke-width="1.6"/>
+  <rect x="470" y="187" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="494" y="189" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="518" y="186" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="542" y="188" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="482" y="175" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="508" y="176" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="530" y="174" width="19" height="15" rx="3" fill="#FAFBF9" stroke="#26332B" stroke-width="1.4"/>
+  <path d="M350 128 V250 H580 V128" fill="none" stroke="#26332B" stroke-width="2.2" stroke-linejoin="round"/>
+  <rect x="564" y="140" width="8" height="110" fill="#F4EFC8" stroke="#26332B" stroke-width="1"/>
+  <path d="M564 244 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 236 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 228 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 220 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 212 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 204 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 196 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 188 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 180 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 172 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 164 h8" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 156 h5" stroke="#26332B" stroke-width="0.8"/>
+  <path d="M564 148 h5" stroke="#26332B" stroke-width="0.8"/>
+  <text x="465" y="290" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B" text-anchor="middle">B · is i havet (havis)</text>
+  <text x="130" y="120" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#6B7A66" text-anchor="middle">mursten = kontinent</text>
+  <path d="M130 124 L130 176" stroke="#6B7A66" stroke-width="1"/>
+  <text x="568" y="133" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="11" fill="#6B7A66" text-anchor="middle">lineal</text>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210" width="640" height="210" role="img" aria-label="To billeder af opstillingen: lampen og termometeret uden viskestykke, og den samme opstilling dækket af et viskestykke">
+  <title>Opstillingen: lampe, termometer og viskestykke</title>
+  <desc>Til venstre ligger en arkitektlampe ned på bordet med skærmen vendt mod et termometer, der ligger lige foran pæren. Til højre er den samme opstilling dækket af et viskestykke, så både lampen og termometeret er under stoffet. Termometeret må ikke flyttes i løbet af forsøget.</desc>
+  <rect x="20" y="170" width="280" height="10" fill="#D9C39A" stroke="#26332B" stroke-width="1.6"/>
+  <rect x="340" y="170" width="280" height="10" fill="#D9C39A" stroke="#26332B" stroke-width="1.6"/>
+  <path d="M100 144 L136 120 L136 166 L100 164 Z" fill="#E6E2D6" stroke="#26332B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M60 156 H102" stroke="#26332B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M138 122 L210 106 V170 H138 Z" fill="#FFE9A8" opacity="0.6"/>
+  <rect x="178" y="110" width="7" height="52" rx="3.5" fill="#fff" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="180" y="136" width="3" height="24" fill="#A8402C"/>
+  <circle cx="181.5" cy="163" r="5.5" fill="#A8402C" stroke="#26332B" stroke-width="1.4"/>
+  <text x="160" y="30" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B" text-anchor="middle">1 · Uden viskestykke (0 lag)</text>
+  <text x="80" y="82" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66" text-anchor="middle">arkitektlampe</text>
+  <text x="240" y="82" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66" text-anchor="middle">termometer</text>
+  <path d="M228 88 L184 112" stroke="#6B7A66" stroke-width="1"/>
+  <path d="M420 144 L456 120 L456 166 L420 164 Z" fill="#E6E2D6" stroke="#26332B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M380 156 H422" stroke="#26332B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M458 122 L530 106 V170 H458 Z" fill="#FFE9A8" opacity="0.6"/>
+  <rect x="498" y="110" width="7" height="52" rx="3.5" fill="#fff" stroke="#26332B" stroke-width="1.4"/>
+  <rect x="500" y="136" width="3" height="24" fill="#A8402C"/>
+  <circle cx="501.5" cy="163" r="5.5" fill="#A8402C" stroke="#26332B" stroke-width="1.4"/>
+  <path d="M392 170 C392 96 420 86 470 86 C520 86 548 96 548 170" fill="#C7E6F6" fill-opacity="0.85" stroke="#26332B" stroke-width="2"/>
+  <path d="M410 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M424 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M438 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M452 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M466 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M480 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M494 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M508 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M522 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <path d="M536 100 v6" stroke="#7FA8BC" stroke-width="2"/>
+  <text x="480" y="30" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#26332B" text-anchor="middle">2 · Dækket af viskestykke</text>
+  <text x="560" y="78" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66">viskestykke</text>
+  <path d="M574 82 L540 110" stroke="#6B7A66" stroke-width="1"/>
+  <text x="480" y="200" font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" font-size="12" fill="#6B7A66" text-anchor="middle">foldes til 2, 3 og 4 lag</text>
+</svg>
