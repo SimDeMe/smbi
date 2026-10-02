@@ -92,3 +92,11 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   er dermed én rettelse i `ark.js`.
 - [ ] Testopsætningen (falsk Firebase + Playwright) kunne ligge i `tid/test/`
   som regressionstest.
+- [ ] **Tjek ferieplanerne igen.** Gennemgå skolens ferieplan for lærerne
+  hvert år, og ret perioderne under Indstillinger → Ferie, så de passer
+  (2026/27: 25 dage — planen skriver juli 2027, men mener 2026). Og få styr på
+  **6. ferieuge**: Er de 37 timer ferie-fridage med i normen på 1650 t eller
+  ej? Er de *ikke* med (229 × 7,4 t ≈ 1695 t, 224 × 7,4 t ≈ 1658 t tyder på
+  det), lægges dagene ind som ferie, når de er aftalt med ledelsen. Er de
+  med, registreres de som tid i stedet. Overvej om appen skal have et felt
+  til det, så det ikke skal huskes.
