@@ -5,7 +5,7 @@
 // ugevisningen syv — én pr. dag — der deler den samme akse, så en fredag
 // eftermiddag kan sammenlignes med resten af ugen på ét blik.
 
-import { fmtMins } from './timer.js';
+import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { addDays, erIDag, DAGE_KORT } from './periode.js';
 
@@ -198,7 +198,7 @@ function blokke(items, vin, H, bred) {
       : `${it.clipTop ? '…' : fmtTime(it.realStart)}–${it.clipBottom ? '…' : fmtTime(it.realEnd)}`;
     // I en smal eller lav blok er der kun plads til navnet
     const visTid = bred && !(h < 34 && it.cols > 1);
-    const wt  = it.workType ? ` · ${stort(it.workType)}` : '';
+    const wt  = it.workType ? ` · ${capitalize(it.workType)}` : '';
     const cls = [
       h < 34 ? 'kal-block-sm' : '',
       bred ? '' : 'kal-block-smal',
@@ -266,8 +266,3 @@ function startFraTryk(min, items) {
   const ligeUnder = min - forrigeSlut <= SNAP_MIN;   // trykket lige under blokken
   return ligeUnder || snap < forrigeSlut ? forrigeSlut : snap;
 }
-
-// ─── Hjælpere ─────────────────────────────────────────────
-const stort = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-const esc = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
-const fmtTime = d => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;

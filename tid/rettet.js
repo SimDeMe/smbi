@@ -15,6 +15,8 @@ import { db, showToast, getCurrentSchoolYear } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { normerFor, tolkTal, fmtTimer } from './normer.js';
 import { datoInput, langDato } from './periode.js';
+import { esc } from './format.js';
+import { openSheet, closeSheet } from './ark.js';
 import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 const HURTIGVALG = [1, 2, 3, 4];
@@ -51,7 +53,7 @@ export function openSaetSheet() {
       btn.addEventListener('click', () => vaelgHold(holds.find(h => h.id === btn.dataset.id)))
     );
   }
-  openSheet();
+  openSheet('saet-sheet', 'saet-backdrop');
 }
 
 function vaelgHold(hold) {
@@ -130,7 +132,7 @@ async function gemSaet(e) {
       rettedeSaet: [...(hold.rettedeSaet || []), saet]
     });
     showToast(`Sæt registreret · ${komma(elevtimer)} elevtimer`);
-    closeSheet();
+    lukArk();
   } catch (err) {
     console.error('Rettet sæt fejl:', err);
     showToast('Kunne ikke gemme — prøv igen');
@@ -191,24 +193,14 @@ async function sletSaet(actId, saetId) {
   }
 }
 
-// ─── Sheet open/close ─────────────────────────────────────
-function openSheet() {
-  const s = document.getElementById('saet-sheet'), b = document.getElementById('saet-backdrop');
-  s.classList.remove('hidden'); b.classList.remove('hidden');
-  requestAnimationFrame(() => { s.classList.add('open'); b.classList.add('open'); });
-}
-function closeSheet() {
-  const s = document.getElementById('saet-sheet'), b = document.getElementById('saet-backdrop');
-  s.classList.remove('open'); b.classList.remove('open');
-  setTimeout(() => { s.classList.add('hidden'); b.classList.add('hidden'); }, 280);
-}
+const lukArk = () => closeSheet('saet-sheet', 'saet-backdrop');
 
 function bindListeners() {
   if (listenersOk) return;
   listenersOk = true;
   document.getElementById('btn-rettet-saet')?.addEventListener('click', openSaetSheet);
-  document.getElementById('saet-close')?.addEventListener('click', closeSheet);
-  document.getElementById('saet-backdrop')?.addEventListener('click', closeSheet);
+  document.getElementById('saet-close')?.addEventListener('click', lukArk);
+  document.getElementById('saet-backdrop')?.addEventListener('click', lukArk);
   document.getElementById('saet-form')?.addEventListener('submit', gemSaet);
   document.getElementById('saet-elevtimer')?.addEventListener('input', opdaterUdregning);
 }
@@ -216,4 +208,3 @@ function bindListeners() {
 // ─── Hjælpere ─────────────────────────────────────────────
 const komma = v => Number(v).toLocaleString('da-DK', { maximumFractionDigits: 2 });
 const nytId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const esc   = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';

@@ -87,8 +87,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   «ugestart», som ikke findes; specifikationen siger auto-stop 240 min, koden
   600.
 - [ ] **Vis appens version** nederst i Indstillinger (fx `tid-v27`).
-- [ ] **Dubletter.** `fmtMins` i tre udgaver, `esc` i seks,
-  `openSheet`/`closeSheet` i fire. Én `format.js` og ét `ark.js` — så bliver
-  tastaturpunktet også én rettelse.
+- [x] **Dubletter.** `esc`, `capitalize`, `fmtMins` og `fmtTime` ligger nu i
+  `format.js`, `openSheet`/`closeSheet` i `ark.js` — tastaturpunktet ovenfor
+  er dermed én rettelse i `ark.js`.
 - [ ] Testopsætningen (falsk Firebase + Playwright) kunne ligge i `tid/test/`
   som regressionstest.

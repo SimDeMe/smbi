@@ -7,6 +7,7 @@
 
 import { getSettings } from './indstillinger.js';
 import { getCurrentSchoolYear } from './app.js';
+import { capitalize } from './format.js';
 
 export const DAG_MS = 86400000;
 
@@ -99,8 +100,6 @@ export function skoleaarForPeriode(type, forskyd = 0) {
 }
 
 // ─── Mærkater ─────────────────────────────────────────────
-const stort = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-
 export const langDato  = d => `${d.getDate()}. ${MAANEDER[d.getMonth()]} ${d.getFullYear()}`;
 export const kortDato  = d => `${d.getDate()}. ${MAANEDER_KORT[d.getMonth()]}`;
 export const datoInput = d =>
@@ -111,9 +110,9 @@ const NAERE_DAGE = { '-2':'I forgårs', '-1':'I går', '0':'I dag', '1':'I morge
 // Kort overskrift: "I går", "Uge 36", "September", "2026/27"
 export function periodeTitel(type, forskyd = 0) {
   const s = periodeStart(type, forskyd);
-  if (type === 'dag')    return NAERE_DAGE[forskyd] ?? stort(DAGE[s.getDay()]);
+  if (type === 'dag')    return NAERE_DAGE[forskyd] ?? capitalize(DAGE[s.getDay()]);
   if (type === 'uge')    return `Uge ${ugeNr(s)}`;
-  if (type === 'maaned') return stort(MAANEDER[s.getMonth()]);
+  if (type === 'maaned') return capitalize(MAANEDER[s.getMonth()]);
   return skoleaarMaerkat(aktueltSkoleaar() + forskyd);
 }
 

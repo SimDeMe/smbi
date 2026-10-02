@@ -4,6 +4,9 @@ import { db, showToast, getCurrentSchoolYear } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { SKEMA, VARIGHEDER, minutterFraTid, skemaFraTider, skemaNu, skemaInterval } from './skema.js';
 import { opretPost, erPause, PAUSE_NAVN } from './pauser.js';
+import { esc, capitalize, fmtMins, fmtTime } from './format.js';
+import { openSheet, closeSheet } from './ark.js';
+import { datoInput } from './periode.js';
 import {
   collection, doc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, where, getDocs, Timestamp
@@ -159,7 +162,7 @@ function renderList() {
   filtered.forEach(e => {
     if (!e.startTime) return;
     const d   = e.startTime.toDate();
-    const key = toDateInput(d);
+    const key = datoInput(d);
     if (!groups.has(key)) groups.set(key, { date: d, list: [] });
     groups.get(key).list.push(e);
   });
@@ -256,7 +259,7 @@ export function openEntrySheet(entryId, prefill = null, post = null) {
 
   if (e) {
     const sd = e.startTime.toDate();
-    document.getElementById('hist-date').value  = toDateInput(sd);
+    document.getElementById('hist-date').value  = datoInput(sd);
     document.getElementById('hist-start').value = fmtTime(sd);
     document.getElementById('hist-end').value   = e.endTime ? fmtTime(e.endTime.toDate()) : '';
     document.getElementById('hist-note').value  = e.note || '';
@@ -266,7 +269,7 @@ export function openEntrySheet(entryId, prefill = null, post = null) {
     });
   } else {
     const start = prefill?.start || new Date();
-    document.getElementById('hist-date').value  = toDateInput(start);
+    document.getElementById('hist-date').value  = datoInput(start);
     document.getElementById('hist-start').value = fmtTime(start);
     document.getElementById('hist-end').value   = prefill?.end ? fmtTime(prefill.end) : '';
     document.getElementById('hist-note').value  = '';
@@ -355,7 +358,7 @@ function vaelgSkema(id) {
   document.getElementById('hist-start').value = valgtIgen ? '' : sk.start;
   document.getElementById('hist-end').value   = valgtIgen ? '' : sk.slut;
   if (!document.getElementById('hist-date').value)
-    document.getElementById('hist-date').value = toDateInput(new Date());
+    document.getElementById('hist-date').value = datoInput(new Date());
   syncSkemaChips();
   syncVarighedChips();
   syncFremtidNotice();
@@ -371,7 +374,7 @@ function syncSkemaChips() {
   const endVal   = document.getElementById('hist-end').value;
   const match    = skemaFraTider(startVal, endVal);
   const dateVal  = document.getElementById('hist-date').value;
-  const iDag     = dateVal === toDateInput(new Date());
+  const iDag     = dateVal === datoInput(new Date());
   const nu       = iDag ? skemaNu() : null;
 
   row.querySelectorAll('.skema-chip').forEach(btn => {
@@ -403,7 +406,7 @@ function vaelgVarighed(minutter) {
   const dateEl  = document.getElementById('hist-date');
   const startEl = document.getElementById('hist-start');
   // Åbner man arket uden tider (fx fra knappen "Ny"), regnes varigheden fra nu
-  if (!dateEl.value)  dateEl.value  = toDateInput(new Date());
+  if (!dateEl.value)  dateEl.value  = datoInput(new Date());
   if (!startEl.value) startEl.value = fmtTime(new Date());
 
   const start = parseDateTime(dateEl.value, startEl.value);
@@ -624,25 +627,6 @@ async function deleteEntry() {
   } finally { btn.disabled = false; }
 }
 
-// ─── Sheet helpers ────────────────────────────────────────
-function openSheet(id, bdId) {
-  document.getElementById(id).classList.remove('hidden');
-  document.getElementById(bdId).classList.remove('hidden');
-  requestAnimationFrame(() => {
-    document.getElementById(id).classList.add('open');
-    document.getElementById(bdId).classList.add('open');
-  });
-}
-
-function closeSheet(id, bdId) {
-  document.getElementById(id).classList.remove('open');
-  document.getElementById(bdId).classList.remove('open');
-  setTimeout(() => {
-    document.getElementById(id).classList.add('hidden');
-    document.getElementById(bdId).classList.add('hidden');
-  }, 280);
-}
-
 // ─── Bind listeners ───────────────────────────────────────
 function bindListeners() {
   if (listenersOk) return;
@@ -681,23 +665,6 @@ function bindListeners() {
 }
 
 // ─── Formattering ─────────────────────────────────────────
-const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-const esc = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
-
-function fmtMins(m) {
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60), r = m % 60;
-  return r > 0 ? `${h}t ${r}m` : `${h}t`;
-}
-
-function fmtTime(d) {
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-function toDateInput(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
 function parseDateTime(dateStr, timeStr) {
   try {
     const [y, m, day] = dateStr.split('-').map(Number);

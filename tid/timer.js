@@ -5,6 +5,8 @@ import { getLoadedActivities, isActivitiesLoaded, aktiviteterHentet, naarAktivit
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaDatoer, skemaLaengde, skemaInterval, skemaNu } from './skema.js';
 import { opretPost } from './pauser.js';
+import { esc, capitalize, fmtMins, fmtTime } from './format.js';
+import { openSheet, closeSheet } from './ark.js';
 import {
   collection, doc, updateDoc, deleteDoc,
   onSnapshot, query, where, limit, getDocs, orderBy,
@@ -357,7 +359,7 @@ function goToModulWhen(hold) {
 
   const now = new Date();
   document.getElementById('modul-tid-input').value =
-    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    fmtTime(now);
   syncModulFremtid();
 }
 
@@ -559,24 +561,6 @@ async function stopEntry(entry, showMsg) {
   return duration;
 }
 
-// ─── Sheet open/close ─────────────────────────────────────
-function openSheet(id, bdId) {
-  document.getElementById(id).classList.remove('hidden');
-  document.getElementById(bdId).classList.remove('hidden');
-  requestAnimationFrame(() => {
-    document.getElementById(id).classList.add('open');
-    document.getElementById(bdId).classList.add('open');
-  });
-}
-function closeSheet(id, bdId) {
-  document.getElementById(id).classList.remove('open');
-  document.getElementById(bdId).classList.remove('open');
-  setTimeout(() => {
-    document.getElementById(id).classList.add('hidden');
-    document.getElementById(bdId).classList.add('hidden');
-  }, 280);
-}
-
 // ─── Event listeners ─────────────────────────────────────
 function bindListeners() {
   if (listenersOk) return;
@@ -618,18 +602,9 @@ function bindListeners() {
 }
 
 // ─── Formattering ─────────────────────────────────────────
-const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-const esc        = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
-
 function fmtSecs(s) {
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
   return h > 0
     ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
     : `${m}:${String(sec).padStart(2,'0')}`;
-}
-
-export function fmtMins(m) {
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60), r = m % 60;
-  return r > 0 ? `${h}t ${r}m` : `${h}t`;
 }

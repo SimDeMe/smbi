@@ -1,7 +1,8 @@
 // activities.js — Trin 3: Aktiviteter CRUD
 
 import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
-import { fmtMins } from './timer.js';
+import { fmtMins, esc } from './format.js';
+import { openSheet, closeSheet } from './ark.js';
 import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, timerTilModuler, erModulform } from './normer.js';
 import { optjeningFor } from './akkord.js';
 import { renderSaetListe } from './rettet.js';
@@ -582,25 +583,6 @@ async function doCopy() {
   } finally { btn.disabled = false; }
 }
 
-// ─── Sheet open/close ─────────────────────────────────────
-function openSheet(sheetId, bdId) {
-  document.getElementById(sheetId).classList.remove('hidden');
-  document.getElementById(bdId).classList.remove('hidden');
-  requestAnimationFrame(() => {
-    document.getElementById(sheetId).classList.add('open');
-    document.getElementById(bdId).classList.add('open');
-  });
-}
-
-function closeSheet(sheetId, bdId) {
-  document.getElementById(sheetId).classList.remove('open');
-  document.getElementById(bdId).classList.remove('open');
-  setTimeout(() => {
-    document.getElementById(sheetId).classList.add('hidden');
-    document.getElementById(bdId).classList.add('hidden');
-  }, 280);
-}
-
 // ─── Event listeners (én gang) ────────────────────────────
 function bindListeners() {
   if (listenersOk) return;
@@ -667,4 +649,3 @@ function bindListeners() {
 const nextOrder    = () => Math.max(0, ...activities.map(a => a.order || 0)) + 1;
 const autoColor    = () => { const u = new Set(activities.map(a => a.color)); return COLOR_PALETTE.find(c => !u.has(c)) || COLOR_PALETTE[0]; };
 const nextSchoolYear = y => { const n = parseInt(y) + 1; return `${n}/${String(n + 1).slice(2)}`; };
-const esc = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';

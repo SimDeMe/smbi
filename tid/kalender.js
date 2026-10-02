@@ -12,7 +12,7 @@
 import { db } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { openEntrySheet } from './historik.js';
-import { fmtMins } from './timer.js';
+import { fmtMins } from './format.js';
 import { erPause } from './pauser.js';
 import { tegnDag, tegnUge } from './kalender-akse.js';
 import { tegnMaaned, tegnAar } from './kalender-oversigt.js';

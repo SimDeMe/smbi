@@ -6,7 +6,7 @@
 // er registreret, og under gitteret står fordelingen på aktiviteter. Så kan
 // man se travle uger, ferier og skæve fordelinger på ét blik.
 
-import { fmtMins } from './timer.js';
+import { esc, fmtMins } from './format.js';
 import {
   addDays, dageIMaaned, erIDag, kortTimer,
   MAANEDER, MAANEDER_KORT, UGEDAGE_KORT, mandag, ugeNr, langDato
@@ -188,5 +188,3 @@ function bindSpring(rod, ctx) {
   rod.querySelectorAll('.kal-aar-md').forEach(b =>
     b.addEventListener('click', () => ctx.vaelgMaaned(new Date(Number(b.dataset.dato)))));
 }
-
-const esc = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';

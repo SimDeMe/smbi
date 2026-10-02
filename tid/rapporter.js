@@ -8,6 +8,7 @@ import { db, COLOR_PALETTE } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { getSettings, gemIndstilling } from './indstillinger.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
+import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
 } from './akkord.js';
@@ -817,23 +818,8 @@ function bindListeners() {
 }
 
 // ─── Formattering ─────────────────────────────────────────
-const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
-const esc = s => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
-
 function fmtDate(d) {
   return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
-}
-
-function fmtTime(d) {
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-function fmtMins(m) {
-  m = Math.round(m || 0);
-  if (!m) return '0m';
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60), r = m % 60;
-  return r > 0 ? `${h}t ${r}m` : `${h}t`;
 }
 
 // Saldo med fortegn: "+3t 20m", "−1t 5m"
