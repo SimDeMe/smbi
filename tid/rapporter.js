@@ -644,8 +644,9 @@ function akkordType(navn, tal, brugt, norm, optjent, color, chip) {
 // Retningen måles mod de rettede sæt, der er afsluttet i perioden: tiden
 // brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt endnu,
 // skønnes den rettede fordybelsestid ud fra, hvor stor en del af årets
-// undervisning der er registreret, og tallet mærkes "skønnet". Har holdet
-// sæt, men ingen i perioden, er der intet at måle mod.
+// undervisning der er registreret, og tallet mærkes "skønnet" — men kun, når
+// der er registreret retning. Har holdet sæt, men ingen i perioden, er der
+// intet at måle mod.
 // Forholdstal gælder for enhver periode, så linjen står også under dag, uge
 // og måned.
 //
@@ -670,9 +671,11 @@ function faktorLinje(act, n, wt) {
     if ((act.rettedeSaet || []).length) {
       const et = rettedeElevtimer(act, datoInput(start()), datoInput(slut()));
       if (et > 0 && elever > 0) realR = (wt.retning || 0) / (et * elever);
-    } else {
+    } else if (wt.retning > 0) {
+      // Uden sæt og uden registreret retning er der intet at skønne ud fra —
+      // et «0,0» ville bare se ud som et resultat
       const andel = u / (n.undervisning * 60);
-      realR = (wt.retning || 0) / (n.elevtimer * andel);
+      realR = wt.retning / (n.elevtimer * andel);
       skoen = true;
     }
     if (realR != null) {

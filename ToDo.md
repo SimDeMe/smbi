@@ -65,8 +65,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   25 feriedage og 229 arbejdsdage.
 - [ ] **Import sætter ingen optjeningsmåde.** Alt bliver «Løbende». Tillad en
   femte kolonne (`afslutning`) eller vis en huskeseddel efter import.
-- [ ] **Støj i holdets faktorlinje.** Skjul «Retning (skønnet) 0,0», når der
-  ikke er registreret retning.
+- [x] **Støj i holdets faktorlinje.** «Retning (skønnet)» står kun, når der
+  er registreret retning.
 - [ ] **Ugevisningen bliver høj af en post hen over midnat.** Klip vinduet,
   eller marker «…fortsætter» i stedet for at udvide aksen til 00.
 - [ ] **Navne trunkeres i hurtigstart** («Eksamen …»). To linjer, eller fuld
@@ -87,7 +87,9 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 - [ ] **Hjælpesiden er forældet.** `hjaelp.html` nævner «modul-længde» og
   «ugestart», som ikke findes; specifikationen siger auto-stop 240 min, koden
   600.
-- [ ] **Vis appens version** nederst i Indstillinger (fx `tid-v27`).
+- [x] **Vis appens version** nederst i Indstillinger — navnet på den cache,
+  appen kører fra (`tid-v32`). Samtidig rettet: tid og navneApp slettede
+  hinandens caches, når den ene blev opdateret.
 - [x] **Dubletter.** `esc`, `capitalize`, `fmtMins` og `fmtTime` ligger nu i
   `format.js`, `openSheet`/`closeSheet` i `ark.js` — tastaturpunktet ovenfor
   er dermed én rettelse i `ark.js`.

@@ -1,4 +1,4 @@
-const CACHE = 'tid-v31';
+const CACHE = 'tid-v32';
 const SHELL = [
   '/tid/',
   '/tid/index.html',
@@ -44,7 +44,9 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      // Kun appens egne, gamle caches — smbi.dk har flere apps på samme
+      // domæne, og de deler cachelager
+      Promise.all(keys.filter(k => k.startsWith('tid-') && k !== CACHE).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();

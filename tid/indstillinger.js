@@ -38,6 +38,23 @@ export async function initIndstillingerView(uid) {
 
 export function refreshIndstillinger() {
   populateForm();
+  visVersion();
+}
+
+// ─── Version ──────────────────────────────────────────────
+// Versionen er navnet på service workerens cache (tid-v32) — så står der
+// præcis den udgave, appen faktisk kører fra. Uden cache (første besøg,
+// privat vindue) står der «ikke installeret».
+async function visVersion() {
+  const el = document.getElementById('app-version');
+  if (!el) return;
+  try {
+    const nr = (await caches.keys())
+      .map(k => /^tid-v(\d+)$/.exec(k)?.[1]).filter(Boolean).map(Number);
+    el.textContent = nr.length ? `tid-v${Math.max(...nr)}` : 'ikke installeret';
+  } catch {
+    el.textContent = 'ikke installeret';
+  }
 }
 
 // ─── Load from Firestore ──────────────────────────────────

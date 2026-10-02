@@ -1381,6 +1381,13 @@ select.form-input{
 .ferie-advarsel{display:block;color:var(--ink);background:var(--tint-pasPaa);
   border:2px solid var(--ink);border-radius:8px;padding:4px 8px;margin-top:6px}
 
+/* Versionen nederst — som simuleringernes: småt og uden versaler */
+.app-version{
+  margin:4px 0 20px;text-align:center;
+  font-family:var(--mono);font-size:0.62rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate);
+}
+
 /* ─── Besked ────────────────────────────────────────────── */
 .toast{
   position:fixed;left:50%;z-index:210;
