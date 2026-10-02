@@ -6,3 +6,7 @@
 
 # Stensamlingens fotos i fuld opløsning — kilden til beskæringsværktøjet
 geografi/stensamling/billeder/originaler/
+
+# Testene i tid/test: Playwright-link og skærmbilleder
+tid/test/node_modules
+tid/test/ud/

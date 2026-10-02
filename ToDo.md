@@ -93,8 +93,8 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 - [x] **Dubletter.** `esc`, `capitalize`, `fmtMins` og `fmtTime` ligger nu i
   `format.js`, `openSheet`/`closeSheet` i `ark.js` — tastaturpunktet ovenfor
   er dermed én rettelse i `ark.js`.
-- [ ] Testopsætningen (falsk Firebase + Playwright) kunne ligge i `tid/test/`
-  som regressionstest.
+- [x] Testopsætningen (falsk Firebase + Playwright) ligger i `tid/test/` —
+  `node tid/test/alle.mjs` kører det hele. Se `tid/test/README.md`.
 - [ ] **Tjek ferieplanerne igen.** Gennemgå skolens ferieplan for lærerne
   hvert år, og ret perioderne under Indstillinger → Ferie, så de passer
   (2026/27: 25 dage — planen skriver juli 2027, men mener 2026). Og få styr på

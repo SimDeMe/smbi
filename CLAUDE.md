@@ -14,6 +14,14 @@ python3 -m http.server 8777       # og åbn http://localhost:8777/...
 Sider linker til `/geografi.html`, `/contact.html` osv. med rod-relative stier,
 så de kun virker rigtigt over en server — ikke via `file://`.
 
+## Tid-appen (`tid/`)
+
+PWA med Firebase. Har browsertest mod en falsk Firebase i `tid/test/` — kør
+`node tid/test/alle.mjs` før hvert push, der rører `tid/` (se
+`tid/test/README.md`), og læg en test til ved hver rettelse. Hver ændring
+tæller cachenavnet `tid-vNN` i `tid/service-worker.js` op; nye filer skrives
+ind i dens liste.
+
 ## Simuleringer: gerne flere filer
 
 Alle nye simuleringer — og simuleringer, der lægges om — må deles op i flere
