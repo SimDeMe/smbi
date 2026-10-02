@@ -44,19 +44,21 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 - [x] **Timer-banneret kan vise forkert navn ved opstart.** Kom den
   igangværende post før aktiviteterne, stod der «Ubundet tid» til næste
   snapshot. Banner og timerkort tegnes nu igen, når aktiviteterne ændres.
-- [ ] **Overlappende registreringer tælles dobbelt uden advarsel.** Formularen
-  kunne advare («overlapper 3g Ng 12:00–13:35»), eller rapporten kunne vise
-  overlappet tid for sig.
-- [ ] **«Alle» i historiklisten er stille begrænset til 500 poster** (2–3
-  måneder). Vis «Viser de seneste 500», eller brug periodefilteret med pile
-  som i kalender og rapporter.
+- [x] **Overlappende registreringer tælles dobbelt uden advarsel.** Formularen
+  advarer nu («Overlapper med 3g Ng 08:00–09:35»), og i listen får
+  overlappende poster mærkatet «Overlap». Pauser tæller med, for de er fælles
+  tid. Rapporten viser stadig ikke overlappet tid for sig.
+- [x] **«Alle» i historiklisten er stille begrænset til 500 poster** (2–3
+  måneder). Under en afskåret liste står nu «Viser de seneste 500» og en knap
+  «Vis 500 mere». Samtidig rettet: kalenderen åbnede en post ældre end
+  listens 500 som «Ny registrering», så Gem lavede en kopi.
 
 ### Brugsoplevelse
 
-- [ ] **Kort pause fylder historiklisten.** Vis dem som en tynd mellemlinje
-  («· 15 m pause») i stedet for et fuldt kort — kalenderen dæmper dem allerede.
-- [ ] **Dobbelt timer på Hjem.** Banner og timerkort viser det samme med to
-  Stop-knapper. Skjul banneret på Hjem.
+- [x] **Kort pause fylder historiklisten.** Pauser står nu som en tynd stiplet
+  mellemlinje («Pause 15m 09:35–09:50»), der stadig kan trykkes på og rettes.
+- [x] **Dobbelt timer på Hjem.** Banneret er skjult på Hjem og vises på de
+  andre faner.
 - [ ] **«Bagud skema» er misvisende i efteråret.** Forløbet regnes lineært fra
   1. juni, så sommerferien tæller som arbejdstid («▼ 323 t bagud» i oktober).
   Spring ferien over, fx med en indstilling for ferieuger eller arbejdsuger

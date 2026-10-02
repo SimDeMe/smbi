@@ -6,7 +6,7 @@ import { SKEMA, VARIGHEDER, minutterFraTid, skemaFraTider, skemaNu, skemaInterva
 import { opretPost, erPause, PAUSE_NAVN } from './pauser.js';
 import {
   collection, doc, updateDoc, deleteDoc,
-  onSnapshot, query, orderBy, limit, Timestamp
+  onSnapshot, query, orderBy, limit, where, getDocs, Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── State ────────────────────────────────────────────────
@@ -15,8 +15,18 @@ let entries      = [];
 let unsubEntries = null;
 let listenersOk  = false;
 let editingId    = null;
+let redigeret    = null;       // posten i arket — også når den er ældre end listen
 let periodFilter = 'uge';
 let actFilter    = '';
+
+// Listen henter de seneste LISTE_TRIN poster og kan udvides i samme spring,
+// så «Alle» ikke stille holder op ved en grænse
+const LISTE_TRIN = 500;
+let listeGraense = LISTE_TRIN;
+
+// Formularens nabolag: posterne omkring den valgte dato, til overlap-tjekket
+let naboPoster   = [];
+let naboDato     = '';
 
 // ─── Init ─────────────────────────────────────────────────
 export function initHistorikView(uid) {
@@ -39,7 +49,7 @@ function setupEntriesListener() {
     query(
       collection(db, `users/${userId}/entries`),
       orderBy('startTime', 'desc'),
-      limit(500)
+      limit(listeGraense)
     ),
     snap => {
       entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -47,6 +57,41 @@ function setupEntriesListener() {
     },
     err => console.error('Entries listener:', err)
   );
+}
+
+function visFlere() {
+  listeGraense += LISTE_TRIN;
+  setupEntriesListener();
+}
+
+// Er listen skåret af, før perioden er slut bagud? Så mangler der poster,
+// og det skal stå under listen
+function listenErAfskaaret() {
+  if (entries.length < listeGraense) return false;
+  const start  = getPeriodStart(periodFilter);
+  const aeldst = entries[entries.length - 1]?.startTime?.toDate();
+  return !start || (aeldst && aeldst > start);
+}
+
+// ─── Overlap ──────────────────────────────────────────────
+// To registreringer, der dækker samme minutter, tælles begge med i
+// rapporterne. Det kan være rigtigt (to ting på én gang), men oftest er det
+// en fejl — så det skal kunne ses. Pauser er med: de tæller som fælles tid.
+const slutMs = e => e.endTime ? e.endTime.toDate().getTime() : Date.now();
+
+function overlappendeIds(liste) {
+  const poster = liste
+    .filter(e => e.startTime)
+    .sort((a, b) => a.startTime.toDate() - b.startTime.toDate());
+  const ids = new Set();
+  for (let i = 0; i < poster.length; i++) {
+    const slut = slutMs(poster[i]);
+    for (let j = i + 1; j < poster.length; j++) {
+      if (poster[j].startTime.toDate().getTime() >= slut) break;
+      ids.add(poster[i].id); ids.add(poster[j].id);
+    }
+  }
+  return ids;
 }
 
 // ─── Filtering ────────────────────────────────────────────
@@ -94,10 +139,20 @@ function renderList() {
   const acts     = getLoadedActivities();
   const filtered = filterEntries();
 
+  const flere = listenErAfskaaret()
+    ? `<div class="hist-more">
+        <span class="hist-more-txt">Viser de seneste ${entries.length} registreringer</span>
+        <button type="button" id="hist-more-btn" class="btn btn-secondary">Vis ${LISTE_TRIN} mere</button>
+      </div>`
+    : '';
+
   if (!filtered.length) {
-    el.innerHTML = `<div class="hist-empty">Ingen registreringer i denne periode</div>`;
+    el.innerHTML = `<div class="hist-empty">Ingen registreringer i denne periode</div>` + flere;
+    document.getElementById('hist-more-btn')?.addEventListener('click', visFlere);
     return;
   }
+
+  const overlap = overlappendeIds(filtered);
 
   // Group by date key YYYY-MM-DD
   const groups = new Map();
@@ -119,11 +174,21 @@ function renderList() {
     html += `<div class="hist-date-head">${fmtDateHead(g.date)}${dayLabel}</div>`;
 
     g.list.forEach(e => {
+      // En kort pause er en tynd mellemlinje — den skal ikke fylde som et
+      // stykke arbejde, men kan stadig trykkes på og rettes
+      if (erPause(e)) {
+        const tid = e.startTime && e.endTime
+          ? `${fmtTime(e.startTime.toDate())}–${fmtTime(e.endTime.toDate())}` : '';
+        html += `<div class="entry-pause-line" data-id="${e.id}" aria-label="${PAUSE_NAVN} ${tid}">
+          <span class="entry-pause-txt">Pause${e.durationMinutes != null ? ` <span class="enhed">${fmtMins(e.durationMinutes)}</span>` : ''}</span>
+          <span class="entry-pause-tid">${tid}</span>${overlap.has(e.id) ? '<span class="entry-overlap">Overlap</span>' : ''}
+        </div>`;
+        return;
+      }
+
       const act      = acts.find(a => a.id === e.activityId);
       const color    = act?.color || 'var(--border)';
-      const pause    = erPause(e);
-      const name     = pause ? PAUSE_NAVN
-                             : act?.name || (e.activityId ? 'Slettet aktivitet' : 'Ubundet tid');
+      const name     = act?.name || (e.activityId ? 'Slettet aktivitet' : 'Ubundet tid');
       const isActive = !e.endTime;
 
       const startT = e.startTime ? fmtTime(e.startTime.toDate()) : '??:??';
@@ -137,11 +202,14 @@ function renderList() {
       const dot    = isActive
         ? `<span class="entry-running-dot"></span>`
         : '';
+      const overlapMaerke = overlap.has(e.id)
+        ? `<span class="entry-overlap" title="Dækker samme tid som en anden registrering">Overlap</span>`
+        : '';
 
-      html += `<div class="entry-row${isActive ? ' entry-row-active' : ''}${pause ? ' entry-row-pause' : ''}" data-id="${e.id}" style="--act-color:${color}">
+      html += `<div class="entry-row${isActive ? ' entry-row-active' : ''}" data-id="${e.id}" style="--act-color:${color}">
         <div class="entry-body">
           <div class="entry-act">${esc(name)}<span class="entry-wt">${esc(wt)}</span></div>
-          <div class="entry-meta">${dot}${timeStr}</div>
+          <div class="entry-meta">${dot}${timeStr}${overlapMaerke}</div>
           ${note}
         </div>
         <div class="entry-duration">${dur}</div>
@@ -150,10 +218,11 @@ function renderList() {
     });
   }
 
-  el.innerHTML = html;
-  el.querySelectorAll('.entry-row').forEach(row =>
+  el.innerHTML = html + flere;
+  el.querySelectorAll('.entry-row, .entry-pause-line').forEach(row =>
     row.addEventListener('click', () => openEntrySheet(row.dataset.id))
   );
+  document.getElementById('hist-more-btn')?.addEventListener('click', visFlere);
 }
 
 // ─── Activity filter dropdown ─────────────────────────────
@@ -173,9 +242,12 @@ function renderActivityFilter() {
 // ─── Open entry sheet ─────────────────────────────────────
 // prefill: {start: Date, end: Date|null} — bruges når kalenderen åbner arket
 // på et bestemt tidsrum (fx et tryk på tidsaksen).
-export function openEntrySheet(entryId, prefill = null) {
-  editingId = entryId || null;
-  const e   = entryId ? entries.find(x => x.id === entryId) : null;
+// Kalenderen sender selve posten med, for den kan være ældre end de poster,
+// listen har hentet — og så skal den stadig åbnes til redigering, ikke som ny.
+export function openEntrySheet(entryId, prefill = null, post = null) {
+  const e   = post || (entryId ? entries.find(x => x.id === entryId) : null) || null;
+  editingId = e?.id || null;
+  redigeret = e;
 
   document.getElementById('hist-sheet-title').textContent =
     !e ? 'Ny registrering' : erPause(e) ? 'Redigér kort pause' : 'Redigér registrering';
@@ -206,6 +278,8 @@ export function openEntrySheet(entryId, prefill = null) {
   syncSkemaChips();
   syncVarighedChips();
   syncFremtidNotice();
+  naboDato = '';
+  syncOverlapNotice();
   updateWtVisibility();
   document.getElementById('hist-delete-btn').classList.toggle('hidden', !e);
   openSheet('hist-sheet', 'hist-backdrop');
@@ -285,6 +359,7 @@ function vaelgSkema(id) {
   syncSkemaChips();
   syncVarighedChips();
   syncFremtidNotice();
+  syncOverlapNotice();
 }
 
 // Fremhæver det slot, tidsfelterne præcis svarer til — også når tiderne
@@ -340,6 +415,7 @@ function vaelgVarighed(minutter) {
   syncSkemaChips();
   syncVarighedChips();
   syncFremtidNotice();
+  syncOverlapNotice();
 }
 
 // Fremhæver den varighed, tidsfelterne svarer til — også når tiderne kommer
@@ -385,6 +461,74 @@ function syncFremtidNotice() {
     ? 'OBS · Du registrerer i fremtiden — angiv en sluttid'
     : 'OBS · Du registrerer i fremtiden';
   el.classList.toggle('hidden', !fremtid);
+}
+
+// ─── OBS ved overlap ──────────────────────────────────────
+// Formularen kender ikke nødvendigvis dagens poster (listen kan stå på en
+// anden periode), så de hentes for den valgte dato og et døgn til hver side
+// — en post hen over midnat skal også fanges.
+async function hentNaboPoster(dateVal) {
+  const dag = parseDateTime(dateVal, '00:00');
+  if (!dag || isNaN(dag)) { naboPoster = []; return; }
+  const fra = new Date(dag); fra.setDate(fra.getDate() - 1);
+  const til = new Date(dag); til.setDate(til.getDate() + 2);
+  const snap = await getDocs(query(
+    collection(db, `users/${userId}/entries`),
+    where('startTime', '>=', Timestamp.fromDate(fra)),
+    where('startTime', '<',  Timestamp.fromDate(til)),
+    orderBy('startTime', 'asc'),
+    limit(200)
+  ));
+  if (naboDato !== dateVal) return;        // datoen er skiftet imens
+  naboPoster = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// Formularens tidsrum, som det bliver gemt (sluttid før start = næste dag;
+// ingen sluttid = en timer, der kører til nu)
+function formularensTidsrum() {
+  const dateVal  = document.getElementById('hist-date').value;
+  const startVal = document.getElementById('hist-start').value;
+  const endVal   = document.getElementById('hist-end').value;
+  const start = dateVal && startVal ? parseDateTime(dateVal, startVal) : null;
+  if (!start || isNaN(start)) return null;
+  let slut = endVal ? parseDateTime(dateVal, endVal) : new Date();
+  if (!slut || isNaN(slut)) return null;
+  if (endVal && slut < start) slut = new Date(slut.getTime() + 24 * 60 * 60 * 1000);
+  return slut > start ? { start, slut } : null;
+}
+
+async function syncOverlapNotice() {
+  const el = document.getElementById('hist-overlap');
+  if (!el) return;
+  const dateVal = document.getElementById('hist-date').value;
+  if (dateVal !== naboDato) {
+    naboDato = dateVal;
+    naboPoster = [];
+    el.classList.add('hidden');
+    try { await hentNaboPoster(dateVal); }
+    catch (err) { console.error('Overlap-opslag fejl:', err); return; }
+    if (naboDato !== dateVal) return;
+  }
+
+  const tr = formularensTidsrum();
+  const acts = getLoadedActivities();
+  const ramt = !tr ? [] : naboPoster.filter(p =>
+    p.id !== editingId && p.startTime &&
+    p.startTime.toDate() < tr.slut && slutMs(p) > tr.start.getTime()
+  );
+  if (!ramt.length) { el.classList.add('hidden'); return; }
+
+  const beskriv = p => {
+    const navn = erPause(p) ? PAUSE_NAVN : acts.find(a => a.id === p.activityId)?.name
+      || (p.activityId ? 'Slettet aktivitet' : 'Ubundet tid');
+    const til  = p.endTime ? fmtTime(p.endTime.toDate()) : 'nu';
+    return `${navn} ${fmtTime(p.startTime.toDate())}–${til}`;
+  };
+  const dele = ramt.slice(0, 2).map(beskriv);
+  if (ramt.length > 2) dele.push(`${ramt.length - 2} til`);
+  const tekst = dele.length > 1 ? `${dele.slice(0, -1).join(', ')} og ${dele.at(-1)}` : dele[0];
+  el.textContent = `OBS · Overlapper med ${tekst} — tiden tælles dobbelt i rapporterne`;
+  el.classList.remove('hidden');
 }
 
 function updateWtVisibility() {
@@ -450,8 +594,7 @@ async function saveEntry(ev) {
     if (editingId) {
       // Kun de redigérbare felter opdateres — isModule/autoStopped bevares.
       // Får en pause tildelt en aktivitet, er den ikke længere en pause.
-      const gammel = entries.find(x => x.id === editingId);
-      const felter = erPause(gammel) && actId ? { ...data, isBreak: false } : data;
+      const felter = erPause(redigeret) && actId ? { ...data, isBreak: false } : data;
       await updateDoc(doc(db, `users/${userId}/entries/${editingId}`), felter);
       showToast(iFremtiden ? 'Registrering opdateret · i fremtiden' : 'Registrering opdateret');
     } else {
@@ -532,6 +675,7 @@ function bindListeners() {
       syncSkemaChips();
       syncVarighedChips();
       syncFremtidNotice();
+      syncOverlapNotice();
     })
   );
 }

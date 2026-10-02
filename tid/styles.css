@@ -280,6 +280,8 @@ img{display:block;max-width:100%}
 .btn-icon:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink);background:var(--tint)}
 
 /* ─── Bjælken med den aktive timer ──────────────────────── */
+/* Ikke på Hjem: der står timerkortet med samme navn, tid og Stop-knap */
+#app[data-view="hjem"] #active-timer-banner{display:none}
 #active-timer-banner{
   flex-shrink:0;display:flex;align-items:center;gap:10px;
   padding:8px max(14px,env(safe-area-inset-left));
@@ -680,14 +682,39 @@ select.form-input{
 .entry-row:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);background:var(--paper-2)}
 .entry-row-active{background:var(--tint)}
 
-/* Kort pause — dæmpet, så den ikke konkurrerer med dagens arbejde */
-.entry-row-pause{
-  background:var(--paper-2);
-  border:2px dashed var(--ink);box-shadow:none;
-  padding:7px 12px;
+/* Kort pause — en tynd stiplet mellemlinje, ikke et kort: den er ikke arbejde
+   og skal ikke gøre listen dobbelt så lang */
+.entry-pause-line{
+  display:flex;align-items:center;gap:8px;
+  margin:-2px 14px 6px;padding:2px 2px;
+  cursor:pointer;user-select:none;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);
 }
-.entry-row-pause:hover{transform:none;box-shadow:none}
-.entry-row-pause .entry-act,.entry-row-pause .entry-duration{color:var(--slate)}
+.entry-pause-line::before,.entry-pause-line::after{
+  content:"";flex:1;border-top:2px dashed var(--slate);opacity:.45;
+}
+.entry-pause-line::before{flex:0 0 14px}
+.entry-pause-line:hover{color:var(--ink)}
+.entry-pause-line .enhed,.entry-pause-line .entry-overlap{text-transform:none}
+
+/* Overlap — mærkat, ikke kun farve */
+.entry-overlap{
+  margin-left:4px;padding:1px 6px;
+  background:var(--tint-pasPaa);color:var(--ink);
+  border:1.5px solid var(--ink);border-radius:999px;
+}
+
+/* «Vis flere» under en afskåret liste */
+.hist-more{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:10px;padding:12px 2px;
+  border-top:2px dashed var(--ink);
+}
+.hist-more-txt{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);
+}
 
 .entry-body{flex:1;min-width:0}
 .entry-act{

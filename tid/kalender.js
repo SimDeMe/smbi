@@ -217,7 +217,7 @@ function byggKontekst() {
     },
     aktivitetFarve: id =>
       (id && acts.find(a => a.id === id)?.color) || '#94a3b8',
-    aabnPost:   id => openEntrySheet(id),
+    aabnPost:   id => openEntrySheet(id, null, poster.find(p => p.id === id)),
     nyPost:     nyPost,
     vaelgDag:    d => visPeriode('dag', d),
     vaelgUge:    d => visPeriode('uge', d),

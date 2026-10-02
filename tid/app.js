@@ -192,6 +192,8 @@ export function navigateTo(viewName) {
 
   if (view) view.classList.remove('hidden');
   if (btn)  btn.classList.add('active');
+  // Hjem har sit eget timerkort; banneret er til de andre faner
+  appEl.dataset.view = viewName;
 
   $('main-content').scrollTop = 0;
 }
