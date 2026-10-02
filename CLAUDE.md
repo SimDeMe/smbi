@@ -80,10 +80,10 @@ alfabetisk, linker til `.html` og har `PDF`/`Word`-sublinks (samt link til
 simuleringen, hvis der findes en). Kortet får ét eller flere emnetags — i
 `data-emne` adskilt af semikolon (`data-emne="Klima; Hav; Kyst"`) og som én
 `<span class="fag">` pr. tag — så emneknapperne over staken kan filtrere på
-dem. I biologi er tagget emnet fra `Øvelser/oversigt.html`; i geografi er
-alle de sammensatte «… og …»-emner delt op i enkeltord (`Vejr`, `Klima`,
-`Hav`, `Kyst`, `Geologi`, `Landskab`, `Vand`, `Grundvand`, `Energi`,
-`Ressourcer`), og kortet får dem, der er relevante. Niveauet står som mærker til
+dem. Emnerne fra `Øvelser/oversigt.html` er sammensatte («Krop og
+fysiologi», «Hav og kyst»); på kortene er de delt op i enkeltord (fx `Krop`,
+`Fysiologi`, `Hav`, `Kyst`), og kortet får de ord, der er relevante — også
+fra et andet emne, hvis det passer. Niveauet står som mærker til
 højre (`<span class="lvl lvl-C">C</span>`, NV-øvelser også `lvl-NV`). Tælleren i stak-hovedet (`<span class="n">`)
 rettes med, og sidens adresse skrives ind i `sitemap.xml`.
 

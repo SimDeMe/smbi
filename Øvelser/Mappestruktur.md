@@ -77,16 +77,23 @@ kortenes tags — et nyt tag giver selv en ny knap, og et kort med flere tags
 tæller med under hver af dem. Stavefejl giver altså et ekstra tag. Et tag kan
 deles med `?emne=klima`.
 
-* **Biologi:** tagget er præcis emnet fra øvelsens række i `oversigt.html`
-  (fx `Krop og fysiologi`).
-* **Geografi** (ændret 2026-10-02): alle de sammensatte emner er delt op i
-  enkeltord, og kortet får de tags, der passer:
-  «Vejr og klima» → `Vejr`, `Klima` · «Hav og kyst» → `Hav`, `Kyst` ·
-  «Geologi og landskab» → `Geologi`, `Landskab` · «Vand og grundvand» →
-  `Vand`, `Grundvand` · «Energi og ressourcer» → `Energi`, `Ressourcer`.
-  Et kort kan også få et tag fra et andet emne, når det er relevant (Oliens
-  migration har fx `Energi; Ressourcer; Geologi`). `oversigt.html` grupperer
-  stadig efter de gamle, sammensatte emner.
+Tagsene er enkeltord (ændret 2026-10-02). Emnerne i `oversigt.html` er
+sammensatte, og på kortene er de delt op, så kortet får de dele, der passer:
+
+* **Geografi:** «Vejr og klima» → `Vejr`, `Klima` · «Hav og kyst» → `Hav`,
+  `Kyst` · «Geologi og landskab» → `Geologi`, `Landskab` · «Vand og
+  grundvand» → `Vand`, `Grundvand` · «Energi og ressourcer» → `Energi`,
+  `Ressourcer`.
+* **Biologi:** «Celler og mikroskopi» → `Celler`, `Mikroskopi` ·
+  «Mikrobiologi og sundhed» → `Mikrobiologi`, `Sundhed` · «Stofskifte og
+  enzymer» → `Stofskifte`, `Enzymer` · «Krop og fysiologi» → `Krop`,
+  `Fysiologi` · «Genetik og bioteknologi» → `Genetik`, `Bioteknologi` ·
+  «Økologi og evolution» → `Økologi`, `Evolution`.
+
+Et kort kan også få et tag fra et andet emne, når det er relevant (Oliens
+migration har fx `Energi; Ressourcer; Geologi`, Dafnier og koffein
+`Fysiologi; Mikroskopi`). `oversigt.html` grupperer stadig efter de
+sammensatte emner.
 
 Niveauet står som mærker til højre på kortet: `<span class="lvl lvl-C">C</span>`,
 og NV-øvelserne har desuden `<span class="lvl lvl-NV">NV</span>` foran.
