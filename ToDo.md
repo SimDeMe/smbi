@@ -75,6 +75,13 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   («…–00:40») med den rigtige varighed.
 - [x] **Navne trunkeres i hurtigstart.** Navne står på op til to linjer, og
   lange navne (over 20 tegn eller et ord over 12) får hele bredden.
+- [ ] **Barsel trækkes jævnt fra hele året.** Linjerne under Indstillinger →
+  Andet i porteføljen trækkes fra årsnormen fordelt over alle årets
+  arbejdsdage. Det passer til frikøb og overførte timer, men en barsel ligger
+  i en bestemt periode, så «foran/bagud» bliver skæv før og efter den (fx
+  800 t barsel fra marts: i efteråret ser man ud til at være langt foran).
+  Mulig løsning: en valgfri periode (fra–til) på en linje, så dens timer
+  kun trækkes fra arbejdsdagene i perioden — som ferien i `ferie.js`.
 
 ### Tilgængelighed
 
@@ -103,7 +110,7 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   skriver juli 2027, men mener 2026) er skrevet ind i `SKOLENS_FERIE` i
   `ferie.js` og bruges, til læreren selv gemmer ferie. Læg hvert år den nye
   plan ind dér (2027/28 når den kommer).
-- [x] **6. ferieuge** er med i normen på 1650 t. Den lægges derfor ikke ind
+- [x] **6. ferieuge** er med i normen på 1690 t. Den lægges derfor ikke ind
   som ferie, men oprettes som en opgave «6. ferieuge» på 37 t, og hver
   fridag registreres som 7t 24m på den. Indstillinger og hjælpesiden siger
   det nu; intet ekstra felt i appen.
