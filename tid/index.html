@@ -320,10 +320,14 @@
             <input type="number" id="cfg-start-day" class="settings-input-sm" min="1" max="31">
           </div>
           <div class="settings-row">
-            <label class="settings-label" for="cfg-norm-hours">Norm (timer/år)</label>
+            <label class="settings-label" for="cfg-norm-hours">Årsnorm (timer/år)</label>
             <div class="settings-row-right">
-              <input type="number" id="cfg-norm-hours" class="settings-input-sm" min="1" max="9999"> t
+              <input type="number" id="cfg-norm-hours" class="settings-input-sm" min="1" max="9999" aria-describedby="cfg-norm-hjaelp cfg-norm-sub"> t
             </div>
+          </div>
+          <div class="settings-row">
+            <span class="settings-sub"><span id="cfg-norm-hjaelp" class="norm-hjaelp" aria-live="polite"></span>
+              <span id="cfg-norm-sub">1690 t på fuld tid, ved nedsat tid 1690 × ansættelsesgraden (80 % = 1352 t). Ikke summen af din opgaveportefølje — den står i rapporten, regnet ud af aktiviteternes budgetter.</span></span>
           </div>
         </div>
 

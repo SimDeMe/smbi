@@ -53,5 +53,6 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `version-og-cache.mjs` | versionen i Indstillinger, og at tid ikke sletter navneApps cache |
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
+| `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
 
 Ret en fejl → lav en test, der fejler uden rettelsen, og læg den her.

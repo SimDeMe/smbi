@@ -38,12 +38,13 @@ const chipTal = async page => {
   return [t, Number(t.match(/(\d+)t/)[1])];
 };
 
+// Bagud-tallene er regnet med årsnormen 1690 t (appens udgangspunkt)
 // Intet gemt: skolens plan for 2026/27 bruges af sig selv
 {
   const page = await side(browser, { seed: [settings, act('a1', 'SRP')] });
   await page.waitForTimeout(400);
   const [t, n] = await chipTal(page);
-  ok(n >= 526 && n <= 533, 'uden gemt ferie bruges skolens plan (73–74 af 229): ' + t);
+  ok(n >= 539 && n <= 546, 'uden gemt ferie bruges skolens plan (73–74 af 229): ' + t);
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
   const sum = (await page.textContent('#cfg-ferie-sum')).replace(/\s+/g, ' ').trim();
   ok(sum === '25 feriedage · 229 arbejdsdage', 'skolens plan står i indstillingerne: ' + sum);
@@ -55,7 +56,7 @@ const chipTal = async page => {
   const page = await side(browser, { seed: [['users/u1/settings/config', { currentSchoolYear: '2026/27', ferie: { '2026/27': [] } }], act('a1', 'SRP')] });
   await page.waitForTimeout(400);
   const [t, n] = await chipTal(page);
-  ok(n >= 578 && n <= 585 && t.includes('bagud skema'), 'uden ferie (89–90 af 254 arbejdsdage): ' + t);
+  ok(n >= 592 && n <= 599 && t.includes('bagud skema'), 'uden ferie (89–90 af 254 arbejdsdage): ' + t);
   await page.context().close();
 }
 
@@ -64,7 +65,7 @@ const chipTal = async page => {
   const page = await side(browser, { seed: [['users/u1/settings/config', { currentSchoolYear: '2026/27', ferie: { '2026/27': FERIE } }], act('a1', 'SRP')] }, 390);
   await page.waitForTimeout(400);
   const [t, n] = await chipTal(page);
-  ok(n >= 526 && n <= 533, 'med ferieplan (73–74 af 229): ' + t + ' (lineært var det 556)');
+  ok(n >= 539 && n <= 546, 'med ferieplan (73–74 af 229): ' + t + ' (lineært var det 570)');
 
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
   ok((await page.$$('#cfg-ferie-liste .ferie-raekke')).length === 4, 'fire ferieperioder vises');
@@ -94,7 +95,7 @@ const chipTal = async page => {
   const gemt = await page.evaluate(() => window.__fs.store.get('users/u1/settings/config')?.ferie?.['2026/27']);
   ok(gemt?.length === 5 && gemt[0].fra === '2026-07-06' && gemt[2].fra === '2026-12-21' && gemt[1].fra === '2026-10-12', 'gemt i datoorden: ' + JSON.stringify(gemt?.map(p => p.fra)));
   const [t2, n2] = await chipTal(page);
-  ok(n2 >= 540 && n2 <= 547, 'rapporten følger med efter gem (73–74 af 224): ' + t2);
+  ok(n2 >= 553 && n2 <= 560, 'rapporten følger med efter gem (73–74 af 224): ' + t2);
 
   // Andet skoleår i feltet: tom liste
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(200);

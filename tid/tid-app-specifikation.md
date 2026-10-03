@@ -93,7 +93,7 @@ Regler:
 {
   schoolYearStartMonth: 6,         // normperioden går fra 1. juni
   schoolYearStartDay: 1,
-  normHours: 1650,
+  normHours: 1690,                  // årsnormen (1690 × ansættelsesgrad) — ikke porteføljens sum; en gemt 1650 (gammel standard) læses som 1690
   autoStopAfterMinutes: 600,
   autoShortBreaks: true,            // luk mellemrum under 30 min som "Kort pause"
   ferie: {                          // pr. skoleår, begge datoer med — se ferie.js
@@ -206,7 +206,7 @@ Egen side. Vælg intervallets længde:
 Intervallet bladres frem og tilbage med pile, så rapporten lige så gerne viser i går, uge 34 eller sidste skoleår som den periode, man står i. Chippen under pilene fører tilbage til nu, og skifter man længde, følger datoen med efter samme regel som i kalenderen. Kun den valgte periodes registreringer hentes, så der er ingen grænse for, hvor langt tilbage man kan se; aktiviteterne, der vises, er dem fra det skoleår, perioden ligger i.
 
 Vis for valgte interval:
-- **Samlet:** Total tid forbrugt, og hvis skoleår er valgt: forbrugt / norm (1650t for fuldtid — konfigurerbart i indstillinger). Procent og resterende.
+- **Samlet:** Total tid forbrugt, og hvis skoleår er valgt: forbrugt / norm (1690 t for fuldtid — konfigurerbart i indstillinger). Procent og resterende.
 - **Pr. aktivitet:** Liste sorteret efter forbrug. For hver aktivitet: navn, forbrugt tid, budget, procent (fx "142t / 288t — 49%"), visuel progress bar i aktivitetens farve. Under-aktiviteter vises indrykket under deres parent — også de afsluttede, med mærkatet *Afsluttet* — og en afsluttet parent står med alle sine under-aktiviteter under *Afsluttede opgaver*. Parent viser eget forbrug + summen af alle children mod hele sit budget, og bjælken er delt op: parentens egen tid og hver under-aktivitet i sin farve. Har en under-aktivitet samme farve som parenten eller en søskende, får den i rapporten den næste ledige farve fra paletten, både i bjælken og på sin egen række. *Ubrugt tid i alt* lægger kun topopgaverne sammen.
 - **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet med akkorden: undervisningen i moduler (*10 af 36,9 moduler*), forberedelse og retning som brugt og optjent mod normen med en saldochip. Bjælken er brugt mod norm, og en blækstreg i den markerer det optjente. Retningen viser også *rettet 5 af 15 elevtimer*. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
 - **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elevtime mod holdets eget budget pr. elevtime (resten af budgettet ÷ elevtimer, ≈ 5,2 min ved skolens formel); måles mod de rettede sæt, der er afsluttet i perioden: tiden brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt, skønnes den rettede fordybelsestid ud fra den andel af årets undervisningsnorm, der er registreret, og tallet mærkes *skønnet*; har holdet sæt, men ingen i perioden, vises retningen ikke. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
@@ -239,7 +239,7 @@ Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
 
 ### 9. Indstillinger
 Egen side:
-- Skoleår: aktivt skoleår, startmåned, startdag, samlet norm-timetal (default 1650)
+- Skoleår: aktivt skoleår, startmåned, startdag, årsnorm i timer (default 1690; feltet viser procent af fuld tid og advarer over 1690, hvor tallet sandsynligvis er porteføljens sum)
 - Holdnormer for det aktive skoleår: forberedelsesfaktor (default 2,35). Reduktionen står ikke længere på siden; den gemte bruges kun på ældre hold
 - Ferie pr. skoleår (se `ferie.js`). Skolens plan for lærerne står i `SKOLENS_FERIE` og bruges, indtil brugeren selv har gemt ferie for året
 - Auto-stop-grænse
@@ -250,7 +250,7 @@ Egen side:
 - Feedback: knappen fra `/feedback.js` står her (via `data-feedback-vaert`) og ikke som svævende knap, der ville dække bundmenuen
 
 ### 10. Akkordregnskab
-Læreren er både timelønnet (normen, 1650 t) og akkordlønnet (hver linje i opgavefordelingen er et budget, der betales, uanset hvor lang tid arbejdet tager). Skoleårs-rapporten viser derfor ud over den samlede tid mod normen også, hvor meget af akkorderne der er leveret.
+Læreren er både timelønnet (normen, 1690 t) og akkordlønnet (hver linje i opgavefordelingen er et budget, der betales, uanset hvor lang tid arbejdet tager). Skoleårs-rapporten viser derfor ud over den samlede tid mod normen også, hvor meget af akkorderne der er leveret, og porteføljen (summen af budgetterne) mod årsnormen og merarbejdsgrænsen: normen + 42 t på fuld tid, skaleret med ansættelsesgraden (1732 t ved 1690 t).
 
 **Tre tal og en saldo** — alle for hele skoleåret:
 

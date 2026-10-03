@@ -14,7 +14,7 @@ const DEFAULTS = {
   currentSchoolYear:    '',
   schoolYearStartMonth: 6,
   schoolYearStartDay:   1,
-  normHours:            1650,
+  normHours:            1690,
   autoStopAfterMinutes: 600,
   autoShortBreaks:      true,
   normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
@@ -27,6 +27,19 @@ let settings    = { ...DEFAULTS };
 let listenersOk = false;
 
 export const getSettings = () => ({ ...settings });
+
+// ─── Årsnorm ──────────────────────────────────────────────
+// Årsnormen er overenskomstens tal: 1690 t på fuld tid, skaleret med
+// ansættelsesgraden. Den er ikke det samme som summen af opgaveporteføljen —
+// den regner rapporten selv ud af aktiviteternes budgetter, og porteføljen
+// må gerne ligge op til 42 t (skaleret) over normen, før det er merarbejde.
+// 1650 var appens gamle udgangspunkt og er aldrig en rigtig norm; den
+// gemte værdi læses derfor som 1690.
+export const FULD_AARSNORM = 1690;
+export const FLEKSBAAND    = 42;
+const GAMMEL_STANDARD      = 1650;
+export const aarsnorm = (s = settings) =>
+  !s.normHours || s.normHours === GAMMEL_STANDARD ? FULD_AARSNORM : s.normHours;
 
 // ─── Init ─────────────────────────────────────────────────
 export async function initIndstillingerView(uid) {
@@ -83,11 +96,27 @@ function populateForm() {
   set('cfg-school-year',   s.currentSchoolYear    || getCurrentSchoolYear());
   set('cfg-start-month',   s.schoolYearStartMonth ?? DEFAULTS.schoolYearStartMonth);
   set('cfg-start-day',     s.schoolYearStartDay   ?? DEFAULTS.schoolYearStartDay);
-  set('cfg-norm-hours',    s.normHours            ?? DEFAULTS.normHours);
+  set('cfg-norm-hours',    aarsnorm(s));
+  visNormHjaelp();
   set('cfg-autostop-mins', s.autoStopAfterMinutes ?? DEFAULTS.autoStopAfterMinutes);
   check('cfg-auto-breaks', s.autoShortBreaks ?? DEFAULTS.autoShortBreaks);
   visFaktorer(s.currentSchoolYear || getCurrentSchoolYear());
   visFerie(s.currentSchoolYear || getCurrentSchoolYear());
+}
+
+// Under feltet: hvad tallet svarer til — og en advarsel, hvis det ligner
+// porteføljens sum i stedet for årsnormen
+function visNormHjaelp() {
+  const el = document.getElementById('cfg-norm-hjaelp');
+  if (!el) return;
+  const v = parseInt(document.getElementById('cfg-norm-hours').value);
+  const pct = v / FULD_AARSNORM * 100;
+  el.classList.toggle('norm-advarsel', v > FULD_AARSNORM);
+  el.textContent = !v ? `Fuld tid er ${FULD_AARSNORM} t.`
+    : v > FULD_AARSNORM
+      ? `Over fuld tid (${FULD_AARSNORM} t) — er det summen af din opgaveportefølje? Her skal stå årsnormen.`
+      : v === FULD_AARSNORM ? 'Fuld tid.'
+      : `${String(Math.round(pct * 10) / 10).replace('.', ',')} % af fuld tid (${FULD_AARSNORM} t).`;
 }
 
 // Holdnormernes faktorer hører til ét skoleår ad gangen — det, der står i
@@ -208,7 +237,7 @@ async function saveSettings() {
     currentSchoolYear:    yearVal,
     schoolYearStartMonth: parseInt(document.getElementById('cfg-start-month').value)  || 6,
     schoolYearStartDay:   parseInt(document.getElementById('cfg-start-day').value)    || 1,
-    normHours:            parseInt(document.getElementById('cfg-norm-hours').value)   || 1650,
+    normHours:            parseInt(document.getElementById('cfg-norm-hours').value)   || FULD_AARSNORM,
     autoStopAfterMinutes: parseInt(document.getElementById('cfg-autostop-mins').value)|| 600,
     autoShortBreaks:      document.getElementById('cfg-auto-breaks')?.checked ?? true,
     normFaktorer: {
@@ -261,4 +290,5 @@ function bindListeners() {
     if (/^\d{4}\/\d{2}$/.test(aar)) { visFaktorer(aar); visFerie(aar); }
   });
   document.getElementById('cfg-ferie-ny')?.addEventListener('click', nyFerie);
+  document.getElementById('cfg-norm-hours')?.addEventListener('input', visNormHjaelp);
 }
