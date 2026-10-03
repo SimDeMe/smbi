@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 import {
-  initializeFirestore, persistentLocalCache, collection, getDocs
+  initializeFirestore, persistentLocalCache, collection, getDocs, doc, getDoc
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import { initActivitiesView, refreshAktiviteter, aktiviteterHentet } from './activities.js';
@@ -32,14 +32,20 @@ export const COLOR_PALETTE = [
 ];
 
 // ─── Eksport ─────────────────────────────────────────────
+// Fuld backup som én JSON-fil: alt, der ligger under users/{uid}/ —
+// aktiviteterne (hold og opgaver, med rettede sæt og normgrundlag),
+// registreringerne (også pauser og en timer, der kører) og indstillingerne
+// (skoleår, årsnorm, holdfaktorer, ferie, andet i porteføljen). Appen
+// gemmer intet andet, heller ikke i browseren.
 let currentUserId = null;
 
 async function exportAllData() {
   if (!currentUserId) return;
   try {
-    const [actsSnap, entriesSnap] = await Promise.all([
+    const [actsSnap, entriesSnap, cfgSnap] = await Promise.all([
       getDocs(collection(db, `users/${currentUserId}/activities`)),
-      getDocs(collection(db, `users/${currentUserId}/entries`))
+      getDocs(collection(db, `users/${currentUserId}/entries`)),
+      getDoc(doc(db, `users/${currentUserId}/settings/config`))
     ]);
     // Firestore Timestamp har sin egen toJSON, som JSON.stringify kalder før
     // en replacer — derfor konverteres rekursivt inden serialisering.
@@ -52,7 +58,12 @@ async function exportAllData() {
       return v;
     };
     const payload = tsToIso({
+      format:      'tid-backup',
+      formatVersion: 2,
       exportedAt:  new Date().toISOString(),
+      appVersion:  await appVersion(),
+      user:        { uid: currentUserId, email: auth.currentUser?.email ?? null },
+      settings:    cfgSnap.exists() ? cfgSnap.data() : null,
       activities:  actsSnap.docs.map(d => ({ id: d.id, ...d.data() })),
       entries:     entriesSnap.docs.map(d => ({ id: d.id, ...d.data() }))
     });
@@ -63,13 +74,25 @@ async function exportAllData() {
       href: url,
       download: `tidsregistrering-backup-${new Date().toISOString().slice(0,10)}.json`
     });
+    document.body.append(a);
     a.click();
-    URL.revokeObjectURL(url);
-    showToast('Backup downloadet');
+    a.remove();
+    // Safari skal nå at læse filen, før adressen frigives
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    showToast(`Backup downloadet · ${payload.activities.length} aktiviteter, ${payload.entries.length} registreringer`);
   } catch (err) {
     console.error('JSON eksport fejl:', err);
     showToast('Eksport fejlede — prøv igen');
   }
+}
+
+// Navnet på service workerens cache (tid-v40), som i Indstillinger
+async function appVersion() {
+  try {
+    const nr = (await caches.keys())
+      .map(k => /^tid-v(\d+)$/.exec(k)?.[1]).filter(Boolean).map(Number);
+    return nr.length ? `tid-v${Math.max(...nr)}` : null;
+  } catch { return null; }
 }
 
 // ─── DOM-referencer ──────────────────────────────────────

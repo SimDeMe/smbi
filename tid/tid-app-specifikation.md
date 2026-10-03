@@ -238,7 +238,7 @@ Knap "Eksportér" i rapporter:
 - Semikolon (dansk Excel)
 - Filnavn: `tidsregistrering-{periode}.csv` — fx `tidsregistrering-uge-34-2026.csv` eller `tidsregistrering-2026-09-01.csv`
 
-Knap "Eksportér alle data" i indstillinger — komplet JSON backup.
+Knap "Eksportér alle data" i indstillinger — komplet JSON backup af alt under `users/{uid}/`: `settings` (dokumentet `settings/config`), `activities` og `entries`, hver med deres `id`, tidspunkter som ISO-tekst. Øverst `format: "tid-backup"`, `formatVersion: 2`, `exportedAt`, `appVersion` og `user` (uid og e-mail).
 
 ### 9. Indstillinger
 Egen side:
