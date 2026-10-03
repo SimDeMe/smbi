@@ -123,6 +123,21 @@ Detaljerne står i `Øvelser/Mappestruktur.md` og `Øvelser/LÆS-MIG.md`.
 
 @design_rules.md
 
+## Ny session — sig til
+
+Sig til, når det er smart at starte en ny session, før vi går videre —
+kort, med grunden og hvad der skal med over. Typisk når:
+
+* næste opgave handler om noget helt andet end det, sessionen har arbejdet
+  med (fx fra `tid/` til en simulering eller en øvelsesvejledning),
+* samtalen er blevet så lang, at tidligere detaljer risikerer at blive
+  glemt eller opsummeret væk,
+* en større opgave er færdig, committet og pushet, og resten er løse ender.
+
+Skriv i så fald 2–3 linjer, jeg kan sætte ind i den nye session (hvad der
+er lavet, hvad der mangler, hvilke filer det drejer sig om). Gælder ikke
+midt i en opgave — gør den færdig først.
+
 ## Commits
 
 Danske, i bydeform, med en kort forklarende krop når ændringen er stor. Fx:
