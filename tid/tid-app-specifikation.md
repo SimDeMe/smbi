@@ -240,6 +240,12 @@ Knap "Eksportér" i rapporter:
 
 Knap "Eksportér alle data" i indstillinger — komplet JSON backup af alt under `users/{uid}/`: `settings` (dokumentet `settings/config`), `activities` og `entries`, hver med deres `id`, tidspunkter som ISO-tekst. Øverst `format: "tid-backup"`, `formatVersion: 2`, `exportedAt`, `appVersion` og `user` (uid og e-mail).
 
+Knap "Gendan fra backup" ved siden af (`backup.js`). Filen er sandheden: dokumenter i filen skrives (nye og ændrede), dokumenter, der ikke står i filen, slettes. Mangler `settings` eller er den `null`, beholdes de nuværende indstillinger. Filen kan rettes i hånden eller af en AI — feltet `om` forklarer formatet og ignoreres ved indlæsning:
+- Nye aktiviteter og registreringer må være uden `id`; de får et. Aktiviteter uden `color`, `order`, `parentId`, `isArchived` eller `budgetHours` får standardværdier.
+- Tidspunkter som ISO 8601; uden tidszone læses de som lokal tid. `durationMinutes` regnes ud af start og slut.
+- Fejl stopper indlæsningen: ugyldig JSON, manglende `activities`/`entries`, dobbelte id'er, `activityId`/`parentId`, der ikke findes, hold under en anden aktivitet, slut før start, manglende `endTime` (skal være `null` for en kørende timer), mere end én kørende timer, ukendt `type`/`workType`/`optjening`, forkert skoleår.
+- Arket viser nye/ændrede/slettede/uændrede pr. samling og advarer om registreringer lavet efter backuppen, der slettes. Før der skrives, downloades en backup af de nuværende data. Skrives i batches à 400; bagefter genindlæses appen.
+
 ### 9. Indstillinger
 Egen side:
 - Skoleår: aktivt skoleår, startmåned, startdag, årsnorm i timer (default 1690; feltet viser procent af fuld tid og advarer over 1690, hvor tallet sandsynligvis er porteføljens sum)

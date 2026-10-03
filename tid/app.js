@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 import {
-  initializeFirestore, persistentLocalCache, collection, getDocs, doc, getDoc
+  initializeFirestore, persistentLocalCache
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 import { initActivitiesView, refreshAktiviteter, aktiviteterHentet } from './activities.js';
@@ -13,6 +13,7 @@ import { initKalenderView, refreshKalender } from './kalender.js';
 import { initRapporterView, refreshRapporter } from './rapporter.js';
 import { initRettet } from './rettet.js';
 import { fangTab } from './ark.js';
+import { initBackup } from './backup.js';
 import { initIndstillingerView, refreshIndstillinger, getSettings } from './indstillinger.js';
 
 // ─── Firebase init ────────────────────────────────────────
@@ -30,70 +31,6 @@ export const COLOR_PALETTE = [
   '#E8336D', '#0E86C8', '#5FB030', '#FFB300', '#7A4FD6',
   '#FF6A3D', '#0FA593', '#1D4E89', '#B3218B', '#7A8B1E'
 ];
-
-// ─── Eksport ─────────────────────────────────────────────
-// Fuld backup som én JSON-fil: alt, der ligger under users/{uid}/ —
-// aktiviteterne (hold og opgaver, med rettede sæt og normgrundlag),
-// registreringerne (også pauser og en timer, der kører) og indstillingerne
-// (skoleår, årsnorm, holdfaktorer, ferie, andet i porteføljen). Appen
-// gemmer intet andet, heller ikke i browseren.
-let currentUserId = null;
-
-async function exportAllData() {
-  if (!currentUserId) return;
-  try {
-    const [actsSnap, entriesSnap, cfgSnap] = await Promise.all([
-      getDocs(collection(db, `users/${currentUserId}/activities`)),
-      getDocs(collection(db, `users/${currentUserId}/entries`)),
-      getDoc(doc(db, `users/${currentUserId}/settings/config`))
-    ]);
-    // Firestore Timestamp har sin egen toJSON, som JSON.stringify kalder før
-    // en replacer — derfor konverteres rekursivt inden serialisering.
-    const tsToIso = v => {
-      if (v?.toDate) return v.toDate().toISOString();
-      if (Array.isArray(v)) return v.map(tsToIso);
-      if (v && typeof v === 'object') return Object.fromEntries(
-        Object.entries(v).map(([k, x]) => [k, tsToIso(x)])
-      );
-      return v;
-    };
-    const payload = tsToIso({
-      format:      'tid-backup',
-      formatVersion: 2,
-      exportedAt:  new Date().toISOString(),
-      appVersion:  await appVersion(),
-      user:        { uid: currentUserId, email: auth.currentUser?.email ?? null },
-      settings:    cfgSnap.exists() ? cfgSnap.data() : null,
-      activities:  actsSnap.docs.map(d => ({ id: d.id, ...d.data() })),
-      entries:     entriesSnap.docs.map(d => ({ id: d.id, ...d.data() }))
-    });
-    const json = JSON.stringify(payload, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = Object.assign(document.createElement('a'), {
-      href: url,
-      download: `tidsregistrering-backup-${new Date().toISOString().slice(0,10)}.json`
-    });
-    document.body.append(a);
-    a.click();
-    a.remove();
-    // Safari skal nå at læse filen, før adressen frigives
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    showToast(`Backup downloadet · ${payload.activities.length} aktiviteter, ${payload.entries.length} registreringer`);
-  } catch (err) {
-    console.error('JSON eksport fejl:', err);
-    showToast('Eksport fejlede — prøv igen');
-  }
-}
-
-// Navnet på service workerens cache (tid-v40), som i Indstillinger
-async function appVersion() {
-  try {
-    const nr = (await caches.keys())
-      .map(k => /^tid-v(\d+)$/.exec(k)?.[1]).filter(Boolean).map(Number);
-    return nr.length ? `tid-v${Math.max(...nr)}` : null;
-  } catch { return null; }
-}
 
 // ─── DOM-referencer ──────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -137,10 +74,10 @@ btnLogout.addEventListener('click', async () => {
 // endnu.
 onAuthStateChanged(auth, async user => {
   if (user) {
-    currentUserId = user.uid;
     loginScreen.classList.add('hidden');
     appEl.classList.remove('hidden');
     try {
+      initBackup(user.uid);
       await initIndstillingerView(user.uid);
       updateTopYear();
       initActivitiesView(user.uid);
@@ -156,7 +93,7 @@ onAuthStateChanged(auth, async user => {
     loadingScreen.classList.add('hidden');
     visOnboardingHvisTom();
   } else {
-    currentUserId = null;
+    initBackup(null);
     loadingScreen.classList.add('hidden');
     appEl.classList.add('hidden');
     loginScreen.classList.remove('hidden');
@@ -164,7 +101,6 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-$('btn-export-json')?.addEventListener('click', exportAllData);
 
 // ─── First-run: vis onboarding hvis ingen aktiviteter ─────
 // Svaret kommer fra aktivitetslytteren, der alligevel kører — appen skal ikke

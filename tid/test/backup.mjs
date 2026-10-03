@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 const HER = fileURLToPath(new URL('.', import.meta.url));   // tid/test/
 const BASE = 'http://localhost:8777/tid/';
+const DIR = HER + 'ud';                                       // skærmbilleder
+fs.mkdirSync(DIR, { recursive: true });
 const fejl = [];
 const ok = (b, msg) => { console.log((b ? 'OK   ' : 'FEJL ') + msg); if (!b) fejl.push(msg); };
 
@@ -81,6 +83,113 @@ const browser = await chromium.launch();
   await page.click('#btn-onboarding-skip').catch(() => {});
   const [, b] = await hentBackup(page);
   ok(b.settings === null && b.activities.length === 0 && b.entries.length === 0, 'tom bruger giver en gyldig, tom backup');
+  await page.context().close();
+}
+
+// ── Gendan: ret i backuppen som en AI ville, og læs den ind igen ──
+const grundData = () => ({ seed: [
+  ['users/u1/settings/config', { currentSchoolYear: '2026/27', normHours: 1690 }],
+  ['users/u1/activities/h1', { name: '3g Ng', type: 'hold', color: '#0E86C8', schoolYear: '2026/27', order: 1, isArchived: false, parentId: null, budgetHours: 288 }],
+  ['users/u1/activities/o1', { name: 'SRP', type: 'opgave', color: '#E8336D', schoolYear: '2026/27', order: 2, isArchived: false, parentId: null, budgetHours: 40 }],
+  ['users/u1/entries/e1', { activityId: 'h1', workType: 'undervisning', startTime: { __ts: start }, endTime: { __ts: slut }, durationMinutes: 95, note: '', isModule: true, autoStopped: false }],
+  ['users/u1/entries/e2', { activityId: 'o1', workType: null, startTime: { __ts: slut + 3600000 }, endTime: { __ts: slut + 7200000 }, durationMinutes: 60, note: '', isModule: false, autoStopped: false }]
+] });
+const indlaes = async (page, obj, navn = 'rettet.json') => {
+  await page.setInputFiles('#gendan-fil', { name: navn, mimeType: 'application/json', buffer: Buffer.from(typeof obj === 'string' ? obj : JSON.stringify(obj)) });
+  await page.waitForSelector('#gendan-sheet.open'); await page.waitForTimeout(200);
+};
+const celler = async page => page.$$eval('.gendan-tabel tbody tr', rs => rs.map(r => [...r.querySelectorAll('td')].map(t => Number(t.textContent))));
+
+{
+  const page = await side(browser, grundData());
+  await page.waitForTimeout(400);
+  const [, b] = await hentBackup(page);
+  ok(Array.isArray(b.om) && b.om.some(l => l.includes('ISO 8601')), 'filen forklarer selv sit format');
+
+  b.entries.find(e => e.id === 'e1').note = 'Fotosyntese';                       // ændret
+  b.entries = b.entries.filter(e => e.id !== 'e2');                               // slettet
+  b.activities.push({ id: 'ny-vejl', name: 'Vejledning', type: 'opgave', schoolYear: '2026/27', budgetHours: 20 });  // ny, uden farve og orden
+  b.entries.push({ activityId: 'h1', workType: 'undervisning', startTime: '2026-10-05T10:00:00+02:00', endTime: '2026-10-05T11:35:00+02:00', note: 'Skema', isModule: true });
+  b.entries.push({ activityId: 'ny-vejl', startTime: '2026-10-05T12:00', endTime: '2026-10-05T12:30' });          // uden tidszone og id
+  b.settings.normHours = 1500;
+  await indlaes(page, b);
+
+  ok(JSON.stringify(await celler(page)) === JSON.stringify([[1, 0, 0, 2], [2, 1, 1, 0]]), 'arket: nye/ændres/slettes/uændret ' + JSON.stringify(await celler(page)));
+  ok((await page.textContent('#gendan-body')).includes('Indstillinger: ændres'), 'indstillingerne ændres');
+  ok(!(await page.isDisabled('#btn-do-gendan')), 'Gendan kan trykkes');
+  await page.waitForTimeout(300); await page.screenshot({ path: DIR + '/gendan.png' });
+
+  const [sikker] = await Promise.all([page.waitForEvent('download'), page.click('#btn-do-gendan')]);
+  ok(sikker.suggestedFilename().startsWith('tidsregistrering-foer-gendannelse-'), 'backup af de nuværende data hentes først: ' + sikker.suggestedFilename());
+  const foer = JSON.parse(fs.readFileSync(await sikker.path(), 'utf8'));
+  ok(foer.entries.length === 2 && foer.settings.normHours === 1690, 'sikkerhedskopien er de gamle data');
+  await page.waitForTimeout(300);
+  const st = await page.evaluate(() => {
+    const s = window.__fs.store, ud = {};
+    for (const [p, d] of s) ud[p] = JSON.parse(JSON.stringify(d, (k, v) => v && v.ms != null && v.toDate ? { ms: v.ms } : v));
+    return ud;
+  });
+  const poster = Object.entries(st).filter(([p]) => p.startsWith('users/u1/entries/'));
+  ok(poster.length === 3 && !st['users/u1/entries/e2'], 'tre registreringer, e2 er slettet');
+  ok(st['users/u1/entries/e1'].note === 'Fotosyntese', 'e1 er rettet');
+  const skema = poster.map(([, d]) => d).find(d => d.note === 'Skema');
+  ok(skema?.startTime?.ms === new Date('2026-10-05T10:00:00+02:00').getTime() && skema.durationMinutes === 95, 'ny post med tidszone, varighed regnet ud');
+  const vejl = poster.map(([, d]) => d).find(d => d.activityId === 'ny-vejl');
+  ok(vejl?.startTime?.ms === new Date(2026, 9, 5, 12, 0).getTime() && vejl.durationMinutes === 30 && vejl.workType === null, 'ny post uden tidszone læses som lokal tid');
+  const na = st['users/u1/activities/ny-vejl'];
+  ok(na && na.color && na.order === 3 && na.parentId === null && na.isArchived === false, 'ny aktivitet får farve, orden og standardfelter');
+  ok(st['users/u1/settings/config'].normHours === 1500, 'indstillingerne er skrevet');
+  await page.context().close();
+}
+
+// ── Fejl i filen: intet gendannes, og fejlene står i arket ──
+{
+  const page = await side(browser, grundData());
+  await page.waitForTimeout(400);
+  const [, b] = await hentBackup(page);
+  b.entries.push({ activityId: 'findes-ikke', startTime: '2026-10-05T10:00', endTime: '2026-10-05T11:00' });
+  b.entries.push({ activityId: 'h1', startTime: '2026-10-05T12:00', endTime: '2026-10-05T11:00' });
+  b.entries.push({ activityId: 'h1', startTime: '2026-10-05T13:00' });
+  b.activities.push({ name: 'Hold under opgave', type: 'hold', schoolYear: '2026/27', parentId: 'o1' });
+  await indlaes(page, b);
+  const t = await page.textContent('#gendan-body');
+  ok(t.includes('«findes-ikke» findes ikke'), 'ukendt aktivitet er en fejl');
+  ok(t.includes('slutter før den starter'), 'slut før start er en fejl');
+  ok(t.includes('endTime mangler'), 'manglende sluttid er en fejl');
+  ok(t.includes('et hold kan ikke ligge under'), 'hold under en opgave er en fejl');
+  ok(await page.isDisabled('#btn-do-gendan'), 'Gendan kan ikke trykkes');
+  await page.screenshot({ path: DIR + '/gendan-fejl.png' });
+
+  await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+  await indlaes(page, '{ ikke json');
+  ok((await page.textContent('#gendan-body')).includes('ikke gyldig JSON') && await page.isDisabled('#btn-do-gendan'), 'ødelagt fil afvises');
+
+  // Den uændrede fil: intet at gøre
+  await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+  const [, b2] = await hentBackup(page);
+  await indlaes(page, b2);
+  ok((await page.textContent('#gendan-body')).includes('intet at gendanne') && await page.isDisabled('#btn-do-gendan'), 'samme data: intet at gendanne');
+  ok(await page.evaluate(() => window.__fs.entries().length) === 2, 'intet er skrevet');
+  await page.context().close();
+}
+
+// ── Gammel backup uden indstillinger: de nuværende beholdes, og nyere poster varsles ──
+{
+  const page = await side(browser, grundData());
+  await page.waitForTimeout(400);
+  const gammel = { exportedAt: new Date(slut + 1000).toISOString(),
+    activities: [{ id: 'h1', name: '3g Ng', type: 'hold', color: '#0E86C8', schoolYear: '2026/27', order: 1, isArchived: false, parentId: null, budgetHours: 288 },
+                 { id: 'o1', name: 'SRP', type: 'opgave', color: '#E8336D', schoolYear: '2026/27', order: 2, isArchived: false, parentId: null, budgetHours: 40 }],
+    entries: [{ id: 'e1', activityId: 'h1', workType: 'undervisning', startTime: new Date(start).toISOString(), endTime: new Date(slut).toISOString(), durationMinutes: 95, note: '', isModule: true, autoStopped: false }] };
+  await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
+  await indlaes(page, gammel, 'gammel.json');
+  const t = await page.textContent('#gendan-body');
+  ok(t.includes('dine nuværende beholdes'), 'indstillinger uden for filen beholdes');
+  ok(t.includes('1 registrering er lavet, efter backuppen blev taget, og slettes'), 'advarsel om nyere registreringer: ' + t.replace(/\s+/g, ' ').slice(0, 300));
+  await Promise.all([page.waitForEvent('download'), page.click('#btn-do-gendan')]);
+  await page.waitForTimeout(300);
+  ok(await page.evaluate(() => window.__fs.store.get('users/u1/settings/config')?.normHours) === 1690, 'indstillingerne er urørte');
+  ok(await page.evaluate(() => window.__fs.entries().length) === 1, 'den nyere registrering er slettet');
   await page.context().close();
 }
 

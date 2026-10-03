@@ -403,6 +403,14 @@
               Eksportér alle data (JSON)
             </button>
           </div>
+          <div class="settings-row" style="flex-direction:column; gap:8px; align-items:stretch;">
+            <button id="btn-gendan" class="btn btn-secondary btn-full">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Gendan fra backup …
+            </button>
+            <input type="file" id="gendan-fil" accept=".json,application/json" hidden>
+            <span class="settings-sub">Læser en backupfil ind — også en, du har rettet i, fx med dit faktiske skema. Det, der står i filen, bliver dine data. Du ser ændringerne, før noget gemmes.</span>
+          </div>
         </div>
 
         <!-- Feedback — knappen sættes ind af /feedback.js. Den står her og
@@ -618,6 +626,25 @@ Vejledning; opgave; 40</div>
       </div>
       <div class="form-actions">
         <button id="btn-do-import" class="btn btn-primary btn-full">Importer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Gendan fra backup sheet ──────────────────────────── -->
+  <div id="gendan-backdrop" class="sheet-backdrop hidden"></div>
+  <div id="gendan-sheet" class="sheet hidden">
+    <div class="sheet-handle-bar"></div>
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <h3>Gendan fra backup</h3>
+        <button id="gendan-sheet-close" class="btn-icon" aria-label="Luk">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="gendan-body" aria-live="polite"></div>
+      <div class="form-actions">
+        <button id="btn-do-gendan" class="btn btn-primary btn-full">Gendan</button>
+        <button id="btn-gendan-annuller" class="btn btn-secondary btn-full">Annuller</button>
       </div>
     </div>
   </div>

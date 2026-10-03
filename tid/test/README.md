@@ -54,7 +54,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
-| `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter (med rettede sæt) og registreringer (med pauser), tom bruger |
+| `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter og registreringer; gendan en rettet fil (nye uden id, tider med og uden tidszone, sletning), fejl i filen, gammel fil uden indstillinger |
 | `portefolje-andet.mjs` | frikøb, barsel og overførte timer: indtastning, gem, rapportens norm og portefølje |
 
 Ret en fejl → lav en test, der fejler uden rettelsen, og læg den her.
