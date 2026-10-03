@@ -6,7 +6,7 @@
 
 import { db, COLOR_PALETTE } from './app.js';
 import { getLoadedActivities } from './activities.js';
-import { getSettings, gemIndstilling, aarsnorm, FULD_AARSNORM, FLEKSBAAND } from './indstillinger.js';
+import { getSettings, gemIndstilling, aarsnorm, andetSum, FULD_AARSNORM, FLEKSBAAND } from './indstillinger.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { forloebIArbejdsdage, ferieFor } from './ferie.js';
@@ -272,7 +272,11 @@ function renderSummary(totalMins, ak) {
   if (periodFilter === 'skolear') {
     const elapsed = forloebAndel();
     const NORM    = normHours();
-    const normM   = NORM * 60;
+    // Frikøb, barsel, overførte timer o.l. står i porteføljen, men
+    // registreres ikke — de trækkes fra det, der skal registreres
+    const ANDET   = andetSum(year, getSettings());
+    const SKAL    = NORM - ANDET;
+    const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
     const expPct  = Math.min(99, Math.round(elapsed * 100));
     const chip    = forloebChip(totalMins, normM, elapsed);
@@ -284,12 +288,13 @@ function renderSummary(totalMins, ak) {
           <div class="norm-progress-marker" style="left:${expPct}%"></div>
         </div>
         <div class="norm-progress-labels">
-          <span>${fmtMins(totalMins)} / ${NORM}t</span>
+          <span>${fmtMins(totalMins)} / ${fmtTal(SKAL)}t</span>
           <span>${pct}%</span>
         </div>
+        ${ANDET ? `<div class="norm-andet">Årsnorm ${NORM} t ${ANDET > 0 ? '−' : '+'} ${fmtTal(Math.abs(ANDET))} t andet i porteføljen</div>` : ''}
       </div>
       ${chip}
-      ${ak ? renderAkkord(ak, elapsed, NORM) : ''}`;
+      ${ak ? renderAkkord(ak, elapsed, NORM, ANDET) : ''}`;
   }
 
   return `<div class="rapport-summary">
@@ -303,7 +308,7 @@ function renderSummary(totalMins, ak) {
 // Saldoen er optjent − brugt for hele skoleåret. Bjælken viser, hvor stor en
 // del af akkorderne der er leveret, og stregen, hvor langt året er nået.
 // Fluebenet flytter kun den fælles tid; saldoen øverst er den samme.
-function renderAkkord(ak, elapsed, norm) {
+function renderAkkord(ak, elapsed, norm, andet) {
   const pct = ak.akkord > 0 ? Math.min(100, Math.round(ak.optjent / ak.akkord * 100)) : 0;
   const kal = Math.min(99, Math.round(elapsed * 100));
   return `<div class="akkord">
@@ -326,7 +331,7 @@ function renderAkkord(ak, elapsed, norm) {
       <span>Leveret ${pct}%</span>
       <span>Året er ${kal}% gået</span>
     </div>
-    ${portefoljeLinje(ak.akkord, norm)}
+    ${portefoljeLinje(ak.akkord, norm, andet)}
     <label class="akkord-fordel">
       <input type="checkbox" id="akkord-fordel" class="settings-check"${ak.fordelt || fordelFaelles() ? ' checked' : ''}>
       <span>Fordel fælles tid på aktiviteterne<small>Ubundet tid, pauser og opgaver uden budget, vægtet efter budget</small></span>
@@ -337,14 +342,19 @@ function renderAkkord(ak, elapsed, norm) {
 // Porteføljen (summen af budgetterne) over for årsnormen. Den må ligge op
 // til 42 t over normen på fuld tid — skaleret med ansættelsesgraden — før
 // det er merarbejde.
-function portefoljeLinje(akkordM, norm) {
-  if (!akkordM) return '';
-  const port   = Math.round(akkordM / 60);
+// «Andet i porteføljen» (frikøb, barsel, overført) lægges til budgetterne.
+function portefoljeLinje(akkordM, norm, andet = 0) {
+  if (!akkordM && !andet) return '';
+  const port   = Math.round(akkordM / 60 + andet);
   const graense = Math.round(norm + FLEKSBAAND * norm / FULD_AARSNORM);
   const over   = port > graense;
-  return `<p class="akkord-portefolje">Portefølje <b>${port} t</b> · årsnorm <b>${norm} t</b> ·
+  const heraf  = andet ? ` (heraf ${fmtTal(andet)} t andet)` : '';
+  return `<p class="akkord-portefolje">Portefølje <b>${port} t</b>${heraf} · årsnorm <b>${norm} t</b> ·
     <span class="${over ? 'is-over' : ''}">merarbejde over <b>${graense} t</b>${over ? ` — ${port - graense} t over` : ''}</span></p>`;
 }
+
+// Timer med højst én decimal og komma
+const fmtTal = t => String(Math.round(t * 10) / 10).replace('.', ',');
 
 // Saldochip: plus = arbejdet har taget mindre tid, end det betales med
 function saldoChip(m, lille = true) {

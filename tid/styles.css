@@ -1382,6 +1382,16 @@ select.form-input{
   letter-spacing:0.04em;color:var(--slate);line-height:1.5;
 }
 .ferie-sum b{font-family:var(--display);font-size:0.9rem;color:var(--ink)}
+/* Andet i porteføljen: navn, timer, enhed, slet */
+.andet-raekke{
+  display:grid;grid-template-columns:minmax(0,1fr) 5.5em auto auto;
+  align-items:center;gap:6px;
+  padding:10px 0;border-bottom:2px solid var(--rule);
+}
+.andet-raekke .settings-input-sm{width:100%;min-width:0;text-align:left;padding:8px 7px;font-size:0.84rem}
+.andet-raekke .andet-timer{text-align:right}
+.andet-enhed{font-family:var(--mono);font-size:0.7rem;color:var(--slate)}
+.norm-andet{margin-top:4px;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.04em;color:var(--slate)}
 .norm-hjaelp{display:block;font-weight:600;color:var(--ink)}
 .norm-hjaelp.norm-advarsel{padding:6px 9px;margin:2px 0 6px;background:var(--tint-pasPaa);border:2px solid var(--ink);border-radius:9px}
 .akkord-portefolje{margin:12px 0 0;font-size:0.84rem;line-height:1.45;color:var(--slate)}

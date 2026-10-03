@@ -93,6 +93,9 @@ Regler:
 {
   schoolYearStartMonth: 6,         // normperioden går fra 1. juni
   schoolYearStartDay: 1,
+  portefoljeAndet: {                // pr. skoleår: frikøb, barsel, overført fra sidste år (minus = skyldige timer)
+    "2026/27": [{ navn: "Frikøb (TR)", timer: 100 }]
+  },                                // tæller i porteføljen, trækkes fra det, der skal registreres
   normHours: 1690,                  // årsnormen (1690 × ansættelsesgrad) — ikke porteføljens sum; en gemt 1650 (gammel standard) læses som 1690
   autoStopAfterMinutes: 600,
   autoShortBreaks: true,            // luk mellemrum under 30 min som "Kort pause"

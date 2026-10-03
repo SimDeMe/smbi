@@ -19,6 +19,7 @@ const DEFAULTS = {
   autoShortBreaks:      true,
   normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
   ferie:                {},     // { "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }] } — se ferie.js
+  portefoljeAndet:      {},     // { "2026/27": [{ navn: "Frikøb (TR)", timer: 100 }] } — se andetFor()
   fordelFaellesTid:     true    // akkordregnskabet: fordel fælles tid på aktiviteterne — se akkord.js
 };
 
@@ -40,6 +41,15 @@ export const FLEKSBAAND    = 42;
 const GAMMEL_STANDARD      = 1650;
 export const aarsnorm = (s = settings) =>
   !s.normHours || s.normHours === GAMMEL_STANDARD ? FULD_AARSNORM : s.normHours;
+
+// ─── Andet i porteføljen ──────────────────────────────────
+// Linjer i opgaveporteføljen, der ikke er opgaver, og som der ikke
+// registreres tid på: frikøb, barsel og anden orlov, timer overført fra
+// sidste år (minus, hvis man skylder timer). De tæller med i porteføljen og
+// trækkes fra det, der skal registreres i løbet af året.
+export const andetFor = (aar, s = settings) => s.portefoljeAndet?.[aar] || [];
+export const andetSum = (aar, s = settings) =>
+  andetFor(aar, s).reduce((sum, l) => sum + (Number(l.timer) || 0), 0);
 
 // ─── Init ─────────────────────────────────────────────────
 export async function initIndstillingerView(uid) {
@@ -102,6 +112,7 @@ function populateForm() {
   check('cfg-auto-breaks', s.autoShortBreaks ?? DEFAULTS.autoShortBreaks);
   visFaktorer(s.currentSchoolYear || getCurrentSchoolYear());
   visFerie(s.currentSchoolYear || getCurrentSchoolYear());
+  visAndet(s.currentSchoolYear || getCurrentSchoolYear());
 }
 
 // Under feltet: hvad tallet svarer til — og en advarsel, hvis det ligner
@@ -213,6 +224,67 @@ function opdaterFerieTal() {
     + (udenfor ? `<span class="ferie-advarsel">OBS · ${udenfor === 1 ? 'Én periode' : `${udenfor} perioder`} ligger uden for normperioden ${kortDato(start)} ${start.getFullYear()} – ${kortDato(sidste)} ${sidste.getFullYear()}</span>` : '');
 }
 
+// ─── Andet i porteføljen ──────────────────────────────────
+// Samme mønster som ferien: et udkast pr. skoleår, gemt med resten
+let andetAar    = '';
+let andetUdkast = [];
+
+function visAndet(aar) {
+  andetAar    = aar;
+  andetUdkast = andetFor(aar, settings).map(l => ({ navn: l.navn, timer: kommatal(l.timer) }));
+  const el = document.getElementById('cfg-andet-aar');
+  if (el) el.textContent = aar;
+  tegnAndet();
+}
+
+function tegnAndet() {
+  const liste = document.getElementById('cfg-andet-liste');
+  if (!liste) return;
+  liste.innerHTML = andetUdkast.map((l, i) => `
+    <div class="andet-raekke" data-i="${i}">
+      <input type="text" class="settings-input-sm andet-navn" value="${esc(l.navn)}"
+        placeholder="Fx frikøb, barsel" aria-label="Linje ${i + 1}, hvad">
+      <input type="text" inputmode="decimal" class="settings-input-sm andet-timer" value="${esc(l.timer)}"
+        placeholder="0" aria-label="Linje ${i + 1}, timer">
+      <span class="andet-enhed" aria-hidden="true">t</span>
+      <button type="button" class="btn-icon ferie-slet andet-slet" aria-label="Fjern linje ${i + 1}">×</button>
+    </div>`).join('');
+  liste.querySelectorAll('.andet-raekke').forEach(rk => {
+    const i = Number(rk.dataset.i);
+    rk.querySelector('.andet-navn').addEventListener('input', e => { andetUdkast[i].navn = e.target.value; });
+    rk.querySelector('.andet-timer').addEventListener('input', e => {
+      andetUdkast[i].timer = e.target.value; opdaterAndetSum();
+    });
+    rk.querySelector('.andet-slet').addEventListener('click', () => {
+      andetUdkast.splice(i, 1); tegnAndet();
+      document.getElementById('cfg-andet-ny')?.focus();
+    });
+  });
+  opdaterAndetSum();
+}
+
+// Summen og det, der så skal registreres, med årsnormen fra feltet ovenover
+function opdaterAndetSum() {
+  const el = document.getElementById('cfg-andet-sum');
+  if (!el) return;
+  const sum  = andetTilGem().reduce((s, l) => s + l.timer, 0);
+  const norm = parseInt(document.getElementById('cfg-norm-hours')?.value) || FULD_AARSNORM;
+  el.innerHTML = sum
+    ? `<b>${kommatal(sum)} t</b> uden registrering · der skal registreres <b>${kommatal(norm - sum)} t</b> af årsnormen`
+    : '';
+}
+
+function nyAndet() {
+  andetUdkast.push({ navn: '', timer: '' });
+  tegnAndet();
+  document.querySelector('#cfg-andet-liste .andet-raekke:last-child .andet-navn')?.focus();
+}
+
+// Til gemning: kun linjer med et tal; uden navn hedder de «Andet»
+const andetTilGem = () => andetUdkast
+  .map(l => ({ navn: l.navn.trim() || 'Andet', timer: tolkTal(l.timer) }))
+  .filter(l => l.timer != null && l.timer !== 0);
+
 function nyFerie() {
   ferieUdkast.push({ fra: '', til: '' });
   tegnFerie();
@@ -249,7 +321,8 @@ async function saveSettings() {
         reduktion: settings.normFaktorer?.[yearVal]?.reduktion ?? STANDARD_FAKTORER.reduktion
       }
     },
-    ferie: { ...settings.ferie, [ferieAar]: ferieTilGem() }
+    ferie: { ...settings.ferie, [ferieAar]: ferieTilGem() },
+    portefoljeAndet: { ...settings.portefoljeAndet, [andetAar]: andetTilGem() }
   };
 
   const btn = document.getElementById('cfg-save-btn');
@@ -287,8 +360,9 @@ function bindListeners() {
   document.getElementById('cfg-save-btn')?.addEventListener('click', saveSettings);
   document.getElementById('cfg-school-year')?.addEventListener('input', e => {
     const aar = e.target.value.trim();
-    if (/^\d{4}\/\d{2}$/.test(aar)) { visFaktorer(aar); visFerie(aar); }
+    if (/^\d{4}\/\d{2}$/.test(aar)) { visFaktorer(aar); visFerie(aar); visAndet(aar); }
   });
   document.getElementById('cfg-ferie-ny')?.addEventListener('click', nyFerie);
-  document.getElementById('cfg-norm-hours')?.addEventListener('input', visNormHjaelp);
+  document.getElementById('cfg-norm-hours')?.addEventListener('input', () => { visNormHjaelp(); opdaterAndetSum(); });
+  document.getElementById('cfg-andet-ny')?.addEventListener('click', nyAndet);
 }
