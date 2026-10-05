@@ -921,6 +921,9 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
   cursor:grabbing;z-index:600!important;
   box-shadow:3px 3px 0 var(--ink);
 }
+/* Overlap under trækket: den trukne og de ramte får koral stiplet ramme —
+   og tiden i blokken siger «overlap», så farven ikke står alene */
+.kal-block-overlap,.kal-block-ramt{outline:3px dashed var(--coral);outline-offset:1px}
 
 /* ─── Dagens registreringer ved siden af aksen ──────────── */
 /* Kun på en bred skærm — under 1000 px har man fanen «Liste» */
@@ -1555,8 +1558,9 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
 }
 .toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
-/* Med en knap (fx «Fortryd») skal toasten kunne trykkes på, mens den ses */
-.toast.visible.toast-med-knap{pointer-events:auto}
+/* Med en knap (fx «Fortryd») skal knappen kunne trykkes på, mens den ses —
+   resten af toasten lader klik gå igennem til kalenderen under den */
+.toast.visible .toast-knap{pointer-events:auto}
 .toast-knap{
   margin-left:10px;padding:2px 12px;cursor:pointer;
   font-family:var(--display);font-weight:800;font-size:0.86rem;

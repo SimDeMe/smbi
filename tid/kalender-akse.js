@@ -319,7 +319,7 @@ function bindLane(rod, ctx, dage, vin, grupper) {
     if (b.dataset.flyt) b.addEventListener('pointerdown', ev => {
       const nr = Number(b.closest('[data-dagnr]')?.dataset.dagnr) || 0;
       const it = grupper[nr].find(x => x.id === b.dataset.id);
-      if (it) startTraek(ev, b, it, vin, H, ctx, traek);
+      if (it) startTraek(ev, b, it, grupper[nr].filter(x => x !== it), vin, H, ctx, traek);
     });
   });
 
@@ -360,43 +360,89 @@ function startFraTryk(min, items) {
 // grebet forneden. Tiden springer i hele 5 minutter og står i blokken,
 // mens man trækker. Først når man slipper, gemmes posten. På en
 // berøringsskærm gør et træk det samme som før: siden ruller.
-function startTraek(ev, b, it, vin, H, ctx, traek) {
+//
+// Kommer en kant tæt på en nabos kant, snapper den til — så to poster kan
+// lægges kant i kant uden et minuts hul eller overlap. Overlapper blokken
+// alligevel en anden, bliver begge markeret, mens man trækker.
+const SNAP_PX = 10;            // så tæt skal kanterne være, før de snapper
+
+function startTraek(ev, b, it, naboer, vin, H, ctx, traek) {
   if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
   ev.preventDefault();                       // ingen markering af tekst
   const strak = !!ev.target.closest('.kal-block-greb');
   const y0    = ev.clientY;
   const pxMin = H / 60;
-  let igang = false, dMin = 0;
+  const MIN   = 60000;
+  const s0 = it.realStart.getTime(), e0 = it.realEnd.getTime();
+  // Blokkens start i minutter fra aksens døgnstart — til placeringen
+  const dagStart = s0 - it.startMin * MIN;
+  const nu = Date.now();
+  const kanter = naboer.flatMap(o => [o.realStart.getTime(), o.realEnd ? o.realEnd.getTime() : nu]);
+  const ramt = new Set();
+  let igang = false, fra = s0, til = e0;
 
   const tidEl = () => b.querySelector('.kal-block-time') ||
     b.insertBefore(Object.assign(document.createElement('span'), { className: 'kal-block-time' }),
                    b.querySelector('.kal-block-greb'));
 
+  // Nærmeste nabokant inden for SNAP_PX: forskydningen dertil, ellers null
+  const snap = (...egne) => {
+    let bedst = null;
+    egne.forEach(t => kanter.forEach(k => {
+      const d = k - t;
+      if (Math.abs(d) <= SNAP_PX / pxMin * MIN && (bedst === null || Math.abs(d) < Math.abs(bedst))) bedst = d;
+    }));
+    return bedst;
+  };
+
   const flyt = e => {
     const dy = e.clientY - y0;
     if (!igang && Math.abs(dy) < 4) return;  // et klik må gerne ryste lidt
     if (!igang) { igang = true; b.classList.add('kal-block-traek'); }
-    dMin = Math.round(dy / pxMin / TRAEK_MIN) * TRAEK_MIN;
-    if (strak) dMin = Math.max(dMin, TRAEK_MIN - it.durMin);
-    else       dMin = Math.min(Math.max(dMin, vin.fra * 60 - it.startMin), vin.til * 60 - it.endMin);
+    const raa = dy / pxMin * MIN;
+    let d = Math.round(raa / (TRAEK_MIN * MIN)) * TRAEK_MIN * MIN;
 
-    const s = it.startMin + (strak ? 0 : dMin), sl = it.endMin + dMin;
-    if (strak) b.style.height = `${Math.max(16, (sl - s) * pxMin)}px`;
-    else       b.style.top    = `${yPos(s, vin, H)}px`;
-    const fra = new Date(it.realStart.getTime() + (strak ? 0 : dMin) * 60000);
-    const til = new Date(it.realEnd.getTime() + dMin * 60000);
-    tidEl().textContent = `${fmtTime(fra)}–${fmtTime(til)} · ${fmtMins(sl - s)}`;
+    if (strak) {
+      const sn = snap(e0 + raa);
+      if (sn !== null) d = raa + sn;
+      d = Math.max(d, s0 + TRAEK_MIN * MIN - e0);          // mindst 5 min lang
+      fra = s0; til = e0 + d;
+    } else {
+      const sn = snap(s0 + raa, e0 + raa);
+      if (sn !== null) d = raa + sn;
+      // Inden for aksen
+      d = Math.min(Math.max(d, dagStart + vin.fra * 60 * MIN - s0), dagStart + vin.til * 60 * MIN - e0);
+      fra = s0 + d; til = e0 + d;
+    }
+
+    const sMin = (fra - dagStart) / MIN, lMin = (til - fra) / MIN;
+    if (strak) b.style.height = `${Math.max(16, lMin * pxMin)}px`;
+    else       b.style.top    = `${yPos(sMin, vin, H)}px`;
+
+    // Overlap med naboerne — de ramte markeres også
+    ramt.clear();
+    naboer.forEach(o => {
+      const oSlut = o.realEnd ? o.realEnd.getTime() : nu;
+      if (o.realStart.getTime() < til && oSlut > fra) ramt.add(o.id);
+    });
+    b.classList.toggle('kal-block-overlap', ramt.size > 0);
+    b.parentElement.querySelectorAll('.kal-block').forEach(x =>
+      x.classList.toggle('kal-block-ramt', ramt.has(x.dataset.id)));
+
+    tidEl().textContent = `${fmtTime(new Date(fra))}–${fmtTime(new Date(til))} · ${
+      fmtMins(Math.round(lMin))}${ramt.size ? ' · overlap' : ''}`;
   };
 
   const slip = () => {
     window.removeEventListener('pointermove', flyt);
     window.removeEventListener('pointerup', slip);
     if (!igang) return;
-    b.classList.remove('kal-block-traek');
+    b.classList.remove('kal-block-traek', 'kal-block-overlap');
+    b.parentElement.querySelectorAll('.kal-block-ramt').forEach(x => x.classList.remove('kal-block-ramt'));
     // Klikket, der følger efter et træk, må ikke åbne arket
     traek.slap = true;
     setTimeout(() => { traek.slap = false; }, 0);
-    if (dMin) ctx.flytPost(it.id, strak ? 0 : dMin, dMin);
+    if (fra !== s0 || til !== e0) ctx.flytPost(it.id, new Date(fra), new Date(til), !strak);
   };
 
   window.addEventListener('pointermove', flyt);

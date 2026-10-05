@@ -292,14 +292,12 @@ function markerValgt() {
     el.classList.toggle('kal-valgt', el.dataset.id === valgtId));
 }
 
-// En blok er trukket med musen: start og slut flyttes de givne minutter.
-// Længden følger med, og toasten kan fortryde, til den forsvinder.
-async function flytPost(id, dStart, dSlut) {
+// En blok er trukket med musen til et nyt tidsrum. Overlapper det en anden
+// post, siger beskeden det — og den kan fortryde, til den forsvinder.
+async function flytPost(id, fra, til, flyttet) {
   const p = poster.find(x => x.id === id);
   if (!p?.startTime || !p.endTime) return;
   const gl = { startTime: p.startTime, endTime: p.endTime, durationMinutes: p.durationMinutes ?? null };
-  const fra = new Date(p.startTime.toDate().getTime() + dStart * 60000);
-  const til = new Date(p.endTime.toDate().getTime() + dSlut * 60000);
   const ref = doc(db, `users/${userId}/entries/${id}`);
   try {
     await updateDoc(ref, {
@@ -313,9 +311,17 @@ async function flytPost(id, dStart, dSlut) {
     render();                          // blokken tilbage, hvor den stod
     return;
   }
-  const tekst = dStart ? `Flyttet til ${fmtTime(fra)}–${fmtTime(til)}`
-                       : `Ændret til ${fmtTime(fra)}–${fmtTime(til)}`;
-  showToast(tekst, 6000, {
+
+  const ctx  = byggKontekst();
+  const nu   = Date.now();
+  const ramt = poster.filter(o => o.id !== id && o.startTime &&
+    o.startTime.toMillis() < til.getTime() && (o.endTime ? o.endTime.toMillis() : nu) > fra.getTime());
+  const navne = [...new Set(ramt.map(o => erPause(o) ? 'en pause' : ctx.aktivitetNavn(o.activityId)))];
+  const navn  = navne.length > 1 ? `${navne.slice(0, -1).join(', ')} og ${navne.at(-1)}` : navne[0];
+
+  const tekst = `${flyttet ? 'Flyttet til' : 'Ændret til'} ${fmtTime(fra)}–${fmtTime(til)}${
+    ramt.length ? ` · OBS: overlapper ${navn}` : ''}`;
+  showToast(tekst, ramt.length ? 9000 : 6000, {
     tekst: 'Fortryd',
     fn: () => updateDoc(ref, gl).catch(err => {
       console.error('Fortryd fejl:', err);

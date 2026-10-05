@@ -34,7 +34,8 @@ const seed = [settings, act('a1', 'SRP'), act('a2', 'Retning', { color: '#E8336D
   post('e1', 'a1', kl(8), kl(9, 35)),
   post('e2', null, kl(9, 35), kl(9, 40), { isBreak: true }),
   post('e3', 'a2', kl(9, 40), kl(11, 15)),
-  post('e4', 'a1', kl(11, 15), kl(11, 20))];
+  post('e4', 'a1', kl(11, 15), kl(11, 20)),
+  post('e5', 'a2', kl(12), kl(13))];
 
 // Hvilken blok rammer et klik midt i blokkens synlige del?
 const rammer = (page, id) => page.$eval(`.kal-block[data-id="${id}"]`, b => {
@@ -74,7 +75,7 @@ const browser = await chromium.launch();
   const bredde = await page.$eval('#view-historik', v => v.getBoundingClientRect().width);
   ok(bredde > 1000, `Historik bruger bredden: ${Math.round(bredde)} px`);
   const raekker = await page.$$eval('.kal-dl-raekke', l => l.map(r => r.dataset.id));
-  ok(raekker.join() === 'e1,e2,e3,e4', 'dagens liste har alle fire poster i rækkefølge: ' + raekker);
+  ok(raekker.join() === 'e1,e2,e3,e4,e5', 'dagens liste har alle fem poster i rækkefølge: ' + raekker);
 
   // Rækken åbner arket, som står i højre side uden at dække kalenderen
   await page.click('.kal-dl-raekke[data-id="e2"]');
@@ -113,6 +114,34 @@ const browser = await chromium.launch();
   await page.mouse.move(g.x, g.y - pxTime / 4, { steps: 5 });
   await page.mouse.up(); await page.waitForTimeout(300);
   ok((await e3()).join() === '09:40,11:00,80', 'grebet ændrer kun sluttiden: ' + await e3());
+
+  // Snap: e5 (12:00–13:00) trækkes 38 min op — starten snapper til e4's slutning 11:20
+  const tid = id => page.evaluate(id => { const d = window.__fs.store.get('users/u1/entries/' + id); return [d.startTime.toDate().toTimeString().slice(0, 8), d.endTime.toDate().toTimeString().slice(0, 8)]; }, id);
+  const midt = id => page.$eval(`.kal-block[data-id="${id}"]`, b => { const r = b.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  let m = await midt('e5');
+  await page.mouse.move(m.x, m.y); await page.mouse.down();
+  await page.mouse.move(m.x, m.y - 38 * pxTime / 60, { steps: 6 });
+  await page.mouse.up(); await page.waitForTimeout(300);
+  ok((await tid('e5')).join() === '11:20:00,12:20:00', 'starten snapper til naboens slutning: ' + await tid('e5'));
+  ok(!(await page.textContent('#toast')).includes('OBS'), 'kant i kant er ikke overlap: ' + await page.textContent('#toast'));
+
+  // Overlap: e5 trækkes 30 min op, ind over e3 (09:40–11:00) og e4
+  m = await midt('e5');
+  await page.mouse.move(m.x, m.y); await page.mouse.down();
+  await page.mouse.move(m.x, m.y - 30 * pxTime / 60, { steps: 6 });
+  const under = await page.evaluate(() => ({
+    selv: document.querySelector('.kal-block[data-id="e5"]').classList.contains('kal-block-overlap'),
+    ramt: [...document.querySelectorAll('.kal-block-ramt')].map(b => b.dataset.id).join(),
+    tekst: document.querySelector('.kal-block[data-id="e5"] .kal-block-time').textContent }));
+  ok(under.selv && under.ramt === 'e3,e4', 'under trækket markeres blokken og de ramte: ' + under.ramt);
+  ok(under.tekst.includes('overlap'), 'tiden i blokken siger overlap: ' + under.tekst);
+  await page.screenshot({ path: DIR + '/kalender-overlap.png' });
+  await page.mouse.up(); await page.waitForTimeout(300);
+  const toast = await page.textContent('#toast');
+  ok(toast.includes('10:50–11:50') && toast.includes('OBS: overlapper Retning og SRP'), 'beskeden advarer om overlap: ' + toast);
+  ok(await page.$$eval('.kal-block-ramt,.kal-block-overlap', l => l.length) === 0, 'markeringen forsvinder, når man slipper');
+  await page.click('.toast-knap'); await page.waitForTimeout(300);
+  ok((await tid('e5')).join() === '11:20:00,12:20:00', 'Fortryd efter overlap: ' + await tid('e5'));
 
   // Et almindeligt klik på blokken åbner stadig arket
   await page.click('.kal-block[data-id="e1"]');
