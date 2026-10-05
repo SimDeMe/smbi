@@ -10,3 +10,7 @@ geografi/stensamling/billeder/originaler/
 # Testene i tid/test: Playwright-link og skærmbilleder
 tid/test/node_modules
 tid/test/ud/
+
+# Pladstjekket i værktøj: Playwright-link og skærmbilleder
+værktøj/node_modules
+værktøj/ud/

@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td><code>geografi/Stigningsregn.html</code></td>
-<td>simulering med canvas + skydere + instrumenter</td>
+<td>simulering med canvas + skydere + instrumenter, sidespalte og højdebudget (afsnit 7)</td>
 </tr>
 <tr class="odd">
 <td><code>geografi/drivhuseffektenSimpel.html</code></td>
@@ -122,15 +122,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>Lagt om indtil videre: forsiden, fagforsiderne, <code>born.html</code>, <code>admin.html</code>, <code>contact.html</code>, <code>Stigningsregn.html</code>, <code>drivhuseffektenSimpel.html</code>, <code>drivhuseffekten.html</code>, <code>poroesitetPermeabilitet.html</code>, <code>TermiskTryk3.html</code>, <code>Dugpunkt.html</code>, <code>groenlandspumpen.html</code>, <code>biologi/transkription.html</code>, <code>biologi/enzymkinetik.html</code>, <code>biologi/osmose.html</code>, <code>biologi/DNA_Simulering.html</code>, <code>biologi/enzymhastighed.html</code>, <code>geografi/Tidevand.html</code>, <code>geografi/boelger.html</code>, <code>biologi/membran.html</code>, <code>biologi/fotosyntese.html</code>, <code>biologi/bio-blocks/index.html</code>, <code>biologi/membran2d.html</code>, <code>navneApp/</code>, <code>tid/</code> (brug dem som forlæg, når <code>--accent:var(--bio)</code> skal bruges). Resten af <code>geografi/</code>, <code>biologi/</code> og <code>style.css</code>-siderne kører stadig det gamle design — rør dem kun, når opgaven handler om dem.</p>
+<p>Lagt om indtil videre: forsiden, fagforsiderne, <code>born.html</code>, <code>admin.html</code>, <code>contact.html</code>, <code>Stigningsregn.html</code>, <code>drivhuseffektenSimpel.html</code>, <code>drivhuseffekten.html</code>, <code>poroesitetPermeabilitet.html</code>, <code>TermiskTryk3.html</code>, <code>Dugpunkt.html</code>, <code>groenlandspumpen.html</code>, <code>biologi/transkription.html</code>, <code>biologi/enzymkinetik.html</code>, <code>biologi/osmose.html</code>, <code>biologi/DNA_Simulering.html</code>, <code>biologi/enzymhastighed.html</code>, <code>geografi/Tidevand.html</code>, <code>geografi/boelger.html</code>, <code>geografi/vulkanudbrud.html</code>, <code>geografi/stensamling.html</code>, <code>biologi/membran.html</code>, <code>biologi/fotosyntese.html</code>, <code>biologi/bio-blocks/index.html</code>, <code>biologi/membran2d.html</code>, <code>biologi/KvindensCyklus/FinalSim.html</code>, <code>navneApp/</code>, <code>tid/</code> (brug dem som forlæg, når <code>--accent:var(--bio)</code> skal bruges). Resten af <code>geografi/</code>, <code>biologi/</code> og <code>style.css</code>-siderne kører stadig det gamle design — rør dem kun, når opgaven handler om dem.</p>
 <section id="filstruktur-én-fil-eller-flere" class="level2">
 <h2 class="anchored" data-anchor-id="filstruktur-én-fil-eller-flere">0. Filstruktur — én fil eller flere</h2>
-<p>Små figurer bliver i én selvstændig HTML-fil, som hidtil. <strong>Større simuleringer deles op i moduler</strong> — 2D såvel som 3D. Del op, når mindst ét af disse er sandt:</p>
+<p><strong>Alle nye simuleringer må deles op i flere filer</strong> — 2D såvel som 3D, store som små. Det er et frit valg, ikke et krav: en lille figur må gerne blive i én selvstændig HTML-fil. Del op, når det gør siden lettere at læse og rette, og altid når mindst ét af disse er sandt:</p>
 <ul>
 <li>JavaScript-delen er over ca. 600 linjer,</li>
 <li>siden består af flere uafhængige dele, der kan bygges og rettes hver for sig (fx én transportmekanisme ad gangen),</li>
-<li>siden indeholder fagdata, som skal kunne rettes uden at scrolle forbi kode.</li>
+<li>siden indeholder en beregningsmodel eller fagdata, som skal kunne læses og rettes uden at scrolle forbi tegnekode.</li>
 </ul>
+<p>Et lille eksempel i ren canvas 2D + SVG er <code>geografi/boelger.html</code>: <code>model.js</code> (bølgemodellen), <code>strand.js</code> (profil og sand), <code>boelger.js</code>, <code>opskyl.js</code>, <code>kort.js</code> (bølgekortet) og <code>side.js</code>.</p>
 <p>Koden lægges i ES-moduler i en undermappe med sidens navn:</p>
 <pre><code>biologi/membran.html            CSS, markup, importmap — siden selv
 biologi/membran/side.js         indgangen: binder DOM, moduler og løkke sammen
@@ -212,9 +213,14 @@ biologi/membran/transport-*.js  én delmekanisme pr. fil</code></pre>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">main</span><span class="dt">&gt;</span></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">footer</span><span class="ot"> class</span><span class="op">=</span><span class="st">"foot"</span><span class="dt">&gt;</span> brand + .foot-links <span class="dt">&lt;/</span><span class="kw">footer</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>På en simuleringsside står sidehoved og panel i <strong>samme</strong> beholder, så spalten kan følge panelets bredde (se afsnit 7):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"wrap sim"</span><span class="dt">&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"head"</span><span class="dt">&gt;&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"head-in"</span><span class="dt">&gt;</span> eyebrow, h1, lead <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">section</span><span class="ot"> class</span><span class="op">=</span><span class="st">"rig"</span><span class="dt">&gt;</span> ... <span class="dt">&lt;/</span><span class="kw">section</span><span class="dt">&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Fast krom, der skal med på hver side:</p>
 <ul>
-<li><strong>Topbjælken</strong> er <code>position:sticky</code> med <code>border-bottom:2px solid var(--ink)</code> og halvgennemsigtig papirbaggrund + <code>backdrop-filter:blur(10px)</code>. Brandet er <code>smbi.dk</code> med <code>.brand-mark</code> (conic-gradient-firkant med blækkant). Undersider har to links: faget og forsiden.</li>
+<li><strong>Topbjælken</strong> er <code>position:sticky</code> med <code>border-bottom:2px solid var(--ink)</code> og halvgennemsigtig papirbaggrund + <code>backdrop-filter:blur(10px)</code>. På lave skærme (<code>max-height:820px</code>) er den 46 px høj og klæber ikke. Brandet er <code>smbi.dk</code> med <code>.brand-mark</code> (conic-gradient-firkant med blækkant). Undersider har to links: faget og forsiden.</li>
 <li><strong><code>.hi</code></strong> lægger en skæv farveklat bag et ord i <code>h1</code> (<code>--hc</code> styrer farven).</li>
 <li><strong>Bunden</strong> er <code>--ink</code>-flade med <code>#FFF6E0</code> tekst og pilleformede links.</li>
 <li><strong>Ingen <code>.smbi-home</code>-knap mere.</strong> Den flydende hjem-knap i gammelt design erstattes af topbjælkens navigation.</li>
@@ -226,19 +232,21 @@ biologi/membran/transport-*.js  én delmekanisme pr. fil</code></pre>
 <p>Alt interaktivt bor i ét panel:</p>
 <pre><code>.rig        hvid flade, border:2.5px solid ink, radius 18px, box-shadow var(--hard-lg)
  ├ .rig-bar   9 px stribe i --accent
- ├ .rig-head  lys stribe (#E7F4FB) med pulserende .dot + .mono-status,
+ ├ .rig-head  lys stribe (#E7F4FB) med .version, pulserende .dot + .mono-status,
  │            værktøjsknapper (.btn-mini) til højre
- ├ .stage     selve figuren: prikket baggrund
- │            radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px
- │            canvas/svg har selv border:2px solid ink + radius 12px
- ├ .gauges    instrumenter i et grid, adskilt af 2 px blækstreger,
- │            hver med sin lyse baggrund (#FFF1EC, #F1ECFC, #EDF8E4, #E7F4FB)
- ├ .knobs     skydere på --paper-2
- └ .facts     pilleformede nøgletal/signaturforklaring nederst</code></pre>
-<p>Kun de dele, siden har brug for. Alle indre rækker adskilles med <code>border-top:2px solid var(--ink)</code> — panelet skal se ud som ét apparat.</p>
+ └ .rig-body  figur og betjening — to spalter fra 960 px (afsnit 7)
+    ├ .stage     selve figuren: prikket baggrund
+    │            radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px
+    │            canvas/svg har selv border:2px solid ink + radius 12px
+    ├ .side      sidespalten: det, man aflæser og skruer på
+    │  ├ .gauges    instrumenter i et grid, adskilt af 2 px blækstreger,
+    │  │            hver med sin lyse baggrund (#FFF1EC, #F1ECFC, #EDF8E4, #E7F4FB)
+    │  └ .knobs     skydere på --paper-2
+    └ .facts     pilleformede nøgletal/signaturforklaring nederst, under begge spalter</code></pre>
+<p>Kun de dele, siden har brug for. Alle indre rækker adskilles med <code>border-top:2px solid var(--ink)</code>, og sidespalten med <code>border-left</code> — panelet skal se ud som ét apparat. Under 960 px forsvinder spalterne, og alt står under hinanden i samme rækkefølge som før.</p>
 <p><strong>Knapper:</strong> blækkant, hård skygge, og de flytter sig ved klik.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.btn</span><span class="in">:hover</span>  {<span class="kw">transform</span><span class="ch">:</span><span class="fu">translate(</span><span class="dv">-2</span><span class="dt">px</span><span class="op">,</span><span class="dv">-2</span><span class="dt">px</span><span class="fu">)</span><span class="op">;</span> <span class="kw">box-shadow</span><span class="ch">:</span><span class="dv">6</span><span class="dt">px</span> <span class="dv">6</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">var(</span><span class="va">--ink</span><span class="fu">)</span>}</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.btn</span><span class="in">:active</span> {<span class="kw">transform</span><span class="ch">:</span><span class="fu">translate(</span><span class="dv">2</span><span class="dt">px</span><span class="op">,</span><span class="dv">2</span><span class="dt">px</span><span class="fu">)</span><span class="op">;</span>   <span class="kw">box-shadow</span><span class="ch">:</span><span class="dv">1</span><span class="dt">px</span> <span class="dv">1</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">var(</span><span class="va">--ink</span><span class="fu">)</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.btn</span><span class="in">:hover</span>  {<span class="kw">transform</span><span class="ch">:</span><span class="fu">translate(</span><span class="dv">-2</span><span class="dt">px</span><span class="op">,</span><span class="dv">-2</span><span class="dt">px</span><span class="fu">)</span><span class="op">;</span> <span class="kw">box-shadow</span><span class="ch">:</span><span class="dv">6</span><span class="dt">px</span> <span class="dv">6</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">var(</span><span class="va">--ink</span><span class="fu">)</span>}</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.btn</span><span class="in">:active</span> {<span class="kw">transform</span><span class="ch">:</span><span class="fu">translate(</span><span class="dv">2</span><span class="dt">px</span><span class="op">,</span><span class="dv">2</span><span class="dt">px</span><span class="fu">)</span><span class="op">;</span>   <span class="kw">box-shadow</span><span class="ch">:</span><span class="dv">1</span><span class="dt">px</span> <span class="dv">1</span><span class="dt">px</span> <span class="dv">0</span> <span class="fu">var(</span><span class="va">--ink</span><span class="fu">)</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>.btn-mini</code> er den lille udgave (2 px skygge) til <code>.rig-head</code>.</p>
 <p><strong>Skydere</strong> styles i alle tre browsere (<code>::-webkit-slider-runnable-track</code>, <code>::-webkit-slider-thumb</code>, <code>::-moz-range-track</code>, <code>::-moz-range-thumb</code>): 10 px bane med blækkant, 22 px rund gribeknap med blækkant og hård skygge. Hver slider får sin egen <code>--track</code>-gradient og <code>--kc</code>-knapfarve.</p>
 </section>
@@ -257,20 +265,11 @@ biologi/membran/transport-*.js  én delmekanisme pr. fil</code></pre>
 <li><p><strong><code>&lt;html lang="da"&gt;</code></strong>, sigende <code>&lt;title&gt;</code> der ender på <code>— smbi.dk</code>, og en <code>&lt;meta name="description"&gt;</code> på én sætning. Dertil hovedets faste blok med kanonisk adresse, delekort og ikoner — se <code>seo.md</code>, og husk sidens adresse i <code>sitemap.xml</code>.</p></li>
 <li><p><strong>Tilgængelighed:</strong> <code>:focus-visible{outline:3px solid var(--grape)}</code>, <code>aria-label</code> på figurer, <code>aria-live="polite"</code> på det felt der ændrer sig, <code>&lt;title&gt;</code>/<code>&lt;desc&gt;</code> i SVG’er, og et skjult statusfelt (<code>.sr</code>) til skærmlæsere. Betjening skal kunne klares med tastatur alene.</p></li>
 <li><p><strong>Farve er aldrig eneste signal</strong> — kombinér med stregtype, mærkat eller form (fx kortbølget = fuldt optrukket, langbølget = stiplet).</p></li>
-<li><p><strong>Responsivt:</strong> brydepunkter ved 960 px (to spalter → én), 700 px (brede SVG’er får deres egen vandrette rulning med <code>min-width</code>, resten af siden ruller kun lodret) og 620 px (mindre skrift, <code>--hard</code> i stedet for <code>--hard-lg</code>, padding 16 px).</p></li>
-<li><p><strong>Højdebudget — figuren skal kunne ses sammen med sine knapper.</strong> Panelets højde må ikke afhænge af spaltens bredde alene. Gør den det, vokser figuren ud over skærmen, og man kan ikke se visualisering, instrumenter og skydere på én gang. Hver simuleringsside har derfor tokenet <code>--fig</code> i <code>:root</code>, en <code>max-width</code> på den kasse, figuren bor i (bredden følger af formatforholdet), og scriptet <code>Højdebudget</code> nederst på siden:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">:root</span>{<span class="va">--fig</span><span class="ch">:</span><span class="dv">456</span><span class="dt">px</span>}                                    <span class="co">/* udgangspunkt */</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.stage</span>{<span class="kw">max-width</span><span class="ch">:</span><span class="fu">calc(var(</span><span class="va">--fig</span><span class="fu">)</span><span class="op">*</span><span class="dv">800</span><span class="op">/</span><span class="dv">400</span> <span class="op">+</span> <span class="dv">20</span><span class="dt">px</span><span class="fu">)</span><span class="op">;</span><span class="kw">margin-inline</span><span class="ch">:</span><span class="bu">auto</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Scriptet måler, hvad panelet bruger til alt andet end figuren, og lægger resten af skærmhøjden i <code>--fig</code>. Tre ting hører med:</p>
-<ul>
-<li>Budgettet <strong>kan kun gøre figuren mindre</strong> — aldrig bredere end spalten i forvejen tillod. På en høj skærm sker der ingenting.</li>
-<li>Kan panelet alligevel ikke komme til at passe (for mange rækker under figuren, eller en sidespalte der er højere end den), <strong>giver budgettet op</strong> og lader figuren beholde sin fulde størrelse. En figur, der er skrumpet uden gevinst, er det værste af begge dele.</li>
-<li>Sætter siden selv lærredets størrelse i JavaScript (three.js, et lærred uden fast formatforhold), så skal <code>--fig</code> læses dér i stedet — <code>Math.min(…, budget)</code> — og siden udstiller <code>window.tilpasFigur</code>, som scriptet kalder, når budgettet skifter.</li>
-</ul>
-<p>Kopiér fra <code>geografi/Stigningsregn.html</code> (lærred med fast forhold), <code>geografi/TermiskTryk3.html</code> (lærred uden fast forhold) eller <code>biologi/membran/model.js</code> (three.js).</p></li>
+<li><p><strong>Responsivt:</strong> brydepunkter ved 960 px (sidespalte → alt under hinanden), 700 px (brede SVG’er får deres egen vandrette rulning med <code>min-width</code>, resten af siden ruller kun lodret) og 620 px (mindre skrift, <code>--hard</code> i stedet for <code>--hard-lg</code>, padding 16 px).</p></li>
+<li><p><strong>Plads på skærmen:</strong> simuleringen skal kunne ses på elevernes egne skærme — figur, instrumenter og skydere på én gang. Se afsnit 7; det gælder hver simuleringsside, og det skal måles, før siden er færdig.</p></li>
 <li><p><strong><code>@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}</code></strong></p></li>
 <li><p><strong><code>@media print</code></strong> — skjul <code>.top</code>, <code>.foot</code> og navigationsknapper, så det aktuelle billede kan komme på ét A4.</p></li>
-<li><p><strong>Rammen skal stå stille.</strong> Har siden trin eller tilstande med forskellig mængde tekst, må panelet ikke hoppe i højden, når man klikker videre — så flytter figuren, knapperne og trinprikkerne sig for hvert klik. Mål alle tilstande én gang ved indlæsning og lås panelet til den højeste (<code>min-height</code> i px); mål igen ved <code>resize</code>, ved skift af projektortilstand og på <code>document.fonts.ready</code>. Den plads, der bliver til overs på de korte trin, samles ét sted (fx ved at hænge navigationen i bunden med <code>margin-top:auto</code>), og indhold der kun vises i ét trin, får sin plads reserveret med <code>visibility:hidden</code> frem for <code>hidden</code>/<code>display:none</code>. Låsen gælder kun to-spaltelayoutet — under 960 px står tingene under hinanden, og der ville den kun give dødt luftrum.</p></li>
+<li><p><strong>Rammen skal stå stille.</strong> Har siden trin eller tilstande med forskellig mængde tekst, må panelet ikke hoppe i højden, når man klikker videre — så flytter figuren, knapperne og trinprikkerne sig for hvert klik. Mål alle tilstande én gang ved indlæsning og lås panelet til den højeste (<code>min-height</code> i px); mål igen ved <code>resize</code>, ved skift af projektortilstand og på <code>document.fonts.ready</code>. Den plads, der bliver til overs på de korte trin, samles ét sted (fx ved at hænge navigationen i bunden med <code>margin-top:auto</code>), og indhold der kun vises i ét trin, får sin plads reserveret med <code>visibility:hidden</code> frem for <code>hidden</code>/<code>display:none</code>. Låsen gælder kun to-spaltelayoutet — under 960 px står tingene under hinanden, og der ville den kun give dødt luftrum. Låsen må heller ikke sprænge højdebudgettet (afsnit 7): er det længste trin for højt, så ruller trinteksten i sit eget felt i stedet for at gøre panelet højere.</p></li>
 <li><p><strong>Deling og tavle:</strong> hvis siden har trin eller tilstande, så afspejl dem i <code>location.hash</code> (<code>#trin=3</code>) og accepter dem også som query (<code>?trin=3</code>). Projektortilstand (<code>?projektor=1</code> / <code>?mode=teach</code>) skjuler sidens krom og skalerer teksten op.</p></li>
 <li><p><strong>Ingen eksterne afhængigheder</strong> ud over Google Fonts — og three.js fra CDN på de sider, der er ægte 3D (aftalt undtagelse, se <code>geografi/Tidevand.html</code>). Ingen build, ingen npm-pakker, ingen ikonbibliotek-CDN i nye sider.</p></li>
 </ul>
@@ -278,6 +277,76 @@ biologi/membran/transport-*.js  én delmekanisme pr. fil</code></pre>
 <section id="når-fysikkenmodellen-ændres" class="level2">
 <h2 class="anchored" data-anchor-id="når-fysikkenmodellen-ændres">6. Når fysikken/modellen ændres</h2>
 <p>Simuleringernes beregninger er undervisningsindhold. Ved omlægning af designet skal modellen være <strong>uændret</strong> — omskriv kun rammen, og kontrollér resultatet mod den gamle udgave over et gitter af inputkombinationer, før du kalder det færdigt (sådan blev <code>Stigningsregn.html</code> lagt om: 0 afvigelse over 250 kombinationer).</p>
+</section>
+<section id="plads-på-skærmen-elevernes-skærme" class="level2">
+<h2 class="anchored" data-anchor-id="plads-på-skærmen-elevernes-skærme">7. Plads på skærmen — elevernes skærme</h2>
+<p>Eleverne sidder sjældent med fuld skærm, og når de gør, tager faner, adresselinje og proceslinje 130–200 px. Det, der faktisk er tilbage, er <strong>bredt og lavt</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Vindue</th>
+<th>Typisk skærm</th>
+<th>Krav</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1280 × 577</td>
+<td>1080p-skærm ved 150 %</td>
+<td>panelet kan ses, når man har rullet ned til det</td>
+</tr>
+<tr class="even">
+<td>1366 × 625</td>
+<td>1366 × 768-laptop</td>
+<td><strong>hele panelet kan ses, når siden åbner</strong></td>
+</tr>
+<tr class="odd">
+<td>1536 × 730</td>
+<td>1080p-skærm ved 125 %</td>
+<td><strong>hele panelet kan ses, når siden åbner</strong></td>
+</tr>
+<tr class="even">
+<td>390 × 750</td>
+<td>telefon</td>
+<td>ingen vandret rulning; lodret rulning er fint</td>
+</tr>
+</tbody>
+</table>
+<p>«Panelet» er figur, instrumenter og de skydere, der styrer figuren. Målegrafer, lange trintekster og andet sekundært må gerne ligge nedenfor, men så skal det være et valg, ikke noget der bare skete.</p>
+<p><strong>Mål det.</strong> <code>node værktøj/pladstjek.mjs &lt;side&gt;</code> åbner siden i alle vinduerne, siger for hvert vindue, om panelet kan ses straks, efter rulning eller ikke, og gemmer skærmbilleder i <code>værktøj/ud/</code>. Kig også på billederne — tallene fanger ikke, om det ser godt ud.</p>
+<p><strong>Rækkefølgen, når der mangler plads.</strong> Skru først på det, der koster mindst:</p>
+<ol type="1">
+<li><strong>Lavt sidehoved og topbjælke.</strong> Under <code>max-height:820px</code> er topbjælken 46 px og klæber ikke. Sidehovedet beholder øjenbryn, titel og indledning, men titlen bliver mindre, og indledningen står til højre for titlen i stedet for under den — så fylder hovedet ca. 100 px i stedet for 250–350.</li>
+<li><strong>Sidespalte.</strong> Fra 960 px står <code>.gauges</code> og <code>.knobs</code> i <code>.side</code> til højre for figuren (<code>--side:340px</code>), og <code>.facts</code> går under begge spalter. Skærmene er brede, så det er bredden, der skal betales med, ikke højden.</li>
+<li><strong>Mindre figur</strong> — først når 1 og 2 ikke er nok, og aldrig under <code>MIN</code> (230 px høj).</li>
+<li><strong>Rulning</strong> — først til sidst.</li>
+</ol>
+<p><strong>Sådan ser sidespalten ud, så den ikke bliver et kontrolpanel fra et andet site:</strong></p>
+<ul>
+<li><p>Hoved og panel står i <code>.wrap.sim</code>, der er et grid med <code>justify-content:center</code>. Spalten er præcis så bred som panelet (<code>.sim &gt; .head{width:0;min-width:100%}</code>), så hovedets og panelets venstrekanter flugter, og <strong>der står aldrig tomt rum ved siden af figuren.</strong> Figurspaltens bredde følger figuren:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.rig-body</span>{<span class="kw">display</span><span class="ch">:</span><span class="dv">grid</span><span class="op">;</span><span class="kw">grid-template-areas</span><span class="ch">:</span><span class="st">"stage side"</span> <span class="st">"facts facts"</span><span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">grid-template-columns</span><span class="ch">:</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">min(calc(var(</span><span class="va">--fig</span><span class="fu">)</span><span class="op">*</span><span class="dv">800</span><span class="op">/</span><span class="dv">400</span> <span class="op">+</span> <span class="dv">20</span><span class="dt">px</span><span class="fu">)</span><span class="op">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">calc(var(</span><span class="va">--max</span><span class="fu">)</span> <span class="op">-</span> <span class="dv">48</span><span class="dt">px</span> <span class="op">-</span> <span class="fu">var(</span><span class="va">--side</span><span class="fu">)</span> <span class="op">-</span> <span class="dv">7</span><span class="dt">px</span><span class="fu">)</span><span class="op">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">calc(</span><span class="dv">100</span><span class="dt">vw</span> <span class="op">-</span> <span class="dv">48</span><span class="dt">px</span> <span class="op">-</span> <span class="fu">var(</span><span class="va">--side</span><span class="fu">)</span> <span class="op">-</span> <span class="dv">7</span><span class="dt">px</span><span class="fu">))</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">var(</span><span class="va">--side</span><span class="fu">)</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Samme formsprog som resten af panelet: <code>--paper-2</code> bag skyderne, 2 px blækstreger, instrumenterne beholder deres tegninger (termometer, bue, søjle) — bare lidt lavere (34 px). Ingen <code>&lt;select&gt;</code>-bokse i stedet for knapper, ingen 1 px-streger, ingen fold-ud-felter som standard.</p></li>
+<li><p>Er sidespalten højere end figuren, får figuren lov at vokse op til den — panelet bliver ikke højere af det, og det prikkede felt under figuren forsvinder.</p></li>
+</ul>
+<p><strong>Højdebudgettet</strong> (scriptet nederst i <code>geografi/Stigningsregn.html</code>) lægger figurens højde i <code>--fig</code> på <code>.rig</code>:</p>
+<ul>
+<li><strong>Med sidespalte</strong> regnes pladsen fra panelets top, som det står, når siden åbner, til skærmens bund. Fra den trækkes panelets hoved og signaturstriben — ikke sidespalten, den står ved siden af. Budgettet <strong>giver aldrig op</strong>; bredden klarer CSS’en.</li>
+<li><strong>Uden sidespalte</strong> (under 960 px) er rulning det normale. Figuren gøres kun mindre, hvis hele panelet så kan ses, når man har rullet ned til det; ellers beholder den sin fulde størrelse.</li>
+<li>Sætter siden selv lærredets størrelse i JavaScript (three.js, et lærred uden fast formatforhold), så læses <code>--fig</code> dér — <code>Math.min(…, budget)</code> — og siden udstiller <code>window.tilpasFigur</code>, som scriptet kalder, når budgettet skifter (se <code>geografi/TermiskTryk3.html</code> og <code>biologi/membran/model.js</code>).</li>
+</ul>
+<p><strong>Fuld skærm.</strong> <code>.rig-head</code> har en knap <code>⤢ Fuld skærm</code>, der kalder <code>document.documentElement.requestFullscreen()</code> og giver eleven 100–150 px mere. Den vises kun, når <code>document.fullscreenEnabled</code> (altså ikke i en iframe eller på iPhone), og skjules under 960 px.</p>
+<p>Indtil videre har kun <code>geografi/Stigningsregn.html</code> sidespalten; de øvrige simuleringer kører stadig det gamle højdebudget, der giver op på lave skærme.</p>
+<p><strong>Lægges en eksisterende side om</strong>, så sker det én side ad gangen, med nyt versionsnummer, et pladstjek før og efter og et kig på skærmbillederne. Modellen røres ikke (afsnit 6) — det er kun rammen, der flytter sig.</p>
 </section>
 </section>
 

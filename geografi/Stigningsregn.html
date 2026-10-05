@@ -51,9 +51,10 @@
   --mono:'IBM Plex Mono',ui-monospace,monospace;
 
   --wide:'wdth' 118;
-  --max:980px;
+  --max:1180px;
   --fig:456px;         /* figurens højdebudget — sættes af
                         scriptet "Højdebudget" nederst */
+  --side:340px;        /* sidespalten med instrumenter og skydere */
 
   --hard:4px 4px 0 var(--ink);
   --hard-lg:7px 7px 0 var(--ink);
@@ -161,6 +162,8 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#E7F4FB;
 }
+.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate)}
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
@@ -363,6 +366,66 @@ input[type=range]::-moz-range-thumb{
 .fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
 .fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0}
 
+/* ── Sidespalte på brede skærme ────────────────────────────
+   Skærmene er brede, ikke høje. Fra 960 px står instrumenter og
+   skydere derfor i en spalte ved siden af figuren i stedet for under
+   den; signaturen går under begge. Hoved og panel deler
+   én spalte, der er præcis så bred som panelet, så kanterne flugter
+   og der aldrig står tomt rum ved siden af figuren. */
+@media (min-width:960px){
+  .sim{display:grid;justify-content:center}
+  .sim > .head{width:0;min-width:100%}   /* spalten følger panelet, ikke titlen */
+  .rig-body{
+    display:grid;
+    grid-template-columns:
+      min(calc(var(--fig)*800/400 + 20px),
+          calc(var(--max) - 48px - var(--side) - 7px),
+          calc(100vw - 48px - var(--side) - 7px))
+      var(--side);
+    grid-template-areas:"stage side" "facts facts";
+  }
+  .stage{grid-area:stage;max-width:none;margin:0;padding:10px}
+  .facts{grid-area:facts}
+  .side{
+    grid-area:side;border-left:2px solid var(--ink);
+    display:flex;flex-direction:column;background:var(--paper-2);
+  }
+  .gauges{grid-template-columns:1fr 1fr;border-top:none}
+  .gauge{padding:9px 13px 10px;gap:6px}
+  .gauge dd{font-size:1.15rem}
+  .g-viz{height:34px}
+  .thermo,.ticks,.col,.cyl{height:32px}
+  .arc{width:56px;height:34px}
+  .gauge:nth-child(3){border-left:none}
+  .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
+  .knobs{grid-template-columns:1fr;gap:10px;padding:12px 14px 14px;flex:1}
+  .facts{padding:9px 15px;gap:8px}
+}
+
+/* ── Lave skærme ───────────────────────────────────────────
+   En laptop med faner og adresselinje har 580–700 px i højden.
+   Topbjælken bliver smal og klæber ikke, og sidehovedet lægger
+   indledningen ved siden af titlen, så panelet kan ses straks. */
+@media (max-height:820px){
+  .top{position:relative}
+  .top-in{height:46px}
+  .brand-mark{width:21px;height:21px;border-radius:8px}
+}
+@media (min-width:960px) and (max-height:820px){
+  .head{padding:12px 0 0}
+  .head::before{width:300px;height:300px;top:-190px;right:-60px}
+  .head-in{
+    display:grid;grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"eye lead" "h1 lead";column-gap:32px;align-items:end;
+  }
+  .eyebrow{grid-area:eye;justify-self:start}
+  h1{grid-area:h1;font-size:clamp(1.7rem,2.6vw,2.2rem);margin:10px 0 0}
+  .lead{grid-area:lead;font-size:0.94rem;line-height:1.45;max-width:46ch;justify-self:end}
+  .rig{margin-top:14px}
+  .rig-head{padding:8px 15px}
+  .facts{padding:7px 15px}
+}
+
 /* ── Bund ──────────────────────────────────────────────── */
 .foot{
   margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px;
@@ -390,6 +453,7 @@ body[data-projektor="1"] .top,
 body[data-projektor="1"] .head,
 body[data-projektor="1"] .foot{display:none}
 body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"]{--max:100vw;--side:400px}
 body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
 body[data-projektor="1"] .gauge dt{font-size:0.78rem}
 body[data-projektor="1"] .gauge dd{font-size:1.9rem}
@@ -401,6 +465,9 @@ body[data-projektor="1"] .fact{font-size:0.74rem}
 body[data-projektor="1"] .fact b{font-size:0.92rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:959px){
+  #btn-fuld{display:none}   /* fuld skærm er til laptops */
+}
 @media (max-width:820px){
   .gauges{grid-template-columns:1fr 1fr}
   .gauge:nth-child(3){border-left:none}
@@ -496,7 +563,8 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
 </header>
 
 <main>
-  <div class="wrap head">
+  <div class="wrap sim">
+  <div class="head">
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · nedbør &amp; luftfugtighed</span>
       <h1>Stigningsregn og <span class="hi" style="--hc:#C7E6F6">føhn-effekten</span></h1>
@@ -504,83 +572,89 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
     </div>
   </div>
 
-  <div class="wrap">
     <section class="rig">
       <div class="rig-bar"></div>
       <div class="rig-head">
+        <span class="version" title="Simuleringens version">v1.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono">Live model</span></span>
         <span class="who">Tør 1,0 <span class="enhed">°C/100 m</span> · fugtig 0,5 <span class="enhed">°C/100 m</span></span>
         <button type="button" class="btn-mini" id="btn-afspil" aria-pressed="false"
                 title="Lad luftpakken køre hen over bjerget af sig selv">▶ Afspil</button>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
+        <button type="button" class="btn-mini" id="btn-fuld" aria-pressed="false" hidden
+                title="Skjul browserens faner og adresselinje, så figuren får mere plads">⤢ Fuld skærm</button>
       </div>
 
-      <div class="stage" id="stage" tabindex="0" role="application"
-           aria-label="Simulering: træk luftpakken hen over bjerget, eller tryk Afspil. Brug venstre og højre piletast til at flytte den.">
-        <canvas id="simCanvas" width="800" height="400"></canvas>
-        <div class="proc" id="proc" style="--pc:var(--slate)">
-          <span class="proc-dot"></span>
-          <span class="proc-txt" id="proc-txt">Start ved havet</span>
-        </div>
-      </div>
-
-      <dl class="gauges">
-        <div class="gauge g-temp">
-          <dt>Temperatur</dt>
-          <div class="g-viz">
-            <div class="thermo"><i id="anim-temp"></i></div>
-            <div class="ticks"><span>30°</span><span>10°</span><span>−10°</span></div>
+      <div class="rig-body">
+        <div class="stage" id="stage" tabindex="0" role="application"
+             aria-label="Simulering: træk luftpakken hen over bjerget, eller tryk Afspil. Brug venstre og højre piletast til at flytte den.">
+          <canvas id="simCanvas" width="800" height="400"></canvas>
+          <div class="proc" id="proc" style="--pc:var(--slate)">
+            <span class="proc-dot"></span>
+            <span class="proc-txt" id="proc-txt">Start ved havet</span>
           </div>
-          <dd id="val-temp">20,0<small>°C</small></dd>
         </div>
 
-        <div class="gauge g-rh">
-          <dt>Relativ luftfugtighed</dt>
-          <div class="g-viz">
-            <svg class="arc" viewBox="0 0 74 44" aria-hidden="true">
-              <path class="arc-bg-2" d="M8 39 A29 29 0 0 1 66 39"/>
-              <path class="arc-bg" d="M8 39 A29 29 0 0 1 66 39"/>
-              <path class="arc-val" id="anim-rh" d="M8 39 A29 29 0 0 1 66 39" stroke-dasharray="91.1" stroke-dashoffset="45.5"/>
-              <path class="arc-100" d="M66 39 v-6"/>
-            </svg>
+        <div class="side">
+          <dl class="gauges">
+            <div class="gauge g-temp">
+              <dt>Temperatur</dt>
+              <div class="g-viz">
+                <div class="thermo"><i id="anim-temp"></i></div>
+                <div class="ticks"><span>30°</span><span>10°</span><span>−10°</span></div>
+              </div>
+              <dd id="val-temp">20,0<small>°C</small></dd>
+            </div>
+
+            <div class="gauge g-rh">
+              <dt>Relativ luftfugtighed</dt>
+              <div class="g-viz">
+                <svg class="arc" viewBox="0 0 74 44" aria-hidden="true">
+                  <path class="arc-bg-2" d="M8 39 A29 29 0 0 1 66 39"/>
+                  <path class="arc-bg" d="M8 39 A29 29 0 0 1 66 39"/>
+                  <path class="arc-val" id="anim-rh" d="M8 39 A29 29 0 0 1 66 39" stroke-dasharray="91.1" stroke-dashoffset="45.5"/>
+                  <path class="arc-100" d="M66 39 v-6"/>
+                </svg>
+              </div>
+              <dd id="val-rh">50<small>%</small></dd>
+            </div>
+
+            <div class="gauge g-alt">
+              <dt>Højde</dt>
+              <div class="g-viz">
+                <div class="col"><i id="anim-alt"></i><b>2000 m</b></div>
+              </div>
+              <dd id="val-alt">0<small>m.o.h.</small></dd>
+            </div>
+
+            <div class="gauge g-rain">
+              <dt>Opsamlet nedbør</dt>
+              <div class="g-viz">
+                <div class="cyl"><i id="anim-rain"></i><u class="t1"></u><u class="t2"></u><u class="t3"></u></div>
+                <button class="btn-reset" type="button" id="btn-reset">Nulstil</button>
+              </div>
+              <dd id="val-rain">0<small>mm</small></dd>
+            </div>
+          </dl>
+
+          <div class="knobs">
+            <label class="knob" for="inp-temp">
+              <span class="knob-top"><span class="mono">Starttemperatur ved havet</span><span class="knob-val" id="lbl-start-temp">20 °C</span></span>
+              <input type="range" id="inp-temp" min="5" max="30" step="1" value="20">
+            </label>
+            <label class="knob" for="inp-water">
+              <span class="knob-top"><span class="mono">Start-vandindhold</span><span class="knob-val" id="lbl-start-water">10 g/m³</span></span>
+              <input type="range" id="inp-water" min="2" max="25" step="0.5" value="10">
+            </label>
           </div>
-          <dd id="val-rh">50<small>%</small></dd>
         </div>
 
-        <div class="gauge g-alt">
-          <dt>Højde</dt>
-          <div class="g-viz">
-            <div class="col"><i id="anim-alt"></i><b>2000 m</b></div>
-          </div>
-          <dd id="val-alt">0<small>m.o.h.</small></dd>
+        <div class="facts">
+          <span class="fact" style="--fc:var(--blue)">Tøradiabatisk <b>1,0 <span class="enhed">°C/100 m</span></b></span>
+          <span class="fact" style="--fc:var(--grape)">Fugtadiabatisk <b>0,5 <span class="enhed">°C/100 m</span></b></span>
+          <span class="fact" style="--fc:var(--coral)">Føhn: tør &amp; varm i læ</span>
         </div>
-
-        <div class="gauge g-rain">
-          <dt>Opsamlet nedbør</dt>
-          <div class="g-viz">
-            <div class="cyl"><i id="anim-rain"></i><u class="t1"></u><u class="t2"></u><u class="t3"></u></div>
-            <button class="btn-reset" type="button" id="btn-reset">Nulstil</button>
-          </div>
-          <dd id="val-rain">0<small>mm</small></dd>
-        </div>
-      </dl>
-
-      <div class="knobs">
-        <label class="knob" for="inp-temp">
-          <span class="knob-top"><span class="mono">Starttemperatur ved havet</span><span class="knob-val" id="lbl-start-temp">20 °C</span></span>
-          <input type="range" id="inp-temp" min="5" max="30" step="1" value="20">
-        </label>
-        <label class="knob" for="inp-water">
-          <span class="knob-top"><span class="mono">Start-vandindhold</span><span class="knob-val" id="lbl-start-water">10 g/m³</span></span>
-          <input type="range" id="inp-water" min="2" max="25" step="0.5" value="10">
-        </label>
-      </div>
-
-      <div class="facts">
-        <span class="fact" style="--fc:var(--blue)">Tøradiabatisk <b>1,0 <span class="enhed">°C/100 m</span></b></span>
-        <span class="fact" style="--fc:var(--grape)">Fugtadiabatisk <b>0,5 <span class="enhed">°C/100 m</span></b></span>
-        <span class="fact" style="--fc:var(--coral)">Føhn: tør &amp; varm i læ</span>
       </div>
     </section>
 
@@ -1338,53 +1412,93 @@ btnProjektor.addEventListener('click', function(){
 });
 if (/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
 
+// Fuld skærm: browserens faner og adresselinje forsvinder, og figuren
+// får 100–150 px mere i højden. Knappen vises kun, hvor det kan lade sig gøre.
+const btnFuld = document.getElementById('btn-fuld');
+if (document.fullscreenEnabled) {
+  btnFuld.hidden = false;
+  btnFuld.addEventListener('click', function(){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(function(){});
+  });
+  document.addEventListener('fullscreenchange', function(){
+    const til = !!document.fullscreenElement;
+    btnFuld.setAttribute('aria-pressed', til ? 'true' : 'false');
+    btnFuld.textContent = til ? '⤡ Luk fuld skærm' : '⤢ Fuld skærm';
+  });
+}
+
 // Start — ?t=25&v=12&x=400 eller #t=25&v=12&x=400 kan deles direkte
 laesTilstand();
 requestAnimationFrame(frame);
 </script>
 
 <!-- ── Højdebudget ──────────────────────────────────────
-     Figuren blev før målt efter spaltens bredde alene, og så voksede
-     panelet ud over skærmen: figur, instrumenter og skydere kunne ikke
-     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
-     andet end figuren, og resten af skærmhøjden lægges i --fig.
-     Budgettet kan kun gøre figuren mindre — aldrig større end spalten
-     i forvejen tillod — og det rører den slet ikke, hvis panelet
-     alligevel ikke kan komme til at passe.                          -->
+     Skærmene er brede og lave: en laptop med faner og adresselinje har
+     580–700 px i højden. Figuren får derfor den højde, der er tilbage,
+     når panelets øvrige dele er trukket fra, så hele apparatet kan ses
+     på én gang.
+
+     Bred skærm (sidespalte): pladsen regnes fra panelets top, som det
+     står, når siden åbner, til skærmens bund — så eleven ser det hele
+     uden at rulle. Instrumenter og skydere står ved siden af figuren og
+     tæller ikke med. Budgettet giver aldrig op; bredden sætter CSS'en.
+
+     Smal skærm (alt under hinanden): her er rulning det normale.
+     Figuren gøres kun mindre, hvis panelet så kan passe, når man har
+     rullet ned til det — ellers beholder den sin fulde størrelse.   -->
 <script>
 (function(){
   const rig = document.querySelector('.rig');
+  const krop = document.querySelector('.rig-body');
+  const stage = document.querySelector('.stage');
   const fig = document.querySelector('#simCanvas');
-  if(!rig || !fig) return;
+  if(!rig || !krop || !fig) return;
+  const facts = document.querySelector('.rig-body > .facts');
+  const side = document.querySelector('.rig-body > .side');
   const bjaelke = document.querySelector('.top');
-  const MIN = 230, MAKS = 620, LUFT = 16;
+  const bred = matchMedia('(min-width:960px)');
+  const MIN = 230, MAKS = 620, LUFT = 14;
   let sidst = 0, panel = 0, ventende = false;
 
   function saet(h){
     if(h === sidst) return;
     sidst = h;
     rig.style.setProperty('--fig', h + 'px');
-    /* Sider, der selv sætter lærredets størrelse, skal måle om. */
     if(window.tilpasFigur) window.tilpasFigur();
   }
+  const hoejde = function(el){ return el ? el.getBoundingClientRect().height : 0; };
 
   function maal(){
-    /* Først slippes figuren fri: så er "alt andet end figuren" det
-       samme tal, uanset hvad budgettet gav sidste gang. Uden det ville
-       en sidespalte, der er højere end figuren, presse budgettet i bund. */
-    saet(MAKS);
-    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
-               ? bjaelke.getBoundingClientRect().height : 0;   /* den klæbende topbjælke */
-    const rum  = innerHeight - krom - LUFT;                    /* det, panelet må fylde */
-    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
-    const h    = Math.round(rum - fast);
-    if(h < MAKS){
-      saet(Math.max(MIN, h));
-      /* Hjalp det ikke — fx fordi en sidespalte er højere end figuren —
-         så får figuren pladsen igen. */
-      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    /* Bred: start fra den mindste figur, så sidespaltens egen højde kan
+       måles. Smal: start fra den største, som budgettet altid har gjort. */
+    saet(bred.matches ? MIN : MAKS);
+    /* Det, panelet bruger ud over selve figuren i figurspalten. */
+    const cs = getComputedStyle(stage);
+    const krom = hoejde(rig) - hoejde(krop)
+               + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
+               + (bred.matches ? hoejde(facts) : 0);
+    if(bred.matches){
+      const klaeber = bjaelke && getComputedStyle(bjaelke).position === 'sticky'
+                    ? hoejde(bjaelke) : 0;
+      const top = rig.getBoundingClientRect().top + scrollY;   /* når siden åbner */
+      const rum = innerHeight - Math.max(top, klaeber) - LUFT;
+      /* Er sidespalten højere end figuren, bestemmer den panelets højde
+         alligevel — så må figuren gerne vokse op til den. */
+      const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      const plads = Math.max(rum - krom, hoejde(side) - pad);
+      saet(Math.max(MIN, Math.min(MAKS, Math.round(plads))));
+    } else {
+      const klaeber = bjaelke && getComputedStyle(bjaelke).position === 'sticky'
+                    ? hoejde(bjaelke) : 0;
+      const rum = innerHeight - klaeber - LUFT;
+      const h = Math.round(rum - (hoejde(rig) - hoejde(fig)));
+      if(h < MAKS){
+        saet(Math.max(MIN, h));
+        if(hoejde(rig) > rum + 24) saet(MAKS);
+      }
     }
-    panel = rig.getBoundingClientRect().height;
+    panel = hoejde(rig);
   }
 
   function planlaeg(){
@@ -1395,12 +1509,10 @@ requestAnimationFrame(frame);
 
   maal();
   addEventListener('resize', planlaeg);
-  addEventListener('load', planlaeg);            /* moduler indlæses efter dette script */
+  addEventListener('load', planlaeg);
   if(document.fonts) document.fonts.ready.then(planlaeg);
-  /* Panelets faste dele kan skifte højde undervejs (trin, tekst, projektor).
-     Vores egne ændringer springes over — dem kender vi højden på. */
   new ResizeObserver(function(){
-    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+    if(Math.abs(hoejde(rig) - panel) > 1) planlaeg();
   }).observe(rig);
 })();
 </script>

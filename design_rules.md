@@ -9,7 +9,7 @@ skal følge skabelonen herunder. Kopiér fra en side, der allerede er lagt om.
 | Fil | Bruges som forlæg til |
 | --- | --- |
 | `index.html` + `forside.css` | forside, kort, sektioner, knapper |
-| `geografi/Stigningsregn.html` | simulering med canvas + skydere + instrumenter |
+| `geografi/Stigningsregn.html` | simulering med canvas + skydere + instrumenter, sidespalte og højdebudget (afsnit 7) |
 | `geografi/drivhuseffektenSimpel.html` | trinvis SVG-figur med forklaringsspalte |
 | `biologi/membran.html` + `biologi/membran/` | større simulering delt op i moduler |
 
@@ -184,10 +184,21 @@ Rækkefølgen er altid den samme:
 <footer class="foot"> brand + .foot-links </footer>
 ```
 
+På en simuleringsside står sidehoved og panel i **samme** beholder, så
+spalten kan følge panelets bredde (se afsnit 7):
+
+```html
+<div class="wrap sim">
+  <div class="head"><div class="head-in"> eyebrow, h1, lead </div></div>
+  <section class="rig"> ... </section>
+</div>
+```
+
 Fast krom, der skal med på hver side:
 
 * **Topbjælken** er `position:sticky` med `border-bottom:2px solid var(--ink)`
   og halvgennemsigtig papirbaggrund + `backdrop-filter:blur(10px)`.
+  På lave skærme (`max-height:820px`) er den 46 px høj og klæber ikke.
   Brandet er `smbi.dk` med `.brand-mark` (conic-gradient-firkant med blækkant).
   Undersider har to links: faget og forsiden.
 * **`.hi`** lægger en skæv farveklat bag et ord i `h1` (`--hc` styrer farven).
@@ -204,19 +215,23 @@ Alt interaktivt bor i ét panel:
 ```
 .rig        hvid flade, border:2.5px solid ink, radius 18px, box-shadow var(--hard-lg)
  ├ .rig-bar   9 px stribe i --accent
- ├ .rig-head  lys stribe (#E7F4FB) med pulserende .dot + .mono-status,
+ ├ .rig-head  lys stribe (#E7F4FB) med .version, pulserende .dot + .mono-status,
  │            værktøjsknapper (.btn-mini) til højre
- ├ .stage     selve figuren: prikket baggrund
- │            radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px
- │            canvas/svg har selv border:2px solid ink + radius 12px
- ├ .gauges    instrumenter i et grid, adskilt af 2 px blækstreger,
- │            hver med sin lyse baggrund (#FFF1EC, #F1ECFC, #EDF8E4, #E7F4FB)
- ├ .knobs     skydere på --paper-2
- └ .facts     pilleformede nøgletal/signaturforklaring nederst
+ └ .rig-body  figur og betjening — to spalter fra 960 px (afsnit 7)
+    ├ .stage     selve figuren: prikket baggrund
+    │            radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px
+    │            canvas/svg har selv border:2px solid ink + radius 12px
+    ├ .side      sidespalten: det, man aflæser og skruer på
+    │  ├ .gauges    instrumenter i et grid, adskilt af 2 px blækstreger,
+    │  │            hver med sin lyse baggrund (#FFF1EC, #F1ECFC, #EDF8E4, #E7F4FB)
+    │  └ .knobs     skydere på --paper-2
+    └ .facts     pilleformede nøgletal/signaturforklaring nederst, under begge spalter
 ```
 
 Kun de dele, siden har brug for. Alle indre rækker adskilles med
-`border-top:2px solid var(--ink)` — panelet skal se ud som ét apparat.
+`border-top:2px solid var(--ink)`, og sidespalten med `border-left` —
+panelet skal se ud som ét apparat. Under 960 px forsvinder spalterne, og
+alt står under hinanden i samme rækkefølge som før.
 
 **Knapper:** blækkant, hård skygge, og de flytter sig ved klik.
 
@@ -260,40 +275,13 @@ Spørg, hvis det er uklart om siden skal have forklarende tekst under panelet
   Betjening skal kunne klares med tastatur alene.
 * **Farve er aldrig eneste signal** — kombinér med stregtype, mærkat eller form
   (fx kortbølget = fuldt optrukket, langbølget = stiplet).
-* **Responsivt:** brydepunkter ved 960 px (to spalter → én), 700 px (brede
-  SVG'er får deres egen vandrette rulning med `min-width`, resten af siden
-  ruller kun lodret) og 620 px (mindre skrift, `--hard` i stedet for
-  `--hard-lg`, padding 16 px).
-* **Højdebudget — figuren skal kunne ses sammen med sine knapper.**
-  Panelets højde må ikke afhænge af spaltens bredde alene. Gør den det,
-  vokser figuren ud over skærmen, og man kan ikke se visualisering,
-  instrumenter og skydere på én gang. Hver simuleringsside har derfor
-  tokenet `--fig` i `:root`, en `max-width` på den kasse, figuren bor i
-  (bredden følger af formatforholdet), og scriptet `Højdebudget` nederst
-  på siden:
-
-  ```css
-  :root{--fig:456px}                                    /* udgangspunkt */
-  .stage{max-width:calc(var(--fig)*800/400 + 20px);margin-inline:auto}
-  ```
-
-  Scriptet måler, hvad panelet bruger til alt andet end figuren, og
-  lægger resten af skærmhøjden i `--fig`. Tre ting hører med:
-
-  * Budgettet **kan kun gøre figuren mindre** — aldrig bredere end
-    spalten i forvejen tillod. På en høj skærm sker der ingenting.
-  * Kan panelet alligevel ikke komme til at passe (for mange rækker
-    under figuren, eller en sidespalte der er højere end den), **giver
-    budgettet op** og lader figuren beholde sin fulde størrelse.
-    En figur, der er skrumpet uden gevinst, er det værste af begge dele.
-  * Sætter siden selv lærredets størrelse i JavaScript (three.js,
-    et lærred uden fast formatforhold), så skal `--fig` læses dér i
-    stedet — `Math.min(…, budget)` — og siden udstiller
-    `window.tilpasFigur`, som scriptet kalder, når budgettet skifter.
-
-  Kopiér fra `geografi/Stigningsregn.html` (lærred med fast forhold),
-  `geografi/TermiskTryk3.html` (lærred uden fast forhold) eller
-  `biologi/membran/model.js` (three.js).
+* **Responsivt:** brydepunkter ved 960 px (sidespalte → alt under
+  hinanden), 700 px (brede SVG'er får deres egen vandrette rulning med
+  `min-width`, resten af siden ruller kun lodret) og 620 px (mindre skrift,
+  `--hard` i stedet for `--hard-lg`, padding 16 px).
+* **Plads på skærmen:** simuleringen skal kunne ses på elevernes egne
+  skærme — figur, instrumenter og skydere på én gang. Se afsnit 7; det
+  gælder hver simuleringsside, og det skal måles, før siden er færdig.
 
 * **`@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}`**
 * **`@media print`** — skjul `.top`, `.foot` og navigationsknapper, så det
@@ -308,7 +296,9 @@ Spørg, hvis det er uklart om siden skal have forklarende tekst under panelet
   `margin-top:auto`), og indhold der kun vises i ét trin, får sin plads
   reserveret med `visibility:hidden` frem for `hidden`/`display:none`.
   Låsen gælder kun to-spaltelayoutet — under 960 px står tingene under
-  hinanden, og der ville den kun give dødt luftrum.
+  hinanden, og der ville den kun give dødt luftrum. Låsen må heller ikke
+  sprænge højdebudgettet (afsnit 7): er det længste trin for højt, så
+  ruller trinteksten i sit eget felt i stedet for at gøre panelet højere.
 * **Deling og tavle:** hvis siden har trin eller tilstande, så afspejl dem i
   `location.hash` (`#trin=3`) og accepter dem også som query (`?trin=3`).
   Projektortilstand (`?projektor=1` / `?mode=teach`) skjuler sidens krom og
@@ -324,3 +314,97 @@ skal modellen være **uændret** — omskriv kun rammen, og kontrollér resultat
 mod den gamle udgave over et gitter af inputkombinationer, før du kalder det
 færdigt (sådan blev `Stigningsregn.html` lagt om: 0 afvigelse over 250
 kombinationer).
+
+## 7. Plads på skærmen — elevernes skærme
+
+Eleverne sidder sjældent med fuld skærm, og når de gør, tager faner,
+adresselinje og proceslinje 130–200 px. Det, der faktisk er tilbage, er
+**bredt og lavt**:
+
+| Vindue | Typisk skærm | Krav |
+| --- | --- | --- |
+| 1280 × 577 | 1080p-skærm ved 150 % | panelet kan ses, når man har rullet ned til det |
+| 1366 × 625 | 1366 × 768-laptop | **hele panelet kan ses, når siden åbner** |
+| 1536 × 730 | 1080p-skærm ved 125 % | **hele panelet kan ses, når siden åbner** |
+| 390 × 750 | telefon | ingen vandret rulning; lodret rulning er fint |
+
+«Panelet» er figur, instrumenter og de skydere, der styrer figuren.
+Målegrafer, lange trintekster og andet sekundært må gerne ligge nedenfor,
+men så skal det være et valg, ikke noget der bare skete.
+
+**Mål det.** `node værktøj/pladstjek.mjs <side>` åbner siden i alle
+vinduerne, siger for hvert vindue, om panelet kan ses straks, efter
+rulning eller ikke, og gemmer skærmbilleder i `værktøj/ud/`. Kig også på
+billederne — tallene fanger ikke, om det ser godt ud.
+
+**Rækkefølgen, når der mangler plads.** Skru først på det, der koster
+mindst:
+
+1. **Lavt sidehoved og topbjælke.** Under `max-height:820px` er topbjælken
+   46 px og klæber ikke. Sidehovedet beholder øjenbryn, titel og
+   indledning, men titlen bliver mindre, og indledningen står til højre
+   for titlen i stedet for under den — så fylder hovedet ca. 100 px
+   i stedet for 250–350.
+2. **Sidespalte.** Fra 960 px står `.gauges` og `.knobs` i `.side` til
+   højre for figuren (`--side:340px`), og `.facts` går under begge
+   spalter. Skærmene er brede, så det er bredden, der skal betales med,
+   ikke højden.
+3. **Mindre figur** — først når 1 og 2 ikke er nok, og aldrig under
+   `MIN` (230 px høj).
+4. **Rulning** — først til sidst.
+
+**Sådan ser sidespalten ud, så den ikke bliver et kontrolpanel fra et
+andet site:**
+
+* Hoved og panel står i `.wrap.sim`, der er et grid med
+  `justify-content:center`. Spalten er præcis så bred som panelet
+  (`.sim > .head{width:0;min-width:100%}`), så hovedets og panelets
+  venstrekanter flugter, og **der står aldrig tomt rum ved siden af
+  figuren.** Figurspaltens bredde følger figuren:
+
+  ```css
+  .rig-body{display:grid;grid-template-areas:"stage side" "facts facts";
+    grid-template-columns:
+      min(calc(var(--fig)*800/400 + 20px),
+          calc(var(--max) - 48px - var(--side) - 7px),
+          calc(100vw - 48px - var(--side) - 7px))
+      var(--side)}
+  ```
+
+* Samme formsprog som resten af panelet: `--paper-2` bag skyderne,
+  2 px blækstreger, instrumenterne beholder deres tegninger (termometer,
+  bue, søjle) — bare lidt lavere (34 px). Ingen `<select>`-bokse i stedet
+  for knapper, ingen 1 px-streger, ingen fold-ud-felter som standard.
+* Er sidespalten højere end figuren, får figuren lov at vokse op til den —
+  panelet bliver ikke højere af det, og det prikkede felt under figuren
+  forsvinder.
+
+**Højdebudgettet** (scriptet nederst i `geografi/Stigningsregn.html`)
+lægger figurens højde i `--fig` på `.rig`:
+
+* **Med sidespalte** regnes pladsen fra panelets top, som det står, når
+  siden åbner, til skærmens bund. Fra den trækkes panelets hoved og
+  signaturstriben — ikke sidespalten, den står ved siden af. Budgettet
+  **giver aldrig op**; bredden klarer CSS'en.
+* **Uden sidespalte** (under 960 px) er rulning det normale. Figuren gøres
+  kun mindre, hvis hele panelet så kan ses, når man har rullet ned til
+  det; ellers beholder den sin fulde størrelse.
+* Sætter siden selv lærredets størrelse i JavaScript (three.js, et lærred
+  uden fast formatforhold), så læses `--fig` dér — `Math.min(…, budget)` —
+  og siden udstiller `window.tilpasFigur`, som scriptet kalder, når
+  budgettet skifter (se `geografi/TermiskTryk3.html` og
+  `biologi/membran/model.js`).
+
+**Fuld skærm.** `.rig-head` har en knap `⤢ Fuld skærm`, der kalder
+`document.documentElement.requestFullscreen()` og giver eleven 100–150 px
+mere. Den vises kun, når `document.fullscreenEnabled` (altså ikke i en
+iframe eller på iPhone), og skjules under 960 px.
+
+Indtil videre har kun `geografi/Stigningsregn.html` sidespalten; de
+øvrige simuleringer kører stadig det gamle højdebudget, der giver op på
+lave skærme.
+
+**Lægges en eksisterende side om**, så sker det én side ad gangen, med
+nyt versionsnummer, et pladstjek før og efter og et kig på
+skærmbillederne. Modellen røres ikke (afsnit 6) — det er kun rammen, der
+flytter sig.
