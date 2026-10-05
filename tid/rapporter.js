@@ -317,7 +317,7 @@ function renderAkkord(ak, elapsed, norm, andet) {
     <div class="akkord-head">Akkord</div>
     <div class="akkord-saldo">
       <span class="akkord-saldo-tal ${ak.saldo >= 0 ? 'is-pos' : 'is-neg'}">${fmtSaldo(ak.saldo)}</span>
-      <span class="akkord-saldo-sub">Saldo · optjent − brugt</span>
+      <span class="akkord-saldo-sub">Saldo · optjent − brugt · ${saldoOrd(ak.saldo)}</span>
     </div>
     <dl class="akkord-tal">
       <div><dt>Optjent</dt><dd>${fmtMins(ak.optjent)}</dd></div>
@@ -355,6 +355,9 @@ function portefoljeLinje(akkordM, norm, andet = 0) {
     <span class="${over ? 'is-over' : ''}">merarbejde over <b>${graense} t</b>${over ? ` — ${port - graense} t over` : ''}</span></p>`;
 }
 
+// Hvad saldoens fortegn betyder — samme ord i sammendraget og i grafen
+const saldoOrd = m => m >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent';
+
 // Timer med højst én decimal og komma
 const fmtTal = t => String(Math.round(t * 10) / 10).replace('.', ',');
 
@@ -386,13 +389,12 @@ function tegnSektion(acts, filtered, year) {
   if (!u) return '';
   const slutOrd = aaretAfsluttet();
   const skema = tegnUdvikling('udv-skema', 'Foran eller bagud skema',
-    'Registreret tid minus den del af normen, der burde være brugt — i timer, uge for uge',
+    'Registreret tid minus den del af normen, der burde være brugt, i timer uge for uge. Over nul: du har registreret mere, end skemaet kræver. Under nul: mindre',
     u.skema, start(), slut(),
     v => v >= 0 ? (slutOrd ? 'over norm' : 'foran skema') : (slutOrd ? 'under norm' : 'bagud skema'));
   const akkord = u.akkord ? tegnUdvikling('udv-akkord', 'Leveret mod optjent',
-    'Akkordsaldoen: optjent minus brugt — i timer, uge for uge. Plus: arbejdet har taget mindre tid, end det betales med',
-    u.akkord, start(), slut(),
-    v => v >= 0 ? 'foran' : 'bagud') : '';
+    'Akkordsaldoen, optjent minus brugt, i timer uge for uge. Over nul: arbejdet har taget mindre tid, end det betales med. Under nul: du har brugt mere tid, end du har optjent',
+    u.akkord, start(), slut(), saldoOrd) : '';
   if (!skema && !akkord) return '';
   return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${skema}${akkord}</div>`;
 }

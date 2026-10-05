@@ -210,8 +210,9 @@ export function bindUdvikling(rod) {
     const tip = kort.querySelector('.udv-tip');
     tip.hidden = false;
     tip.innerHTML = `<span>${fmtDag(new Date(t))}</span><b>${fmtT(v)}</b> ${v >= 0 ? cfg.op : cfg.ned}`;
-    const px = x(t) / B * r.width;
-    tip.style.left = `${Math.min(Math.max(px, 60), r.width - 60)}px`;
+    // Midt over punktet, men aldrig ud over kortets kanter
+    const px = x(t) / B * r.width, half = tip.offsetWidth / 2;
+    tip.style.left = `${Math.min(Math.max(px, half), r.width - half)}px`;
   };
   const skjul = kort => {
     kort.querySelector('.udv-hover')?.setAttribute('visibility', 'hidden');

@@ -68,6 +68,13 @@ const browser = await chromium.launch();
   const m = saldo.match(/([+−])(?:(\d+)t)?\s*(?:(\d+)m)?/);
   const saldoM = (m[1] === '−' ? -1 : 1) * ((+m[2] || 0) * 60 + (+m[3] || 0));
   ok(Math.abs(akkord.at(-1)[1] - saldoM) <= 1, `akkordkurven ender i saldoen: ${akkord.at(-1)[1]}m / ${saldo}`);
+  // Fortegnet forklares med samme ord i sammendraget og i grafen
+  const sub = await page.textContent('.akkord-saldo-sub');
+  ok(sub.includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'saldoens fortegn forklaret: ' + sub);
+  ok((await page.$$eval('.udv-nu', e => e[1].textContent)).includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'samme ord i grafens overskrift');
+  const under = await page.$$eval('.udv-under', e => e[1].textContent);
+  ok(under.includes('Over nul') && under.includes('Under nul: du har brugt mere tid, end du har optjent'), 'undertitlen forklarer begge fortegn');
+
   // Studieturen optjener sine 40 t, da den afsluttes 14. september — ikke før
   const a = t => akkord.find(p => p[0] === t)?.[1];
   const foer = a(new Date(2026, 8, 14).getTime()), efter = a(new Date(2026, 8, 21).getTime());
@@ -79,7 +86,8 @@ const browser = await chromium.launch();
   const bx = await svg.boundingBox();
   await page.mouse.move(bx.x + bx.width * 0.3, bx.y + bx.height / 2);
   const tip = (await page.textContent('.udv-kort .udv-tip')).trim();
-  ok(/\d+\. \w+.*t (foran|bagud) skema/.test(tip), 'hover viser dato og tal: ' + tip);
+  const tipInde = await page.evaluate(() => { const t = document.querySelector('.udv-tip').getBoundingClientRect(), k = document.querySelector('.udv-kort').getBoundingClientRect(); return t.left >= k.left && t.right <= k.right; });
+  ok(/\d+\. \w+.*t (foran|bagud) skema/.test(tip) && tipInde, 'hover viser dato og tal: ' + tip);
 
   ok((await page.$$eval('.udv-kort', k => k[0].querySelectorAll('tbody tr').length)) === skema.length, 'tabellen har en række pr. punkt');
   ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'intet vandret overløb ved 390');
