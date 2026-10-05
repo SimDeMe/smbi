@@ -19,21 +19,61 @@ const TIL_H      = 22;         // ... og slutter senest her, hvis intet andet
 const FRA_H_UGE  = 7;
 const TIL_H_UGE  = 18;
 const SNAP_MIN   = 15;         // afrunding ved tryk på tom plads
+const TRAEK_MIN  = 5;          // afrunding, når en blok trækkes med musen
 
 // ─── Dagsvisning ──────────────────────────────────────────
 export function tegnDag(rod, ctx) {
   const dag   = ctx.start;
   const items = kolonner(blokkeForDag(ctx, dag));
   const vin   = vindue([items], dag, FRA_H, TIL_H);
+  const H     = HOUR_H_DAG * ctx.zoom;
 
-  rod.innerHTML = `<div class="kal-grid" style="height:${hoejde(vin, HOUR_H_DAG)}px">
-      ${timeLinjer(vin, HOUR_H_DAG)}
+  rod.innerHTML = `<div class="kal-dag-ramme">
+    <div class="kal-grid" style="height:${hoejde(vin, H)}px">
+      ${timeLinjer(vin, H)}
       <div class="kal-lane" data-dagnr="0">${
-        blokke(items, vin, HOUR_H_DAG, true)}${nuLinje(dag, vin, HOUR_H_DAG)}${
+        blokke(items, vin, H, true)}${nuLinje(dag, vin, H)}${
         items.length ? '' : tomDag()}</div>
-    </div>`;
+    </div>
+    ${dagListe(items)}
+  </div>`;
 
   bindLane(rod, ctx, [dag], vin, [items]);
+  bindDagListe(rod, ctx);
+}
+
+// ─── Dagens registreringer som liste ──────────────────────
+// På en bred skærm står dagens poster også som rækker ved siden af aksen.
+// En pause på fem minutter er få pixel høj på aksen; som række er den lige
+// så nem at ramme som et modul. Under 1000 px skjuler CSS listen — der er
+// fanen «Liste» i stedet.
+function dagListe(items) {
+  if (!items.length) return '';
+  const raekker = items.map(it => {
+    const tid = it.isActive
+      ? `${fmtTime(it.realStart)}–`
+      : `${it.clipTop ? '…' : fmtTime(it.realStart)}–${it.clipBottom ? '…' : fmtTime(it.realEnd)}`;
+    const dur = it.isActive ? 'i gang' : fmtMins(Math.max(0, Math.round(it.durMin)));
+    const wt  = it.workType ? ` · ${capitalize(it.workType)}` : '';
+    return `<button type="button" class="kal-dl-raekke${it.isPause ? ' kal-dl-pause' : ''}"
+        data-id="${it.id}" style="--act-color:${it.color}">
+      <span class="kal-dl-tid">${tid}</span>
+      <span class="kal-dl-navn">${esc(it.name)}<span class="kal-block-wt">${esc(wt)}</span></span>
+      <span class="kal-dl-dur">${dur}</span>
+    </button>`;
+  }).join('');
+  return `<div class="kal-dagliste" aria-label="Dagens registreringer">
+    <div class="section-label">Dagens registreringer</div>${raekker}</div>`;
+}
+
+function bindDagListe(rod, ctx) {
+  rod.querySelectorAll('.kal-dl-raekke').forEach(r => {
+    const blok = rod.querySelector(`.kal-block[data-id="${r.dataset.id}"]`);
+    r.addEventListener('click', () => ctx.aabnPost(r.dataset.id));
+    // Rækken peger sin blok ud på aksen, så man kan se, hvilken det er
+    r.addEventListener('mouseenter', () => blok?.classList.add('kal-block-peg'));
+    r.addEventListener('mouseleave', () => blok?.classList.remove('kal-block-peg'));
+  });
 }
 
 // ─── Ugevisning ───────────────────────────────────────────
@@ -45,7 +85,7 @@ export function tegnUge(rod, ctx) {
   // til vinduet og står med '…' ved kanten
   const vin   = vindue(raa, ctx.start, FRA_H_UGE, TIL_H_UGE, true);
   const items = raa.map(dag => kolonner(klipTilVindue(dag, vin)));
-  const H     = HOUR_H_UGE;
+  const H     = HOUR_H_UGE * ctx.zoom;
 
   const hoved = dage.map((d, i) => {
     const total = items[i].filter(it => !it.isPause)
@@ -211,6 +251,10 @@ function timeLinjer(vin, H) {
 
 // ─── Blokke ───────────────────────────────────────────────
 function blokke(items, vin, H, bred) {
+  // En kort blok får mindstehøjde og rager derfor ned over den næste. De
+  // korte lægges øverst, så de kan rammes — den lange blok under er stadig
+  // stor nok at trykke på.
+  const lag = new Map([...items].sort((a, b) => b.durMin - a.durMin).map((it, i) => [it, 2 + i]));
   return items.map(it => {
     // En pause må gerne blive lavere end en rigtig blok — den skal kunne ses,
     // men ikke skubbe til dagens arbejde
@@ -227,6 +271,9 @@ function blokke(items, vin, H, bred) {
       : `${it.clipTop ? '…' : fmtTime(it.realStart)}–${it.clipBottom ? '…' : fmtTime(it.realEnd)}`;
     // I en smal eller lav blok er der kun plads til navnet
     const visTid = bred && !(h < 34 && it.cols > 1);
+    // Kun hele blokke inden for aksen kan trækkes — en igangværende har
+    // ingen slutning, og en klippet viser ikke hele sin tid
+    const kanTraekkes = !it.isActive && !it.clipTop && !it.clipBottom && !it.vinTop && !it.vinBund;
     const wt  = it.workType ? ` · ${capitalize(it.workType)}` : '';
     const cls = [
       h < 34 ? 'kal-block-sm' : '',
@@ -237,11 +284,12 @@ function blokke(items, vin, H, bred) {
       it.clipBottom || it.vinBund ? 'kal-block-clip-bottom' : ''
     ].filter(Boolean).join(' ');
 
-    return `<button type="button" class="kal-block ${cls}" data-id="${it.id}"
-        style="top:${yPos(it.startMin, vin, H)}px;height:${h}px;left:${it.col * w}%;width:${w}%;--act-color:${it.color}"
+    return `<button type="button" class="kal-block ${cls}" data-id="${it.id}"${kanTraekkes ? ' data-flyt="1"' : ''}
+        style="top:${yPos(it.startMin, vin, H)}px;height:${h}px;left:${it.col * w}%;width:${w}%;z-index:${lag.get(it)};--act-color:${it.color}"
         aria-label="${esc(it.name)}${esc(wt)}, ${tid}, ${dur}">
       <span class="kal-block-title">${esc(it.name)}<span class="kal-block-wt">${esc(wt)}</span></span>
       ${visTid ? `<span class="kal-block-time">${tid} · ${dur}</span>` : ''}
+      ${kanTraekkes ? '<span class="kal-block-greb" aria-hidden="true"></span>' : ''}
     </button>`;
   }).join('');
 }
@@ -259,10 +307,21 @@ const tomDag = () => `<div class="kal-empty">Ingen registreringer denne dag<br>
 
 // ─── Tryk på aksen ────────────────────────────────────────
 function bindLane(rod, ctx, dage, vin, grupper) {
-  const H = dage.length > 1 ? HOUR_H_UGE : HOUR_H_DAG;
+  const H = (dage.length > 1 ? HOUR_H_UGE : HOUR_H_DAG) * ctx.zoom;
+  const traek = { slap: false };
 
-  rod.querySelectorAll('.kal-block').forEach(b =>
-    b.addEventListener('click', ev => { ev.stopPropagation(); ctx.aabnPost(b.dataset.id); }));
+  rod.querySelectorAll('.kal-block').forEach(b => {
+    b.addEventListener('click', ev => {
+      ev.stopPropagation();
+      if (traek.slap) return;            // klikket, der afslutter et træk
+      ctx.aabnPost(b.dataset.id);
+    });
+    if (b.dataset.flyt) b.addEventListener('pointerdown', ev => {
+      const nr = Number(b.closest('[data-dagnr]')?.dataset.dagnr) || 0;
+      const it = grupper[nr].find(x => x.id === b.dataset.id);
+      if (it) startTraek(ev, b, it, vin, H, ctx, traek);
+    });
+  });
 
   rod.querySelectorAll('.kal-lane,.kal-bane').forEach(bane => {
     bane.addEventListener('click', ev => {
@@ -294,4 +353,52 @@ function startFraTryk(min, items) {
 
   const ligeUnder = min - forrigeSlut <= SNAP_MIN;   // trykket lige under blokken
   return ligeUnder || snap < forrigeSlut ? forrigeSlut : snap;
+}
+
+// ─── Træk med musen ───────────────────────────────────────
+// Med musen kan en blok flyttes op og ned, eller dens slutning trækkes i
+// grebet forneden. Tiden springer i hele 5 minutter og står i blokken,
+// mens man trækker. Først når man slipper, gemmes posten. På en
+// berøringsskærm gør et træk det samme som før: siden ruller.
+function startTraek(ev, b, it, vin, H, ctx, traek) {
+  if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
+  ev.preventDefault();                       // ingen markering af tekst
+  const strak = !!ev.target.closest('.kal-block-greb');
+  const y0    = ev.clientY;
+  const pxMin = H / 60;
+  let igang = false, dMin = 0;
+
+  const tidEl = () => b.querySelector('.kal-block-time') ||
+    b.insertBefore(Object.assign(document.createElement('span'), { className: 'kal-block-time' }),
+                   b.querySelector('.kal-block-greb'));
+
+  const flyt = e => {
+    const dy = e.clientY - y0;
+    if (!igang && Math.abs(dy) < 4) return;  // et klik må gerne ryste lidt
+    if (!igang) { igang = true; b.classList.add('kal-block-traek'); }
+    dMin = Math.round(dy / pxMin / TRAEK_MIN) * TRAEK_MIN;
+    if (strak) dMin = Math.max(dMin, TRAEK_MIN - it.durMin);
+    else       dMin = Math.min(Math.max(dMin, vin.fra * 60 - it.startMin), vin.til * 60 - it.endMin);
+
+    const s = it.startMin + (strak ? 0 : dMin), sl = it.endMin + dMin;
+    if (strak) b.style.height = `${Math.max(16, (sl - s) * pxMin)}px`;
+    else       b.style.top    = `${yPos(s, vin, H)}px`;
+    const fra = new Date(it.realStart.getTime() + (strak ? 0 : dMin) * 60000);
+    const til = new Date(it.realEnd.getTime() + dMin * 60000);
+    tidEl().textContent = `${fmtTime(fra)}–${fmtTime(til)} · ${fmtMins(sl - s)}`;
+  };
+
+  const slip = () => {
+    window.removeEventListener('pointermove', flyt);
+    window.removeEventListener('pointerup', slip);
+    if (!igang) return;
+    b.classList.remove('kal-block-traek');
+    // Klikket, der følger efter et træk, må ikke åbne arket
+    traek.slap = true;
+    setTimeout(() => { traek.slap = false; }, 0);
+    if (dMin) ctx.flytPost(it.id, strak ? 0 : dMin, dMin);
+  };
+
+  window.addEventListener('pointermove', flyt);
+  window.addEventListener('pointerup', slip);
 }

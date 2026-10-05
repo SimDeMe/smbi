@@ -875,7 +875,7 @@ select.form-input{
 
 /* Nu-linje */
 .kal-now{
-  position:absolute;left:-4px;right:0;z-index:3;
+  position:absolute;left:-4px;right:0;z-index:500;   /* over alle blokke */
   border-top:2.5px solid var(--pink);pointer-events:none;
 }
 .kal-now-dot{
@@ -894,6 +894,79 @@ select.form-input{
 }
 .kal-chip:disabled{opacity:.45;box-shadow:1px 1px 0 var(--ink);cursor:default}
 .kal-chip:disabled:active{transform:none}
+
+/* Zoom på tidsaksen */
+.kal-zoom{display:inline-flex;gap:6px}
+.kal-zoom .kal-chip{min-width:34px;font-size:1rem;line-height:1}
+
+/* Blokken, der står i arket — kun mens arket er åbent */
+html[data-ark="hist-sheet"] .kal-block.kal-valgt{outline:3px solid var(--grape);outline-offset:1px;z-index:400!important}
+html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-shadow:inset 0 0 0 2px var(--grape)}
+.kal-block-peg{outline:3px solid var(--grape);outline-offset:1px;z-index:400!important}
+
+/* ─── Træk med musen ────────────────────────────────────── */
+/* Grebet forneden ændrer sluttiden; resten af blokken flytter den */
+.kal-block-greb{display:none}
+@media (pointer:fine){
+  .kal-block[data-flyt]{cursor:grab;user-select:none}
+  .kal-block-greb{
+    display:block;position:absolute;left:0;right:0;bottom:0;height:7px;
+    cursor:ns-resize;
+  }
+  .kal-block[data-flyt]:hover .kal-block-greb{
+    background:linear-gradient(var(--ink),var(--ink)) center/18px 2px no-repeat;
+  }
+}
+.kal-block-traek{
+  cursor:grabbing;z-index:600!important;
+  box-shadow:3px 3px 0 var(--ink);
+}
+
+/* ─── Dagens registreringer ved siden af aksen ──────────── */
+/* Kun på en bred skærm — under 1000 px har man fanen «Liste» */
+.kal-dagliste{display:none}
+.kal-dl-raekke{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;
+  width:100%;min-height:40px;padding:6px 10px;text-align:left;cursor:pointer;
+  background:var(--panel);
+  border:2px solid var(--ink);border-left:6px solid var(--act-color,var(--ink));
+  border-radius:9px;
+}
+.kal-dl-raekke:hover{background:color-mix(in srgb, var(--act-color) 12%, #fff)}
+.kal-dl-tid,.kal-dl-dur{
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.04em;
+  color:var(--text-2);font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.kal-dl-navn{
+  font-family:var(--display);font-weight:700;font-size:0.84rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.kal-dl-pause{background:var(--paper-2);border:1.5px dashed var(--slate);min-height:32px}
+.kal-dl-pause .kal-dl-navn{color:var(--slate);font-size:0.74rem}
+
+/* ─── Bred skærm: Historik bruger bredden ───────────────── */
+/* Over 1000 px står Historik bredere end resten af appen, dagens liste står
+   ved siden af aksen, og redigeringsarket kommer ind fra højre i stedet for
+   nedefra — så kalenderen kan ses, mens man retter */
+@media (min-width:1000px){
+  #app[data-view="historik"]{
+    --app-max:1100px;
+    --app-kant:max(0px,calc((100% - var(--app-max)) / 2));
+  }
+  .kal-dag-ramme{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+  .kal-dagliste{display:flex;flex-direction:column;gap:6px;position:sticky;top:12px}
+
+  #main-content{transition:padding-right .28s}
+  html[data-ark="hist-sheet"] #main-content{padding-right:440px}
+  #hist-backdrop{background:transparent}
+  #hist-sheet{
+    top:0;left:auto;right:0;width:420px;max-width:none;max-height:none;margin:0;
+    border-bottom:0;border-right:0;border-radius:20px 0 0 20px;
+    transform:translateX(100%);
+  }
+  #hist-sheet.open{transform:translateX(0)}
+  #hist-sheet .sheet-handle-bar{display:none}
+}
 
 /* ─── Ugevisning ────────────────────────────────────────── */
 /* Syv kolonner deler én tidsakse. Er skærmen for smal til, at en dag kan
@@ -1482,6 +1555,15 @@ select.form-input{
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
 }
 .toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Med en knap (fx «Fortryd») skal toasten kunne trykkes på, mens den ses */
+.toast.visible.toast-med-knap{pointer-events:auto}
+.toast-knap{
+  margin-left:10px;padding:2px 12px;cursor:pointer;
+  font-family:var(--display);font-weight:800;font-size:0.86rem;
+  background:var(--tint);border:2px solid var(--ink);border-radius:14px;
+  box-shadow:2px 2px 0 var(--ink);
+}
+.toast-knap:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
 
 /* ─────────────────────────────────────────────────────────
    Vejledningssiderne — hjaelp.html og installer.html

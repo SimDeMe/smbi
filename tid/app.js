@@ -184,9 +184,22 @@ navBtns.forEach(btn => {
 });
 
 // ─── Toast ───────────────────────────────────────────────
-export function showToast(message, duration = 2800) {
+// handling: { tekst, fn } giver toasten en knap — fx «Fortryd»
+export function showToast(message, duration = 2800, handling = null) {
   const toast = $('toast');
   toast.textContent = message;
+  toast.classList.toggle('toast-med-knap', !!handling);
+  if (handling) {
+    const knap = document.createElement('button');
+    knap.type = 'button';
+    knap.className = 'toast-knap';
+    knap.textContent = handling.tekst;
+    knap.addEventListener('click', () => {
+      toast.classList.remove('visible');
+      handling.fn();
+    });
+    toast.append(' ', knap);
+  }
   toast.classList.add('visible');
   clearTimeout(toast._t);
   toast._t = setTimeout(() => toast.classList.remove('visible'), duration);

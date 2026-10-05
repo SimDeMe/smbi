@@ -46,6 +46,8 @@ export function openSheet(id, bdId) {
 
   ark.classList.remove('hidden');
   bd.classList.remove('hidden');
+  // Det øverste åbne ark — CSS kan lægge plads til et ark i siden
+  document.documentElement.dataset.ark = id;
   // Arket selv får fokus — ikke første felt, så telefonens tastatur ikke
   // springer op. Tab går derfra videre til arkets knapper og felter.
   if (!ark.contains(document.activeElement)) ark.focus({ preventScroll: true });
@@ -70,6 +72,8 @@ export function closeSheet(id, bdId) {
   if (i < 0) return;
   const [{ tilbage }] = stak.splice(i, 1);
   const oeverst = stak[stak.length - 1];
+  if (oeverst) document.documentElement.dataset.ark = oeverst.id;
+  else delete document.documentElement.dataset.ark;
   if (oeverst) {
     document.getElementById(oeverst.id).inert = false;
   } else {

@@ -52,6 +52,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `faktorlinje.mjs` | «Retning (skønnet)» kun med registreret retning |
 | `version-og-cache.mjs` | versionen i Indstillinger, og at tid ikke sletter navneApps cache |
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
+| `kalender-redigering.mjs` | korte blokke kan rammes, zoom, dagens liste og arket i siden på bred skærm, træk med musen og Fortryd |
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
 | `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter og registreringer; gendan en rettet fil (nye uden id, tider med og uden tidszone, sletning), fejl i filen, gammel fil uden indstillinger |

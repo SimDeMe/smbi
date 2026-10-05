@@ -9,10 +9,10 @@
 // kalender-akse.js (dag og uge på tidsakse) og kalender-oversigt.js (måned og
 // år som mængde-gitter).
 
-import { db } from './app.js';
+import { db, showToast } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { openEntrySheet } from './historik.js';
-import { fmtMins } from './format.js';
+import { fmtMins, fmtTime } from './format.js';
 import { erPause } from './pauser.js';
 import { tegnDag, tegnUge } from './kalender-akse.js';
 import { tegnMaaned, tegnAar } from './kalender-oversigt.js';
@@ -21,7 +21,7 @@ import {
   startOfDay, addDays, datoInput
 } from './periode.js';
 import {
-  collection, onSnapshot, query, where, orderBy, limit, Timestamp
+  collection, onSnapshot, query, where, orderBy, limit, Timestamp, doc, updateDoc
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── Visningerne ──────────────────────────────────────────
@@ -47,6 +47,19 @@ let listenerKey  = null;
 let listenersOk  = false;
 let isVisible    = false;
 let tick         = null;
+
+// Zoom på tidsaksen: hvor mange gange den normale timehøjde. Med musen er
+// der ofte plads til mere, så dér starter den et trin oppe. Valget huskes
+// på enheden.
+const ZOOM_TRIN = [1, 1.5, 2, 3];
+const ZOOM_NOEGLE = 'tid-kal-zoom';
+let zoom = (() => {
+  try {
+    const gemt = Number(localStorage.getItem(ZOOM_NOEGLE));
+    if (ZOOM_TRIN.includes(gemt)) return gemt;
+  } catch { /* privat vindue */ }
+  return matchMedia('(pointer:fine)').matches ? 1.5 : 1;
+})();
 
 const aktuel = () => VISNINGER[visning];
 const start  = () => periodeStart(aktuel().type, forskyd);
@@ -218,8 +231,10 @@ function byggKontekst() {
     },
     aktivitetFarve: id =>
       (id && acts.find(a => a.id === id)?.color) || '#94a3b8',
-    aabnPost:   id => openEntrySheet(id, null, poster.find(p => p.id === id)),
+    zoom,
+    aabnPost:   aabnPost,
     nyPost:     nyPost,
+    flytPost:   flytPost,
     vaelgDag:    d => visPeriode('dag', d),
     vaelgUge:    d => visPeriode('uge', d),
     vaelgMaaned: d => visPeriode('maaned', d)
@@ -233,10 +248,80 @@ function render() {
 
   const v = aktuel();
   renderBar();
+  markerZoom();
   v.tegn(rod, byggKontekst());
+  markerValgt();
 
   const hint = document.getElementById('kal-hint');
-  if (hint) hint.textContent = v.hint;
+  if (hint) hint.textContent = v.hint + (v.akse && matchMedia('(pointer:fine)').matches
+    ? ' Træk i en blok for at flytte den, eller i dens bundkant for at ændre sluttiden.' : '');
+}
+
+// ─── Zoom ─────────────────────────────────────────────────
+function saetZoom(retning) {
+  const i = ZOOM_TRIN.indexOf(zoom) + retning;
+  if (i < 0 || i >= ZOOM_TRIN.length) return;
+  zoom = ZOOM_TRIN[i];
+  try { localStorage.setItem(ZOOM_NOEGLE, String(zoom)); } catch { /* privat vindue */ }
+  render();
+}
+
+function markerZoom() {
+  const boks = document.getElementById('kal-zoom');
+  if (!boks) return;
+  boks.classList.toggle('hidden', !aktuel().akse);
+  document.getElementById('kal-zoom-ud').disabled  = zoom === ZOOM_TRIN[0];
+  document.getElementById('kal-zoom-ind').disabled = zoom === ZOOM_TRIN.at(-1);
+}
+
+// ─── Redigering fra aksen ─────────────────────────────────
+// Den post, der står i arket, markeres på aksen og i dagens liste — på en
+// bred skærm står arket ved siden af kalenderen, så man kan se, hvilken
+// blok man retter. Markeringen vises kun, mens arket er åbent (se CSS).
+let valgtId = null;
+
+function aabnPost(id) {
+  valgtId = id;
+  markerValgt();
+  openEntrySheet(id, null, poster.find(p => p.id === id));
+}
+
+// Også efter en ny tegning — nu-linjen tegner aksen om hvert minut
+function markerValgt() {
+  document.querySelectorAll('#kal-view [data-id]').forEach(el =>
+    el.classList.toggle('kal-valgt', el.dataset.id === valgtId));
+}
+
+// En blok er trukket med musen: start og slut flyttes de givne minutter.
+// Længden følger med, og toasten kan fortryde, til den forsvinder.
+async function flytPost(id, dStart, dSlut) {
+  const p = poster.find(x => x.id === id);
+  if (!p?.startTime || !p.endTime) return;
+  const gl = { startTime: p.startTime, endTime: p.endTime, durationMinutes: p.durationMinutes ?? null };
+  const fra = new Date(p.startTime.toDate().getTime() + dStart * 60000);
+  const til = new Date(p.endTime.toDate().getTime() + dSlut * 60000);
+  const ref = doc(db, `users/${userId}/entries/${id}`);
+  try {
+    await updateDoc(ref, {
+      startTime: Timestamp.fromDate(fra),
+      endTime:   Timestamp.fromDate(til),
+      durationMinutes: Math.round((til - fra) / 60000)
+    });
+  } catch (err) {
+    console.error('Flyt post fejl:', err);
+    showToast('Kunne ikke gemme — prøv igen');
+    render();                          // blokken tilbage, hvor den stod
+    return;
+  }
+  const tekst = dStart ? `Flyttet til ${fmtTime(fra)}–${fmtTime(til)}`
+                       : `Ændret til ${fmtTime(fra)}–${fmtTime(til)}`;
+  showToast(tekst, 6000, {
+    tekst: 'Fortryd',
+    fn: () => updateDoc(ref, gl).catch(err => {
+      console.error('Fortryd fejl:', err);
+      showToast('Kunne ikke fortryde');
+    })
+  });
 }
 
 // ─── Sidehoved med periode og tal ─────────────────────────
@@ -304,6 +389,9 @@ function bindListeners() {
     const btn = ev.target.closest('.kal-vis-tab');
     if (btn) setVisning(btn.dataset.vis);
   });
+
+  document.getElementById('kal-zoom-ud')?.addEventListener('click', () => saetZoom(-1));
+  document.getElementById('kal-zoom-ind')?.addEventListener('click', () => saetZoom(1));
 
   document.getElementById('kal-prev')?.addEventListener('click', () => bladr(-1));
   document.getElementById('kal-next')?.addEventListener('click', () => bladr(1));
