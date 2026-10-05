@@ -14,6 +14,7 @@ import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
 } from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
+import { beregnUdvikling, tegnUdvikling, bindUdvikling } from './udvikling.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
   forskydningFor, skoleaarForPeriode, datoInput
@@ -217,6 +218,7 @@ function renderReport() {
 
   el.innerHTML =
     renderSummary(totalMins, ak) +
+    renderUdvikling(acts, filtered, year) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
     renderArchivedList(archivedRows, ak);
@@ -363,6 +365,30 @@ function saldoChip(m, lille = true) {
   return m > 0
     ? `<span class="${kl} forecast-ahead">${fmtSaldo(m)}</span>`
     : `<span class="${kl} forecast-behind">${fmtSaldo(m)}</span>`;
+}
+
+// ─── Udviklingen over skoleåret ───────────────────────────
+// To grafer under sammendraget: foran/bagud skema og akkordsaldoen, uge for
+// uge. Regningen står i udvikling.js; sidste punkt er tallene ovenfor.
+function renderUdvikling(acts, filtered, year) {
+  if (periodFilter !== 'skolear') return '';
+  const SKAL = normHours() - andetSum(year, getSettings());
+  const u = beregnUdvikling({
+    acts, entries: filtered, aar: year, start: start(), slut: slut(),
+    ferie: ferieFor(year), normM: SKAL * 60, fordel: fordelFaelles()
+  });
+  if (!u) return '';
+  const slutOrd = aaretAfsluttet();
+  const skema = tegnUdvikling('udv-skema', 'Foran eller bagud skema',
+    'Registreret tid minus den del af normen, der burde være brugt — i timer, uge for uge',
+    u.skema, start(), slut(),
+    v => v >= 0 ? (slutOrd ? 'over norm' : 'foran skema') : (slutOrd ? 'under norm' : 'bagud skema'));
+  const akkord = u.akkord ? tegnUdvikling('udv-akkord', 'Leveret mod optjent',
+    'Akkordsaldoen: optjent minus brugt — i timer, uge for uge. Plus: arbejdet har taget mindre tid, end det betales med',
+    u.akkord, start(), slut(),
+    v => v >= 0 ? 'foran' : 'bagud') : '';
+  if (!skema && !akkord) return '';
+  return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${skema}${akkord}</div>`;
 }
 
 // ─── Donut chart ──────────────────────────────────────────
@@ -833,6 +859,8 @@ function bindListeners() {
 
   document.getElementById('btn-export-csv')
     ?.addEventListener('click', exportCSV);
+
+  bindUdvikling(document.getElementById('rapport-content'));
 
   // Fluebenet i akkordregnskabet tegnes med rapporten, så det fanges her
   document.getElementById('rapport-content')

@@ -1109,6 +1109,55 @@ select.form-input{
 .forecast-behind{background:var(--tint-slem)}
 .forecast-neutral{background:var(--paper-2)}
 
+/* Udviklingen over skoleåret (kun skoleårs-rapporten) — se udvikling.js */
+.udv-sektion{margin-bottom:16px}
+.udv-sektion .rapport-act-head{padding-top:4px}
+.udv-kort{
+  padding:14px 14px 10px;margin-bottom:12px;
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:16px;box-shadow:var(--hard);
+}
+.udv-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px}
+.udv-titel{font-family:var(--display);font-weight:800;font-size:1rem;margin-right:auto}
+.udv-nu{
+  font-family:var(--display);font-weight:800;font-size:0.9rem;
+  font-variant-numeric:tabular-nums;
+}
+.udv-nu.is-pos{color:#2C7A2C}
+.udv-nu.is-neg{color:#B8321A}
+.udv-under{margin-top:2px;font-size:0.8rem;line-height:1.4;color:var(--slate)}
+.udv-plot{position:relative;margin-top:8px}
+.udv-plot svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.udv-gitter{stroke:var(--rule);stroke-width:1}
+.udv-nul{stroke:var(--ink);stroke-width:1.5}
+.udv-maaned{stroke:var(--text-3);stroke-width:1}
+.udv-akse{
+  font-family:var(--mono);font-size:19px;font-weight:600;
+  letter-spacing:0.04em;fill:var(--slate);
+}
+.udv-akse-x{font-size:16px;letter-spacing:0}
+.udv-flade-op{fill:var(--tint-god)}
+.udv-flade-ned{fill:var(--tint-slem)}
+.udv-linje{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.udv-prik{fill:var(--ink);stroke:var(--panel);stroke-width:2}
+.udv-kryds{stroke:var(--slate);stroke-width:1.5;stroke-dasharray:4 4}
+.udv-tip{
+  position:absolute;top:-4px;transform:translateX(-50%);pointer-events:none;
+  padding:3px 9px;border:2px solid var(--ink);border-radius:10px;background:var(--panel);
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.06em;
+  white-space:nowrap;color:var(--text-2);
+}
+.udv-tip span{color:var(--slate);margin-right:6px}
+.udv-tip b{font-family:var(--display);font-size:0.78rem;color:var(--ink)}
+.udv-tabel{margin-top:6px}
+.udv-tabel summary{
+  cursor:pointer;font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);
+}
+.udv-tabel table{margin-top:6px;border-collapse:collapse;font-size:0.8rem;font-variant-numeric:tabular-nums}
+.udv-tabel th,.udv-tabel td{padding:2px 14px 2px 0;text-align:left}
+.udv-tabel th{font-family:var(--mono);font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate)}
+
 /* Kagediagram */
 .rapport-chart-section{
   display:flex;align-items:center;gap:16px;
@@ -1632,7 +1681,7 @@ select.form-input{
   .guide-footer,.toast,.sheet,.sheet-backdrop{display:none!important}
   body{background:#fff}
   .timer-card,.rapport-summary,.rapport-act-row,.act-row,.entry-row,
-  .settings-section,.step-list li,.guide-card,.why-card,.rapport-chart-section,
+  .settings-section,.step-list li,.guide-card,.why-card,.rapport-chart-section,.udv-kort,
   .kal-md,.kal-aar,.kal-fordeling{
     box-shadow:none;break-inside:avoid;page-break-inside:avoid;
   }
