@@ -59,6 +59,23 @@ SW = 'allow';
   ok((await page.textContent('.app-version')) === 'Tid-appen · ' + VERSION, 'version: ' + await page.textContent('.app-version'));
   await page.locator('.app-version').scrollIntoViewIfNeeded();
   await page.screenshot({ path: DIR + '/version.png' });
+
+  // Appen ser efter en ny udgave, hver gang den kommer frem fra baggrunden
+  const kald = await page.evaluate(async () => {
+    const r = await navigator.serviceWorker.getRegistration();
+    let n = 0; const org = r.update.bind(r);
+    r.update = () => { n++; return org(); };
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    return n;
+  });
+  ok(kald === 1, 'ser efter ny udgave, når appen kommer frem: ' + kald);
+
+  // Appens højde er den synlige højde (dvh), ikke 100vh med værktøjslinjen
+  // regnet fra — ellers gemmer bunden af siderne sig bag den på mobilen
+  const hoejde = await page.evaluate(() => [...document.styleSheets].flatMap(s => { try { return [...s.cssRules]; } catch { return []; } })
+    .find(r => r.selectorText === '#app')?.style.height);
+  ok(hoejde === '100dvh', '#app er 100dvh høj: ' + hoejde);
   await ctx.close();
 }
 await browser.close();

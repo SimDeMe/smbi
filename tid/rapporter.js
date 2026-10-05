@@ -370,7 +370,13 @@ function saldoChip(m, lille = true) {
 // ─── Udviklingen over skoleåret ───────────────────────────
 // To grafer under sammendraget: foran/bagud skema og akkordsaldoen, uge for
 // uge. Regningen står i udvikling.js; sidste punkt er tallene ovenfor.
-function renderUdvikling(acts, filtered, year) {
+// En fejl i graferne må ikke tage resten af rapporten med sig
+function renderUdvikling(...a) {
+  try { return tegnSektion(...a); }
+  catch (err) { console.error('Udvikling:', err); return ''; }
+}
+
+function tegnSektion(acts, filtered, year) {
   if (periodFilter !== 'skolear') return '';
   const SKAL = normHours() - andetSum(year, getSettings());
   const u = beregnUdvikling({

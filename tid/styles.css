@@ -185,7 +185,10 @@ img{display:block;max-width:100%}
 /* ─── Appens skelet ─────────────────────────────────────── */
 #app{
   display:flex;flex-direction:column;
-  height:100dvh;height:100vh;      /* fallback til ældre Safari */
+  /* 100vh er fallback til ældre Safari og skal stå først: i mobilbrowseren
+     er 100vh højden uden værktøjslinjen, så bunden af hver side — fx
+     versionen under Indstillinger — gemte sig bag den */
+  height:100vh;height:100dvh;
   overflow:hidden;
 }
 

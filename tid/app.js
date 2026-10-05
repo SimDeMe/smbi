@@ -209,7 +209,15 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('./service-worker.js')
-      .then(r  => console.log('SW registreret:', r.scope))
+      .then(r  => {
+        console.log('SW registreret:', r.scope);
+        // En app på hjemmeskærmen vækkes fra baggrunden uden at blive hentet
+        // igen, og så ser browseren ikke efter en ny udgave. Det gør vi selv,
+        // hver gang appen kommer frem
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') r.update().catch(() => {});
+        });
+      })
       .catch(e => console.warn('SW fejl:', e));
   });
 }
