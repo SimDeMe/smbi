@@ -114,3 +114,54 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   som ferie, men oprettes som en opgave «6. ferieuge» på 37 t, og hver
   fridag registreres som 7t 24m på den. Indstillinger og hjælpesiden siger
   det nu; intet ekstra felt i appen.
+
+## Sidespalte og højdebudget — de øvrige simuleringer
+
+Læg dem om én ad gangen efter `geografi/Stigningsregn.html` (afsnit 7 i
+`design_rules.md`): `node værktøj/pladstjek.mjs <side>` før og efter, kig på
+skærmbillederne, nyt versionsnummer, modellen uændret. Tallet er, hvor meget
+panelet manglede ved 1366×625 (`pladstjek --alle`, 5. oktober 2026).
+
+Først (mangler mest plads): `geografi/TermiskTryk3.html` (1190 px),
+`biologi/enzymkinetik.html` (858), `geografi/vulkanudbrud.html` (596),
+`geografi/drivhuseffekten.html` (564).
+
+Derefter — kan ikke ses straks på nogen af de lave skærme:
+
+- [ ] `geografi/magnetiskNord.html` — 544 px (mangler også ved 1920×940)
+- [ ] `biologi/DNA_Simulering.html` — 540 px
+- [ ] `geografi/Aarstider.html` — 522 px (mangler også ved 1920×940)
+- [ ] `geografi/pladegraenser.html` — 491 px
+- [ ] `biologi/oelbrygning.html` — 490 px (v2.0)
+- [ ] `biologi/enzymhastighed.html` — 472 px
+- [ ] `biologi/bio-blocks/index.html` — 472 px (blokprogrammering; figuren er
+  hele bredden, så sidespalten skal måske tænkes anderledes)
+- [ ] `geografi/poroesitetPermeabilitet.html` — 452 px
+- [ ] `geografi/Tidevand.html` — 450 px (three.js → `window.tilpasFigur`;
+  mangler også ved 1920×940)
+- [ ] `biologi/transkription.html` — 449 px (v1.0; mangler også ved 1920×940)
+- [ ] `biologi/fotosyntese.html` — 441 px
+- [ ] `biologi/KvindensCyklus/FinalSim.html` — 428 px
+- [ ] `biologi/osmose.html` — 391 px
+- [ ] `geografi/drivhuseffektenSimpel.html` — 342 px (v1.0; trinvis, så
+  højdelåsen fra afsnit 5 skal med)
+- [ ] `biologi/membran.html` — 317 px (three.js → `window.tilpasFigur`)
+- [ ] `geografi/Dugpunkt.html` — 261 px
+- [ ] `geografi/boelger.html` — 194 px
+
+Kan ses efter rulning ved 1366×625, men ikke ved 1280×577 — mindst haster:
+
+- [ ] `geografi/kompas.html` — mangler 274 px ved 1280×577
+- [ ] `biologi/gaerbobler.html` — mangler 216 px ved 1280×577
+- [ ] `biologi/membran2d.html` — mangler 147 px ved 1280×577
+
+Skal ses på, før de lægges om:
+
+- [ ] `geografi/groenlandspumpen.html` — «efter rul» overalt, men pladstjek
+  måler figuren til 15×15 px; find ud af, hvad der skal måles som figur.
+- [ ] `geografi/stensamling.html` (v2.4) og `geografi/stensamling/beskaer.html`
+  — en samling og et værktøj, ikke en figur med skydere. Nok bedre at lade
+  pladstjek springe dem over end at presse dem ind i et højdebudget.
+- [ ] `biologi/gaerbobler2/index.html` — har intet `.rig`-panel og kommer
+  derfor ikke med i `pladstjek --alle`. Gammelt design, eller afløst af
+  `gaerbobler.html`?
