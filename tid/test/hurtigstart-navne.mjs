@@ -39,6 +39,24 @@ for (const w of [390, 340]) {
   await page.screenshot({ path: `${DIR}/qs-${w}.png`, clip: { x: 0, y: 0, width: w, height: 700 } });
   await page.context().close();
 }
+// Bred skærm: appen står som en spalte midt på, ikke strakt ud over hele bredden
+{
+  const w = 2000;
+  const page = await side(browser, { seed: [settings, ...navne.map((n, i) => act('a' + i, n, { order: i }))] }, w);
+  await page.waitForSelector('.qs-btn'); await page.waitForTimeout(300);
+  const m = await page.evaluate(() => {
+    const r = s => document.querySelector(s).getBoundingClientRect();
+    const g = r('#quickstart-grid'), n = r('.nav-btn:first-child'), nl = r('.nav-btn:last-child');
+    return { gl: g.left, gr: g.right, nl: n.left, nr: nl.right };
+  });
+  ok(m.gr - m.gl <= 640, `${w} px: hurtigstarten er højst 640 px bred (${Math.round(m.gr - m.gl)})`);
+  ok(Math.abs((m.gl + m.gr) / 2 - w / 2) < 2, `${w} px: hurtigstarten står midt på`);
+  ok(m.nr - m.nl <= 640 && Math.abs((m.nl + m.nr) / 2 - w / 2) < 2, `${w} px: bundmenuen står midt på`);
+  await page.click('.qs-btn');
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${DIR}/qs-${w}.png` });
+  await page.context().close();
+}
 await browser.close();
 console.log(fejl.length ? '\nFEJL:\n' + fejl.join('\n') : '\nAlt OK');
 process.exitCode = fejl.length ? 1 : 0;
