@@ -711,6 +711,155 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
   .rig{box-shadow:none;break-inside:avoid}
   .board{height:520px}
 }
+
+/* ── Arbejdsplads: figur og betjening på samme skærm ───────── */
+.sim-page .wrap,.sim-page .top-in{max-width:1600px;padding-inline:18px}
+.sim-page .top-in{height:40px}
+.sim-page .head{padding:10px 18px 8px;overflow:visible}
+.sim-page .head::before,.sim-page .eyebrow{display:none}
+.sim-page .head h1{font-size:clamp(1.2rem,2vw,1.55rem);line-height:1.15;margin:0}
+.sim-intro,.sim-explanation,.sim-legend{border:0;box-shadow:none;border-radius:0;background:transparent;padding:0;margin:0;width:auto;max-width:none}
+.sim-intro{margin-top:5px;max-width:80ch}
+.sim-intro summary,.sim-explanation summary,.sim-legend summary{display:list-item;border:0;padding:4px 0;background:transparent;min-height:0;list-style:revert}
+.sim-intro summary::after,.sim-explanation summary::after,.sim-legend summary::after{content:none}
+.sim-intro summary{font-family:var(--display);font-size:.8rem;font-weight:600;cursor:pointer;color:var(--slate)}
+.sim-intro .lead{font-size:1rem;margin:6px 0;max-width:80ch}
+.sim-page .rig{margin-top:0;border-radius:12px;box-shadow:var(--hard)}
+.sim-page .rig-bar{height:5px}
+.sim-page .rig-head{padding:7px 12px;gap:7px}
+.sim-page .rig-head > *{min-width:0}
+.sim-page .version{font-family:var(--mono);font-size:.58rem;font-weight:500;letter-spacing:.08em;color:var(--slate);text-transform:none}
+.sim-workspace{--sim-ratio:2;min-width:0;min-height:0}
+.sim-workspace [hidden]{display:none!important}
+.sim-visual,.sim-controls{min-width:0;min-height:0}
+.sim-controls{background:var(--paper-2)}
+.sim-controls .gauges{grid-template-columns:repeat(2,minmax(0,1fr));min-height:0!important}
+.sim-controls .knobs,.sim-controls .ligninger,.sim-controls .facts{min-height:0!important}
+.sim-controls .gauge{min-width:0;padding:8px 10px;gap:5px;border-left:0;border-top:1px solid var(--ink)}
+.sim-controls .gauge:nth-child(even){border-left:1px solid var(--ink)}
+.sim-controls .gauge:nth-child(-n+2){border-top:0}
+.sim-controls .gauge dt{font-size:.72rem;letter-spacing:.035em;line-height:1.3;overflow-wrap:anywhere}
+.sim-controls .gauge dd{font-size:1.15rem;line-height:1.2;overflow-wrap:anywhere}
+.sim-controls .gauge dd small{white-space:normal;overflow-wrap:anywhere}
+.sim-controls .g-sub{font-size:.75rem;line-height:1.3;min-height:0!important}
+.sim-legend{padding:7px 10px;border-top:1px solid var(--ink)}
+.sim-legend summary{font-family:var(--display);font-size:.8rem;font-weight:700;cursor:pointer}
+.sim-controls .knobs{display:grid;grid-template-columns:minmax(0,1fr);padding:10px 12px;gap:10px}
+.sim-controls .knob{min-width:0;gap:4px;grid-column:auto}
+.sim-controls .knob-top{flex-wrap:wrap}
+.sim-controls .knob-top .mono,.sim-controls .knob-hoved label{font-size:.72rem;letter-spacing:.035em}
+.sim-controls .knob-val{font-size:1rem;padding:1px 8px}
+.sim-controls .knob-row{padding:6px 10px;gap:7px;flex-wrap:wrap}
+.sim-controls .side{border:0;padding:10px 12px;overflow:visible;display:flex;flex-direction:column;gap:8px}
+.sim-controls .side-in{position:static;display:flex;flex-direction:column;min-height:0}
+.sim-controls .side-h{padding:0 0 8px}
+.sim-controls .side-h b,.sim-controls .side-titel{font-size:1.1rem;margin-top:4px}
+.sim-controls .side-kort{font-size:.9rem;padding:7px 9px;line-height:1.35;margin:0}
+.sim-controls .side-body{padding:8px 0;font-size:.9rem;line-height:1.4;overflow:visible}
+.sim-controls .side .nav{gap:6px;flex-wrap:wrap;margin-top:6px}
+.sim-controls .side .prikker{gap:4px;flex-wrap:wrap}
+.sim-controls .side .stopop{margin-top:8px}
+.sim-explanation summary{font-family:var(--display);font-size:.8rem;font-weight:700;cursor:pointer;padding:5px 0}
+.sim-controls .places,.sim-controls .vaelg,.sim-controls .tools,.sim-controls .cases{padding:8px 10px;gap:7px;flex-wrap:wrap}
+.sim-controls .places .pl-group,.sim-controls .vaelg .group{flex-wrap:wrap}
+.sim-controls .seg{flex-wrap:wrap;max-width:100%}
+.sim-controls .facts{padding:8px 10px;gap:6px}
+.sim-controls .fact{padding:3px 8px;font-size:.68rem;letter-spacing:.03em}
+.sim-controls .styring,.sim-controls .steps,.sim-controls .chain-wrap{padding:8px 10px;gap:6px;flex-wrap:wrap}
+.sim-controls .ligninger{grid-template-columns:1fr;padding:8px 10px}
+.sim-controls .lign{font-size:.85rem;padding:7px 9px}
+.sim-controls .knobs.tom::after{font-size:.72rem;letter-spacing:.03em}
+.sim-controls input[type=range]{min-height:24px}
+.sim-choice{display:flex;flex-direction:column;gap:5px;width:100%;font-family:var(--display);font-size:.8rem;font-weight:700}
+.sim-choice select{width:100%;min-height:36px;font:inherit;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:5px 8px}
+.sim-choices-ready > button.fact{display:none}
+.sim-choices-ready > button.pill,.sim-choices-ready > button.btn{display:none}
+.sim-controls .pl-group.sim-choices-ready{width:100%}
+.sim-views{display:flex;gap:6px;flex-wrap:wrap;padding:7px 10px;background:var(--paper-2);border-bottom:1px solid var(--ink)}
+.sim-view-btn{font-family:var(--display);font-size:.8rem;font-weight:700;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:5px 10px;cursor:pointer}
+.sim-view-btn[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.sim-visual [hidden]{display:none!important}
+.sim-visual .legend-box{width:auto;max-width:100%;margin:0;padding:6px 10px}
+.sim-visual .plot,.sim-visual .plots{min-width:0;width:100%}
+.sim-visual .plot-svg{min-width:0}
+.sim-visual .plot-head{padding:7px 10px;gap:6px;flex-wrap:wrap}
+.sim-visual .plot-legend{padding:7px 10px;gap:6px;flex-wrap:wrap}
+.sim-visual .facts{padding:7px 10px;gap:6px}
+.sim-visual #status{padding:7px 10px;min-height:36px;font-size:.9rem}
+.sim-controls .forklaring{position:static;max-height:none;overflow:visible}
+@media (min-width:900px) and (min-height:480px){
+  .sim-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;height:var(--work,480px);align-items:stretch;min-height:0!important}
+  .sim-visual{display:flex;flex-direction:column;justify-content:flex-start;overflow:auto;background:#fff;scrollbar-gutter:stable}
+  .sim-controls{overflow:auto;border-left:2px solid var(--ink);scrollbar-gutter:stable;overscroll-behavior:contain}
+  .sim-main{flex:none;width:100%;max-width:calc(var(--fig,420px)*var(--sim-ratio) + 24px)!important;margin-inline:auto;align-self:center;border-right:0!important}
+  .sim-main.stage{padding:10px;min-height:0;grid-template-columns:1fr}
+  .sim-main .view{width:100%;padding:0;min-width:0}
+  .sim-main .board{height:var(--fig,420px)}
+  .sim-main .view canvas{min-width:0}
+  .sim-main .dhs-scene-wrap,.sim-main .cd-scene-wrap{width:100%;max-width:none}
+  .sim-main .dhs-scene-indre,.sim-main .cd-scene-indre{width:100%;min-width:0}
+  .sim-main.stage.sim-pair{grid-template-columns:var(--sim-columns,1fr 1fr);align-items:start;gap:10px}
+  .sim-main.sim-pair canvas{min-width:0}
+  .sim-visual .sim-views{flex:none}
+  .sim-visual .sim-main{margin-block:auto}
+  .sim-visual[data-view=plot]{justify-content:flex-start}
+  .sim-visual[data-view=both]{justify-content:flex-start}
+  .sim-visual[data-view=both] .sim-main{margin-block:0}
+  .sim-visual[data-view=both] .sim-secondary{flex:none}
+  .sim-visual .stage-col{min-width:0}
+  .sim-visual .termo{margin:6px 10px}
+  .sim-controls .g-viz{display:none}
+  .sim-controls .dh-el.gauge[data-vis="skjult"]{display:none}
+  .sim-controls .gauge:has(.gauge-navn){display:block}
+  .sim-controls .gauge-navn{font-size:.72rem;letter-spacing:.035em}
+  .sim-controls .termo-bar{height:12px;margin:7px 0}
+  .sim-controls .termo-vaerdi{font-size:1.15rem}
+  .sim-controls .knob-vaerdi{font-size:1rem}
+  .sim-controls .knob-note{font-size:.8rem;line-height:1.35}
+  .sim-controls .cases:has(.sim-choice) > .rowlab{display:none}
+  .sim-controls .side-kort{min-height:0!important}
+  .sim-controls .pips{height:12px}
+  .sim-controls .edots{display:none}
+  .sim-controls .case-row{gap:5px}
+  .sim-controls .cases .case-desc{min-height:0!important;font-size:.85rem;line-height:1.35;margin:6px 0}
+  .sim-controls .chain{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .sim-controls .trin,.sim-controls .trin:has(.trin-skema:empty){display:block;padding:10px 12px}
+  .sim-controls .trin h2{font-size:1.1rem}
+  .sim-controls .trin-nav{gap:8px;margin-top:8px}
+  .sim-controls .trin-skema{margin:8px 0;overflow:auto}
+  .sim-controls .trin-tekst p{font-size:.9rem;line-height:1.4}
+  .sim-controls .termo{margin:7px 10px;padding:12px 10px}
+  .sim-controls .termo.er-skjult{display:none}
+  .sim-controls .opgave{padding:9px 10px;gap:9px}
+  .sim-controls .opgave-tekst p{font-size:.87rem;line-height:1.35}
+  .sim-controls .opgave .nr{font-size:1.5rem;width:36px;height:36px}
+  .sim-controls .trinvej{gap:5px}
+  .sim-controls .styring .btn,.sim-controls .steps .btn{font-size:.8rem;padding:5px 9px}
+  .sim-controls .two-col{grid-template-columns:1fr 1fr;gap:6px}
+  .sim-controls .legend,.sim-controls .paa-kloden{font-size:.85rem;padding:7px 0}
+}
+@media (max-width:899px),(max-height:479px){
+  .sim-workspace{display:block;height:auto}
+  .sim-visual{overflow:visible}
+  .sim-controls{border-top:2px solid var(--ink);overflow:visible}
+  .sim-controls .knobs{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .sim-main .view{max-width:100%}
+  .sim-page .head h1{font-size:1.3rem}
+}
+@media (pointer:coarse){
+  .sim-choice select,.sim-view-btn,.sim-intro summary,.sim-controls button,.sim-controls select,.sim-controls summary{min-height:44px}
+  .sim-controls input[type=range]{min-height:44px}
+}
+@media print{
+  .sim-workspace,.sim-visual,.sim-controls{display:block!important;height:auto!important;overflow:visible!important;max-height:none!important;border-left:0}
+  .sim-main{max-width:100%!important}
+  .sim-intro,.sim-views{display:none!important}
+  .sim-controls .g-viz{display:flex}
+}
+
+
+
+
 </style>
 <script type="application/ld+json">
 {
@@ -771,7 +920,7 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
 </script>
 </head>
 
-<body>
+<body class="sim-page">
 
 <header class="top" id="site-top">
   <div class="rainbow"></div>
@@ -791,15 +940,17 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Biologi · makromolekyler</span>
       <h1>Byg det store molekyle af <span class="hi" style="--hc:#FBD3E1">små byggesten</span></h1>
-      <p class="lead">Træk to byggesten sammen, så de mødes plads mod plads: der fraspaltes et vandmolekyle, og de to bliver til ét. Det gælder sukrene, aminosyrerne og fedtsyrerne — samme reaktion, tre stofgrupper. Klik på ilten i en binding, og den bliver spaltet igen.</p>
+      <details class="sim-intro"><summary>Om simulationen</summary>
+<p class="lead">Træk to byggesten sammen, så de mødes plads mod plads: der fraspaltes et vandmolekyle, og de to bliver til ét. Det gælder sukrene, aminosyrerne og fedtsyrerne — samme reaktion, tre stofgrupper. Klik på ilten i en binding, og den bliver spaltet igen.</p>
+</details>
     </div>
   </div>
 
   <div class="wrap">
     <section class="rig">
-      <div class="rig-bar"></div>
-
-      <div class="rig-head">
+<div class="rig-bar"></div>
+<div class="rig-head">
+        <span class="version" title="Simuleringens version">v1.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono">Byggebord</span></span>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-tasks" title="Opgaver med gæt, byg og forklaring">🎯 Opgaver</button>
@@ -808,24 +959,9 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
         <button type="button" class="btn-mini btn-ryd" id="btn-reset" title="Fjern alt fra bordet og begynd forfra">Ryd bordet</button>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false" title="Skjul sidens krom og forstør teksten">Projektor</button>
       </div>
-
-      <!-- Grupperne fyldes af js/ui.js ud fra det valgte modul — kun den
-           faste gruppe i rig-head er den samme for kulhydrater, proteiner
-           og fedt. Hvor mange af dem der overhovedet bliver fyldt, afgør
-           niveauvalget: se js/levels.js. -->
-      <div class="vaelg">
-        <div class="group" id="grp-module"></div>
-        <div class="group" id="grp-repr"></div>
-        <div class="group" id="grp-level"></div>
-      </div>
-
-      <div class="knobs">
-        <div class="group" id="grp-spawn"></div>
-        <div class="group" id="grp-build"></div>
-        <div class="group" id="grp-enzymes"></div>
-      </div>
-
-      <div class="stage">
+<div class="sim-workspace" style="--sim-ratio:2.000000">
+<div class="sim-visual">
+<div class="stage sim-main">
         <div class="board">
           <svg id="svg-space" width="100%" height="100%" role="img"
                aria-label="Byggebordet. Byggestenene ligger som blokke med en knop på den ene side og en ring på den anden: knoppen er en fri donorplads, ringen en fri modtagerplads. Trækkes en knop hen til en ring, fraspaltes et vandmolekyle, og de to bliver til ét molekyle. Hvad der sker, står i statuslinjen under bordet.">
@@ -856,22 +992,36 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
           </div>
         </div>
       </div>
-
-      <p id="status" aria-live="polite"></p>
-
-      <dl class="gauges">
+<p id="status" aria-live="polite"></p>
+</div>
+<div class="sim-controls" role="region" aria-label="Indstillinger og målinger" tabindex="0">
+<div class="vaelg">
+        <div class="group" id="grp-module"></div>
+        <div class="group" id="grp-repr"></div>
+        <div class="group" id="grp-level"></div>
+      </div>
+<div class="knobs">
+        <div class="group" id="grp-spawn"></div>
+        <div class="group" id="grp-build"></div>
+        <div class="group" id="grp-enzymes"></div>
+      </div>
+<dl class="gauges">
         <div class="gauge">
           <dt>Vand fraspaltet</dt>
           <dd>💧 <span id="water-count">0</span> <span class="enhed">molekyler</span></dd>
         </div>
       </dl>
-
-      <div class="facts">
+<details class="sim-legend"><summary>Signatur og nøgletal</summary>
+<div class="facts">
         <span class="fact knop">Knop · fri donorplads</span>
         <span class="fact ring">Ring · fri modtagerplads</span>
         <span class="fact ilt">Ilt i en binding · klik og spalt den</span>
       </div>
-    </section>
+</details>
+</div>
+</div>
+
+</section>
   </div>
 </main>
 
@@ -955,68 +1105,90 @@ body[data-projektor="1"] #task-panel{width:min(400px,62%);font-size:1.02rem}
 })();
 </script>
 
-
-<!-- ── Højdebudget ──────────────────────────────────────
-     Figuren blev før målt efter spaltens bredde alene, og så voksede
-     panelet ud over skærmen: figur, instrumenter og skydere kunne ikke
-     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
-     andet end figuren, og resten af skærmhøjden lægges i --fig.
-     Budgettet kan kun gøre figuren mindre — aldrig større end spalten
-     i forvejen tillod — og det rører den slet ikke, hvis panelet
-     alligevel ikke kan komme til at passe.                          -->
+<script src="/feedback.js" defer></script>
 <script>
+/* Arbejdspladsens højde måles efter det kompakte sidehoved.
+   På telefonen beholder siden almindelig lodret rulning. */
 (function(){
-  const rig = document.querySelector('.rig');
-  const fig = document.querySelector('.board');
-  if(!rig || !fig) return;
-  const bjaelke = document.querySelector('.top');
-  const MIN = 285, MAKS = 620, LUFT = 16;
-  let sidst = 0, panel = 0, ventende = false;
-
-  function saet(h){
-    if(h === sidst) return;
-    sidst = h;
-    rig.style.setProperty('--fig', h + 'px');
-    /* Sider, der selv sætter lærredets størrelse, skal måle om. */
+  const rig=document.querySelector('.rig');
+  const work=document.querySelector('.sim-workspace');
+  const visual=document.querySelector('.sim-visual');
+  if(!rig || !work || !visual) return;
+  const desktop=matchMedia('(min-width:900px) and (min-height:480px)');
+  let pending=false;
+  function set(name,value){
+    if(rig.style.getPropertyValue(name)!==value) rig.style.setProperty(name,value);
+  }
+  function measure(){
+    pending=false;
+    if(!desktop.matches){set('--fig','420px');set('--work','auto');if(window.tilpasFigur) window.tilpasFigur();return;}
+    const top=rig.getBoundingClientRect().top+scrollY;
+    const chrome=[...rig.children].filter(e=>e!==work).reduce((n,e)=>n+e.getBoundingClientRect().height,0);
+    const height=Math.max(260,Math.round(innerHeight-top-chrome-16));
+    set('--work',height+'px');
+    const extra=[...visual.children].filter(e=>!e.classList.contains('sim-main')&&!e.hidden).reduce((n,e)=>n+e.getBoundingClientRect().height,0);
+    const figure=Math.max(180,Math.min(620,height-extra-24));
+    set('--fig',Math.round(figure)+'px');
     if(window.tilpasFigur) window.tilpasFigur();
   }
-
-  function maal(){
-    /* Først slippes figuren fri: så er "alt andet end figuren" det
-       samme tal, uanset hvad budgettet gav sidste gang. Uden det ville
-       en sidespalte, der er højere end figuren, presse budgettet i bund. */
-    saet(MAKS);
-    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
-               ? bjaelke.getBoundingClientRect().height : 0;   /* den klæbende topbjælke */
-    const rum  = innerHeight - krom - LUFT;                    /* det, panelet må fylde */
-    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
-    const h    = Math.round(rum - fast);
-    if(h < MAKS){
-      saet(Math.max(MIN, h));
-      /* Hjalp det ikke — fx fordi en sidespalte er højere end figuren —
-         så får figuren pladsen igen. */
-      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+  function schedule(){if(!pending){pending=true;requestAnimationFrame(measure);}}
+  const main=visual.querySelector('.sim-main');
+  const secondary=visual.querySelector('.sim-secondary');
+  if(main && secondary){
+    const nav=document.createElement('div');nav.className='sim-views';nav.setAttribute('role','group');nav.setAttribute('aria-label','Visning');
+    const buttons=[];
+    function choose(mode){
+      visual.dataset.view=mode;
+      main.hidden=mode==='plot';secondary.hidden=mode==='scene';
+      buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===mode)));
+      schedule();
     }
-    panel = rig.getBoundingClientRect().height;
+    [['scene','Simulation'],['plot','Målegraf'],['both','Begge']].forEach(([mode,label])=>{
+      const b=document.createElement('button');b.type='button';b.className='sim-view-btn';b.dataset.view=mode;b.textContent=label;
+      b.addEventListener('click',()=>choose(mode));buttons.push(b);nav.append(b);
+    });
+    visual.prepend(nav);choose('scene');
   }
-
-  function planlaeg(){
-    if(ventende) return;
-    ventende = true;
-    requestAnimationFrame(function(){ ventende = false; maal(); });
+  /* Lange knaprækker bliver én vælger. De oprindelige knapper og deres
+     hændelser bruges stadig, så en ny visning følger samme modelkode. */
+  function makeSelect(facts){
+    if(facts.classList.contains('sim-choices-ready') && facts.querySelector('.sim-choice'))return;
+    const options=[...facts.children].filter(e=>e.matches('button.fact,button.pill,button.btn'));
+    if(options.length<4) return;
+    const label=document.createElement('label');label.className='sim-choice';
+    const caption=facts.querySelector(':scope > .mono');
+    const title=caption?caption.textContent.trim():facts.id==='case-btns'?'Vælg case':'Vælg i figuren';
+    label.append(document.createTextNode(title));
+    const select=document.createElement('select');
+    select.setAttribute('aria-label',title);
+    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Vælg…';select.append(placeholder);
+    options.forEach((button,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=button.textContent.trim();select.append(o);});
+    select.addEventListener('change',()=>{if(select.value!=='') options[+select.value].click();});
+    label.append(select);facts.prepend(label);facts.classList.add('sim-choices-ready');
+    if(caption) caption.hidden=true;
+    function sync(){
+      options.forEach((b,i)=>{const o=select.options[i+1];if(o.disabled!==b.disabled)o.disabled=b.disabled;if(o.hidden!==b.hidden)o.hidden=b.hidden;});
+      const i=options.findIndex(b=>b.getAttribute('aria-pressed')==='true'||b.getAttribute('aria-selected')==='true'||b.classList.contains('active'));
+      select.value=i<0?'':String(i);
+    }
+    new MutationObserver(sync).observe(facts,{subtree:true,attributes:true,attributeFilter:['aria-pressed','aria-selected','class','disabled','hidden']});
+    sync();
   }
-
-  maal();
-  addEventListener('resize', planlaeg);
-  addEventListener('load', planlaeg);            /* moduler indlæses efter dette script */
-  if(document.fonts) document.fonts.ready.then(planlaeg);
-  /* Panelets faste dele kan skifte højde undervejs (trin, tekst, projektor).
-     Vores egne ændringer springes over — dem kender vi højden på. */
-  new ResizeObserver(function(){
-    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
-  }).observe(rig);
+  rig.querySelectorAll('.facts,.pl-group,.case-row').forEach(group=>{
+    makeSelect(group);
+    new MutationObserver(()=>makeSelect(group)).observe(group,{childList:true});
+    addEventListener('load',()=>makeSelect(group),{once:true});
+  });
+  new ResizeObserver(schedule).observe(rig);
+  [...visual.children].filter(e=>!e.classList.contains('sim-main')).forEach(e=>new ResizeObserver(schedule).observe(e));
+  const head=document.querySelector('.head');if(head) new ResizeObserver(schedule).observe(head);
+  new MutationObserver(schedule).observe(rig,{subtree:true,attributes:true,attributeFilter:['data-projektor','hidden']});
+  new MutationObserver(schedule).observe(document.body,{attributes:true,attributeFilter:['data-projektor']});
+  addEventListener('resize',schedule);addEventListener('load',schedule);
+  if(document.fonts) document.fonts.ready.then(schedule);
+  schedule();
 })();
+
 </script>
-<script src="/feedback.js" defer></script>
 </body>
 </html>

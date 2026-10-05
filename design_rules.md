@@ -92,7 +92,7 @@ links, så `python3 -m http.server 8777` er uændret arbejdsgangen. Modulerne
 arver dokumentets importmap, så de kan skrive `import * as THREE from 'three'`
 uden at kende CDN-adressen.
 
-## 1. Tokens — kopiér uændret ind i `:root`
+## 1. Tokens — fælles identitet, plads efter opgaven
 
 ```css
 :root{
@@ -111,7 +111,7 @@ uden at kende CDN-adressen.
   --mono:'IBM Plex Mono',ui-monospace,monospace;
 
   --wide:'wdth' 118;
-  --max:1180px;        /* 980px, hvis siden er én smal spalte */
+  --max:1180px;        /* forsider og læsesider; simulationer op til 1600px */
 
   --hard:4px 4px 0 var(--ink);
   --hard-lg:7px 7px 0 var(--ink);
@@ -134,7 +134,9 @@ Skrifterne hentes fra Google Fonts i `<head>`:
 * `--body` (Source Serif 4) — al brødtekst. Sidens `font-size` er `17px`.
 * `--mono` (IBM Plex Mono) — etiketter, enheder, øjenbryn, fodnoter. Altid
   `text-transform:uppercase; letter-spacing:0.12–0.14em` og lille (≈0.6rem).
-  Klassen `.mono` findes færdig.
+  Klassen `.mono` findes færdig. I kontrolpaneler bruges mindst `0.72rem`
+  med `letter-spacing:0.035em`, så etiketter kan læses uden at fylde
+  unødigt i bredden. Reducér mellemrum før skriftstørrelse.
 
 **Enheder skrives altid, som de staves.** Versalerne i mono-mærkaterne må
 ikke lave `mmol/L` om til `MMOL/L`, `kJ/mol` om til `KJ/MOL` eller `pH` om til
@@ -161,7 +163,8 @@ i topstriben og i brandmærket. Lyse toner til flader: `#C7E6F6` blå,
 
 ## 2. Sidens skelet
 
-Rækkefølgen er altid den samme:
+Forsider og læsesider følger dette skelet. Simulationer bruger det
+kompakte sidehoved og arbejdsområde i afsnit 3a:
 
 ```html
 <header class="top" id="site-top">
@@ -215,8 +218,8 @@ Alt interaktivt bor i ét panel:
  └ .facts     pilleformede nøgletal/signaturforklaring nederst
 ```
 
-Kun de dele, siden har brug for. Alle indre rækker adskilles med
-`border-top:2px solid var(--ink)` — panelet skal se ud som ét apparat.
+Kun de dele, siden har brug for. Indre rækker adskilles med blækstreger; i det kompakte kontrolpanel er
+`1px` tilstrækkeligt. Yderrammen bevarer sitets formsprog.
 
 **Knapper:** blækkant, hård skygge, og de flytter sig ved klik.
 
@@ -231,6 +234,48 @@ Kun de dele, siden har brug for. Alle indre rækker adskilles med
 `::-webkit-slider-thumb`, `::-moz-range-track`, `::-moz-range-thumb`): 10 px
 bane med blækkant, 22 px rund gribeknap med blækkant og hård skygge. Hver
 slider får sin egen `--track`-gradient og `--kc`-knapfarve.
+
+## 3a. Simulationer — et kompakt arbejdsområde
+
+Den visuelle identitet er fælles, men undervisningsforsiden og selve
+arbejdspladsen bruger forskellige størrelser. Simulationer skal åbne
+med titel, figur og primær betjening samlet på en almindelig laptop
+ved 100 % zoom. Brug 1366 × 650 og 1024 × 650 CSS-pixels som kontrol;
+kontrollér også 390 × 844 og projektortilstand.
+
+* Sidehovedet har en kort titel og et udfoldeligt «Om simulationen» med
+  den eksisterende indledning. Topbjælken er kompakt, og arbejdsspalten
+  må være op til 1600 px bred. Mere bredde må ikke automatisk give en
+  højere figur.
+* `.sim-workspace` er arbejdsområdet, `.sim-visual` indeholder figuren,
+  og `.sim-controls` indeholder indstillinger, målinger og trinvalg.
+  Betjeningsspalten er cirka 320 px bred og kan betjenes med tastaturet.
+  Et eksisterende `.rig-body` kan også være `.sim-workspace`.
+* `.sim-main` beholder figurens formatforhold (`--sim-ratio`). To
+  sammenhørende billeder, fx tværsnit og lup, bliver ved siden af hinanden
+  i `.sim-pair`, også i laptoplayoutets mellemstørrelse.
+* Prioritér skydere og tal. På laptop kan et dekorativt `.g-viz`-instrument
+  udelades, når samme måling står tydeligt som tal med navn og enhed.
+  Signaturer og længere forklaringer er tilgængelige i `details`;
+  indhold fjernes ikke. Primær figur og relevant betjening skal forblive
+  sammen, når et ekstra afsnit åbnes.
+* Mange ens valg kan bruge en native `select`. Vælgeren bruger de
+  eksisterende knappers hændelser, følger deres aktive tilstand og
+  opdateres, hvis muligheder ændres. Der vises én betjening for samme valg.
+* En ekstra målegraf kan vælges med «Simulation», «Målegraf» og «Begge».
+  De relevante skydere og målinger bliver tilgængelige i alle visninger.
+  «Simulation» er udgangspunktet; «Begge» kan kræve rulning i billedspalten
+  på en lille skærm.
+* `hidden` skal altid skjule indhold, også efter en komponent har fået
+  `display:flex` eller `display:grid`. Skjulte tilstande må ikke fylde
+  eller kunne tabbes til. Bevar labels, fokusmarkering og tastaturstyring.
+* Telefoner har fri sidehøjde og almindelig lodret rulning. Touchbetjening
+  får mindst 44 px træfflade. Print bruger igen fri højde.
+
+CSS og arbejdsområde-script ligger i hver side, som resten af skabelonen,
+så siden stadig er et selvstændigt forlæg. Ingen fælles stilfil eller build
+er nødvendig. Tilpas særtilfælde som stensamlingens liste og 3D-lærredets
+størrelsesfunktion til deres indhold.
 
 ## 4. Hold siden let
 
@@ -260,55 +305,34 @@ Spørg, hvis det er uklart om siden skal have forklarende tekst under panelet
   Betjening skal kunne klares med tastatur alene.
 * **Farve er aldrig eneste signal** — kombinér med stregtype, mærkat eller form
   (fx kortbølget = fuldt optrukket, langbølget = stiplet).
-* **Responsivt:** brydepunkter ved 960 px (to spalter → én), 700 px (brede
-  SVG'er får deres egen vandrette rulning med `min-width`, resten af siden
-  ruller kun lodret) og 620 px (mindre skrift, `--hard` i stedet for
-  `--hard-lg`, padding 16 px).
-* **Højdebudget — figuren skal kunne ses sammen med sine knapper.**
-  Panelets højde må ikke afhænge af spaltens bredde alene. Gør den det,
-  vokser figuren ud over skærmen, og man kan ikke se visualisering,
-  instrumenter og skydere på én gang. Hver simuleringsside har derfor
-  tokenet `--fig` i `:root`, en `max-width` på den kasse, figuren bor i
-  (bredden følger af formatforholdet), og scriptet `Højdebudget` nederst
-  på siden:
-
-  ```css
-  :root{--fig:456px}                                    /* udgangspunkt */
-  .stage{max-width:calc(var(--fig)*800/400 + 20px);margin-inline:auto}
-  ```
-
-  Scriptet måler, hvad panelet bruger til alt andet end figuren, og
-  lægger resten af skærmhøjden i `--fig`. Tre ting hører med:
-
-  * Budgettet **kan kun gøre figuren mindre** — aldrig bredere end
-    spalten i forvejen tillod. På en høj skærm sker der ingenting.
-  * Kan panelet alligevel ikke komme til at passe (for mange rækker
-    under figuren, eller en sidespalte der er højere end den), **giver
-    budgettet op** og lader figuren beholde sin fulde størrelse.
-    En figur, der er skrumpet uden gevinst, er det værste af begge dele.
-  * Sætter siden selv lærredets størrelse i JavaScript (three.js,
-    et lærred uden fast formatforhold), så skal `--fig` læses dér i
-    stedet — `Math.min(…, budget)` — og siden udstiller
-    `window.tilpasFigur`, som scriptet kalder, når budgettet skifter.
-
-  Kopiér fra `geografi/Stigningsregn.html` (lærred med fast forhold),
-  `geografi/TermiskTryk3.html` (lærred uden fast forhold) eller
-  `biologi/membran/model.js` (three.js).
+* **Responsivt:** vælg brydepunkter efter indholdet. Arbejdsområdet bruger
+  to spalter fra 900 px, når vinduet er mindst 480 px højt; mindre vinduer
+  bruger almindelig lodret rulning. Et bredt canvas eller SVG kan stadig få
+  sin egen vandrette rulning på en telefon. Der må ikke komme vandret
+  rulning på hele siden.
+* **Højdebudget gælder hele arbejdsområdet.** Mål pladsen efter det aktuelle
+  sidehoved, værktøjsbjælken og eventuelle andre faste rækker. Læg den i
+  `--work` på `.rig`, og figurens andel i `--fig`. Figuren tilpasses sit
+  formatforhold i `.sim-main`; spalten må ikke alene bestemme højden.
+  Forklaringer og sekundære valg må rulle i `.sim-controls`, så figuren
+  bliver på skærmen. Et overfyldt kontrolpanel må ikke få tilpasningen til
+  at opgive og gøre figuren stor igen.
+  Sider, der selv måler lærredet, læser `--fig` i deres størrelsesfunktion
+  og udstiller `window.tilpasFigur`. Lærredets indre pixelmål følger det
+  valgte visningsmål og pixeltæthed; modellen ændres ikke.
+  Se arbejdsområde-scriptet nederst i `geografi/Stigningsregn.html` og
+  størrelsesfunktionen i `geografi/Aarstider.html`.
 
 * **`@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}`**
 * **`@media print`** — skjul `.top`, `.foot` og navigationsknapper, så det
   aktuelle billede kan komme på ét A4.
-* **Rammen skal stå stille.** Har siden trin eller tilstande med forskellig
-  mængde tekst, må panelet ikke hoppe i højden, når man klikker videre — så
-  flytter figuren, knapperne og trinprikkerne sig for hvert klik. Mål alle
-  tilstande én gang ved indlæsning og lås panelet til den højeste
-  (`min-height` i px); mål igen ved `resize`, ved skift af projektortilstand
-  og på `document.fonts.ready`. Den plads, der bliver til overs på de korte
-  trin, samles ét sted (fx ved at hænge navigationen i bunden med
-  `margin-top:auto`), og indhold der kun vises i ét trin, får sin plads
-  reserveret med `visibility:hidden` frem for `hidden`/`display:none`.
-  Låsen gælder kun to-spaltelayoutet — under 960 px står tingene under
-  hinanden, og der ville den kun give dødt luftrum.
+* **Rammen skal stå stille inden for skærmen.** På en laptop er
+  `.sim-workspace` afgrænset af `--work`, så trin og forklaringer ikke
+  flytter figuren eller hovedbetjeningen. Lås ikke hele panelet til det
+  længste forklaringstrins fulde højde. Lang tekst foldes ud i et
+  `details`-element eller ruller i sin egen forklaringsdel. På telefoner
+  er arbejdsområdets højde fri. En gammel `min-height`-lås på rækker
+  tilsidesættes i kontrolpanelet, når den kun reserverer tom plads.
 * **Deling og tavle:** hvis siden har trin eller tilstande, så afspejl dem i
   `location.hash` (`#trin=3`) og accepter dem også som query (`?trin=3`).
   Projektortilstand (`?projektor=1` / `?mode=teach`) skjuler sidens krom og

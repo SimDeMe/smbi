@@ -655,3 +655,25 @@ button:focus-visible {
 #boble-knap { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .rude.skema canvas { margin-top: 10px; height: auto; }
 .resultater td { white-space: nowrap; }
+/* Mere plads til bordet på bærbare, med uændret fingerbetjening. */
+@media (min-width:900px){
+ :root{--panel-bredde:320px}
+ .panel{padding:8px;gap:8px;scrollbar-gutter:stable}
+ .kort{padding:8px}
+ .kort > h2{margin-bottom:6px;letter-spacing:.04em}
+}
+.version{font-size:.65rem;color:var(--tekst-mat);font-weight:400;white-space:nowrap}
+
+@media (max-width:899px){
+ html,body{height:auto;min-height:100%}
+ body{overflow-x:hidden}
+ .top{gap:6px;padding-inline:10px;flex-wrap:wrap}
+ .top h1{white-space:normal;flex-basis:50%}
+ .top-hoejre{margin-left:auto;flex-wrap:wrap}
+ .panel{max-width:100%}
+ .overlay-boks{max-width:calc(100vw - 24px)}
+}
+
+@media (pointer:coarse){
+ .panel button,.panel select,.panel input[type=range]{min-height:44px}
+}
