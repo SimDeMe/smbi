@@ -35,8 +35,9 @@
   --r-sm:9px; --r-md:13px; --r-lg:16px; --r-xl:20px;
 
   --nav-h:64px;
-  /* Appen er bygget til telefonen. På en bred skærm står den som en
-     spalte midt på — ellers bliver hver knap 1000 px bred */
+  /* Appen er bygget til telefonen. På en mellemstor skærm står den som en
+     spalte midt på; over 1000 px bruger den op til 1200 px (se «Bred
+     skærm» nederst), og hurtigstarten får flere spalter */
   --app-max:640px;
   --app-kant:max(0px,calc((100% - var(--app-max)) / 2));
   --safe-b:env(safe-area-inset-bottom,0px);
@@ -484,7 +485,7 @@ img{display:block;max-width:100%}
 
 .sheet{
   position:fixed;left:0;right:0;bottom:0;z-index:200;
-  max-width:var(--app-max);margin-inline:auto;
+  max-width:640px;margin-inline:auto;
   max-height:92dvh;
   display:flex;flex-direction:column;overflow:hidden;
   /* regnbuestribe langs arkets overkant */
@@ -947,15 +948,25 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .kal-dl-pause{background:var(--paper-2);border:1.5px dashed var(--slate);min-height:32px}
 .kal-dl-pause .kal-dl-navn{color:var(--slate);font-size:0.74rem}
 
-/* ─── Bred skærm: Historik bruger bredden ───────────────── */
-/* Over 1000 px står Historik bredere end resten af appen, dagens liste står
-   ved siden af aksen, og redigeringsarket kommer ind fra højre i stedet for
-   nedefra — så kalenderen kan ses, mens man retter */
+/* ─── Bred skærm: appen bruger vinduet ──────────────────── */
+/* Over 1000 px er appen op til 1200 px bred. Hurtigstarten får så mange
+   spalter, der er plads til, Lectio-ugerne står to og to, dagens liste står
+   ved siden af kalenderens akse, og redigeringsarket kommer ind fra højre i
+   stedet for nedefra — så kalenderen kan ses, mens man retter. Formularerne
+   i Aktiviteter og Indstillinger holdes i en læsbar bredde. */
 @media (min-width:1000px){
-  #app[data-view="historik"]{
-    --app-max:1100px;
+  :root{
+    --app-max:1200px;
     --app-kant:max(0px,calc((100% - var(--app-max)) / 2));
   }
+  #view-aktiviteter,#view-indstillinger{max-width:820px}
+
+  .quickstart-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .qs-lang{grid-column:auto}
+  .special-btns{flex-direction:row}
+  .special-btns > *{flex:1}
+
+
   .kal-dag-ramme{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
   .kal-dagliste{display:flex;flex-direction:column;gap:6px;position:sticky;top:12px}
 
@@ -1146,6 +1157,42 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .periode-nu{display:flex;margin-bottom:16px}
 
 .rapport-content{display:flex;flex-direction:column}
+
+/* ─── Lectio: skoleåret som uger med fra–til pr. dag ────── */
+.lectio{display:flex;flex-direction:column;gap:14px}
+.lectio-forklaring{font-size:0.88rem;color:var(--text-2);line-height:1.45}
+.lectio-uge{
+  background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);
+  overflow:hidden;
+}
+.lectio-uge-hoved{
+  display:flex;align-items:baseline;gap:10px;padding:9px 14px;
+  background:var(--tint);border-bottom:2px solid var(--ink);
+}
+.lectio-uge-nr{font-family:var(--display);font-weight:800;font-size:1rem;letter-spacing:-0.01em}
+.lectio-uge-dato{font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.08em;color:var(--slate)}
+.lectio-uge-sum{margin-left:auto;font-family:var(--display);font-weight:800;font-size:0.9rem}
+.lectio-tabel{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lectio-tabel th,.lectio-tabel td{padding:7px 14px;text-align:left}
+.lectio-tabel thead th{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--slate);padding-bottom:3px;
+}
+.lectio-tabel tbody th{font-family:var(--display);font-weight:700;font-size:0.88rem;white-space:nowrap}
+.lectio-tabel tbody tr{border-top:1.5px solid var(--rule)}
+.lectio-tabel tbody tr.lectio-note{border-top:0}
+.lectio-kl{font-family:var(--display);font-weight:800;font-size:1.02rem}
+.lectio-sum{font-family:var(--mono);font-size:0.7rem;font-weight:600;color:var(--text-2);text-align:right!important}
+.lectio-tom{color:var(--text-3)}
+.lectio-idag{background:var(--paper-2)}
+.lectio-note td{padding-top:0;font-size:0.78rem;color:var(--text-2);line-height:1.35}
+.lectio-ingen{padding:10px 14px;color:var(--slate);font-size:0.88rem}
+/* Bred skærm: ugerne to og to, nyeste øverst til venstre */
+@media (min-width:1000px){
+  .lectio{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .lectio-forklaring{grid-column:1 / -1}
+}
 
 .rapport-summary{
   /* 9 px accentstribe øverst, som på simuleringernes panel */

@@ -53,6 +53,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `version-og-cache.mjs` | versionen i Indstillinger, og at tid ikke sletter navneApps cache |
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
 | `kalender-redigering.mjs` | korte blokke kan rammes, zoom, dagens liste og arket i siden på bred skærm, træk med musen, snap til naboen, advarsel ved overlap og Fortryd |
+| `lectio.mjs` | Lectio-fanen: uger nyeste først, fra + registreret tid = til, huller og overlap med småt, sekunder giver ikke et falsk hul |
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
 | `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter og registreringer; gendan en rettet fil (nye uden id, tider med og uden tidszone, sletning), fejl i filen, gammel fil uden indstillinger |

@@ -15,6 +15,7 @@ import {
 } from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
 import { beregnUdvikling, tegnUdvikling, bindUdvikling } from './udvikling.js';
+import { tegnLectio } from './lectio.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
   forskydningFor, skoleaarForPeriode, datoInput
@@ -27,6 +28,7 @@ import {
 let userId       = null;
 let periodFilter = 'skolear';
 let periodOffset = 0;          // 0 = perioden vi står i, -1 = den forrige
+let lectio       = false;      // fanen «Lectio»: skoleåret som uger til Lectio
 let listenersOk  = false;
 let entries      = [];
 let unsubEntries = null;
@@ -62,6 +64,14 @@ function anker() {
 }
 
 function setPeriod(type) {
+  // «Lectio» viser skoleåret — bare som uger i stedet for regnskab
+  const tilLectio = type === 'lectio';
+  if (tilLectio) type = 'skolear';
+  if (tilLectio !== lectio) {
+    lectio = tilLectio;
+    markerFaner();
+    if (type === periodFilter) { renderReport(); return; }
+  }
   if (type === periodFilter) return;
   periodOffset = forskydningFor(type, anker());
   periodFilter = type;
@@ -82,7 +92,7 @@ function tilNu() {
 
 function markerFaner() {
   document.querySelectorAll('.rapport-tab').forEach(b =>
-    b.classList.toggle('rapport-tab-active', b.dataset.period === periodFilter));
+    b.classList.toggle('rapport-tab-active', b.dataset.period === (lectio ? 'lectio' : periodFilter)));
 }
 
 // ─── Firestore listener ───────────────────────────────────
@@ -208,6 +218,7 @@ function renderReport() {
   renderPeriodeBar();
   const el = document.getElementById('rapport-content');
   if (!el) return;
+  if (lectio) { el.innerHTML = tegnLectio(entries, start(), slut()); return; }
   const acts = getLoadedActivities();
   const { rows, uboundMins, pauseMins, totalMins, archivedRows, archivedMins, filtered, year } = aggregate(acts);
 
