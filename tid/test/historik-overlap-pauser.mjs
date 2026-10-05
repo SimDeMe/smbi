@@ -25,7 +25,8 @@ const act = (id, name, extra = {}) => [`users/u1/activities/${id}`, { name, type
 const settings = ['users/u1/settings/config', { currentSchoolYear: '2026/27' }];
 const idag = (h, m = 0) => { const d = new Date(); d.setHours(h, m, 0, 0); return d.getTime(); };
 const post = (id, a, s, e, extra = {}) => [`users/u1/entries/${id}`, { activityId: a, workType: null, startTime: { __ts: s }, endTime: e == null ? null : { __ts: e }, durationMinutes: e == null ? null : Math.round((e - s) / 60000), note: '', isModule: false, autoStopped: false, ...extra }];
-const tilHistorik = async page => { await page.click('.nav-btn[data-view="historik"]'); await page.waitForSelector('#view-historik:not(.hidden)'); };
+// Historik åbner i kalenderen — testene her ser på listen
+const tilHistorik = async page => { await page.click('.nav-btn[data-view="historik"]'); await page.waitForSelector('#view-historik:not(.hidden)'); await page.click('.hist-mode-tab[data-mode="liste"]'); };
 
 const browser = await chromium.launch();
 

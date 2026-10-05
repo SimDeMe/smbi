@@ -50,7 +50,9 @@ await page.click('#saet-backdrop', { position: { x: 5, y: 5 } }); await page.wai
 ok(await page.isHidden('#saet-sheet') && await page.isHidden('#saet-backdrop'), 'rettet-sæt-arket lukker via baggrunden');
 
 // Historik: liste og kalender
-await page.click('.nav-btn[data-view="historik"]'); await page.waitForSelector('.entry-row');
+await page.click('.nav-btn[data-view="historik"]'); await page.waitForSelector('#hist-mode-kalender:not(.hidden)');
+ok(await page.isHidden('#hist-mode-liste'), 'Historik åbner i kalenderen');
+await page.click('.hist-mode-tab[data-mode="liste"]'); await page.waitForSelector('.entry-row');
 const rk = (await page.textContent('.entry-row[data-id="e1"]')).replace(/\s+/g, ' ');
 ok(rk.includes('08:00') && rk.includes('1t 35m') && rk.includes('Undervisning'), 'listerække: ' + rk.trim());
 const hoved = await page.$$eval('.entry-day-head, .day-header, h3', h => h.map(x => x.textContent.trim()).slice(0, 2));
@@ -73,6 +75,11 @@ await page.click('.kal-vis-tab[data-vis="aar"]'); await page.waitForTimeout(300)
 ok((await page.$$('.kal-aar-md')).length === 12, 'årsvisning tegnes');
 await page.click('.kal-vis-tab[data-vis="dag"]'); await page.waitForTimeout(300);
 ok((await page.textContent('#kal-total')) === '2t 20m', 'kalenderens total: ' + await page.textContent('#kal-total'));
+// Står man i listen og skifter fane, åbner Historik igen i kalenderen
+await page.click('.hist-mode-tab[data-mode="liste"]');
+await page.click('.nav-btn[data-view="hjem"]'); await page.click('.nav-btn[data-view="historik"]');
+await page.waitForSelector('#hist-mode-kalender:not(.hidden)');
+ok(await page.isHidden('#hist-mode-liste'), 'Historik åbner i kalenderen igen efter et fanebesøg');
 
 // Rapporter
 await page.click('.nav-btn[data-view="rapporter"]'); await page.waitForTimeout(500);

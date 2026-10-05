@@ -59,10 +59,11 @@ export function initKalenderView(uid) {
   bindListeners();
 }
 
-// Kaldes når Historik-fanen åbnes
+// Kaldes når Historik-fanen åbnes. Kalenderen er standard — listen er der,
+// når man selv vælger den, men fanen åbner altid i kalenderen
 export function refreshKalender() {
-  if (!userId || !isVisible) return;
-  setupEntriesListener();
+  if (!userId) return;
+  setMode('kalender');
 }
 
 // ─── Visningsskift (Liste / Kalender) ─────────────────────

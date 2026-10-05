@@ -47,7 +47,7 @@ const tabRundt = async (page, sel, n = 25) => { for (let i = 0; i < n; i++) { aw
   ok(await page.evaluate(() => !document.getElementById('app').inert), 'appen er ikke inert efter lukning');
 
   // Historik-arket med Escape og bagefter normal brug
-  await page.click('.nav-btn[data-view="historik"]'); await page.waitForSelector('.entry-row');
+  await page.click('.nav-btn[data-view="historik"]'); await page.click('.hist-mode-tab[data-mode="liste"]'); await page.waitForSelector('.entry-row');
   await page.focus('.entry-row[data-id="e1"]'); await page.keyboard.press('Enter');
   await page.waitForSelector('#hist-sheet.open');
   ok(await page.evaluate(() => document.getElementById('hist-sheet').getAttribute('aria-labelledby')) === 'hist-sheet-title', 'hist-sheet bruger sin titel');

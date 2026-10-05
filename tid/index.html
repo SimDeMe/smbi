@@ -186,11 +186,11 @@
         </div>
 
         <div class="hist-mode-tabs">
-          <button class="hist-mode-tab hist-mode-tab-active" data-mode="liste">Liste</button>
-          <button class="hist-mode-tab" data-mode="kalender">Kalender</button>
+          <button class="hist-mode-tab hist-mode-tab-active" data-mode="kalender">Kalender</button>
+          <button class="hist-mode-tab" data-mode="liste">Liste</button>
         </div>
 
-        <div id="hist-mode-liste">
+        <div id="hist-mode-liste" class="hidden">
           <div class="hist-filters">
             <select id="hist-period-select" class="select-pill">
               <option value="dag">I dag</option>
@@ -205,7 +205,7 @@
           <div id="hist-list" class="hist-list"></div>
         </div>
 
-        <div id="hist-mode-kalender" class="hidden">
+        <div id="hist-mode-kalender">
           <div class="kal-vis-tabs" id="kal-vis-tabs" role="tablist" aria-label="Kalendervisning">
             <button class="kal-vis-tab kal-vis-tab-active" data-vis="dag">Dag</button>
             <button class="kal-vis-tab" data-vis="uge">Uge</button>
