@@ -83,6 +83,34 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   Mulig løsning: en valgfri periode (fra–til) på en linje, så dens timer
   kun trækkes fra arbejdsdagene i perioden — som ferien i `ferie.js`.
 
+- [ ] **Start- og slutdato på opgaver og hold.** I dag optjenes en løbende
+  opgave jævnt over hele skoleåret (`OPTJENING_HJAELP` i `activities.js`,
+  regnskabet i `akkord.js`), og et hold gør det samme. Et hold, der kører
+  aug–dec, eller et udvalg, der først starter i januar, giver derfor skæv
+  «optjent» og «foran/bagud». Valgfri fra–til på aktiviteten, så budgettet
+  kun optjenes over arbejdsdagene i perioden (`ferie.js` springer weekender,
+  helligdage og ferie over). Tomme felter = hele skoleåret, som nu. Samme
+  mekanisme kan løse barsel-punktet ovenfor. Husk import-kolonnerne,
+  formularen, hjælpesiden og test.
+
+### Hastighed
+
+- [ ] **Hurtigere opstart på mobil.** Allerede gjort: service-workeren
+  serverer hele appen fra cachen (`service-worker.js`), Firestore har
+  `persistentLocalCache`, og modulerne er `modulepreload`. Mål først med en
+  langsom telefon (Chrome DevTools, «Slow 4G» + 4× CPU) og se, hvor tiden går.
+  Mulige syndere:
+  - `onAuthStateChanged` venter på, at Firebase Auth har læst login fra
+    IndexedDB, før noget vises — kunne vise appen straks, hvis en lokal
+    markering siger, at man var logget ind sidst.
+  - `await initIndstillingerView()` i `app.js` holder resten tilbage; læser
+    den fra serveren i stedet for cachen (`getDocFromCache` først)?
+  - Firebase-SDK'et (gstatic) og Google Fonts er på andre domæner og
+    caches ikke af service-workeren — kun browserens egen cache. Overvej at
+    lægge SDK-filerne og skrifterne lokalt i `tid/` og i cachelisten.
+  - Alle views initialiseres ved opstart; kalender, rapporter og Lectio
+    kunne vente, til fanen åbnes første gang.
+
 ### Tilgængelighed
 
 - [x] **Arkene har ingen tastaturhåndtering.** Arkene og onboarding er nu
