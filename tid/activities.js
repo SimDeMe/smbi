@@ -5,6 +5,7 @@ import { fmtMins, esc } from './format.js';
 import { openSheet, closeSheet, somKnap } from './ark.js';
 import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, timerTilModuler, erModulform } from './normer.js';
 import { optjeningFor } from './akkord.js';
+import { periodeTekst, tolkDato, etAarSenere } from './aktivitetsperiode.js';
 import { renderSaetListe } from './rettet.js';
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
@@ -199,6 +200,7 @@ function actRow(a, child = false, spentMins = 0) {
     <div class="act-row-body">
       <div class="act-row-name">${esc(a.name)}</div>
       ${a.note ? `<div class="act-row-note">${esc(a.note)}</div>` : ''}
+      ${a.fra || a.til ? `<div class="act-row-note act-row-periode">${periodeTekst({ fra: a.fra, til: a.til })}</div>` : ''}
       <div class="act-row-stats">${stats}</div>
     </div>
     <div class="act-row-meta">
@@ -235,6 +237,8 @@ function openActSheet(actId) {
   if (optRadio) optRadio.checked = true;
   document.getElementById('act-fremdrift').value = a?.fremdrift ?? '';
   document.getElementById('act-faelles').checked = !a?.udenFaellesTid;
+  document.getElementById('act-fra').value = a?.fra || '';
+  document.getElementById('act-til').value = a?.til || '';
   renderSaetListe(a);
   toggleParentField(typeVal);
   populateParentSelect(a?.schoolYear || selectedYear, a?.parentId || '');
@@ -264,7 +268,7 @@ function toggleParentField(type) {
 // ─── Optjening (kun opgaver) ──────────────────────────────
 // Hvordan opgavens budget tælles som optjent i akkordregnskabet — se akkord.js
 const OPTJENING_HJAELP = {
-  loebende:   'Budgettet optjenes jævnt hen over skoleåret — fx udvalg og teamledelse.',
+  loebende:   'Budgettet optjenes jævnt hen over skoleåret (eller perioden nedenfor) — fx udvalg og teamledelse.',
   afslutning: 'Intet er optjent, før du trykker «Afslut opgave» — så er hele budgettet optjent. Fx eksamen og SRP.',
   manuel:     'Du skriver selv, hvor stor en del af opgaven der er færdig.'
 };
@@ -396,17 +400,20 @@ async function saveActivity(e) {
   const fremdrift   = optjening === 'manuel' && fremdriftV != null
     ? Math.min(100, Math.max(0, fremdriftV)) : null;
   const udenFaellesTid = !document.getElementById('act-faelles').checked;
+  const fra = document.getElementById('act-fra').value || null;
+  const til = document.getElementById('act-til').value || null;
+  if (fra && til && til < fra) { showToast('Perioden slutter før den begynder'); return; }
 
   const btn = document.getElementById('act-save-btn');
   btn.disabled = true;
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, fra, til });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid,
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, fra, til,
           order: nextOrder(), isArchived: false });
       showToast('Aktivitet oprettet');
     }
@@ -486,8 +493,9 @@ async function toggleArchive() {
 }
 
 // ─── Import fra tekst ─────────────────────────────────────
-// Én linje pr. aktivitet: navn; type; budget; parent; optjening.
+// Én linje pr. aktivitet: navn; type; budget; parent; optjening; fra; til.
 // Optjeningen gælder kun opgaver og kan skrives, som den står i formularen.
+// Fra og til er en valgfri periode; en dato, der ikke kan læses, droppes.
 const OPTJENING_ORD = {
   'løbende': 'loebende', 'loebende': 'loebende', 'lobende': 'loebende',
   'afslutning': 'afslutning', 'ved afslutning': 'afslutning',
@@ -500,9 +508,11 @@ export function tolkImport(raw) {
     .map(line => {
       const p = line.split(';').map(s => s.trim());
       const optjening = OPTJENING_ORD[(p[4] || '').toLowerCase()] || null;
+      let fra = tolkDato(p[5]) || null, til = tolkDato(p[6]) || null;
+      if (fra && til && til < fra) [fra, til] = [til, fra];
       return { name: p[0], type: p[1]?.toLowerCase() === 'hold' && !p[3] ? 'hold' : 'opgave',
                budget: tolkTal(p[2]), parent: p[3] || null,
-               optjening: optjening || 'loebende', angivet: !!optjening };
+               optjening: optjening || 'loebende', angivet: !!optjening, fra, til };
     }).filter(p => p.name);
 }
 
@@ -529,7 +539,7 @@ async function doImport() {
         name: p.name, type: p.type, parentId: null,
         budgetHours: p.budget, color: COLOR_PALETTE[(activities.length + i) % COLOR_PALETTE.length],
         schoolYear: year, note: '', order: nextOrder() + i, isArchived: false,
-        optjening: p.type === 'opgave' ? p.optjening : null
+        optjening: p.type === 'opgave' ? p.optjening : null, fra: p.fra, til: p.til
       });
       nameToId[p.name] = ref.id;
       i++;
@@ -539,7 +549,7 @@ async function doImport() {
         name: p.name, type: 'opgave', parentId: nameToId[p.parent] || null,
         budgetHours: p.budget, color: COLOR_PALETTE[(activities.length + i) % COLOR_PALETTE.length],
         schoolYear: year, note: '', order: nextOrder() + i, isArchived: false,
-        optjening: p.optjening
+        optjening: p.optjening, fra: p.fra, til: p.til
       });
       i++;
     }
@@ -581,17 +591,19 @@ async function doCopy() {
     const colRef = collection(db, `users/${userId}/activities`);
     const idMap  = {};
 
-    // Kun strukturen følger med — rettede sæt og fremdrift er det gamle års
+    // Kun strukturen følger med — rettede sæt og fremdrift er det gamle års.
+    // En periode flyttes et år frem, så grundforløbet igen ligger i efteråret.
+    const flyt = a => ({ fra: etAarSenere(a.fra), til: etAarSenere(a.til) });
     for (const a of source.filter(a => !a.parentId)) {
       const newRef = doc(colRef);
       idMap[a.id] = newRef.id;
       const { id, rettedeSaet, fremdrift, ...rest } = a;
-      batch.set(newRef, { ...rest, schoolYear: targetYear, parentId: null });
+      batch.set(newRef, { ...rest, ...flyt(a), schoolYear: targetYear, parentId: null });
     }
     for (const a of source.filter(a => a.parentId)) {
       const newRef = doc(colRef);
       const { id, rettedeSaet, fremdrift, ...rest } = a;
-      batch.set(newRef, { ...rest, schoolYear: targetYear, parentId: idMap[a.parentId] || null });
+      batch.set(newRef, { ...rest, ...flyt(a), schoolYear: targetYear, parentId: idMap[a.parentId] || null });
     }
 
     await batch.commit();

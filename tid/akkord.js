@@ -22,6 +22,9 @@
 // sig, i det skoleår de betales. Et hold uden normgrundlag optjener sit budget
 // jævnt over året, ligesom en løbende opgave.
 //
+// «Jævnt over året» er over aktivitetens periode, hvis den har en (fx et
+// grundforløb aug–nov) — se aktivitetsperiode.js. Uden periode: hele året.
+//
 // Opgaver optjener efter deres optjeningsmåde: løbende (jævnt over året), ved
 // afslutning (intet, til den afsluttes) eller manuelt (en procent). En
 // afsluttet aktivitet — opgave eller hold — har altid optjent hele sit budget.
@@ -83,8 +86,11 @@ function akkordBudget(a) {
 // acts:    alle aktiviteter (filtreres til skoleåret her)
 // entries: skoleårets afsluttede registreringer, pauser medregnet
 // andel:   den del af skoleåret, der er gået (0–1)
+// andelFor: den del af aktivitetens egen periode, der er gået — uden den
+//          bruges `andel` for alle
 // fordel:  skal den fælles tid fordeles på aktiviteterne?
-export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
+export function beregnAkkord({ acts, entries, aar, andel, andelFor = null, fordel }) {
+  const andelAf = a => andelFor ? andelFor(a) : andel;
   const aarets  = acts.filter(a => a.schoolYear === aar);
   const iAaret  = new Set(aarets.map(a => a.id));
   const harBudget = a => akkordBudget(a) != null;
@@ -114,7 +120,7 @@ export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
   const enheder = {};
   aarets.forEach(a => {
     if (a.parentId && harBudget(a)) {
-      enheder[a.id] = enhed(a, direkte[a.id] || 0, wt[a.id] || {}, akkordBudget(a), andel);
+      enheder[a.id] = enhed(a, direkte[a.id] || 0, wt[a.id] || {}, akkordBudget(a), andelAf(a));
       return;
     }
     if (a.parentId) return;                     // under forælderens akkord
@@ -127,7 +133,7 @@ export function beregnAkkord({ acts, entries, aar, andel, fordel }) {
         .reduce((s, c) => s + akkordBudget(c), 0);
       budget = Math.max(0, budget - boernsBudget);
     }
-    enheder[a.id] = enhed(a, brugt, wt[a.id] || {}, budget, andel);
+    enheder[a.id] = enhed(a, brugt, wt[a.id] || {}, budget, andelAf(a));
   });
 
   // Opgaver uden budget er fælles tid, til de får et

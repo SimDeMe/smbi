@@ -58,6 +58,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
 | `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter og registreringer; gendan en rettet fil (nye uden id, tider med og uden tidszone, sletning), fejl i filen, gammel fil uden indstillinger |
 | `udvikling.mjs` | graferne i skoleårs-rapporten: foran/bagud skema og akkordsaldoen uge for uge, ender i sammendragets tal, afsluttet opgave optjener fra sin dato |
+| `periode.mjs` | periode (fra–til) på hold og opgaver: foran/bagud og markøren regner budgettet i perioden, løbende optjening kun i perioden, under-opgave arver, formular, import og kopi til næste år (fast dato: 2. okt. 2026) |
 | `portefolje-andet.mjs` | frikøb, barsel og overførte timer: indtastning, gem, rapportens norm og portefølje |
 
 Ret en fejl → lav en test, der fejler uden rettelsen, og læg den her.

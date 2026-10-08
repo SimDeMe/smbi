@@ -10,6 +10,7 @@ import { getSettings, gemIndstilling, aarsnorm, andetSum, FULD_AARSNORM, FLEKSBA
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { forloebIArbejdsdage, ferieFor } from './ferie.js';
+import { aktivitetsAndel, forventetM, periodeFor, periodeTekst } from './aktivitetsperiode.js';
 import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
 } from './akkord.js';
@@ -224,11 +225,12 @@ function renderReport() {
 
   // Akkordregnskabet gælder hele skoleåret — budgetterne er årets
   const ak = periodFilter === 'skolear'
-    ? beregnAkkord({ acts, entries: filtered, aar: year, andel: forloebAndel(), fordel: fordelFaelles() })
+    ? beregnAkkord({ acts, entries: filtered, aar: year, andel: forloebAndel(),
+        andelFor: a => aktivitetsAndel(a, acts, aarsPeriode(year)), fordel: fordelFaelles() })
     : null;
 
   el.innerHTML =
-    renderSummary(totalMins, ak) +
+    renderSummary(totalMins, ak, acts) +
     renderUdvikling(acts, filtered, year) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
@@ -262,13 +264,17 @@ function forloebAndel() {
   return forloebIArbejdsdage(start(), slut(), ferieFor(aar));
 }
 
+// Normperioden og ferien — det, aktivitetsperiode.js regner andele i
+const aarsPeriode = aar => ({ start: start(), slut: slut(), ferie: ferieFor(aar) });
+
 const aaretAfsluttet = () => Date.now() >= slut().getTime();
 
-// Foran/bagud-chippen. Et afsluttet skoleår sammenlignes med hele normen,
-// ikke med "skema".
-function forloebChip(brugtM, normM, elapsed, lille = false) {
+// Foran/bagud-chippen mod den tid, der burde være registreret — normen
+// jævnt over året, men med aktiviteternes budget i deres egne perioder.
+// Et afsluttet skoleår sammenlignes med hele normen, ikke med "skema".
+function forloebChip(brugtM, forventet, elapsed, lille = false) {
   if (elapsed === 0) return '';
-  const diff  = brugtM - Math.round(normM * elapsed);
+  const diff  = brugtM - forventet;
   const diffH = Math.abs(Math.round(diff / 60));
   const slut  = aaretAfsluttet();
   const kl    = `forecast-chip${lille ? ' forecast-chip-sm' : ''}`;
@@ -278,7 +284,7 @@ function forloebChip(brugtM, normM, elapsed, lille = false) {
 }
 
 // ─── Summary card ─────────────────────────────────────────
-function renderSummary(totalMins, ak) {
+function renderSummary(totalMins, ak, acts) {
   const year = skoleaarForPeriode(periodFilter, periodOffset);
   let extra  = '';
 
@@ -291,8 +297,9 @@ function renderSummary(totalMins, ak) {
     const SKAL    = NORM - ANDET;
     const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
-    const expPct  = Math.min(99, Math.round(elapsed * 100));
-    const chip    = forloebChip(totalMins, normM, elapsed);
+    const forv    = forventetM({ acts, aar: year, normM, ...aarsPeriode(year) });
+    const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
+    const chip    = forloebChip(totalMins, forv, elapsed);
 
     extra = `
       <div class="norm-progress-outer">
@@ -625,8 +632,9 @@ function akkordLinje(act, ak, kids = []) {
   const maade = egen.maade === 'manuel'
     ? `${MAADE_TEKST.manuel} ${Math.round(Number(act.fremdrift) || 0)}%`
     : act.type === 'hold' ? 'Løbende · uden normgrundlag' : MAADE_TEKST[egen.maade];
+  const per = egen.maade === 'loebende' ? periodeTekst(periodeFor(act, getLoadedActivities())) : '';
   return `<div class="rapport-akkord">
-    <span class="rapport-akkord-maade">${maade}${udenFaelles(act, ak)}</span>
+    <span class="rapport-akkord-maade">${maade}${per ? ` · ${per}` : ''}${udenFaelles(act, ak)}</span>
     <span>Optjent <b>${fmtMins(u.optjent)}</b></span>
     ${u.faelles > 0 ? `<span>Fælles <b>${fmtMins(u.faelles)}</b></span>` : ''}
     ${saldoChip(u.saldo)}

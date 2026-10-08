@@ -571,6 +571,20 @@
             <input class="form-input" type="number" id="act-fremdrift" min="0" max="100" step="1" placeholder="fx 40">
           </div>
         </div>
+        <fieldset class="form-group norm-felt" id="field-periode">
+          <legend class="form-label">Periode <span class="form-optional">(valgfri — tom = hele skoleåret)</span></legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="act-fra">Fra</label>
+              <input class="form-input" type="date" id="act-fra">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="act-til">Til <span class="form-optional">(med)</span></label>
+              <input class="form-input" type="date" id="act-til">
+            </div>
+          </div>
+          <p class="form-hint" id="act-periode-hint">Fx et grundforløb aug–nov eller eksamen i maj–juni. Foran/bagud regner med, at budgettet bruges i perioden, og løbende optjening sker kun over periodens arbejdsdage.</p>
+        </fieldset>
         <div class="form-group">
           <label class="akkord-fordel" for="act-faelles">
             <input type="checkbox" id="act-faelles" class="settings-check" checked>
@@ -616,13 +630,15 @@
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <p class="sheet-desc">Én linje per aktivitet — format: <code>navn; type; budget; parent; optjening</code>.
-        Optjening (kun opgaver) er <code>løbende</code>, <code>afslutning</code> eller <code>manuel</code>; uden den optjenes løbende.</p>
+      <p class="sheet-desc">Én linje per aktivitet — format: <code>navn; type; budget; parent; optjening; fra; til</code>.
+        Optjening (kun opgaver) er <code>løbende</code>, <code>afslutning</code> eller <code>manuel</code>; uden den optjenes løbende.
+        Fra og til er en valgfri periode (<code>2027-05-01</code> eller <code>1/5-2027</code>); uden dem gælder hele skoleåret.</p>
       <div class="import-example">
         <div class="import-example-code">3g Ng; hold; 288
 Eksamen og prøver; opgave; 80
 SRP; opgave; 20; Eksamen og prøver; afslutning
-Vejledning; opgave; 40</div>
+Vejledning; opgave; 40
+1g grundforløb; hold; 60; ; ; 2026-08-10; 2026-11-27</div>
       </div>
       <div class="form-group">
         <label class="form-label" for="import-year">Skoleår</label>

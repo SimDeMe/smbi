@@ -1,4 +1,4 @@
-const CACHE = 'tid-v49';
+const CACHE = 'tid-v50';
 const SHELL = [
   '/tid/',
   '/tid/index.html',
@@ -26,6 +26,7 @@ const SHELL = [
   '/tid/ferie.js',
   '/tid/backup.js',
   '/tid/udvikling.js',
+  '/tid/aktivitetsperiode.js',
   '/tid/firebase-config.js',
   '/tid/manifest.json',
   '/tid/icons/icon.svg',

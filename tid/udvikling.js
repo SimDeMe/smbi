@@ -3,7 +3,8 @@
 // To kurver, uge for uge gennem skoleåret, begge i timer:
 //
 //   Skema  = registreret tid − den del af normen, der burde være brugt
-//            (samme regning som chippen: arbejdsdage, ferie trukket fra)
+//            (samme regning som chippen: arbejdsdage, ferie trukket fra, og
+//            aktiviteter med periode vægtet i perioden — aktivitetsperiode.js)
 //   Akkord = optjent − brugt (samme regning som saldoen i akkordregnskabet)
 //
 // Hvert punkt regnes, som tallene stod ved ugens begyndelse: kun tid
@@ -17,6 +18,7 @@
 import { beregnAkkord } from './akkord.js';
 import { erPause } from './pauser.js';
 import { forloebIArbejdsdage } from './ferie.js';
+import { aktivitetsAndel, forventetM } from './aktivitetsperiode.js';
 import { addDays, mandag, datoInput, MAANEDER_KORT } from './periode.js';
 import { esc } from './format.js';
 
@@ -84,11 +86,12 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, normM,
     const med   = sidst ? poster : poster.filter(p => p.t < d);
     const brugt = med.reduce((s, p) => s + p.m, 0);
     const andel = forloebIArbejdsdage(start, slut, ferie, d);
-    skema.push({ d, v: brugt - Math.round(normM * andel) });
+    skema.push({ d, v: brugt - forventetM({ acts, aar, normM, start, slut, ferie, nu: d }) });
 
     const ak = beregnAkkord({
       acts: sidst ? acts : aktiviteterVed(acts, d, afsluttet),
-      entries: med.map(p => p.e), aar, andel, fordel
+      entries: med.map(p => p.e), aar, andel, fordel,
+      andelFor: a => aktivitetsAndel(a, acts, { start, slut, ferie, nu: d })
     });
     akkord.push({ d, v: ak.akkord > 0 ? ak.saldo : null });
   });

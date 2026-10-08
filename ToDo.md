@@ -83,15 +83,14 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   Mulig løsning: en valgfri periode (fra–til) på en linje, så dens timer
   kun trækkes fra arbejdsdagene i perioden — som ferien i `ferie.js`.
 
-- [ ] **Start- og slutdato på opgaver og hold.** I dag optjenes en løbende
-  opgave jævnt over hele skoleåret (`OPTJENING_HJAELP` i `activities.js`,
-  regnskabet i `akkord.js`), og et hold gør det samme. Et hold, der kører
-  aug–dec, eller et udvalg, der først starter i januar, giver derfor skæv
-  «optjent» og «foran/bagud». Valgfri fra–til på aktiviteten, så budgettet
-  kun optjenes over arbejdsdagene i perioden (`ferie.js` springer weekender,
-  helligdage og ferie over). Tomme felter = hele skoleåret, som nu. Samme
-  mekanisme kan løse barsel-punktet ovenfor. Husk import-kolonnerne,
-  formularen, hjælpesiden og test.
+- [x] **Start- og slutdato på opgaver og hold.** Valgfri periode (fra–til)
+  på hver aktivitet (`aktivitetsperiode.js`). Løbende opgaver og hold uden
+  normgrundlag optjener kun over periodens arbejdsdage, og «foran/bagud
+  skema» (chip, markør og kurve) regner med, at budgettet bruges i perioden —
+  et grundforløb i efteråret og eksamen i juni giver ikke længere skæv
+  fordeling. Under-opgaver arver forælderens periode; import har kolonnerne
+  `fra; til`, og «Kopiér til næste år» flytter perioden et år frem. Barsel
+  ovenfor kan løses med samme regning.
 
 ### Hastighed
 
