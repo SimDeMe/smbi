@@ -1,4 +1,4 @@
-const CACHE = 'tid-v50';
+const CACHE = 'tid-v51';
 const SHELL = [
   '/tid/',
   '/tid/index.html',
@@ -33,6 +33,8 @@ const SHELL = [
   '/tid/icons/icon-180.png',
   '/tid/icons/icon-192.png',
   '/tid/icons/icon-512.png',
+  '/tid/icons/favicon.svg',
+  '/tid/icons/favicon-32.png',
 ];
 
 self.addEventListener('install', e => {

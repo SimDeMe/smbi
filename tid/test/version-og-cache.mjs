@@ -76,7 +76,20 @@ SW = 'allow';
   const hoejde = await page.evaluate(() => [...document.styleSheets].flatMap(s => { try { return [...s.cssRules]; } catch { return []; } })
     .find(r => r.selectorText === '#app')?.style.height);
   ok(hoejde === '100dvh', '#app er 100dvh høj: ' + hoejde);
+
+  // Eget favicon (smbi-boksen med visere) — ellers viser fanen en grå globus.
+  // Det skal kunne hentes og ligge i cachen, så det også er der offline.
+  const ikon = await page.evaluate(async () => {
+    const href = document.querySelector('link[rel="icon"][type="image/svg+xml"]')?.href;
+    const svar = href && await fetch(href);
+    return { href, ok: !!svar?.ok, cachet: !!(href && await caches.match(href)) };
+  });
+  ok(ikon.href?.endsWith('/tid/icons/favicon.svg') && ikon.ok && ikon.cachet, 'favicon findes og er cachet: ' + JSON.stringify(ikon));
   await ctx.close();
+}
+for (const s of ['hjaelp.html', 'installer.html']) {
+  const html = fs.readFileSync(HER + '../' + s, 'utf8');
+  ok(html.includes('href="icons/favicon.svg"'), s + ' har favicon');
 }
 await browser.close();
 console.log(fejl.length ? '\nFEJL:\n' + fejl.join('\n') : '\nAlt OK');
