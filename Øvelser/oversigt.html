@@ -365,10 +365,13 @@ td.note{color:var(--slate);font-size:.86rem;max-width:34ch}
       </ul>
       <h2>Det der mangler</h2>
       <ul>
-        <li>Alle geografi-vejledninger på nær HF-varianten og de fire NV-vejledninger
-            (<code>hold: "NV"</code>) har <b>tomme <code>fag</code>- og
-            <code>hold</code>-felter</b> i deres YAML-hoved. Derfor står sidehovedet tomt i den
-            renderede HTML og PDF. Biologi-øvelserne har alle <code>fag: "Biologi"</code>.</li>
+        <li>Fem geografi-vejledninger har stadig <b>tomt <code>fag</code>-felt</b> i deres
+            YAML-hoved: <code>digital-kystopmaaling-rojle</code>, <code>konvektionskammer</code>,
+            <code>konvektionskammer-med-opgaver</code>, <code>opmaaling-af-terraenprofil</code> og
+            <code>poroesitet-og-permeabilitet-med-opgaver</code>. Derfor står sidehovedet tomt i den
+            renderede HTML og PDF. De øvrige har <code>fag: "Naturgeografi"</code>, og
+            biologi-øvelserne har alle <code>fag: "Biologi"</code>. <code>hold</code> er kun udfyldt
+            i HF-varianten og NV-vejledningerne.</li>
         <li><b>Efterslæb efter standarden fra 14.&nbsp;september 2026:</b> begge afsnit —
             <code>## Databehandling</code> og <code>## Journalspørgsmål</code> — skal nu være med i
             <i>alle</i> vejledninger, ikke kun i de nyeste. Databehandling må kun mangle, hvor øvelsen
@@ -694,6 +697,10 @@ const ØVELSER = [
 {fag:'geo',navn:'Havniveau og isafsmeltning',emne:'Hav og kyst',type:'Modelforsøg',sti:'Geografi/havniveau-og-isafsmeltning',fil:'havniveau-og-isafsmeltning',
  niveau:'NV · C',niveauFormodet:false,quarto:true,data:'ja',spg:'ja',
  note:'Ny 2026-10-02 som NV-version af forsøget i NV-forløbets modul 3 (NV/Modul 3 - Vandets kredsløb/Opgaver og vejledninger/Undersøgelse af havniveaustigninger.docx), der selv bygger på klimaforandringer.science.ku.dk. Is på land og is i havet i to kar under lampe. Nyt: isen vejes og karret måles, så den forventede stigning Δh = m/(ρ·A) kan sammenlignes med den målte. Arbejdsspørgsmålene om tilstandsformer og Golfstrømmen er lagt ind som journalspørgsmål. NV-arkets fotos og KU-figur er ikke genbrugt — selvtegnet opstillingsfigur. Kort med NV- og C-mærke.'},
+
+{fag:'geo',navn:'Reserve og ressource',emne:'Energi og ressourcer',type:'Simuleringsøvelse',sti:'Geografi/reserve-og-ressource',fil:'reserve-og-ressource',
+ niveau:'Ng B',niveauFormodet:true,quarto:true,data:'ja',spg:'ja',
+ note:'Ny 2026-10-08 til simuleringen geografi/raastoffer.html (McKelvey-kassen for kobber). Ingen original i arkivet — bygger på NaturgeografiGrundbogen B, afsnit 12.6 «Fremtidens råstoffer». Fem dele: pris, teknologi, genanvendelse, fire scenarier over tid (A–D, med og uden «Markedet styrer») og elevernes egen strategi. Databehandling: R/P beregnet i hånden, graf over reserve mod pris, procentændring ved teknologi, udvinding = forbrug·(1 − genanvendelse) og R/P-prognosen holdt op mod året for mangel. Syv journalspørgsmål, bl.a. om kritiske råstoffer og konfliktmineraler. Selvtegnet kassefigur og skærmbillede af simuleringen.'},
 
 /* ---------------- NATURGEOGRAFI — kandidater (SM-DRIVE) ---------------- */
 {fag:'geo',navn:'Permeabilitet/porøsitet i jord (gamle udgaver)',emne:'Vand og grundvand',original:'NATURGEOGRAFI/03 - Permeabilitet-porøsitet i jord (brunjord, podsoljord, tropisk rødjord)',type:'Laboratorieøvelse',kilde:'NF + Ng, flere årgange',

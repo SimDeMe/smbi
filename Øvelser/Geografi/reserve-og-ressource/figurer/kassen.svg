@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" role="img" aria-label="Reserve- og ressourcekassen: ressourcen delt i kendt og uopdaget, og i rentabel og ikke rentabel. Reserven er den kendte, rentable del.">
+  <title>Reserve og ressource</title>
+  <desc>En kasse, hvis bredde er hele ressourcen. En lodret streg deler den i kendt (venstre) og uopdaget (højre). En vandret streg deler den i rentabel (øverst) og ikke rentabel (nederst). Feltet øverst til venstre er reserven. Pile viser, at efterforskning flytter den lodrette streg mod højre, og at højere pris eller bedre teknologi flytter den vandrette streg nedad.</desc>
+  <g font-family="Carlito,Calibri,Helvetica,Arial,sans-serif" fill="#26332B">
+    <text x="175" y="26" font-size="14" text-anchor="middle" font-weight="700">Kendt</text>
+    <text x="395" y="26" font-size="14" text-anchor="middle" font-weight="700">Uopdaget</text>
+    <text transform="translate(52 90) rotate(-90)" font-size="14" text-anchor="middle" font-weight="700">Rentabel</text>
+    <text transform="translate(52 215) rotate(-90)" font-size="14" text-anchor="middle" font-weight="700">Ikke rentabel</text>
+    <rect x="70" y="36" width="210" height="110" fill="#1F7FB8"/>
+    <rect x="70" y="146" width="210" height="110" fill="#D9E9F0"/>
+    <rect x="280" y="36" width="230" height="110" fill="#EEF5F8"/>
+    <rect x="280" y="146" width="230" height="110" fill="#FFFFFF"/>
+    <rect x="70" y="36" width="440" height="220" fill="none" stroke="#26332B" stroke-width="2.5"/>
+    <path d="M280 36 V256" stroke="#26332B" stroke-width="2"/>
+    <path d="M70 146 H280" stroke="#26332B" stroke-width="2.5"/>
+    <path d="M280 146 H510" stroke="#26332B" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="175" y="96" font-size="20" text-anchor="middle" font-weight="700" fill="#FFFFFF">Reserve</text>
+    <text x="175" y="114" font-size="12" text-anchor="middle" fill="#FFFFFF">kendt og rentabel</text>
+    <text x="175" y="206" font-size="14" text-anchor="middle">Kendt, ikke rentabel</text>
+    <text x="395" y="96" font-size="13" text-anchor="middle">uopdaget, rentabel</text>
+    <text x="395" y="206" font-size="13" text-anchor="middle">uopdaget, ikke rentabel</text>
+    <text x="290" y="280" font-size="14" text-anchor="middle" font-weight="700">Ressource = hele kassen</text>
+    <!-- pile -->
+    <path d="M292 58 H330" stroke="#B8461F" stroke-width="4" stroke-linecap="round"/>
+    <path d="M322 50 L333 58 L322 66" fill="none" stroke="#B8461F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="340" y="63" font-size="12" fill="#B8461F" font-weight="700">efterforskning</text>
+    <path d="M232 156 V186" stroke="#B8461F" stroke-width="4" stroke-linecap="round"/>
+    <path d="M224 178 L232 189 L240 178" fill="none" stroke="#B8461F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="528" y="140" font-size="12" fill="#B8461F" font-weight="700">højere pris eller</text>
+    <text x="528" y="155" font-size="12" fill="#B8461F" font-weight="700">bedre teknologi:</text>
+    <text x="528" y="170" font-size="12" fill="#B8461F" font-weight="700">grænsen flytter ned</text>
+    <path d="M522 146 H514" stroke="#B8461F" stroke-width="2"/>
+  </g>
+</svg>
