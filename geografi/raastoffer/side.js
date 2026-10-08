@@ -4,6 +4,7 @@
 import * as M from './model.js';
 import * as K from './kasse.js';
 import * as G from './graf.js';
+import { OPGAVER } from './opgaver.js';
 
 const $ = id => document.getElementById(id);
 const W = 800, H = 400;
@@ -51,6 +52,7 @@ function tegn(){
   instrumenter(a, p);
   etiketter(p);
   skaermlaeser(a);
+  tjekOpgave(a, p);
 }
 
 function etiketter(p){
@@ -147,12 +149,95 @@ for (const el of Object.values(ind)){
   el.addEventListener('input', () => { tegn(); gemTilstand(); });
 }
 
+// ── Opgavemode ─────────────────────────────────────────
+// Ni opgaver i en linje over figuren. Hver opgave stiller selv modellen
+// op, holder øje med, om målet er nået, og låser så forklaringen op.
+const opg = { aaben: false, nr: 0, klaret: new Set(), forkl: false };
+const elOpg = $('opgave'), btnOpgaver = $('btn-opgaver');
+const btnForkl = $('opg-forkl'), btnForrige = $('opg-forrige'), btnNaeste = $('opg-naeste');
+
+function visOpgave(){
+  const o = OPGAVER[opg.nr], klar = opg.klaret.has(opg.nr);
+  $('opg-nr').textContent = klar ? '✓' : opg.nr + 1;
+  $('opg-titel').textContent = 'Opgave ' + (opg.nr + 1) + ' af ' + OPGAVER.length + ' · '
+    + (opg.forkl ? 'forklaring' : o.titel);
+  const tekst = $('opg-tekst');
+  tekst.textContent = opg.forkl ? o.forklaring : o.tekst;
+  tekst.classList.toggle('forkl', opg.forkl);
+  elOpg.classList.toggle('klaret', klar);
+  $('opg-status').textContent = klar ? '✓ Klaret' : 'Ikke klaret endnu';
+  $('opg-status').classList.toggle('ikke', !klar);
+  btnForkl.disabled = !klar;
+  btnForkl.setAttribute('aria-pressed', opg.forkl ? 'true' : 'false');
+  btnForkl.textContent = opg.forkl ? 'Opgaven' : 'Forklaring';
+  btnForrige.disabled = opg.nr === 0;
+  btnNaeste.disabled = opg.nr === OPGAVER.length - 1;
+}
+
+function tjekOpgave(a, p){
+  if (!opg.aaben || opg.klaret.has(opg.nr)) return;
+  if (OPGAVER[opg.nr].maal(a, p, s)){ opg.klaret.add(opg.nr); visOpgave(); }
+}
+
+function aabnOpgave(nr){
+  opg.nr = Math.max(0, Math.min(OPGAVER.length - 1, nr));
+  opg.forkl = false;
+  const o = OPGAVER[opg.nr];
+  for (const [k, v] of Object.entries(o.opstil)) ind[k].value = v;
+  btnMarked.setAttribute('aria-pressed', o.marked ? 'true' : 'false');
+  s = M.nyTilstand();
+  stop();
+  visOpgave();
+  tegn();
+  gemTilstand();
+}
+
+function saetOpgaver(til, nr = 0){
+  opg.aaben = til;
+  elOpg.hidden = !til;
+  document.body.setAttribute('data-opgave', til ? '1' : '0');
+  btnOpgaver.setAttribute('aria-pressed', til ? 'true' : 'false');
+  if (til){
+    aabnOpgave(nr); laasOpgave();
+    // linjen gør panelet højere — på en lav skærm rulles det helt op
+    const rig = document.querySelector('.rig');
+    if (rig.getBoundingClientRect().bottom > innerHeight)
+      requestAnimationFrame(() => rig.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+  } else gemTilstand();
+}
+
+/* Opgaverne og forklaringerne er ikke lige lange. Linjen låses til den
+   længste, så figur og knapper ikke hopper, når man klikker videre. */
+function laasOpgave(){
+  if (!opg.aaben) return;
+  const tekst = $('opg-tekst');
+  tekst.style.minHeight = '0px';
+  if (!matchMedia('(min-width:960px)').matches) return;   // under hinanden: ingen lås
+  const gem = tekst.textContent;
+  let maks = 0;
+  for (const o of OPGAVER) for (const t of [o.tekst, o.forklaring]){
+    tekst.textContent = t;
+    maks = Math.max(maks, tekst.offsetHeight);
+  }
+  tekst.textContent = gem;
+  tekst.style.minHeight = maks + 'px';
+}
+let laasTimer = 0;
+window.addEventListener('resize', () => { clearTimeout(laasTimer); laasTimer = setTimeout(laasOpgave, 150); });
+if (document.fonts) document.fonts.ready.then(laasOpgave);
+
+btnOpgaver.addEventListener('click', () => saetOpgaver(!opg.aaben, opg.nr));
+btnForrige.addEventListener('click', () => aabnOpgave(opg.nr - 1));
+btnNaeste.addEventListener('click', () => aabnOpgave(opg.nr + 1));
+btnForkl.addEventListener('click', () => { opg.forkl = !opg.forkl; visOpgave(); });
+
 // ── Deling: skydernes stilling ligger i adressen ───────
 const NOEGLER = { p: 'pris', t: 'teknologi', e: 'efterforskning', v: 'vaekst', g: 'genanv' };
 let hashTimer = 0;
 function tilstandStreng(){
   return '#' + Object.entries(NOEGLER).map(([k, n]) => k + '=' + ind[n].value).join('&')
-       + (btnMarked.getAttribute('aria-pressed') === 'true' ? '&m=1' : '');
+       + (btnMarked.getAttribute('aria-pressed') === 'true' ? '&m=1' : '')
+       + (opg.aaben ? '&opgave=' + (opg.nr + 1) : '');
 }
 function gemTilstand(){
   clearTimeout(hashTimer);
@@ -169,6 +254,7 @@ function laesTilstand(){
     if (isFinite(v)) ind[n].value = Math.max(+ind[n].min, Math.min(+ind[n].max, v));
   }
   if (q.get('m') === '1') btnMarked.setAttribute('aria-pressed', 'true');
+  return parseInt(q.get('opgave'), 10);
 }
 
 // ── Projektor og fuld skærm ────────────────────────────
@@ -195,7 +281,8 @@ if (document.fullscreenEnabled){
 }
 
 // ── Start ──────────────────────────────────────────────
-laesTilstand();
+const opgaveFraAdresse = laesTilstand();
 tilpasKanvas();
+if (opgaveFraAdresse >= 1) saetOpgaver(true, opgaveFraAdresse - 1);
 window.addEventListener('resize', tilpasKanvas);
 if (document.fonts) document.fonts.ready.then(tegn);

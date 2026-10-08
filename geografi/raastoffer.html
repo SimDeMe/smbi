@@ -205,6 +205,35 @@ canvas{
 
 
 
+/* ── Opgavemode: opgavelinjen over figuren ─────────────── */
+.opgave{
+  border-bottom:2px solid var(--ink);background:#FFF3DC;
+  padding:9px 15px;display:flex;gap:13px;align-items:flex-start;
+}
+.opgave[hidden]{display:none}
+.opgave .nr{
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:1.25rem;line-height:1;
+  border:2.5px solid var(--ink);border-radius:11px;background:#fff;
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  flex:none;box-shadow:2px 2px 0 var(--ink);
+}
+.opgave.klaret .nr{background:var(--lime);color:#fff}
+.opgave-tekst{min-width:0;flex:1}
+.opgave-tekst .mono{color:#41585F;display:block;margin-bottom:2px;font-size:0.6rem}
+.opgave-tekst p{font-size:0.92rem;line-height:1.4}
+.opgave-tekst p.forkl{border-left:4px solid var(--lime);padding-left:10px}
+.opg-knapper{display:flex;flex-direction:column;gap:6px;align-items:stretch;flex:none}
+.opg-knapper .raekke{display:flex;gap:6px}
+.opg-knapper .btn-mini{white-space:nowrap}
+.btn-mini[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:2px 2px 0 var(--ink)}
+.status-klar{font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;text-align:center;color:#3B6E1F}
+.status-klar.ikke{color:#7E8F8C}
+body[data-opgave="1"] .facts{display:none}
+body[data-projektor="1"] .opgave-tekst p{font-size:1.12rem}
+body[data-projektor="1"] .opgave-tekst .mono{font-size:0.78rem}
+
 /* ── Instrumenter ──────────────────────────────────────── */
 .gauges{
   display:grid;grid-template-columns:repeat(4,1fr);
@@ -450,6 +479,9 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
   canvas{min-width:640px}
 }
 @media (max-width:620px){
+  .opgave{flex-wrap:wrap;padding:9px 12px}
+  .opg-knapper{flex-direction:row;width:100%;justify-content:space-between;align-items:center}
+
   body{font-size:16px}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
   .head{padding:24px 0 18px}
@@ -521,7 +553,7 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
     <section class="rig">
       <div class="rig-bar"></div>
       <div class="rig-head">
-        <span class="version" title="Simuleringens version">v1.0</span>
+        <span class="version" title="Simuleringens version">v2.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono">Kobber</span></span>
         <span class="who">R/P = reserve ÷ produktion</span>
         <button type="button" class="btn-mini" id="btn-nulstil"
@@ -530,10 +562,29 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
                 title="Lad årene gå: der brydes, efterforskes og forbruget vokser">▶ Kør tiden</button>
         <button type="button" class="btn-mini" id="btn-et-aar"
                 title="Gå ét år frem">+1 år</button>
+        <button type="button" class="btn-mini" id="btn-opgaver" aria-pressed="false"
+                title="En lille tur gennem modellen i ni opgaver">Opgaver</button>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
                 title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
         <button type="button" class="btn-mini" id="btn-fuld" aria-pressed="false" hidden
                 title="Skjul browserens faner og adresselinje, så figuren får mere plads">⤢ Fuld skærm</button>
+      </div>
+
+      <div class="opgave" id="opgave" hidden>
+        <span class="nr" id="opg-nr" aria-hidden="true">1</span>
+        <div class="opgave-tekst" aria-live="polite">
+          <span class="mono" id="opg-titel">Opgave 1 af 9</span>
+          <p id="opg-tekst"></p>
+        </div>
+        <div class="opg-knapper">
+          <span class="status-klar ikke" id="opg-status">Ikke klaret endnu</span>
+          <button type="button" class="btn-mini" id="opg-forkl" aria-pressed="false" disabled
+                  title="Låses op, når opgaven er klaret">Forklaring</button>
+          <span class="raekke">
+            <button type="button" class="btn-mini" id="opg-forrige" aria-label="Forrige opgave">←</button>
+            <button type="button" class="btn-mini" id="opg-naeste">Næste →</button>
+          </span>
+        </div>
       </div>
 
       <div class="rig-body">
