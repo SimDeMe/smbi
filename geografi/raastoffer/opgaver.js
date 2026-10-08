@@ -42,7 +42,7 @@ export const OPGAVER = [
     tekst: 'Prisen står fast på 9.000 USD/t. Kan I få reserven op på 1.500 mio. t uden at røre prisen?',
     opstil: STANDARD, marked: false,
     maal: (a, p) => a.reserve >= 1500 && p.pris === 9000,
-    forklaring: 'Ja, med ca. 35 % billigere udvinding. Bedre teknologi, fx større maskiner eller bedre metoder til at få metallet ud af malmen, flytter grænsen for det rentable nedad på samme måde som en højere pris. Lavgradig malm, der før var affald, bliver til reserve.',
+    forklaring: 'Ja, med ca. 35 % billigere udvinding. Bedre teknologi, fx større maskiner eller bedre metoder til at få metallet ud af malmen, flytter grænsen for det rentable nedad på samme måde som en højere pris. Fattig malm med en lav koncentration af kobber var før affald, men bliver nu til reserve.',
   },
   {
     titel: 'Pris og efterspørgsel',
