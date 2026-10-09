@@ -11,6 +11,7 @@
 // står i den, slettes. Før noget skrives, vises hvad der ændres, og der
 // hentes en backup af det, der ligger nu.
 
+import { PERIODER } from './aktivitetsperiode.js';
 import { db, auth, showToast, COLOR_PALETTE } from './app.js';
 import { openSheet, closeSheet } from './ark.js';
 import { esc } from './format.js';
@@ -33,10 +34,10 @@ const OM = [
   'Filen er sandheden ved gendannelse: det, der står her, bliver dine data; aktiviteter og registreringer, der fjernes fra filen, slettes i appen.',
   'Behold "id" på det, der findes i forvejen. Nye aktiviteter og registreringer må gerne være uden id — så får de et.',
   'Tidspunkter skrives som ISO 8601, gerne med tidszone: "2026-10-05T08:10:00+02:00". Uden tidszone læses de som dansk tid.',
-  'activities: name, type ("hold" eller "opgave"), schoolYear ("2026/27"), budgetHours (timer), parentId (id på en overordnet opgave eller null — kun for opgaver), isArchived, color, order, note, optjening ("loebende", "afslutning" eller "manuel", kun opgaver), fra og til (valgfri periode som "ÅÅÅÅ-MM-DD", begge dage med; null = hele skoleåret).',
+  'activities: name, type ("hold" eller "opgave"), schoolYear ("2026/27"), budgetHours (timer), parentId (id på en overordnet opgave eller null — kun for opgaver), isArchived, color, order, note, optjening ("loebende", "afslutning" eller "manuel", kun opgaver), periode ("grundforloeb", "efterGf" eller "eksamen"; null = hele skoleåret).',
   'entries: activityId (id på en aktivitet, eller null for pause/ubundet tid), workType ("undervisning", "forberedelse" eller "retning" — kun når aktiviteten er et hold), startTime, endTime (null = timeren kører; højst én), note, isBreak (true for pauser). durationMinutes regnes ud af start og slut.',
   'Skemaets moduler: 1. modul 08:10–09:45, 2. modul 10:00–11:35, frokost 11:35–12:00, 3. modul 12:00–13:35, 4. modul 13:45–15:20. Et modul i undervisning har isModule: true.',
-  'settings: currentSchoolYear, normHours (årsnorm i timer), ferie, normFaktorer, portefoljeAndet m.fl. Mangler settings (eller er den null), beholdes de nuværende indstillinger.'
+  'settings: currentSchoolYear, normHours (årsnorm i timer), ferie, normFaktorer, portefoljeAndet, periodeDatoer ({ skolestart, gfSlut, eksamenFra, eksamenTil } pr. skoleår) m.fl. Mangler settings (eller er den null), beholdes de nuværende indstillinger.'
 ];
 
 const sti = (uid, del) => `users/${uid}/${del}`;
@@ -172,7 +173,7 @@ function tolkSettings(s, fejl) {
   if (s.normHours != null && !(erTal(s.normHours) && s.normHours > 0)) f('normHours skal være et positivt tal');
   if (s.autoStopAfterMinutes != null && !(erTal(s.autoStopAfterMinutes) && s.autoStopAfterMinutes > 0))
     f('autoStopAfterMinutes skal være et positivt tal');
-  for (const [felt, kontrol] of [['ferie', tjekFerie], ['portefoljeAndet', tjekAndet], ['normFaktorer', tjekFaktor]]) {
+  for (const [felt, kontrol] of [['ferie', tjekFerie], ['portefoljeAndet', tjekAndet], ['normFaktorer', tjekFaktor], ['periodeDatoer', tjekPerioder]]) {
     if (s[felt] == null) continue;
     if (!erObjekt(s[felt])) { f(`${felt} skal være et objekt med skoleår som nøgler`); continue; }
     for (const [aar, v] of Object.entries(s[felt])) {
@@ -185,6 +186,8 @@ function tolkSettings(s, fejl) {
 const tjekFerie = l => !Array.isArray(l) ? 'skal være en liste'
   : l.some(p => !DATO.test(p?.fra) || !DATO.test(p?.til) || p.fra > p.til)
     ? 'hver periode skal have fra og til som ÅÅÅÅ-MM-DD, og fra må ikke ligge efter til' : null;
+const tjekPerioder = v => !erObjekt(v) ? 'skal være et objekt'
+  : Object.values(v).some(d => d != null && !DATO.test(d)) ? 'datoerne skal skrives som ÅÅÅÅ-MM-DD' : null;
 const tjekAndet = l => !Array.isArray(l) ? 'skal være en liste'
   : l.some(x => !erTal(x?.timer)) ? 'hver linje skal have timer som tal' : null;
 const tjekFaktor = v => !erObjekt(v) ? 'skal være et objekt'
@@ -209,10 +212,8 @@ function tolkAktiviteter(liste, fejl, advarsler) {
       fejl.push(`${hvem}: budgetHours skal være et tal (timer)`);
     if (felter.optjening != null && !OPTJENING.includes(felter.optjening))
       fejl.push(`${hvem}: optjening skal være «loebende», «afslutning» eller «manuel»`);
-    for (const k of ['fra', 'til'])
-      if (felter[k] != null && !DATO.test(felter[k])) fejl.push(`${hvem}: ${k} skal være en dato som ÅÅÅÅ-MM-DD`);
-    if (DATO.test(felter.fra ?? '') && DATO.test(felter.til ?? '') && felter.til < felter.fra)
-      fejl.push(`${hvem}: perioden slutter før den begynder`);
+    if (felter.periode != null && !PERIODER[felter.periode])
+      fejl.push(`${hvem}: periode skal være «grundforloeb», «efterGf» eller «eksamen»`);
     if (felter.rettedeSaet != null && !Array.isArray(felter.rettedeSaet))
       fejl.push(`${hvem}: rettedeSaet skal være en liste`);
 

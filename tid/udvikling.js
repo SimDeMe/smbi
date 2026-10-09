@@ -4,7 +4,7 @@
 //
 //   Skema  = registreret tid − den del af normen, der burde være brugt
 //            (samme regning som chippen: arbejdsdage, ferie trukket fra, og
-//            aktiviteter med periode vægtet i perioden — aktivitetsperiode.js)
+//            aktiviteter i en periode vægtet i perioden — aktivitetsperiode.js)
 //   Akkord = optjent − brugt (samme regning som saldoen i akkordregnskabet)
 //
 // Hvert punkt regnes, som tallene stod ved ugens begyndelse: kun tid
@@ -91,7 +91,7 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, normM,
     const ak = beregnAkkord({
       acts: sidst ? acts : aktiviteterVed(acts, d, afsluttet),
       entries: med.map(p => p.e), aar, andel, fordel,
-      andelFor: a => aktivitetsAndel(a, acts, { start, slut, ferie, nu: d })
+      andelFor: a => aktivitetsAndel(a, acts, { aar, start, slut, ferie, nu: d })
     });
     akkord.push({ d, v: ak.akkord > 0 ? ak.saldo : null });
   });

@@ -75,10 +75,12 @@ const browser = await chromium.launch();
   const under = await page.$$eval('.udv-under', e => e[1].textContent);
   ok(under.includes('Over nul') && under.includes('Under nul: du har brugt mere tid, end du har optjent'), 'undertitlen forklarer begge fortegn');
 
-  // Studieturen optjener sine 40 t, da den afsluttes 14. september — ikke før
+  // Studieturen (ved afslutning) har optjent sine 15 brugte timer undervejs og
+  // optjener resten af de 40 t, da den afsluttes 14. september
   const a = t => akkord.find(p => p[0] === t)?.[1];
   const foer = a(new Date(2026, 8, 14).getTime()), efter = a(new Date(2026, 8, 21).getTime());
-  ok(efter - foer > 30 * 60, `springet ved afslutningen (≈ +40 t minus en uges tid): ${Math.round((efter - foer) / 60)} t`);
+  const spring = (efter - foer) / 60;
+  ok(spring > 20 && spring < 32, `springet ved afslutningen (≈ de 25 t, der er tilbage): ${Math.round(spring)} t`);
 
   // Hover viser datoen og tallet
   const svg = await page.$('.udv-kort svg');

@@ -5,6 +5,7 @@ import { STANDARD_FAKTORER, tolkTal } from './normer.js';
 import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieFor } from './ferie.js';
 import { skoleaarStart, kortDato, datoInput } from './periode.js';
 import { esc } from './format.js';
+import { PERIODER, datoerFor, periodeBeskrivelse } from './aktivitetsperiode.js';
 import { doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── Defaults ─────────────────────────────────────────────
@@ -20,6 +21,7 @@ const DEFAULTS = {
   normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
   ferie:                {},     // { "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }] } — se ferie.js
   portefoljeAndet:      {},     // { "2026/27": [{ navn: "Frikøb (TR)", timer: 100 }] } — se andetFor()
+  periodeDatoer:        {},     // { "2026/27": { skolestart, gfSlut, eksamenFra, eksamenTil } } — se aktivitetsperiode.js
   fordelFaellesTid:     true    // akkordregnskabet: fordel fælles tid på aktiviteterne — se akkord.js
 };
 
@@ -113,6 +115,7 @@ function populateForm() {
   visFaktorer(s.currentSchoolYear || getCurrentSchoolYear());
   visFerie(s.currentSchoolYear || getCurrentSchoolYear());
   visAndet(s.currentSchoolYear || getCurrentSchoolYear());
+  visPerioder(s.currentSchoolYear || getCurrentSchoolYear());
 }
 
 // Under feltet: hvad tallet svarer til — og en advarsel, hvis det ligner
@@ -224,6 +227,35 @@ function opdaterFerieTal() {
     + (udenfor ? `<span class="ferie-advarsel">OBS · ${udenfor === 1 ? 'Én periode' : `${udenfor} perioder`} ligger uden for normperioden ${kortDato(start)} ${start.getFullYear()} – ${kortDato(sidste)} ${sidste.getFullYear()}</span>` : '');
 }
 
+// ─── Perioder ─────────────────────────────────────────────
+// Skolens faste perioder for ét skoleår ad gangen. Felterne viser skolens
+// datoer, til man selv retter dem; under dem står perioderne, som de bliver.
+const PERIODE_FELTER = [
+  ['cfg-skolestart', 'skolestart'], ['cfg-gfslut', 'gfSlut'],
+  ['cfg-eksamenfra', 'eksamenFra'], ['cfg-eksamentil', 'eksamenTil']
+];
+let periodeAar = '';
+
+function visPerioder(aar) {
+  periodeAar = aar;
+  const el = document.getElementById('cfg-periode-aar');
+  if (el) el.textContent = aar;
+  const d = datoerFor(aar, settings);
+  PERIODE_FELTER.forEach(([id, k]) => set(id, d[k]));
+  opdaterPerioder();
+}
+
+const periodeUdkast = () => Object.fromEntries(PERIODE_FELTER
+  .map(([id, k]) => [k, document.getElementById(id)?.value || null]).filter(([, v]) => v));
+
+function opdaterPerioder() {
+  const el = document.getElementById('cfg-periode-sum');
+  if (!el) return;
+  const s = { ...settings, periodeDatoer: { ...settings.periodeDatoer, [periodeAar]: periodeUdkast() } };
+  el.innerHTML = Object.keys(PERIODER).map(k =>
+    `<li><b>${PERIODER[k]}</b> · ${esc(periodeBeskrivelse(k, periodeAar, s))}</li>`).join('');
+}
+
 // ─── Andet i porteføljen ──────────────────────────────────
 // Samme mønster som ferien: et udkast pr. skoleår, gemt med resten
 let andetAar    = '';
@@ -322,8 +354,12 @@ async function saveSettings() {
       }
     },
     ferie: { ...settings.ferie, [ferieAar]: ferieTilGem() },
-    portefoljeAndet: { ...settings.portefoljeAndet, [andetAar]: andetTilGem() }
+    portefoljeAndet: { ...settings.portefoljeAndet, [andetAar]: andetTilGem() },
+    periodeDatoer: { ...settings.periodeDatoer, [periodeAar]: periodeUdkast() }
   };
+  const pd = updated.periodeDatoer[periodeAar];
+  if (pd.gfSlut && pd.skolestart && pd.gfSlut < pd.skolestart) { showToast('Grundforløbet slutter før første skoledag'); return; }
+  if (pd.eksamenFra && pd.eksamenTil && pd.eksamenTil < pd.eksamenFra) { showToast('Eksamensperioden slutter før den begynder'); return; }
 
   const btn = document.getElementById('cfg-save-btn');
   if (btn) btn.disabled = true;
@@ -360,9 +396,10 @@ function bindListeners() {
   document.getElementById('cfg-save-btn')?.addEventListener('click', saveSettings);
   document.getElementById('cfg-school-year')?.addEventListener('input', e => {
     const aar = e.target.value.trim();
-    if (/^\d{4}\/\d{2}$/.test(aar)) { visFaktorer(aar); visFerie(aar); visAndet(aar); }
+    if (/^\d{4}\/\d{2}$/.test(aar)) { visFaktorer(aar); visFerie(aar); visAndet(aar); visPerioder(aar); }
   });
   document.getElementById('cfg-ferie-ny')?.addEventListener('click', nyFerie);
   document.getElementById('cfg-norm-hours')?.addEventListener('input', () => { visNormHjaelp(); opdaterAndetSum(); });
   document.getElementById('cfg-andet-ny')?.addEventListener('click', nyAndet);
+  PERIODE_FELTER.forEach(([id]) => document.getElementById(id)?.addEventListener('input', opdaterPerioder));
 }

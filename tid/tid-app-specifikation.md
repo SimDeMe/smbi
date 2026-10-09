@@ -65,8 +65,10 @@ Alt under `users/{userId}/`:
   optjening: "loebende" | "afslutning" | "manuel",   // kun opgaver; mangler = løbende
   fremdrift: null | 40,             // kun ved manuel optjening, procent færdig
   udenFaellesTid: false,            // true = får ingen andel af den fælles tid i akkordregnskabet
-  fra: null | "2026-08-10",         // valgfri periode, begge dage med; null = hele skoleåret
-  til: null | "2026-11-27"          // under-opgave uden egen periode følger forælderens
+  periode: null | "grundforloeb" | "efterGf" | "eksamen" | "aar"
+                                    // skolens faste periode; null = hele skoleåret, for en
+                                    // under-opgave forælderens. "aar" kun på en under-opgave,
+                                    // der skal have hele året under en forælder med periode
 }
 ```
 
@@ -216,7 +218,7 @@ Vis for valgte interval:
 - **Pr. aktivitet:** Liste sorteret efter forbrug. For hver aktivitet: navn, forbrugt tid, budget, procent (fx "142t / 288t — 49%"), visuel progress bar i aktivitetens farve. Under-aktiviteter vises indrykket under deres parent — også de afsluttede, med mærkatet *Afsluttet* — og en afsluttet parent står med alle sine under-aktiviteter under *Afsluttede opgaver*. Parent viser eget forbrug + summen af alle children mod hele sit budget, og bjælken er delt op: parentens egen tid og hver under-aktivitet i sin farve. Har en under-aktivitet samme farve som parenten eller en søskende, får den i rapporten den næste ledige farve fra paletten, både i bjælken og på sin egen række. *Ubrugt tid i alt* lægger kun topopgaverne sammen.
 - **For hold-aktiviteter:** Vis fordeling på undervisning / forberedelse / retning som en lille bar eller tal-række. Har holdet et normgrundlag, og er skoleår valgt, vises hver arbejdstype i stedet med akkorden: undervisningen i moduler (*10 af 36,9 moduler*), forberedelse og retning som brugt og optjent mod normen med en saldochip. Bjælken er brugt mod norm, og en blækstreg i den markerer det optjente. Retningen viser også *rettet 5 af 15 elevtimer*. Dag, uge og måned viser kun fordelingen, fordi normerne gælder hele året.
 - **Realiseret faktor (alle hold, alle perioder):** holdets tid målt med skolens mål. *Forberedelsesfaktor* = (undervisning + forberedelse) / undervisning mod skoleårets faktor (fx 2,35). *Retning* i minutter pr. elevtime mod holdets eget budget pr. elevtime (resten af budgettet ÷ elevtimer, ≈ 5,2 min ved skolens formel); måles mod de rettede sæt, der er afsluttet i perioden: tiden brugt på retning ÷ (elevtimer × elever). Har holdet ingen sæt, skønnes den rettede fordybelsestid ud fra den andel af årets undervisningsnorm, der er registreret, og tallet mærkes *skønnet*; har holdet sæt, men ingen i perioden, vises retningen ikke. Forberedelsesfaktoren kræver kun skoleårets faktor og vises på alle hold med registreret undervisning; retningen kræver et normgrundlag med elever og fordybelsestid.
-- **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Den forventede tid er normen × forløbet andel af arbejdsdagene, men aktiviteter med periode lægger deres budget i perioden: forventet = norm × årets andel + Σ budget × (periodens andel − årets andel). Markøren i normbjælken står ved den forventede tid. Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema". Det er timeløns-tallet; akkordregnskabet står under det.
+- **Forventet vs faktisk:** Hvis vi er X% gennem skoleåret, vis om man er foran/bagud på samlet niveau (lille indikator). Den forventede tid er normen × forløbet andel af arbejdsdagene, men aktiviteter i en anden periode end hele året lægger deres budget i perioden: forventet = norm × årets andel + Σ budget × (periodens andel − årets andel). Markøren i normbjælken står ved den forventede tid. Et afsluttet skoleår sammenlignes med hele normen — der står "over/under norm" i stedet for "foran/bagud skema". Det er timeløns-tallet; akkordregnskabet står under det.
 - **Akkordregnskab (kun skoleår):** se *Akkordregnskab* nedenfor.
 - **Fælles tid:** ubundet tid og pauser står samlet nederst i listen, hver for sig. I skoleåret kommer opgaver uden budget med.
 - Simpel cirkel- eller søjlediagram af aktivitets-fordeling (lav i SVG, intet bibliotek).
@@ -227,12 +229,12 @@ Egen side "Aktiviteter":
 - Skift mellem skoleår (dropdown)
 - Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få tal fra Lectio (årsnorm i moduler, elever, elevtimer pr. elev); så deles budgettet op, og opdelingen vises under budgetfeltet
 - Opgaver har en optjeningsmåde: *Løbende*, *Ved afslutning* eller *Manuelt* (med et felt for procent færdig) — se *Akkordregnskab*
-- **Periode på aktiviteter:** hold og opgaver kan få en valgfri periode (fra–til, begge dage med), fx grundforløb aug–nov eller eksamen maj–juni. Den bruges i foran/bagud (se *Forventet vs faktisk*) og i løbende optjening, der kun sker over periodens arbejdsdage (weekender, helligdage og ferie sprunget over, som i `ferie.js`). Perioden klippes til normperioden; tomme felter = hele skoleåret. Listen viser perioden under navnet. Regningen ligger i `aktivitetsperiode.js`
+- **Periode på aktiviteter:** hold og opgaver hører til en af skolens faste perioder — *Hele skoleåret* (standard, normperioden), *Grundforløb* (første skoledag til grundforløbets slutning, fredag to uger efter efterårsferien), *Efter grundforløb* (dagen efter og året ud) eller *Eksamensperiode* (sommerterminen i starten af normperioden; prøverne tæller i den normperiode, de holdes i, skriftlige og mundtlige ens). Valget er fire knapper i formularen med periodens datoer og arbejdsdage under. Datoerne står pr. skoleår i Indstillinger → Perioder (`periodeDatoer`); uden gemte datoer bruges skolens plan (`SKOLENS_DATOER`), og ellers et skøn (2. mandag i august, fredag i uge 44, 1.–24. juni). Perioden bruges i foran/bagud (se *Forventet vs faktisk*) og i løbende optjening, der kun sker over periodens arbejdsdage (som i `ferie.js`). En under-opgave får forælderens periode, når forælderen vælges, og gemmes da uden egen. Listen viser perioden under navnet. Regningen ligger i `aktivitetsperiode.js`
 - Et gemt hold viser sine rettede sæt med dato, navn og elevtimer og summen mod normen (*Rettet 5 af 15 elevtimer*). Et sæt slettes med krydset og registreres igen, hvis det er tastet forkert
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
 - Under-aktiviteter vises indrykket under deres parent
-- **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne; rettede sæt og fremdrift følger ikke med, og en periode flyttes et år frem) — gør det nemt når et nyt skoleår begynder
-- **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?; optjening?; fra?; til?` der parses og oprettes. Fra og til er datoer (`2027-05-01`, `1/5-2027` eller `1.5.2027`); en dato, der ikke kan læses, droppes. Optjening (`løbende`, `afslutning` eller `manuel`) gælder kun opgaver; uden den bliver opgaven løbende, og importen siger, hvor mange det gælder. Sparer tid ved opsætning.
+- **"Kopiér til næste skoleår"** — opretter samme struktur i et nyt skoleår (uden tidsdata, kun selve aktiviteterne; rettede sæt og fremdrift følger ikke med, perioden gør) — gør det nemt når et nyt skoleår begynder
+- **"Importer fra tekst"** — simpel tekstindtaster: en linje pr. aktivitet i format `navn; type; budget; parent?; optjening?; periode?` der parses og oprettes. Periode er `grundforløb`, `efter grundforløb` (eller `studieretning`) eller `eksamen`; uden den hele skoleåret. Optjening (`løbende`, `afslutning` eller `manuel`) gælder kun opgaver; uden den bliver opgaven løbende, og importen siger, hvor mange det gælder. Sparer tid ved opsætning.
 
 ### 8. CSV-eksport
 Knap "Eksportér" i rapporter:
@@ -288,8 +290,8 @@ Hold uden normgrundlag optjener deres budget løbende (i deres periode, hvis de 
 
 **Opgaver** optjener efter `optjening`:
 
-- *Løbende* (standard): budgettet jævnt over året, eller over aktivitetens periode — udvalg, teamledelse
-- *Ved afslutning*: intet, til opgaven afsluttes med "Afslut opgave" — eksamen, SRP
+- *Løbende* (standard): budgettet jævnt over arbejdsdagene i aktivitetens periode — udvalg, teamledelse
+- *Ved afslutning*: den tid, der er brugt, højst budgettet — resten, når opgaven afsluttes med "Afslut opgave". Engangsopgaver som eksamen og SRP: et møde om NV-eksamen på en time er optjent, når det er holdt
 - *Manuelt*: `fremdrift` procent af budgettet
 
 En afsluttet aktivitet — opgave eller hold — har altid optjent hele budgettet. Eksamen er en almindelig opgave i det skoleår, den betales — typisk året efter, holdet har kørt.

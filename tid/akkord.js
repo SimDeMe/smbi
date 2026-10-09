@@ -22,12 +22,13 @@
 // sig, i det skoleår de betales. Et hold uden normgrundlag optjener sit budget
 // jævnt over året, ligesom en løbende opgave.
 //
-// «Jævnt over året» er over aktivitetens periode, hvis den har en (fx et
-// grundforløb aug–nov) — se aktivitetsperiode.js. Uden periode: hele året.
+// «Jævnt over året» er over aktivitetens periode (fx grundforløbet eller
+// eksamensperioden) — se aktivitetsperiode.js. Standard: hele året.
 //
 // Opgaver optjener efter deres optjeningsmåde: løbende (jævnt over året), ved
-// afslutning (intet, til den afsluttes) eller manuelt (en procent). En
-// afsluttet aktivitet — opgave eller hold — har altid optjent hele sit budget.
+// afslutning (den tid, der er brugt, højst budgettet — resten, når opgaven
+// afsluttes) eller manuelt (en procent). En afsluttet aktivitet — opgave
+// eller hold — har altid optjent hele sit budget.
 //
 // Fælles tid er tid, der ikke hører til en akkord: ubundet tid, pauser og
 // opgaver uden budget. Den tæller som brugt og kan fordeles på alle
@@ -186,9 +187,11 @@ function enhed(a, brugt, wt, budget, andel) {
 
   u.maade = a.type === 'hold' ? 'loebende' : optjeningFor(a);
   const pct = Math.min(100, Math.max(0, Number(a.fremdrift) || 0));
+  // Ved afslutning: et møde om eksamen er optjent, når det er holdt — resten
+  // af budgettet først, når opgaven afsluttes
   u.optjent = u.maade === 'loebende'   ? budget * andel
             : u.maade === 'manuel'     ? budget * pct / 100
-            : 0;
+            : Math.min(brugt, budget);
   return u;
 }
 

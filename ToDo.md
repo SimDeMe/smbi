@@ -83,14 +83,22 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   Mulig løsning: en valgfri periode (fra–til) på en linje, så dens timer
   kun trækkes fra arbejdsdagene i perioden — som ferien i `ferie.js`.
 
-- [x] **Start- og slutdato på opgaver og hold.** Valgfri periode (fra–til)
-  på hver aktivitet (`aktivitetsperiode.js`). Løbende opgaver og hold uden
-  normgrundlag optjener kun over periodens arbejdsdage, og «foran/bagud
-  skema» (chip, markør og kurve) regner med, at budgettet bruges i perioden —
-  et grundforløb i efteråret og eksamen i juni giver ikke længere skæv
-  fordeling. Under-opgaver arver forælderens periode; import har kolonnerne
-  `fra; til`, og «Kopiér til næste år» flytter perioden et år frem. Barsel
-  ovenfor kan løses med samme regning.
+- [x] **Perioder på opgaver og hold.** Skolens faste perioder — hele
+  skoleåret, grundforløb, efter grundforløb og eksamensperiode — med datoer
+  pr. skoleår i Indstillinger (`aktivitetsperiode.js`). Løbende opgaver og
+  hold uden normgrundlag optjener kun over periodens arbejdsdage, og
+  «foran/bagud skema» regner med, at budgettet bruges i perioden. «Ved
+  afslutning» optjener nu den brugte tid undervejs og resten ved afslutning.
+- [ ] **Eksamenstid i maj.** Tidlige prøver i maj tæller i den *næste*
+  normperiode (FAQ om opgavefordeling), men tiden registreres før
+  normperiodens start. Registreres den på næste års eksamensopgave, falder
+  den ud af begge års rapporter. Skal maj-eksamen kunne tælle med i den
+  normperiode, opgaven hører til?
+- [ ] **Vintertermin.** Eksamensperioden er kun sommerterminen. Hf-eksamen i
+  dec./jan. ligger i dag under «Hele skoleåret» — evt. en femte periode.
+- [ ] **Perioder: tjek datoerne hvert år** i `SKOLENS_DATOER`
+  (`aktivitetsperiode.js`) — grundforløbets slutning for 2026/27 (30. okt.)
+  er sat efter mønsteret fra 2025/26, ikke fra en plan.
 
 ### Hastighed
 

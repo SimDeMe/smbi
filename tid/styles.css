@@ -570,6 +570,11 @@ select.form-input{
 }
 .seg-opt input:checked + span{background:var(--accent);color:#fff}
 .seg-opt input:focus-visible + span{outline:3px solid var(--grape);outline-offset:-3px}
+/* Fire valg i to rækker: periode */
+.segmented-2x2{display:grid;grid-template-columns:1fr 1fr}
+.segmented-2x2 .seg-opt + .seg-opt{border-left:0}
+.segmented-2x2 .seg-opt:nth-child(even){border-left:2px solid var(--ink)}
+.segmented-2x2 .seg-opt:nth-child(n+3){border-top:2px solid var(--ink)}
 
 /* Farvevælger */
 .color-picker{display:flex;flex-wrap:wrap;gap:11px}
@@ -1568,6 +1573,11 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
   letter-spacing:0.04em;color:var(--slate);line-height:1.5;
 }
 .ferie-sum b{font-family:var(--display);font-size:0.9rem;color:var(--ink)}
+.settings-input-sm.periode-dato{width:auto;min-width:9.6em;text-align:left;padding:8px 4px 8px 7px;font-size:0.84rem}
+/* Perioderne med datoer og arbejdsdage */
+.periode-sum{list-style:none;margin:0;padding:6px 0 4px;display:grid;gap:4px;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.04em;color:var(--slate);line-height:1.5}
+.periode-sum b{font-family:var(--display);font-size:0.8rem;color:var(--ink)}
 /* Andet i porteføljen: navn, timer, enhed, slet */
 .andet-raekke{
   display:grid;grid-template-columns:minmax(0,1fr) 5.5em auto auto;

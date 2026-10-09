@@ -151,9 +151,10 @@
       arbejdsdage gået, burde 40 % af normen være brugt. Weekender, helligdage og den ferie, du
       har lagt ind under Indstillinger, tæller ikke — så sommerferien gør dig ikke bagud. Har du
       ingen ferie lagt ind, regnes ferien som arbejdsdage, og chippen viser for meget bagud.
-      Har et hold eller en opgave en <strong>periode</strong>, regner chippen med, at dens budget
-      bruges i perioden — et grundforløb i efteråret gør dig ikke foran, og eksamen i juni gør dig
-      ikke bagud i vinter. Resten af normen fordeles jævnt over året.</p>
+      Hører et hold eller en opgave til en <strong>periode</strong> — grundforløbet, tiden efter
+      grundforløbet eller eksamensperioden — regner chippen med, at dens budget bruges i perioden:
+      et 1g-hold i grundforløbet gør dig ikke foran i efteråret, og et 2g-hold efter grundforløbet
+      gør dig ikke bagud. Resten af normen fordeles jævnt over året.</p>
       <p><strong>Akkordregnskabet.</strong> Under skoleåret står også, hvor meget af dine akkorder
       du har leveret. <strong>Optjent</strong> er den del af budgetterne, dit arbejde indtil nu er
       værd; <strong>saldoen</strong> er optjent minus brugt. Plus betyder, at arbejdet har taget
@@ -162,7 +163,7 @@
         <li><strong>Undervisning</strong> optjenes modul for modul og står som fx <em>10 af 36,9 moduler</em></li>
         <li><strong>Forberedelse</strong> følger undervisningen: hvert modul giver 2 t 8 min forberedelse (med faktor 2,35)</li>
         <li><strong>Retning</strong> optjenes med de sæt, du registrerer med "Rettet sæt" — fx <em>rettet 5 af 15 elevtimer</em></li>
-        <li><strong>Opgaver</strong> optjenes løbende over året, først når du afslutter dem, eller med en procent, du selv sætter (se Aktiviteter)</li>
+        <li><strong>Opgaver</strong> optjenes løbende over deres periode, ved afslutning (den tid, du bruger, er optjent undervejs, og resten af budgettet, når du afslutter), eller med en procent, du selv sætter (se Aktiviteter)</li>
         <li><strong>Fælles tid</strong> — ubundet tid, pauser og opgaver uden budget — kan fordeles på alle aktiviteter efter deres budget. Det styrer du med fluebenet i sammendraget. Andelen står skraveret i hver aktivitets bjælke. Skal en aktivitet stå uden, så slå «Får andel af fælles tid» fra, når du redigerer den. Saldoen øverst er den samme begge veje</li>
       </ul>
       <p><strong>Udvikling.</strong> Under sammendraget i skoleåret står to grafer, uge for uge
@@ -198,12 +199,12 @@
           </ul>
           Opdelingen står under budgetfeltet. Lader du Lectio-felterne stå tomme, bruger holdet bare budgettet.</li>
         <li>Har du oprettet noget som opgave, der i virkeligheden er et hold, kan du skifte typen, når du redigerer det. Tiden, der allerede er registreret, følger med og står i rapporten som <em>uden arbejdstype</em>.</li>
-        <li>En opgave har en <strong>optjeningsmåde</strong>: <em>Løbende</em> (budgettet optjenes jævnt over året, fx udvalg), <em>Ved afslutning</em> (intet, til du trykker "Afslut opgave" — fx eksamen og SRP) eller <em>Manuelt</em> (du skriver selv, hvor mange procent der er færdige)</li>
-        <li>Hold og opgaver kan få en <strong>periode</strong> (fra–til, begge dage med) — fx et grundforløb aug–nov eller eksamen i maj–juni. Så regner foran/bagud med, at budgettet bruges i perioden, og løbende optjening sker kun over periodens arbejdsdage. Tomme felter = hele skoleåret. En under-opgave uden egen periode følger forælderens</li>
+        <li>En opgave har en <strong>optjeningsmåde</strong>: <em>Løbende</em> (budgettet optjenes jævnt over året, fx udvalg), <em>Ved afslutning</em> (til engangsopgaver som eksamen og SRP: den tid, du bruger, er optjent, mens du arbejder — et møde om NV-eksamen på en time er optjent, når det er holdt — og resten af budgettet, når du trykker "Afslut opgave") eller <em>Manuelt</em> (du skriver selv, hvor mange procent der er færdige)</li>
+        <li>Hold og opgaver hører til en af skolens faste <strong>perioder</strong>: <em>Hele skoleåret</em> (standard), <em>Grundforløb</em> (første skoledag til et par uger efter efterårsferien), <em>Efter grundforløb</em> (resten af året) eller <em>Eksamensperiode</em>. Så regner foran/bagud med, at budgettet bruges i perioden, og løbende optjening sker kun over periodens arbejdsdage. Datoerne står under valget og rettes i Indstillinger. En under-opgave får forælderens periode, når du vælger forælderen</li>
         <li>Når du redigerer et hold, ser du dets <strong>rettede sæt</strong>. Har du tastet et forkert, så slet det med krydset og registrér det igen</li>
         <li>Opgaver kan have under-aktiviteter (fx "SRP" under "Eksamen og årsprøver") — tid registreret på en under-aktivitet tæller automatisk med på forælderen</li>
-        <li><strong>"Importer"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent; optjening; fra; til</code>) for hurtig opsætning — optjening er <code>løbende</code>, <code>afslutning</code> eller <code>manuel</code>, og fra–til er en periode som <code>2027-05-01</code>; alle tre kan udelades</li>
-        <li><strong>"Kopiér til næste år"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter; perioder flyttes et år frem</li>
+        <li><strong>"Importer"</strong> — indsæt en linje pr. aktivitet (<code>navn; type; budget; parent; optjening; periode</code>) for hurtig opsætning — optjening er <code>løbende</code>, <code>afslutning</code> eller <code>manuel</code>, og periode er <code>grundforløb</code>, <code>efter grundforløb</code> eller <code>eksamen</code>; begge kan udelades</li>
+        <li><strong>"Kopiér til næste år"</strong> — genskaber din liste af aktiviteter (uden tidsdata) når et nyt skoleår starter; perioderne følger med</li>
       </ul>
     </div>
 
@@ -221,6 +222,12 @@
       helligdage tæller ikke som feriedage, så tallet ved hver periode er de arbejdsdage, den koster.
       Ligger en periode uden for normperioden, får du besked. Som holdnormerne hører ferien til ét
       skoleår ad gangen.</p>
+      <p>Under <strong>Perioder</strong> står skolens datoer for første skoledag, grundforløbets
+      slutning og eksamensperioden; under felterne ser du hver periode med dens arbejdsdage.
+      Eksamensperioden er sommerterminen i starten af normperioden — juni 2026 hører til 2026/27,
+      fordi skolen regner prøverne med i den normperiode, de holdes i (skriftlige og mundtlige
+      ens). For 2026/27 er skolens datoer lagt ind på forhånd; ret dem, hvis planen ændres. Som
+      ferien hører perioderne til ét skoleår ad gangen.</p>
       <p>Under <strong>Holdnormer</strong> står forberedelsesfaktoren for det aktive skoleår (2,35 i 2025/26). Den skifter fra år til år, så hvert skoleår har sin egen — skriv et andet skoleår i feltet øverst for at se eller rette dét års tal. Retter du den, deles alle holdenes budgetter det år op på ny.</p>
     </div>
 

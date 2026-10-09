@@ -366,6 +366,31 @@
           </div>
         </div>
 
+        <!-- Perioder -->
+        <div class="settings-section">
+          <div class="settings-section-title">Perioder · <span id="cfg-periode-aar">2026/27</span></div>
+          <div class="settings-row">
+            <span class="settings-sub">Hold og opgaver kan høre til grundforløbet, tiden efter det eller eksamensperioden. Så regner «foran/bagud» med, at deres timer bruges i perioden. Skolens datoer står her på forhånd — ret dem, hvis planen ændres. Eksamensperioden er sommerterminen i starten af normperioden: prøverne tæller i den normperiode, de holdes i.</span>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-skolestart">Første skoledag</label>
+            <input type="date" id="cfg-skolestart" class="settings-input-sm periode-dato">
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-gfslut">Grundforløbet slutter</label>
+            <input type="date" id="cfg-gfslut" class="settings-input-sm periode-dato">
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-eksamenfra">Eksamensperiode fra</label>
+            <input type="date" id="cfg-eksamenfra" class="settings-input-sm periode-dato">
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-eksamentil">Eksamensperiode til</label>
+            <input type="date" id="cfg-eksamentil" class="settings-input-sm periode-dato">
+          </div>
+          <ul id="cfg-periode-sum" class="periode-sum" role="status" aria-live="polite"></ul>
+        </div>
+
         <!-- Holdnormer -->
         <div class="settings-section">
           <div class="settings-section-title">Holdnormer · <span id="cfg-faktor-aar">2026/27</span></div>
@@ -573,20 +598,16 @@
             <input class="form-input" type="number" id="act-fremdrift" min="0" max="100" step="1" placeholder="fx 40">
           </div>
         </div>
-        <fieldset class="form-group norm-felt" id="field-periode">
-          <legend class="form-label">Periode <span class="form-optional">(valgfri — tom = hele skoleåret)</span></legend>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="act-fra">Fra</label>
-              <input class="form-input" type="date" id="act-fra">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="act-til">Til <span class="form-optional">(med)</span></label>
-              <input class="form-input" type="date" id="act-til">
-            </div>
+        <div class="form-group" id="field-periode">
+          <label class="form-label" id="act-periode-label">Periode</label>
+          <div class="segmented segmented-2x2" role="radiogroup" aria-labelledby="act-periode-label">
+            <label class="seg-opt"><input type="radio" name="act-periode" value="aar" checked><span>Hele skoleåret</span></label>
+            <label class="seg-opt"><input type="radio" name="act-periode" value="grundforloeb"><span>Grundforløb</span></label>
+            <label class="seg-opt"><input type="radio" name="act-periode" value="efterGf"><span>Efter grundforløb</span></label>
+            <label class="seg-opt"><input type="radio" name="act-periode" value="eksamen"><span>Eksamensperiode</span></label>
           </div>
-          <p class="form-hint" id="act-periode-hint">Fx et grundforløb aug–nov eller eksamen i maj–juni. Foran/bagud regner med, at budgettet bruges i perioden, og løbende optjening sker kun over periodens arbejdsdage.</p>
-        </fieldset>
+          <p class="form-hint" id="act-periode-hint" aria-live="polite"></p>
+        </div>
         <div class="form-group">
           <label class="akkord-fordel" for="act-faelles">
             <input type="checkbox" id="act-faelles" class="settings-check" checked>
@@ -632,15 +653,16 @@
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <p class="sheet-desc">Én linje per aktivitet — format: <code>navn; type; budget; parent; optjening; fra; til</code>.
+      <p class="sheet-desc">Én linje per aktivitet — format: <code>navn; type; budget; parent; optjening; periode</code>.
         Optjening (kun opgaver) er <code>løbende</code>, <code>afslutning</code> eller <code>manuel</code>; uden den optjenes løbende.
-        Fra og til er en valgfri periode (<code>2027-05-01</code> eller <code>1/5-2027</code>); uden dem gælder hele skoleåret.</p>
+        Periode er <code>grundforløb</code>, <code>efter grundforløb</code> eller <code>eksamen</code>; uden den gælder hele skoleåret.</p>
       <div class="import-example">
         <div class="import-example-code">3g Ng; hold; 288
 Eksamen og prøver; opgave; 80
 SRP; opgave; 20; Eksamen og prøver; afslutning
 Vejledning; opgave; 40
-1g grundforløb; hold; 60; ; ; 2026-08-10; 2026-11-27</div>
+1g grundforløb; hold; 60; ; ; grundforløb
+NV-eksamen; opgave; 15; ; afslutning; eksamen</div>
       </div>
       <div class="form-group">
         <label class="form-label" for="import-year">Skoleår</label>

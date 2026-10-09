@@ -10,7 +10,7 @@ import { getSettings, gemIndstilling, aarsnorm, andetSum, FULD_AARSNORM, FLEKSBA
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { forloebIArbejdsdage, ferieFor } from './ferie.js';
-import { aktivitetsAndel, forventetM, periodeFor, periodeTekst } from './aktivitetsperiode.js';
+import { aktivitetsAndel, forventetM, periodeFor, PERIODER } from './aktivitetsperiode.js';
 import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
 } from './akkord.js';
@@ -265,7 +265,7 @@ function forloebAndel() {
 }
 
 // Normperioden og ferien — det, aktivitetsperiode.js regner andele i
-const aarsPeriode = aar => ({ start: start(), slut: slut(), ferie: ferieFor(aar) });
+const aarsPeriode = aar => ({ aar, start: start(), slut: slut(), ferie: ferieFor(aar) });
 
 const aaretAfsluttet = () => Date.now() >= slut().getTime();
 
@@ -297,7 +297,7 @@ function renderSummary(totalMins, ak, acts) {
     const SKAL    = NORM - ANDET;
     const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
-    const forv    = forventetM({ acts, aar: year, normM, ...aarsPeriode(year) });
+    const forv    = forventetM({ acts, normM, ...aarsPeriode(year) });
     const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
     const chip    = forloebChip(totalMins, forv, elapsed);
 
@@ -632,7 +632,8 @@ function akkordLinje(act, ak, kids = []) {
   const maade = egen.maade === 'manuel'
     ? `${MAADE_TEKST.manuel} ${Math.round(Number(act.fremdrift) || 0)}%`
     : act.type === 'hold' ? 'Løbende · uden normgrundlag' : MAADE_TEKST[egen.maade];
-  const per = egen.maade === 'loebende' ? periodeTekst(periodeFor(act, getLoadedActivities())) : '';
+  const p   = periodeFor(act, getLoadedActivities());
+  const per = p !== 'aar' && egen.maade !== 'afsluttet' ? PERIODER[p] : '';
   return `<div class="rapport-akkord">
     <span class="rapport-akkord-maade">${maade}${per ? ` · ${per}` : ''}${udenFaelles(act, ak)}</span>
     <span>Optjent <b>${fmtMins(u.optjent)}</b></span>
