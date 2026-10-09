@@ -74,6 +74,18 @@ export function onSnapshot(q, cb, err) {
 }
 export const getDocs = async q => run(q.kind === 'col' ? { path: q.path, c: [] } : q);
 export const getDoc = async ref => docSnap(ref);
+// cache: { 'sti': data } er telefonens egen kopi; mangler stien, er den ikke
+// i cachen. Serveren svarer med lageret, efter forsinkelsen i cfg.delay
+export async function getDocFromCache(ref) {
+  if (!(ref.path in (cfg.cache || {}))) throw new Error('unavailable');
+  const d = cfg.cache[ref.path];
+  return { id: ref.id, exists: () => !!d, data: () => d && { ...d } };
+}
+export async function getDocFromServer(ref) {
+  const delay = (cfg.delay || []).find(([frag]) => ref.path.includes(frag))?.[1] ?? 0;
+  await new Promise(r => setTimeout(r, delay));
+  return docSnap(ref);
+}
 export async function addDoc(col, data) { const r = doc(col); store.set(r.path, resolve(data)); notify(); return r; }
 export async function setDoc(ref, data, opt) { store.set(ref.path, opt?.merge ? { ...(store.get(ref.path) || {}), ...resolve(data) } : resolve(data)); notify(); }
 export async function updateDoc(ref, data) { if (!store.has(ref.path)) throw new Error('no doc ' + ref.path); store.set(ref.path, { ...store.get(ref.path), ...resolve(data) }); notify(); }

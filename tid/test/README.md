@@ -50,6 +50,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `ferie.mjs` | foran/bagud på arbejdsdage og ferieindtastningen (fast dato: 2. okt. 2026) |
 | `tastatur.mjs` | arkene som dialoger: fokus, Tab, Escape, onboarding |
 | `faktorlinje.mjs` | «Retning (skønnet)» kun med registreret retning |
+| `opstart.mjs` | login uden popup-hjælperens iframe ved start, indstillinger fra cachen før serveren svarer |
 | `version-og-cache.mjs` | versionen i Indstillinger, og at tid ikke sletter navneApps cache |
 | `hurtigstart-navne.mjs` | lange navne i hurtigstart ved 390 og 340 px |
 | `kalender-redigering.mjs` | korte blokke kan rammes, zoom, dagens liste og arket i siden på bred skærm, træk med musen, snap til naboen, advarsel ved overlap og Fortryd |

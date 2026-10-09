@@ -1,6 +1,8 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  initializeAuth, indexedDBLocalPersistence, browserLocalPersistence,
+  browserSessionPersistence, browserPopupRedirectResolver,
+  GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 import {
   initializeFirestore, persistentLocalCache
@@ -18,7 +20,16 @@ import { initIndstillingerView, refreshIndstillinger, getSettings } from './inds
 
 // ─── Firebase init ────────────────────────────────────────
 const firebaseApp = initializeApp(firebaseConfig);
-export const auth = getAuth(firebaseApp);
+// Ikke getAuth(): den tager login-vinduets hjælper med fra start, og på
+// iPhone (og i Safari) indlæser hjælperen så en skjult iframe fra
+// smbi-tid.firebaseapp.com plus Googles gapi-script — FØR onAuthStateChanged
+// melder, hvem der er logget ind. Det kostede op mod et halvt minut eller
+// mere ved hver opstart, også for en, der var logget ind i forvejen. Samme
+// lagre som getAuth, så eksisterende logins overlever; hjælperen gives i
+// stedet først til signInWithPopup, når der faktisk skal logges ind.
+export const auth = initializeAuth(firebaseApp, {
+  persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence]
+});
 export const db   = initializeFirestore(firebaseApp, {
   localCache: persistentLocalCache()
 });
@@ -50,9 +61,13 @@ const views            = document.querySelectorAll('.view');
 btnGoogleLogin.addEventListener('click', async () => {
   btnGoogleLogin.disabled = true;
   try {
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(auth, provider, browserPopupRedirectResolver);
   } catch (err) {
-    if (err.code !== 'auth/popup-closed-by-user') {
+    // Første tryk indlæser hjælperen, og så kan iPhone nå at regne vinduet
+    // for ikke at være åbnet af et tryk. Andet tryk går hurtigt igennem
+    if (err.code === 'auth/popup-blocked') {
+      showToast('Tryk på knappen igen for at logge ind');
+    } else if (err.code !== 'auth/popup-closed-by-user') {
       showToast('Kunne ikke logge ind — prøv igen');
     }
     btnGoogleLogin.disabled = false;

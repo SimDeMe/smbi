@@ -6,7 +6,7 @@ import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieListe } from './feri
 import { skoleaarStart, kortDato, datoInput } from './periode.js';
 import { esc } from './format.js';
 import { PERIODER, datoerFor, periodeBeskrivelse } from './aktivitetsperiode.js';
-import { doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { doc, getDoc, getDocFromCache, getDocFromServer, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── Defaults ─────────────────────────────────────────────
 // currentSchoolYear er tom som default, så getCurrentSchoolYear() falder
@@ -84,11 +84,32 @@ async function visVersion() {
 }
 
 // ─── Load from Firestore ──────────────────────────────────
-// Ét opslag ved opstart. Findes dokumentet ikke, skrives standardværdierne —
-// men appen venter ikke på skrivningen: den kan lige så godt lande, mens
-// brugeren allerede er i gang.
+// Opstarten venter på indstillingerne, så de skal komme hurtigt. Ligger de i
+// telefonens egen kopi af databasen, bruges den med det samme, og serveren
+// spørges bagefter — er der rettet noget fra en anden enhed, lægges det ind,
+// når svaret kommer. Et almindeligt getDoc ville vente på serveren hver gang,
+// og på en træg forbindelse kan det tage mange sekunder.
+//
+// Findes dokumentet slet ikke, skrives standardværdierne — men appen venter
+// ikke på skrivningen: den kan lige så godt lande, mens brugeren allerede er
+// i gang.
 async function loadSettings() {
   const ref = doc(db, `users/${userId}/settings/config`);
+  let fraCache = null;
+  try { fraCache = await getDocFromCache(ref); } catch { /* ikke i cachen */ }
+  if (fraCache?.exists()) {
+    settings = { ...DEFAULTS, ...fraCache.data() };
+    populateForm();
+    getDocFromServer(ref).then(snap => {
+      if (!snap.exists()) return;
+      const nye = { ...DEFAULTS, ...snap.data() };
+      if (JSON.stringify(nye) === JSON.stringify(settings)) return;
+      settings = nye;
+      populateForm();
+      updateTopYear();
+    }).catch(() => { /* offline — cachen må gøre det */ });
+    return;
+  }
   try {
     const snap = await getDoc(ref);
     if (snap.exists()) {
