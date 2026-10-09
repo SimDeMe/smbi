@@ -58,7 +58,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
 | `backup.mjs` | JSON-backuppen: indstillinger, aktiviteter og registreringer; gendan en rettet fil (nye uden id, tider med og uden tidszone, sletning), fejl i filen, gammel fil uden indstillinger |
-| `udvikling.mjs` | graferne i skoleårs-rapporten: foran/bagud skema og akkordsaldoen uge for uge, ender i sammendragets tal, afsluttet opgave optjener fra sin dato |
+| `udvikling.mjs` | graferne i skoleårs-rapporten: foran/bagud skema og akkordsaldoen uge for uge, ender i sammendragets tal, afsluttet opgave optjener fra sin dato; ugegrafens opgaver ved hover og klik (summen er ugens belastning), piletaster, zoom ved træk og med knapperne |
 | `periode.mjs` | skolens faste perioder: foran/bagud og kurven regner budgettet i perioden, løbende optjening kun i perioden, «ved afslutning» optjener brugt tid og resten ved afslutning og forventes, når tiden er brugt, «optjenes i næste normperiode» i begge år, under-opgave følger forælderen, studieretningens start, formular, indstillinger, import og kopi (fast dato: 2. okt. 2026) |
 | `portefolje-andet.mjs` | frikøb, barsel og overførte timer: indtastning, gem, rapportens norm og portefølje |
 

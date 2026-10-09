@@ -107,8 +107,64 @@ const browser = await chromium.launch();
   await svgU.scrollIntoViewIfNeeded();
   const bu = await svgU.boundingBox();
   await page.mouse.move(bu.x + bu.width * 0.5, bu.y + bu.height / 2);
-  const tipU = (await page.textContent('.udv-uger .udv-tip')).trim();
-  ok(/^Uge \d+.*belastning \d+ t · norm \d+ t$/.test(tipU), 'hover på ugegrafen viser ugens tal: ' + tipU);
+  const tipU = (await page.textContent('.udv-uger .udv-tip-hoved')).trim();
+  ok(/^Uge \d+ · .*belastning \d+ t · norm \d+ t$/.test(tipU), 'hover på ugegrafen viser ugens tal: ' + tipU);
+  const tipOpg = await page.$$eval('.udv-uger .udv-tip-opg', e => e.map(x => x.textContent.trim()));
+  ok(tipOpg.length >= 1 && tipOpg[0].startsWith('Hold-arbejde'), 'hover viser ugens opgaver: ' + tipOpg.join(' / '));
+  const tipInde2 = await page.evaluate(() => { const t = document.querySelector('.udv-uger .udv-tip').getBoundingClientRect(), k = document.querySelector('.udv-uger').getBoundingClientRect(); return t.left >= k.left - 1 && t.right <= k.right + 1; });
+  ok(tipInde2, 'ugegrafens tip står inden for kortet');
+
+  // Klik på en uge: panelet med opgaverne, og deres timer giver ugens belastning
+  const ugeX = async t => {
+    const w = uger.findIndex(u => u[0] === t);
+    const b = await (await page.$('.udv-uger svg')).boundingBox();
+    const vb = { l: 62, r: 18, B: 600 };
+    const xv = vb.l + (w + 0.5) / uger.length * (vb.B - vb.l - vb.r);   // ugerne er (næsten) lige brede
+    return b.x + xv / vb.B * b.width;
+  };
+  const sepUge = new Date(2026, 8, 7).getTime();
+  await page.mouse.click(await ugeX(sepUge), bu.y + bu.height / 2);
+  await page.waitForTimeout(100);
+  const det = await page.$eval('.udv-uger .udv-detalje', el => ({ skjult: el.hidden, hoved: el.querySelector('.udv-det-head')?.textContent, opg: [...el.querySelectorAll('.udv-opg li')].map(li => [li.querySelector('.udv-opg-navn').textContent, li.querySelector('b').textContent]) }));
+  ok(!det.skjult && /Uge 37/.test(det.hoved), 'klik på uge 37 viser panelet: ' + det.hoved?.replace(/\s+/g, ' '));
+  const tal = t => Number(t.replace(' t', '').replace(',', '.'));
+  const sumOpg = det.opg.reduce((s, [, t]) => s + tal(t), 0);
+  const belSep = uge(sepUge)[3] / 60;
+  ok(Math.abs(sumOpg - belSep) < 0.3, `opgavernes timer giver ugens belastning: ${sumOpg.toFixed(1)} / ${belSep.toFixed(1)}`);
+  ok(det.opg.some(([n]) => n === 'Studietur') && det.opg.some(([n]) => n === 'Hold-arbejde'), 'begge opgaver i ugen før studieturen blev afsluttet: ' + det.opg.map(o => o.join(' ')).join(' / '));
+  // Studieturen belaster med den tid, der blev brugt den uge (fredag: 3 t)
+  ok(det.opg.find(([n]) => n === 'Studietur')?.[1] === '3 t', 'studieturen belaster med den brugte tid: ' + det.opg.find(([n]) => n === 'Studietur')?.[1]);
+  ok(await page.$('.udv-uger .udv-uge-valgt') !== null, 'den valgte uge er markeret i grafen');
+  // Pil til højre: næste uge
+  await page.focus('.udv-uger svg');
+  await page.keyboard.press('ArrowRight');
+  ok(/Uge 38/.test(await page.textContent('.udv-uger .udv-det-head')), 'pil til højre vælger næste uge');
+  await page.click('.udv-uger .udv-luk');
+  ok(await page.$eval('.udv-uger .udv-detalje', el => el.hidden), 'panelet lukkes med ×');
+
+  // Zoom: træk hen over grafen fra august til oktober
+  const antalUger = () => page.$$eval('.udv-uger .udv-bel', p => (p[0].getAttribute('d').match(/M|L/g).length) / 2);
+  ok(await antalUger() === uger.length, 'hele året vises fra start: ' + await antalUger());
+  ok(await page.$eval('.udv-zk[data-zoom="alt"]', b => b.disabled), '«Hele året» er slået fra, når hele året vises');
+  const x1 = await ugeX(new Date(2026, 7, 10).getTime()), x2 = await ugeX(new Date(2026, 9, 5).getTime());
+  await page.mouse.move(x1, bu.y + bu.height / 2);
+  await page.mouse.down();
+  await page.mouse.move((x1 + x2) / 2, bu.y + bu.height / 2, { steps: 4 });
+  await page.mouse.move(x2, bu.y + bu.height / 2, { steps: 4 });
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  ok(await antalUger() === 9, 'trukket udsnit: 9 uger: ' + await antalUger());
+  ok(await page.$eval('.udv-uger .udv-detalje', el => el.hidden), 'et træk vælger ikke en uge');
+  const akse = await page.$$eval('.udv-uger .udv-akse-x', t => t.map(x => x.textContent));
+  ok(akse[0] === 'uge' && akse.includes('33') && akse.includes('41'), 'kort udsnit: ugenumre på x-aksen: ' + akse.join(' '));
+  ok((await page.textContent('.udv-udsnit')).includes('9 uger'), 'udsnittet står over grafen: ' + await page.textContent('.udv-udsnit'));
+  await page.click('.udv-zk[data-zoom="hoejre"]');
+  ok((await page.textContent('.udv-udsnit')).startsWith('14. sep'), '› flytter udsnittet et halvt udsnit frem: ' + await page.textContent('.udv-udsnit'));
+  await page.click('.udv-zk[data-zoom="ind"]');
+  ok(await antalUger() === 5, '+ halverer udsnittet: ' + await antalUger());
+  await page.click('.udv-zk[data-zoom="alt"]');
+  ok(await antalUger() === uger.length, '«Hele året» viser hele året igen');
+  ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'tabellen har stadig alle uger');
 
   ok((await page.$$eval('.udv-kort[data-udv]', k => k[0].querySelectorAll('tbody tr').length)) === skema.length, 'tabellen har en række pr. punkt');
   ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'ugetabellen har en række pr. uge');

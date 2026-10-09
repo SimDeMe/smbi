@@ -27,11 +27,17 @@
 // budget uden børnenes, intet for opgaver, der optjenes næste år, og intet
 // for sidste års opgaver, hvis tid blev brugt dengang.
 //
+// Belastningen kan også deles op på opgaverne (dele): hver opgaves del til og
+// med en dato, så rapporten kan vise, hvad en uge består af. Resten af normen
+// uden hold og løbende opgaver står under nøglen REST.
+//
 // Alle tal er i minutter.
 
 import { forloebIArbejdsdage } from './ferie.js';
 import { periodeFor, graenser } from './aktivitetsperiode.js';
 import { erEngang } from './akkord.js';
+
+export const REST = '_rest';
 
 const midnat = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
@@ -44,7 +50,7 @@ export function beregnBelastning({ ak, acts, aar, normM, start, slut, ferie, ele
   const engang = enheder.filter(u => erEngang(u.act));
   const perioder = enheder.filter(u => !erEngang(u.act)).map(u => {
     const [f, t] = graenser(periodeFor(u.act, aarets), aar, start, slut);
-    return { budget: u.budget, f, t };
+    return { id: u.act.id, budget: u.budget, f, t };
   });
 
   const P = perioder.reduce((s, x) => s + x.budget, 0);
@@ -58,8 +64,23 @@ export function beregnBelastning({ ak, acts, aar, normM, start, slut, ferie, ele
   const planlagt = d =>
     perioder.reduce((s, x) => s + faktor * x.budget * andel(x.f, x.t, d), 0) + rest * andel(start, slut, d);
 
+  // Opgavernes dele ved d, id → minutter; med nu som i frem
+  const dele = (d, nu = null) => {
+    const m = new Map();
+    perioder.forEach(x => m.set(x.id, (m.get(x.id) || 0) + faktor * x.budget * andel(x.f, x.t, d)));
+    if (rest) m.set(REST, rest * andel(start, slut, d));
+    const fremad = nu && d > nu ? andel(midnat(nu), slut, d) : 0;
+    engang.forEach(u => {
+      const o = Math.min(u.optjent, u.budget);
+      m.set(u.act.id, (m.get(u.act.id) || 0) + o + (u.budget - o) * fremad);
+    });
+    return m;
+  };
+
   return {
     total: faktor * P + E + rest,
+    faktor,
+    dele,
     // Belastningen til og med d, med engangsopgaverne, som de står i ak
     ved: d => planlagt(d) + optjent,
     // Fremskrevet fra nu: det ubrugte af engangsopgaverne jævnt over de
