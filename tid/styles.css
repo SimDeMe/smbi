@@ -1239,6 +1239,8 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .forecast-ahead{background:var(--tint-god)}
 .forecast-behind{background:var(--tint-slem)}
 .forecast-neutral{background:var(--paper-2)}
+.forecast-over{background:var(--tint-slem)}
+.forecast-under{background:var(--tint-god)}
 
 /* Udviklingen over skoleåret (kun skoleårs-rapporten) — se udvikling.js */
 .udv-sektion{margin-bottom:16px}
@@ -1280,6 +1282,29 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 }
 .udv-tip span{color:var(--slate);margin-right:6px}
 .udv-tip b{font-family:var(--display);font-size:0.78rem;color:var(--ink)}
+/* Kurven, hvor over nul er merarbejde: farverne byttet om */
+.udv-omvendt .udv-flade-op{fill:var(--tint-slem)}
+.udv-omvendt .udv-flade-ned{fill:var(--tint-god)}
+.udv-omvendt .udv-nu.is-pos{color:#B8321A}
+.udv-omvendt .udv-nu.is-neg{color:#2C7A2C}
+/* Belastning og arbejde, uge for uge */
+.udv-noegle{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.06em;color:var(--slate)}
+.udv-noegle span{display:inline-flex;align-items:center;gap:5px}
+.udv-noegle i{display:inline-block;width:14px;height:10px}
+.udv-n-soejle{background:var(--blue);border-radius:2px}
+.udv-n-bel{height:0!important;border-top:3px solid var(--coral)}
+.udv-n-norm{height:0!important;border-top:2px dashed var(--slate)}
+.udv-n-elev{border:1px solid var(--text-3);
+  background:repeating-linear-gradient(45deg,var(--text-3) 0 1px,transparent 1px 4px)}
+.udv-n-ferie{background:#ECE6D6;border:1px solid var(--rule)}
+.udv-ferie{fill:#ECE6D6}
+.udv-skrav{stroke:#D3CBB6;stroke-width:2}
+.udv-soejle{fill:var(--blue)}
+.udv-bel{fill:none;stroke:var(--coral);stroke-width:2.5;stroke-linejoin:round}
+.udv-norm{fill:none;stroke:var(--slate);stroke-width:1.5;stroke-dasharray:5 4}
+.udv-idag{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 3}
+.udv-uge-mark{fill:var(--ink);opacity:0.08}
 .udv-tabel{margin-top:6px}
 .udv-tabel summary{
   cursor:pointer;font-family:var(--mono);font-size:0.58rem;font-weight:600;
@@ -1561,6 +1586,11 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 }
 .ferie-raekke .settings-input-sm{width:100%;min-width:0;text-align:left;padding:8px 4px 8px 7px;font-size:0.84rem}
 .ferie-til{font-family:var(--mono);font-size:0.7rem;color:var(--slate)}
+.ferie-elev{
+  grid-column:1 / -1;display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.04em;color:var(--slate);
+}
+.ferie-elev input{width:16px;height:16px;margin:0;accent-color:var(--ink)}
 .ferie-dage{
   grid-column:1 / -1;
   font-family:var(--mono);font-size:0.62rem;font-weight:600;color:var(--slate);

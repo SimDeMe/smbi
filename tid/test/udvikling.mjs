@@ -26,7 +26,7 @@ const act = (id, name, extra = {}) => [`users/u1/activities/${id}`, { name, type
 const settings = ['users/u1/settings/config', { currentSchoolYear: '2026/27' }];
 const post = (id, a, s, min) => [`users/u1/entries/${id}`, { activityId: a, workType: null, startTime: { __ts: s }, endTime: { __ts: s + min * 60000 }, durationMinutes: min, note: '', isModule: false, autoStopped: false }];
 const tilRapport = async page => { await page.click('.nav-btn[data-view="rapporter"]'); await page.waitForTimeout(500); };
-const kurve = (page, n) => page.$$eval('.udv-kort', (k, n) => JSON.parse(k[n].dataset.udv).data, n);
+const kurve = (page, n) => page.$$eval('.udv-kort[data-udv]', (k, n) => JSON.parse(k[n].dataset.udv).data, n);
 
 const browser = await chromium.launch();
 
@@ -46,15 +46,26 @@ const browser = await chromium.launch();
   await tilRapport(page);
 
   const kort = await page.$$('.udv-kort');
-  ok(kort.length === 2, 'to grafer under skoleåret: ' + kort.length);
+  ok(kort.length === 3, 'tre grafer under skoleåret: ' + kort.length);
   const titler = await page.$$eval('.udv-titel', e => e.map(x => x.textContent));
-  ok(titler.join() === 'Foran eller bagud skema,Leveret mod optjent', 'titlerne: ' + titler.join());
+  ok(titler.join() === 'Belastning og arbejde,Arbejdet mod belastning,Leveret mod optjent', 'titlerne: ' + titler.join());
 
-  // Sidste punkt i skemakurven er chippens tal
+  // Ugerne: tre timer hver hverdag er 15 t om ugen; hele normperioden er med
+  const uger = await page.$eval('.udv-uger', k => JSON.parse(k.dataset.uger).data);
+  const uge = t => uger.find(w => w[0] === t);
+  ok(uge(new Date(2026, 8, 7).getTime())?.[2] === 15 * 60, 'arbejdet i ugen fra 7. sep.: ' + uge(new Date(2026, 8, 7).getTime())?.[2] / 60 + ' t');
+  ok(uger[0][0] === new Date(2026, 5, 1).getTime() && uger.at(-1)[1] === new Date(2027, 5, 1).getTime(), 'ugerne dækker normperioden');
+  ok(uge(new Date(2026, 10, 2).getTime())?.[2] === null && uge(new Date(2026, 10, 2).getTime())?.[3] > 0, 'uger frem i tiden: intet arbejdet, men belastning');
+  ok(uge(new Date(2026, 6, 13).getTime())?.[3] === 0 && uge(new Date(2026, 6, 13).getTime())?.[4] === 0, 'sommerferien: hverken belastning eller norm');
+  // Summen af ugernes belastning er normen
+  const sumBel = uger.reduce((s, w) => s + w[3], 0) / 60;
+  ok(Math.abs(sumBel - 1690) <= 2, 'ugernes belastning giver normen: ' + Math.round(sumBel));
+
+  // Sidste punkt i forskelskurven er chippens tal
   const chip = (await page.textContent('.rapport-summary .forecast-chip')).trim();
-  const chipT = Number(chip.match(/(\d+)t/)[1]) * (chip.includes('bagud') ? -1 : 1);
+  const chipT = Number(chip.match(/(\d+)t/)[1]) * (chip.includes('overskud') ? -1 : 1);
   const skema = await kurve(page, 0);
-  ok(Math.round(skema.at(-1)[1] / 60) === chipT, `skemakurven ender i chippens tal: ${Math.round(skema.at(-1)[1] / 60)} / ${chip}`);
+  ok(Math.round(skema.at(-1)[1] / 60) === chipT, `forskelskurven ender i chippens tal: ${Math.round(skema.at(-1)[1] / 60)} / ${chip}`);
   ok(skema[0][0] === new Date(2026, 5, 1).getTime() && skema[0][1] === 0, 'kurven begynder i 0 ved normperiodens start');
   ok(skema.length >= 18 && skema.length <= 20, 'et punkt om ugen: ' + skema.length);
   // Hele juni og juli uden registreringer: bagud — men ikke i sommerferien
@@ -71,8 +82,8 @@ const browser = await chromium.launch();
   // Fortegnet forklares med samme ord i sammendraget og i grafen
   const sub = await page.textContent('.akkord-saldo-sub');
   ok(sub.includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'saldoens fortegn forklaret: ' + sub);
-  ok((await page.$$eval('.udv-nu', e => e[1].textContent)).includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'samme ord i grafens overskrift');
-  const under = await page.$$eval('.udv-under', e => e[1].textContent);
+  ok((await page.$$eval('.udv-nu', e => e[2].textContent)).includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'samme ord i grafens overskrift');
+  const under = await page.$$eval('.udv-under', e => e[2].textContent);
   ok(under.includes('Over nul') && under.includes('Under nul: du har brugt mere tid, end du har optjent'), 'undertitlen forklarer begge fortegn');
 
   // Studieturen (ved afslutning) har optjent sine 15 brugte timer undervejs og
@@ -83,15 +94,24 @@ const browser = await chromium.launch();
   ok(spring > 20 && spring < 32, `springet ved afslutningen (≈ de 25 t, der er tilbage): ${Math.round(spring)} t`);
 
   // Hover viser datoen og tallet
-  const svg = await page.$('.udv-kort svg');
+  const svg = await page.$('.udv-kort[data-udv] svg');
   await svg.scrollIntoViewIfNeeded();
   const bx = await svg.boundingBox();
   await page.mouse.move(bx.x + bx.width * 0.3, bx.y + bx.height / 2);
-  const tip = (await page.textContent('.udv-kort .udv-tip')).trim();
-  const tipInde = await page.evaluate(() => { const t = document.querySelector('.udv-tip').getBoundingClientRect(), k = document.querySelector('.udv-kort').getBoundingClientRect(); return t.left >= k.left && t.right <= k.right; });
-  ok(/\d+\. \w+.*t (foran|bagud) skema/.test(tip) && tipInde, 'hover viser dato og tal: ' + tip);
+  const tip = (await page.textContent('.udv-kort[data-udv] .udv-tip')).trim();
+  const tipInde = await page.evaluate(() => { const t = document.querySelector('.udv-kort[data-udv] .udv-tip').getBoundingClientRect(), k = document.querySelector('.udv-kort[data-udv]').getBoundingClientRect(); return t.left >= k.left && t.right <= k.right; });
+  ok(/\d+\. \w+.*t (merarbejde|overskud)/.test(tip) && tipInde, 'hover viser dato og tal: ' + tip);
 
-  ok((await page.$$eval('.udv-kort', k => k[0].querySelectorAll('tbody tr').length)) === skema.length, 'tabellen har en række pr. punkt');
+  // Hover på ugegrafen viser ugen
+  const svgU = await page.$('.udv-uger svg');
+  await svgU.scrollIntoViewIfNeeded();
+  const bu = await svgU.boundingBox();
+  await page.mouse.move(bu.x + bu.width * 0.5, bu.y + bu.height / 2);
+  const tipU = (await page.textContent('.udv-uger .udv-tip')).trim();
+  ok(/^Uge \d+.*belastning \d+ t · norm \d+ t$/.test(tipU), 'hover på ugegrafen viser ugens tal: ' + tipU);
+
+  ok((await page.$$eval('.udv-kort[data-udv]', k => k[0].querySelectorAll('tbody tr').length)) === skema.length, 'tabellen har en række pr. punkt');
+  ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'ugetabellen har en række pr. uge');
   ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'intet vandret overløb ved 390');
   await page.locator('.udv-sektion').screenshot({ path: DIR + '/udvikling.png' });
 
@@ -101,13 +121,13 @@ const browser = await chromium.launch();
   await page.context().close();
 }
 
-// Uden budgetter: kun skemakurven
+// Uden budgetter: ingen akkordkurve
 {
   const s = new Date(2026, 8, 7, 8).getTime();
   const page = await side(browser, { seed: [settings, act('a1', 'Diverse'), post('e1', 'a1', s, 120)] });
   await tilRapport(page);
   const titler = await page.$$eval('.udv-titel', e => e.map(x => x.textContent));
-  ok(titler.join() === 'Foran eller bagud skema', 'uden budgetter kun skemakurven: ' + titler.join());
+  ok(titler.join() === 'Belastning og arbejde,Arbejdet mod belastning', 'uden budgetter ingen akkordkurve: ' + titler.join());
   await page.context().close();
 }
 

@@ -36,7 +36,7 @@ const tilRapport = async page => {
 const chip = async page => {
   await tilRapport(page);
   const t = (await page.textContent('.rapport-summary .forecast-chip')).trim();
-  return Number(t.match(/(\d+)t/)[1]) * (t.includes('bagud') ? -1 : 1);
+  return Number(t.match(/(\d+)t/)[1]) * (t.includes('overskud') ? -1 : 1);
 };
 
 // Arbejdsdage (hverdage uden helligdage og lærernes ferie) i [fra, til)
@@ -45,46 +45,66 @@ const NU = new Date(2026, 9, 2, 10);
 // Grundforløbet 10. aug.–30. okt. 2026 (ingen lærerferie eller helligdage i det)
 const pGrund = (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 2)) + 10 / 24) / hverdage(new Date(2026, 7, 10), new Date(2026, 9, 31));
 const pAar   = 73.4 / 229;                    // skoleåret med skolens ferieplan
+// Belastningen ligger kun på dage uden elevferie: 23 af årets 229, 10 før
+// 2. okt. og 5 i grundforløbet (efterårsferien)
+const bAar   = 63.4 / 206;
+const bGrund = (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 2)) + 10 / 24) / (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 31)) - 5);
+const NORM = 1690;
 const browser = await chromium.launch();
 const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)m/); return !m ? NaN : m[3] ? Number(m[3]) : Number(m[1]) * 60 + Number(m[2] || 0); };
 
-// ── Foran/bagud: grundforløb, efter grundforløb og eksamen ──
+// ── Belastning: grundforløb, efter grundforløb og eksamen ──
+// Resten af normen (1690 t − porteføljen) fordeles på hold og løbende opgaver
+// efter budget, så den følger deres perioder
 {
+  const kurveSidst = p => p.$eval('.udv-kort[data-udv]', k => JSON.parse(k.dataset.udv).data.at(-1)[1]);
+  const hold = (id, navn, extra) => act(id, navn, { type: 'hold', budgetHours: 300, order: id === 'a1' ? 1 : 2, ...extra });
+
   const n0 = await (async () => {
-    const p = await side(browser, { seed: [settings, act('a1', 'Hold', { type: 'hold', budgetHours: 300 })] });
+    const p = await side(browser, { seed: [settings, hold('a1', 'Hold')] });
     const n = await chip(p); await p.context().close(); return n;
   })();
-  ok(n0 >= -546 && n0 <= -539, 'hele skoleåret: bagud som før: ' + n0);
+  ok(Math.abs(n0 + Math.round(NORM * bAar)) <= 1, `hele skoleåret: normen over dagene uden elevferie, ${Math.round(NORM * bAar)} t overskud: ${n0}`);
 
-  const med = await side(browser, { seed: [settings, act('a1', 'Grundforløb', { type: 'hold', budgetHours: 300, periode: 'grundforloeb' })] });
+  // Halvdelen af porteføljen i grundforløbet: halvdelen af normen dér
+  const med = await side(browser, { seed: [settings, hold('a1', 'Hold'), hold('a2', 'Grundforløb', { periode: 'grundforloeb' })] });
   const n1 = await chip(med);
-  const forv = Math.round(300 * (pGrund - pAar));
-  ok(Math.abs((n0 - n1) - forv) <= 1, `grundforløb: ${forv} t mere bagud (${n0} → ${n1})`);
-  const sidst = await med.$eval('.udv-kort', k => JSON.parse(k.dataset.udv).data.at(-1)[1]);
-  ok(Math.round(sidst / 60) === n1, `skemakurven ender i chippens tal: ${Math.round(sidst / 60)} / ${n1}`);
+  const forv1 = Math.round(NORM / 2 * (bAar + bGrund));
+  ok(Math.abs(n1 + forv1) <= 1, `grundforløb: ${forv1} t overskud (${n1})`);
+  ok(Math.round(await kurveSidst(med) / 60) === n1, `kurven ender i chippens tal: ${n1}`);
+  // Ugen med efterårsferien: belastning 0, men stadig arbejdstid
+  const uge42 = await med.$eval('.udv-uger', (k, t) => JSON.parse(k.dataset.uger).data.find(w => w[0] === t), new Date(2026, 9, 12).getTime());
+  ok(uge42 && uge42[3] === 0 && uge42[4] > 0, 'efterårsferien: belastning 0, norm ' + Math.round(uge42?.[4] / 60) + ' t');
+  const ugeGf = await med.$eval('.udv-uger', (k, t) => JSON.parse(k.dataset.uger).data.find(w => w[0] === t), new Date(2026, 8, 7).getTime());
+  const ugeSr = await med.$eval('.udv-uger', (k, t) => JSON.parse(k.dataset.uger).data.find(w => w[0] === t), new Date(2026, 10, 9).getTime());
+  ok(ugeGf[3] > 2 * ugeSr[3], `grundforløbet belaster mere end efter: ${Math.round(ugeGf[3] / 60)} t mod ${Math.round(ugeSr[3] / 60)} t om ugen`);
+  ok(/Resten af året \d+(,\d)? t\/uge/.test(await med.textContent('.udv-uger .udv-head')), 'resten af året står i grafens hoved');
+  await med.screenshot({ path: DIR + '/periode-belastning.png', fullPage: true });
   await med.context().close();
 
-  const sr = await side(browser, { seed: [settings, act('a1', '2g Bi', { type: 'hold', budgetHours: 300, periode: 'efterGf' })] });
+  // Efter grundforløbet er ikke begyndt: kun hele-året-holdet belaster
+  const sr = await side(browser, { seed: [settings, hold('a1', 'Hold'), hold('a2', '2g Bi', { periode: 'efterGf' })] });
   const n2 = await chip(sr);
-  ok(Math.abs((n2 - n0) - Math.round(300 * pAar)) <= 1, `efter grundforløb: ${Math.round(300 * pAar)} t mindre bagud (${n0} → ${n2})`);
+  ok(Math.abs(n2 + Math.round(NORM / 2 * bAar)) <= 1, `efter grundforløb: ${Math.round(NORM / 2 * bAar)} t overskud (${n2})`);
   await sr.context().close();
 
   // Eksamensperioden er juni 2026 — i starten af normperioden, så den er gået
-  const eks = await side(browser, { seed: [settings, act('a1', 'Censur', { budgetHours: 100, optjening: 'loebende', periode: 'eksamen' })] });
+  const eks = await side(browser, { seed: [settings, hold('a1', 'Hold'), act('a2', 'Censur', { budgetHours: 100, optjening: 'loebende', periode: 'eksamen', order: 2 })] });
   const n3 = await chip(eks);
-  ok(Math.abs((n0 - n3) - Math.round(100 * (1 - pAar))) <= 1, `løbende opgave i eksamensperioden (juni, overstået): ${Math.round(100 * (1 - pAar))} t mere bagud (${n0} → ${n3})`);
+  const forv3 = Math.round(NORM / 400 * (100 + 300 * bAar));
+  ok(Math.abs(n3 + forv3) <= 1, `løbende opgave i eksamensperioden (juni, overstået): ${forv3} t overskud (${n3})`);
   await eks.context().close();
 
-  // En engangsopgave forventes, når tiden er brugt: 10 t på den flytter ikke
-  // chippen, og budgettet fordeles ikke over året — heller ikke med en gammel periode
+  // En engangsopgave belaster, når tiden er brugt: 10 t på den er 10 t
+  // belastning, og budgettet fordeles ikke over året — heller ikke med en gammel periode
   const t0 = new Date(2026, 8, 15, 8).getTime();
-  const eng = await side(browser, { seed: [settings,
-    act('a1', 'NV-eksamen', { budgetHours: 100, optjening: 'afslutning', periode: 'eksamen' }),
-    [`users/u1/entries/e1`, { activityId: 'a1', workType: null, startTime: { __ts: t0 }, endTime: { __ts: t0 + 600 * 60000 }, durationMinutes: 600, note: '', isModule: false, autoStopped: false }]] });
+  const eng = await side(browser, { seed: [settings, hold('a1', 'Hold'),
+    act('a2', 'NV-eksamen', { budgetHours: 100, optjening: 'afslutning', periode: 'eksamen', order: 2 }),
+    [`users/u1/entries/e1`, { activityId: 'a2', workType: null, startTime: { __ts: t0 }, endTime: { __ts: t0 + 600 * 60000 }, durationMinutes: 600, note: '', isModule: false, autoStopped: false }]] });
   const n4 = await chip(eng);
-  ok(Math.abs((n4 - n0) - Math.round(100 * pAar)) <= 1, `engangsopgave: tiden forventes, når den er brugt (${n0} → ${n4})`);
-  const sidst4 = await eng.$eval('.udv-kort', k => JSON.parse(k.dataset.udv).data.at(-1)[1]);
-  ok(Math.round(sidst4 / 60) === n4, 'kurven ender også her i chippens tal');
+  const forv4 = Math.round((NORM - 100) * bAar);
+  ok(Math.abs(n4 + forv4) <= 1, `engangsopgave: tiden er belastningen, resten af normen på holdet: ${forv4} t overskud (${n4})`);
+  ok(Math.round(await kurveSidst(eng) / 60) === n4, 'kurven ender også her i chippens tal');
   await eng.context().close();
 }
 

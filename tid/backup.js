@@ -37,7 +37,7 @@ const OM = [
   'activities: name, type ("hold" eller "opgave"), schoolYear ("2026/27"), budgetHours (timer), parentId (id på en overordnet opgave eller null — kun for opgaver), isArchived, color, order, note, optjening ("loebende", "afslutning" eller "manuel", kun opgaver), periode ("grundforloeb", "efterGf" eller "eksamen"; null = hele skoleåret; ikke på engangsopgaver), naesteAar (true: en engangsopgave, hvis budget optjenes i næste normperiode).',
   'entries: activityId (id på en aktivitet, eller null for pause/ubundet tid), workType ("undervisning", "forberedelse" eller "retning" — kun når aktiviteten er et hold), startTime, endTime (null = timeren kører; højst én), note, isBreak (true for pauser). durationMinutes regnes ud af start og slut.',
   'Skemaets moduler: 1. modul 08:10–09:45, 2. modul 10:00–11:35, frokost 11:35–12:00, 3. modul 12:00–13:35, 4. modul 13:45–15:20. Et modul i undervisning har isModule: true.',
-  'settings: currentSchoolYear, normHours (årsnorm i timer), ferie, normFaktorer, portefoljeAndet, periodeDatoer ({ skolestart, gfSlut, srStart, eksamenFra, eksamenTil } pr. skoleår) m.fl. Mangler settings (eller er den null), beholdes de nuværende indstillinger.'
+  'settings: currentSchoolYear, normHours (årsnorm i timer), ferie (pr. skoleår en liste af { fra, til } som "ÅÅÅÅ-MM-DD"; elev: true = elevferie, arbejdsdage uden belastning), ferieMedElev, normFaktorer, portefoljeAndet, periodeDatoer ({ skolestart, gfSlut, srStart, eksamenFra, eksamenTil } pr. skoleår) m.fl. Mangler settings (eller er den null), beholdes de nuværende indstillinger.'
 ];
 
 const sti = (uid, del) => `users/${uid}/${del}`;

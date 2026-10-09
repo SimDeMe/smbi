@@ -20,20 +20,12 @@
 //
 //   optjent  — en løbende opgave (og et hold uden normgrundlag) optjener sit
 //              budget jævnt over arbejdsdagene i perioden (se akkord.js)
-//   skema    — den tid, der «burde» være registreret, regner med, at
-//              aktivitetens budget bruges i perioden. Resten af normen
-//              fordeles jævnt over året som før:
-//
-//     forventet = norm × årets andel + Σ budget × (periodens andel − årets andel)
-//
-//   Summen er den samme ved årets slut; det er kun fordelingen hen over
-//   året, der ændres.
+//   belastning — aktivitetens budget lægges ud over periodens arbejdsdage
+//              uden elevferie (se belastning.js)
 //
 // Engangsopgaver (optjent ved afslutning — eksamen, SRP, et møde) har ingen
-// periode: de er korte og skal ikke fordeles jævnt over noget. I skemaet
-// forventes deres tid, når den er brugt — altså det, der er optjent:
-//
-//     forventet += optjent − budget × årets andel
+// periode: de er korte og skal ikke fordeles jævnt over noget. Deres
+// belastning er den tid, der er brugt — altså det, der er optjent.
 //
 // Gemmes på aktiviteten som periode: 'grundforloeb' | 'efterGf' | 'eksamen'
 // (eller null = hele skoleåret). En under-opgave uden egen periode ligger i
@@ -42,7 +34,6 @@
 import { getSettings } from './indstillinger.js';
 import { forloebIArbejdsdage, arbejdsdageIPerioden, tilDato, ferieFor } from './ferie.js';
 import { addDays, datoInput, skoleaarStart, kortDato } from './periode.js';
-import { budgetTimer } from './normer.js';
 import { erEngang } from './akkord.js';
 
 export const PERIODER = {
@@ -125,31 +116,6 @@ export function periodeBeskrivelse(noegle, aar, s = getSettings()) {
   const sidste = addDays(t, -1);
   const n = arbejdsdageIPerioden(f, t, ferieFor(aar, s));
   return `${kortDato(f)} – ${kortDato(sidste)} ${sidste.getFullYear()} · ${n} arbejdsdage`;
-}
-
-// Den tid, der burde være registreret ved `nu`, i minutter (se øverst).
-// Kun aktiviteter med en anden periode end hele året og engangsopgaver
-// flytter noget. ak: akkordregnskabet ved `nu` — engangsopgavernes optjente.
-export function forventetM({ acts, aar, normM, start, slut, ferie, ak = null, nu = new Date() }) {
-  const aaret = forloebIArbejdsdage(start, slut, ferie, nu);
-  let m = normM * aaret;
-  const aarets = acts.filter(a => a.schoolYear === aar);
-  const budgetM = a => { const b = budgetTimer(a); return b != null ? b * 60 : 0; };
-  aarets.forEach(a => {
-    if (periodeFor(a, aarets) === 'aar') return;
-    let b = budgetM(a);
-    // Forælderens budget rummer børnenes — de med eget budget tæller selv
-    if (!a.parentId) b -= aarets.filter(c => c.parentId === a.id).reduce((s, c) => s + budgetM(c), 0);
-    if (b <= 0) return;
-    m += b * (aktivitetsAndel(a, aarets, { aar, start, slut, ferie, nu }) - aaret);
-  });
-  // Engangsopgaver: deres tid forventes, når den er brugt. Dem, der optjenes
-  // næste år, og dem fra sidste år har budget 0 her og flytter intet.
-  Object.values(ak?.enheder || {}).forEach(u => {
-    if (u.overfoert || !u.budget || !erEngang(u.act)) return;
-    m += u.optjent - u.budget * aaret;
-  });
-  return Math.round(m);
 }
 
 // Import: det, man skriver, → periodens nøgle

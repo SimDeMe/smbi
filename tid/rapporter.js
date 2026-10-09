@@ -9,13 +9,14 @@ import { getLoadedActivities } from './activities.js';
 import { getSettings, gemIndstilling, aarsnorm, andetSum, FULD_AARSNORM, FLEKSBAAND } from './indstillinger.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
-import { forloebIArbejdsdage, ferieFor } from './ferie.js';
-import { aktivitetsAndel, forventetM, periodeFor, PERIODER } from './aktivitetsperiode.js';
+import { forloebIArbejdsdage, ferieFor, elevferieFor } from './ferie.js';
+import { aktivitetsAndel, periodeFor, PERIODER } from './aktivitetsperiode.js';
+import { beregnBelastning } from './belastning.js';
 import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN, naesteSkoleaar
 } from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
-import { beregnUdvikling, tegnUdvikling, bindUdvikling } from './udvikling.js';
+import { beregnUdvikling, tegnUdvikling, tegnUger, bindUdvikling } from './udvikling.js';
 import { tegnLectio } from './lectio.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
@@ -280,21 +281,22 @@ function forloebAndel() {
 // Normperioden og ferien — det, aktivitetsperiode.js regner andele i
 const aarsPeriode = aar => ({ aar, start: start(), slut: slut(), ferie: ferieFor(aar) });
 
-const aaretAfsluttet = () => Date.now() >= slut().getTime();
 
-// Foran/bagud-chippen mod den tid, der burde være registreret — normen
-// jævnt over året, men med aktiviteternes budget i deres egne perioder.
-// Et afsluttet skoleår sammenlignes med hele normen, ikke med "skema".
-function forloebChip(brugtM, forventet, elapsed, lille = false) {
+// Chippen: det arbejdede mod belastningen indtil nu (belastning.js).
+// Merarbejde: du har arbejdet mere, end opgaverne indtil nu kræver.
+// Overskud: mindre — om opgaverne så er leveret, siger akkordregnskabet.
+function forloebChip(brugtM, belastning, elapsed, lille = false) {
   if (elapsed === 0) return '';
-  const diff  = brugtM - forventet;
+  const diff  = brugtM - belastning;
   const diffH = Math.abs(Math.round(diff / 60));
-  const slut  = aaretAfsluttet();
   const kl    = `forecast-chip${lille ? ' forecast-chip-sm' : ''}`;
   return diff >= 0
-    ? `<span class="${kl} forecast-ahead">▲ ${diffH}t ${slut ? 'over norm' : 'foran skema'}</span>`
-    : `<span class="${kl} forecast-behind">▼ ${diffH}t ${slut ? 'under norm' : 'bagud skema'}</span>`;
+    ? `<span class="${kl} forecast-over">▲ ${diffH}t merarbejde</span>`
+    : `<span class="${kl} forecast-under">▼ ${diffH}t overskud</span>`;
 }
+
+// Ord til kurven: samme som chippen
+const forskelOrd = v => v >= 0 ? 'merarbejde' : 'overskud';
 
 // ─── Summary card ─────────────────────────────────────────
 function renderSummary(totalMins, ak, acts) {
@@ -310,7 +312,7 @@ function renderSummary(totalMins, ak, acts) {
     const SKAL    = NORM - ANDET;
     const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
-    const forv    = forventetM({ acts, normM, ak, ...aarsPeriode(year) });
+    const forv    = beregnBelastning({ ak, acts, normM, elevferie: elevferieFor(year), ...aarsPeriode(year) }).ved(new Date());
     const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
     const chip    = forloebChip(totalMins, forv, elapsed);
 
@@ -415,19 +417,18 @@ function tegnSektion(acts, filtered, year) {
   const SKAL = normHours() - andetSum(year, getSettings());
   const u = beregnUdvikling({
     acts, entries: filtered, aar: year, start: start(), slut: slut(),
-    ferie: ferieFor(year), normM: SKAL * 60, fordel: fordelFaelles()
+    ferie: ferieFor(year), elevferie: elevferieFor(year), normM: SKAL * 60, fordel: fordelFaelles()
   });
   if (!u) return '';
-  const slutOrd = aaretAfsluttet();
-  const skema = tegnUdvikling('udv-skema', 'Foran eller bagud skema',
-    'Registreret tid minus den del af normen, der burde være brugt, i timer uge for uge. Over nul: du har registreret mere, end skemaet kræver. Under nul: mindre',
-    u.skema, start(), slut(),
-    v => v >= 0 ? (slutOrd ? 'over norm' : 'foran skema') : (slutOrd ? 'under norm' : 'bagud skema'));
+  const uger = tegnUger('udv-uger', u, start(), slut());
+  const forskel = tegnUdvikling('udv-forskel', 'Arbejdet mod belastning',
+    'Arbejdet minus belastningen, lagt sammen fra årets start, i timer uge for uge. Over nul: merarbejde, du har arbejdet mere, end opgaverne indtil nu kræver. Under nul: overskud',
+    u.forskel, start(), slut(), forskelOrd, true);
   const akkord = u.akkord ? tegnUdvikling('udv-akkord', 'Leveret mod optjent',
     'Akkordsaldoen, optjent minus brugt, i timer uge for uge. Over nul: arbejdet har taget mindre tid, end det betales med. Under nul: du har brugt mere tid, end du har optjent',
     u.akkord, start(), slut(), saldoOrd) : '';
-  if (!skema && !akkord) return '';
-  return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${skema}${akkord}</div>`;
+  if (!uger && !forskel && !akkord) return '';
+  return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${uger}${forskel}${akkord}</div>`;
 }
 
 // ─── Donut chart ──────────────────────────────────────────

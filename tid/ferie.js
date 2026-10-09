@@ -9,6 +9,11 @@
 //   ferie: { "2026/27": [{ fra:"2026-07-06", til:"2026-07-27" }, …] }
 // Begge datoer er med. Ferie-fridagene (6. ferieuge) er med i normen og
 // hører ikke til her — de registreres som tid på en opgave.
+//
+// Samme liste rummer elevernes ferier, markeret med elev: true. Det er
+// arbejdsdage for læreren — de tæller med i normen — men der ligger ingen
+// opgaver i dem, så belastningen er 0 (se belastning.js). ferieFor giver
+// kun lærerens ferie, elevferieFor kun elevernes.
 
 import { getSettings } from './indstillinger.js';
 import { datoInput, addDays } from './periode.js';
@@ -56,17 +61,39 @@ const erHelligdag = d => helligdage(d.getFullYear()).has(datoInput(d));
 // «Forslag til lærernes ferie». Den bruges, indtil læreren selv har gemt
 // ferie for skoleåret — en gemt liste, også en tom, går forud.
 // Ret hvert år efter den nye plan.
+//
+// Elevernes ferier er fra «Ferieplan for elever og lærere 2026-27», de dage,
+// hvor læreren arbejder. Dagene 4.–7. august er ikke med: eleverne har
+// stadig ferie, men lærerne er på skolen til møder og forberedelse.
 export const SKOLENS_FERIE = {
   '2026/27': [
     { fra: '2026-07-06', til: '2026-07-27' },   // sommer, 16 dage (planen skriver 2027, men mener 2026)
     { fra: '2026-12-21', til: '2026-12-24' },   // jul, 4 dage
     { fra: '2027-02-15', til: '2027-02-16' },   // vinter, uge 7, 2 dage
-    { fra: '2027-03-22', til: '2027-03-24' }    // påske, 3 dage — i alt 25
+    { fra: '2027-03-22', til: '2027-03-24' },   // påske, 3 dage — i alt 25
+    { fra: '2026-06-29', til: '2026-07-03', elev: true },   // sommer, før lærerens ferie
+    { fra: '2026-07-28', til: '2026-08-03', elev: true },   // sommer, til første dag på skolen 4/8
+    { fra: '2026-10-12', til: '2026-10-16', elev: true },   // efterår, uge 42
+    { fra: '2026-12-28', til: '2026-12-31', elev: true },   // jul
+    { fra: '2027-02-17', til: '2027-02-19', elev: true },   // vinter, resten af uge 7
+    { fra: '2027-05-07', til: '2027-05-07', elev: true }    // fredag efter Kristi himmelfart
   ]
 };
 
+// Hele listen, som Indstillinger viser den. En liste, der er gemt, før
+// elevferien kom til, får skolens elevferie med, til listen gemmes igen.
+export function ferieListe(aarMaerkat, s = getSettings()) {
+  const gemt = s.ferie?.[aarMaerkat];
+  const skolens = SKOLENS_FERIE[aarMaerkat] ?? [];
+  if (!gemt) return skolens;
+  if (s.ferieMedElev?.[aarMaerkat]) return gemt;
+  return [...gemt.filter(p => !p.elev), ...skolens.filter(p => p.elev)];
+}
+
 export const ferieFor = (aarMaerkat, s = getSettings()) =>
-  s.ferie?.[aarMaerkat] ?? SKOLENS_FERIE[aarMaerkat] ?? [];
+  ferieListe(aarMaerkat, s).filter(p => !p.elev);
+export const elevferieFor = (aarMaerkat, s = getSettings()) =>
+  ferieListe(aarMaerkat, s).filter(p => p.elev);
 
 // Alle feriedatoer som 'ÅÅÅÅ-MM-DD'
 function ferieDatoer(perioder) {

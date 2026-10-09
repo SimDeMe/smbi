@@ -2,7 +2,7 @@
 
 import { db, showToast, getCurrentSchoolYear, updateTopYear } from './app.js';
 import { STANDARD_FAKTORER, tolkTal } from './normer.js';
-import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieFor } from './ferie.js';
+import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieListe } from './ferie.js';
 import { skoleaarStart, kortDato, datoInput } from './periode.js';
 import { esc } from './format.js';
 import { PERIODER, datoerFor, periodeBeskrivelse } from './aktivitetsperiode.js';
@@ -19,7 +19,8 @@ const DEFAULTS = {
   autoStopAfterMinutes: 600,
   autoShortBreaks:      true,
   normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
-  ferie:                {},     // { "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }] } — se ferie.js
+  ferie:                {},     // { "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }, { fra, til, elev: true }] } — se ferie.js
+  ferieMedElev:         {},     // { "2026/27": true } — listen er gemt med elevferien i
   portefoljeAndet:      {},     // { "2026/27": [{ navn: "Frikøb (TR)", timer: 100 }] } — se andetFor()
   periodeDatoer:        {},     // { "2026/27": { skolestart, gfSlut, srStart, eksamenFra, eksamenTil } } — se aktivitetsperiode.js
   fordelFaellesTid:     true    // akkordregnskabet: fordel fælles tid på aktiviteterne — se akkord.js
@@ -152,7 +153,7 @@ let ferieUdkast = [];
 
 function visFerie(aar) {
   ferieAar    = aar;
-  ferieUdkast = ferieFor(aar, settings).map(p => ({ ...p }));
+  ferieUdkast = ferieListe(aar, settings).map(p => ({ ...p }));
   const el = document.getElementById('cfg-ferie-aar');
   if (el) el.textContent = aar;
   tegnFerie();
@@ -175,6 +176,7 @@ function tegnFerie() {
       <span class="ferie-til" aria-hidden="true">–</span>
       <input type="date" class="settings-input-sm ferie-tilfelt" value="${esc(p.til)}" aria-label="Ferie ${i + 1} til og med">
       <button type="button" class="btn-icon ferie-slet" aria-label="Fjern ferie ${i + 1}">×</button>
+      <label class="ferie-elev"><input type="checkbox" class="ferie-elevfelt"${p.elev ? ' checked' : ''}> Kun elever</label>
       <span class="ferie-dage"></span>
     </div>`).join('');
   liste.querySelectorAll('.ferie-raekke').forEach(r => {
@@ -190,6 +192,9 @@ function tegnFerie() {
     });
     r.querySelector('.ferie-tilfelt').addEventListener('input', e => {
       ferieUdkast[i].til = e.target.value; opdaterFerieTal();
+    });
+    r.querySelector('.ferie-elevfelt').addEventListener('change', e => {
+      ferieUdkast[i].elev = e.target.checked; opdaterFerieTal();
     });
     r.querySelector('.ferie-slet').addEventListener('click', () => {
       ferieUdkast.splice(i, 1); tegnFerie();
@@ -210,7 +215,7 @@ function opdaterFerieTal() {
     if (p.fra > p.til) { el.textContent = 'til før fra'; el.classList.add('ferie-dage-fejl'); return; }
     el.classList.remove('ferie-dage-fejl');
     const n = taelFeriedage([p]);
-    el.textContent = `${n} ${n === 1 ? 'dag' : 'dage'}`;
+    el.textContent = `${n} ${n === 1 ? 'dag' : 'dage'}${p.elev ? ' · elevferie, arbejdsdage uden belastning' : ''}`;
     if (tilDato(p.fra) < start || tilDato(p.til) >= slut) udenfor++;
   });
 
@@ -219,11 +224,15 @@ function opdaterFerieTal() {
   // Kun den del af ferien, der ligger i normperioden, tæller
   const iPerioden = ferieUdkast.filter(gyldig).map(p => ({
     fra: p.fra < datoInput(start)  ? datoInput(start)  : p.fra,
-    til: p.til > datoInput(sidste) ? datoInput(sidste) : p.til
+    til: p.til > datoInput(sidste) ? datoInput(sidste) : p.til,
+    elev: !!p.elev
   })).filter(gyldig);
-  const feriedage = taelFeriedage(iPerioden);
-  const arbejdsdage = arbejdsdageIPerioden(start, slut, iPerioden);
+  const laerer = iPerioden.filter(p => !p.elev);
+  const feriedage = taelFeriedage(laerer);
+  const arbejdsdage = arbejdsdageIPerioden(start, slut, laerer);
+  const elevdage = arbejdsdage - arbejdsdageIPerioden(start, slut, iPerioden);
   sum.innerHTML = `<b>${feriedage}</b> feriedage · <b>${arbejdsdage}</b> arbejdsdage`
+    + (elevdage ? `, heraf <b>${elevdage}</b> i elevferie` : '')
     + (udenfor ? `<span class="ferie-advarsel">OBS · ${udenfor === 1 ? 'Én periode' : `${udenfor} perioder`} ligger uden for normperioden ${kortDato(start)} ${start.getFullYear()} – ${kortDato(sidste)} ${sidste.getFullYear()}</span>` : '');
 }
 
@@ -324,7 +333,7 @@ function nyFerie() {
 }
 
 // Til gemning: kun hele perioder, i datoorden
-const ferieTilGem = () => ferieUdkast.filter(gyldig).map(({ fra, til }) => ({ fra, til }))
+const ferieTilGem = () => ferieUdkast.filter(gyldig).map(({ fra, til, elev }) => elev ? { fra, til, elev: true } : { fra, til })
   .sort((a, b) => a.fra.localeCompare(b.fra));
 
 const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
@@ -354,6 +363,7 @@ async function saveSettings() {
       }
     },
     ferie: { ...settings.ferie, [ferieAar]: ferieTilGem() },
+    ferieMedElev: { ...settings.ferieMedElev, [ferieAar]: true },
     portefoljeAndet: { ...settings.portefoljeAndet, [andetAar]: andetTilGem() },
     periodeDatoer: { ...settings.periodeDatoer, [periodeAar]: periodeUdkast() }
   };
