@@ -4,7 +4,7 @@ import { db, COLOR_PALETTE, getCurrentSchoolYear, showToast } from './app.js';
 import { fmtMins, esc } from './format.js';
 import { openSheet, closeSheet, somKnap } from './ark.js';
 import { beregnNormer, faktorerFor, budgetTimer, fmtTimer, tolkTal, timerTilModuler, erModulform } from './normer.js';
-import { optjeningFor } from './akkord.js';
+import { optjeningFor, naesteSkoleaar } from './akkord.js';
 import { PERIODER, periodeFor, periodeBeskrivelse, tolkPeriode } from './aktivitetsperiode.js';
 import { renderSaetListe } from './rettet.js';
 import {
@@ -200,7 +200,8 @@ function actRow(a, child = false, spentMins = 0) {
     <div class="act-row-body">
       <div class="act-row-name">${esc(a.name)}</div>
       ${a.note ? `<div class="act-row-note">${esc(a.note)}</div>` : ''}
-      ${periodeFor(a, activities) !== 'aar' ? `<div class="act-row-note act-row-periode">${PERIODER[periodeFor(a, activities)]}</div>` : ''}
+      ${a.naesteAar ? `<div class="act-row-note act-row-periode">Optjenes i ${naesteSkoleaar(a.schoolYear)}</div>`
+        : periodeFor(a, activities) !== 'aar' ? `<div class="act-row-note act-row-periode">${PERIODER[periodeFor(a, activities)]}</div>` : ''}
       <div class="act-row-stats">${stats}</div>
     </div>
     <div class="act-row-meta">
@@ -237,6 +238,7 @@ function openActSheet(actId) {
   if (optRadio) optRadio.checked = true;
   document.getElementById('act-fremdrift').value = a?.fremdrift ?? '';
   document.getElementById('act-faelles').checked = !a?.udenFaellesTid;
+  document.getElementById('act-naeste').checked = !!a?.naesteAar;
   const perRadio = document.querySelector(`input[name="act-periode"][value="${a ? periodeFor(a, activities) : 'aar'}"]`);
   if (perRadio) perRadio.checked = true;
   renderSaetListe(a);
@@ -270,16 +272,25 @@ function toggleParentField(type) {
 // Hvordan opgavens budget tælles som optjent i akkordregnskabet — se akkord.js
 const OPTJENING_HJAELP = {
   loebende:   'Budgettet optjenes jævnt hen over perioden nedenfor — fx udvalg og teamledelse.',
-  afslutning: 'Den tid, du bruger, er optjent, mens du arbejder; resten af budgettet, når du trykker «Afslut opgave». Fx eksamen, SRP og engangsopgaver.',
+  afslutning: 'Engangsopgave: den tid, du bruger, er optjent, mens du arbejder; resten af budgettet, når du trykker «Afslut opgave». Fx eksamen, SRP og møder. Har ingen periode.',
   manuel:     'Du skriver selv, hvor stor en del af opgaven der er færdig.'
 };
 const formOptjening = () =>
   document.querySelector('input[name="act-optjening"]:checked')?.value || 'loebende';
 
+// En engangsopgave (ved afslutning) har ingen periode, men kan optjenes i
+// næste normperiode
+const formEngang = () => formType() !== 'hold' && formOptjening() === 'afslutning';
+
 function visOptjening() {
   const m = formOptjening();
   document.getElementById('act-optjening-hint').textContent = OPTJENING_HJAELP[m];
   document.getElementById('field-fremdrift').style.display = m === 'manuel' ? '' : 'none';
+  document.getElementById('field-naeste').style.display    = formEngang() ? '' : 'none';
+  document.getElementById('field-periode').style.display   = formEngang() ? 'none' : '';
+  const aar = document.getElementById('act-year').value.trim() || selectedYear;
+  if (/^\d{4}\/\d{2}$/.test(aar))
+    document.querySelector('#field-naeste > span').firstChild.textContent = `Optjenes i ${naesteSkoleaar(aar)} `;
 }
 
 // ─── Periode ──────────────────────────────────────────────
@@ -429,18 +440,20 @@ async function saveActivity(e) {
   const fremdrift   = optjening === 'manuel' && fremdriftV != null
     ? Math.min(100, Math.max(0, fremdriftV)) : null;
   const udenFaellesTid = !document.getElementById('act-faelles').checked;
-  const periode     = gemtPeriode(formPeriode(), parentId);
+  const engang      = type === 'opgave' && optjening === 'afslutning';
+  const periode     = engang ? null : gemtPeriode(formPeriode(), parentId);
+  const naesteAar   = engang && document.getElementById('act-naeste').checked;
 
   const btn = document.getElementById('act-save-btn');
   btn.disabled = true;
   try {
     if (isEditing) {
       await updateDoc(doc(db, `users/${userId}/activities/${editingId}`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, periode });
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, periode, naesteAar });
       showToast('Aktivitet opdateret');
     } else {
       await addDoc(collection(db, `users/${userId}/activities`),
-        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, periode,
+        { name, type, parentId, budgetHours, normGrundlag, color, schoolYear, note, optjening, fremdrift, udenFaellesTid, periode, naesteAar,
           order: nextOrder(), isArchived: false });
       showToast('Aktivitet oprettet');
     }
@@ -539,7 +552,8 @@ export function tolkImport(raw) {
       return { name: p[0], type: p[1]?.toLowerCase() === 'hold' && !p[3] ? 'hold' : 'opgave',
                budget: tolkTal(p[2]), parent: p[3] || null,
                optjening: optjening || 'loebende', angivet: !!optjening,
-               periode: per && per !== 'aar' ? per : null };
+               // En engangsopgave har ingen periode
+               periode: per && per !== 'aar' && optjening !== 'afslutning' ? per : null };
     }).filter(p => p.name);
 }
 
@@ -685,7 +699,7 @@ function bindListeners() {
   document.querySelectorAll('input[name="act-periode"]').forEach(r =>
     r.addEventListener('change', visPeriode)
   );
-  document.getElementById('act-year').addEventListener('input', visPeriode);
+  document.getElementById('act-year').addEventListener('input', () => { visPeriode(); visOptjening(); });
   document.getElementById('act-parent').addEventListener('change', foelgForaelder);
 
   [...NORM_FELTER.map(([id]) => id), 'act-year', 'act-budget'].forEach(id =>

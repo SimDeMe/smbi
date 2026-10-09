@@ -70,10 +70,22 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   await sr.context().close();
 
   // Eksamensperioden er juni 2026 — i starten af normperioden, så den er gået
-  const eks = await side(browser, { seed: [settings, act('a1', 'Eksamen', { budgetHours: 100, optjening: 'afslutning', periode: 'eksamen' })] });
+  const eks = await side(browser, { seed: [settings, act('a1', 'Censur', { budgetHours: 100, optjening: 'loebende', periode: 'eksamen' })] });
   const n3 = await chip(eks);
-  ok(Math.abs((n0 - n3) - Math.round(100 * (1 - pAar))) <= 1, `eksamen (juni, overstået): ${Math.round(100 * (1 - pAar))} t mere bagud (${n0} → ${n3})`);
+  ok(Math.abs((n0 - n3) - Math.round(100 * (1 - pAar))) <= 1, `løbende opgave i eksamensperioden (juni, overstået): ${Math.round(100 * (1 - pAar))} t mere bagud (${n0} → ${n3})`);
   await eks.context().close();
+
+  // En engangsopgave forventes, når tiden er brugt: 10 t på den flytter ikke
+  // chippen, og budgettet fordeles ikke over året — heller ikke med en gammel periode
+  const t0 = new Date(2026, 8, 15, 8).getTime();
+  const eng = await side(browser, { seed: [settings,
+    act('a1', 'NV-eksamen', { budgetHours: 100, optjening: 'afslutning', periode: 'eksamen' }),
+    [`users/u1/entries/e1`, { activityId: 'a1', workType: null, startTime: { __ts: t0 }, endTime: { __ts: t0 + 600 * 60000 }, durationMinutes: 600, note: '', isModule: false, autoStopped: false }]] });
+  const n4 = await chip(eng);
+  ok(Math.abs((n4 - n0) - Math.round(100 * pAar)) <= 1, `engangsopgave: tiden forventes, når den er brugt (${n0} → ${n4})`);
+  const sidst4 = await eng.$eval('.udv-kort', k => JSON.parse(k.dataset.udv).data.at(-1)[1]);
+  ok(Math.round(sidst4 / 60) === n4, 'kurven ender også her i chippens tal');
+  await eng.context().close();
 }
 
 // ── Optjening ──
@@ -110,6 +122,44 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   const txt = (await afs.textContent('.rapport-summary')).replace(/\s+/g, ' ');
   ok(/Optjent\s*15t/.test(txt), 'afsluttet: alle 15 t optjent');
   await afs.context().close();
+}
+
+// ── Optjenes i næste normperiode ──
+{
+  const t = (h, m = 0) => new Date(2026, 8, 15, h, m).getTime();
+  const post = (id, a, s, e) => [`users/u1/entries/${id}`, { activityId: a, workType: null, startTime: { __ts: s }, endTime: { __ts: e }, durationMinutes: Math.round((e - s) / 60000), note: '', isModule: false, autoStopped: false }];
+  const page = await side(browser, { seed: [settings,
+    act('a1', 'Teamledelse', { budgetHours: 100, optjening: 'loebende' }),
+    act('a2', 'Eksamen maj', { budgetHours: 15, optjening: 'afslutning', naesteAar: true, order: 2 }),
+    post('e1', 'a2', t(9), t(12)),
+    // Sidste år: eksamen i maj 2026, afsluttet i juni — optjenes i år
+    act('g1', 'Eksamen maj 2026', { schoolYear: '2025/26', budgetHours: 20, optjening: 'afslutning', naesteAar: true, isArchived: true, archivedAt: { __ts: new Date(2026, 5, 20).getTime() } }),
+  ] }, 1280);
+  await tilRapport(page);
+  const linjer = await page.$$eval('.rapport-akkord', l => l.map(x => x.textContent.replace(/\s+/g, ' ').trim()));
+  const maj = linjer.find(l => l.includes('optjenes i 2027/28')) || '';
+  ok(maj.includes('Optjent 0m') && maj.includes('−3t'), 'i år: tiden er brugt, intet optjent, saldo −3 t: ' + maj);
+  const tal = await page.$$eval('.akkord-tal dd', d => d.map(x => x.textContent.trim()));
+  ok(tal[2] === '120t', 'porteføljen i år: teamledelsen og sidste års eksamen, ikke årets (100 + 20 t): ' + tal.join(' / '));
+  const fra = (await page.textContent('.rapport-act-section:has-text("Fra sidste skoleår")')).replace(/\s+/g, ' ');
+  ok(fra.includes('Eksamen maj 2026') && /Optjent 20t/.test(fra), 'sidste års eksamen står under «Fra sidste skoleår», 20 t optjent');
+  await page.screenshot({ path: DIR + '/periode-naeste.png', fullPage: true });
+
+  // Formularen: fluebenet kun på engangsopgaver, og så ingen periode
+  await page.click('.nav-btn[data-view="aktiviteter"]'); await page.waitForTimeout(300);
+  ok((await page.textContent('.act-row:has-text("Eksamen maj") .act-row-periode')).trim() === 'Optjenes i 2027/28', 'listen siger, hvornår den optjenes');
+  await page.click('#btn-new-activity'); await page.waitForSelector('#act-sheet.open');
+  ok(!(await page.isVisible('#field-naeste')) && await page.isVisible('#field-periode'), 'løbende: periode, intet flueben');
+  await page.click('.seg-opt:has(input[name="act-optjening"][value="afslutning"])');
+  ok(await page.isVisible('#field-naeste') && !(await page.isVisible('#field-periode')), 'engangsopgave: flueben, ingen periode');
+  ok((await page.textContent('#field-naeste')).includes('Optjenes i 2027/28'), 'fluebenet nævner næste skoleår');
+  await page.fill('#act-name', 'Vintertermin');
+  await page.fill('#act-budget', '12');
+  await page.check('#act-naeste');
+  await page.click('#act-save-btn'); await page.waitForTimeout(400);
+  const v = (await aktiviteter(page))['Vintertermin'];
+  ok(v?.optjening === 'afslutning' && v.naesteAar === true && v.periode == null, 'gemt som engangsopgave til næste år: ' + JSON.stringify([v?.optjening, v?.naesteAar, v?.periode]));
+  await page.context().close();
 }
 
 // ── Formularen ──
@@ -153,7 +203,13 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   ok(await page.inputValue('#cfg-eksamenfra') === '2026-06-01' && await page.inputValue('#cfg-eksamentil') === '2026-06-24', 'eksamensperioden 1.–24. juni 2026');
   const sum = await page.$$eval('#cfg-periode-sum li', l => l.map(x => x.textContent));
   ok(sum.length === 4 && sum[1].startsWith('Grundforløb · 10. aug – 30. okt 2026'), 'perioderne listes: ' + sum[1]);
+  ok(await page.inputValue('#cfg-srstart') === '2026-11-03', 'studieretningen begynder 3/11');
+  ok(sum[2].startsWith('Efter grundforløb · 3. nov – 31. maj 2027'), 'efter grundforløb fra studieretningens start: ' + sum[2]);
   await page.fill('#cfg-gfslut', '2026-11-06');
+  await page.fill('#cfg-srstart', '2026-11-04');
+  await page.click('#cfg-save-btn'); await page.waitForTimeout(300);
+  ok((await page.textContent('#toast')).includes('efter grundforløbet'), 'studieretningen før grundforløbets slutning afvises');
+  await page.fill('#cfg-srstart', '2026-11-09');
   ok((await page.textContent('#cfg-periode-sum')).includes('6. nov'), 'listen følger med, når datoen rettes');
   await page.click('#cfg-save-btn'); await page.waitForTimeout(400);
   const gemt = await page.evaluate(() => window.__fs.store.get('users/u1/settings/config').periodeDatoer);
@@ -178,7 +234,7 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   const akt = await aktiviteter(page);
   ok(akt['1g grundforløb']?.periode === 'grundforloeb' && akt['1g grundforløb'].type === 'hold', 'import: grundforløb');
   ok(akt['2g Bi']?.periode === 'efterGf', 'import: efter grundforløb');
-  ok(akt['NV-eksamen']?.periode === 'eksamen' && akt['NV-eksamen'].optjening === 'afslutning', 'import: eksamen og optjening');
+  ok(akt['NV-eksamen']?.periode == null && akt['NV-eksamen'].optjening === 'afslutning', 'import: en engangsopgave får ingen periode');
   ok(akt['Vejledning']?.periode == null, 'import: uden kolonnen = hele året');
 
   await page.click('#btn-copy-year'); await page.waitForSelector('#copy-sheet.open');

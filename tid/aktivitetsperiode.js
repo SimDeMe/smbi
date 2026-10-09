@@ -5,14 +5,14 @@
 //   aar           Hele skoleåret — normperioden (standard)
 //   grundforloeb  Grundforløb — første skoledag til grundforløbets slutning
 //                 (fredag to uger efter efterårsferien)
-//   efterGf       Efter grundforløb — dagen efter grundforløbet og året ud
+//   efterGf       Efter grundforløb — fra studieretningens start og året ud
 //   eksamen       Eksamensperiode — sommerterminen i starten af normperioden.
 //                 Skolen regner de officielle prøver (skriftlige og mundtlige)
 //                 med i den normperiode, de holdes i — juni 2026 hører til
 //                 2026/27 (FAQ om opgavefordeling på MG 2026/27)
 //
 // Datoerne står pr. skoleår i indstillingerne og kan rettes dér:
-//   periodeDatoer: { "2026/27": { skolestart, gfSlut, eksamenFra, eksamenTil } }
+//   periodeDatoer: { "2026/27": { skolestart, gfSlut, srStart, eksamenFra, eksamenTil } }
 // Uden gemte datoer bruges skolens plan, og findes den ikke for året, et
 // skøn efter samme mønster.
 //
@@ -29,6 +29,12 @@
 //   Summen er den samme ved årets slut; det er kun fordelingen hen over
 //   året, der ændres.
 //
+// Engangsopgaver (optjent ved afslutning — eksamen, SRP, et møde) har ingen
+// periode: de er korte og skal ikke fordeles jævnt over noget. I skemaet
+// forventes deres tid, når den er brugt — altså det, der er optjent:
+//
+//     forventet += optjent − budget × årets andel
+//
 // Gemmes på aktiviteten som periode: 'grundforloeb' | 'efterGf' | 'eksamen'
 // (eller null = hele skoleåret). En under-opgave uden egen periode ligger i
 // forælderens.
@@ -37,6 +43,7 @@ import { getSettings } from './indstillinger.js';
 import { forloebIArbejdsdage, arbejdsdageIPerioden, tilDato, ferieFor } from './ferie.js';
 import { addDays, datoInput, skoleaarStart, kortDato } from './periode.js';
 import { budgetTimer } from './normer.js';
+import { erEngang } from './akkord.js';
 
 export const PERIODER = {
   aar:          'Hele skoleåret',
@@ -49,16 +56,19 @@ export const PERIODER = {
 export const SKOLENS_DATOER = {
   '2025/26': {
     skolestart: '2025-08-11', gfSlut: '2025-10-31',       // Kalender 2025-26: GF-slut fre. 31/10
+    srStart:    '2025-11-03',                             // Kalender 2025-26: SR-start man. 3/11
     eksamenFra: '2025-06-01', eksamenTil: '2025-06-25'    // skøn — sommerterminen 2025
   },
   '2026/27': {
-    skolestart: '2026-08-10', gfSlut: '2026-10-30',       // Ferieplan 2026-27; GF-slut som 2025: fre. uge 44
+    skolestart: '2026-08-10', gfSlut: '2026-10-30',       // Ferieplan 2026-27; skolens plan: GF slutter 30/10
+    srStart:    '2026-11-03',                             // 1g's studieretninger starter tir. 3/11
     eksamenFra: '2026-06-01', eksamenTil: '2026-06-24'    // Kalender 2025-26: sidste eksamensdag ons. 24/6
   }
 };
 
 // Skøn for et år uden plan: skolestart 2. mandag i august, grundforløbet
-// slutter fredag i uge 44, eksamen 1.–24. juni
+// slutter fredag i uge 44, studieretningen starter mandagen efter, eksamen
+// 1.–24. juni
 function skoen(aar) {
   const y = parseInt(aar);
   const aug1 = new Date(y, 7, 1);
@@ -68,6 +78,7 @@ function skoen(aar) {
   return {
     skolestart: datoInput(addDays(mandag1, 7)),
     gfSlut:     datoInput(addDays(uge1Mandag, 43 * 7 + 4)),
+    srStart:    datoInput(addDays(uge1Mandag, 44 * 7)),
     eksamenFra: `${y}-06-01`, eksamenTil: `${y}-06-24`
   };
 }
@@ -81,14 +92,16 @@ export function graenser(noegle, aar, start, slut, s = getSettings()) {
   const efter = str => addDays(tilDato(str), 1);
   const [fra, til] =
       noegle === 'grundforloeb' ? [tilDato(d.skolestart), efter(d.gfSlut)]
-    : noegle === 'efterGf'      ? [efter(d.gfSlut), slut]
+    : noegle === 'efterGf'      ? [tilDato(d.srStart), slut]
     : noegle === 'eksamen'      ? [tilDato(d.eksamenFra), efter(d.eksamenTil)]
     : [start, slut];
   return [fra < start ? start : fra, til > slut ? slut : til];
 }
 
-// Aktivitetens periode, evt. arvet fra forælderen
+// Aktivitetens periode, evt. arvet fra forælderen. En engangsopgave har
+// ingen — den regnes som hele året, men indgår i skemaet med det optjente.
 export function periodeFor(a, acts = []) {
+  if (erEngang(a)) return 'aar';
   if (PERIODER[a?.periode]) return a.periode;
   const far = a?.parentId ? acts.find(p => p.id === a.parentId) : null;
   return PERIODER[far?.periode] ? far.periode : 'aar';
@@ -115,8 +128,9 @@ export function periodeBeskrivelse(noegle, aar, s = getSettings()) {
 }
 
 // Den tid, der burde være registreret ved `nu`, i minutter (se øverst).
-// Kun aktiviteter med en anden periode end hele året flytter noget.
-export function forventetM({ acts, aar, normM, start, slut, ferie, nu = new Date() }) {
+// Kun aktiviteter med en anden periode end hele året og engangsopgaver
+// flytter noget. ak: akkordregnskabet ved `nu` — engangsopgavernes optjente.
+export function forventetM({ acts, aar, normM, start, slut, ferie, ak = null, nu = new Date() }) {
   const aaret = forloebIArbejdsdage(start, slut, ferie, nu);
   let m = normM * aaret;
   const aarets = acts.filter(a => a.schoolYear === aar);
@@ -128,6 +142,12 @@ export function forventetM({ acts, aar, normM, start, slut, ferie, nu = new Date
     if (!a.parentId) b -= aarets.filter(c => c.parentId === a.id).reduce((s, c) => s + budgetM(c), 0);
     if (b <= 0) return;
     m += b * (aktivitetsAndel(a, aarets, { aar, start, slut, ferie, nu }) - aaret);
+  });
+  // Engangsopgaver: deres tid forventes, når den er brugt. Dem, der optjenes
+  // næste år, og dem fra sidste år har budget 0 her og flytter intet.
+  Object.values(ak?.enheder || {}).forEach(u => {
+    if (u.overfoert || !u.budget || !erEngang(u.act)) return;
+    m += u.optjent - u.budget * aaret;
   });
   return Math.round(m);
 }

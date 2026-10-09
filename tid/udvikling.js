@@ -15,7 +15,7 @@
 // nuværende procent hele vejen. Sidste punkt er altid det samme som tallene
 // i sammendraget over graferne.
 
-import { beregnAkkord } from './akkord.js';
+import { beregnAkkord, forrigeSkoleaar } from './akkord.js';
 import { erPause } from './pauser.js';
 import { forloebIArbejdsdage } from './ferie.js';
 import { aktivitetsAndel, forventetM } from './aktivitetsperiode.js';
@@ -75,7 +75,12 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, normM,
     .sort((a, b) => a.t - b.t);
 
   const afsluttet = new Map();
-  acts.forEach(a => { if (a.isArchived && a.schoolYear === aar) afsluttet.set(a.id, afsluttetVed(a, acts, entries)); });
+  // Også sidste års engangsopgaver, der optjenes i år
+  const forrige = forrigeSkoleaar(aar);
+  acts.forEach(a => {
+    if (a.isArchived && (a.schoolYear === aar || a.schoolYear === forrige))
+      afsluttet.set(a.id, afsluttetVed(a, acts, entries));
+  });
 
   const pkt = maalepunkter(start, slut, nu);
   const skema = [], akkord = [];
@@ -86,13 +91,13 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, normM,
     const med   = sidst ? poster : poster.filter(p => p.t < d);
     const brugt = med.reduce((s, p) => s + p.m, 0);
     const andel = forloebIArbejdsdage(start, slut, ferie, d);
-    skema.push({ d, v: brugt - forventetM({ acts, aar, normM, start, slut, ferie, nu: d }) });
-
     const ak = beregnAkkord({
       acts: sidst ? acts : aktiviteterVed(acts, d, afsluttet),
       entries: med.map(p => p.e), aar, andel, fordel,
       andelFor: a => aktivitetsAndel(a, acts, { aar, start, slut, ferie, nu: d })
     });
+    // Engangsopgaverne forventes, som de var optjent den dag
+    skema.push({ d, v: brugt - forventetM({ acts, aar, normM, start, slut, ferie, ak, nu: d }) });
     akkord.push({ d, v: ak.akkord > 0 ? ak.saldo : null });
   });
 

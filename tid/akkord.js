@@ -30,6 +30,12 @@
 // afsluttes) eller manuelt (en procent). En afsluttet aktivitet — opgave
 // eller hold — har altid optjent hele sit budget.
 //
+// En opgave ved afslutning er en engangsopgave — eksamen, SRP, et møde. Den
+// kan optjenes i næste normperiode (naesteAar): tidlige prøver i maj hører
+// til næste års opgaveportefølje, men tiden bruges i år. I år tæller tiden
+// som brugt, mens budgettet er 0; næste år står budgettet i regnskabet og
+// optjenes, når opgaven afsluttes. Under-opgaver følger forælderen.
+//
 // Fælles tid er tid, der ikke hører til en akkord: ubundet tid, pauser og
 // opgaver uden budget. Den tæller som brugt og kan fordeles på alle
 // aktiviteter med budget, vægtet efter budgettet — også de afsluttede, så
@@ -52,6 +58,19 @@ export const OPTJENING = {
 };
 export const optjeningFor = a =>
   OPTJENING[a?.optjening] ? a.optjening : 'loebende';
+
+// Engangsopgave: en opgave, der optjenes ved afslutning
+export const erEngang = a => a?.type !== 'hold' && optjeningFor(a) === 'afslutning';
+
+// Optjenes i næste normperiode — egen markering eller forælderens
+export function optjenesNaesteAar(a, acts = []) {
+  if (a?.naesteAar) return true;
+  const far = a?.parentId ? acts.find(p => p.id === a.parentId) : null;
+  return !!far?.naesteAar;
+}
+
+export const naesteSkoleaar  = y => { const n = parseInt(y) + 1; return `${n}/${String(n + 1).slice(2)}`; };
+export const forrigeSkoleaar = y => { const n = parseInt(y) - 1; return `${n}/${String(n + 1).slice(2)}`; };
 
 // Holdets rettede elevtimer — summen af de registrerede sæt, evt. kun dem
 // mellem to datoer ('YYYY-MM-DD', fra og med / til og uden)
@@ -120,21 +139,24 @@ export function beregnAkkord({ acts, entries, aar, andel, andelFor = null, forde
 
   const enheder = {};
   aarets.forEach(a => {
-    if (a.parentId && harBudget(a)) {
-      enheder[a.id] = enhed(a, direkte[a.id] || 0, wt[a.id] || {}, akkordBudget(a), andelAf(a));
-      return;
-    }
-    if (a.parentId) return;                     // under forælderens akkord
-    const udenEget = boern(a.id).filter(c => !harBudget(c));
+    const budget = enhedsBudget(a, aarets);
+    if (budget === undefined) return;           // under forælderens akkord
+    const udenEget = a.parentId ? [] : boern(a.id).filter(c => !harBudget(c));
     const brugt = (direkte[a.id] || 0) +
       udenEget.reduce((s, c) => s + (direkte[c.id] || 0), 0);
-    let budget = akkordBudget(a);
-    if (budget != null) {
-      const boernsBudget = boern(a.id).filter(harBudget)
-        .reduce((s, c) => s + akkordBudget(c), 0);
-      budget = Math.max(0, budget - boernsBudget);
-    }
-    enheder[a.id] = enhed(a, brugt, wt[a.id] || {}, budget, andelAf(a));
+    enheder[a.id] = enhed(a, brugt, wt[a.id] || {}, budget, andelAf(a), optjenesNaesteAar(a, aarets));
+  });
+
+  // Engangsopgaver fra sidste år, der optjenes i år. Tiden blev brugt sidste
+  // år; her står kun budgettet, optjent ved afslutning.
+  const sidste = acts.filter(a => a.schoolYear === forrigeSkoleaar(aar));
+  sidste.forEach(a => {
+    if (!optjenesNaesteAar(a, sidste)) return;
+    const budget = enhedsBudget(a, sidste);
+    if (budget == null) return;
+    const u = enhed(a, 0, {}, budget, 0);
+    u.overfoert = true;
+    enheder[a.id] = u;
   });
 
   // Opgaver uden budget er fælles tid, til de får et
@@ -169,10 +191,26 @@ export function beregnAkkord({ acts, entries, aar, andel, andelFor = null, forde
   };
 }
 
+// Akkordens budget for en aktivitet — undefined, hvis den hører under
+// forælderens. En under-opgave med eget budget er sin egen; forælderens er
+// det, der er tilbage, når børnenes er trukket fra.
+function enhedsBudget(a, liste) {
+  const harBudget = x => akkordBudget(x) != null;
+  if (a.parentId) return harBudget(a) ? akkordBudget(a) : undefined;
+  const budget = akkordBudget(a);
+  if (budget == null) return null;
+  const boernsBudget = liste.filter(c => c.parentId === a.id && harBudget(c))
+    .reduce((s, c) => s + akkordBudget(c), 0);
+  return Math.max(0, budget - boernsBudget);
+}
+
 // Én akkord: hvad er brugt, og hvad er optjent?
-function enhed(a, brugt, wt, budget, andel) {
+function enhed(a, brugt, wt, budget, andel, naeste = false) {
   const u = { act: a, brugt, budget, optjent: 0, faelles: 0, saldo: null, maade: null };
   if (budget == null) return u;
+
+  // Optjenes næste år: budgettet står i næste års regnskab, ikke i år
+  if (naeste) { u.maade = 'naesteAar'; u.naesteBudget = budget; u.budget = 0; return u; }
 
   // Færdig er færdig: hele budgettet er optjent — også på et hold
   if (a.isArchived) { u.maade = 'afsluttet'; u.optjent = budget; return u; }

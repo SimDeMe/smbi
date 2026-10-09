@@ -89,16 +89,14 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   hold uden normgrundlag optjener kun over periodens arbejdsdage, og
   «foran/bagud skema» regner med, at budgettet bruges i perioden. «Ved
   afslutning» optjener nu den brugte tid undervejs og resten ved afslutning.
-- [ ] **Eksamenstid i maj.** Tidlige prøver i maj tæller i den *næste*
-  normperiode (FAQ om opgavefordeling), men tiden registreres før
-  normperiodens start. Registreres den på næste års eksamensopgave, falder
-  den ud af begge års rapporter. Skal maj-eksamen kunne tælle med i den
-  normperiode, opgaven hører til?
-- [ ] **Vintertermin.** Eksamensperioden er kun sommerterminen. Hf-eksamen i
-  dec./jan. ligger i dag under «Hele skoleåret» — evt. en femte periode.
+- [x] **Eksamenstid i maj.** Engangsopgaver kan optjenes i næste
+  normperiode (flueben): tiden tæller i år, budgettet næste år.
+- [x] **Vintertermin.** Oprettes som engangsopgave — ingen periode.
 - [ ] **Perioder: tjek datoerne hvert år** i `SKOLENS_DATOER`
-  (`aktivitetsperiode.js`) — grundforløbets slutning for 2026/27 (30. okt.)
-  er sat efter mønsteret fra 2025/26, ikke fra en plan.
+  (`aktivitetsperiode.js`): første skoledag, grundforløbets slutning,
+  studieretningens start og eksamensperioden. 2026/27 er skolens plan
+  (GF til 30/10, SR fra 3/11); eksamensperioden 1.–24. juni er fra
+  kalenderen 2025-26.
 
 ### Hastighed
 

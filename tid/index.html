@@ -370,7 +370,7 @@
         <div class="settings-section">
           <div class="settings-section-title">Perioder · <span id="cfg-periode-aar">2026/27</span></div>
           <div class="settings-row">
-            <span class="settings-sub">Hold og opgaver kan høre til grundforløbet, tiden efter det eller eksamensperioden. Så regner «foran/bagud» med, at deres timer bruges i perioden. Skolens datoer står her på forhånd — ret dem, hvis planen ændres. Eksamensperioden er sommerterminen i starten af normperioden: prøverne tæller i den normperiode, de holdes i.</span>
+            <span class="settings-sub">Hold og opgaver kan høre til grundforløbet, tiden efter det (fra studieretningen begynder) eller eksamensperioden. Så regner «foran/bagud» med, at deres timer bruges i perioden. Engangsopgaver har ingen periode. Skolens datoer står her på forhånd — ret dem, hvis planen ændres. Eksamensperioden er sommerterminen i starten af normperioden: prøverne tæller i den normperiode, de holdes i.</span>
           </div>
           <div class="settings-row">
             <label class="settings-label" for="cfg-skolestart">Første skoledag</label>
@@ -379,6 +379,10 @@
           <div class="settings-row">
             <label class="settings-label" for="cfg-gfslut">Grundforløbet slutter</label>
             <input type="date" id="cfg-gfslut" class="settings-input-sm periode-dato">
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="cfg-srstart">Studieretningen begynder</label>
+            <input type="date" id="cfg-srstart" class="settings-input-sm periode-dato">
           </div>
           <div class="settings-row">
             <label class="settings-label" for="cfg-eksamenfra">Eksamensperiode fra</label>
@@ -593,6 +597,12 @@
             <label class="seg-opt"><input type="radio" name="act-optjening" value="manuel"><span>Manuelt</span></label>
           </div>
           <p class="form-hint" id="act-optjening-hint"></p>
+          <label class="akkord-fordel form-naeste" id="field-naeste" for="act-naeste">
+            <input type="checkbox" id="act-naeste" class="settings-check">
+            <span>Optjenes i næste normperiode
+              <small id="act-naeste-hint">Fx eksamen i maj, der står i næste års opgaveportefølje: tiden tæller i år, budgettet optjenes næste år, når opgaven afsluttes.</small>
+            </span>
+          </label>
           <div class="form-group form-fremdrift" id="field-fremdrift">
             <label class="form-label" for="act-fremdrift">Færdig <span class="enhed">%</span></label>
             <input class="form-input" type="number" id="act-fremdrift" min="0" max="100" step="1" placeholder="fx 40">

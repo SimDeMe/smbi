@@ -68,7 +68,9 @@ Alt under `users/{userId}/`:
   periode: null | "grundforloeb" | "efterGf" | "eksamen" | "aar"
                                     // skolens faste periode; null = hele skoleåret, for en
                                     // under-opgave forælderens. "aar" kun på en under-opgave,
-                                    // der skal have hele året under en forælder med periode
+                                    // der skal have hele året under en forælder med periode.
+                                    // Ikke på engangsopgaver (optjening "afslutning")
+  naesteAar: false                  // engangsopgave, hvis budget optjenes i næste normperiode
 }
 ```
 
@@ -229,7 +231,7 @@ Egen side "Aktiviteter":
 - Skift mellem skoleår (dropdown)
 - Knap "Ny aktivitet": navn, type, parent (hvis opgave), budget, farve, skoleår, note. Hold kan desuden få tal fra Lectio (årsnorm i moduler, elever, elevtimer pr. elev); så deles budgettet op, og opdelingen vises under budgetfeltet
 - Opgaver har en optjeningsmåde: *Løbende*, *Ved afslutning* eller *Manuelt* (med et felt for procent færdig) — se *Akkordregnskab*
-- **Periode på aktiviteter:** hold og opgaver hører til en af skolens faste perioder — *Hele skoleåret* (standard, normperioden), *Grundforløb* (første skoledag til grundforløbets slutning, fredag to uger efter efterårsferien), *Efter grundforløb* (dagen efter og året ud) eller *Eksamensperiode* (sommerterminen i starten af normperioden; prøverne tæller i den normperiode, de holdes i, skriftlige og mundtlige ens). Valget er fire knapper i formularen med periodens datoer og arbejdsdage under. Datoerne står pr. skoleår i Indstillinger → Perioder (`periodeDatoer`); uden gemte datoer bruges skolens plan (`SKOLENS_DATOER`), og ellers et skøn (2. mandag i august, fredag i uge 44, 1.–24. juni). Perioden bruges i foran/bagud (se *Forventet vs faktisk*) og i løbende optjening, der kun sker over periodens arbejdsdage (som i `ferie.js`). En under-opgave får forælderens periode, når forælderen vælges, og gemmes da uden egen. Listen viser perioden under navnet. Regningen ligger i `aktivitetsperiode.js`
+- **Periode på aktiviteter:** hold og opgaver hører til en af skolens faste perioder — *Hele skoleåret* (standard, normperioden), *Grundforløb* (første skoledag til grundforløbets slutning, fredag to uger efter efterårsferien), *Efter grundforløb* (fra studieretningens start og året ud) eller *Eksamensperiode* (sommerterminen i starten af normperioden; prøverne tæller i den normperiode, de holdes i, skriftlige og mundtlige ens). Valget er fire knapper i formularen med periodens datoer og arbejdsdage under. Datoerne står pr. skoleår i Indstillinger → Perioder (`periodeDatoer`); uden gemte datoer bruges skolens plan (`SKOLENS_DATOER`), og ellers et skøn (2. mandag i august, fredag i uge 44, mandag i uge 45, 1.–24. juni). Engangsopgaver har ingen periode; feltet skjules, når optjeningen er *Ved afslutning*. Perioden bruges i foran/bagud (se *Forventet vs faktisk*) og i løbende optjening, der kun sker over periodens arbejdsdage (som i `ferie.js`). En under-opgave får forælderens periode, når forælderen vælges, og gemmes da uden egen. Listen viser perioden under navnet. Regningen ligger i `aktivitetsperiode.js`
 - Et gemt hold viser sine rettede sæt med dato, navn og elevtimer og summen mod normen (*Rettet 5 af 15 elevtimer*). Et sæt slettes med krydset og registreres igen, hvis det er tastet forkert
 - Tryk på en aktivitet: redigér eller slet. En aktivitet uden forælder og uden under-aktiviteter kan skifte type (opgave ↔ hold); dens registreringer følger med
 - Under-aktiviteter vises indrykket under deres parent
@@ -291,7 +293,7 @@ Hold uden normgrundlag optjener deres budget løbende (i deres periode, hvis de 
 **Opgaver** optjener efter `optjening`:
 
 - *Løbende* (standard): budgettet jævnt over arbejdsdagene i aktivitetens periode — udvalg, teamledelse
-- *Ved afslutning*: den tid, der er brugt, højst budgettet — resten, når opgaven afsluttes med "Afslut opgave". Engangsopgaver som eksamen og SRP: et møde om NV-eksamen på en time er optjent, når det er holdt
+- *Ved afslutning* (engangsopgave): den tid, der er brugt, højst budgettet — resten, når opgaven afsluttes med "Afslut opgave". Eksamen, SRP, vinterterminen: et møde om NV-eksamen på en time er optjent, når det er holdt. Ingen periode; i foran/bagud forventes tiden, når den er brugt (forventet += optjent − budget × årets andel). Med `naesteAar` («Optjenes i næste normperiode» — fx eksamen i maj, der står i næste års portefølje) tæller tiden som brugt i år med budget 0, og næste år står budgettet i regnskabet og porteføljen, optjent ved afslutning, under *Fra sidste skoleår* i rapporten. Under-opgaver følger forælderen
 - *Manuelt*: `fremdrift` procent af budgettet
 
 En afsluttet aktivitet — opgave eller hold — har altid optjent hele budgettet. Eksamen er en almindelig opgave i det skoleår, den betales — typisk året efter, holdet har kørt.

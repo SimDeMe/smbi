@@ -12,7 +12,7 @@ import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { forloebIArbejdsdage, ferieFor } from './ferie.js';
 import { aktivitetsAndel, forventetM, periodeFor, PERIODER } from './aktivitetsperiode.js';
 import {
-  beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN
+  beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN, naesteSkoleaar
 } from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
 import { beregnUdvikling, tegnUdvikling, bindUdvikling } from './udvikling.js';
@@ -234,7 +234,20 @@ function renderReport() {
     renderUdvikling(acts, filtered, year) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
-    renderArchivedList(archivedRows, ak);
+    renderArchivedList(archivedRows, ak) +
+    renderOverfoert(ak);
+}
+
+// ─── Engangsopgaver fra sidste år ─────────────────────────
+// Opgaver fra sidste skoleår, der optjenes i år (fx eksamen i maj). Tiden
+// står i sidste års rapport; her står budgettet og det optjente.
+function renderOverfoert(ak) {
+  const u = Object.values(ak?.enheder || {}).filter(x => x.overfoert);
+  if (!u.length) return '';
+  return `<div class="rapport-act-section">
+    <div class="rapport-act-head">Fra sidste skoleår</div>
+    ${u.map(x => actRow(x.act, 0, 0, {}, false, ak)).join('')}
+  </div>`;
 }
 
 const fordelFaelles = () => getSettings().fordelFaellesTid !== false;
@@ -297,7 +310,7 @@ function renderSummary(totalMins, ak, acts) {
     const SKAL    = NORM - ANDET;
     const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
-    const forv    = forventetM({ acts, normM, ...aarsPeriode(year) });
+    const forv    = forventetM({ acts, normM, ak, ...aarsPeriode(year) });
     const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
     const chip    = forloebChip(totalMins, forv, elapsed);
 
@@ -631,6 +644,8 @@ function akkordLinje(act, ak, kids = []) {
   const u = samletEnhed([egen, ...kids.map(id => ak.enheder[id])]);
   const maade = egen.maade === 'manuel'
     ? `${MAADE_TEKST.manuel} ${Math.round(Number(act.fremdrift) || 0)}%`
+    : egen.maade === 'naesteAar' ? `Ved afslutning · optjenes i ${naesteSkoleaar(act.schoolYear)}`
+    : egen.overfoert ? `${MAADE_TEKST[egen.maade]} · tiden er brugt i ${esc(act.schoolYear)}`
     : act.type === 'hold' ? 'Løbende · uden normgrundlag' : MAADE_TEKST[egen.maade];
   const p   = periodeFor(act, getLoadedActivities());
   const per = p !== 'aar' && egen.maade !== 'afsluttet' ? PERIODER[p] : '';

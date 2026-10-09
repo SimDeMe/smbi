@@ -21,7 +21,7 @@ const DEFAULTS = {
   normFaktorer:         {},     // { "2025/26": { faktor: 2.35, reduktion: 0.9 } } — se normer.js
   ferie:                {},     // { "2026/27": [{ fra: "2026-07-06", til: "2026-07-27" }] } — se ferie.js
   portefoljeAndet:      {},     // { "2026/27": [{ navn: "Frikøb (TR)", timer: 100 }] } — se andetFor()
-  periodeDatoer:        {},     // { "2026/27": { skolestart, gfSlut, eksamenFra, eksamenTil } } — se aktivitetsperiode.js
+  periodeDatoer:        {},     // { "2026/27": { skolestart, gfSlut, srStart, eksamenFra, eksamenTil } } — se aktivitetsperiode.js
   fordelFaellesTid:     true    // akkordregnskabet: fordel fælles tid på aktiviteterne — se akkord.js
 };
 
@@ -231,7 +231,7 @@ function opdaterFerieTal() {
 // Skolens faste perioder for ét skoleår ad gangen. Felterne viser skolens
 // datoer, til man selv retter dem; under dem står perioderne, som de bliver.
 const PERIODE_FELTER = [
-  ['cfg-skolestart', 'skolestart'], ['cfg-gfslut', 'gfSlut'],
+  ['cfg-skolestart', 'skolestart'], ['cfg-gfslut', 'gfSlut'], ['cfg-srstart', 'srStart'],
   ['cfg-eksamenfra', 'eksamenFra'], ['cfg-eksamentil', 'eksamenTil']
 ];
 let periodeAar = '';
@@ -359,6 +359,7 @@ async function saveSettings() {
   };
   const pd = updated.periodeDatoer[periodeAar];
   if (pd.gfSlut && pd.skolestart && pd.gfSlut < pd.skolestart) { showToast('Grundforløbet slutter før første skoledag'); return; }
+  if (pd.srStart && pd.gfSlut && pd.srStart <= pd.gfSlut) { showToast('Studieretningen skal begynde efter grundforløbet'); return; }
   if (pd.eksamenFra && pd.eksamenTil && pd.eksamenTil < pd.eksamenFra) { showToast('Eksamensperioden slutter før den begynder'); return; }
 
   const btn = document.getElementById('cfg-save-btn');
