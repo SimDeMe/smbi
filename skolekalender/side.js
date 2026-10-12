@@ -44,14 +44,20 @@ const ALLE = BEGIVENHEDER.map((b, i) => {
   return { ...b, i, fra: dato(b.d), sidst: dato(b.til || b.d), hold, navn };
 }).sort((a, b) => a.fra - b.fra || (a.t === 'ferie' ? -1 : 0) - (b.t === 'ferie' ? -1 : 0) || a.i - b.i);
 
+// Filteret er en liste af hold; en tom liste er «Alle».
+const alleHold = () => !tilstand.hold.length;
+const valgtNavn = (sep = ', ') => alleHold() ? 'alle hold' : tilstand.hold.join(sep);
+// Holdmærker på begivenhederne, når der er mere end ét hold at skelne imellem
+const visHoldMaerke = () => tilstand.hold.length !== 1;
+
 // Hvad vises under det valgte filter? 'alle' (hele skolen) vises overalt;
 // begivenheder uden hold vises kun under «Alle» — personalets dog kun,
 // når personaleknappen er slået til.
 function synlig(b) {
   if (b.t === 'pers') return tilstand.pers;
   if (b.hold === 'alle') return true;
-  if (tilstand.hold === 'alle') return true;
-  return b.hold.includes(tilstand.hold);
+  if (!tilstand.hold.length) return true;
+  return b.hold.some(h => tilstand.hold.includes(h));
 }
 const holdTekst = b => b.hold === 'alle' ? 'Alle' : b.hold.length ? b.hold.join(' · ') : '';
 
@@ -72,14 +78,16 @@ const iAaret = idag >= START && idag <= SLUT;
 const smal = matchMedia('(max-width:699px)');
 
 const tilstand = {
-  hold: 'alle', pers: true, vis: smal.matches ? 'liste' : 'maaned',
+  hold: [], pers: true, vis: smal.matches ? 'liste' : 'maaned',
   md: iAaret ? idagK.slice(0, 7) : MAANEDER[0],
   dag: iAaret ? idagK : null
 };
 
 function laesAdresse() {
   const p = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
-  if (HOLD.includes(p.get('hold'))) tilstand.hold = p.get('hold');
+  // ?hold=1hf,3g — flere hold adskilt af komma
+  const hold = (p.get('hold') || '').split(',').filter(h => HOLD.includes(h));
+  tilstand.hold = HOLD.filter(h => hold.includes(h));
   if (p.get('personale') === '0') tilstand.pers = false;
   if (['maaned', 'liste'].includes(p.get('vis'))) tilstand.vis = p.get('vis');
   if (MAANEDER.includes(p.get('md'))) tilstand.md = p.get('md');
@@ -87,12 +95,12 @@ function laesAdresse() {
 }
 function skrivAdresse() {
   const p = new URLSearchParams();
-  if (tilstand.hold !== 'alle') p.set('hold', tilstand.hold);
-  if (tilstand.hold !== 'alle' && tilstand.pers) p.set('personale', '1');
-  if (tilstand.hold === 'alle' && !tilstand.pers) p.set('personale', '0');
+  if (!alleHold()) p.set('hold', tilstand.hold.join(','));
+  if (!alleHold() && tilstand.pers) p.set('personale', '1');
+  if (alleHold() && !tilstand.pers) p.set('personale', '0');
   if (tilstand.vis !== 'maaned') p.set('vis', tilstand.vis);
   if (tilstand.vis === 'maaned') p.set('md', tilstand.md);
-  history.replaceState(null, '', p.toString() ? '#' + p : location.pathname);
+  history.replaceState(null, '', p.toString() ? '#' + p.toString().replace(/%2C/g, ',') : location.pathname);
 }
 
 // ─── DOM ──────────────────────────────────────────────────
@@ -113,7 +121,7 @@ function chip(b, d) {
   if (d && b.fra < d && ugedag(d) !== 0 && d.getDate() !== 1) c.classList.add('fort');
   if (d && b.sidst > d && ugedag(d) !== 6) c.classList.add('videre');
   c.append(el('i', 'tegn', T.tegn), el('span', 'cx', b.navn));
-  if (tilstand.hold === 'alle' && b.hold !== 'alle' && b.hold.length)
+  if (visHoldMaerke() && b.hold !== 'alle' && b.hold.length)
     c.append(el('span', 'ch', b.hold.length > 2 ? `${b.hold.length} hold` : b.hold.join('·')));
   c.title = `${T.navn}: ${b.navn}${holdTekst(b) ? ' — ' + holdTekst(b) : ''}${b.n ? '\n' + b.n : ''}`;
   return c;
@@ -282,7 +290,7 @@ function tegnNaeste() {
     const knap = el('button');
     knap.type = 'button';
     knap.append(el('span', 'nd', b.fra <= fra && b.til ? 'Nu' : kortDato(b.fra)), el('i', 'tegn', TYPER[b.t].tegn), el('span', 'nx', b.navn));
-    if (tilstand.hold === 'alle' && holdTekst(b) && b.hold !== 'alle') knap.append(el('span', 'ch', holdTekst(b)));
+    if (visHoldMaerke() && holdTekst(b) && b.hold !== 'alle') knap.append(el('span', 'ch', holdTekst(b)));
     knap.addEventListener('click', () => vaelgDag(tekst(b.fra < fra ? fra : b.fra), true));
     li.append(knap);
     ul.append(li);
@@ -304,12 +312,13 @@ function tegnStatus() {
 // ─── Samlet tegning ───────────────────────────────────────
 function tegn() {
   for (const b of document.querySelectorAll('#holdvalg button'))
-    b.setAttribute('aria-pressed', b.dataset.hold === tilstand.hold ? 'true' : 'false');
+    b.setAttribute('aria-pressed',
+      (b.dataset.hold === 'alle' ? alleHold() : tilstand.hold.includes(b.dataset.hold)) ? 'true' : 'false');
   $('#pers').setAttribute('aria-pressed', tilstand.pers ? 'true' : 'false');
   for (const b of document.querySelectorAll('#visning button'))
     b.setAttribute('aria-pressed', b.dataset.vis === tilstand.vis ? 'true' : 'false');
   $('#rig').dataset.vis = tilstand.vis;
-  $('#ics-hold').textContent = tilstand.hold === 'alle' ? 'alle hold' : tilstand.hold;
+  $('#ics-hold').textContent = valgtNavn();
 
   tegnMaaned();
   const nu = tegnListe();
@@ -318,7 +327,7 @@ function tegn() {
   tegnStatus();
   tilpas();          // 5 eller 6 uger giver forskellig plads pr. dag
   skrivAdresse();
-  $('#sr').textContent = `Viser ${tilstand.hold === 'alle' ? 'alle hold' : tilstand.hold}${tilstand.pers ? ' med personale' : ''}, ${tilstand.vis === 'liste' ? 'som liste' : $('#md-navn').textContent}.`;
+  $('#sr').textContent = `Viser ${valgtNavn()}${tilstand.pers ? ' med personale' : ''}, ${tilstand.vis === 'liste' ? 'som liste' : $('#md-navn').textContent}.`;
   return nu;
 }
 
@@ -337,7 +346,7 @@ function ics() {
   const d8 = d => tekst(d).replace(/-/g, '');
   const stempel = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
   const linjer = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//smbi.dk//Skolekalender//DA', 'CALSCALE:GREGORIAN',
-    `X-WR-CALNAME:Skolekalender ${AAR.navn}${tilstand.hold === 'alle' ? '' : ' ' + tilstand.hold}`];
+    `X-WR-CALNAME:Skolekalender ${AAR.navn}${alleHold() ? '' : ' ' + valgtNavn(' ')}`];
   for (const b of ALLE.filter(synlig)) {
     const hv = holdTekst(b);
     linjer.push('BEGIN:VEVENT',
@@ -345,7 +354,7 @@ function ics() {
       `DTSTAMP:${stempel}`,
       `DTSTART;VALUE=DATE:${d8(b.fra)}`,
       `DTEND;VALUE=DATE:${d8(plus(b.sidst, 1))}`,
-      `SUMMARY:${esc(b.navn + (hv && hv !== 'Alle' && tilstand.hold === 'alle' ? ` (${hv})` : ''))}`,
+      `SUMMARY:${esc(b.navn + (hv && hv !== 'Alle' && visHoldMaerke() ? ` (${hv})` : ''))}`,
       `CATEGORIES:${esc(TYPER[b.t].navn)}`,
       ...(b.n ? [`DESCRIPTION:${esc(b.n)}`] : []),
       'TRANSP:TRANSPARENT', 'END:VEVENT');
@@ -356,7 +365,7 @@ function ics() {
   const blob = new Blob([linjer.map(fold).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
   const a = el('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `skolekalender-${AAR.navn.replace('–', '-')}${tilstand.hold === 'alle' ? '' : '-' + tilstand.hold}.ics`;
+  a.download = `skolekalender-${AAR.navn.replace('–', '-')}${alleHold() ? '' : '-' + valgtNavn('-')}.ics`;
   document.body.append(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
@@ -379,7 +388,15 @@ function byg() {
     const b = el('button', 'btn-mini', h === 'alle' ? 'Alle' : h);
     b.type = 'button';
     b.dataset.hold = h;
-    b.addEventListener('click', () => { tilstand.hold = h; tegn(); });
+    // «Alle» nulstiller; et hold slås til og fra, så man kan vælge flere
+    b.addEventListener('click', () => {
+      if (h === 'alle') tilstand.hold = [];
+      else {
+        const valgt = tilstand.hold.includes(h) ? tilstand.hold.filter(x => x !== h) : [...tilstand.hold, h];
+        tilstand.hold = HOLD.filter(x => valgt.includes(x));
+      }
+      tegn();
+    });
     holdvalg.append(b);
   }
   $('#pers').addEventListener('click', () => { tilstand.pers = !tilstand.pers; tegn(); });
