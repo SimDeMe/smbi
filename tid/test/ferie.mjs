@@ -120,6 +120,27 @@ const SKOLENS_SUM = '25 feriedage · 229 arbejdsdage, heraf 23 i elevferie';
   ok(bred, 'intet vandret overløb ved 390');
   await page.context().close();
 }
+// skolekalender.js kan læses uden Firebase — arbejdstidskalenderen i roden
+// bruger den. Firebase-adresserne afvises, så et skjult import ville fejle.
+{
+  const ctx = await browser.newContext({ serviceWorkers: 'block' });
+  const page = await ctx.newPage();
+  const net = [];
+  page.on('request', r => net.push(r.url()));
+  await page.route('https://www.gstatic.com/**', r => r.abort());
+  await page.goto('http://localhost:8777/robots.txt');
+  const r = await page.evaluate(async () => {
+    const m = await import('/tid/skolekalender.js');
+    const liste = m.SKOLENS_FERIE['2026/27'];
+    return { laerer: liste.filter(p => !p.elev).length, elev: liste.filter(p => p.elev).length,
+             navne: liste.every(p => p.navn), skaer: m.helligdagsnavne(2027).get('2027-03-25'),
+             grundlov: m.helligdage(2026).has('2026-06-05') };
+  });
+  ok(r.laerer === 4 && r.elev === 6 && r.navne, 'skolekalender: fire lærerferier, seks elevferier, alle med navn');
+  ok(r.skaer === 'Skærtorsdag' && !r.grundlov, 'skolekalender: helligdage med navn, grundlovsdag er arbejdsdag');
+  ok(!net.some(u => u.includes('gstatic') || u.includes('/tid/app.js')), 'skolekalender henter hverken Firebase eller app.js');
+  await ctx.close();
+}
 await browser.close();
 console.log(fejl.length ? '\nFEJL:\n' + fejl.join('\n') : '\nAlt OK');
 process.exitCode = fejl.length ? 1 : 0;

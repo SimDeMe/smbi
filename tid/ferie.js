@@ -17,68 +17,17 @@
 
 import { getSettings } from './indstillinger.js';
 import { datoInput, addDays } from './periode.js';
+import { helligdage, SKOLENS_FERIE } from './skolekalender.js';
+
+export { helligdage, SKOLENS_FERIE };
 
 const DAG_MS = 86400000;
-
-// ─── Helligdage ───────────────────────────────────────────
-// Påskedag efter den gregorianske regel (Meeus/Jones/Butcher)
-function paaskedag(aar) {
-  const a = aar % 19, b = Math.floor(aar / 100), c = aar % 100;
-  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const md = Math.floor((h + l - 7 * m + 114) / 31), dag = (h + l - 7 * m + 114) % 31 + 1;
-  return new Date(aar, md - 1, dag);
-}
-
-// De danske helligdage, der kan falde på en hverdag. Store bededag er
-// afskaffet fra 2024; grundlovsdag og juleaftensdag er arbejdsdage
-// (skolens ferieplan tæller 24/12 som en feriedag).
-const helligCache = new Map();
-export function helligdage(aar) {
-  if (helligCache.has(aar)) return helligCache.get(aar);
-  const p = paaskedag(aar);
-  const dage = [
-    new Date(aar, 0, 1),                       // nytårsdag
-    addDays(p, -3), addDays(p, -2),            // skærtorsdag, langfredag
-    addDays(p, 1),                             // 2. påskedag
-    ...(aar < 2024 ? [addDays(p, 26)] : []),   // store bededag
-    addDays(p, 39),                            // Kristi himmelfartsdag
-    addDays(p, 50),                            // 2. pinsedag
-    new Date(aar, 11, 25), new Date(aar, 11, 26)
-  ];
-  const s = new Set(dage.map(datoInput));
-  helligCache.set(aar, s);
-  return s;
-}
 
 const erHverdag = d => d.getDay() !== 0 && d.getDay() !== 6;
 const erHelligdag = d => helligdage(d.getFullYear()).has(datoInput(d));
 
 // ─── Ferie ────────────────────────────────────────────────
-// Skolens ferieplan for lærerne (Middelfart Gymnasium), som den står i
-// «Forslag til lærernes ferie». Den bruges, indtil læreren selv har gemt
-// ferie for skoleåret — en gemt liste, også en tom, går forud.
-// Ret hvert år efter den nye plan.
-//
-// Elevernes ferier er fra «Ferieplan for elever og lærere 2026-27», de dage,
-// hvor læreren arbejder. Dagene 4.–7. august er ikke med: eleverne har
-// stadig ferie, men lærerne er på skolen til møder og forberedelse.
-export const SKOLENS_FERIE = {
-  '2026/27': [
-    { fra: '2026-07-06', til: '2026-07-27' },   // sommer, 16 dage (planen skriver 2027, men mener 2026)
-    { fra: '2026-12-21', til: '2026-12-24' },   // jul, 4 dage
-    { fra: '2027-02-15', til: '2027-02-16' },   // vinter, uge 7, 2 dage
-    { fra: '2027-03-22', til: '2027-03-24' },   // påske, 3 dage — i alt 25
-    { fra: '2026-06-29', til: '2026-07-03', elev: true },   // sommer, før lærerens ferie
-    { fra: '2026-07-28', til: '2026-08-03', elev: true },   // sommer, til første dag på skolen 4/8
-    { fra: '2026-10-12', til: '2026-10-16', elev: true },   // efterår, uge 42
-    { fra: '2026-12-28', til: '2026-12-31', elev: true },   // jul
-    { fra: '2027-02-17', til: '2027-02-19', elev: true },   // vinter, resten af uge 7
-    { fra: '2027-05-07', til: '2027-05-07', elev: true }    // fredag efter Kristi himmelfart
-  ]
-};
+// Skolens plan (SKOLENS_FERIE) står i skolekalender.js sammen med helligdagene.
 
 // Hele listen, som Indstillinger viser den. En liste, der er gemt, før
 // elevferien kom til, får skolens elevferie med, til listen gemmes igen.
