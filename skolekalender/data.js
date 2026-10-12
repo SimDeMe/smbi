@@ -95,7 +95,7 @@ export const BEGIVENHEDER = [
   { d: '2026-10-04', til: '2026-10-11', h: '', t: 'tur', x: 'Sprogrejse Frankrig' },
   { d: '2026-10-06', h: '2hf', t: 'valg', x: 'Studievalg' },
   { d: '2026-10-07', h: '', t: 'pers', x: 'M', kode: 'M' },
-  { d: '2026-10-07', til: '2026-10-21', h: '', t: 'tur', x: 'Sprogrejse Spanien' },
+  { d: '2026-10-07', til: '2026-10-21', h: '', t: 'tur', x: 'Sprogrejse Spanien' },   // hen over efterårsferien, som skolen skriver
   { d: '2026-10-21', til: '2026-10-23', h: '3g', t: 'valg', x: 'Studiepraktik' },
   { d: '2026-10-21', h: '', t: 'pers', x: 'Fremmedsprogsnetværk' },
   { d: '2026-10-23', h: '1g', t: 'proeve', x: 'AP-prøve' },
@@ -178,12 +178,11 @@ export const BEGIVENHEDER = [
   { d: '2027-03-16', h: '1hf', t: 'proeve', x: 'NF intern prøve' },
   { d: '2027-03-18', h: '2g', t: 'proeve', x: 'SRO-præsentation' },
   { d: '2027-03-31', h: '2g', t: 'valg', x: 'SRO-valg' },
-  { d: '2027-03-31', h: '1hf', t: 'tur', x: 'Københavnstur' },
+  { d: '2027-03-31', til: '2027-04-02', h: '1hf', t: 'tur', x: 'Københavnstur' },
   { d: '2027-03-31', h: '2hf', t: 'proeve', x: 'POP4' },
 
   // ── April 2027 ────────────────────────────────────────────
   { d: '2027-04-01', h: '2hf', t: 'proeve', x: 'POP4' },
-  { d: '2027-04-02', h: '1hf', t: 'tur', x: 'Københavnstur' },
   { d: '2027-04-05', h: '2hf', t: 'arr', x: 'Fagpakkegalla' },
   { d: '2027-04-05', til: '2027-04-23', h: '', t: 'andet', x: 'Introkurser 8. klasse', n: 'Uge 14–16' },
   { d: '2027-04-09', h: '2g', t: 'proeve', x: 'SRO' },
