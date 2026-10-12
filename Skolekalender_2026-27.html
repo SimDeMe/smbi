@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skolekalender 2026–27 — smbi.dk</title>
+<meta name="description" content="Middelfart Gymnasiums kalender for skoleåret 2026–27 måned for måned eller som liste, filtreret på 1g, 2g, 3g, 1hf og 2hf — og som kalenderfil til Outlook og telefonen.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   Skolekalender — design efter smbi.dk's forside
+   ───────────────────────────────────────────────────────── */
+:root{
+  --paper:#FFF9EE;  --paper-2:#FFF3DC;  --panel:#FFFFFF;
+  --ink:#17211F;    --slate:#566B68;
+
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+
+  --bio:var(--pink);
+  --geo:var(--blue);
+  --accent:var(--teal);   /* interne værktøjer */
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --wide:'wdth' 118;
+  --max:1180px;
+  --side:320px;
+
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+
+  --d-ferie:#C7E6F6;
+  --d-hellig:#FFD9C9;
+  --d-weekend:var(--paper-2);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+
+.mono{
+  font-family:var(--mono);font-size:0.68rem;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+}
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{
+  height:7px;
+  background:linear-gradient(90deg,
+    var(--pink) 0 14.3%, var(--coral) 14.3% 28.6%, var(--amber) 28.6% 42.9%,
+    var(--lime) 42.9% 57.2%, var(--teal) 57.2% 71.5%, var(--blue) 71.5% 85.8%,
+    var(--grape) 85.8% 100%);
+}
+.top{position:sticky;top:0;z-index:60}
+.top-bar{
+  background:rgba(255,249,238,0.93);backdrop-filter:blur(10px);
+  border-bottom:2px solid var(--ink);
+}
+.top-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:16px;height:60px;
+}
+.brand{
+  font-family:var(--display);font-variation-settings:'wdth' 125;
+  font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+}
+.brand-mark{
+  width:25px;height:25px;border-radius:9px;border:2px solid var(--ink);
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));
+  flex-shrink:0;
+}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{
+  font-family:var(--display);font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--ink);white-space:nowrap;
+  padding:7px 14px;border-radius:20px;border:2px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.top-nav a:hover{background:#C9EFE9;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head::before{
+  content:'';position:absolute;width:380px;height:380px;border-radius:50%;
+  background:#9BE8DC;filter:blur(70px);opacity:.5;top:-200px;right:-120px;z-index:0;
+}
+.head-in{position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px;
+}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+h1{
+  font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
+  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;
+  margin:16px 0 14px;
+}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{
+  content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
+  background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
+}
+.lead{font-size:1.06rem;color:#3E4E4C;max-width:60ch}
+
+/* ── Signaturpanel ─────────────────────────────────────── */
+.rig{
+  position:relative;background:var(--panel);
+  border:2.5px solid var(--ink);border-radius:18px;
+  box-shadow:var(--hard-lg);margin-top:26px;
+}
+.rig-bar{height:9px;background:var(--accent);border-radius:15px 15px 0 0}
+.rig-head{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 15px;border-bottom:2px solid var(--ink);background:#E3F6F3;
+}
+.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate)}
+.rig-live{display:flex;align-items:center;gap:7px}
+.rig-live .mono{color:var(--ink);font-weight:600}
+.dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
+}
+.rig-tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn-mini{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 11px;border-radius:18px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.btn-mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.btn-mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{
+  background:var(--ink);color:#FFF6E0;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);
+}
+.btn-mini:disabled{opacity:.35;cursor:default;transform:none;box-shadow:2px 2px 0 var(--ink)}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:2px 2px 0 var(--ink)}
+.seg button{
+  font-family:var(--display);font-size:0.72rem;font-weight:700;
+  background:#fff;border:none;padding:4px 12px;cursor:pointer;
+}
+.seg button + button{border-left:2px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#FFF6E0}
+
+/* ── Scenen: måned eller liste ─────────────────────────── */
+.stage{
+  padding:14px 16px 16px;min-width:0;
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
+}
+.rig[data-vis="liste"] .maaned{display:none}
+.rig[data-vis="maaned"] .liste{display:none}
+
+.md-nav{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.md-nav h2{
+  font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:800;
+  font-size:1.45rem;letter-spacing:-0.02em;line-height:1;min-width:9.5ch;
+}
+.md-strip{
+  margin-left:auto;display:flex;gap:2px;background:#fff;
+  border:2px solid var(--ink);border-radius:18px;padding:2px;
+}
+.md-strip button{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;border:none;background:none;border-radius:14px;
+  padding:3px 7px;cursor:pointer;color:var(--slate);
+}
+.md-strip button:hover{background:var(--paper-2);color:var(--ink)}
+.md-strip button[aria-current="true"]{background:var(--accent);color:#fff}
+
+.gitter{
+  display:grid;grid-template-columns:24px repeat(7,minmax(0,1fr));gap:4px;
+}
+.dow{
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--slate);text-align:left;padding:0 4px 1px;
+}
+.dow.uge,.ugenr{text-align:center;padding:0}
+.ugenr{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;color:var(--slate);
+  padding-top:7px;
+}
+.celle{
+  position:relative;min-height:88px;min-width:0;border-radius:8px;
+  border:1.5px solid #D9E0DE;background:#fff;padding:4px 4px 5px;
+  display:flex;flex-direction:column;gap:3px;text-align:left;cursor:pointer;
+  font-variant-numeric:tabular-nums;
+}
+.celle:hover{border-color:var(--ink)}
+.celle.uden{visibility:hidden}
+.celle.weekend{background:var(--d-weekend);border-color:transparent}
+.celle.weekend .dn{color:#8C9997}
+.celle.ferie{background:var(--d-ferie);border-color:#8CC6E4}
+.celle.hellig{background:var(--d-hellig);border-color:#F1A487}
+.celle.idag{border:2.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.celle.valgt{outline:3px solid var(--grape);outline-offset:1px}
+.ctop{display:flex;align-items:baseline;gap:5px;min-width:0;padding:0 2px}
+.dn{font-family:var(--display);font-weight:800;font-size:0.86rem;line-height:1.1}
+.celle.idag .dn{
+  background:var(--ink);color:#FFF6E0;border-radius:9px;padding:1px 6px;
+}
+.hd{
+  font-family:var(--mono);font-size:0.5rem;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;color:#1B5E80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.celle.hellig .hd{color:#8A2F0E}
+.chips{display:flex;flex-direction:column;gap:2px;min-width:0}
+.chip{
+  display:flex;align-items:baseline;gap:3px;min-width:0;
+  background:var(--cf);border-left:3px solid var(--ck);border-radius:3px 5px 5px 3px;
+  padding:1px 4px 1px 3px;font-family:var(--display);font-size:0.66rem;font-weight:600;
+  line-height:1.25;
+}
+.chip.videre{border-radius:3px 0 0 3px;margin-right:-8px}
+.chip.fort{border-left:none;border-radius:0;margin-left:-8px;padding-left:11px}
+.chip.fort.videre{border-radius:0}
+.chip.fort:not(.videre){border-radius:0 5px 5px 0}
+.chip.fort > *{visibility:hidden}
+.chip .cx{
+  overflow:hidden;min-width:0;flex:1;overflow-wrap:break-word;hyphens:auto;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;
+}
+.chip.videre .cx,.chip.fort .cx{-webkit-line-clamp:1;line-clamp:1;overflow-wrap:normal;white-space:nowrap;text-overflow:ellipsis;display:block}
+.chip .ch{
+  font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#3E4E4C;
+  white-space:nowrap;flex:none;
+}
+.tegn{font-style:normal;font-size:0.9em;line-height:1;flex:none;width:1.05em;text-align:center}
+.mere{font-family:var(--mono);font-size:0.52rem;font-weight:600;color:var(--slate);padding-left:4px}
+
+.md-noter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.md-noter[hidden]{display:none}
+.md-noter .mono{font-size:0.58rem;color:var(--slate)}
+.note-pille{
+  background:#fff;border:2px dashed var(--ink);border-radius:18px;padding:2px 11px;
+  font-size:0.84rem;line-height:1.4;
+}
+
+/* listen */
+.liste{display:flex;flex-direction:column;gap:14px}
+.lmd{background:#fff;border:2px solid var(--ink);border-radius:12px;overflow:hidden;box-shadow:3px 3px 0 var(--ink)}
+.lmd h3{
+  font-family:var(--display);font-variation-settings:'wdth' 110;font-weight:800;
+  font-size:1.02rem;letter-spacing:-0.01em;padding:8px 12px;
+  border-bottom:2px solid var(--ink);background:var(--paper);
+}
+.lrk{list-style:none}
+.lr{
+  display:grid;grid-template-columns:9.5rem minmax(0,1fr) auto;gap:4px 12px;align-items:baseline;
+  padding:6px 12px 6px 9px;border-left:5px solid var(--ck,transparent);
+}
+.lr + .lr{border-top:1.5px solid #E6EDEB}
+.lr.t-ferie{background:var(--d-ferie)}
+.lr.forbi{opacity:.5}
+.lr.note{border-left-color:#C9D2D0}
+#nu{box-shadow:inset 0 0 0 2px var(--ink)}
+.ld{display:flex;flex-direction:column;line-height:1.2}
+.ld b{font-family:var(--display);font-weight:700;font-size:0.86rem;font-variant-numeric:tabular-nums}
+.ld .mono{font-size:0.54rem;color:var(--slate);letter-spacing:0.1em}
+.lx{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0}
+.lx b{font-family:var(--display);font-weight:700;font-size:0.92rem}
+.lx small{font-size:0.82rem;color:#3E4E4C;flex-basis:100%;padding-left:1.45em;line-height:1.35}
+.lx .tegn{background:var(--cf,#E6EDEB);border-radius:5px;width:1.35em;padding:1px 0}
+.lh{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.tag{
+  font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.06em;
+  border:1.5px solid var(--ink);border-radius:10px;padding:0 6px;background:#fff;
+}
+.tag.alle{background:var(--ink);color:#FFF6E0}
+.tag.pers{background:var(--d-hellig);text-transform:uppercase}
+.tomt{padding:8px 12px;color:var(--slate);font-size:0.88rem}
+
+/* ── Sidespalten ───────────────────────────────────────── */
+.side{background:var(--paper-2);border-top:2px solid var(--ink)}
+.blok{padding:12px 15px 14px}
+.blok + .blok{border-top:2px solid var(--ink)}
+.blok > .mono{display:block;font-size:0.6rem;color:#5A6C69;margin-bottom:8px}
+.holdvalg{display:flex;gap:5px;flex-wrap:wrap}
+.holdvalg .btn-mini{padding:4px 9px}
+.pers-knap{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:0.84rem;line-height:1.3}
+.pers-knap .btn-mini{flex:none}
+.dag{background:#fff}
+.dag-h{display:flex;flex-direction:column;margin-bottom:8px}
+.dag-h b{font-family:var(--display);font-weight:800;font-size:1.02rem;line-height:1.2}
+.dag-h .mono{font-size:0.56rem;color:var(--slate)}
+.dag-l,.naeste-l{list-style:none;display:flex;flex-direction:column;gap:5px}
+.dag-l li{
+  display:flex;gap:7px;align-items:baseline;line-height:1.3;
+  background:var(--cf,var(--d-hellig));border-left:3px solid var(--ck,var(--coral));
+  border-radius:3px 7px 7px 3px;padding:4px 8px 5px 6px;
+}
+.dag-l li.tomt{background:none;border:none;padding:0}
+.dag-l b{font-family:var(--display);font-weight:700;font-size:0.9rem;display:block}
+.dag-l small{display:block;font-size:0.8rem;color:#3E4E4C}
+.dag-l small.mono{font-size:0.54rem;letter-spacing:0.08em;color:var(--slate)}
+.note{font-size:0.86rem;line-height:1.45;color:#3E4E4C}
+.naeste-l button{
+  width:100%;display:flex;align-items:baseline;gap:6px;text-align:left;cursor:pointer;
+  background:#fff;border:1.5px solid #D9E0DE;border-left:4px solid var(--ck);border-radius:4px 8px 8px 4px;
+  padding:4px 8px 4px 6px;line-height:1.3;
+}
+.naeste-l button:hover{border-color:var(--ink);border-left-color:var(--ck)}
+.naeste-l .nd{font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;color:var(--slate);flex:none;width:4.4em}
+.naeste-l .nx{font-family:var(--display);font-weight:700;font-size:0.82rem;min-width:0;flex:1}
+.naeste-l .ch{font-family:var(--mono);font-size:0.5rem;font-weight:600;color:var(--slate);flex:none}
+.ics-note{font-size:0.8rem;line-height:1.4;color:#3E4E4C;margin-top:8px}
+
+/* ── Signatur ──────────────────────────────────────────── */
+.facts{
+  border-top:2px solid var(--ink);background:#fff;border-radius:0 0 15px 15px;
+  padding:10px 15px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.fact{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:3px 11px 3px 4px;
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+}
+.fact .sw{
+  width:20px;height:20px;border-radius:50%;border:2px solid;flex:none;
+  display:grid;place-items:center;font-size:0.72rem;letter-spacing:0;color:var(--ink);
+}
+.fact-note{font-size:0.8rem;color:var(--slate);flex-basis:100%}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
+.foot-in{
+  max-width:var(--max);margin:0 auto;padding:0 24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
+}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;
+  border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.foot-links a:nth-child(1):hover{background:var(--teal);border-color:var(--teal)}
+.foot-links a:nth-child(2):hover{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.foot-links a:nth-child(3):hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+/* ── Sidespalte på brede skærme ────────────────────────── */
+@media (min-width:960px){
+  .rig-body{display:grid;grid-template-columns:minmax(0,1fr) var(--side);grid-template-areas:"stage side" "facts facts"}
+  .stage{grid-area:stage}
+  .facts{grid-area:facts}
+  .side{grid-area:side;border-top:none;border-left:2px solid var(--ink)}
+  .side-in{position:sticky;top:69px}
+  .side-in > :last-child{border-bottom:2px solid var(--ink)}
+}
+
+/* ── Lave skærme ───────────────────────────────────────── */
+@media (max-height:820px){
+  .top{position:relative}
+  .top-in{height:46px}
+  .brand-mark{width:21px;height:21px;border-radius:8px}
+}
+@media (min-width:960px) and (max-height:820px){
+  .side-in{top:12px}
+  .head{padding:12px 0 0}
+  .head::before{width:300px;height:300px;top:-190px;right:-60px}
+  .head-in{
+    display:grid;grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"eye lead" "h1 lead";column-gap:32px;align-items:end;
+  }
+  .eyebrow{grid-area:eye;justify-self:start}
+  h1{grid-area:h1;font-size:clamp(1.7rem,2.6vw,2.2rem);margin:10px 0 0}
+  .lead{grid-area:lead;font-size:0.94rem;line-height:1.45;max-width:46ch;justify-self:end}
+  .rig{margin-top:14px}
+  .rig-head{padding:8px 15px}
+  .celle{min-height:76px}
+}
+
+/* ── Responsivt ────────────────────────────────────────── */
+@media (max-width:959px){
+  .rig-body{display:flex;flex-direction:column}
+  .side{order:-1;border-top:none;border-bottom:2px solid var(--ink)}
+  .side-in{display:grid;grid-template-columns:1fr 1fr}
+  .side-in .blok + .blok{border-top:none;border-left:2px solid var(--ink)}
+  .side-in .blok:nth-child(n+3){border-top:2px solid var(--ink)}
+  .side-in .blok:nth-child(3){border-left:none}
+}
+@media (max-width:699px){
+  /* månedsgitteret bliver for smalt — her er listen visningen */
+  #visning,.maaned{display:none!important}
+  .rig .liste{display:flex!important}
+  .side-in{display:block}
+  .side-in .blok + .blok{border-left:none;border-top:2px solid var(--ink)}
+  .side .dag{display:none}
+  .lr{grid-template-columns:6.6rem minmax(0,1fr)}
+  .lh{grid-column:2;justify-content:flex-start}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
+  .head{padding:24px 0 18px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .rig-bar{border-radius:11px 11px 0 0}
+  .facts{border-radius:0 0 11px 11px}
+  .stage{padding:12px}
+  .top-nav a{padding:6px 10px}
+  .rig-tools{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  .top,.foot,.rig-tools,.side,.md-strip,#forrige,#naeste,#idag,.head::before{display:none!important}
+  body{background:#fff;font-size:13px}
+  .head{padding:0 0 6px}
+  h1{font-size:1.6rem;margin:4px 0}
+  .lead{display:none}
+  .rig{box-shadow:none;margin-top:6px}
+  .rig-body{display:block}
+  .stage{background:none;padding:8px}
+  .celle{min-height:66px;break-inside:avoid}
+  .lmd{box-shadow:none;break-inside:avoid}
+  .celle.valgt{outline:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/admin.html">Admin</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="head">
+      <div class="head-in">
+        <span class="eyebrow mono"><span class="blink"></span>Middelfart Gymnasium · skoleåret</span>
+        <h1>Skolekalender <span class="hi" style="--hc:#C9EFE9">2026–27</span></h1>
+        <p class="lead">Ferier, prøver, ture og arrangementer for hele skoleåret. Vælg dit hold, og se måneden — eller hent det hele ind i din egen kalender.</p>
+      </div>
+    </div>
+
+    <section class="rig" id="rig" aria-label="Skolekalender" data-vis="maaned">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="version" title="Kalenderens version">v1.0</span>
+        <span class="rig-live"><span class="dot"></span><span class="mono" id="status">Skoleåret</span></span>
+        <span class="rig-tools">
+          <span class="seg" id="visning" role="group" aria-label="Visning">
+            <button type="button" data-vis="maaned">Måned</button>
+            <button type="button" data-vis="liste">Liste</button>
+          </span>
+          <button type="button" class="btn-mini" id="print" title="Udskriv det, der vises">Udskriv</button>
+        </span>
+      </div>
+
+      <div class="rig-body">
+        <div class="stage">
+          <div class="maaned">
+            <div class="md-nav">
+              <button type="button" class="btn-mini" id="forrige" aria-label="Forrige måned">‹</button>
+              <h2 id="md-navn" aria-live="polite">August 2026</h2>
+              <button type="button" class="btn-mini" id="naeste" aria-label="Næste måned">›</button>
+              <button type="button" class="btn-mini" id="idag">I dag</button>
+              <nav class="md-strip" aria-label="Skoleårets måneder"></nav>
+            </div>
+            <div class="gitter" id="gitter" aria-label="Månedens dage"></div>
+            <div class="md-noter" id="md-noter" hidden></div>
+          </div>
+          <div class="liste" id="liste" aria-label="Hele skoleåret som liste"></div>
+        </div>
+
+        <div class="side">
+          <div class="side-in">
+            <div class="blok">
+              <span class="mono">Hold · <b id="tael">0</b> begivenheder</span>
+              <div class="holdvalg" id="holdvalg" role="group" aria-label="Vis kalenderen for"></div>
+              <div class="pers-knap">
+                <button type="button" class="btn-mini" id="pers" aria-pressed="true">● Personale</button>
+                <span>møder og kurser for lærerne</span>
+              </div>
+            </div>
+            <div class="blok dag" id="dag" aria-live="polite"></div>
+            <div class="blok">
+              <span class="mono" id="naeste-t">Det næste</span>
+              <ul class="naeste-l" id="naeste-l"></ul>
+            </div>
+            <div class="blok">
+              <span class="mono">Ind i din egen kalender</span>
+              <button type="button" class="btn-mini" id="ics">↓ Kalenderfil for <span id="ics-hold">alle hold</span></button>
+              <p class="ics-note">Åbn filen, så lægges begivenhederne ind i Outlook, Google eller telefonens kalender.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="facts" id="facts"></div>
+      </div>
+    </section>
+    <p class="sr" id="sr" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Skolekalender · efter skolens kalender og ferieplan</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/admin.html">Admin</a>
+      <a href="/Arbejdstidskalender_2026-27.html">Arbejdstid</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="skolekalender/side.js"></script>
+<script>
+// Iframe-krom: skjul sidens ramme, når kalenderen ligger i en anden side
+if (window.top !== window.self) {
+  for (const s of ['#site-top', '.foot', '.head']) {
+    const e = document.querySelector(s);
+    if (e) e.style.display = 'none';
+  }
+}
+</script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
