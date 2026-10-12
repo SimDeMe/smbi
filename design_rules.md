@@ -22,7 +22,7 @@ Lagt om indtil videre: forsiden, fagforsiderne, `born.html`, `admin.html`,
 `geografi/Tidevand.html`, `geografi/boelger.html`, `geografi/raastoffer.html`, `geografi/vulkanudbrud.html`, `geografi/stensamling.html`, `biologi/membran.html`,
 `biologi/fotosyntese.html`, `biologi/bio-blocks/index.html`,
 `biologi/membran2d.html`, `biologi/KvindensCyklus/FinalSim.html`,
-`navneApp/`, `tid/`, `Arbejdstidskalender_2026-27.html`
+`navneApp/`, `tid/`, `Arbejdstidskalender_2026-27.html`, `Skolekalender_2026-27.html`
 (brug dem som forlæg, når `--accent:var(--bio)` skal
 bruges). Resten af `geografi/`, `biologi/` og `style.css`-siderne kører
 stadig det gamle design — rør dem kun, når opgaven handler om dem.
