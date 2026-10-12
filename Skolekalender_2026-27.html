@@ -77,7 +77,7 @@ button{font:inherit;color:inherit}
   border-bottom:2px solid var(--ink);
 }
 .top-in{
-  max-width:var(--max);margin:0 auto;padding:0 24px;
+  margin:0 auto;padding:0 24px;
   display:flex;align-items:center;gap:16px;height:60px;
 }
 .brand{
@@ -101,7 +101,8 @@ button{font:inherit;color:inherit}
 .top-nav a:hover{background:#C9EFE9;border-color:var(--ink)}
 
 /* ── Sidehoved ─────────────────────────────────────────── */
-.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+/* kalenderen bruger hele vinduets bredde — her er ingen --max */
+.wrap{margin:0 auto;padding:0 24px}
 .head{padding:34px 0 22px;position:relative;overflow:hidden}
 .head::before{
   content:'';position:absolute;width:380px;height:380px;border-radius:50%;
@@ -175,13 +176,14 @@ h1{
 .rig[data-vis="liste"] .maaned{display:none}
 .rig[data-vis="maaned"] .liste{display:none}
 
-.md-nav{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.md-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;min-width:0}
+.rig[data-vis="liste"] .md-nav{visibility:hidden}
 .md-nav h2{
   font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:800;
-  font-size:1.45rem;letter-spacing:-0.02em;line-height:1;min-width:9.5ch;
+  font-size:1.2rem;letter-spacing:-0.02em;line-height:1;min-width:8.6ch;text-align:center;
 }
 .md-strip{
-  margin-left:auto;display:flex;gap:2px;background:#fff;
+  margin-left:8px;display:flex;gap:2px;background:#fff;
   border:2px solid var(--ink);border-radius:18px;padding:2px;
 }
 .md-strip button{
@@ -233,18 +235,14 @@ h1{
   display:flex;align-items:baseline;gap:3px;min-width:0;
   background:var(--cf);border-left:3px solid var(--ck);border-radius:3px 5px 5px 3px;
   padding:1px 4px 1px 3px;font-family:var(--display);font-size:0.66rem;font-weight:600;
-  line-height:1.25;
+  line-height:1.15;
 }
 .chip.videre{border-radius:3px 0 0 3px;margin-right:-8px}
 .chip.fort{border-left:none;border-radius:0;margin-left:-8px;padding-left:11px}
 .chip.fort.videre{border-radius:0}
 .chip.fort:not(.videre){border-radius:0 5px 5px 0}
 .chip.fort > *{visibility:hidden}
-.chip .cx{
-  overflow:hidden;min-width:0;flex:1;overflow-wrap:break-word;hyphens:auto;
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;
-}
-.chip.videre .cx,.chip.fort .cx{-webkit-line-clamp:1;line-clamp:1;overflow-wrap:normal;white-space:nowrap;text-overflow:ellipsis;display:block}
+.chip .cx{overflow:hidden;min-width:0;flex:1;white-space:nowrap;text-overflow:ellipsis}
 .chip .ch{
   font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#3E4E4C;
   white-space:nowrap;flex:none;
@@ -252,9 +250,9 @@ h1{
 .tegn{font-style:normal;font-size:0.9em;line-height:1;flex:none;width:1.05em;text-align:center}
 .mere{font-family:var(--mono);font-size:0.52rem;font-weight:600;color:var(--slate);padding-left:4px}
 
-.md-noter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
-.md-noter[hidden]{display:none}
-.md-noter .mono{font-size:0.58rem;color:var(--slate)}
+.md-noter{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.md-noter[hidden],.rig[data-vis="liste"] .md-noter{display:none}
+.md-noter .mono{flex-basis:100%;margin-bottom:0!important}
 .note-pille{
   background:#fff;border:2px dashed var(--ink);border-radius:18px;padding:2px 11px;
   font-size:0.84rem;line-height:1.4;
@@ -349,7 +347,7 @@ h1{
 /* ── Bund ──────────────────────────────────────────────── */
 .foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
 .foot-in{
-  max-width:var(--max);margin:0 auto;padding:0 24px;
+  margin:0 auto;padding:0 24px;
   display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;
 }
 .foot .brand{color:#FFF6E0}
@@ -370,8 +368,18 @@ h1{
   .stage{grid-area:stage}
   .facts{grid-area:facts}
   .side{grid-area:side;border-top:none;border-left:2px solid var(--ink)}
-  .side-in{position:sticky;top:69px}
   .side-in > :last-child{border-bottom:2px solid var(--ink)}
+
+  /* Panelet fylder vinduet fra sin top og ned (--rig-h sættes i side.js).
+     Månedens uger deler højden; sidespalten og listen ruller i sig selv. */
+  .rig{display:flex;flex-direction:column;height:var(--rig-h,auto)}
+  .rig[data-vis="maaned"] .stage{padding:10px 12px 12px}
+  .rig-body{flex:1;min-height:0;grid-template-rows:minmax(0,1fr) auto}
+  .stage{display:flex;flex-direction:column;min-height:0;overflow:auto}
+  .maaned{flex:1;min-height:0;display:flex;flex-direction:column}
+  .gitter{flex:1;min-height:0;grid-template-rows:auto repeat(var(--uger,5),minmax(52px,1fr))}
+  .celle{min-height:0;overflow:hidden}
+  .side{min-height:0;overflow:auto}
 }
 
 /* ── Lave skærme ───────────────────────────────────────── */
@@ -380,7 +388,8 @@ h1{
   .top-in{height:46px}
   .brand-mark{width:21px;height:21px;border-radius:8px}
 }
-@media (min-width:960px) and (max-height:820px){
+/* lavt sidehoved på alle brede skærme, så kalenderen får højden */
+@media (min-width:960px){
   .side-in{top:12px}
   .head{padding:12px 0 0}
   .head::before{width:300px;height:300px;top:-190px;right:-60px}
@@ -393,7 +402,14 @@ h1{
   .lead{grid-area:lead;font-size:0.94rem;line-height:1.45;max-width:46ch;justify-self:end}
   .rig{margin-top:14px}
   .rig-head{padding:8px 15px}
-  .celle{min-height:76px}
+}
+
+/* meget lave skærme: titel og øjenbryn på én linje, uden indledning */
+@media (min-width:960px) and (max-height:700px){
+  .head{padding:8px 0 0}
+  .head-in{display:flex;align-items:center;gap:16px}
+  .lead{display:none}
+  h1{margin:0;font-size:1.7rem}
 }
 
 /* ── Responsivt ────────────────────────────────────────── */
@@ -407,7 +423,7 @@ h1{
 }
 @media (max-width:699px){
   /* månedsgitteret bliver for smalt — her er listen visningen */
-  #visning,.maaned{display:none!important}
+  #visning,.maaned,.md-nav{display:none!important}
   .rig .liste{display:flex!important}
   .side-in{display:block}
   .side-in .blok + .blok{border-left:none;border-top:2px solid var(--ink)}
@@ -430,6 +446,8 @@ h1{
   *{animation:none!important;transition:none!important}
 }
 @media print{
+  .rig{height:auto!important}
+  .gitter{grid-template-rows:none!important}
   @page{size:A4 landscape;margin:10mm}
   .top,.foot,.rig-tools,.side,.md-strip,#forrige,#naeste,#idag,.head::before{display:none!important}
   body{background:#fff;font-size:13px}
@@ -442,6 +460,7 @@ h1{
   .celle{min-height:66px;break-inside:avoid}
   .lmd{box-shadow:none;break-inside:avoid}
   .celle.valgt{outline:none}
+  .rig-head{background:none}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
@@ -474,8 +493,15 @@ h1{
     <section class="rig" id="rig" aria-label="Skolekalender" data-vis="maaned">
       <div class="rig-bar"></div>
       <div class="rig-head">
-        <span class="version" title="Kalenderens version">v1.2</span>
-        <span class="rig-live"><span class="dot"></span><span class="mono" id="status">Skoleåret</span></span>
+        <span class="version" title="Kalenderens version">v1.3</span>
+        <span class="sr" id="status">Skoleåret</span>
+        <div class="md-nav">
+          <button type="button" class="btn-mini" id="forrige" aria-label="Forrige måned">‹</button>
+          <h2 id="md-navn" aria-live="polite">August 2026</h2>
+          <button type="button" class="btn-mini" id="naeste" aria-label="Næste måned">›</button>
+          <button type="button" class="btn-mini" id="idag">I dag</button>
+          <nav class="md-strip" aria-label="Skoleårets måneder"></nav>
+        </div>
         <span class="rig-tools">
           <span class="seg" id="visning" role="group" aria-label="Visning">
             <button type="button" data-vis="maaned">Måned</button>
@@ -488,15 +514,7 @@ h1{
       <div class="rig-body">
         <div class="stage">
           <div class="maaned">
-            <div class="md-nav">
-              <button type="button" class="btn-mini" id="forrige" aria-label="Forrige måned">‹</button>
-              <h2 id="md-navn" aria-live="polite">August 2026</h2>
-              <button type="button" class="btn-mini" id="naeste" aria-label="Næste måned">›</button>
-              <button type="button" class="btn-mini" id="idag">I dag</button>
-              <nav class="md-strip" aria-label="Skoleårets måneder"></nav>
-            </div>
             <div class="gitter" id="gitter" aria-label="Månedens dage"></div>
-            <div class="md-noter" id="md-noter" hidden></div>
           </div>
           <div class="liste" id="liste" aria-label="Hele skoleåret som liste"></div>
         </div>
@@ -512,6 +530,7 @@ h1{
               </div>
             </div>
             <div class="blok dag" id="dag" aria-live="polite"></div>
+            <div class="blok md-noter" id="md-noter" hidden></div>
             <div class="blok">
               <span class="mono" id="naeste-t">Det næste</span>
               <ul class="naeste-l" id="naeste-l"></ul>

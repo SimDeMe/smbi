@@ -137,6 +137,7 @@ function tegnMaaned() {
 
   let d = plus(f, -ugedag(f));
   const sidste = new Date(y, m, 0);
+  gitter.style.setProperty('--uger', Math.ceil((ugedag(f) + sidste.getDate()) / 7));
   while (d <= sidste) {
     gitter.append(el('div', 'ugenr', String(ugenr(d))));
     for (let j = 0; j < 7; j++, d = plus(d, 1)) {
@@ -168,7 +169,7 @@ function tegnMaaned() {
         // flerdagsbegivenheder øverst, så de står i samme række dag efter dag
         const vis = bs.filter(b => b.t !== 'ferie')
           .sort((a, b) => !!b.til - !!a.til || a.fra - b.fra || a.i - b.i);
-        const max = 4;
+        const max = pladsTil;
         vis.slice(0, vis.length > max ? max - 1 : max).forEach(b => liste.append(chip(b, d)));
         if (vis.length > max) liste.append(el('span', 'mere', `+${vis.length - max + 1} mere`));
         celle.append(liste);
@@ -315,6 +316,7 @@ function tegn() {
   tegnDag();
   tegnNaeste();
   tegnStatus();
+  tilpas();          // 5 eller 6 uger giver forskellig plads pr. dag
   skrivAdresse();
   $('#sr').textContent = `Viser ${tilstand.hold === 'alle' ? 'alle hold' : tilstand.hold}${tilstand.pers ? ' med personale' : ''}, ${tilstand.vis === 'liste' ? 'som liste' : $('#md-navn').textContent}.`;
   return nu;
@@ -428,11 +430,41 @@ function byg() {
 
 function rulTilNu() {
   const nu = document.getElementById('nu');
-  if (nu) nu.scrollIntoView({ block: 'center' });
+  if (!nu) return;
+  // på brede skærme ruller listen inde i panelet — siden skal blive stående
+  const st = $('.stage');
+  if (st.scrollHeight > st.clientHeight + 4) {
+    const y = nu.getBoundingClientRect().top - st.getBoundingClientRect().top + st.scrollTop;
+    st.scrollTop = y - st.clientHeight / 2 + nu.offsetHeight / 2;
+  } else nu.scrollIntoView({ block: 'center' });
+}
+
+// ─── Højde: panelet fylder vinduet ────────────────────────
+// Fra 960 px går panelet fra sin top til vinduets bund, og ugerne deler
+// højden. Hvor mange begivenheder der er plads til pr. dag, måles bagefter.
+let pladsTil = 4;
+const bred = matchMedia('(min-width:960px)');
+function tilpas() {
+  const rig = $('#rig');
+  if (!bred.matches) { rig.style.removeProperty('--rig-h'); return; }
+  const top = rig.getBoundingClientRect().top + scrollY;
+  // signaturforklaringen må gerne ligge under vinduets kant
+  const facts = $('#facts').offsetHeight;
+  rig.style.setProperty('--rig-h', `${Math.max(480, innerHeight - top - 14) + facts}px`);
+  const c = document.querySelector('.celle:not(.uden)');
+  const chip = document.querySelector('.chip');
+  if (!c) return;
+  const chipH = chip ? chip.getBoundingClientRect().height + 2 : 16;
+  const topH = c.querySelector('.ctop').getBoundingClientRect().height;
+  const ny = Math.max(2, Math.floor((c.clientHeight - topH - 10) / chipH));
+  if (ny !== pladsTil) { pladsTil = ny; tegnMaaned(); }
 }
 
 laesAdresse();
 byg();
 tegn();
+addEventListener('resize', tilpas);
+bred.addEventListener('change', tilpas);
+document.fonts?.ready.then(tilpas);
 if (tilstand.vis === 'liste' && iAaret) requestAnimationFrame(rulTilNu);
 smal.addEventListener('change', e => { if (e.matches && tilstand.vis === 'maaned') { tilstand.vis = 'liste'; tegn(); } });
