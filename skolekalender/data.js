@@ -29,14 +29,13 @@ export const TYPER = {
   andet:  { navn: 'Andet',                     tegn: '◆', farve: '#E6EDEB', kant: '#566B68' }
 };
 
-// Forkortelserne i kalenderens venstre margen. Kun M er forklaret i
-// skolens kalender; de andre står, som de står der.
+// Forkortelserne for personalets møder i kalenderens venstre margen.
+// FC er ikke forklaret og står, som den står i skolens kalender.
 export const KODER = {
-  M:   'Morgensamling',
-  PR:  null,
-  FC:  null,
-  FUN: null,
-  LF:  null
+  M:  'Morgensamling',
+  PR: 'Pædagogisk råd',
+  LF: 'Lærerforsamling',
+  FC: null
 };
 
 export const BEGIVENHEDER = [
@@ -73,7 +72,7 @@ export const BEGIVENHEDER = [
   // ── September 2026 ────────────────────────────────────────
   { d: '2026-09-02', h: '1g', t: 'proeve', x: 'SR-afprøvning' },
   { d: '2026-09-04', h: 'alle', t: 'arr', x: 'Aktivitetsdag' },
-  { d: '2026-09-04', h: '', t: 'pers', x: 'FUN', kode: 'FUN' },
+  { d: '2026-09-04', h: 'alle', t: 'arr', x: 'Fest', n: 'FUN — elevernes festudvalg' },
   { d: '2026-09-07', h: '1g', t: 'valg', x: 'Kontaktgruppesamtaler' },
   { d: '2026-09-07', h: '1hf', t: 'valg', x: 'Studievalg' },
   { d: '2026-09-09', h: '', t: 'pers', x: 'Fremmedsprogsnetværk' },
@@ -132,7 +131,7 @@ export const BEGIVENHEDER = [
   { d: '2026-12-01', h: '3g', t: 'proeve', x: 'FF3-aflevering' },
   { d: '2026-12-02', h: '1g 1hf', t: 'arr', x: 'Lommefilm' },
   { d: '2026-12-04', h: '3g', t: 'proeve', x: 'FF3-fremlæggelse' },
-  { d: '2026-12-04', h: '', t: 'pers', x: 'FUN', kode: 'FUN' },
+  { d: '2026-12-04', h: 'alle', t: 'arr', x: 'Fest', n: 'FUN — elevernes festudvalg' },
   { d: '2026-12-10', h: '2g', t: 'tur', x: 'Tyskhold til Flensburg', n: 'Alle 2g-tyskhold' },
   { d: '2026-12-11', h: '', t: 'pers', x: 'M', kode: 'M' },
   { d: '2026-12-14', h: '1hf', t: 'proeve', x: 'Eksamensforberedelse' },
@@ -166,7 +165,7 @@ export const BEGIVENHEDER = [
   { d: '2027-02-04', h: '2hf', t: 'valg', x: 'Studievalg' },
   { d: '2027-02-25', h: '1hf', t: 'proeve', x: 'Terminsprøver' },
   { d: '2027-02-26', h: '2g 3g 2hf', t: 'proeve', x: 'Terminsprøver' },
-  { d: '2027-02-26', h: '', t: 'pers', x: 'FUN', kode: 'FUN' },
+  { d: '2027-02-26', h: 'alle', t: 'arr', x: 'Fest', n: 'FUN — elevernes festudvalg' },
   { d: '2027-02-28', h: '1g', t: 'proeve', x: '1. standpunkt' },
   { d: '2027-02-28', h: '1hf', t: 'proeve', x: '2. standpunkt' },
 
