@@ -30,12 +30,11 @@ export const TYPER = {
 };
 
 // Forkortelserne for personalets møder i kalenderens venstre margen.
-// FC er ikke forklaret og står, som den står i skolens kalender.
 export const KODER = {
   M:  'Morgensamling',
   PR: 'Pædagogisk råd',
   LF: 'Lærerforsamling',
-  FC: null
+  FC: 'Fraværscheck'
 };
 
 export const BEGIVENHEDER = [
