@@ -155,7 +155,7 @@ export const BEGIVENHEDER = [
   { d: '2027-01-23', h: '', t: 'andet', x: 'Infomøde', n: 'Kl. 10–12' },
   { d: '2027-01-26', til: '2027-01-30', h: '3g', t: 'tur', x: 'København og Bruxelles', n: '3a til Bruxelles' },
   { d: '2027-01-31', h: '2g 3g', t: 'proeve', x: 'Karaktergivning / formativ evaluering', n: 'Fortsætterhold: formativ evaluering. Afslutterhold: karakterer' },
-  { d: '2027-01-31', h: '1hf 2hf', t: 'proeve', x: '2. standpunkt' },
+  { d: '2027-01-31', h: '2hf', t: 'proeve', x: '2. standpunkt' },   // 1hf får 2. standpunkt 28/2
 
   // ── Februar 2027 ──────────────────────────────────────────
   { d: '2027-02-01', til: '2027-02-12', h: '2g', t: 'tur', x: 'Studieture for 2c', n: 'Island og Ghana' },
