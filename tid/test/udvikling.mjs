@@ -46,9 +46,9 @@ const browser = await chromium.launch();
   await tilRapport(page);
 
   const kort = await page.$$('.udv-kort');
-  ok(kort.length === 3, 'tre grafer under skoleåret: ' + kort.length);
+  ok(kort.length === 4, 'fire grafer under skoleåret: ' + kort.length);
   const titler = await page.$$eval('.udv-titel', e => e.map(x => x.textContent));
-  ok(titler.join() === 'Belastning og arbejde,Arbejdet mod belastning,Leveret mod optjent', 'titlerne: ' + titler.join());
+  ok(titler.join() === 'Arbejdet mod normen,Belastning og arbejde,Arbejdet mod belastning,Leveret mod optjent', 'titlerne: ' + titler.join());
 
   // Ugerne: tre timer hver hverdag er 15 t om ugen; hele normperioden er med
   const uger = await page.$eval('.udv-uger', k => JSON.parse(k.dataset.uger).data);
@@ -62,7 +62,7 @@ const browser = await chromium.launch();
   ok(Math.abs(sumBel - 1690) <= 2, 'ugernes belastning giver normen: ' + Math.round(sumBel));
 
   // Sidste punkt i forskelskurven er chippens tal
-  const chip = (await page.textContent('.rapport-summary .forecast-chip')).trim();
+  const chip = (await page.textContent('.rapport-summary > .forecast-chip')).trim();
   const chipT = Number(chip.match(/(\d+)t/)[1]) * (chip.includes('overskud') ? -1 : 1);
   const skema = await kurve(page, 0);
   ok(Math.round(skema.at(-1)[1] / 60) === chipT, `forskelskurven ender i chippens tal: ${Math.round(skema.at(-1)[1] / 60)} / ${chip}`);
@@ -82,8 +82,8 @@ const browser = await chromium.launch();
   // Fortegnet forklares med samme ord i sammendraget og i grafen
   const sub = await page.textContent('.akkord-saldo-sub');
   ok(sub.includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'saldoens fortegn forklaret: ' + sub);
-  ok((await page.$$eval('.udv-nu', e => e[2].textContent)).includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'samme ord i grafens overskrift');
-  const under = await page.$$eval('.udv-under', e => e[2].textContent);
+  ok((await page.$$eval('.udv-nu', e => e[3].textContent)).includes(akkord.at(-1)[1] >= 0 ? 'optjent mere end brugt' : 'brugt mere end optjent'), 'samme ord i grafens overskrift');
+  const under = await page.$$eval('.udv-under', e => e[3].textContent);
   ok(under.includes('Over nul') && under.includes('Under nul: du har brugt mere tid, end du har optjent'), 'undertitlen forklarer begge fortegn');
 
   // Studieturen (ved afslutning) har optjent sine 15 brugte timer undervejs og
@@ -92,6 +92,41 @@ const browser = await chromium.launch();
   const foer = a(new Date(2026, 8, 14).getTime()), efter = a(new Date(2026, 8, 21).getTime());
   const spring = (efter - foer) / 60;
   ok(spring > 20 && spring < 32, `springet ved afslutningen (≈ de 25 t, der er tilbage): ${Math.round(spring)} t`);
+
+  // Arbejdet mod normen: 37 t × ansættelsesgraden om ugen, lagt sammen
+  const norm = await page.$eval('.udv-norm-kort', k => JSON.parse(k.dataset.norm).data);
+  const fortid = norm.filter(p => p[1] != null), nuP = fortid.at(-1);
+  const total = (await page.textContent('.rapport-total')).trim();
+  const tm = total.match(/(?:(\d+)t)?\s*(?:(\d+)m)?/);
+  ok(Math.abs(nuP[1] - ((+tm[1] || 0) * 60 + (+tm[2] || 0))) <= 1, `normkurvens arbejde ender i den samlede tid: ${nuP[1]}m / ${total}`);
+  ok(norm[0][0] === new Date(2026, 5, 1).getTime() && norm[0][1] === 0 && norm[0][2] === 0, 'normkurven begynder i 0');
+  ok(norm.at(-1)[0] === new Date(2027, 5, 1).getTime() && Math.abs(norm.at(-1)[2] - 1690 * 60) <= 1 && norm.at(-1)[1] === null, 'normen fortsætter til årets slut og ender i 1690 t');
+  const nv = t => norm.find(p => p[0] === t)?.[2];
+  ok(nv(ferieStart) === nv(ferieSlut), 'normen står stille i sommerferien');
+  const ugeNorm = (nv(new Date(2026, 8, 14).getTime()) - nv(new Date(2026, 8, 7).getTime())) / 60;
+  ok(ugeNorm > 36 && ugeNorm < 38.5, 'en hel uge uden ferie er ≈ 37 t: ' + ugeNorm.toFixed(2));
+  const underN = await page.textContent('.udv-norm-kort .udv-under');
+  ok(/ (36|37|38),\d t om ugen/.test(underN), 'undertitlen siger normen om ugen: ' + underN.match(/[\d,]+ t om ugen/)?.[0]);
+  // Sammendragets linje og grafens hoved siger det samme
+  const modN = (await page.textContent('.norm-mod')).replace(/\s+/g, ' ').trim();
+  const diffT = Math.round((nuP[1] - nuP[2]) / 60);
+  ok(modN.includes(`Normen indtil nu ${Math.round(nuP[2] / 60)} t`) && modN.includes(`${Math.abs(diffT)}t ${diffT >= 0 ? 'over' : 'under'} normen`), 'sammendraget: ' + modN);
+  const hovedN = (await page.textContent('.udv-norm-kort .udv-nu')).trim();
+  ok(hovedN === `${diffT > 0 ? '+' : diffT < 0 ? '−' : '± '}${Math.abs(diffT)} t ${diffT >= 0 ? 'over' : 'under'} normen`, 'grafens hoved: ' + hovedN);
+  // Hover: arbejdet og normen før i dag, kun normen efter
+  const svgN = await page.$('.udv-norm-kort svg');
+  await svgN.scrollIntoViewIfNeeded();
+  const bn = await svgN.boundingBox();
+  await page.mouse.move(bn.x + bn.width * 0.3, bn.y + bn.height / 2);
+  const tipN = (await page.textContent('.udv-norm-kort .udv-tip')).trim();
+  ok(/arbejdet \d+ t · normen \d+ t · [+−±]/.test(tipN), 'hover før i dag: ' + tipN);
+  await page.mouse.move(bn.x + bn.width * 0.8, bn.y + bn.height / 2);
+  const tipN2 = (await page.textContent('.udv-norm-kort .udv-tip')).trim();
+  ok(/normen \d+ t$/.test(tipN2) && !tipN2.includes('arbejdet'), 'hover efter i dag: ' + tipN2);
+  await page.mouse.move(0, 0);
+  await page.locator('.rapport-summary').screenshot({ path: DIR + '/normen-sammendrag.png' });
+  await page.addStyleTag({ content: '.nav-btn{visibility:hidden}nav{display:none!important}' });
+  await page.locator('.udv-norm-kort').screenshot({ path: DIR + '/normen-graf.png' });
 
   // Hover viser datoen og tallet
   const svg = await page.$('.udv-kort[data-udv] svg');
@@ -183,7 +218,7 @@ const browser = await chromium.launch();
   const page = await side(browser, { seed: [settings, act('a1', 'Diverse'), post('e1', 'a1', s, 120)] });
   await tilRapport(page);
   const titler = await page.$$eval('.udv-titel', e => e.map(x => x.textContent));
-  ok(titler.join() === 'Belastning og arbejde,Arbejdet mod belastning', 'uden budgetter ingen akkordkurve: ' + titler.join());
+  ok(titler.join() === 'Arbejdet mod normen,Belastning og arbejde,Arbejdet mod belastning', 'uden budgetter ingen akkordkurve: ' + titler.join());
   await page.context().close();
 }
 

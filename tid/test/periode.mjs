@@ -35,7 +35,7 @@ const tilRapport = async page => {
 };
 const chip = async page => {
   await tilRapport(page);
-  const t = (await page.textContent('.rapport-summary .forecast-chip')).trim();
+  const t = (await page.textContent('.rapport-summary > .forecast-chip')).trim();
   return Number(t.match(/(\d+)t/)[1]) * (t.includes('overskud') ? -1 : 1);
 };
 

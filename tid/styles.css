@@ -1295,6 +1295,10 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .udv-n-soejle{background:var(--blue);border-radius:2px}
 .udv-n-bel{height:0!important;border-top:3px solid var(--coral)}
 .udv-n-norm{height:0!important;border-top:2px dashed var(--slate)}
+.udv-n-arb{height:0!important;border-top:3px solid var(--ink)}
+/* Arbejdet mod normen: fladen mellem kurverne */
+.udv-mellem.is-pos{fill:var(--tint-god)}
+.udv-mellem.is-neg{fill:var(--tint-slem)}
 .udv-n-elev{border:1px solid var(--text-3);
   background:repeating-linear-gradient(45deg,var(--text-3) 0 1px,transparent 1px 4px)}
 .udv-n-ferie{background:#ECE6D6;border:1px solid var(--rule)}
@@ -1667,6 +1671,10 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .andet-raekke .settings-input-sm{width:100%;min-width:0;text-align:left;padding:8px 7px;font-size:0.84rem}
 .andet-raekke .andet-timer{text-align:right}
 .andet-enhed{font-family:var(--mono);font-size:0.7rem;color:var(--slate)}
+.norm-mod{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 10px;margin-top:10px;
+  font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.04em;color:var(--slate)}
+.norm-mod b{font-family:var(--display);font-size:0.82rem;color:var(--ink)}
+.norm-mod .forecast-chip-sm{margin-top:0}
 .norm-andet{margin-top:4px;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.04em;color:var(--slate)}
 .norm-hjaelp{display:block;font-weight:600;color:var(--ink)}
 .norm-hjaelp.norm-advarsel{padding:6px 9px;margin:2px 0 6px;background:var(--tint-pasPaa);border:2px solid var(--ink);border-radius:9px}

@@ -30,6 +30,8 @@ const tilHistorik = async page => { await page.click('.nav-btn[data-view="histor
 
 // Den version, appen skal vise: cachenavnet i service workeren
 const VERSION = /const CACHE = '([^']+)'/.exec(fs.readFileSync(HER + '../service-worker.js', 'utf8'))[1];
+// navneApps nuværende cache — den sletter selv sine gamle, så testen bruger den, den beholder
+const NAVNE = /const CACHE = '([^']+)'/.exec(fs.readFileSync(HER + '../../navneApp/service-worker.js', 'utf8'))[1];
 const browser = await chromium.launch();
 {
   const page = await side(browser, { seed: [settings, act('a1', 'SRP')] });
@@ -43,7 +45,7 @@ SW = 'allow';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p0 = await ctx.newPage();
   await p0.goto('http://localhost:8777/navneApp/');
-  await p0.evaluate(async () => { await caches.open('navne-app-v8'); await caches.open('tid-v1'); });
+  await p0.evaluate(async n => { await caches.open(n); await caches.open('tid-v1'); }, NAVNE);
   const page = await ctx.newPage();
   page.on('pageerror', e => fejl.push('pageerror: ' + e.message));
   for (const [frag, fil] of [['firebase-app.js', 'fake-app.js'], ['firebase-auth.js', 'fake-auth.js'], ['firebase-firestore.js', 'fake-fs.js']])
@@ -54,7 +56,7 @@ SW = 'allow';
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForTimeout(1500);
   const noegler = await page.evaluate(() => caches.keys());
-  ok(noegler.includes('navne-app-v8') && noegler.includes(VERSION) && !noegler.includes('tid-v1'), 'kun tids gamle caches slettes: ' + noegler.join());
+  ok(noegler.includes(NAVNE) && noegler.includes(VERSION) && !noegler.includes('tid-v1'), 'kun tids gamle caches slettes: ' + noegler.join());
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
   ok((await page.textContent('.app-version')) === 'Tid-appen · ' + VERSION, 'version: ' + await page.textContent('.app-version'));
   await page.locator('.app-version').scrollIntoViewIfNeeded();

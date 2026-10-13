@@ -9,6 +9,9 @@
 //   Forskel    = arbejdet minus belastningen, lagt sammen fra årets start.
 //                Over nul: merarbejde. Under nul: overskud
 //   Akkord     = optjent − brugt (samme regning som saldoen i akkordregnskabet)
+//   Normen     = arbejdet lagt sammen fra årets start over for normen lagt
+//                sammen: årsnormen (37 t × ansættelsesgraden om ugen) jævnt
+//                over årets arbejdsdage, uden hensyn til opgaverne
 //
 // Forskel og akkord regnes, som tallene stod ved ugens begyndelse: kun tid
 // registreret før den dag, kun sæt rettet før den dag, og kun opgaver
@@ -88,7 +91,7 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, elevfe
   });
 
   const pkt = maalepunkter(start, slut, nu);
-  const forskel = [], akkord = [], belVed = [], bels = [];
+  const forskel = [], akkord = [], belVed = [], bels = [], arb = [];
   let bel = null;
   pkt.forEach((d, i) => {
     const sidst = i === pkt.length - 1;
@@ -96,6 +99,7 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, elevfe
     // sammendraget, så kurven ender i det tal, der står over den
     const med   = sidst ? poster : poster.filter(p => p.t < d);
     const brugt = med.reduce((s, p) => s + p.m, 0);
+    arb.push(brugt);
     const andel = forloebIArbejdsdage(start, slut, ferie, d);
     const ak = beregnAkkord({
       acts: sidst ? acts : aktiviteterVed(acts, d, afsluttet),
@@ -116,6 +120,7 @@ export function beregnUdvikling({ acts, entries, aar, start, slut, ferie, elevfe
     uger: ugerne({ pkt, bels, bel, poster, start, slut, ferie, normM, nu }),
     opgaver: opgaveNavne(acts),
     faktor: bel?.faktor ?? 1,
+    norm: normKurven({ pkt, arb, start, slut, ferie, normM }),
     rest: resten({ bel, brugt: poster.reduce((s, p) => s + p.m, 0), belNu: belVed[belVed.length - 1], slut, ferie, nu }),
     ferie, elevferie
   };
@@ -152,6 +157,19 @@ function ugerne({ pkt, bels, bel, poster, start, slut, ferie, normM, nu }) {
     fra = til;
   }
   return uger;
+}
+
+// Arbejdet og normen lagt sammen: målepunkterne til i dag (med arbejdet),
+// derefter mandagene til årets slut (kun normen). uge: normen i en hel uge
+// uden ferie — 37 t × ansættelsesgraden, når ferien er sat rigtigt
+function normKurven({ pkt, arb, start, slut, ferie, normM }) {
+  const ved = d => normM * forloebIArbejdsdage(start, slut, ferie, d);
+  const k = pkt.map((d, i) => ({ d, arb: arb[i], norm: ved(d) }));
+  const sidst = pkt[pkt.length - 1];
+  for (let d = addDays(mandag(sidst), 7); d < slut; d = addDays(d, 7)) k.push({ d, arb: null, norm: ved(d) });
+  if (sidst < slut) k.push({ d: slut, arb: null, norm: normM });
+  const dage = arbejdsdageIPerioden(start, slut, ferie);
+  return { punkter: k, uge: dage > 0 ? normM / (dage / 5) : 0, hele: normM };
 }
 
 // Navn og farve pr. opgave; en under-opgave med forælderens navn foran
@@ -264,6 +282,71 @@ export function tegnUdvikling(id, titel, under, punkter, start, slut, ordFor, om
     <details class="udv-tabel">
       <summary>Vis som tabel</summary>
       <table><thead><tr><th>Uge fra</th><th>Timer</th></tr></thead><tbody>${tabel}</tbody></table>
+    </details>
+  </div>`;
+}
+
+// ─── Arbejdet mod normen ──────────────────────────────────
+// To kurver lagt sammen fra årets start: det arbejdede (til i dag) og normen
+// (hele året, så man kan se, hvor den ender). Forskellen står i hovedet.
+const fmtNorm = d => `${fmtT(d)} ${d >= 0 ? 'over' : 'under'} normen`;
+
+export function tegnNorm(id, titel, under, n, start, slut) {
+  const k = n?.punkter;
+  if (!k || k.length < 2) return '';
+  const fortid = k.filter(p => p.arb != null);
+  const nu = fortid[fortid.length - 1];
+  const diff = nu.arb - nu.norm;
+  const hi0 = Math.max(4, ...k.map(p => Math.max(p.arb ?? 0, p.norm) / 60));
+  const s = trin(hi0);
+  const hi = Math.ceil(hi0 / s) * s;
+  const x = d => M.l + (d - start) / (slut - start) * (B - M.l - M.r);
+  const y = t => M.t + (hi - t) / hi * (H - M.t - M.b);
+
+  let gitter = '';
+  for (let t = 0; t <= hi + 1e-9; t += s) {
+    const yy = y(t).toFixed(1);
+    gitter += `<line class="udv-gitter${t === 0 ? ' udv-nul' : ''}" x1="${M.l}" x2="${B - M.r}" y1="${yy}" y2="${yy}"/>
+      <text class="udv-akse" x="${M.l - 8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${t}</text>`;
+  }
+  const sti = (pp, f) => pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(f(p) / 60).toFixed(1)}`).join('');
+  // Fladen mellem de to kurver til i dag: grøn over normen, rød under
+  const mellem = `${sti(fortid, p => p.arb)}L${[...fortid].reverse().map(p => `${x(p.d).toFixed(1)},${y(p.norm / 60).toFixed(1)}`).join('L')}Z`;
+  const iDag = nu.d < slut
+    ? `<line class="udv-idag" x1="${x(nu.d).toFixed(1)}" x2="${x(nu.d).toFixed(1)}" y1="${M.t}" y2="${H - M.b}"/>` : '';
+
+  const data = k.map(p => [+p.d, p.arb == null ? null : Math.round(p.arb), Math.round(p.norm)]);
+  const tabel = k.map(p => `<tr><td>${fmtDag(p.d)}</td><td>${p.arb == null ? '' : fmtU(p.arb)}</td><td>${fmtU(p.norm)}</td><td>${p.arb == null ? '' : fmtT(p.arb - p.norm)}</td></tr>`).join('');
+
+  return `<div class="udv-kort udv-norm-kort" data-norm="${esc(JSON.stringify({ data, start: +start, slut: +slut, hi }))}">
+    <div class="udv-head">
+      <span class="udv-titel">${titel}</span>
+      <span class="udv-nu ${diff >= 0 ? 'is-pos' : 'is-neg'}">${fmtNorm(diff)}</span>
+    </div>
+    <div class="udv-under">${under}</div>
+    <div class="udv-noegle" aria-hidden="true">
+      <span><i class="udv-n-arb"></i>Arbejdet i alt</span>
+      <span><i class="udv-n-norm"></i>Normen i alt</span>
+    </div>
+    <div class="udv-plot">
+      <svg viewBox="0 0 ${B} ${H}" role="img" aria-label="${esc(titel)}: arbejdet ${fmtU(nu.arb)}, normen indtil nu ${fmtU(nu.norm)}, ${fmtNorm(diff)}. Se tabellen for ugens tal.">
+        ${gitter}${maanedsakse(x, start, slut)}
+        <path class="udv-mellem ${diff >= 0 ? 'is-pos' : 'is-neg'}" d="${mellem}"/>
+        <path class="udv-norm" d="${sti(k, p => p.norm)}"/>
+        <path class="udv-linje" d="${sti(fortid, p => p.arb)}"/>
+        ${iDag}
+        <circle class="udv-prik" cx="${x(nu.d).toFixed(1)}" cy="${y(nu.arb / 60).toFixed(1)}" r="5"/>
+        <g class="udv-hover" visibility="hidden">
+          <line class="udv-kryds" y1="${M.t}" y2="${H - M.b}"/>
+          <circle class="udv-prik" r="5"/>
+        </g>
+        <rect class="udv-maal" x="${M.l}" y="0" width="${B - M.l - M.r}" height="${H}" fill="transparent"/>
+      </svg>
+      <div class="udv-tip" hidden></div>
+    </div>
+    <details class="udv-tabel">
+      <summary>Vis som tabel</summary>
+      <table><thead><tr><th>Dato</th><th>Arbejdet</th><th>Normen</th><th>Forskel</th></tr></thead><tbody>${tabel}</tbody></table>
     </details>
   </div>`;
 }
@@ -547,6 +630,7 @@ export function bindUdvikling(rod) {
 
   const vis = (kort, klientX) => {
     if (kort.dataset.ugerId) return visUge(kort, klientX);
+    if (kort.dataset.norm) return visNorm(kort, klientX);
     const cfg = JSON.parse(kort.dataset.udv);
     const svg = kort.querySelector('svg');
     const r   = svg.getBoundingClientRect();
@@ -568,6 +652,29 @@ export function bindUdvikling(rod) {
     // Midt over punktet, men aldrig ud over kortets kanter
     const px = x(t) / B * r.width, half = tip.offsetWidth / 2;
     tip.style.left = `${Math.min(Math.max(px, half), r.width - half)}px`;
+  };
+  // Normkurven: nærmeste punkt, med arbejdet (til i dag) og normen
+  const visNorm = (kort, klientX) => {
+    const cfg = JSON.parse(kort.dataset.norm);
+    const r   = kort.querySelector('svg').getBoundingClientRect();
+    const px  = (klientX - r.left) / r.width * B;
+    const x   = t => M.l + (t - cfg.start) / (cfg.slut - cfg.start) * (B - M.l - M.r);
+    const y   = m => M.t + (cfg.hi - m / 60) / cfg.hi * (H - M.t - M.b);
+    let [t, a, n] = cfg.data[0];
+    cfg.data.forEach(p => { if (Math.abs(x(p[0]) - px) < Math.abs(x(t) - px)) [t, a, n] = p; });
+    const g = kort.querySelector('.udv-hover');
+    g.setAttribute('visibility', 'visible');
+    g.querySelector('line').setAttribute('x1', x(t));
+    g.querySelector('line').setAttribute('x2', x(t));
+    g.querySelector('circle').setAttribute('cx', x(t));
+    g.querySelector('circle').setAttribute('cy', y(a ?? n));
+    const tip = kort.querySelector('.udv-tip');
+    tip.hidden = false;
+    tip.innerHTML = `<span>${fmtDag(new Date(t))}</span>` + (a == null
+      ? `normen <b>${fmtU(n)}</b>`
+      : `arbejdet <b>${fmtU(a)}</b> · normen <b>${fmtU(n)}</b> · <b>${fmtT(a - n)}</b>`);
+    const half = tip.offsetWidth / 2, p = x(t) / B * r.width;
+    tip.style.left = `${Math.min(Math.max(p, half), r.width - half)}px`;
   };
   const skjul = kort => {
     kort.querySelector('.udv-hover')?.setAttribute('visibility', 'hidden');

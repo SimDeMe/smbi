@@ -16,7 +16,7 @@ import {
   beregnAkkord, samletEnhed, rettedeElevtimer, OPTJENING, MODUL_MIN, naesteSkoleaar
 } from './akkord.js';
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
-import { beregnUdvikling, tegnUdvikling, tegnUger, bindUdvikling } from './udvikling.js';
+import { beregnUdvikling, tegnUdvikling, tegnUger, tegnNorm, bindUdvikling } from './udvikling.js';
 import { tegnLectio } from './lectio.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
@@ -295,6 +295,21 @@ function forloebChip(brugtM, belastning, elapsed, lille = false) {
     : `<span class="${kl} forecast-under">▼ ${diffH}t overskud</span>`;
 }
 
+// Mod normen: det arbejdede over for normen jævnt over årets arbejdsdage
+// (37 t × ansættelsesgraden om ugen), uden hensyn til opgaverne
+function normLinje(brugtM, normM, elapsed) {
+  if (elapsed === 0) return '';
+  const nu   = normM * elapsed;
+  const diff = brugtM - nu;
+  const t    = Math.abs(Math.round(diff / 60));
+  const chip = Math.round(diff / 60) === 0
+    ? `<span class="forecast-chip forecast-chip-sm forecast-neutral">± 0t</span>`
+    : diff > 0
+      ? `<span class="forecast-chip forecast-chip-sm forecast-ahead">▲ ${t}t over normen</span>`
+      : `<span class="forecast-chip forecast-chip-sm forecast-behind">▼ ${t}t under normen</span>`;
+  return `<div class="norm-mod">Normen indtil nu <b>${Math.round(nu / 60)} t</b> ${chip}</div>`;
+}
+
 // Ord til kurven: samme som chippen
 const forskelOrd = v => v >= 0 ? 'merarbejde' : 'overskud';
 
@@ -326,6 +341,7 @@ function renderSummary(totalMins, ak, acts) {
           <span>${fmtMins(totalMins)} / ${fmtTal(SKAL)}t</span>
           <span>${pct}%</span>
         </div>
+        ${normLinje(totalMins, normM, elapsed)}
         ${ANDET ? `<div class="norm-andet">Årsnorm ${NORM} t ${ANDET > 0 ? '−' : '+'} ${fmtTal(Math.abs(ANDET))} t andet i porteføljen</div>` : ''}
       </div>
       ${chip}
@@ -404,8 +420,8 @@ function saldoChip(m, lille = true) {
 }
 
 // ─── Udviklingen over skoleåret ───────────────────────────
-// To grafer under sammendraget: foran/bagud skema og akkordsaldoen, uge for
-// uge. Regningen står i udvikling.js; sidste punkt er tallene ovenfor.
+// Fire grafer under sammendraget: arbejdet mod normen, belastning og arbejde
+// uge for uge, arbejdet mod belastningen og akkordsaldoen. Regningen står i udvikling.js; sidste punkt er tallene ovenfor.
 // En fejl i graferne må ikke tage resten af rapporten med sig
 function renderUdvikling(...a) {
   try { return tegnSektion(...a); }
@@ -420,6 +436,10 @@ function tegnSektion(acts, filtered, year) {
     ferie: ferieFor(year), elevferie: elevferieFor(year), normM: SKAL * 60, fordel: fordelFaelles()
   });
   if (!u) return '';
+  const andet = andetSum(year, getSettings());
+  const norm = tegnNorm('udv-normen', 'Arbejdet mod normen',
+    `Det, du har arbejdet, lagt sammen fra årets start, over for normen: årsnormen${andet ? ' (minus andet i porteføljen)' : ''} jævnt over årets arbejdsdage, ${fmtTal(u.norm.uge / 60)} t om ugen. Normen står stille i ferien og ender i ${Math.round(u.norm.hele / 60)} t`,
+    u.norm, start(), slut());
   const uger = tegnUger('udv-uger', u, start(), slut());
   const forskel = tegnUdvikling('udv-forskel', 'Arbejdet mod belastning',
     'Arbejdet minus belastningen, lagt sammen fra årets start, i timer uge for uge. Over nul: merarbejde, du har arbejdet mere, end opgaverne indtil nu kræver. Under nul: overskud',
@@ -427,8 +447,8 @@ function tegnSektion(acts, filtered, year) {
   const akkord = u.akkord ? tegnUdvikling('udv-akkord', 'Leveret mod optjent',
     'Akkordsaldoen, optjent minus brugt, i timer uge for uge. Over nul: arbejdet har taget mindre tid, end det betales med. Under nul: du har brugt mere tid, end du har optjent',
     u.akkord, start(), slut(), saldoOrd) : '';
-  if (!uger && !forskel && !akkord) return '';
-  return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${uger}${forskel}${akkord}</div>`;
+  if (!norm && !uger && !forskel && !akkord) return '';
+  return `<div class="udv-sektion"><div class="rapport-act-head">Udvikling</div>${norm}${uger}${forskel}${akkord}</div>`;
 }
 
 // ─── Donut chart ──────────────────────────────────────────
