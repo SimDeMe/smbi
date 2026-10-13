@@ -2,7 +2,9 @@
 //
 // Hvert hold og hver opgave hører til én af skolens faste perioder:
 //
-//   aar           Hele skoleåret — normperioden (standard)
+//   aar           Undervisningsåret — normperioden uden eksamensperioden
+//                 (standard). I eksamensperioden ligger kun eksamen, så hold
+//                 og opgaver, der løber hele året, fordeles på resten
 //   grundforloeb  Grundforløb — første skoledag til grundforløbets slutning
 //                 (fredag to uger efter efterårsferien)
 //   efterGf       Efter grundforløb — fra studieretningens start og året ud
@@ -28,7 +30,7 @@
 // belastning er den tid, der er brugt — altså det, der er optjent.
 //
 // Gemmes på aktiviteten som periode: 'grundforloeb' | 'efterGf' | 'eksamen'
-// (eller null = hele skoleåret). En under-opgave uden egen periode ligger i
+// (eller null = undervisningsåret). En under-opgave uden egen periode ligger i
 // forælderens.
 
 import { getSettings } from './indstillinger.js';
@@ -37,7 +39,7 @@ import { addDays, datoInput, skoleaarStart, kortDato } from './periode.js';
 import { erEngang } from './akkord.js';
 
 export const PERIODER = {
-  aar:          'Hele skoleåret',
+  aar:          'Undervisningsåret',
   grundforloeb: 'Grundforløb',
   efterGf:      'Efter grundforløb',
   eksamen:      'Eksamensperiode'
@@ -85,8 +87,17 @@ export function graenser(noegle, aar, start, slut, s = getSettings()) {
       noegle === 'grundforloeb' ? [tilDato(d.skolestart), efter(d.gfSlut)]
     : noegle === 'efterGf'      ? [tilDato(d.srStart), slut]
     : noegle === 'eksamen'      ? [tilDato(d.eksamenFra), efter(d.eksamenTil)]
-    : [start, slut];
+    : undervisning(tilDato(d.eksamenFra), efter(d.eksamenTil), start, slut);
   return [fra < start ? start : fra, til > slut ? slut : til];
+}
+
+// Normperioden uden eksamensperioden. Eksamen ligger i den ene ende (skolens
+// sommertermin i starten); den side af normperioden, der er størst, er
+// undervisningsåret. Ligger eksamen uden for normperioden, er det hele
+function undervisning(eFra, eTil, start, slut) {
+  const f = eFra < start ? start : eFra, t = eTil > slut ? slut : eTil;
+  if (t <= f) return [start, slut];
+  return f - start <= slut - t ? [t, slut] : [start, f];
 }
 
 // Aktivitetens periode, evt. arvet fra forælderen. En engangsopgave har
@@ -100,9 +111,7 @@ export function periodeFor(a, acts = []) {
 
 // Hvor stor en del af aktivitetens arbejdsdage, der er gået ved `nu`
 export function aktivitetsAndel(a, acts, { aar, start, slut, ferie, nu = new Date() }) {
-  const p = periodeFor(a, acts);
-  if (p === 'aar') return forloebIArbejdsdage(start, slut, ferie, nu);
-  const [f, t] = graenser(p, aar ?? a.schoolYear, start, slut);
+  const [f, t] = graenser(periodeFor(a, acts), aar ?? a.schoolYear, start, slut);
   if (t <= f) return nu >= f ? 1 : 0;           // perioden ligger uden for året
   return forloebIArbejdsdage(f, t, ferie, nu);
 }
@@ -124,6 +133,8 @@ const ORD = {
   'efter grundforløb': 'efterGf', 'efter grundforloeb': 'efterGf', 'efter gf': 'efterGf',
   'studieretning': 'efterGf', 'studieretningsforløb': 'efterGf', 'sr': 'efterGf',
   'eksamen': 'eksamen', 'eksamensperiode': 'eksamen', 'eksamensperioden': 'eksamen',
+  'undervisningsår': 'aar', 'undervisningsåret': 'aar', 'undervisning': 'aar',
+  'undervisningsperiode': 'aar', 'undervisningsperioden': 'aar',
   'skoleår': 'aar', 'skoleåret': 'aar', 'hele skoleåret': 'aar', 'hele året': 'aar', 'året': 'aar'
 };
 export const tolkPeriode = s => ORD[(s || '').trim().toLowerCase()] ?? null;

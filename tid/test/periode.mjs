@@ -44,10 +44,12 @@ const hverdage = (fra, til) => { let n = 0; for (let d = new Date(fra); d < til;
 const NU = new Date(2026, 9, 2, 10);
 // Grundforløbet 10. aug.–30. okt. 2026 (ingen lærerferie eller helligdage i det)
 const pGrund = (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 2)) + 10 / 24) / hverdage(new Date(2026, 7, 10), new Date(2026, 9, 31));
-const pAar   = 73.4 / 229;                    // skoleåret med skolens ferieplan
+// Undervisningsåret er skoleåret uden eksamensperioden 1.–24. juni 2026 —
+// dens 18 arbejdsdage er trukket fra både før 2. okt. og i alt
+const pAar   = 55.4 / 211;                    // skolens ferieplan
 // Belastningen ligger kun på dage uden elevferie: 23 af årets 229, 10 før
 // 2. okt. og 5 i grundforløbet (efterårsferien)
-const bAar   = 63.4 / 206;
+const bAar   = 45.4 / 188;
 const bGrund = (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 2)) + 10 / 24) / (hverdage(new Date(2026, 7, 10), new Date(2026, 9, 31)) - 5);
 const NORM = 1690;
 const browser = await chromium.launch();
@@ -64,7 +66,18 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
     const p = await side(browser, { seed: [settings, hold('a1', 'Hold')] });
     const n = await chip(p); await p.context().close(); return n;
   })();
-  ok(Math.abs(n0 + Math.round(NORM * bAar)) <= 1, `hele skoleåret: normen over dagene uden elevferie, ${Math.round(NORM * bAar)} t overskud: ${n0}`);
+  ok(Math.abs(n0 + Math.round(NORM * bAar)) <= 1, `undervisningsåret: normen over dagene uden elevferie, ${Math.round(NORM * bAar)} t overskud: ${n0}`);
+
+  // Eksamensperioden: et hold i undervisningsåret belaster ikke dér
+  {
+    const p = await side(browser, { seed: [settings, hold('a1', 'Hold')] });
+    await tilRapport(p);
+    const uge = t => p.$eval('.udv-uger', (k, t) => JSON.parse(k.dataset.uger).data.find(w => w[0] === t), t);
+    const juni = await uge(new Date(2026, 5, 8).getTime()), sep = await uge(new Date(2026, 8, 7).getTime());
+    ok(juni[3] === 0 && juni[4] > 0, 'eksamensperioden: ingen belastning fra holdet, men stadig norm ' + Math.round(juni[4] / 60) + ' t');
+    ok(sep[3] > 0, 'september: holdet belaster ' + Math.round(sep[3] / 60) + ' t');
+    await p.context().close();
+  }
 
   // Halvdelen af porteføljen i grundforløbet: halvdelen af normen dér
   const med = await side(browser, { seed: [settings, hold('a1', 'Hold'), hold('a2', 'Grundforløb', { periode: 'grundforloeb' })] });
@@ -127,7 +140,7 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   const hold = linjer.find(l => l.includes('uden normgrundlag')) || '';
   ok(hold.includes('Grundforløb') && Math.abs(timer(hold) - Math.round(100 * 60 * pGrund)) <= 1, 'hold uden normgrundlag optjener i perioden: ' + hold);
   const team = linjer.find(l => l.startsWith('Løbende Optjent')) || '';
-  ok(Math.abs(timer(team) - Math.round(100 * 60 * pAar)) <= 30, 'hele skoleåret som før: ' + team);
+  ok(Math.abs(timer(team) - Math.round(100 * 60 * pAar)) <= 30, 'undervisningsåret, uden eksamensperioden: ' + team);
   const nv = linjer.find(l => l.startsWith('Ved afslutning')) || '';
   ok(timer(nv) === 60 && nv.includes('± 0m'), 'ved afslutning: den brugte time er optjent, saldo 0: ' + nv);
   await page.screenshot({ path: DIR + '/periode-rapport.png', fullPage: true });
@@ -190,7 +203,9 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   await page.click('#btn-new-activity'); await page.waitForSelector('#act-sheet.open');
   await page.fill('#act-name', '1g Ng');
   await page.click('.seg-opt:has(input[name="act-type"][value="hold"])');
-  ok(await page.isChecked('input[name="act-periode"][value="aar"]'), 'ny aktivitet: hele skoleåret');
+  ok(await page.isChecked('input[name="act-periode"][value="aar"]'), 'ny aktivitet: undervisningsåret');
+  const hintAar = (await page.textContent('#act-periode-hint')).trim();
+  ok(hintAar.startsWith('Undervisningsåret: 25. jun – 31. maj 2027 ·'), 'undervisningsåret begynder efter eksamensperioden: ' + hintAar);
   await page.click('.seg-opt:has(input[name="act-periode"][value="grundforloeb"])');
   const hint = (await page.textContent('#act-periode-hint')).trim();
   ok(hint.startsWith('Grundforløb: 10. aug – 30. okt 2026 ·') && /\d+ arbejdsdage/.test(hint), 'datoerne står under valget: ' + hint);
