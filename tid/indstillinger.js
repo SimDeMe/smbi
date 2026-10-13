@@ -59,6 +59,7 @@ export async function initIndstillingerView(uid) {
   if (userId === uid) return;
   userId = uid;
   bindListeners();
+  visVersion();
   await loadSettings();
 }
 
@@ -70,16 +71,21 @@ export function refreshIndstillinger() {
 // ─── Version ──────────────────────────────────────────────
 // Versionen er navnet på service workerens cache (tid-v32) — så står der
 // præcis den udgave, appen faktisk kører fra. Uden cache (første besøg,
-// privat vindue) står der «ikke installeret».
-async function visVersion() {
+// privat vindue) står der «ikke installeret». Topbjælken viser det korte
+// nummer (v59) — og intet, når appen ikke er installeret.
+export async function visVersion() {
   const el = document.getElementById('app-version');
-  if (!el) return;
+  const top = document.getElementById('top-version');
+  let nr = [];
   try {
-    const nr = (await caches.keys())
+    nr = (await caches.keys())
       .map(k => /^tid-v(\d+)$/.exec(k)?.[1]).filter(Boolean).map(Number);
-    el.textContent = nr.length ? `tid-v${Math.max(...nr)}` : 'ikke installeret';
-  } catch {
-    el.textContent = 'ikke installeret';
+  } catch { /* ingen caches: ikke installeret */ }
+  const v = nr.length ? Math.max(...nr) : null;
+  if (el) el.textContent = v ? `tid-v${v}` : 'ikke installeret';
+  if (top) {
+    top.textContent = v ? `v${v}` : '';
+    top.title = v ? `Appens version: tid-v${v}` : '';
   }
 }
 

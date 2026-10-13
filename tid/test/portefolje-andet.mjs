@@ -31,7 +31,7 @@ const tilHistorik = async page => { await page.click('.nav-btn[data-view="histor
 
 const chipTal = async page => {
   await page.click('.nav-btn[data-view="rapporter"]'); await page.waitForTimeout(400);
-  const t = (await page.textContent('.forecast-chip')).trim();
+  const t = (await page.textContent('.norm-mod:not(.bel-mod) .forecast-chip')).trim();
   return [t, Number(t.match(/(\d+)t/)[1])];
 };
 const cfg = extra => ['users/u1/settings/config', { currentSchoolYear: '2026/27', ...extra }];

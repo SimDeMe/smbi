@@ -34,7 +34,7 @@ const FERIE = [{ fra: '2026-07-06', til: '2026-07-27' }, { fra: '2026-12-21', ti
                { fra: '2027-02-15', til: '2027-02-16' }, { fra: '2027-03-22', til: '2027-03-24' }];
 const chipTal = async page => {
   await page.click('.nav-btn[data-view="rapporter"]'); await page.waitForTimeout(400);
-  const t = (await page.textContent('.rapport-summary > .forecast-chip')).trim();
+  const t = (await page.textContent('.bel-mod .forecast-chip')).trim();
   return [t, Number(t.match(/(\d+)t/)[1])];
 };
 

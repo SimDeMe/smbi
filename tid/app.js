@@ -16,7 +16,7 @@ import { initRapporterView, refreshRapporter } from './rapporter.js';
 import { initRettet } from './rettet.js';
 import { fangTab } from './ark.js';
 import { initBackup } from './backup.js';
-import { initIndstillingerView, refreshIndstillinger, getSettings } from './indstillinger.js';
+import { initIndstillingerView, refreshIndstillinger, getSettings, visVersion } from './indstillinger.js';
 
 // ─── Firebase init ────────────────────────────────────────
 const firebaseApp = initializeApp(firebaseConfig);
@@ -248,4 +248,6 @@ if ('serviceWorker' in navigator) {
       })
       .catch(e => console.warn('SW fejl:', e));
   });
+  // Første besøg: versionen står i topbjælken, så snart cachen er lagt
+  navigator.serviceWorker.ready.then(() => visVersion()).catch(() => {});
 }

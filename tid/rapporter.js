@@ -329,7 +329,7 @@ function renderSummary(totalMins, ak, acts) {
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
     const forv    = beregnBelastning({ ak, acts, normM, elevferie: elevferieFor(year), ...aarsPeriode(year) }).ved(new Date());
     const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
-    const chip    = forloebChip(totalMins, forv, elapsed);
+    const chip    = forloebChip(totalMins, forv, elapsed, true);
 
     extra = `
       <div class="norm-progress-outer">
@@ -344,7 +344,7 @@ function renderSummary(totalMins, ak, acts) {
         ${normLinje(totalMins, normM, elapsed)}
         ${ANDET ? `<div class="norm-andet">Årsnorm ${NORM} t ${ANDET > 0 ? '−' : '+'} ${fmtTal(Math.abs(ANDET))} t andet i porteføljen</div>` : ''}
       </div>
-      ${chip}
+      ${chip ? `<div class="norm-mod bel-mod">Mod belastningen ${chip}</div>` : ''}
       ${ak ? renderAkkord(ak, elapsed, NORM, ANDET) : ''}`;
   }
 

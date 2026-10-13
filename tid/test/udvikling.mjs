@@ -62,7 +62,8 @@ const browser = await chromium.launch();
   ok(Math.abs(sumBel - 1690) <= 2, 'ugernes belastning giver normen: ' + Math.round(sumBel));
 
   // Sidste punkt i forskelskurven er chippens tal
-  const chip = (await page.textContent('.rapport-summary > .forecast-chip')).trim();
+  const chip = (await page.textContent('.bel-mod .forecast-chip')).trim();
+  ok((await page.textContent('.bel-mod')).trim().startsWith('Mod belastningen'), 'chippen har tekst foran: Mod belastningen');
   const chipT = Number(chip.match(/(\d+)t/)[1]) * (chip.includes('overskud') ? -1 : 1);
   const skema = await kurve(page, 0);
   ok(Math.round(skema.at(-1)[1] / 60) === chipT, `forskelskurven ender i chippens tal: ${Math.round(skema.at(-1)[1] / 60)} / ${chip}`);

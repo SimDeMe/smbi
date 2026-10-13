@@ -37,6 +37,7 @@ const browser = await chromium.launch();
   const page = await side(browser, { seed: [settings, act('a1', 'SRP')] });
   await page.waitForTimeout(300);
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
+  ok(!(await page.isVisible('#top-version')), 'uden service worker: ingen version i topbjælken');
   ok((await page.textContent('.app-version')) === 'Tid-appen · ikke installeret', 'uden service worker: ' + await page.textContent('.app-version'));
   await page.context().close();
 }
@@ -59,6 +60,8 @@ SW = 'allow';
   ok(noegler.includes(NAVNE) && noegler.includes(VERSION) && !noegler.includes('tid-v1'), 'kun tids gamle caches slettes: ' + noegler.join());
   await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
   ok((await page.textContent('.app-version')) === 'Tid-appen · ' + VERSION, 'version: ' + await page.textContent('.app-version'));
+  const top = (await page.textContent('#top-version')).trim();
+  ok(top === VERSION.replace('tid-', '') && await page.isVisible('#top-version'), 'versionen står i topbjælken: ' + top);
   await page.locator('.app-version').scrollIntoViewIfNeeded();
   await page.screenshot({ path: DIR + '/version.png' });
 
