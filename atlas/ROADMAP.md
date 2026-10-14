@@ -112,5 +112,12 @@ deres implementation automatisk.
 [Claudes sammenligning med ejerens lokale materialer](OVERDRAGELSE-CLAUDE.md)
 og den faglige gennemgang med ejeren; #46 er derfor fortsat åben. Prioritér
 genbrug før større nye modeller. #47 kan fortsætte sideløbende, især på
-faktiske elevlaptops og telefoner. Fortsæt derefter med #48's pladegrænser
-og #49's kvalitetssikrede Island-model.
+faktiske elevlaptops og telefoner.
+
+**#48's første leverance er lavet 14. oktober 2026:** et valgfrit,
+klassificeret pladegrænselag fra Birds PB2002 med signatur, kilde, licens,
+forbehold, undersøgelsesopgave og browsertest (se [README](README.md)).
+Fysisk telefon og Safari mangler som i #47. Jordskælvs- og vulkanlag er
+senere, særskilt afgrænsede leverancer. Næste trin er #49's milepæl A:
+den faglige modelbeskrivelse for Island, som skal kvalitetssikres af ejeren,
+før tværsnit og animation bygges.
