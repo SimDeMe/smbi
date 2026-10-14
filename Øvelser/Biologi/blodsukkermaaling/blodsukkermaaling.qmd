@@ -78,3 +78,36 @@ Kulhydratindholdet pr. 100 g/mL for den valgte fødevare findes på varedeklarat
 | Blodglukose (mmol/L) | | | | | | | |
 
 : Blodglukose som funktion af tid efter indtagelse af fødevaren. {#tbl-1}
+
+## Databehandling
+
+1. Lav et punktdiagram med tiden (min) på x-aksen og blodglukosekoncentrationen (mmol/L) på y-aksen. Sæt alle forsøgspersoner/fødevarer fra klassens fælles regneark ind i samme diagram med hver sin farve eller signatur.
+2. Aflæs for hver forsøgsperson den højeste blodglukoseværdi og tidspunktet for den, og beregn stigningen i forhold til fasteværdien:
+
+$$\Delta G_{\text{maks}} = G_{\text{maks}} - G_{0}$$
+
+3. Beregn for hver forsøgsperson, hvor meget blodglukosen samlet set har ligget over fasteværdien i de 90 minutter (arealet mellem kurven og fasteværdien). Med målinger hvert 15. minut kan det tilnærmes med trapezmetoden:
+
+$$\text{Areal} \approx 15\ \text{min} \cdot \left( \frac{\Delta G_{0} + \Delta G_{90}}{2} + \Delta G_{15} + \Delta G_{30} + \Delta G_{45} + \Delta G_{60} + \Delta G_{75} \right)$$
+
+hvor $\Delta G_{t} = G_{t} - G_{0}$ (negative værdier sættes til 0). Enheden bliver mmol/L · min.
+
+| Forsøgsperson | Fødevare | $G_0$ (mmol/L) | $G_{\text{maks}}$ (mmol/L) | Tid for maks. (min) | $\Delta G_{\text{maks}}$ (mmol/L) | Areal (mmol/L · min) |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|
+| | | | | | | |
+| | | | | | | |
+| | | | | | | |
+| | | | | | | |
+
+: Udregnede nøgletal for hver forsøgsperson. {#tbl-2}
+
+4. Sammenlign fødevarerne ud fra @tbl-2: Hvilken fødevare gav den hurtigste og højeste stigning, og hvilken gav det største samlede areal? Kommentér kurvernes forløb for hver forsøgsperson.
+
+## Journalspørgsmål
+
+1. Hvilke kulhydrater indeholder de fødevarer, I har undersøgt (mono-, di- eller polysakkarider), og hvordan kan det forklare forskellene i, hvor hurtigt blodglukosen steg?
+2. Forklar ud fra jeres kurver, hvordan insulin og glukagon regulerer blodglukosen efter et måltid. Hvorfor falder blodglukosen nogle gange til under fasteværdien hen mod slutningen af forsøget?
+3. Hvorfor skal alle forsøgspersoner indtage den samme mængde kulhydrat pr. kg kropsvægt, og hvorfor skal de møde fastende?
+4. Hvilket måltid vil I ud fra resultaterne vurdere som det sundeste at indtage? Begrund svaret, fx med begrebet glykæmisk indeks.
+5. Hvordan ville I forvente, at kurven så ud for en person med type 1-diabetes eller type 2-diabetes, som ikke var i behandling? Begrund svaret.
+6. Hvilke fejlkilder kan have påvirket jeres målinger (fx præcision af glykometeret, tidspunkter, fysisk aktivitet under forsøget), og hvor meget kan de have betydet for konklusionen?

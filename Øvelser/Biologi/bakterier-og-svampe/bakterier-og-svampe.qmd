@@ -120,8 +120,13 @@ $$\text{Forskel (\%)} = \frac{\text{udendørs} - \text{indendørs}}{\text{udend�
 
 3. Beregn klassens gennemsnitlige kimfald for hver af de fire kombinationer ud fra @tbl-2, og sammenlign med jeres egne tal. Er der stor spredning mellem grupperne? Diskutér, hvad forskelle i placering, tidspunkt og vejr kan have betydet.
 4. Beskriv resultatet fra genstandspladen (felt I–IV) i ord: i hvilket felt voksede der flest kolonier, og i hvilket færrest? Understøt med jeres foto.
-5. Diskutér på baggrund af resultaterne:
-   - Hvor stammer de bakterier og svampesporer, I har fundet, fra?
-   - Hvilke betingelser (temperatur, fugt, næring) skal være til stede, for at bakterier og svampe kan vokse — og hvordan har I selv skabt dem i varmeskabet?
-   - Hvordan kan I bruge jeres resultater fra felt I–IV til at give et råd om håndhygiejne?
-6. Skriv en kort konklusion, der samler formålet, de vigtigste tal og svarene på spørgsmålene ovenfor.
+5. Skriv en kort konklusion, der samler formålet og de vigtigste tal.
+
+## Journalspørgsmål
+
+1. Hvordan kan en eventuel forskel mellem kimfaldet indendørs og udendørs forklares? Har placeringen af skålene indendørs betydning for resultatet?
+2. Er der forskel på antallet af bakterie- og svampekolonier? Hvordan kan I se forskel på en bakteriekoloni og en svampekoloni på pladen, og hvor mange forskellige typer af hver fandt I?
+3. Hvor stammer de bakterier og svampesporer, I har fundet, fra?
+4. Hvilke betingelser (temperatur, fugt, næring) skal være til stede, for at bakterier og svampe kan vokse — og hvordan har I selv skabt dem i varmeskabet? Hvorfor bruges der forskellig agar til bakterier og svampe?
+5. Hvordan kan I bruge jeres resultater fra felt I–IV til at give et råd om håndhygiejne?
+6. Hvordan fjerner eller dræber vi bakterier, og hvordan undgår vi at få bakterier og skimmelsvampe i maden?
