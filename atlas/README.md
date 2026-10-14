@@ -102,10 +102,33 @@ ikke navngivet; laget viser ikke jordskælv, vulkaner eller dybhavsgrave.
 Samme dialog har en kort undersøgelsesopgave (seks spørgsmål om mønstre,
 Island, transformforkastninger, subduktion, hotspot og modelkritik), en knap
 der viser Island med laget, og links til `pladegraenser.html` og
-`vulkanudbrud.html`. Brede skærme viser signaturen i figurens venstre hjørne
+`vulkanudbrud.html`. Den kan også åbnes fra **Processer → Undersøg
+pladegrænserne**, uafhængigt af grafikken. **Modellen i tekst** er en foldbar
+oversigt over typer og geografiske eksempler; ved fejl i selve globussen er
+den åben fra start. DOI, versionsbundne originaler og licens er klikbare.
+Brede skærme viser signaturen i figurens venstre hjørne
 i stedet for globusnoten; smalle skærme viser den under betjeningen. Kan
-data ikke hentes, vises en statusbesked, knappen forbliver slået fra, og
-globussen virker uændret.
+data ikke hentes, vises en statusbesked med vej til tekstalternativet, knappen
+forbliver slået fra, og globussen virker uændret. Et nyt forsøg kan hente
+data; efter en fejlet ES-modulimport kan browseren kræve genindlæsning.
+
+Selve `pladelag.js` importeres først ved tilvalg. Et manglende lagmodul må
+derfor ikke forhindre den almindelige globus i at starte. Før tegning
+kontrolleres klasser, koordinaters type/interval, linjernes længde,
+subduktionssider og lukkede orogenringe. Ugyldige data afvises; fx må `null`
+ikke blive fortolket som 0° og tegne en forkert linje. Tastaturfokus bevares
+på tilvalgsknappen efter den asynkrone indlæsning.
+
+Efterkontrollen mod de versionsbundne originaler bevarer alle **5.819 trin
+i 1.719 linjer og 13 orogener**, inklusive klassifikation og subduktionsside.
+Peru-ringen var ikke lukket i originalen; eksportøren gentager nu startpunktet,
+så D3 beholder alle kildepunkterne i en gyldig GeoJSON-ring. Der tilføjes ingen
+gættede koordinater. SHA-256 og præcise downloadadresser står i licensfilen.
+
+Laget understøtter K1 og F2/F4/F7 i [kernestofkortet](KERNESTOF.md): geografiske
+mønstre, valg af kortlag og modelkritik. Det dokumenterer ikke i sig selv
+elevernes målopfyldelse. Jordskælvs- og vulkankataloger er fortsat senere
+leverancer og indgår ikke i dette lag.
 
 ## Supplerende faglig information
 
@@ -140,7 +163,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
 | pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 
-Filerne er hentet uændret fra `https://cdn.jsdelivr.net/npm/<pakke>@<version>/`
+D3, TopoJSON og world-atlas er hentet uændret fra `https://cdn.jsdelivr.net/npm/<pakke>@<version>/`
 (`dist/<pakke>.min.js`, `LICENSE`, henholdsvis `countries-110m.json`). Kortet
 stammer fra [Natural Earth](https://www.naturalearthdata.com/), public domain,
 forenklet til 1:110 mio. Det er et oversigtskort; små øer og detaljer kan mangle.
@@ -203,8 +226,28 @@ slås til/fra med `aria-pressed`, canvas ændres og vender tilbage til
 udgangspunktet, signaturen har alle fire typer og overlapper ingen kontroller,
 opgavedialogen har seks spørgsmål, kildeinformation med DOI og licens samt de
 to model-links, og «Vis Island med pladegrænser» lukker dialogen og centrerer.
-En særskilt prøve afbryder `pladegraenser.json` og kontrollerer statusbesked,
-at knappen forbliver slået fra, og at globussen stadig kan drejes.
+Enter/Space kontrolleres med bevaret fokus. Særskilte prøver afbryder
+lagmodul eller data og tilfører ugyldig JSON, `null`, ulige koordinatliste,
+breddegrad over 90°, åben ring, forkert klassemapping og manglende grænsetype.
+Globussen skal forblive uændret, knappen slået fra og tekst/opgave tilgængelig.
+Prøverne kontrollerer også nyt forsøg efter datafejl, genindlæsning efter
+modulfejl og skift mellem brede/smalle vinduer med laget aktivt. Touch-rotation
+og tofingerzoom køres med laget slået til. Fejl i grundkort/bibliotek/Canvas
+bevarer også adgang til opgaven gennem Processer.
+
+Datakontrollen kan køres uden browser eller netadgang:
+
+```sh
+python3 atlas/test/pladedata.py
+# Valgfrit: alle originaltrin kontrolleres mod de hentede, versionsbundne filer
+python3 atlas/test/pladedata.py --originaler /mappe/med/PB2002-filer
+```
+
+Den kontrollerer geografiske stikprøver ved Island, San Andreas, Himalaya,
+Andes og Japan samt de syv klasser og ringlukning. Med originalerne
+kontrolleres SHA-256, samtlige segmenter/kildepunkter og subduktionssider
+uafhængigt af eksportørens funktioner, med højst 0,005° ændring pr. koordinat
+fra den dokumenterede afrunding til 0,01°.
 
 `test/information.py` indgår også og afprøver #50 på alle fem visninger:
 samtlige stedtekster, synlige modelbegrænsninger, tap/klik/Enter/Space,
@@ -271,6 +314,23 @@ værktøjslinjen skjult og knappen hedder «Plader», så de fem knapper står p
 én linje ned til 320 px. Med laget koster en omtegning ca. 10 ms mere i headless
 Chromium ved 1536×730 og dobbelt pixeltæthed (40 rotationer: 45 mod 34 ms pr.
 to billeder); fysisk telefon og Safari er ikke afprøvet.
+
+**Supplerende review og færdiggørelse 14. oktober 2026:** hele Chromium-prøven
+består også på Linux på alle fem visninger, uden WebGL og med reduced motion,
+inklusive de nye fejltilstande, tekstalternativ, tastaturfokus og touch med
+laget. Alle seks simulationslinks svarer HTTP 200; ingen JavaScript-/konsolfejl
+ved normal brug. Skærmbilleder er gennemgået på alle fem visninger samt ved
+Japan, Andes og datolinjen. Figurflader og centrale kontrollers placering er
+uændrede. Dataprøven mod originalerne består for alle 5.819 trin og 13 orogener.
+En lokal måling med 40 drejninger og to tegningsrammer pr. drejning på
+1366×625 ved dobbelt pixeltæthed gav ca. 44 ms uden og 63 ms med laget;
+det er en headless-måling på denne maskine, ikke en måling på elevhardware.
+
+De nye rettelser er ikke efterprøvet i Firefox/WebKit her. Firefox 153 kunne
+installeres, men startede ikke i dette cloudmiljø (sandbox-/softwaregrafikfejl
+før nogen side blev åbnet). Den tidligere macOS-røgtest ovenfor gælder
+udgangspunktet. Fysisk telefon, egentlig Safari og skærmlæser står fortsat
+som opfølgning i #47; de er ikke markeret som gennemført.
 
 ## Mulig fase 2
 

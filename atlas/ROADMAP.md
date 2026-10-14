@@ -117,6 +117,9 @@ faktiske elevlaptops og telefoner.
 **#48's første leverance er lavet 14. oktober 2026:** et valgfrit,
 klassificeret pladegrænselag fra Birds PB2002 med signatur, kilde, licens,
 forbehold, undersøgelsesopgave og browsertest (se [README](README.md)).
+Den supplerende gennemgang har efterkontrolleret alle originalsegmenter,
+rettet indlæsning ved lagfejl og tilføjet tekstalternativ via Processer.
+Alle fem elevvisninger og udvidede fejltilstande består i Chromium.
 Fysisk telefon og Safari mangler som i #47. Jordskælvs- og vulkanlag er
 senere, særskilt afgrænsede leverancer. Næste trin er #49's milepæl A:
 den faglige modelbeskrivelse for Island, som skal kvalitetssikres af ejeren,
