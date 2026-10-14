@@ -78,8 +78,7 @@ midt på Island og ældst mod øst- og vestkysten.
 Resten af Den Midtatlantiske Ryg ligger 2–3 km under havoverfladen. Under
 Island er kappen varmere. Varmere kappe begynder at smelte dybere nede, så der
 dannes mere magma. Det giver en skorpe på ca. 20–40 km mod ca. 7 km under
-resten af ryggen. En tyk skorpe ligger højere – ligesom en tyk isklump stikker
-længere op af vandet end en tynd.
+resten af ryggen.
 
 *Se efter:* skift mellem «Normal ryg» og «Island». Hvor begynder
 smeltningen, og hvor tyk bliver skorpen?
@@ -233,8 +232,7 @@ Ejeren bedes tage stilling til:
 
 1. Er elevteksten i afsnit 2 fagligt korrekt, og rammer sproget 1.g/C-niveau?
    Er der flere ord, der skal forklares eller fjernes?
-2. Virker sammenligningerne (negle, gletsjer, kogning på Mount Everest,
-   isklump), eller er nogen af dem misvisende?
+2. Virker sammenligningerne (negle, gletsjer, kogning på Mount Everest), eller er nogen af dem misvisende?
 3. Skal hotspot-/plumetrinnet med på C-niveau, og er formuleringen om, at
    forskerne er uenige, passende?
 4. Er «Normal ryg / Island» den rigtige hovedkontrol?
