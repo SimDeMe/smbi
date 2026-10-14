@@ -1,6 +1,8 @@
 ---
 title: "Opmåling af terrænprofil"
 subtitle: "Feltøvelse"
+fag: "Naturgeografi"
+hold: ""
 format:
   typst: default
   html: default
@@ -59,3 +61,37 @@ Dobbelttjek at snoren er helt i vater, før I aflæser højden på stokken — e
 : Måleresultater. Husk fortegn ved højdeændringerne! {#tbl-1}
 
 *Sætter I ekstra stokke ind undervejs, tilføjes ekstra kolonner i hånden.*
+
+## Databehandling
+
+1. Beregn for hver stok den samlede vandrette afstand fra startstokken og den samlede højde i forhold til startstokken ved at lægge strækningernes afstande og højdeændringer sammen (husk fortegn):
+
+$$x_n = \sum_{i=1}^{n} \text{afstand}_i \qquad h_n = \sum_{i=1}^{n} \Delta h_i$$
+
+| Stok | 1 | 2 | 3 | 4 | 5 | 6 |
+|:---|:-:|:-:|:-:|:-:|:-:|:-:|
+| Samlet afstand fra stok 1 (m) | 0 | | | | | |
+| Højde i forhold til stok 1 (cm) | 0 | | | | | |
+
+: Profilets punkter, udledt af @tbl-1. {#tbl-2}
+
+2. Tegn terrænprofilet på millimeterpapir eller i et regneark: afstand på x-aksen og højde på y-aksen. Vælg målestok for begge akser, og angiv dem på tegningen. Beregn den *overhøjning*, I har brugt:
+
+$$\text{Overhøjning} = \frac{\text{lodret målestok}}{\text{vandret målestok}}$$
+
+3. Beregn hældningen for hver strækning i procent og i grader, og find den stejleste strækning:
+
+$$\text{Hældning (\%)} = \frac{\Delta h}{\text{afstand}} \cdot 100 \qquad \text{Hældning (°)} = \tan^{-1}\!\left(\frac{\Delta h}{\text{afstand}}\right)$$
+
+(Husk at regne $\Delta h$ og afstanden om til samme enhed.)
+
+4. Sæt navne på terrænformerne langs profilet (fx vold, skråning, flade).
+
+## Journalspørgsmål
+
+1. Beskriv profilet med fagbegreber: hvor er terrænet fladt, hvor er det stejlt, og hvor stor er den samlede højdeforskel?
+2. Volden ved den gamle swimmingpool er menneskeskabt. Hvordan kan man i terrænet kende forskel på en menneskeskabt terrænform og en naturlig, fx en morænebakke eller en åskrænt?
+3. Hvorfor tegner man ofte terrænprofiler med overhøjning? Hvilke fordele og ulemper har det for læseren?
+4. Hvilke fejlkilder er der ved metoden (fx en snor, der ikke er helt vandret, en skæv stok eller en strækning, der ikke følger profillinjen), og hvordan forplanter en fejl på én strækning sig til resten af profilet?
+5. Sammenlign jeres profil med højdekurverne på et topografisk kort eller Danmarks Højdemodel over samme sted. Stemmer de overens?
+6. Hvordan kunne man bruge samme metode til at opmåle fx et kystprofil eller en ådal, og hvad ville man kunne lære af at gentage målingen et år senere?

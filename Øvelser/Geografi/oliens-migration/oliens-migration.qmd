@@ -88,16 +88,6 @@ Hæld vandet forsigtigt ned ad glassets inderside eller over en ske, så sandlag
 
 Tegn til sidst glasset af, som det ser ud ved forsøgets slutning, og sæt navn på lagene.
 
-### Konklusion og diskussion af resultater
-
-1. Beskriv, hvad I ser. Relatér derefter øvelsen til teorien om oliedannelse, migration, kildebjergarter, reservoirbjergarter og oliefælder: hvilke af de begreber har vi i vores forsøg, og hvilke har vi ikke?
-2. Diskutér, hvilke energimæssige og miljømæssige konsekvenser det ville have haft, hvis oliens massefylde havde været større end vands. Hvor ville vores Nordsøolie så befinde sig i dag, og hvad ville det betyde for vores muligheder for at bruge den?
-3. Hvilke problemer er der forbundet med olie som energiråstof?
-
-### Fejlkilder
-
-Hvad er der for eksempel galt ved at bruge vegetabilsk olie frem for mineralsk olie? Find selv flere fejlkilder.
-
 ## Del 3: Oliens densitet
 
 Forsøget i del 2 virker kun, fordi olien er lettere end vandet. Her sætter I tal på forskellen.
@@ -117,18 +107,32 @@ Forsøget i del 2 virker kun, fordi olien er lettere end vandet. Her sætter I t
 
 : Vejninger til bestemmelse af densiteten. {#tbl-3}
 
-### Beregning
+## Databehandling
 
-Densiteten er massen pr. rumfang. Rumfanget er de 100 mL, altså 100 cm³:
+1. Beregn væskernes masse i @tbl-3 som forskellen mellem måleglasset med og uden væske.
+2. Beregn densiteten af vand og madolie. Densiteten er massen pr. rumfang, og rumfanget er de 100 mL, altså 100 cm³:
 
 $$\rho = \frac{m}{V}$$
 
 | | Vand | Madolie |
 |:---|:---:|:---:|
 | Densitet (g/cm³) | | |
+| Tabelværdi (g/cm³) | 1,00 | ca. 0,92 |
+| Afvigelse fra tabelværdien (%) | | |
 
-: Beregnet densitet. {#tbl-4}
+: Beregnet densitet sammenlignet med tabelværdier ved stuetemperatur. {#tbl-4}
 
-1. Hvor mange procent lettere er olien end vandet?
-2. Brug tallene til at forklare, hvorfor olien i del 2 bevægede sig op gennem sandet — og hvorfor den bliver liggende øverst.
-3. Råolie fra Nordsøen har en densitet omkring 0,85 g/cm³, mens det salte porevand i undergrunden er tungere end 1,00 g/cm³. Hvad betyder den forskel for oliens vej op gennem undergrunden?
+3. Beregn, hvor mange procent lettere olien er end vandet:
+
+$$\text{Forskel (\%)} = \frac{\rho_{\text{vand}} - \rho_{\text{olie}}}{\rho_{\text{vand}}} \cdot 100$$
+
+4. Sammenlign jeres målte densiteter med tabelværdierne i @tbl-4, og beregn afvigelsen i procent på samme måde. Hvor stor er usikkerheden ved at aflæse 100 mL i måleglasset?
+
+## Journalspørgsmål
+
+1. Beskriv, hvad I så i glasset i del 2. Relatér derefter forsøget til teorien om oliedannelse, migration, kildebjergarter, reservoirbjergarter og oliefælder: hvilke af de begreber har vi i vores forsøg, og hvilke har vi ikke?
+2. Brug jeres densiteter fra del 3 til at forklare, hvorfor olien bevægede sig op gennem sandet — og hvorfor den blev liggende øverst.
+3. Råolie fra Nordsøen har en densitet omkring 0,85 g/cm³, mens det salte porevand i undergrunden er tungere end 1,00 g/cm³. Hvad betyder den forskel for oliens vej op gennem undergrunden, og hvad skal der til for at standse den i en oliefælde?
+4. Diskutér, hvilke energimæssige og miljømæssige konsekvenser det ville have haft, hvis oliens densitet havde været større end vands. Hvor ville vores Nordsøolie så befinde sig i dag, og hvad ville det betyde for vores muligheder for at bruge den?
+5. Hvilke problemer er der forbundet med olie som energiråstof?
+6. **Fejlkilder.** Hvad er der fx galt ved at bruge vegetabilsk olie frem for mineralsk olie, og løst sand frem for sandsten? Find selv flere forskelle mellem modellen og undergrunden.

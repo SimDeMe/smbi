@@ -1,6 +1,8 @@
 ---
 title: "Digital opmåling af kystlinjen ved Røjle Klint"
 subtitle: "GIS-øvelse over 100 år"
+fag: "Naturgeografi"
+hold: ""
 format:
   typst: default
   html: default
@@ -64,6 +66,35 @@ På ekskursionen parkerede vi i den nordlige ende af Kristiansmindevej og gik ti
 11. Vælg til sidst **Ortofoto seneste**, og sammenlign med kystlinjen for Ortofoto 1954. Hvilke ændringer kan du få øje på, og hvor? Indtegn den nye kystlinje, og indsæt et skærmprint her:
 
 *(Indsæt eget skærmprint her)*
+
+## Databehandling
+
+1. Vælg tre faste punkter langs kysten — fx ved den vestlige ende, midt for klinten og ved den østlige ende af jeres udsnit. Brug **Mål afstand** til at måle den vinkelrette afstand fra kystlinjen på det ældste kort til kystlinjen på hvert af de nyere kort. Skriv tallene i @tbl-1 med fortegn: negativt, hvor kysten er rykket ind i land (erosion), positivt, hvor den er rykket ud (aflejring).
+
+| Kortlag | Årstal | Punkt 1 (m) | Punkt 2 (m) | Punkt 3 (m) |
+|:---|:---:|:---:|:---:|:---:|
+| Høje målebordsblade | | 0 | 0 | 0 |
+| Lave målebordsblade | | | | |
+| Ortofoto 1954 | 1954 | | | |
+| Ortofoto seneste | | | | |
+
+: Kystlinjens forskydning i forhold til det ældste kort. Årstallet for målebordsbladene aflæses i kortets signaturforklaring eller sættes til midten af perioden. {#tbl-1}
+
+2. Beregn for hvert punkt den gennemsnitlige forskydning pr. år mellem det ældste og det nyeste kort:
+
+$$\text{Gennemsnitlig forskydning} = \frac{\text{forskydning (m)}}{\text{antal år}} \quad (\text{m/år})$$
+
+3. Beregn også forskydningen pr. år for perioden 1954 til i dag alene, og sammenlign med hele perioden. Er erosionen gået hurtigere eller langsommere i den seneste periode?
+4. Sammenhold tallene med jeres skærmprint: hvor har kysten flyttet sig mest, og hvor mindst?
+
+## Journalspørgsmål
+
+1. Beskriv, hvordan kystlinjen ved Røjle Klint har ændret sig gennem de ca. 100 år. Hvor er der sket erosion, og hvor er der sket aflejring?
+2. Forklar, hvilke processer der fjerner materiale fra en klint, og hvad der sker med materialet bagefter. Brug begreberne *bølgeerosion*, *skred* og *materialevandring langs kysten*.
+3. Hvilken retning har den fremherskende materialevandring ved Røjle Klint ud fra jeres kort? Begrund svaret med, hvor der er aflejret materiale.
+4. Hvorfor er de gamle målebordsblade mindre præcise end ortofotos, og hvilken betydning har det for, hvor sikre jeres målte forskydninger er?
+5. Hvilke konsekvenser kan en fortsat kysttilbagerykning have for bygninger, veje og landbrug i området? Diskutér fordele og ulemper ved kystsikring, fx høfder eller skræntfodsbeskyttelse, både lokalt og for kysten længere nede ad materialevandringen.
+6. Hvordan forventer I, at stigende havniveau og flere kraftige storme i et varmere klima vil påvirke erosionen ved Røjle Klint?
 
 ## Ekstraopgaver
 
