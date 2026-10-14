@@ -96,12 +96,12 @@ Slinkyens længde under forsøget: \_\_\_\_\_\_\_\_ m &nbsp;&nbsp;&nbsp;&nbsp; S
 1. Beregn farten for hver måling med $v = s/t$, og skriv den i @tbl-1.
 2. Beregn gennemsnittet af farten for hver bølgetype:
 
-$$\bar{v} = \frac{v_1 + v_2 + \dots + v_n}{n}$$
+   $$\bar{v} = \frac{v_1 + v_2 + \dots + v_n}{n}$$
 
 3. Angiv spredningen på jeres målinger som forskellen mellem den største og den mindste fart for hver bølgetype. Er forskellen mellem P og S større end spredningen?
 4. Beregn forholdet mellem farterne, og sammenlign med Jordens skorpe:
 
-$$\frac{\bar{v}_P}{\bar{v}_S} \quad \text{(slinky)} \qquad \text{og} \qquad \frac{\text{6,2 km/s}}{\text{3,65 km/s}} \approx \text{1,7} \quad \text{(Jordens skorpe)}$$
+   $$\frac{\bar{v}_P}{\bar{v}_S} \quad \text{(slinky)} \qquad \text{og} \qquad \frac{\text{6,2 km/s}}{\text{3,65 km/s}} \approx \text{1,7} \quad \text{(Jordens skorpe)}$$
 
 5. Lav et søjlediagram med gennemsnitsfarten for P- og S-bølgen, og vis spredningen.
 6. Saml metode, resultater, diagram og videoer i en kort præsentation (fx Google Slides) til klassen.

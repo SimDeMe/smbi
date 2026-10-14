@@ -89,12 +89,12 @@ Lav skemaet i Excel eller Google Sheets. Så kan I bagefter genbruge det til tø
 
 1. Udfyld @tbl-1 måned for måned efter reglerne ovenfor. Summér $N$, $E$ og $O$ for hele året i den nederste række, og kontrollér, at regnskabet går op over året (det skal det, når underskuddet er 0 både i starten og i slutningen af året; afrundingen kan give 1–2 mm forskel):
 
-$$N_\text{år} - E_\text{år} = O_\text{år}$$
+   $$N_\text{år} - E_\text{år} = O_\text{år}$$
 
 2. Lav et diagram over året med månederne på x-aksen: nedbør $N$ og fordampning $E$ som to søjler eller kurver, og underskuddet $U$ som en kurve under nul. Markér de måneder, hvor der dannes overskud.
 3. Beregn, hvor stor en del af årets nedbør der bliver til overskud:
 
-$$\text{andel overskud} = \frac{O_\text{år}}{N_\text{år}} \cdot 100\ \%$$
+   $$\text{andel overskud} = \frac{O_\text{år}}{N_\text{år}} \cdot 100\ \%$$
 
 4. **Rodzonens kapacitet.** Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den *faktiske* fordampning bliver mindre end den potentielle. Find i @tbl-1, i hvilken måned underskuddet ville komme under $-100$ mm. Hvad betyder det for planterne på en sandjord?
 5. Udfyld @tbl-2 for 2018 på samme måde, og sammenlign med gennemsnitsåret: hvor stort blev det største underskud, og i hvilken måned begyndte der igen at komme overskud? Går regnskabet $N_\text{år} - E_\text{år} = O_\text{år}$ op for 2018? Forklar hvorfor eller hvorfor ikke.

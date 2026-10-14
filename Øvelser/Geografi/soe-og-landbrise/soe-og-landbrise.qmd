@@ -96,7 +96,7 @@ Afstand fra lampe til skåle: \_\_\_\_\_\_\_\_ cm
 1. Lav et (x,y)-punktdiagram i Excel eller Google Sheets med tiden i minutter på x-aksen og temperaturen i °C på y-aksen. Tegn sand og vand som to serier i samme diagram, navngiv akserne, og markér, hvor lampen blev slukket.
 2. Beregn temperaturforskellen mellem «land» og «hav» til hvert tidspunkt, og skriv den i sidste kolonne af @tbl-1:
 
-$$\Delta T_\text{land–hav} = T_\text{sand} - T_\text{vand}$$
+   $$\Delta T_\text{land–hav} = T_\text{sand} - T_\text{vand}$$
 
 3. Lav et nyt diagram med $\Delta T_\text{land–hav}$ som funktion af tiden. Tegn en vandret linje ved 0 °C. Hvornår er land varmest, og hvornår er havet varmest?
 4. Beregn for både sand og vand, hvor meget temperaturen ændrede sig om «dagen» og om «natten», og hvor hurtigt det gik:

@@ -107,7 +107,7 @@ I denne del er der ingen hypotese: I skal undersøge og beskrive.
 
 1. Beregn gennemsnittet af de 10 kornstørrelser i @tbl-2:
 
-$$\bar{d} = \frac{d_1 + d_2 + \dots + d_{10}}{10}$$
+   $$\bar{d} = \frac{d_1 + d_2 + \dots + d_{10}}{10}$$
 
 2. Angiv den mindste og den største kornstørrelse. Er kornene nogenlunde lige store, eller er der store krystaller i en finkornet grundmasse (en *porfyr*)?
 3. Er stenen fin-, middel- eller grovkornet ud fra gennemsnittet? Hvad fortæller det om, hvor hurtigt den er størknet eller dannet?

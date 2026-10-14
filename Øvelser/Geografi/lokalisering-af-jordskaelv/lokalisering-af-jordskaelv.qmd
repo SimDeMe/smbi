@@ -78,7 +78,7 @@ Stationerne findes også som en færdig fil, [seismografstationer.kml](seismogra
 2. Tegn cirklerne i Google Earth (fremgangsmåden trin 4–5). Hvor ligger epicentret ifølge jeres målinger? Notér koordinaterne.
 3. Beregn, hvornår jordskælvet skete. P-bølgen har brugt tiden $D/v_P$ på at nå frem til stationen, så:
 
-$$t_0 = t_P - \frac{D}{\text{6,2}\ \text{km/s}}$$
+   $$t_0 = t_P - \frac{D}{\text{6,2}\ \text{km/s}}$$
 
 4. Sammenlign med den officielle placering og det officielle tidspunkt (læreren udleverer dem, eller slå skælvet op hos USGS: «M 5.2 – 29 km NNE of Val-des-Monts, Canada»). Beregn, hvor mange kilometer jeres epicenter ligger fra det officielle. Mål afstanden med linealen i Google Earth.
 

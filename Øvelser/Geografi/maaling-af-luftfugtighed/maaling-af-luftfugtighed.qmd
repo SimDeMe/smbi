@@ -106,12 +106,12 @@ Er forskellen mellem tør- og vådtemperaturen større end tabellen på psykrome
 1. Find den maksimale luftfugtighed ved tørtemperaturen i @tbl-1 for både inde og ude.
 2. Beregn den absolutte luftfugtighed:
 
-$$\text{absolut luftfugtighed} = \frac{\text{relativ luftfugtighed}}{100\ \%} \cdot \text{maksimal luftfugtighed}$$
+   $$\text{absolut luftfugtighed} = \frac{\text{relativ luftfugtighed}}{100\ \%} \cdot \text{maksimal luftfugtighed}$$
 
 3. Find dugpunktet: led i @tbl-1 efter den temperatur, hvor den maksimale luftfugtighed er lig med jeres absolutte luftfugtighed.
 4. Beregn klasselokalets rumfang og den samlede masse af vanddamp i luften i lokalet:
 
-$$V = \text{længde} \cdot \text{bredde} \cdot \text{højde} \qquad m_\text{vanddamp} = \text{absolut luftfugtighed} \cdot V$$
+   $$V = \text{længde} \cdot \text{bredde} \cdot \text{højde} \qquad m_\text{vanddamp} = \text{absolut luftfugtighed} \cdot V$$
 
 5. Hvor meget mere vanddamp kunne luften i lokalet indeholde, før den blev mættet?
 

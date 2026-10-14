@@ -111,21 +111,21 @@ Absorberens areal: $A$ = 0,0756 m² &nbsp;&nbsp;&nbsp;&nbsp; Vandets masse i tan
 
 1. Beregn gennemsnittet af de fem målinger af bestrålingsstyrken i @tbl-1:
 
-$$\bar{\varphi} = \frac{\varphi_1 + \varphi_2 + \varphi_3 + \varphi_4 + \varphi_5}{5}$$
+   $$\bar{\varphi} = \frac{\varphi_1 + \varphi_2 + \varphi_3 + \varphi_4 + \varphi_5}{5}$$
 
 2. Lav et (x,y)-punktdiagram i Excel eller Google Sheets med tiden i s på x-aksen og temperaturen i °C på y-aksen. Navngiv akserne, og skriv enhederne på. Er kurven en ret linje, eller flader den ud?
 3. Beregn den energi, der har ramt absorberen i forsøgets 1800 s. Husk at omregne fra J til kJ:
 
-$$Q_\text{ind} = \bar{\varphi} \cdot A \cdot t$$
+   $$Q_\text{ind} = \bar{\varphi} \cdot A \cdot t$$
 
 4. Beregn temperaturstigningen $\Delta T = T_{1800} - T_0$ og den energi, vandet i tanken har modtaget:
 
-$$Q_\text{vand} = c_\text{vand} \cdot m_\text{vand} \cdot \Delta T$$
+   $$Q_\text{vand} = c_\text{vand} \cdot m_\text{vand} \cdot \Delta T$$
 
 5. Beregn nyttevirkningen $\eta$ i procent, og sammenlign med jeres hypotese.
 6. Beregn den gennemsnitlige effekt, solfangeren har leveret til vandet, og sammenlign med den effekt, der ramte absorberen:
 
-$$P_\text{vand} = \frac{Q_\text{vand}}{t} \qquad P_\text{ind} = \bar{\varphi} \cdot A$$
+   $$P_\text{vand} = \frac{Q_\text{vand}}{t} \qquad P_\text{ind} = \bar{\varphi} \cdot A$$
 
 7. Beregn til sidst nyttevirkningen for de første 10 minutter (0–600 s) og for de sidste 10 minutter (1200–1800 s) hver for sig. Bliver solfangeren bedre eller dårligere, efterhånden som vandet bliver varmt?
 
