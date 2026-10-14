@@ -100,17 +100,8 @@
   <section id="pladevalg" class="pladevalg" popover="auto" aria-labelledby="pladevalgtitel">
     <div class="pladevalg-top"><h2 id="pladevalgtitel">Plader på globussen</h2><button popovertarget="pladevalg" popovertargetaction="hide" aria-label="Luk pladevisning">Luk ×</button></div>
     <label class="pladevalg-felt"><input id="pladenavne" type="checkbox"> Pladenavne</label>
-    <label class="pladevalg-felt"><input id="pladepile" type="checkbox"> Pile og hastighed</label>
-    <div id="pladereferencefelt" hidden>
-      <label for="pladereference">Bevægelse i forhold til</label>
-      <select id="pladereference">
-        <option value="EU">Eurasiske Plade</option>
-        <option value="NA">Nordamerikanske Plade</option>
-        <option value="PA">Stillehavspladen</option>
-        <option value="AF">Afrikanske Plade</option>
-      </select>
-      <p>Pile viser retning; tallene er cm/år ved pilepunktet. Den valgte referenceplade står stille.</p>
-    </div>
+    <label class="pladevalg-felt"><input id="pladepile" type="checkbox"> Pile og grænsehastighed</label>
+    <p id="graenseforklaring" hidden>Fra/mod viser den samlede åbning/lukning på tværs af grænsen i cm/år. Langs viser forskydning ved transformforkastninger. ≈ markerer mere usikre tal i diffuse zoner. Pilene viser retning uden hastighedsskala.</p>
     <p class="pladevalg-note">Zoom ind for at se flere små plader. Navne og pile skjules, hvor der ikke er plads.</p>
     <p id="pladevalgstatus" role="status" hidden></p>
   </section>

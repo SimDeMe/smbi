@@ -150,7 +150,13 @@ document.querySelector('#fokus').onclick = event => {
   event.currentTarget.textContent = aktiv ? 'Afslut fokus' : 'Fokus';
 };
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !dialog.open && !document.querySelector('[popover]:popover-open') && document.body.classList.contains('fokus')) document.querySelector('#fokus').click();
+  if (event.key !== 'Escape') return;
+  const panel = document.querySelector('#pladevalg:popover-open');
+  if (panel) {
+    event.preventDefault();
+    panel.hidePopover();
+    document.querySelector('#pladevisning').focus({ preventScroll: true });
+  } else if (!dialog.open && document.body.classList.contains('fokus')) document.querySelector('#fokus').click();
 });
 document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
@@ -167,7 +173,7 @@ document.querySelector('#hjaelp').onclick = () => {
 const PLADEKILDE = 'Pladegrænser: Peter Bird (2003), An updated digital model of plate boundaries, Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252. Data er hentet fra Birds egen side (peterbird.name/oldFTP/PB2002) og er identiske med kopien i github.com/fraxen/tectonicplates, som udgives under Open Data Commons Attribution 1.0. ' +
   'Bird inddeler hvert ca. 45 km langt stykke af grænserne i syv klasser ud fra pladernes beregnede relative bevægelse. Her er de samlet i tre: konstruktiv = pladerne glider fra hinanden, i havet (spredningsryg) eller på land (riftzone); destruktiv = pladerne bevæger sig mod hinanden, enten så den ene glider ned under den anden (subduktion) eller så de presses sammen til bjerge (kollision, fx Himalaya); bevarende = pladerne glider forbi hinanden (transformforkastning). Derfor kan typen skifte flere gange langs den samme grænse. ' +
   'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er brede zoner med fordelt deformation, fx Alperne og Tibet. Der findes ingen enkelt skarp grænse, og linjernes placering er mindre sikker. ' +
-  'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Pladenavne og bevægelsespile kan vælges under Visning. Hastighederne beregnes fra PB2002-rotationspolerne relativt til den valgte referenceplade; de er modelværdier, ikke aktuelle GPS-målinger. Farten varierer fra sted til sted på samme plade. Pilen angiver retning, ikke en målfast årlig vandring. Usikre pilepunkter i diffuse zoner og den hypotetiske Shetlandbevægelse vises ikke som hastighedspile. Laget viser ikke jordskælvs- eller vulkankataloger.';
+  'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Pladenavne og grænsehastigheder kan vælges under Visning. Ved grænserne vises PB2002-modellens lokale relative hastigheder: Fra og Mod er den samlede åbning eller lukning på tværs af grænsen, ikke halvspredning eller hastigheden af én plade. Langs er forskydningen langs transformforkastninger. Ved skrå bevægelse findes begge komponenter i teksttabellen. Tallene er modelværdier, ikke aktuelle GPS-målinger, og kan variere langs samme grænse. Pilene viser kun retning og har ingen hastighedsskala. I diffuse zoner mærkes tal med ≈, fordi grænse og pladebevægelse er mere usikre. Langs den hypotetiske Shetlandplade vises ingen hastighed. Laget viser ikke jordskælvs- eller vulkankataloger.';
 
 function visPladeopgave() {
   aabn('Undersøg pladegrænserne');
@@ -198,7 +204,7 @@ function visPladeopgave() {
   ]) liste.append(element('li', spoergsmaal));
   indhold.append(liste);
   const tabel = element('details', '', 'pladetabeloversigt');
-  tabel.append(element('summary', 'Alle pladenavne og modelhastigheder'));
+  tabel.append(element('summary', 'Alle pladenavne'));
   const tabelindhold = element('div');
   tabel.append(tabelindhold);
   tabel.addEventListener('toggle', async () => {
@@ -207,31 +213,25 @@ function visPladeopgave() {
     try {
       const modul = await import('./pladebevaegelse.js');
       const plader = await modul.hentPlader();
-      const reference = plader.find(p => p.id === pladevalg.reference);
       const t = element('table', '', 'pladetabel');
-      t.append(element('caption', `PB2002-model. Hastigheder relativt til ${reference.navn}. Tallene gælder ved det viste pilepunkt; plader omfatter både land og havbund.`));
+      t.id = 'pladenavnetabel';
+      t.append(element('caption', 'De 52 plader i PB2002. Pladerne omfatter både land og havbund.'));
       const top = element('tr');
-      for (const tekst of ['Plade og pilepunkt', 'cm/år', 'Retning']) {
+      for (const tekst of ['Plade', 'Kode']) {
         const h = element('th', tekst); h.scope = 'col'; top.append(h);
       }
       const hoved = element('thead'); hoved.append(top); t.append(hoved);
       const krop = element('tbody');
       for (const p of [...plader].sort((a, b) => a.navn.localeCompare(b.navn, 'da'))) {
-        const v = modul.beregnBevaegelse(p.pol, reference.pol, p.punkt);
-        const raekke = element('tr');
-        const navn = element('th', p.navn); navn.scope = 'row';
-        const [lon, lat] = p.punkt;
-        navn.append(element('small', `${Math.abs(lat).toFixed(1).replace('.', ',')}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lon).toFixed(1).replace('.', ',')}° ${lon < 0 ? 'V' : 'Ø'}`));
-        raekke.append(navn, element('td', p.usikker ? '—' : modul.formaterFart(v.fart).replace(' cm/år', '')),
-          element('td', p.usikker ? 'Usikker model – se kilde' : modul.formaterRetning(v.retning)));
-        krop.append(raekke);
+        const raekke = element('tr'), navn = element('th', p.navn); navn.scope = 'row';
+        raekke.append(navn, element('td', p.id)); krop.append(raekke);
       }
       t.append(krop); tabelindhold.replaceChildren(t);
     } catch {
       tabelindhold.textContent = 'Pladedata kunne ikke hentes. De øvrige forklaringer og simulationer kan stadig bruges. Luk og åbn listen for at prøve igen.';
     }
   });
-  indhold.append(tabel);
+  indhold.append(tabel, lavGraenseoversigt());
   indhold.append(lavInformation({
     navn: 'Pladegrænser', overskrift: 'Om data',
     introduktion: 'Peter Birds model PB2002 (2003). Grænser og typer er en model – ikke skarpe, målte linjer.',
@@ -266,26 +266,69 @@ function visPladeopgave() {
   indhold.append(visModeller(modeller.filter(model => model.steder.includes('island'))));
 }
 
+function lavGraenseoversigt() {
+  const oversigt = element('details', '', 'graenseoversigt');
+  oversigt.append(element('summary', 'Hastigheder ved pladegrænserne'));
+  const indre = element('div'); oversigt.append(indre);
+  oversigt.addEventListener('toggle', async () => {
+    if (!oversigt.open || indre.childElementCount) return;
+    indre.textContent = 'Henter grænsehastigheder …';
+    try {
+      const [modul, navnemodul] = await Promise.all([import('./graensehastigheder.js'), import('./pladebevaegelse.js')]);
+      const [punkter, plader] = await Promise.all([modul.hentGraensehastigheder(), navnemodul.hentPlader()]);
+      const navne = Object.fromEntries(plader.map(p => [p.id, p.navn]));
+      const par = p => [p.graense.slice(0, 2), p.graense.slice(3, 5)].sort().join('-');
+      const grupper = [...new Set(punkter.map(par))].map(id => ({ id,
+        navn: id.split('-').map(k => navne[k] || k).join(' / ') })).sort((a, b) => a.navn.localeCompare(b.navn, 'da'));
+      const label = element('label', 'Vælg de to plader', 'graensevaelger');
+      const valg = element('select');
+      for (const gruppe of grupper) { const o = element('option', gruppe.navn); o.value = gruppe.id; valg.append(o); }
+      valg.value = 'EU-NA'; label.append(valg);
+      const tabelrum = element('div');
+      const tegn = () => {
+        const t = element('table', '', 'pladetabel graensetabel');
+        t.id = 'graensehastighedstabel';
+        t.append(element('caption', 'PB2002-model, cm/år mellem de to plader. Fra/mod er samlet åbning/lukning på tværs, ikke halvspredning. Langs er forskydningen langs grænsen. ≈ angiver mere usikre tal i en diffus zone; — angiver den hypotetiske Shetlandmodel.'));
+        const hoved = element('thead'), top = element('tr');
+        for (const tekst of ['Grænsepunkt', 'På tværs', 'Langs']) { const h = element('th', tekst); h.scope = 'col'; top.append(h); }
+        hoved.append(top); t.append(hoved);
+        const krop = element('tbody');
+        for (const p of punkter.filter(p => par(p) === valg.value).sort((a, b) => b.punkt[1] - a.punkt[1])) {
+          const [lon, lat] = p.punkt;
+          const raekke = element('tr'), sted = element('th', `${Math.abs(lat).toFixed(1).replace('.', ',')}° ${lat < 0 ? 'S' : 'N'}`);
+          sted.scope = 'row'; sted.append(element('small', `${Math.abs(lon).toFixed(1).replace('.', ',')}° ${lon < 0 ? 'V' : 'Ø'}`));
+          raekke.dataset.trin = p.trin;
+          raekke.append(sted, element('td', p.hypotetisk ? '—' : (p.usikker ? '≈ ' : '') + modul.tvaerstekst(p.aabning)),
+            element('td', p.hypotetisk ? '—' : (p.usikker ? '≈ ' : '') + modul.formaterKomponent(p.langs))); krop.append(raekke);
+        }
+        t.append(krop); tabelrum.replaceChildren(t);
+      };
+      valg.addEventListener('change', tegn); indre.replaceChildren(label, tabelrum); tegn();
+    } catch {
+      indre.textContent = 'Grænsehastigheder kunne ikke hentes. Luk og åbn listen for at prøve igen. De øvrige forklaringer og simulationer kan stadig bruges.';
+    }
+  });
+  return oversigt;
+}
+
 const pladeknap = document.querySelector('#pladelag');
 const signatur = document.querySelector('#signatur');
 const canvas = document.querySelector('#globus');
 const canvasbeskrivelse = canvas.getAttribute('aria-label');
-const pladevalg = { navne: false, bevaegelse: false, reference: 'EU' };
+const pladevalg = { navne: false, bevaegelse: false };
 const valgpanel = document.querySelector('#pladevalg');
 const valgknap = document.querySelector('#pladevisning');
 const navnefelt = document.querySelector('#pladenavne');
 const pilefelt = document.querySelector('#pladepile');
-const referencefelt = document.querySelector('#pladereference');
 const bevaegelsesnote = document.querySelector('#bevaegelsesnote');
 const valgstatus = document.querySelector('#pladevalgstatus');
 
 function opdaterPladebeskrivelse() {
-  const reference = referencefelt.selectedOptions[0].textContent;
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
-  bevaegelsesnote.textContent = `Pile: retning og cm/år ved pilepunktet, relativt til ${reference}.`;
-  document.querySelector('#pladereferencefelt').hidden = !pladevalg.bevaegelse;
+  bevaegelsesnote.textContent = 'cm/år mellem pladerne. Fra/mod: samlet åbning/lukning på tværs. Langs: forskydning. ≈: diffus zone.';
+  document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
   canvas.setAttribute('aria-label', pladeknap.getAttribute('aria-pressed') === 'true'
-    ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ` og bevægelsespile i cm/år relativt til ${reference}` : ''}`
+    ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
     : canvasbeskrivelse);
 }
 
@@ -308,26 +351,26 @@ valgpanel.addEventListener('toggle', event => {
 window.addEventListener('resize', placerValgpanel);
 
 async function skiftPladeoplysninger() {
-  const ny = { navne: navnefelt.checked, bevaegelse: pilefelt.checked, reference: referencefelt.value };
+  const ny = { navne: navnefelt.checked, bevaegelse: pilefelt.checked };
   const havdeFokus = document.activeElement;
-  for (const felt of [navnefelt, pilefelt, referencefelt]) felt.disabled = true;
+  for (const felt of [navnefelt, pilefelt]) felt.disabled = true;
   valgstatus.hidden = true;
   valgpanel.setAttribute('aria-busy', 'true');
   try {
     await globus.visPladeoplysninger(ny);
     Object.assign(pladevalg, ny);
   } catch {
-    navnefelt.checked = pladevalg.navne; pilefelt.checked = pladevalg.bevaegelse; referencefelt.value = pladevalg.reference;
+    navnefelt.checked = pladevalg.navne; pilefelt.checked = pladevalg.bevaegelse;
     valgstatus.textContent = 'Navne og bevægelser kunne ikke hentes. Pladegrænser og globus virker stadig. Prøv igen, eller genindlæs siden.';
     valgstatus.hidden = false;
   } finally {
-    for (const felt of [navnefelt, pilefelt, referencefelt]) felt.disabled = false;
+    for (const felt of [navnefelt, pilefelt]) felt.disabled = false;
     valgpanel.removeAttribute('aria-busy');
     opdaterPladebeskrivelse(); placerValgpanel();
     if (document.activeElement === document.body && valgpanel.matches(':popover-open')) havdeFokus.focus({ preventScroll: true });
   }
 }
-for (const felt of [navnefelt, pilefelt, referencefelt]) felt.addEventListener('change', skiftPladeoplysninger);
+for (const felt of [navnefelt, pilefelt]) felt.addEventListener('change', skiftPladeoplysninger);
 async function skiftPladelag() {
   const vis = pladeknap.getAttribute('aria-pressed') !== 'true';
   const havdeFokus = document.activeElement === pladeknap;

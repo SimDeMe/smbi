@@ -50,15 +50,6 @@ export async function hentPlader() {
   return data;
 }
 
-// Et kort geografisk skridt i en given kompasretning giver pilens retning
-// i den aktuelle projektion, også når kloden drejes eller står ved datolinjen.
-function fremad([lon, lat], retning) {
-  const f = lat * RAD, l = lon * RAD, a = retning * RAD, d = .25 * RAD;
-  const f2 = Math.asin(Math.sin(f) * Math.cos(d) + Math.cos(f) * Math.sin(d) * Math.cos(a));
-  const l2 = l + Math.atan2(Math.sin(a) * Math.sin(d) * Math.cos(f), Math.cos(d) - Math.sin(f) * Math.sin(f2));
-  return [((l2 / RAD + 540) % 360) - 180, f2 / RAD];
-}
-
 function linjer(navn) {
   if (navn.endsWith(' Plade')) return [navn.slice(0, -6), 'Plade'];
   if (navn.length > 19 && navn.includes(' ')) {
@@ -70,68 +61,27 @@ function linjer(navn) {
 const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
 export function tegnPlader(ctx, projektion, synlig, valg, undgaa) {
-  if (!data || (!valg.navne && !valg.bevaegelse)) return;
-  const reference = data.find(p => p.id === valg.reference);
-  if (!reference) return;
+  if (!data || !valg.navne) return;
   const skala = projektion.scale(), [cx, cy] = projektion.translate();
   const optaget = [...undgaa];
   ctx.save();
   ctx.font = "600 12px 'Archivo', sans-serif";
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   for (const p of data) {
     if (!synlig(p.punkt) || p.areal * skala * skala < 500) continue;
-    const [x, y] = projektion(p.punkt);
-    const tekst = valg.navne ? linjer(p.navn) : [];
-    let pil = valg.bevaegelse && !p.usikker;
-    const v = beregnBevaegelse(p.pol, reference.pol, p.punkt);
-    if (!tekst.length && !pil) continue;
-    const hastighed = formaterFart(v.fart);
-    const tekstbredde = Math.max(0, ...tekst.map(t => ctx.measureText(t).width)) + 14;
-    const w = Math.max(tekstbredde, pil ? ctx.measureText(hastighed).width + 14 : 0);
-    const h = pil ? (tekst.length ? 84 : 62) : tekst.length * 15 + 10;
-    let navney = y;
-    let boks = { x: x - w / 2, y: y - (pil && tekst.length ? 49 : h / 2), w, h };
-    const fri = b => !optaget.some(a => overlap(a, b)) &&
-      b.x >= 0 && b.y >= 0 && b.x + b.w <= ctx.canvas.clientWidth && b.y + b.h <= ctx.canvas.clientHeight &&
-      ![b.x, b.x + b.w].some(tx => [b.y, b.y + b.h].some(ty => Math.hypot(tx - cx, ty - cy) > skala - 5));
-    // Bevar navnet, når en pil med hastighed ikke kan være der. Punktet
-    // flyttes ikke for at få plads: det ville ændre den lokale hastighed.
-    if (!fri(boks) && tekst.length) {
-      pil = false;
-      for (const forskydning of [0, -16, 16]) {
-        navney = y + forskydning;
-        boks = { x: x - tekstbredde / 2, y: navney - (tekst.length * 15 + 10) / 2,
-          w: tekstbredde, h: tekst.length * 15 + 10 };
-        if (fri(boks)) break;
-      }
-    }
-    if (!fri(boks)) continue;
+    const [x, y] = projektion(p.punkt), tekst = linjer(p.navn);
+    const w = Math.max(...tekst.map(t => ctx.measureText(t).width)) + 14, h = tekst.length * 15 + 10;
+    const boks = [0, -16, 16].map(dy => ({ x: x - w / 2, y: y + dy - h / 2, w, h })).find(b =>
+      b.x >= 0 && b.y >= 0 && b.x + w <= ctx.canvas.clientWidth && b.y + h <= ctx.canvas.clientHeight &&
+      !optaget.some(a => overlap(a, b)) &&
+      ![b.x, b.x + w].some(tx => [b.y, b.y + h].some(ty => Math.hypot(tx - cx, ty - cy) > skala - 5)));
+    if (!boks) continue;
     optaget.push(boks);
     ctx.strokeStyle = '#fff9ee'; ctx.fillStyle = '#17211f'; ctx.lineWidth = 4;
     for (let i = 0; i < tekst.length; i++) {
-      const ty = pil ? y - 38 + i * 15 : navney + (i - (tekst.length - 1) / 2) * 15;
+      const ty = boks.y + h / 2 + (i - (tekst.length - 1) / 2) * 15;
       ctx.strokeText(tekst[i], x, ty); ctx.fillText(tekst[i], x, ty);
     }
-    if (!pil) continue;
-    ctx.font = "600 11px 'Archivo', sans-serif";
-    ctx.strokeText(hastighed, x, y + 27); ctx.fillText(hastighed, x, y + 27);
-    if (v.retning === null || v.fart < .05) {
-      ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fill();
-    } else {
-      const q = projektion(fremad(p.punkt, v.retning));
-      const dx = q[0] - x, dy = q[1] - y, laengde = Math.hypot(dx, dy);
-      if (laengde > 0) {
-        const ux = dx / laengde, uy = dy / laengde;
-        const a = [x - 16 * ux, y - 16 * uy], b = [x + 16 * ux, y + 16 * uy];
-        ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b);
-        ctx.moveTo(b[0] - 8 * ux + 5 * uy, b[1] - 8 * uy - 5 * ux);
-        ctx.lineTo(...b); ctx.lineTo(b[0] - 8 * ux - 5 * uy, b[1] - 8 * uy + 5 * ux);
-        ctx.strokeStyle = '#fff9ee'; ctx.lineWidth = 6; ctx.stroke();
-        ctx.strokeStyle = '#6842a1'; ctx.lineWidth = 2.6; ctx.stroke();
-      }
-    }
-    ctx.font = "600 12px 'Archivo', sans-serif";
   }
   ctx.restore();
 }

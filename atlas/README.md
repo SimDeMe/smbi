@@ -28,8 +28,10 @@ atlasregisteret og dokumenterer ikke fuld læreplansdækning.
   Canvas bruger højst dobbelt pixeltæthed; kun ændringer udløser tegning.
 - `pladelag.js`: valgfrit pladegrænselag (#48). Henter først data, når laget
   slås til, og tegner signaturen i samme Canvas som globussen.
-- `pladebevaegelse.js`: valgfrie pladenavne, lokale hastigheder og retninger
-  fra PB2002's 52 Eulerpoler; bruges også til teksttabellen.
+- `pladebevaegelse.js`: valgfrie navne for PB2002's 52 plader. Eulerberegningen
+  er bevaret til uafhængig kontrol af modellens relative hastigheder.
+- `graensehastigheder.js`: valgfrie hastigheder og pile ved grænserne, fra
+  PB2002's publicerede komponenter på tværs og langs; også brugt i teksttabellen.
 - `vendor/` og `data/`: lokale, versionsbundne biblioteker, licenser og kortdata.
 
 Globusmodulet indlæses separat med fejlhåndtering. Manglende bibliotek, HTTP-fejl,
@@ -132,40 +134,51 @@ mønstre, valg af kortlag og modelkritik. Det dokumenterer ikke i sig selv
 elevernes målopfyldelse. Jordskælvs- og vulkankataloger er fortsat senere
 leverancer og indgår ikke i dette lag.
 
-### Pladenavne, retning og hastighed
+### Pladenavne og hastigheder ved grænserne
 
-Åbn **Pladegrænser → Visning**. **Pladenavne** og **Pile og hastighed** er
-uafhængige tilvalg. De er slukket fra start og huskes ved fra-/tilvalg af
+Åbn **Pladegrænser → Visning**. **Pladenavne** og **Pile og grænsehastighed**
+er uafhængige tilvalg. De er slukket fra start og huskes ved fra-/tilvalg af
 pladegrænselaget i samme besøg. Indstillingerne åbnes midlertidigt oven på
 figuren og gør ikke globussen mindre. Escape og klik udenfor lukker dem;
 i fokusvisning lukker første Escape indstillingerne, næste afslutter fokus.
 
-**Bevægelse i forhold til** vælger Eurasiske Plade (standard), Nordamerikanske
-Plade, Stillehavspladen eller Afrikanske Plade som fast reference. Den aktive
-reference og enheden cm/år bliver stående i signaturen. Hastigheden gælder ved
-pilens punkt og varierer på samme stive plade. En pil viser retning med konstant
-skærmlængde; tallet viser farten. Referencepladen vises med en prik og 0 cm/år,
-hvor der er plads. Navne/pile skjules ved horisonten, uden for figuren eller
-ved overlap med markører, andre etiketter og betjening. Et navn kan blive
-stående uden pil. Zoom og rotation viser flere plader.
+Hastighederne står **ved grænserne**, med henvisningslinje og et kildepunkt:
 
-**Undersøg og kilde → Alle pladenavne og modelhastigheder** giver alle 52
-plader, pilepunktets koordinater og bevægelsen i den valgte reference som
-teksttabel, også når globussen ikke virker. Navnepunkterne er beregnet inde
-i kildepolygonerne; de er kartografiske ankre, ikke målestationer. En plade
-omfatter også havbund, så fx Sydamerikanske Plades punkt kan ligge i Atlanten.
+- **Fra**: samlet åbning på tværs af en konstruktiv grænse.
+- **Mod**: samlet lukning på tværs af en destruktiv grænse.
+- **Langs**: forskydning langs en transformforkastning.
 
-`data/plader.json` (ca. 7 kB) dannes af `data/plader.mjs` fra Birds originale
-pladepolygoner og poltabel. Polerne er oprindelig relative til Stillehavspladen.
-Modulet trækker de kartesiske rotationsvektorer fra hinanden før beregningen
-`v = (ω_plade − ω_reference) × r`, med jordradius 6371 km og omregning til cm/år.
-Kilde, præcise downloadadresser, kontrolsummer og ODC-By 1.0 står i
-`data/plader.LICENSE`. Ingen nye biblioteker eller build til elevsiden.
+Alle tal er cm/år **mellem de to naboplader**. De er ikke halvspredning eller
+hastigheden af én plade i forhold til en fast tredje plade. Den gamle
+referencevælger og hastighederne ved pladernes navnepunkter er derfor fjernet.
+Pile på hver side viser relativ retning uden hastighedsskala; de angiver ikke
+lige store absolutte hastigheder for de to plader. Begge komponenter kan være
+til stede ved skrå bevægelse. ≈ markerer mere usikre modeltal i diffuse zoner;
+langs den hypotetiske Shetlandplade vises ingen tal/pile.
 
-Dette er den ældre PB2002-model, ikke aktuelle GPS-målinger eller hastigheder
-i en hotspotreference. Småpladernes rotationer er særligt usikre. Ved ankre i
-diffuse zoner (NH, BR, CR) og den hypotetiske Shetlandrotation (SL) vises navn
-men ingen hastighedspil; tabellen angiver usikker model i stedet for et tal.
+Den synlige signatur forklarer Fra/Mod/Langs, cm/år og ≈. Overlap med markører,
+andre etiketter, betjening og figurens kant undgås. Zoom og rotation viser
+flere lokale værdier. De tre bevægelsestyper får på skift plads ved udvælgelsen,
+så mange transformstykker ikke skjuler en tilstødende spredningsryg.
+
+**Undersøg og kilde → Hastigheder ved pladegrænserne** lader eleven vælge et
+pladepar. Tabellen viser lokale koordinater og begge komponenter, også når
+selve globussen ikke virker. **Alle pladenavne** giver fortsat alle 52 navne.
+
+`data/graensehastigheder.json` (117 kB) dannes reproducerbart af
+`data/graensehastigheder.py`. Der udtages 1.937 originaltrin blandt Birds 5.819,
+ved midten af højst ca. 400 km lange intervaller med ens grænse, klasse og
+orogenstatus. Hvert punkt beholder det valgte trins lokale komponenter uændret;
+tallene gennemsnittes eller halveres ikke. Midtpunktet beregnes sfærisk.
+Browseren omregner blot kildens mm/år til cm/år. Data og modul hentes først
+ved tilvalg eller åbning af tabellen. Kilde, licens, kontrolsum og bearbejdning
+står i `data/graensehastigheder.LICENSE`.
+
+`data/plader.json` (ca. 7 kB) kommer fortsat fra Birds 52 pladepolygoner og poler.
+Navnepunkterne er kartografiske ankre inde i polygonerne, ikke målestationer.
+Kilde og ODC-By 1.0 står i `data/plader.LICENSE`. Hastighederne er den ældre
+PB2002-model, ikke aktuelle GPS-målinger eller bevægelsen under et jordskælv.
+Der er ingen nye biblioteker eller build til elevsiden.
 
 ## Supplerende faglig information
 
@@ -200,6 +213,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
 | pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 | plader.json | PB2002 (Bird 2003), tabel 1 | Samme kilde/licens; poler og pladepolygoner, bearbejdet som beskrevet i `data/plader.LICENSE` |
+| graensehastigheder.json | PB2002 (Bird 2003), tabel 2 | Samme kilde/licens; lokale komponenter, kildeudtag og koordinater i `data/graensehastigheder.LICENSE` |
 
 D3, TopoJSON og world-atlas er hentet uændret fra `https://cdn.jsdelivr.net/npm/<pakke>@<version>/`
 (`dist/<pakke>.min.js`, `LICENSE`, henholdsvis `countries-110m.json`). Kortet
@@ -281,6 +295,9 @@ python3 atlas/test/pladedata.py
 python3 atlas/test/pladedata.py --originaler /mappe/med/PB2002-filer
 node atlas/test/pladebevaegelse.mjs
 node atlas/test/pladebevaegelse.mjs --originaler /mappe/med/PB2002-filer
+node atlas/test/graensehastigheder.mjs --originaler /mappe/med/PB2002-filer
+# Genskab hastighedspunkter fra den versionsbundne kilde:
+python3 atlas/data/graensehastigheder.py /mappe/med/PB2002-filer/PB2002_steps.dat.txt
 ```
 
 Den kontrollerer geografiske stikprøver ved Island, San Andreas, Himalaya,
@@ -296,15 +313,24 @@ og alle 5.819 relative trinbevægelser mod Birds uafhængige tabel (mm/år og
 heltalsgrader). Største forskel er 0,00730 cm/år og 0,506°.
 Eksporten er reproduceret med byte-identisk `plader.json`.
 
+`test/graensehastigheder.mjs` kontrollerer fortegn, omregning til cm/år,
+samlet spredning, uafhængige stikprøver ved Island, Andes, San Andreas og Japan,
+og alle 1.937 punkters tal/flag/placering mod originalen. Begge komponenter for
+alle 5.819 trin sammenholdes også med Eulerberegninger under hensyn til
+azimuttabellens afrunding til hele grader. Originalens publicerede komponenter
+bruges direkte, så kortgeometriens afrunding ikke forringer tallene.
+
 `test/pladevisning.py` indgår i browsertesten: uafhængige tilvalg, faktisk
-ændring af canvas, bevaret figurstørrelse, referenceskift og tilbagevenden
-til den oprindelige tegning. Den kontrollerer alle 52 tabelrækker, fast
-referenceplade, usikkerhedsmarkering, piletaster i indstillinger og Escape
-i fokusvisning. Netværks-/modulfejl, ugyldig JSON, null-pol, ugyldig
-breddegrad og dublet-ID skal lade grundkort og pladegrænser fungere med
-mulighed for nyt forsøg. Touch kører med navne og pile aktive; vinduet
-ændres mellem alle fem størrelser med åbne indstillinger. Tabellen virker
-også uden kortbibliotek, kortdata og Canvas 2D.
+ændring af canvas, bevaret figurstørrelse og gendannelse efter fravalg.
+De faktisk tegnede ankre og etiketter matches mod de rigtige kildepunkter,
+komponenter og enheder. Den kontrollerer alle 52 navne, pladeparvælger,
+begge komponenter ved Island/Andes/San Andreas, Shetland, ≈-markering,
+piletaster i indstillinger og Escape i fokusvisning. Netværks-/modulfejl,
+ugyldig JSON, null, ugyldig breddegrad, dublet-ID og forkert enhed skal lade
+grundkort og allerede valgte navne fungere med mulighed for nyt forsøg.
+Touch kører med navne og grænsehastigheder aktive; vinduet ændres mellem alle
+fem størrelser med åbne indstillinger. Tabellerne virker også uden
+kortbibliotek, kortdata og Canvas 2D.
 
 `test/information.py` indgår også og afprøver #50 på alle fem visninger:
 samtlige stedtekster, synlige modelbegrænsninger, tap/klik/Enter/Space,
@@ -389,7 +415,7 @@ før nogen side blev åbnet). Den tidligere macOS-røgtest ovenfor gælder
 udgangspunktet. Fysisk telefon, egentlig Safari og skærmlæser står fortsat
 som opfølgning i #47; de er ikke markeret som gennemført.
 
-### Pladenavne og bevægelse — 14. oktober 2026
+### Første udgave med pladenavne og pladebevægelser — 14. oktober 2026
 
 Den samlede udvidede Chromium-prøve består på alle fem skærmstørrelser,
 med WebGL deaktiveret og reduced motion, inklusive navne, pile, referenceskift,
@@ -401,6 +427,28 @@ har præcis samme størrelse som før tilvalgene; ingen vandret rulning.
 Der er ingen ændringer af de eksisterende simulationsfiler eller deres
 beregninger. De nye tilvalg er her kun testet i Chromium; fysisk telefon,
 Firefox, Safari/WebKit og skærmlæser er fortsat ikke efterprøvet for ændringen.
+
+### Grænsehastigheder — efterfølgende rettelse 14. oktober 2026
+
+Tilvalg og tabeller består på 1280×577, 1366×625, 1536×730, 390×750 og
+640×625 i Chromium. Regressionen dækker alle fem visninger, touch, de tre
+grundkortfejl, pladegrænsefejl og navnefejl uden JavaScriptfejl. Desuden består
+grænsehastighedernes syv fejl-/gentagelsesforløb og skærmstørrelsesskift.
+Alle faktisk tegnede tal og ankre er kontrolleret mod de lokale kildepunkter;
+de står ikke ved pladernes navnepunkter.
+
+Alle 1.937 udtagne punkter og begge hastighedskomponenter matcher originalen
+uændret. De 5.819 Eulerbaserede komponentkontroller består, og dataeksporten er
+byte-identisk ved gentagelse. Skærmbilleder er gennemgået på alle fem
+visninger og ved Island, Andes, San Andreas og Japan. Figurflader og
+primære kontroller er uændrede; ingen vandret rulning eller ændringer af
+simulationer. De nye rettelser er ikke afprøvet på fysisk telefon,
+Safari/Firefox eller med skærmlæser.
+
+En lokal headless-måling ved 1366×625 og dobbelt pixeltæthed gav ca. 81 ms
+uden lag og 88 ms med grænser, navne og hastigheder pr. drejning inklusive to
+tegningsrammer (40 drejninger). Det er en relativ måling på denne maskine,
+ikke en måling på elevhardware.
 
 ## Mulig fase 2
 

@@ -26,19 +26,22 @@ Bearbejdning i plader.mjs:
 - Navne-/pilepunkter beregnes inde i de originale sfæriske pladepolygoner.
   De er kartografiske ankre, ikke målestationer. Koordinater og arealer
   afrundes til 5 decimaler. Polygonerne hentes ikke af elevens browser.
-- Et anker uden for orogenerne foretrækkes, hvis det findes. For NH, BR og
-  CR ligger ankeret i en diffus zone, og der vises ingen hastighed. SL
-  undertrykkes også, da Shetlandrotationen er hypotetisk i kilden.
-  Orogenernes kilde og bearbejdning står i pladegraenser.LICENSE.
+- Et anker uden for orogenerne foretrækkes. Datasættets usikkerhedsflag
+  markerer NH, BR og CR, hvis ankeret ligger i en diffus zone, samt den
+  hypotetiske Shetlandrotation (SL). Orogenernes kilde og bearbejdning står
+  i pladegraenser.LICENSE. Flaget gælder ankeret, ikke hele pladen.
 
-Beregning i pladebevaegelse.js:
+Aktuel anvendelse:
+På elevkortet bruges disse punkter kun til pladenavne. Grænsehastigheder
+hentes fra de publicerede lokale trin i graensehastigheder.json; se denne
+fils LICENSE. Der vises ikke længere hastigheder ved navnepunkterne eller
+en vælger til en fast referenceplade.
+
+Eulerberegningen i pladebevaegelse.js er bevaret til uafhængig kildekontrol:
 Originalens poler er relative til Stillehavspladen (PA). Referenceskift
 foretages ved at trække de kartesiske rotationsvektorer fra hinanden før
 v = (omega_plade - omega_reference) kryds r. Jordradius er 6371 km.
-Hastigheden er lokal ved pilepunktet og vises i cm/år. Pilens længde er
-konstant i skærmpixel og er ingen hastighedsskala. Den valgte referenceplade
-vises som en prik med 0 cm/år. Pile er ikke GPS-målinger eller bevægelse i
-forhold til hotspots; den ældre models småplader kan være særligt usikre.
+Dette er en ældre plademodel, ikke aktuelle GPS- eller hotspotmålinger.
 
 Efterkontrol: analytiske løsninger, alle 52 originalpoler og ankerpunkters
 placering inden i kildepolygonerne. Alle 5.819 relative hastigheder ved

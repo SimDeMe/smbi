@@ -25,8 +25,9 @@ export async function startGlobus(steder, vaelgSted) {
   let ramme = 0;
   let pladelag = false;
   let plademodul;
-  let bevaegelsesmodul;
-  let pladevisning = { navne: false, bevaegelse: false, reference: 'EU' };
+  let navnemodul;
+  let graensemodul;
+  let pladevisning = { navne: false, bevaegelse: false };
   const markoerlag = document.querySelector('#markoerer');
   const markoerer = steder.map(sted => {
     const knap = document.createElement('button');
@@ -70,14 +71,16 @@ export async function startGlobus(steder, vaelgSted) {
     const skygge = ctx.createRadialGradient(bredde / 2 - radius * .25, hoejde / 2 - radius * .25, radius * .35, bredde / 2, hoejde / 2, radius);
     skygge.addColorStop(0, '#ffffff00'); skygge.addColorStop(.8, '#17211f00'); skygge.addColorStop(1, '#17211f25');
     ctx.fillStyle = skygge; ctx.fillRect(0, 0, bredde, hoejde);
-    if (pladelag && bevaegelsesmodul && (pladevisning.navne || pladevisning.bevaegelse)) {
+    if (pladelag && (pladevisning.navne || pladevisning.bevaegelse)) {
       const c = canvas.getBoundingClientRect();
       const undgaa = [...document.querySelectorAll('.markoer:not([hidden]) .prik, .markoer:not([hidden]) .etiket:not([hidden]), #signatur, #pladevalg:popover-open, .betjeningslinje button')]
         .filter(el => el.getClientRects().length).map(el => {
           const r = el.getBoundingClientRect();
           return { x: r.left - c.left - 4, y: r.top - c.top - 4, w: r.width + 8, h: r.height + 8 };
         });
-      bevaegelsesmodul.tegnPlader(ctx, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .25, pladevisning, undgaa);
+      const synlig = punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .25;
+      if (pladevisning.bevaegelse) undgaa.push(...graensemodul.tegnGraensehastigheder(ctx, projektion, synlig, undgaa));
+      if (pladevisning.navne) navnemodul.tegnPlader(ctx, projektion, synlig, pladevisning, undgaa);
     }
     ctx.restore();
     ctx.beginPath(); sti({ type: 'Sphere' }); ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2; ctx.stroke();
@@ -203,9 +206,13 @@ export async function startGlobus(steder, vaelgSted) {
     },
     async visPladeoplysninger(valg) {
       const ny = { ...pladevisning, ...valg };
-      if (ny.navne || ny.bevaegelse) {
-        bevaegelsesmodul = await import('./pladebevaegelse.js');
-        await bevaegelsesmodul.hentPlader();
+      if (ny.navne) {
+        navnemodul = await import('./pladebevaegelse.js');
+        await navnemodul.hentPlader();
+      }
+      if (ny.bevaegelse) {
+        graensemodul = await import('./graensehastigheder.js');
+        await graensemodul.hentGraensehastigheder();
       }
       pladevisning = ny;
       opdater();
