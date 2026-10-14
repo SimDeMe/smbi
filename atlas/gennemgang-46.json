@@ -1,0 +1,373 @@
+{
+  "issue": 46,
+  "dato": "2026-10-14",
+  "repository": "SimDeMe/smbi",
+  "grundlag_commit": "59bdf7ca9c573b4eebeb17ae69c7657bb92c6ae3",
+  "afgraensning": "Repository- og officiel kildegennemgang; lokale originaler og fysisk klasse-/forsøgsafprøvning er ikke udført.",
+  "kilder": [
+    {
+      "titel": "Naturgeografi C – stx, august 2024, bilag 120A",
+      "url": "https://uvm.dk/media/xvjog3ij/240613-naturgeografi-c-stx-august-2024.pdf",
+      "sha256": "e0293c1aec9b070f6aa51fbda9450c82a32eb2fb8a3af2309e34679418fcd8f8",
+      "bytes": 438030
+    },
+    {
+      "titel": "Vejledning til naturgeografi B/C, stx, Juni 2024 (forside)",
+      "url": "https://uvm.dk/media/zlsj2rzb/240923vejledning-til-naturgeografi-b-c-stx.pdf",
+      "sha256": "dabfa4ab961057dae2a42d05fd4669f19e568a820abf3ca6ae9b63dc486dbb35",
+      "bytes": 970454
+    }
+  ],
+  "browser": {
+    "version": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+    "vaerktoej": "Playwright, Chromium headless med SwiftShader",
+    "vindue": {
+      "bredde": 1366,
+      "hoejde": 625
+    },
+    "reduced_motion": "reduce ved hovedgennemgangen",
+    "netmetode": "Eksterne Google Fonts/Three.js blev hentet uændret via urllib med systemets CA-kontrol og leveret til Chromium. Ingen TLS-kontrol blev slået fra.",
+    "eksterne_modelmoduler": [
+      {
+        "url": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "status": 200,
+        "sha256": "0a3368c165eea773490aec7b77c22de70e3eac288503409256fdbf4d12578416"
+      }
+    ],
+    "begraensning": "Funktionsgennemgang og udvalgte aflæsninger; ikke fuld modelvalidering, layoutgodkendelse, touchtest eller tværbrowsertest."
+  },
+  "inventar": {
+    "elevressourcer": 16,
+    "simulationer_og_procesfigurer": 15,
+    "stenkataloger": 1,
+    "html_under_geografi_inkl_forfattervaerktoej": 17,
+    "oevelseskilder": [
+      "Øvelser/Geografi/albedo-og-overfladetemperatur/albedo-og-overfladetemperatur.qmd",
+      "Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.qmd",
+      "Øvelser/Geografi/digital-kystopmaaling-rojle/digital-kystopmaaling-rojle.qmd",
+      "Øvelser/Geografi/drivhuseffekt-i-miniature/drivhuseffekt-i-miniature.qmd",
+      "Øvelser/Geografi/groenlandspumpen-model/groenlandspumpen-model.qmd",
+      "Øvelser/Geografi/groenlandspumpen-nv/groenlandspumpen-nv.qmd",
+      "Øvelser/Geografi/havniveau-og-isafsmeltning/havniveau-og-isafsmeltning.qmd",
+      "Øvelser/Geografi/konvektionskammer/konvektionskammer.qmd",
+      "Øvelser/Geografi/konvektionskammer-med-opgaver/konvektionskammer-med-opgaver.qmd",
+      "Øvelser/Geografi/lavas-viskositet/lavas-viskositet.qmd",
+      "Øvelser/Geografi/oliens-migration/oliens-migration.qmd",
+      "Øvelser/Geografi/opmaaling-af-terraenprofil/opmaaling-af-terraenprofil.qmd",
+      "Øvelser/Geografi/poroesitet-og-permeabilitet-hf/poroesitet-og-permeabilitet-hf.qmd",
+      "Øvelser/Geografi/poroesitet-og-permeabilitet-med-opgaver/poroesitet-og-permeabilitet-med-opgaver.qmd",
+      "Øvelser/Geografi/reserve-og-ressource/reserve-og-ressource.qmd",
+      "Øvelser/Geografi/tsunamiboelgers-hastighed/tsunamiboelgers-hastighed.qmd",
+      "Øvelser/Geografi/vands-temperatur-salinitet-og-densitet/vands-temperatur-salinitet-og-densitet.qmd"
+    ],
+    "alle_17_har_html_pdf_docx": true,
+    "geoopgaver_html_inkl_svar": 6,
+    "progressionsplaner": [
+      "Progressioner/1_simulerings-instruktioner.md",
+      "Progressioner/2_udvidet-progression-naturgeografi-c.md",
+      "Progressioner/3_samlet-progression-just-in-time.md"
+    ]
+  },
+  "funktionsgennemgang": [
+    {
+      "sti": "geografi/Aarstider.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "København: sommer → vinter",
+        "Nordpolen om sommeren"
+      ],
+      "udvalgt_aflaesning": {
+        "daglaengde_sommer": "17:33t:min",
+        "daglaengde_vinter": "07:01t:min"
+      }
+    },
+    {
+      "sti": "geografi/Dugpunkt.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Afkøl 20 → 0 °C",
+        "Nulstil"
+      ],
+      "udvalgt_aflaesning": {
+        "foer_RH": "60%",
+        "efter_RH": "100%",
+        "kondens": "5,0g"
+      }
+    },
+    {
+      "sti": "geografi/Stigningsregn.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Flyt luftpakke over bjerget med End",
+        "Home tilbage til luvside",
+        "Suppleret med trinvis Shift+ArrowRight over toppen: kondens/regn og varmere/tørrere læside aflæst."
+      ],
+      "udvalgt_aflaesning": [
+        {
+          "alt": "1000m.o.h.",
+          "temp": "10,7°C",
+          "rh": "100%",
+          "rain": "0mm"
+        },
+        {
+          "alt": "2000m.o.h.",
+          "temp": "5,7°C",
+          "rh": "100%",
+          "rain": "1mm"
+        },
+        {
+          "alt": "441m.o.h.",
+          "temp": "21,3°C",
+          "rh": "39%",
+          "rain": "1mm"
+        },
+        {
+          "alt": "200m.o.h.",
+          "temp": "23,7°C",
+          "rh": "34%",
+          "rain": "1mm"
+        }
+      ]
+    },
+    {
+      "sti": "geografi/TermiskTryk3.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Dag → nat",
+        "Mulige cases",
+        "Sidste case, forklaringstrin 6"
+      ],
+      "udvalgt_aflaesning": [
+        "Land/hav-brise · Lillebælt",
+        "Sibirisk vinterhøjtryk",
+        "Sommermonsun · Indien",
+        "Vintermonsun · Indien"
+      ]
+    },
+    {
+      "sti": "geografi/Tidevand.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Sammenlign tidevandsspænd og skift månefase/tid"
+      ],
+      "udvalgt_aflaesning": {
+        "Fundy": "16,2m",
+        "København": "0,15m",
+        "fase": "Springflod",
+        "niveau": "−0,05m"
+      }
+    },
+    {
+      "sti": "geografi/boelger.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Sommerbrise → storm",
+        "Lad strandtiden gå og nulstil stranden"
+      ],
+      "udvalgt_aflaesning": {
+        "startmodel": "1,2 m; 11,0 s; bølgelængde 189 m (første indlæsning)",
+        "afproevet": "Sommerbrise/storm skifter modeltype og sandbalance; strandtiden kan køres og nulstilles."
+      }
+    },
+    {
+      "sti": "geografi/drivhuseffekten.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Undersøg: 280 → 560 ppm CO₂",
+        "Åbn quiz"
+      ],
+      "udvalgt_aflaesning": {
+        "foer": "+14,9 °C",
+        "efter": "+17,9 °C"
+      }
+    },
+    {
+      "sti": "geografi/drivhuseffektenSimpel.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Gå til sidste forklaringstrin",
+        "Åbn modelbeskrivelse"
+      ],
+      "udvalgt_aflaesning": {
+        "sidste_trin": "TRIN 5 AF 5",
+        "modeltype": "Uden tal og uden model bagved (sidens egen introduktion)."
+      }
+    },
+    {
+      "sti": "geografi/groenlandspumpen.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Scenarie: Isen smelter",
+        "Fri leg: mest ferskvand, mindst kulde",
+        "Forfra"
+      ],
+      "udvalgt_aflaesning": {
+        "afproevet": "smelt → fri, ferskvand 1/kulde 0 → forfra",
+        "modeltype": "Tidsafhængig kvalitativ cirkulation; ingen empirisk prognose valideret."
+      }
+    },
+    {
+      "sti": "geografi/kompas.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Kurs 90° og drej dig 90°",
+        "Åbn opgaver",
+        "Tjek første opgave",
+        "Suppleret med korrekt kurs 60° og positiv opgavefeedback."
+      ],
+      "udvalgt_aflaesning": "RIGTIGTRigtigt — gradskiven viser 60°. Men du går ikke i den retning endnu: kursepilen peger stadig mod nord. Det retter du i næste opgave."
+    },
+    {
+      "sti": "geografi/magnetiskNord.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Polhistorik 1831 → 2025",
+        "Vend feltet"
+      ],
+      "udvalgt_aflaesning": {
+        "1831": "70,1° N, 96,8° V",
+        "2025": "85,8° N, 139,3° Ø",
+        "vend_feltet": "År 2025 med vendt felt — nålen peger mod syd"
+      }
+    },
+    {
+      "sti": "geografi/pladegraenser.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Afprøv grænse: ryg",
+        "Afprøv grænse: ocean-kontinent",
+        "Afprøv grænse: ocean-ocean",
+        "Afprøv grænse: kollision",
+        "Afprøv grænse: transform",
+        "Nulstil"
+      ],
+      "udvalgt_aflaesning": {
+        "cases": [
+          "ryg",
+          "ocean-kontinent",
+          "ocean-ocean",
+          "kollision",
+          "transform"
+        ],
+        "afproevet": "Tid ændret i alle fem, derefter nulstil. Skælvsvisningen er modelhændelser."
+      }
+    },
+    {
+      "sti": "geografi/poroesitetPermeabilitet.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Ler → grus",
+        "Hæld 100 ml på grus"
+      ],
+      "udvalgt_aflaesning": {
+        "ler": "8,7 mmpr. år",
+        "grus": "22 kmpr. døgn"
+      }
+    },
+    {
+      "sti": "geografi/raastoffer.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Teknologiforbedring 0 → 30 %",
+        "Udnyt/efterforsk i ét år",
+        "Åbn opgaver",
+        "Nulstil"
+      ],
+      "udvalgt_aflaesning": {
+        "startmodel": "Reserve 1.000 mio. t; udvinding 22,4 mio. t/år; R/P 45 år",
+        "teknologi": "0 → 30 % ændrer reserve; +1 år, opgaver og nulstil afprøvet."
+      }
+    },
+    {
+      "sti": "geografi/stensamling.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Søg Basalt",
+        "Åbn bjergartsbeskrivelse",
+        "Åbn bestemmelsesnøgle",
+        "Anvend første kriterium"
+      ],
+      "udvalgt_aflaesning": {
+        "antal_poster": 49,
+        "soegning_Basalt": "Magmatiske bjergarter\nMA · 1\nMA-09\nBasalt\nDAGBJERGART · BASISK",
+        "bestemmelse": "Første kornkriterium filtrerer listen."
+      }
+    },
+    {
+      "sti": "geografi/vulkanudbrud.html",
+      "http": 200,
+      "javascriptfejl": [],
+      "konsolfejl_ved_indlaesning": [],
+      "status": "gennemført",
+      "handlinger": [
+        "Sidste trin: strato",
+        "Sidste trin: skjold",
+        "Sidste trin: hotspot",
+        "Fri udforskning: 5 km/5 % vand"
+      ],
+      "udvalgt_aflaesning": {
+        "strato": "TRIN 8 AF 8",
+        "skjold": "TRIN 7 AF 7",
+        "hotspot": "TRIN 7 AF 7",
+        "fri": "5 km og 5 % vand er valgt."
+      }
+    }
+  ],
+  "uafhaengige_regnestikproever": [
+    {
+      "sammenhaeng": "Kobber, primær udvinding",
+      "beregning": "32 × (1 − 0,30) = 22,4 mio. t/år; R/P = 1000/22,4 ≈ 45 år",
+      "begraensning": "Kontrol af sammenhæng mellem starttal, ikke validering af ressource- eller markedsprognose."
+    },
+    {
+      "sammenhaeng": "Dybvandsbølge, T = 11 s",
+      "beregning": "9,81 × 11²/(2π) ≈ 189 m",
+      "begraensning": "Kontrol af bølgelængde, ikke sandtransport eller virkelig kystudvikling."
+    }
+  ]
+}
