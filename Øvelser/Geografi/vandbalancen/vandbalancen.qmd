@@ -1,0 +1,132 @@
+---
+title: "Vandbalancen"
+subtitle: "Hvor bliver nedbøren af i løbet af et år i Danmark?"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Der falder nedbør i Danmark hele året, men det er ikke hele året, at der dannes nyt grundvand. I denne regneøvelse stiller I en *vandbalance* op måned for måned ud fra DMI's målinger af nedbør og fordampning. I finder ud af, hvornår jorden tørrer ud, hvornår den bliver fyldt op igen, og hvor meget vand der er tilbage til grundvand og vandløb. Til sidst sammenligner I et gennemsnitsår med tørkesommeren 2018.
+
+## Baggrund
+
+Den nedbør $N$, der falder på et område, kan gå tre veje:
+
+- Den kan **fordampe** igen fra jordoverfladen og gennem planterne. Den samlede fordampning kaldes *evapotranspiration*, $E$.
+- Den kan blive **i jorden** som jordvand i planternes rodzone. Ændringen i rodzonens vandindhold kaldes $\Delta M$.
+- Resten er **overskud** — også kaldet *nettonedbør* — $O$. I Danmark siver det meste af overskuddet ned til grundvandet eller løber gennem dræn til vandløbene. Kun lidt løber af på overfladen.
+
+Over et år går regnskabet op:
+
+$$N = E + O + \Delta M$$
+
+Om vinteren fordamper der meget lidt, og jorden er fyldt med så meget vand, som den kan holde (*markkapacitet*). Al nedbør ud over fordampningen bliver derfor til overskud. Om sommeren er fordampningen større end nedbøren. Så tærer planterne på vandet i rodzonen, og der opstår et **jordvandsunderskud** $U$. Først når underskuddet er fyldt op igen om efteråret, begynder der igen at komme overskud.
+
+Fordampningstallene fra DMI er *potentiel fordampning*: så meget vand, der ville fordampe, hvis planterne altid havde rigeligt vand. Det vender vi tilbage til i databehandlingen.
+
+## Sådan regner I
+
+Start i januar med et underskud på $U = 0$ (jorden er fyldt op efter vinteren). Gå derefter frem måned for måned:
+
+1. Beregn $N - E$.
+2. **Er $N - E$ negativ**, er der ikke noget overskud ($O = 0$), og underskuddet vokser: læg $N - E$ til $U$.
+3. **Er $N - E$ positiv**, bruges vandet først til at fylde underskuddet op. Kun det, der er tilbage, når $U$ er nået op på 0, bliver til overskud $O$.
+
+**Eksempel:** I september er $N - E = 80 - 55 = 25$ mm, og underskuddet fra august er $-165$ mm. Hele de 25 mm går til at fylde jorden op, så $U = -165 + 25 = -140$ mm, og overskuddet er $O = 0$.
+
+::: {.callout-tip}
+## Tip
+
+Lav skemaet i Excel eller Google Sheets. Så kan I bagefter genbruge det til tørkeåret 2018 og lave graferne direkte ud fra det.
+:::
+
+## Registrering
+
+| Måned | $N$ (mm) | $E$ (mm) | $N - E$ (mm) | Overskud $O$ (mm) | Underskud $U$ (mm) |
+|:---|:-:|:-:|:-:|:-:|:-:|
+| Januar | 72 | 7 | 65 | 65 | 0 |
+| Februar | 54 | 14 | 40 | 40 | 0 |
+| Marts | 41 | 36 | | | |
+| April | 41 | 68 | | | |
+| Maj | 49 | 100 | | | |
+| Juni | 63 | 112 | | | |
+| Juli | 79 | 109 | | | |
+| August | 81 | 89 | | | |
+| September | 80 | 55 | | | |
+| Oktober | 89 | 25 | | | |
+| November | 65 | 9 | | | |
+| December | 78 | 4 | | | |
+| **Året** | | | | | |
+
+: Vandbalancen for Danmark i et gennemsnitsår. Gennemsnit af DMI's landsværdier 2011–2025 for nedbør og potentiel fordampning (Makkink), afrundet til hele mm. {#tbl-1}
+
+| Måned | $N$ (mm) | $E$ (mm) | $N - E$ (mm) | Overskud $O$ (mm) | Underskud $U$ (mm) |
+|:---|:-:|:-:|:-:|:-:|:-:|
+| Januar | 82 | 6 | | | |
+| Februar | 25 | 14 | | | |
+| Marts | 40 | 26 | | | |
+| April | 54 | 65 | | | |
+| Maj | 18 | 131 | | | |
+| Juni | 24 | 127 | | | |
+| Juli | 17 | 142 | | | |
+| August | 101 | 84 | | | |
+| September | 82 | 53 | | | |
+| Oktober | 47 | 31 | | | |
+| November | 34 | 9 | | | |
+| December | 72 | 4 | | | |
+| **Året** | | | | | |
+
+: Vandbalancen for Danmark i tørkeåret 2018. DMI's landsværdier for nedbør og potentiel fordampning (Makkink), afrundet til hele mm. {#tbl-2}
+
+## Databehandling
+
+1. Udfyld @tbl-1 måned for måned efter reglerne ovenfor. Summér $N$, $E$ og $O$ for hele året i den nederste række, og kontrollér, at regnskabet går op over året (det skal det, når underskuddet er 0 både i starten og i slutningen af året; afrundingen kan give 1–2 mm forskel):
+
+$$N_\text{år} - E_\text{år} = O_\text{år}$$
+
+2. Lav et diagram over året med månederne på x-aksen: nedbør $N$ og fordampning $E$ som to søjler eller kurver, og underskuddet $U$ som en kurve under nul. Markér de måneder, hvor der dannes overskud.
+3. Beregn, hvor stor en del af årets nedbør der bliver til overskud:
+
+$$\text{andel overskud} = \frac{O_\text{år}}{N_\text{år}} \cdot 100\ \%$$
+
+4. **Rodzonens kapacitet.** Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den *faktiske* fordampning bliver mindre end den potentielle. Find i @tbl-1, i hvilken måned underskuddet ville komme under $-100$ mm. Hvad betyder det for planterne på en sandjord?
+5. Udfyld @tbl-2 for 2018 på samme måde, og sammenlign med gennemsnitsåret: hvor stort blev det største underskud, og i hvilken måned begyndte der igen at komme overskud? Går regnskabet $N_\text{år} - E_\text{år} = O_\text{år}$ op for 2018? Forklar hvorfor eller hvorfor ikke.
+
+| | Gennemsnit 2011–2025 | 2018 |
+|:---|:-:|:-:|
+| Nedbør $N_\text{år}$ (mm) | | |
+| Potentiel fordampning $E_\text{år}$ (mm) | | |
+| Overskud $O_\text{år}$ (mm) | | |
+| Andel overskud (%) | | |
+| Største underskud $U$ (mm) og måned | | |
+| Første måned med overskud efter sommeren | | |
+
+: Sammenligning af gennemsnitsåret og 2018. {#tbl-3}
+
+## Journalspørgsmål
+
+1. Forklar med jeres egne ord, hvorfor der næsten kun dannes nyt grundvand om vinteren, selv om det regner mest i sensommeren og efteråret.
+2. Hvad er forskellen på potentiel og faktisk fordampning? Hvorfor bliver vandbalancen for sommeren for «tør», når man regner med den potentielle fordampning?
+3. Hvordan ville vandbalancen se anderledes ud på en sandjord i Vestjylland end på en lerjord på Sjælland? Tænk både på nedbøren og på rodzonens kapacitet.
+4. Hvad betød sommeren 2018 for landbruget, for vandløbene og for grundvandet? Brug jeres resultater fra @tbl-3.
+5. Landmænd vander især på sandjorde i Vest- og Midtjylland. Hvor kommer vandet fra, og hvorfor kan for meget vanding være et problem for vandløb og vådområder?
+6. DMI's normal for årsnedbøren i Danmark var 712 mm for 1961–1990 og 759 mm for 1991–2020, og gennemsnittet for 2011–2025 er endnu højere. Hvad kan det betyde for grundvandsdannelsen og for risikoen for oversvømmelser — og hvorfor kan tørkesomre alligevel blive et større problem i fremtiden?
+7. Vurdér metoden: hvad betyder det, at vi regner med landsgennemsnit og hele måneder, og at overskuddet både kan blive til grundvand og løbe til vandløbene gennem dræn?
+
+## Om denne udgave
+
+Tallene er DMI's landsværdier for Danmark fra DMI's frie klimadata ([dmi.dk/frie-data](https://www.dmi.dk/frie-data)): månedlig nedbør (`acc_precip`) og potentiel fordampning efter Makkinks formel (`pot_evaporation_makkink`), hentet 14. oktober 2026. Gennemsnitsåret er beregnet som gennemsnittet af de 15 hele år 2011–2025 — den længste periode, DMI har landsværdier for fordampningen. Det er altså ikke en officiel 30-årig klimanormal. Til sammenligning er DMI's (foreløbige) normal for nedbøren 1991–2020 759,1 mm om året ([DMI Rapport 24-01, *Danmarks klima 2023*](https://www.dmi.dk/fileadmin/Rapporter/2024/DMIRap24-01.pdf)), mens gennemsnittet for 2011–2025 er ca. 792 mm.
+
+Øvelsen er inspireret af en ældre regneøvelse om vandbalancen, men tekst, tal og opbygning er nye. Ændret i forhold til den:
+
+- Nedbøren er skiftet fra 2001–2010 til 2011–2025, og fordampningen er nu DMI's beregnede værdier i stedet for skøn ud fra gamle klimagrafer.
+- Kolonnen «ændring i grundvandsmagasinet» er erstattet af et *jordvandsunderskud* i rodzonen. Det var vandet i rodzonen, kolonnen i virkeligheden regnede på.
+- Overskuddet hed før «afstrømning på overfladen». I Danmark bliver det meste af det til grundvand eller drænvand, så det hedder nu overskud eller nettonedbør.
+- Nyt: rodzonens kapacitet, potentiel mod faktisk fordampning og en sammenligning med tørkeåret 2018.
