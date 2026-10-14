@@ -502,6 +502,15 @@ body[data-projektor="1"] .side-body{font-size:1.02rem}
   </div>
 </footer>
 
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
 <script type="module" src="membran2d/side.js"></script>
 
 

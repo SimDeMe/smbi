@@ -508,6 +508,15 @@ body[data-projektor="1"] .side-body{font-size:1.06rem}
   </div>
 </footer>
 
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"}}
 </script>

@@ -57,7 +57,7 @@ function bygSkydere(){
   for (const s of skydere){
     const lbl = document.createElement('label');
     lbl.className = 'knob'; lbl.htmlFor = 'inp-' + s.id;
-    lbl.innerHTML = `<span class="knob-top"><span class="mono">${s.navn}</span><span class="knob-val" id="lbl-${s.id}"><span></span> <span class="enhed">${s.enhed}</span></span></span>
+    lbl.innerHTML = `<span class="knob-top"><span class="mono">${s.navn.replace(/\bkm\b/, '<span class="enhed">km</span>')}</span><span class="knob-val" id="lbl-${s.id}"><span></span> <span class="enhed">${s.enhed}</span></span></span>
 <input type="range" id="inp-${s.id}" min="${s.min}" max="${s.maks}" step="${s.skridt}" value="${s.start}">`;
     const inp = lbl.querySelector('input');
     inp.style.setProperty('--track', s.track); inp.style.setProperty('--kc', s.kc);

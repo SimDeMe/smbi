@@ -22,7 +22,7 @@ const lærred = byggLaerred(el('scene'));
 
 /* Enheder og græske bogstaver må ikke komme med i mono-mærkaternes
    versaler: α-amylase må ikke blive til «Α-AMYLASE». */
-const beskyt = t => t.replace(/([αβ]|\b(?:mL|g\/L|mg\/L|L\/kg|kW|°C|°P|IBU|EBC|OG|FG|mio\.\/mL)\b|[A-Z][a-z]?[₀-₉]+[A-Za-z₀-₉]*)/g,
+const beskyt = t => t.replace(/([αβ]|\b(?:mL|g\/L|mg\/L|L\/kg|kg|kW|°C|°P|IBU|EBC|OG|FG|mio\.\/mL)\b|[A-Z][a-z]?[₀-₉]+[A-Za-z₀-₉]*)/g,
                               '<span class="enhed">$1</span>');
 
 /* ── Tilstand ──────────────────────────────────────────── */

@@ -638,6 +638,15 @@ body[data-projektor="1"] .instruks-kort .ind{font-size:1.04rem}
   </div>
 </footer>
 
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+
 <script type="module" src="gaerbobler/side.js"></script>
 
 
