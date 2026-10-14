@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
+from information import afproev_stedinformation, afproev_kortinformation
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
 UD = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-atlas-test'))
@@ -45,7 +46,9 @@ with sync_playwright() as p:
             expect(side.locator('#udforsker')).to_be_visible()
             expect(side.locator('#dialogtitel')).to_have_text(navn)
             assert side.locator('.modelkort a').count() >= 1
+            afproev_stedinformation(side, sted, navn, UD)
             side.keyboard.press('Escape')
+        afproev_kortinformation(side)
         side.get_by_role('button', name='Processer', exact=True).first.click()
         side.get_by_role('button', name='Global atmosfære', exact=True).click()
         assert side.locator('.modelkort').count() == 2

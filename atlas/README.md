@@ -11,6 +11,8 @@ login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 - `modeller.js`: redigerbart register over steder og simulationer.
 - `atlas.js`: stedliste, procesfiltre, søgning og detailkort i en native dialog.
   Navigationen starter før globussen, så den også virker ved kortfejl.
+- `information.js`: fælles, ikke-modal visning af supplerende forbehold og
+  datakilder; samme betjening i stedkort og kortets oplysninger i Hjælp.
 - `globus.js`: D3's ortografiske projektion tegnet med Canvas 2D. Den håndterer
   horisontklipning, landegrænser, bredde-/længdegrader og projektion af markører.
   Canvas bruger højst dobbelt pixeltæthed; kun ændringer udløser tegning.
@@ -40,7 +42,9 @@ Tilføj et objekt til `modeller` i `modeller.js`:
 ```
 
 Steder angives separat med `id`, `navn`, valgfrit `kortnavn`, `koordinater`,
-`forklaring` og `forbehold`. Koordinater er **[længdegrad, breddegrad]** i grader,
+`forklaring`, `modelnote` og `forbehold`. `modelnote` er en kort, altid synlig
+modelbegrænsning; `forbehold` bevarer den fulde supplerende tekst.
+Koordinater er **[længdegrad, breddegrad]** i grader,
 med vestlige/sydlige værdier negative. Lister, procesfiltre og markører dannes
 automatisk; globuskoden skal ikke ændres. Søgning bruger alle ord og normaliserer
 store/små bogstaver, diakritiske tegn samt æ/ae, ø/oe og å/aa.
@@ -51,6 +55,27 @@ til stigningsregn. Nordatlanten-markøren angiver en region syd for Grønland og
 ikke et målt nedsynkningspunkt. Der vises ingen opdigtede plade-, terræn- eller
 klimadata. Drivhuseffekten ligger under **Processer → Global atmosfære** og i
 søgningen, uden en vilkårlig markør.
+
+## Supplerende faglig information
+
+Brug `lavInformation({navn, introduktion, note, tekst, overskrift})` fra
+`information.js`, når forbehold, kilder eller usikkerheder skal kunne åbnes
+efter behov. Funktionen returnerer et DOM-element med en rigtig ⓘ-knap ved
+beskrivelsen og et navngivet informationsområde. Standardoverskriften er
+**Om modellen**; kortgrundlaget bruger **Om kortet**. Tekst indsættes med
+`textContent`, og id'er til `aria-controls`/`aria-labelledby` dannes automatisk.
+
+Klik, tap, Enter og Space åbner/lukker. Overskriften får fokus ved åbning;
+Escape og områdets luk-knap lukker kun informationen og returnerer fokus til
+ⓘ-knappen. Klik udenfor lukker også. Panelet følger indholdets flow, så det
+ikke dækker andre kontroller eller kræver en ekstra modal. Det rulles til syne
+uden animation. Ved skift af indhold og lukning af værtsdialogen kaldes
+`lukInformation()`, så en gammel visning ikke overtager fokus eller Escape.
+
+Gem kun **supplerende** tekst bag ikonet. Oplysninger, der er nødvendige for
+at fortolke den aktive model, skal blive i `introduktion` eller den synlige
+`note`; de globale modellers korte mærkning som idealiserede modeller bliver
+også stående. Eksisterende forbehold må ikke slettes fra dataregistret.
 
 ## Afhængigheder og kilder
 
@@ -121,6 +146,13 @@ Den kontrollerer også allerede håndterede events, modifiers og tekstkompositio
 Testen sammenligner canvas' faktiske pixels, så fokusrammer ikke kan give et
 falsk positivt resultat.
 
+`test/information.py` indgår også og afprøver #50 på alle fem visninger:
+samtlige stedtekster, synlige modelbegrænsninger, tap/klik/Enter/Space,
+Escape uden at lukke værtsdialogen, luk-knap, klik udenfor, fokusretur,
+ARIA-referencer, datakilder i Hjælp og oprydning ved indholdsskift. Den måler,
+at det åbne informationsområde kan læses uden vandret rulning eller overlap
+med dialogens navigation. Skærmbilleder gemmes sammen med de øvrige atlasprøver.
+
 ## Teststatus — 14. oktober 2026
 
 Bestået i headless Chromium på 1280×577, 1366×625, 1536×730, mobil 390×750
@@ -131,6 +163,10 @@ med WebGL deaktiveret. Skærmbilleder er visuelt gennemgået.
 Regressionen for #51 blev først reproduceret med den gamle canvas-lytter.
 Efter rettelsen består global piletastnavigation og undtagelserne på alle fem
 visninger sammen med de eksisterende atlasprøver.
+
+Informationsvisningen i #50 består tilsvarende på alle fem visninger. De fulde
+forbehold og datakildetekster er bevaret; globuskode, koordinater og model-links
+er uændrede. De korte nødvendige modelbegrænsninger forbliver synlige.
 
 På de tre laptopstørrelser er både globus og primære kontroller synlige uden
 scroll; figurfladerne er henholdsvis 1228×363, 1314×411 og 1484×516 px.

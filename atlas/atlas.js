@@ -1,4 +1,5 @@
 import { steder, modeller } from './modeller.js';
+import { lavInformation, lukInformation } from './information.js';
 
 const dialog = document.querySelector('#udforsker');
 const indhold = document.querySelector('#dialogindhold');
@@ -14,6 +15,7 @@ function element(type, tekst, klasse) {
 }
 
 function aabn(overskrift) {
+  lukInformation();
   titel.textContent = overskrift;
   indhold.replaceChildren();
   if (!dialog.open) {
@@ -45,7 +47,10 @@ function visSted(sted) {
   aabn(sted.navn);
   const tilbage = element('button', '← Alle steder', 'tilbage');
   tilbage.onclick = visSteder;
-  indhold.append(tilbage, element('p', sted.forklaring), element('p', sted.forbehold, 'forbehold'));
+  indhold.append(tilbage, lavInformation({
+    navn: sted.navn, introduktion: sted.forklaring,
+    note: sted.modelnote, tekst: sted.forbehold
+  }));
   if (globus) {
     const find = element('button', 'Vis på globussen', 'tilbage');
     find.onclick = () => {
@@ -132,7 +137,10 @@ for (const knap of document.querySelectorAll('[data-indgang]')) {
   knap.onclick = { steder: visSteder, processer: visProcesser, soeg: visSoeg }[knap.dataset.indgang];
 }
 document.querySelector('#luk').onclick = () => dialog.close();
-dialog.addEventListener('close', () => senesteFokus?.focus({ preventScroll: true }));
+dialog.addEventListener('close', () => {
+  lukInformation();
+  senesteFokus?.focus({ preventScroll: true });
+});
 document.querySelector('#fokus').onclick = event => {
   const aktiv = document.body.classList.toggle('fokus');
   event.currentTarget.setAttribute('aria-pressed', String(aktiv));
@@ -146,7 +154,11 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
-  indhold.append(element('p', 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr-, klima- eller pladedata.', 'forbehold'));
+  indhold.append(lavInformation({
+    navn: 'Globussen', overskrift: 'Om kortet',
+    introduktion: 'Oversigtskort – ikke aktuelle vejr-, klima- eller pladedata.',
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr-, klima- eller pladedata.'
+  }));
 };
 
 const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zoom-ud, #nulstil')];

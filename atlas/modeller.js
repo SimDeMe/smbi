@@ -4,16 +4,19 @@ export const steder = [
   {
     id: 'island', navn: 'Island', koordinater: [-19, 64.9],
     forklaring: 'Island ligger på den Midtatlantiske Ryg, hvor pladerne bevæger sig fra hinanden. Et hotspot bidrager også til vulkanismen.',
+    modelnote: 'Generelle modeller – ikke en gengivelse af en bestemt islandsk vulkan.',
     forbehold: 'Et fagligt eksempel på pladetektonik og vulkanisme. Modellerne er generelle og gengiver ikke en bestemt islandsk vulkan.'
   },
   {
     id: 'nordatlanten', navn: 'Grønland / Nordatlanten', kortnavn: 'Nordatlanten', koordinater: [-37, 58],
     forklaring: 'I Nordatlanten kan afkøling og høj saltholdighed gøre havvand tungere og bidrage til dannelsen af dybvand.',
+    modelnote: 'Regionalt eksempel – markøren angiver ikke ét nedsynkningspunkt.',
     forbehold: 'Markøren angiver en region syd for Grønland, ikke et enkelt nedsynkningspunkt. Grønlandspumpen er en idealiseret model af dele af havcirkulationen.'
   },
   {
     id: 'alperne', navn: 'Alperne', koordinater: [10, 46.5],
     forklaring: 'Når fugtig luft tvinges op over en bjergkæde, afkøles den. Vanddamp kan kondensere og give nedbør; på læsiden kan luften blive varm og tør.',
+    modelnote: 'Skematisk bjergmodel – ikke en lokal vejrprognose.',
     forbehold: 'Alperne er et eksempel på stigningsregn og føhn. Modellen bruger et skematisk bjerg og beregner ikke det aktuelle vejr i Alperne.'
   }
 ];
