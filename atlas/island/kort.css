@@ -1,0 +1,63 @@
+/* Island på kortet. Bygger på island.css (krom, værktøjslinje, arbejdsflade). */
+
+.zoom{display:flex;gap:4px}.zoom button{min-width:44px}
+.knaplink{display:inline-flex;align-items:center;min-height:44px;padding:7px 13px;border:2px solid var(--ink);border-radius:6px;text-decoration:none;font:600 14px var(--display);background:var(--paper)}
+.knaplink:hover{background:var(--lys)}
+.trinpile .knaplink:last-child{background:var(--ink);color:var(--paper)}
+
+/* Kortet */
+.kortfigur{background:#cfe6f2}
+#islandskort{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:crosshair}
+.zoomet #islandskort{touch-action:none;cursor:grab}.traekker #islandskort{cursor:grabbing}
+#islandskort:focus-visible{outline-offset:-4px}
+#islandskort image{image-rendering:auto}
+
+.sig-svaerm,.sig-vulkan,.sig-kaldera,.sig-uddoed{fill:none;stroke-linejoin:round;stroke-linecap:round}
+.sig-svaerm.aktiv{stroke:#e2521f;stroke-width:2}
+.sig-svaerm.aktiv path{fill:#ffb30040}
+.sig-vulkan.aktiv{stroke:#7d1d0a;stroke-width:2.4}
+.sig-vulkan.aktiv path{fill:#a3150f40}
+.sig-kaldera{stroke:#17211f;stroke-width:1.6;stroke-dasharray:2 2.5}
+.sig-uddoed{stroke:#2c3a36;stroke-width:1.5;stroke-dasharray:5 3}
+/* Lys kant, så omridsene kan ses på både lyst og mørkt terræn. */
+#islandskort [data-lag="svaerm"],#islandskort [data-lag="centralvulkan"]{filter:drop-shadow(0 0 1.2px #fffdf7) drop-shadow(0 0 .6px #fffdf7)}
+/* I signaturforklaringen er figurerne lukkede, så de kan fyldes ens. */
+.signatur .sig-svaerm.aktiv{fill:#ffb30040}.signatur .sig-vulkan.aktiv{fill:#a3150f40}
+.graense-ydre{fill:none;stroke:var(--rod);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.graense-indre{fill:none;stroke:#fff9ee;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.hotspot-cirkel{fill:#c4471c14;stroke:#c4471c;stroke-width:2;stroke-dasharray:7 6}
+.navn circle{fill:#17211f;stroke:#fff9ee;stroke-width:1.5}
+.etiket.ryg{font:italic 600 13px var(--body);fill:#1d4a6b;stroke:#dceff7cc}
+.havnavne .etiket.plade{font:700 13px var(--display)}
+.maalestok rect{fill:#fff9eee6;stroke:var(--ink);stroke-width:1}
+.maalestok path{fill:none;stroke:var(--ink);stroke-width:2}
+.maalestok text{font:500 12px var(--mono);fill:var(--ink)}
+.kryds path{stroke:var(--ink);stroke-width:2.5;fill:none;paint-order:stroke}
+.kryds{filter:drop-shadow(0 0 1.5px #fff)}
+
+.aflaesning{position:absolute;left:8px;top:8px;display:flex;flex-direction:column;padding:4px 9px;background:#fff9eeee;border:1px solid var(--ink);border-radius:4px;pointer-events:none;font:500 12px var(--mono)}
+.aflaesning strong{font:700 14px var(--display)}
+.datamaerke{pointer-events:auto}.datamaerke a{color:inherit}
+.kortstatus{position:absolute;inset:auto 12px 50% 12px;margin:0;text-align:center;font:600 15px var(--display)}
+.kortstatus.fejl{inset:12px;padding:14px;background:var(--paper);border:2px solid var(--ink);border-radius:8px;font:16px/1.45 var(--body);text-align:left}
+
+/* Forklaringen */
+.kortside .tekstrum p{margin:0 0 8px;font-size:15.5px;line-height:1.45}
+.signatur h3{margin:8px 0 4px;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+.signatur ul{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:3px;font-size:14px}
+.signatur li{display:flex;align-items:center;gap:8px}
+.signatur li svg{width:40px;height:16px;flex:none;overflow:visible}
+.hoejdeskala{display:grid;grid-template-columns:1fr 1fr;gap:2px 0;max-width:300px;font-size:13px}
+.skalanavn{color:var(--slate)}.skalanavn.hoejre{text-align:right}
+.skalabaand{grid-column:1/-1;height:12px;border:1px solid var(--ink);border-radius:2px}
+.skalatal{grid-column:1/-1;display:flex;justify-content:space-between;font:500 11px var(--mono)}
+.hotspotnote{margin-top:8px;font-size:14px}
+.hotspotnote summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font:600 14px var(--display)}
+.kildeliste{max-width:80ch;margin:0 0 12px;padding-left:20px;font-size:14px;line-height:1.45}.kildeliste li{margin-bottom:4px}
+
+/* Smalle vinduer: figuren får kortets form, så der ikke bliver tomme felter over og under. */
+@media(max-width:899px){.kortfigur{height:auto;aspect-ratio:6/5;max-height:calc(100svh - 120px);min-height:300px}body.fokus .kortfigur{height:auto}}
+@media(max-width:500px){
+  .zoom{flex:1}.zoom #nulstil{flex:1}
+  .ekstra{width:auto}
+}

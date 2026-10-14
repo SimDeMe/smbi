@@ -18,6 +18,14 @@ main{padding:0 24px 16px;max-width:1800px;margin:auto}
 .overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 3px;color:var(--slate)}
 h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;margin:0}h1 span{color:var(--blue)}.intro>p{font-size:15px;line-height:1.35;margin:0;color:var(--slate);max-width:340px;text-align:right}
 
+/* Forløbet Globus → Kort → Under overfladen, også på tværsnitssiden. */
+.forloeb{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.forloeb a{display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 11px;border:2px solid var(--ink);border-radius:6px;text-decoration:none;font:600 14px var(--display);background:var(--paper)}
+.forloeb a:hover{background:var(--lys)}
+.forloeb a span{font:500 11px var(--mono);color:var(--slate)}
+.forloeb a[aria-current="page"]{background:var(--ink);color:var(--paper)}.forloeb a[aria-current="page"] span{color:#fff9eeb3}
+@media(max-width:500px){.intro{flex-wrap:wrap;gap:6px}.forloeb{justify-content:flex-start;width:100%}.forloeb a{flex:1;justify-content:center;padding:4px 6px;font-size:13px}}
+
 .snit{border:2px solid var(--ink);border-radius:12px;box-shadow:3px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
 .vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--ink)}
 .skift{display:flex}.skift button{border-radius:0}.skift button:first-child{border-radius:6px 0 0 6px}.skift button:last-child{border-radius:0 6px 6px 0;border-left:0}

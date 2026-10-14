@@ -7,8 +7,8 @@ export const steder = [
     modelnote: 'Generelle modeller – ikke en gengivelse af en bestemt islandsk vulkan.',
     forbehold: 'Et fagligt eksempel på pladetektonik og vulkanisme. Modellerne er generelle og gengiver ikke en bestemt islandsk vulkan.',
     // Stedets egen fordybelse: et skematisk tværsnit, der hører til netop dette sted.
-    fordybelse: { titel: 'Under Island', sti: '/atlas/island/#island',
-      beskrivelse: 'Se under overfladen: hvorfor smelter kappen under ryggen, og hvorfor ligger Island over havet? Skematisk tværsnit med lag, 3D-blok og animation.' }
+    fordybelse: { titel: 'Under Island', sti: '/atlas/island/#island', kort: '/atlas/island/kort.html',
+      beskrivelse: 'Hvor ligger vulkanerne? Kort med terræn, havbund og vulkansystemer fra målte data. Se derefter under overfladen: hvorfor smelter kappen, og hvorfor ligger Island over havet?' }
   },
   {
     id: 'nordatlanten', navn: 'Grønland / Nordatlanten', kortnavn: 'Nordatlanten', koordinater: [-37, 58],

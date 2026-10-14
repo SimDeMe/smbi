@@ -3,7 +3,7 @@
 **Status: milepæl A–E er færdige; F (elevafprøvning) mangler.** Tværsnittet ligger i
 [`island/`](island/), se «Milepæl B» og «Milepæl C» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
-(zoom til terræn) er udskudt; første version går fra globus til tværsnit. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
+(zoom til terræn) er bygget som `island/kort.html`, se «Trin 2 – kortet» nederst. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
 
 Arbejdet styres i [#49](https://github.com/SimDeMe/smbi/issues/49). Navigationen
 bygger på reviewet i [#47](https://github.com/SimDeMe/smbi/issues/47), og
@@ -192,5 +192,48 @@ Afprøvet 14. oktober 2026 i Chromium (hele `afproev.py`), Firefox og WebKit
   (0 af 30 forsøg derefter).
 - **Ikke afprøvet:** fysisk telefon/iPad, Safari på iOS, skærmlæser og
   Firefox/Safari med touch på en rigtig enhed.
+
+## Trin 2 – kortet (zoom til terræn)
+
+Selvstændig side `/atlas/island/kort.html` (`kort.html`, `kort.css`,
+`kort.js`, data i `island/data/`). Navigationen «1 Globus · 2 Kort · 3 Under
+overfladen» står på både kortet og tværsnittet; atlassets Island-kort har nu
+både «Se kortet →» og «Se under overfladen →».
+
+- **Indhold:** skyggelagt terræn og havbund (højde/dybde i farver med
+  skala), vulkansystemer – centralvulkaner, kalderaer og sprækkesværme, aktive
+  og uddøde – pladegrænsen fra #48, 14 navngivne vulkaner, rygnavne,
+  målestok og en valgfri, stiplet «Hotspot (fortolkning)». Pegning (mus,
+  tryk eller pile med kryds) aflæser højde/dybde og koordinat.
+- **Faglig pointe («Se efter»):** de aktive vulkansystemer følger
+  pladegrænsen i et bælte fra Reykjanes til Nordisland; uddøde vulkaner
+  ligger mod øst- og vestkysten (de unge klipper i midten fra
+  ISLAND-MODEL.md trin 4); ryggen fortsætter under havet. Mærket «Målte og
+  kortlagte data» med link til kilderne; kun hotspottet er en fortolkning.
+- **Data og licenser** (`island/data/islandskort.LICENSE`):
+  - ETOPO 2022 15″ (NOAA NCEI) via ERDDAP – fri brug og videreformidling.
+  - NÍ's tektoniske kort 1:600 000 (Jóhannesson & Sæmundsson) – CC BY 4.0,
+    kreditering på siden. Veðurstofans Catalogue of Icelandic Volcanoes er
+    fravalgt, fordi den er CC BY-NC-ND 4.0 og ikke må forenkles.
+  - Navne og seneste udbrud fra Smithsonian GVP.
+  - Islands officielle højdemodel ÍslandsDEM (NÍ, CC BY 4.0, 10–50 m)
+    findes også, men ETOPO er valgt, fordi den dækker land og havbund i ét
+    gitter, og ca. 0,5 km pr. pixel er nok i denne skala.
+- **Teknik:** `islandskort.py` (numpy, Pillow) henter rådata, regner hver
+  pixel tilbage gennem D3's sfæriske `geoConicConformal` (64,25°/65,75° N,
+  midtmeridian 19° V som ISN93) og skriver et JPEG-relief (ca. 190 KB), et
+  int16-højdegitter (ca. 460 KB) og JSON med vektorer og navne (ca. 52 KB).
+  Vektorerne projiceres i browseren med samme formel; testen sammenligner
+  D3 med en uafhængig Python-udgave af formlen. Zoom (×1–×5) med knapper,
+  dobbeltklik, + og −; træk eller pile flytter; reliefbilledet dækker altid
+  figuren. Uden zoom ruller et lodret strøg siden på touch.
+- **Plume og magmakamre:** ingen fri datasæt med form eller dybde. Plumen
+  vises kun som omtrentlig cirkel (Wolfe m.fl. 1997; Allen m.fl. 2002);
+  magmakamrenes dybder (fx Katla 2–5 km, Hekla 5–9 km) står kun i
+  litteraturen og er ikke tegnet.
+- Test: `afproev_islandkort` i `atlas/test/island.py` – fem skærme, intet
+  tomt felt i figuren, lag, projektion mod uafhængig formel, højder ved
+  Öræfajökull, Hekla, Langjökull, havet og Þingvallavatn, aflæsning, zoom,
+  træk, tastatur, fokus, kilder, links fra atlasset og fejlbesked uden data.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.

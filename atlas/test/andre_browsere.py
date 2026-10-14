@@ -36,8 +36,8 @@ def roeg(browser, motor, bredde, hoejde):
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
     tryk(side.locator('[data-sted="island"]'))
     kort = side.locator('#dialogindhold .fordybelse')
-    expect(kort).to_contain_text('Skematisk tværsnit')
-    tryk(kort.get_by_role('link'))
+    expect(kort).to_contain_text('Kort med data og skematisk tværsnit')
+    tryk(kort.get_by_role('link', name='Se under overfladen: Under Island'))
     side.wait_for_url('**/atlas/island/#island')
     expect(side.locator('#tvaersnit [data-lag="smelt"]')).to_have_count(1)
     expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
@@ -94,6 +94,17 @@ def roeg(browser, motor, bredde, hoejde):
     side.wait_for_url('**/atlas/#island')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
     expect(side.locator('[data-sted="island"]')).to_be_visible()
+
+    # Kortet over Island (forløbets trin 2) fra atlassets Island-kort.
+    tryk(side.locator('[data-sted="island"]'))
+    tryk(side.locator('#dialogindhold .fordybelse').get_by_role('link', name='Se kortet: Under Island'))
+    side.wait_for_url('**/atlas/island/kort.html')
+    expect(side.locator('.kortfigur.klar')).to_have_count(1)
+    assert side.locator('.sig-svaerm.aktiv path').count() > 20
+    assert side.evaluate('document.documentElement.scrollWidth - innerWidth') <= 0, 'vandret rulning på kortet'
+    tryk(side.get_by_role('button', name='Zoom ind'))
+    expect(side.get_by_role('button', name='Zoom ud')).to_be_enabled()
+    side.screenshot(path=str(UD / f'{motor}-islandskort-{bredde}x{hoejde}.png'))
     side.close()
     assert not fejl, (motor, bredde, fejl)
 
@@ -103,5 +114,5 @@ with sync_playwright() as p:
         browser = getattr(p, motor).launch()
         for bredde, hoejde in SKAERME:
             roeg(browser, motor, bredde, hoejde)
-            print(f'{motor} {bredde}×{hoejde}: Island-forløbet OK')
+            print(f'{motor} {bredde}×{hoejde}: Island-forløbet og kortet OK')
         browser.close()

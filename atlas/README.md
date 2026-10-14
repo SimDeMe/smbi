@@ -129,6 +129,9 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
 - `island/`: selvstændigt tværsnit af Den Midtatlantiske Ryg og Island
   (#49, milepæl B–C): SVG-tværsnit i 2D, drejelig blok i CSS 3D, vis/skjul-lag
   og illustrativ animation. Intet WebGL. Se `ISLAND-DEMO.md`.
+  `island/kort.html` er forløbets trin 2: kort over Island med terræn,
+  havbund og vulkansystemer fra målte data (`island/data/`, dannet af
+  `islandskort.py`; kilder og licenser i `islandskort.LICENSE`).
 - `vendor/` og `data/`: lokale, versionsbundne biblioteker, licenser og kortdata.
 
 Globusmodulet indlæses separat med fejlhåndtering. Manglende bibliotek, HTTP-fejl,

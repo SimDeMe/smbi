@@ -172,14 +172,22 @@ function visSted(sted) {
   indhold.append(visModeller(modeller.filter(model => model.steder.includes(sted.id))));
 }
 
-function visFordybelse({ titel, beskrivelse, sti }) {
+function visFordybelse({ titel, beskrivelse, sti, kort: kortsti }) {
   const kort = element('article', '', 'modelkort fordybelse');
-  kort.append(element('p', 'Skematisk tværsnit · hører til dette sted', 'metadata'));
+  kort.append(element('p', kortsti ? 'Kort med data og skematisk tværsnit · hører til dette sted' : 'Skematisk tværsnit · hører til dette sted', 'metadata'));
   kort.append(element('h3', titel), element('p', beskrivelse));
+  const links = element('div', '', 'fordybelseslinks');
+  if (kortsti) {
+    const tilKort = element('a', 'Se kortet →');
+    tilKort.href = kortsti;
+    tilKort.setAttribute('aria-label', `Se kortet: ${titel}`);
+    links.append(tilKort);
+  }
   const link = element('a', 'Se under overfladen →');
   link.href = sti;
   link.setAttribute('aria-label', `Se under overfladen: ${titel}`);
-  kort.append(link);
+  links.append(link);
+  kort.append(links);
   return kort;
 }
 

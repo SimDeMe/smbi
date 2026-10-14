@@ -430,7 +430,7 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
         side.locator('[data-sted="island"]').click()
         kort = side.locator('#dialogindhold .fordybelse')
         expect(kort).to_have_count(1)
-        expect(kort).to_contain_text('Skematisk tværsnit')
+        expect(kort).to_contain_text('Kort med data og skematisk tværsnit')
         # Kortet står før de generelle simulationer, og de to simulationer er der stadig.
         assert side.locator('#dialogindhold .modelkort').first.get_attribute('class') == 'modelkort fordybelse'
         assert sorted(side.locator('#dialogindhold .modelkort:not(.fordybelse) a').evaluate_all('l => l.map(a => a.getAttribute("href"))')) == \
@@ -443,11 +443,11 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
         side.locator('[data-sted="island"]').click()
         if bredde == 640:
             # Tastatur: Tab til linket og Enter.
-            link = kort.get_by_role('link')
+            link = kort.get_by_role('link', name='Se under overfladen: Under Island')
             link.focus()
             side.keyboard.press('Enter')
         else:
-            kort.get_by_role('link').click()
+            kort.get_by_role('link', name='Se under overfladen: Under Island').click()
         side.wait_for_url('**/atlas/island/#island')
         expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
         # Retur fra modulet: globussen centreres om Island.
@@ -507,5 +507,178 @@ def afproev_islandtouch(browser, adresse):
     side.evaluate('scrollTo(0, 0)')
     side.get_by_role('button', name='Drej mod venstre', exact=True).tap()
     assert blokmaal(side)['transform'] != efter
+    side.close()
+    assert not fejl, fejl
+
+
+def _lcc(lon, lat, paralleller=(64.25, 65.75), midte=-19.0):
+    """Uafhængig udgave af D3's conicConformalRaw, som islandskort.py bruger til rasteret."""
+    import math
+    tany = lambda y: math.tan((math.pi / 2 + y) / 2)
+    y0, y1 = (math.radians(p) for p in paralleller)
+    n = math.log(math.cos(y0) / math.cos(y1)) / math.log(tany(y1) / tany(y0))
+    f = math.cos(y0) * tany(y0) ** n / n
+    r = f / tany(math.radians(lat)) ** n
+    lam = math.radians(lon - midte)
+    return r * math.sin(n * lam), -(f - r * math.cos(n * lam))
+
+
+def afproev_islandkort(browser, adresse, ud, skaerme):
+    """Forløbets trin 2: kort over Island med terræn, havbund og vulkansystemer."""
+    fejl = []
+    for bredde, hoejde in skaerme:
+        side = browser.new_page(viewport={'width': bredde, 'height': hoejde},
+                                has_touch=bredde == 390, is_mobile=bredde == 390, reduced_motion='reduce')
+        side.on('pageerror', lambda e: fejl.append(str(e)))
+        side.on('console', lambda e: fejl.append(e.text) if e.type == 'error' else None)
+        side.goto(adresse + '/atlas/island/kort.html')
+        expect(side.locator('.kortfigur.klar')).to_have_count(1)
+        side.evaluate('document.fonts.ready')
+        m = side.evaluate('''() => {
+          const r = s => document.querySelector(s).getBoundingClientRect();
+          const k = [...document.querySelectorAll('.zoom button, #lagknap, #fokus')].map(x => x.getBoundingClientRect().bottom);
+          const b = document.querySelector('#islandskort image').getBoundingClientRect(), f = r('#islandskort');
+          return {figur: [f.width, f.height], figurbund: f.bottom, kontrolbund: Math.max(...k),
+                  vandret: document.documentElement.scrollWidth - innerWidth,
+                  daekket: Math.min(b.right, f.right) - Math.max(b.left, f.left) >= f.width - 1 && Math.min(b.bottom, f.bottom) - Math.max(b.top, f.top) >= f.height - 1};
+        }''')
+        assert m['vandret'] == 0, (bredde, m)
+        assert m['figur'][1] >= 290, (bredde, m)
+        if bredde >= 900:
+            assert m['kontrolbund'] <= hoejde and m['figurbund'] <= hoejde, (bredde, m)
+        # Reliefbilledet dækker hele figuren – ingen tomme felter.
+        assert m['daekket'], (bredde, m)
+        # Lagene: aktive og uddøde vulkansystemer, pladegrænse; hotspot er slået fra som standard.
+        assert side.locator('.sig-svaerm.aktiv path').count() > 20
+        assert side.locator('.sig-vulkan.aktiv path').count() > 20
+        assert side.locator('.sig-uddoed path').count() > 50
+        expect(side.locator('#islandskort [data-lag="graense"]')).to_have_count(1)
+        expect(side.locator('#islandskort [data-lag="hotspot"]')).to_have_count(0)
+        assert side.locator('#islandskort .navn').count() >= 3
+        expect(side.locator('.datamaerke')).to_contain_text('Målte og kortlagte data')
+        expect(side.locator('.maalestok text').first).to_have_text(re.compile(r'^\d+ km$'))
+        # Forløbsnavigationen.
+        expect(side.locator('.forloeb [aria-current="page"]')).to_have_text(re.compile('Kort'))
+        side.screenshot(path=str(ud / f'islandskort-{bredde}x{hoejde}.png'))
+        side.close()
+
+    side = browser.new_page(viewport={'width': 1366, 'height': 625})
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    side.on('console', lambda e: fejl.append(e.text) if e.type == 'error' else None)
+    side.goto(adresse + '/atlas/island/kort.html')
+    expect(side.locator('.kortfigur.klar')).to_have_count(1)
+
+    # Rasteret og vektorerne bruger samme projektion: D3 i browseren mod en uafhængig formel.
+    punkter = [(-19.666, 63.983), (-24.5, 65.5), (-13.5, 65.2), (-17.0, 67.3), (-25.0, 62.9)]
+    d3 = side.evaluate('''p => p.map(q => d3.geoConicConformal().parallels([64.25, 65.75]).rotate([19, 0]).scale(1).translate([0, 0])(q))''', punkter)
+    for (lon, lat), (x, y) in zip(punkter, d3):
+        rx, ry = _lcc(lon, lat)
+        assert abs(rx - x) < 1e-9 and abs(ry - y) < 1e-9, (lon, lat, x, y, rx, ry)
+    # Kendte steder giver fornuftige højder og dybder i højdegitteret.
+    hoejder = side.evaluate('''async () => {
+      const { proeve } = await import('./kort.js');
+      const p = proeve.projektion();
+      const ved = (lon, lat) => proeve.hoejdeVed(...p([lon, lat]));
+      return { oraefa: ved(-16.65, 64.02), hekla: ved(-19.666, 63.983), langjokull: ved(-20.1, 64.62),
+               syd: ved(-20.0, 63.15), thingvallavatn: ved(-21.14, 64.18) };
+    }''')
+    assert hoejder['oraefa'] > 1300, hoejder
+    assert hoejder['hekla'] > 900, hoejder
+    assert hoejder['langjokull'] > 900, hoejder
+    assert hoejder['syd'] < -50, hoejder
+    assert 0 < hoejder['thingvallavatn'] < 250, hoejder
+
+    # Aflæsning med musen.
+    boks = side.locator('#islandskort').bounding_box()
+    hekla = side.evaluate('''async () => { const { proeve } = await import('./kort.js'); return proeve.projektion()([-19.666, 63.983]); }''')
+    side.mouse.move(boks['x'] + hekla[0], boks['y'] + hekla[1])
+    expect(side.locator('.aflaesning')).to_be_visible()
+    expect(side.locator('.aflaesning')).to_contain_text('m over havet')
+
+    # Lag til og fra; hotspot er tydeligt mærket som fortolkning.
+    side.get_by_role('button', name='Lag').click()
+    side.get_by_label('Hotspot (fortolkning)').check()
+    expect(side.locator('#islandskort [data-lag="hotspot"]')).to_have_count(1)
+    expect(side.locator('.hotspot-etiket')).to_contain_text('fortolkning')
+    expect(side.locator('#kortbeskrivelse')).to_contain_text('fortolkning')
+    side.get_by_label('Også uddøde vulkaner').uncheck()
+    expect(side.locator('.sig-uddoed path')).to_have_count(0)
+    side.get_by_label('Navne').uncheck()
+    expect(side.locator('#islandskort .navn')).to_have_count(0)
+    expect(side.locator('#islandskort .etiket.plade')).to_have_count(0)
+    side.keyboard.press('Escape')
+    expect(side.locator('#lagpanel')).to_be_hidden()
+    side.get_by_role('button', name='Lag').click()
+    side.get_by_label('Navne').check()
+    side.get_by_label('Også uddøde vulkaner').check()
+    side.mouse.click(5, 5)
+    expect(side.locator('#lagpanel')).to_be_hidden()
+
+    # Zoom, målestok, træk og nulstilling.
+    km = lambda: int(side.locator('.maalestok text').first.text_content().split()[0])
+    foer = km()
+    expect(side.get_by_role('button', name='Zoom ud')).to_be_disabled()
+    side.get_by_role('button', name='Zoom ind').click()
+    side.get_by_role('button', name='Zoom ind').click()
+    assert km() < foer
+    midte = side.evaluate('''async () => (await import('./kort.js')).proeve.tilstand.midte.slice()''')
+    cx, cy = boks['x'] + boks['width'] / 2, boks['y'] + boks['height'] / 2
+    side.mouse.move(cx, cy); side.mouse.down(); side.mouse.move(cx - 120, cy - 40, steps=6); side.mouse.up()
+    efter = side.evaluate('''async () => (await import('./kort.js')).proeve.tilstand.midte.slice()''')
+    assert efter[0] > midte[0] and efter[1] > midte[1], (midte, efter)
+    # Billedet dækker stadig figuren efter træk (midten holdes inden for rasteret).
+    side.mouse.move(cx, cy); side.mouse.down(); side.mouse.move(cx + 3000, cy + 3000, steps=6); side.mouse.up()
+    assert side.evaluate('''() => { const b = document.querySelector('#islandskort image').getBoundingClientRect(), f = document.querySelector('#islandskort').getBoundingClientRect();
+      return b.left <= f.left + 1 && b.top <= f.top + 1 && b.right >= f.right - 1 && b.bottom >= f.bottom - 1; }''')
+    side.get_by_role('button', name='Hele Island').click()
+    assert km() == foer
+    expect(side.get_by_role('button', name='Zoom ud')).to_be_disabled()
+
+    # Tastatur: pile flytter og viser krydset med aflæsning; + zoomer; Home nulstiller.
+    side.locator('#islandskort').focus()
+    side.keyboard.press('+')
+    side.keyboard.press('ArrowRight')
+    expect(side.locator('#islandskort .kryds')).to_have_count(1)
+    expect(side.locator('.aflaesning')).to_be_visible()
+    expect(side.locator('.kortstatus')).to_contain_text('Ved krydset')
+    side.keyboard.press('Home')
+    expect(side.get_by_role('button', name='Zoom ud')).to_be_disabled()
+
+    # Fokus og Escape.
+    side.get_by_role('button', name='Fokus').click()
+    expect(side.locator('.site-header')).to_be_hidden()
+    side.keyboard.press('Escape')
+    expect(side.locator('.site-header')).to_be_visible()
+
+    # Kilderne står på siden, også licensen for NÍ's data.
+    kilder = side.locator('#kilder').text_content()
+    for ord in ('ETOPO 2022', 'Náttúrufræðistofnun', 'CC BY 4.0', 'Global Volcanism Program', 'Bird'):
+        assert ord in kilder, ord
+
+    # Videre til tværsnittet.
+    side.get_by_role('link', name='Se under overfladen →').click()
+    side.wait_for_url('**/atlas/island/#island')
+    expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
+    side.locator('.forloeb').get_by_role('link', name='Kort').click()
+    side.wait_for_url('**/atlas/island/kort.html')
+    side.close()
+
+    # Fra atlasset: Island-kortet har et link til kortet.
+    side = browser.new_page(viewport={'width': 1366, 'height': 625})
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    side.goto(adresse + '/atlas/')
+    side.wait_for_function("document.querySelector('#kortstatus').hidden")
+    side.locator('[data-sted="island"]').click()
+    side.locator('#dialogindhold .fordybelse').get_by_role('link', name='Se kortet: Under Island').click()
+    side.wait_for_url('**/atlas/island/kort.html')
+    expect(side.locator('.kortfigur.klar')).to_have_count(1)
+    side.close()
+
+    # Uden data: en læsbar besked i stedet for et tomt kort.
+    side = browser.new_page(viewport={'width': 1280, 'height': 577})
+    side.route('**/islandskort.json', lambda r: r.fulfill(status=404, body='findes ikke'))
+    side.goto(adresse + '/atlas/island/kort.html')
+    expect(side.locator('.kortstatus.fejl')).to_be_visible()
+    expect(side.locator('.kortstatus.fejl')).to_contain_text('Reykjanes')
     side.close()
     assert not fejl, fejl

@@ -1,0 +1,53 @@
+Island-kortet: islandskort-relief.jpg, islandskort-hoejde.bin og
+islandskort.json er dannet af islandskort.py ud fra tre kilder. Alle er
+hentet 14. oktober 2026.
+
+1. Terræn og havbund (relief og højdegitter)
+   NOAA National Centers for Environmental Information (2022): ETOPO 2022
+   15 Arc-Second Global Relief Model. doi:10.25921/fd45-gt74
+   Udgaven med jøklernes overflade («surface»), hentet fra NOAA ERDDAP:
+   https://coastwatch.pfeg.noaa.gov/erddap/griddap/ETOPO_2022_v1_15s.html
+   Udsnit 61,6–68,8° N, 33–5° V, hver 2. række (30″) og 4. kolonne (60″).
+   Licens (fra datasættets metadata): «The data may be used and
+   redistributed for free but is not intended for legal use, since it may
+   contain inaccuracies.» Ingen garanti.
+   SHA-256 for den hentede CSV: ff406d722c004b5c4efd3fa653aed31fe9719301c9e54defe44d4f2aa13a7ce1
+
+2. Vulkansystemer (centralvulkaner, kalderaer, sprækkesværme)
+   "NI_J600v Jarðfræðikort af Íslandi – Höggun 1:600.000" by
+   Náttúrufræðistofnun is licensed under CC BY 4.0
+   (https://creativecommons.org/licenses/by/4.0/).
+   Kortlagt af Haukur Jóhannesson og Kristján Sæmundsson
+   (Jarðfræðikort 1:500.000, 1998). Lag ni_j600v_hoggun_eldstodvakerfi_li
+   hentet fra NÍ's WFS: https://gis.natt.is/geoserver/wfs (EPSG:4326).
+   Metadata: https://gatt.natt.is/geonetwork/srv/api/records/%7B467EBAA3-E603-4E4C-A61F-2FFE9D19C11D%7D
+   Licensvilkår: https://www.natt.is/is/midlun/opin-gogn («Opin gögn
+   Náttúrufræðistofnunar eru gefin út samkvæmt … CC BY 4.0»).
+   Koderne er afkodet efter NÍ's fitjuskrá 600 (Jarðmyndun og landmótun,
+   1.1. útg. 2013): gerdGosgiga meld = centralvulkan (megineldstöð), eld08 =
+   kaldera (sigketill), rein = sprækkesværm (sprungurein); eldSprunguvirkni
+   1 = aktiv (virk), 2 = uddød (óvirk); jardhnik rekb = riftbælte,
+   jadb = flankebælte.
+   SHA-256 for den hentede GeoJSON: ff973b773f18030751cce2b578683fc1535b884e50f004f2f342700eeafed6a0
+   Ændringer: koordinater forenklet med Douglas–Peucker (tolerance 0,25 km,
+   under kortets nøjagtighed på ±500 m) og afrundet til 0,001°; kun
+   felterne slags, aktiv og bælte er beholdt.
+   Bemærk: Veðurstofan udgiver en lignende samling i Catalogue of Icelandic
+   Volcanoes under CC BY-NC-ND 4.0. Den er bevidst IKKE brugt, fordi
+   «ingen bearbejdning» udelukker forenkling.
+
+3. Vulkannavne, placering og seneste udbrud (14 navngivne vulkaner)
+   Global Volcanism Program, Smithsonian Institution: Volcanoes of the
+   World, https://volcano.si.edu/ — hentet via
+   https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows
+   (lag Smithsonian_VOTW_Holocene_Volcanoes, Country = Iceland).
+   Kun fakta (navn, koordinat, år) er brugt; navnene er skrevet med
+   islandske bogstaver.
+   SHA-256 for det hentede svar: 5c860621440f51d70e3e83c8863ee90e132a52acd82eb12390bd59780e487a29
+
+Pladegrænsen på kortet kommer fra ../../data/pladegraenser.json (Bird 2003;
+se ../../data/pladegraenser.LICENSE). Hotspot-cirklen (kort.js) er en
+fortolkning efter Wolfe m.fl. (1997, Nature 385, 245–247,
+doi:10.1038/385245a0) og Allen m.fl. (2002, JGR 107(B12),
+doi:10.1029/2001JB000595): langsomme jordskælvsbølger under det centrale
+Island og det vestlige Vatnajökull, radius ca. 100–150 km. Den er ikke data.

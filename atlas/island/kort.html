@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Island på kortet — terræn, havbund og vulkansystemer — smbi.dk</title>
+  <meta name="description" content="Kort over Island med terræn, havbund, centralvulkaner og sprækkesværme. Se hvordan de aktive vulkaner følger pladegrænsen tværs over øen.">
+  <link rel="canonical" href="https://smbi.dk/atlas/island/kort.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/atlas/island/kort.html">
+  <meta property="og:title" content="Island på kortet — smbi.dk">
+  <meta property="og:description" content="Terræn, havbund og vulkansystemer på Island – målte og kortlagte data.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="island.css">
+  <link rel="stylesheet" href="kort.css">
+  <script defer src="../vendor/d3-array.min.js"></script>
+  <script defer src="../vendor/d3-geo.min.js"></script>
+  <script type="module" src="kort.js"></script>
+</head>
+<body class="kortside">
+  <a class="spring" href="#kort">Spring til kortet</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+      <a href="/atlas/#island">← Island på globussen</a>
+    </div>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="overlinje">Naturgeografi · Island</p><h1>Island på kortet<span>.</span></h1></div>
+      <nav class="forloeb" aria-label="Island i tre trin">
+        <a href="/atlas/#island"><span aria-hidden="true">1</span> Globus</a>
+        <a href="/atlas/island/kort.html" aria-current="page"><span aria-hidden="true">2</span> Kort</a>
+        <a href="/atlas/island/#island"><span aria-hidden="true">3</span> Under overfladen</a>
+      </nav>
+    </div>
+    <section id="kort" class="snit" aria-label="Kort over Island og forklaring">
+      <div class="vaerktoejer">
+        <div class="zoom" role="group" aria-label="Zoom">
+          <button id="zoomind" aria-label="Zoom ind">+</button>
+          <button id="zoomud" aria-label="Zoom ud">−</button>
+          <button id="nulstil" title="Hele Island">Hele Island</button>
+        </div>
+        <div class="ekstra">
+          <div class="lagvalg">
+            <button id="lagknap" aria-expanded="false" aria-controls="lagpanel">Lag <span class="pil" aria-hidden="true">▾</span></button>
+            <fieldset id="lagpanel" class="lagpanel" hidden>
+              <legend>Vis lag</legend>
+              <label class="valgfelt"><input type="checkbox" data-vislag="svaerm" checked> Sprækkesværme</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="centralvulkan" checked> Centralvulkaner</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="uddoed" checked> Også uddøde vulkaner</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="graense" checked> Pladegrænse</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="navne" checked> Navne</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="hotspot"> Hotspot (fortolkning)</label>
+            </fieldset>
+          </div>
+          <button id="fokus" aria-pressed="false">Fokus</button>
+        </div>
+      </div>
+      <div class="arbejdsflade">
+        <figure class="figur kortfigur">
+          <svg id="islandskort" role="img" aria-labelledby="korttitel kortbeskrivelse" tabindex="0" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="aflaesning" aria-hidden="true" hidden></div>
+          <div class="maerkater">
+            <p class="skematisk datamaerke">Målte og kortlagte data · <a href="#kilder">kilder</a></p>
+          </div>
+          <p class="kortstatus" role="status">Henter kortet …</p>
+          <figcaption class="skjult"><span id="korttitel">Kort over Island med terræn, havbund og vulkansystemer.</span> <span id="kortbeskrivelse"></span></figcaption>
+        </figure>
+        <aside class="forklaring" aria-labelledby="forklaringstitel">
+          <div class="tekstrum">
+            <h2 id="forklaringstitel">Hvor ligger vulkanerne?</h2>
+            <p>Kortet viser Islands landskab og havbunden omkring øen, farvet efter højde og dybde.</p>
+            <p>Omridsene er <strong>vulkansystemer</strong> – røde for aktive, grå og stiplede for uddøde. Et vulkansystem består som regel af en <strong>centralvulkan</strong> – et stort vulkansk bjerg, hvor magma kan samle sig i et magmakammer nogle kilometer nede – og en <strong>sprækkesværm</strong>: en lang, smal zone med sprækker og kraterrækker, hvor magma kan bryde op.</p>
+            <p class="seefter"><em>Se efter:</em> De aktive vulkansystemer ligger i et bælte tværs over øen, fra Reykjanes i sydvest til Nordisland – samme sted som pladegrænsen. Ude ved øst- og vestkysten ligger uddøde vulkaner, som pladerne har ført væk fra bæltet. Under havet fortsætter ryggen mod sydvest og nord.</p>
+            <div class="signatur" aria-label="Signaturforklaring">
+              <h3>Signaturer</h3>
+              <ul>
+                <li><svg viewBox="0 0 40 16" aria-hidden="true"><path class="sig-svaerm aktiv" d="M2 3H38V13H2Z"/></svg> Sprækkesværm, aktiv</li>
+                <li><svg viewBox="0 0 40 16" aria-hidden="true"><path class="sig-vulkan aktiv" d="M8 2H32V14H8Z"/></svg> Centralvulkan, aktiv</li>
+                <li><svg viewBox="0 0 40 16" aria-hidden="true"><path class="sig-kaldera" d="M12 4H28V12H12Z"/></svg> Kaldera (stor indsynkning i en vulkan)</li>
+                <li><svg viewBox="0 0 40 16" aria-hidden="true"><path class="sig-uddoed" d="M8 2H32V14H8Z"/></svg> Uddød vulkan eller sværm (stiplet)</li>
+                <li><svg viewBox="0 0 40 16" aria-hidden="true"><path class="graense-ydre" d="M3 8H37"/><path class="graense-indre" d="M3 8H37"/></svg> Pladegrænse (grov model)</li>
+              </ul>
+              <div class="hoejdeskala">
+                <span class="skalanavn">Dybde (m)</span><span class="skalanavn hoejre">Højde (m)</span>
+                <div class="skalabaand" aria-hidden="true"></div>
+                <div class="skalatal" aria-hidden="true"><span>2000</span><span>1000</span><span>0</span><span>1000</span><span>2000</span></div>
+              </div>
+            </div>
+            <details class="hotspotnote">
+              <summary>Hotspot – hvorfor er cirklen stiplet?</summary>
+              <p>Jordskælvsbølger bevæger sig langsommere i kappen under det centrale Island og det vestlige Vatnajökull. Det tolkes som varm kappe, ca. 100–400 km nede, med en bredde på et par hundrede kilometer. Cirklen viser omtrent hvor – ikke en målt grænse. Om varmen kommer fra en egentlig kappeplume, er forskerne uenige om.</p>
+            </details>
+          </div>
+          <div class="trinpile">
+            <a class="knaplink" href="/atlas/#island">← Globus</a>
+            <a class="knaplink" href="/atlas/island/#island">Se under overfladen →</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <div class="eftertekst">
+      <details id="kilder">
+        <summary>Data og kilder</summary>
+        <p>Kortet er bygget af målte og kortlagte data. Højde og dybde er udglattet til ca. 1 km; vulkansystemerne er tegnet i skala 1:600 000 med en nøjagtighed på ca. ±500 m og lidt forenklet. Hotspot-cirklen er en fortolkning.</p>
+        <ul class="kildeliste">
+          <li><strong>Terræn og havbund:</strong> NOAA National Centers for Environmental Information (2022): ETOPO 2022 15 Arc-Second Global Relief Model. <a href="https://doi.org/10.25921/fd45-gt74">doi:10.25921/fd45-gt74</a>. Fri brug og videreformidling.</li>
+          <li><strong>Vulkansystemer:</strong> «NI_J600v Jarðfræðikort af Íslandi – Höggun 1:600.000» by Náttúrufræðistofnun (Haukur Jóhannesson og Kristján Sæmundsson) is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Forenklet af smbi.dk.</li>
+          <li><strong>Vulkannavne og seneste udbrud:</strong> Global Volcanism Program, Smithsonian Institution: <a href="https://volcano.si.edu/">Volcanoes of the World</a>, hentet 14. oktober 2026.</li>
+          <li><strong>Pladegrænse:</strong> Bird, P. (2003): An updated digital model of plate boundaries. <a href="https://doi.org/10.1029/2001GC000252">doi:10.1029/2001GC000252</a>.</li>
+          <li><strong>Hotspot (fortolkning):</strong> Wolfe m.fl. (1997), <a href="https://doi.org/10.1038/385245a0">Nature 385, 245–247</a>; Allen m.fl. (2002), <a href="https://doi.org/10.1029/2001JB000595">JGR 107, B12</a>.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Opgave</summary>
+        <ol>
+          <li>Find tre aktive vulkaner på kortet. Hvad har de til fælles med hensyn til, hvor de ligger?</li>
+          <li>Sammenlign de aktive vulkansystemer med pladegrænsen. Hvad ser du?</li>
+          <li>Hvor ligger de uddøde vulkaner? Brug pladebevægelsen til at forklare det.</li>
+          <li>Hold musen over havbunden syd for Reykjanes og nord for Island. Hvor dybt er der på ryggen, og hvor dybt længere væk fra den?</li>
+        </ol>
+      </details>
+    </div>
+    <noscript><p class="uden-script">Kortet kræver JavaScript. Kort fortalt: De aktive vulkansystemer på Island ligger i et bælte fra Reykjanes til Nordisland, langs grænsen mellem den Nordamerikanske og den Eurasiske plade. Uddøde vulkaner ligger mod øst- og vestkysten.</p></noscript>
+  </main>
+</body>
+</html>
