@@ -1,0 +1,132 @@
+---
+title: "Bjergarternes kredsløb"
+subtitle: "Sortér bjergarter, og bestem en stor sten i jeres nærområde"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Alle bjergarter på Jorden indgår i et kæmpe kredsløb, der tager millioner af år: smeltet magma størkner, klipper forvitrer og bliver til sand og ler, sedimenter presses sammen til ny sten, og tryk og varme dybt nede omdanner bjergarterne igen. I denne øvelse lærer I at kende forskel på de tre hovedgrupper af bjergarter. I sorterer først et sæt bjergartsprøver efter, hvor i kredsløbet de er dannet, og undersøger derefter selv en stor sten udenfor.
+
+## Del I — De tre hovedgrupper
+
+Besvar spørgsmålene ud fra jeres lærebog, før I går i gang med prøverne:
+
+1. Hvad kendetegner **magmatiske** bjergarter, og hvordan dannes de? Hvad er forskellen på dybbjergarter og lavabjergarter?
+2. Hvad kendetegner **sedimentære** bjergarter, og hvordan dannes de? Nævn eksempler på klastiske, kemiske og organiske sedimentære bjergarter.
+3. Hvad kendetegner **metamorfe** bjergarter, og hvordan dannes de?
+
+::: {.callout-note}
+## Kendetegn, der hjælper ved bestemmelsen
+
+- **Kornstørrelse:** grovkornet (korn over ca. 5 mm), middelkornet (1–5 mm) eller finkornet (under 1 mm, kornene kan ikke skelnes med det blotte øje). Magma, der størkner langsomt dybt nede, giver store korn; lava, der størkner hurtigt, giver små korn.
+- **Struktur:** ligger mineralerne hulter til bulter (typisk magmatisk), i lag (typisk sedimentær), eller er de presset ud i striber og bånd (typisk metamorf)?
+- **Hårdhed:** en stålkniv ridser mineraler med en hårdhed under ca. 5,5. Kvarts (hårdhed 7) og feldspat (6) kan ikke ridses af kniven; glimmer og kalkspat kan.
+- **Magnetisme:** en magnet, der hænger fast, afslører mineralet magnetit, som er almindeligt i mørke bjergarter som basalt og gabbro.
+:::
+
+## Del II — Sortér bjergarterne i kredsløbet
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Et sæt nummererede bjergartsprøver
+- En tegning af bjergarternes kredsløb — en stor bestemmelsesdug på gulvet, hvis skolen har en, eller en tegning, I selv laver på et A3-ark
+- Lup og vandforstøver
+:::
+
+### Hypotese
+
+Se på prøverne, før I læser mere: hvilke tror I er magmatiske, sedimentære og metamorfe? Skriv jeres første bud i @tbl-1.
+
+### Fremgangsmåde
+
+1. Undersøg hver prøve med lup. Gør den våd, så farver og korn ses tydeligere.
+2. Placér prøverne på tegningen af kredsløbet, dér hvor I mener, de er dannet: dybbjergart, lavabjergart, klastisk, kemisk eller organisk sedimentær, eller metamorf.
+3. Tag et billede af jeres placering, hvor prøverne kan ses tydeligt.
+4. Udfyld resten af @tbl-1. Brug gerne bestemmelsesnøglen i sitets [stensamling](https://smbi.dk/geografi/stensamling.html?noegle=1) til at give prøverne et navn.
+
+| Prøve | Første bud (hovedgruppe) | Kornstørrelse og struktur | Placering i kredsløbet | Navn (hvis muligt) |
+|:-:|:-:|:---|:-:|:-:|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| 7 | | | | |
+| 8 | | | | |
+
+: Sortering af bjergartsprøverne. {#tbl-1}
+
+## Del III — Undersøg en stor sten
+
+I denne del er der ingen hypotese: I skal undersøge og beskrive.
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Lineal med millimeterinddeling
+- Magnet
+- Lille stålkniv (laboratoriekniv)
+- Lup og mobiltelefon til at fotografere
+:::
+
+1. Find en stor sten udenfor — på skolens område, i en park, på stranden eller ved et dige. Store sten i Danmark er næsten altid ført hertil af isen fra Norge, Sverige eller Østersøområdet.
+2. Fotografér stenen, både hele stenen og helt tæt på, så de enkelte mineralkorn kan ses.
+3. Mål størrelsen af 10 tilfældigt valgte mineralkorn med linealen, og skriv dem i @tbl-2.
+4. Hold magneten mod stenen flere steder. Hænger den fast?
+5. Prøv forsigtigt at ridse i de forskellige slags mineralkorn med kniven. Hvilke kan ridses, og hvilke kan ikke?
+6. Beskriv farver og mønster: ligger kornene hulter til bulter, i lag eller i striber?
+
+| Korn | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|:---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Størrelse (mm) | | | | | | | | | | |
+
+: Kornstørrelse i den store sten. {#tbl-2}
+
+| Undersøgelse | Iagttagelse |
+|:---|:---|
+| Findested | |
+| Dominerende farver | |
+| Mønster (hulter til bulter, lag, striber) | |
+| Magnetisk? | |
+| Mineraler, der kan ridses med kniv | |
+| Mineraler, der ikke kan ridses | |
+
+: Iagttagelser af den store sten. {#tbl-3}
+
+## Databehandling
+
+1. Beregn gennemsnittet af de 10 kornstørrelser i @tbl-2:
+
+$$\bar{d} = \frac{d_1 + d_2 + \dots + d_{10}}{10}$$
+
+2. Angiv den mindste og den største kornstørrelse. Er kornene nogenlunde lige store, eller er der store krystaller i en finkornet grundmasse (en *porfyr*)?
+3. Er stenen fin-, middel- eller grovkornet ud fra gennemsnittet? Hvad fortæller det om, hvor hurtigt den er størknet eller dannet?
+4. Sammenlign kornstørrelsen med en anden gruppes sten. Lav evt. et fælles diagram over klassens sten med gennemsnitlig kornstørrelse og hovedgruppe.
+
+## Journalspørgsmål
+
+1. Argumentér for jeres placering af prøverne i Del II. Hvilke var lettest og sværest at placere, og hvorfor?
+2. Hvilke mineraler tror I, jeres store sten består af? Brug farve, hårdhed og magnetisme som argumenter.
+3. Hvilken hovedgruppe hører stenen til, og hvor i kredsløbet ville I placere den? Kan I give den et navn?
+4. Forklar sammenhængen mellem kornstørrelse og afkølingshastighed i magmatiske bjergarter.
+5. Hvordan kan en granit blive til en sandsten, og en sandsten blive til en kvartsit? Følg vejen rundt i kredsløbet.
+6. Hvorfor er de fleste store sten i Danmark magmatiske eller metamorfe, når Danmarks egen undergrund næsten kun består af sedimentære bjergarter som kalk, kridt, ler og sand?
+7. Vurdér metoden: hvor sikker er en bestemmelse ud fra et billede og en kniv? Hvilke kendetegn var mest pålidelige?
+
+## Om denne udgave
+
+Bygger på opbygningen af en ældre NV-øvelse om bjergarternes kredsløb (2019/20) med tre dele: teori om de tre hovedgrupper, sortering af prøver på en bestemmelsesdug og undersøgelse af en stor sten udenfor. Teksten er skrevet helt ny. Ændret i forhold til den ældre øvelse:
+
+- Del III var bundet til bestemte sten på én skole. Nu kan øvelsen bruges overalt: eleverne finder selv en stor sten på skolen, i en park eller på stranden.
+- Den ældre øvelse forudsatte en bestemt kommerciel bestemmelsesdug. Nu kan man bruge en dug, hvis skolen har en, eller tegne kredsløbet selv, og sitets stensamling med bestemmelsesnøgle kan bruges til at give prøverne navn.
+- Nyt: en boks med kendetegn (kornstørrelse, struktur, hårdhed, magnetisme), skemaer til begge dele, måling af 10 kornstørrelser med gennemsnit og en vurdering af afkølingshastigheden. Spørgsmålene fra den ældre øvelse er samlet i journalspørgsmålene og udvidet med kredsløbet og istidens sten.
