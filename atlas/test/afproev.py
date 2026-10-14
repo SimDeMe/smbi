@@ -5,6 +5,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
 from information import afproev_stedinformation, afproev_kortinformation
+from pladelag import afproev_pladelag, afproev_pladefejl
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
 UD = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-atlas-test'))
@@ -69,6 +70,7 @@ with sync_playwright() as p:
         side.keyboard.press('Escape')
         canvas = side.locator('#globus')
         afproev_piletaster(side)
+        afproev_pladelag(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -137,6 +139,8 @@ with sync_playwright() as p:
         side.screenshot(path=str(UD / f'fallback-{fejltype}.png'))
         print('Fallback', fejltype, ': OK')
         side.close()
+    afproev_pladefejl(browser, ADRESSE)
+    print('Fallback pladedata : OK')
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)

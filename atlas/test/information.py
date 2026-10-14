@@ -59,7 +59,7 @@ def afproev_kortinformation(side):
     knap = side.get_by_role('button', name='Om kortet: Globussen', exact=True)
     panel = side.locator('#' + knap.get_attribute('aria-controls'))
     expect(panel).to_be_hidden()
-    expect(side.locator('#dialogindhold')).to_contain_text('ikke aktuelle vejr-, klima- eller pladedata')
+    expect(side.locator('#dialogindhold')).to_contain_text('ikke aktuelle vejr- eller klimadata')
     knap.press('Enter')
     expect(panel).to_contain_text('Natural Earth')
     expect(panel).to_contain_text('world-atlas 2.0.2')

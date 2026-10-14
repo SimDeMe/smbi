@@ -1,0 +1,17 @@
+Pladegrænser: pladegraenser.json er bearbejdet fra model PB2002.
+
+Kilde: Peter Bird (2003), An updated digital model of plate boundaries,
+Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252.
+Originalfiler: http://peterbird.name/oldFTP/PB2002/
+  PB2002_steps.dat.txt   (md5 uden CR: 31f2b36289cc3efbd05b61379b234717)
+  PB2002_orogens.dig.txt (md5 uden CR: 333226d84898172cb073fb59c84ec113)
+Hentet 14. oktober 2026. Filerne er byte-identiske (bortset fra linjeskift)
+med kopien i https://github.com/fraxen/tectonicplates (commit 339b0c5,
+mappen original/), som udgives under Open Data Commons Attribution License
+1.0: http://opendatacommons.org/licenses/by/1.0/
+
+Bearbejdning (data/pladegraenser.py): Birds syv trinklasser er samlet i tre
+(konstruktiv: OSR, CRB; destruktiv: SUB, OCB, CCB; bevarende: OTF, CTF);
+sammenhængende trin er slået sammen til linjer; længdegrader er bragt til
+-180…180; koordinater er afrundet til 0,01°; orogenernes ringe er vendt til
+D3's omløbsretning. Ingen grænser er tilføjet eller flyttet.

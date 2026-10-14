@@ -156,10 +156,75 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
   indhold.append(lavInformation({
     navn: 'Globussen', overskrift: 'Om kortet',
-    introduktion: 'Oversigtskort – ikke aktuelle vejr-, klima- eller pladedata.',
-    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr-, klima- eller pladedata.'
+    introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænselaget er en model.',
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde.'
   }));
 };
+
+const PLADEKILDE = 'Pladegrænser: Peter Bird (2003), An updated digital model of plate boundaries, Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252. Data er hentet fra Birds egen side (peterbird.name/oldFTP/PB2002) og er identiske med kopien i github.com/fraxen/tectonicplates, som udgives under Open Data Commons Attribution 1.0. ' +
+  'Bird inddeler hvert ca. 45 km langt stykke af grænserne i syv klasser ud fra pladernes beregnede relative bevægelse. Her er de samlet i tre: konstruktiv = oceanisk spredningsryg og kontinental riftzone; destruktiv = subduktion samt oceanisk og kontinental konvergens (fx kollisionen ved Himalaya); bevarende = oceaniske og kontinentale transformforkastninger, hvor bevægelsen er højst 20° fra grænsens retning. Derfor kan typen skifte flere gange langs den samme grænse. ' +
+  'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er Birds orogener: brede zoner, fx Alperne og Tibet, hvor deformationen er spredt, og hvor linjerne er mindst sikre. ' +
+  'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Laget viser ikke jordskælv, vulkaner, dybhavsgrave eller pladernes navne.';
+
+function visPladeopgave() {
+  aabn('Undersøg pladegrænserne');
+  indhold.append(element('p', 'Slå laget Pladegrænser til, og drej globussen. Brug signaturforklaringen.'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Hvor ligger de konstruktive grænser mest – på land eller i havet? Hvor ligger de destruktive?',
+    'Find Island. Hvilken type pladegrænse går gennem øen, og hvilke to plader bevæger sig fra hinanden her?',
+    'Følg den Midtatlantiske Ryg mod syd. Hvorfor er den delt op i korte stykker med bevarende grænser imellem?',
+    'Find en destruktiv grænse med tænder, fx ved Japan eller Andesbjergene. Hvilken plade ligger øverst, og hvilke landformer og hvilken aktivitet vil du forvente der?',
+    'Hele den Midtatlantiske Ryg er en konstruktiv grænse, men det meste ligger dybt under havet. Hvorfor kan pladegrænsen alene ikke forklare, at Island ligger over havet?',
+    'Modelkritik: Laget tegner grænserne som skarpe linjer. Hvorfor er det en forenkling? Se fx de skraverede områder ved Alperne og Tibet.'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  indhold.append(lavInformation({
+    navn: 'Pladegrænser', overskrift: 'Om data',
+    introduktion: 'Peter Birds model PB2002 (2003). Grænser og typer er en model – ikke skarpe, målte linjer.',
+    tekst: PLADEKILDE
+  }));
+  const island = steder.find(sted => sted.id === 'island');
+  if (globus) {
+    const find = element('button', 'Vis Island med pladegrænser', 'tilbage');
+    find.onclick = async () => {
+      senesteFokus = document.querySelector('#globus');
+      dialog.close();
+      if (pladeknap.getAttribute('aria-pressed') !== 'true') await skiftPladelag();
+      globus.visSted(island);
+      document.querySelector('#globus').focus({ preventScroll: true });
+    };
+    indhold.append(find);
+  }
+  indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
+  indhold.append(visModeller(modeller.filter(model => model.steder.includes('island'))));
+}
+
+const pladeknap = document.querySelector('#pladelag');
+const signatur = document.querySelector('#signatur');
+const canvas = document.querySelector('#globus');
+const canvasbeskrivelse = canvas.getAttribute('aria-label');
+async function skiftPladelag() {
+  const vis = pladeknap.getAttribute('aria-pressed') !== 'true';
+  pladeknap.disabled = true;
+  try {
+    await globus.visPladegraenser(vis);
+    pladeknap.setAttribute('aria-pressed', String(vis));
+    signatur.hidden = !vis;
+    document.body.classList.toggle('pladelag', vis);
+    canvas.setAttribute('aria-label', vis
+      ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003`
+      : canvasbeskrivelse);
+  } catch {
+    document.querySelector('#kortstatus').textContent = 'Pladegrænserne kunne ikke indlæses. Globussen virker stadig. Prøv igen senere.';
+    document.querySelector('#kortstatus').hidden = false;
+    setTimeout(() => { document.querySelector('#kortstatus').hidden = true; }, 6000);
+  } finally {
+    pladeknap.disabled = false;
+  }
+}
+pladeknap.onclick = skiftPladelag;
+document.querySelector('#pladeopgave').onclick = visPladeopgave;
 
 const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zoom-ud, #nulstil')];
 globusknapper.forEach(knap => { knap.disabled = true; });
@@ -167,6 +232,7 @@ try {
   const { startGlobus } = await import('./globus.js');
   globus = await startGlobus(steder, visSted);
   globusknapper.forEach(knap => { knap.disabled = false; });
+  pladeknap.disabled = false;
   document.querySelector('#kortstatus').hidden = true;
 } catch {
   document.querySelector('#globus').hidden = true;

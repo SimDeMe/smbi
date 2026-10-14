@@ -26,6 +26,8 @@ atlasregisteret og dokumenterer ikke fuld læreplansdækning.
 - `globus.js`: D3's ortografiske projektion tegnet med Canvas 2D. Den håndterer
   horisontklipning, landegrænser, bredde-/længdegrader og projektion af markører.
   Canvas bruger højst dobbelt pixeltæthed; kun ændringer udløser tegning.
+- `pladelag.js`: valgfrit pladegrænselag (#48). Henter først data, når laget
+  slås til, og tegner signaturen i samme Canvas som globussen.
 - `vendor/` og `data/`: lokale, versionsbundne biblioteker, licenser og kortdata.
 
 Globusmodulet indlæses separat med fejlhåndtering. Manglende bibliotek, HTTP-fejl,
@@ -66,6 +68,45 @@ ikke et målt nedsynkningspunkt. Der vises ingen opdigtede plade-, terræn- elle
 klimadata. Drivhuseffekten ligger under **Processer → Global atmosfære** og i
 søgningen, uden en vilkårlig markør.
 
+## Pladegrænselaget (#48)
+
+Knappen **Pladegrænser** i værktøjslinjen slår et valgfrit lag til og fra
+(`aria-pressed`). Data kommer fra Peter Birds model PB2002 (2003) og ligger i
+`data/pladegraenser.json` (150 kB, 46 kB gzip). Den dannes reproducerbart med
+`data/pladegraenser.py` ud fra Birds originalfiler; kilde, kontrolsummer,
+licens og bearbejdning står i `data/pladegraenser.LICENSE`.
+
+Bird klassificerer hvert ca. 45 km lange trin af grænserne i syv klasser ud fra
+den beregnede relative bevægelse. Atlasset samler dem i skolens tre typer:
+
+| Signatur | Type | Birds klasser |
+| --- | --- | --- |
+| Rød dobbeltlinje | Konstruktiv | OSR (oceanisk spredningsryg), CRB (kontinental rift) |
+| Mørkeblå linje, tænder ved subduktion | Destruktiv | SUB (subduktion), OCB, CCB (oceanisk/kontinental konvergens, fx Himalaya) |
+| Grøn stiplet linje | Bevarende | OTF, CTF (oceanisk/kontinental transformforkastning) |
+| Skraveret flade | Bred, diffus zone | Birds 13 orogener, hvor deformationen er spredt |
+
+Linjeform og tænder gør typerne skelnelige uden farve. Tænderne sidder på den
+overliggende plade efter Birds polaritet (`/` og `\` i grænsenavnet); det er
+kontrolleret visuelt ved Kurilerne, Japan, Marianerne og Andesbjergene.
+Stikprøver af klassifikationen: Island og Midtatlantiske Ryg = OSR (EU-NA),
+Østafrikanske riftzone = CRB (SO-AF), San Andreas og Nordanatoliske forkastning
+= CTF, Himalaya = CCB.
+
+Faglige forbehold vises i signaturen («Model (Bird 2003), ikke målte linjer»)
+og fuldt under **Undersøg og kilde → ⓘ Om data**: grænserne er en geologisk
+model, ikke skarpe observerede linjer; typen kan skifte langs samme grænse;
+bevægelserne bygger på en ældre pladebevægelsesmodel; mikroplader er med, men
+ikke navngivet; laget viser ikke jordskælv, vulkaner eller dybhavsgrave.
+
+Samme dialog har en kort undersøgelsesopgave (seks spørgsmål om mønstre,
+Island, transformforkastninger, subduktion, hotspot og modelkritik), en knap
+der viser Island med laget, og links til `pladegraenser.html` og
+`vulkanudbrud.html`. Brede skærme viser signaturen i figurens venstre hjørne
+i stedet for globusnoten; smalle skærme viser den under betjeningen. Kan
+data ikke hentes, vises en statusbesked, knappen forbliver slået fra, og
+globussen virker uændret.
+
 ## Supplerende faglig information
 
 Brug `lavInformation({navn, introduktion, note, tekst, overskrift})` fra
@@ -97,6 +138,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | d3-geo | 3.1.1 | [D3](https://github.com/d3/d3-geo), ISC; `vendor/d3-geo.LICENSE` |
 | topojson-client | 3.1.0 | [TopoJSON](https://github.com/topojson/topojson-client), ISC; `vendor/topojson-client.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
+| pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 
 Filerne er hentet uændret fra `https://cdn.jsdelivr.net/npm/<pakke>@<version>/`
 (`dist/<pakke>.min.js`, `LICENSE`, henholdsvis `countries-110m.json`). Kortet
@@ -156,6 +198,14 @@ Den kontrollerer også allerede håndterede events, modifiers og tekstkompositio
 Testen sammenligner canvas' faktiske pixels, så fokusrammer ikke kan give et
 falsk positivt resultat.
 
+`test/pladelag.py` indgår også og afprøver #48 på alle fem visninger: laget
+slås til/fra med `aria-pressed`, canvas ændres og vender tilbage til
+udgangspunktet, signaturen har alle fire typer og overlapper ingen kontroller,
+opgavedialogen har seks spørgsmål, kildeinformation med DOI og licens samt de
+to model-links, og «Vis Island med pladegrænser» lukker dialogen og centrerer.
+En særskilt prøve afbryder `pladegraenser.json` og kontrollerer statusbesked,
+at knappen forbliver slået fra, og at globussen stadig kan drejes.
+
 `test/information.py` indgår også og afprøver #50 på alle fem visninger:
 samtlige stedtekster, synlige modelbegrænsninger, tap/klik/Enter/Space,
 Escape uden at lukke værtsdialogen, luk-knap, klik udenfor, fokusretur,
@@ -207,6 +257,20 @@ virker, og der er ingen vandret rulning.
 Ikke afprøvet på fysiske telefoner, i en egentlig Safari-app eller med en
 skærmlæser. Touch er testet gennem Chromiums inputprotokol. Ingen ændringer
 af simulationsmodeller; deres faglige beregninger genvalideres ikke her.
+
+### Pladegrænselaget (#48)
+
+Hele browsertesten med `test/pladelag.py` består i headless Chromium på macOS
+på alle fem visninger, også med WebGL deaktiveret, og uden konsolfejl.
+Figurfladerne er uændrede. På ≥900 px ligger signaturen i figurens venstre
+hjørne (290 px bred), hvor den ikke dækker kloden ved zoom 1× på 1280×577;
+ved større zoom kan den dække kanten af kloden. Under 900 px ligger den under
+betjeningen, så den ved 640×625 og 390×750 kræver lodret rulning, mens globus
+og betjening fortsat er synlige samtidig. På telefon (≤500 px) er ikonerne i
+værktøjslinjen skjult og knappen hedder «Plader», så de fem knapper står på
+én linje ned til 320 px. Med laget koster en omtegning ca. 10 ms mere i headless
+Chromium ved 1536×730 og dobbelt pixeltæthed (40 rotationer: 45 mod 34 ms pr.
+to billeder); fysisk telefon og Safari er ikke afprøvet.
 
 ## Mulig fase 2
 
