@@ -1,7 +1,7 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: milepæl A og B er færdige.** Milepæl B er et statisk tværsnit i
-[`island/`](island/), se «Milepæl B» nederst. Udkast til milepæl A – den faglige
+**Status: milepæl A, B og C er færdige.** Tværsnittet ligger i
+[`island/`](island/), se «Milepæl B» og «Milepæl C» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
 (zoom til terræn) er udskudt; første version går fra globus til tværsnit. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
 
@@ -97,5 +97,43 @@ Selvstændigt modul på `/atlas/island/` (`index.html`, `island.css`,
   skærmstørrelser, vandret rulning, figur og kontroller uden at rulle,
   skift, hotspot, tekst mod ISLAND-MODEL.md, trinfremhævning, tastatur,
   fokus og links.
+
+## Milepæl C – lag, drejning og animation
+
+Samme modul; ingen nye tal eller påstande ud over ISLAND-MODEL.md afsnit 2–3.
+
+- **Vis/skjul-lag:** knappen «Lag» åbner de syv lag fra afsnit 4 med elevens
+  ord. Et skjult lag udelades af figuren og af tekstalternativet («Laget …
+  er slået fra»). Vælger eleven et trin, vises trinnets lag igen, så «Se
+  efter» altid peger på noget synligt. Pladegrænsen hører til
+  «Lithosfæreplader». «Hotspot (fortolkning)» findes kun ved Island.
+- **2D/3D og drejning:** 2D er SVG-tværsnittet lige forfra og er
+  udgangspunktet – læsbart, mærket og det fulde tekstalternativ. 3D gør
+  tværsnittet til forsiden af en blok: oversiden viser ryggen, havet og
+  pladernes bevægelse ovenfra med «↑ Nord» (Island som skematisk landflade,
+  ikke øens omrids), siderne viser, at lagene fortsætter langs ryggen. Drej
+  med træk (vandret på touch, så siden stadig kan rulle), piletaster på
+  figuren, Home for standardvinklen eller de synlige drejeknapper. Drejningen
+  er begrænset til ±60° og 0–45° ovenfra; blokkens hjørner projiceres, så den
+  altid passer i figuren.
+- **Animation:** pladerne og skorpen føres væk fra ryggen som lyse bånd, der
+  flytter sig lige hurtigt til begge sider; kappen stiger langsomt op langs
+  pilene; dråber dannes i forskellig højde i smeltezonen og stiger op mod
+  ryggen; magma bevæger sig op gennem gangene. Kappen er mindst tre gange så
+  langsom som magmaen (testet). Ingen udbrud. Tiden står som «Tiden er sat op
+  – ikke målfast», fordi figuren ikke har vandrette afstande. Afspil/Pause;
+  ved `prefers-reduced-motion` starter den på pause. Kun de bevægelige dele
+  tegnes om pr. billede.
+- **Teknikvalg:** CSS 3D frem for Three.js. Forsiden er den samme SVG som i
+  2D, så etiketter, mærker og fremhævning bliver skarpe og ens i begge
+  visninger, og intet kræver WebGL eller et bibliotek fra et CDN. Uden CSS 3D
+  er 3D-knappen slået fra, og 2D virker som før.
+- **Filer:** `blok.js` (oversiden, siderne og projektionen), `tvaersnit.js`
+  (`bevaegelse()` for de bevægelige dele), `island.js` (styring).
+- Test: `afproev_islandbevaegelse` i `atlas/test/island.py` – blokken passer i
+  figuren på alle fem skærme og i yderstillingerne, piletaster, Home,
+  drejeknapper, træk, grænser, lag og tekstalternativ, trin der viser deres
+  lag, Escape og klik udenfor, afspil/pause, reduced motion, kappens og
+  magmaens fart, båndenes symmetri, ingen tal i figuren og fallback uden CSS 3D.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.

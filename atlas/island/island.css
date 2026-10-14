@@ -21,14 +21,39 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .snit{border:2px solid var(--ink);border-radius:9px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
 .vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--ink)}
 .skift{display:flex}.skift button{border-radius:0}.skift button:first-child{border-radius:6px 0 0 6px}.skift button:last-child{border-radius:0 6px 6px 0;border-left:0}
-.ekstra{display:flex;align-items:center;gap:10px}
+.ekstra{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.visning button{min-width:46px;padding:7px 10px}
+#afspil{min-width:96px}#afspil .ikon{display:inline-block;width:1.1em;font-size:12px}
 .valgfelt{display:flex;align-items:center;gap:8px;min-height:44px;font:600 14px var(--display);cursor:pointer}.valgfelt input{width:20px;height:20px;margin:0;accent-color:#ff6a3d}
 .valgfelt.slukket{opacity:.45;cursor:default}
+.lagvalg{position:relative}
+#lagknap .pil{font-size:11px}#lagknap[aria-expanded="true"]{background:var(--lys)}
+.lagpanel{position:absolute;right:0;top:calc(100% + 6px);z-index:5;min-width:240px;margin:0;padding:6px 14px 8px;background:var(--paper);border:2px solid var(--ink);border-radius:8px;box-shadow:4px 4px 0 var(--ink)}
+.lagpanel legend{float:left;width:100%;padding:4px 0 2px;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+.lagpanel .valgfelt{min-height:40px;clear:both}
 
 .arbejdsflade{display:grid;grid-template-columns:minmax(0,1fr) clamp(290px,29vw,400px);height:calc(100svh - 192px);min-height:400px}
-.figur{position:relative;margin:0;min-width:0;min-height:0;border-right:1px solid var(--ink)}
-#tvaersnit{display:block;width:100%;height:100%}
-.skematisk{position:absolute;left:8px;bottom:6px;margin:0;padding:2px 7px;font:500 12px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px}
+.figur{position:relative;margin:0;min-width:0;min-height:0;border-right:1px solid var(--ink);overflow:hidden}
+.scene{position:absolute;left:0;top:0;width:100%;height:100%;touch-action:pan-y;perspective-origin:50% 45%}
+.scene:focus-visible{outline-offset:-4px}
+.blok{position:absolute;left:0;top:0;transform-style:preserve-3d;transition:transform .35s ease}
+.traekker .blok{transition:none}.tre-d .scene{cursor:grab}.traekker .scene{cursor:grabbing}
+.flade{position:absolute;left:0;top:0;display:block;backface-visibility:hidden;overflow:visible}
+#tvaersnit{width:100%;height:100%}
+.overside,.oest,.vest{display:none}
+.tre-d .overside,.tre-d .oest,.tre-d .vest{display:block}
+.overside{transform-origin:50% 100%;transform:rotateX(90deg)}
+.oest{transform-origin:0 50%;transform:rotateY(90deg)}
+.vest{transform-origin:100% 50%;transform:rotateY(-90deg)}
+.tre-d .luft-flade{fill:none}
+.sidekant{fill:none;stroke:var(--ink);stroke-width:1.5}
+.land-flade{fill:#6b6f6a;stroke:var(--ink);stroke-width:1.5}
+.hav-flade.top{stroke:var(--ink);stroke-width:2}
+.maerkater{position:absolute;left:8px;bottom:6px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
+.skematisk,.tidsmaerke{margin:0;padding:2px 7px;font:500 12px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px}
+.tidsmaerke{border-style:dashed}
+.drejeknapper{position:absolute;right:8px;bottom:6px;display:flex;gap:4px}
+.drejeknapper button{min-width:44px;padding:4px 8px;background:#fffdf7e6}
 .forklaring{display:flex;flex-direction:column;min-height:0;padding:10px 14px}
 .tekstrum{flex:1;min-height:0;overflow:auto;padding-right:4px}
 .trinvalg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.trinvalg button{min-width:40px;padding:4px 8px;font-size:13px}
@@ -46,6 +71,9 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .kappepil{fill:none;stroke:#7a5a33;stroke-width:2.2;stroke-dasharray:1 0}.hoved-kappepil{fill:#7a5a33}
 .smelte-flade{fill:#ffb30040;stroke:#c4471c;stroke-width:1;stroke-dasharray:3 3}
 .draaber circle{fill:#e2521f;stroke:#7d1d0a;stroke-width:.6}
+.baand{fill:#fff9ee;opacity:.13}
+.kappespor circle{fill:#7a5a33;stroke:#fff9ee;stroke-width:1}
+.magmaspor circle{fill:#ffb300;stroke:#7d1d0a;stroke-width:.8}
 .smeltestart{stroke:#c4471c;stroke-width:1.5;stroke-dasharray:5 4}
 .gang{fill:none;stroke:#e2521f;stroke-width:3.5;stroke-linecap:round}.gang.tynd{stroke-width:2.2}
 .henvisning{stroke:var(--ink);stroke-width:1;fill:none}.kammer{fill:#e2521f;stroke:#7d1d0a;stroke-width:1.2}
@@ -59,8 +87,8 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .etiket.midt{font-size:13px}
 
 /* Trinvis fremhævning: andre lag tones ned, men forbliver synlige. */
-#tvaersnit [data-lag]{transition:opacity .25s}
-#tvaersnit.fremhaevet [data-lag]:not(.aktiv):not([data-lag="navne"]){opacity:.28}
+.flade [data-lag]{transition:opacity .25s}
+.flade.fremhaevet [data-lag]:not(.aktiv):not([data-lag="navne"]){opacity:.28}
 
 .eftertekst{display:grid;gap:4px;padding-top:12px;font-size:15px}
 .eftertekst summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font:700 16px var(--display)}
@@ -84,9 +112,11 @@ body.fokus .arbejdsflade{height:calc(100svh - 82px)}
 }
 @media(max-width:500px){
   main{padding:0 10px 14px}.site-linje{padding:8px 12px}
-  .vaerktoejer{padding:7px}.skift{width:100%}.skift button{flex:1;padding:6px 8px;font-size:13px}
+  .vaerktoejer{padding:7px}.skift:not(.visning){width:100%}.skift:not(.visning) button{flex:1;padding:6px 8px;font-size:13px}
   .ekstra{width:100%;justify-content:space-between}
-  .skematisk{font-size:11px}.skematisk span{display:none}
+  .lagpanel{right:auto;left:50%;transform:translateX(-50%)}
+  .skematisk,.tidsmaerke{font-size:11px}.skematisk span{display:none}
+  .ekstra{gap:6px}#afspil{min-width:0}.visning button{min-width:40px}
   .forklaring{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}

@@ -41,14 +41,48 @@
           <button data-tilstand="island" aria-pressed="false">Island</button>
         </div>
         <div class="ekstra">
-          <label class="valgfelt"><input id="hotspot" type="checkbox" checked> Hotspot (fortolkning)</label>
+          <div class="skift visning" role="group" aria-label="Visning">
+            <button data-visning="2d" aria-pressed="true" title="Tværsnittet set lige forfra">2D</button>
+            <button data-visning="3d" aria-pressed="false" title="Blok, der kan drejes">3D</button>
+          </div>
+          <button id="afspil" aria-pressed="false"><span class="ikon" aria-hidden="true">▶</span> <span class="tekst">Afspil</span></button>
+          <div class="lagvalg">
+            <button id="lagknap" aria-expanded="false" aria-controls="lagpanel">Lag <span class="pil" aria-hidden="true">▾</span></button>
+            <fieldset id="lagpanel" class="lagpanel" hidden>
+              <legend>Vis lag</legend>
+              <label class="valgfelt"><input type="checkbox" data-vislag="overflade" checked> Overflade og hav</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="skorpe" checked> Skorpe</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="plader" checked> Lithosfæreplader</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="kappe" checked> Kappe</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="smelt" checked> Her smelter stenen</label>
+              <label class="valgfelt"><input type="checkbox" data-vislag="magma" checked> Magmaens vej</label>
+              <label class="valgfelt"><input id="hotspot" type="checkbox" data-vislag="hotspot" checked> Hotspot (fortolkning)</label>
+            </fieldset>
+          </div>
           <button id="fokus" aria-pressed="false">Fokus</button>
         </div>
       </div>
       <div class="arbejdsflade">
         <figure class="figur">
-          <svg id="tvaersnit" role="img" aria-labelledby="figurtitel figurbeskrivelse" xmlns="http://www.w3.org/2000/svg"></svg>
-          <p class="skematisk">Skematisk – ikke målfast<span> · set fra syd</span></p>
+          <div class="scene" tabindex="0" role="group" aria-label="Tværsnit. Drej blokken med piletasterne." aria-describedby="drejehjaelp">
+            <div class="blok">
+              <svg id="tvaersnit" class="flade forside" role="img" aria-labelledby="figurtitel figurbeskrivelse" xmlns="http://www.w3.org/2000/svg"></svg>
+              <svg class="flade overside" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
+              <svg class="flade oest" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
+              <svg class="flade vest" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+          </div>
+          <div class="maerkater">
+            <p class="tidsmaerke" hidden>Tiden er sat op – ikke målfast</p>
+            <p class="skematisk">Skematisk – ikke målfast<span> · set fra syd</span></p>
+          </div>
+          <div class="drejeknapper" role="group" aria-label="Drej blokken" hidden>
+            <button data-drej="-1,0" aria-label="Drej mod venstre">◀</button>
+            <button data-drej="0,1" aria-label="Se mere ovenfra">▲</button>
+            <button data-drej="0,-1" aria-label="Se mere forfra">▼</button>
+            <button data-drej="1,0" aria-label="Drej mod højre">▶</button>
+          </div>
+          <p id="drejehjaelp" class="skjult">Venstre og højre piletast drejer blokken, op og ned ændrer, hvor meget ovenfra den ses. Home stiller den tilbage.</p>
           <figcaption class="skjult"><span id="figurtitel">Tværsnit</span> <span id="figurbeskrivelse"></span></figcaption>
         </figure>
         <aside class="forklaring" aria-labelledby="trintitel">

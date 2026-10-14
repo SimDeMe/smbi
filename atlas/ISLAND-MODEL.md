@@ -1,8 +1,9 @@
 # Island – faglig modelbeskrivelse (milepæl A i #49)
 
 Status: gennemgået og godkendt af ejeren 14. oktober 2026 (se «Afgørelser»
-nederst). Milepæl B, et statisk tværsnit med elevteksten fra afsnit 2, ligger
-i [`island/`](island/) (`/atlas/island/`); se [ISLAND-DEMO.md](ISLAND-DEMO.md). Tal er afrundede størrelsesordener til forklaring, ikke
+nederst). Milepæl B og C – tværsnittet med elevteksten fra afsnit 2, lag fra
+afsnit 4 og animationen fra afsnit 5 – ligger i [`island/`](island/)
+(`/atlas/island/`); se [ISLAND-DEMO.md](ISLAND-DEMO.md). Tal er afrundede størrelsesordener til forklaring, ikke
 værdier, animationen skal "beregne". Referencerne skal kontrolleres i
 originalen, før de citeres i elevmateriale (se «Afgørelser»).
 
