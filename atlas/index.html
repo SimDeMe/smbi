@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Naturgeografisk atlas — smbi.dk</title>
+  <meta name="description" content="Drej globussen, find et sted eller en proces, og undersøg naturgeografien med interaktive simulationer. Uden login.">
+  <link rel="canonical" href="https://smbi.dk/atlas/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/atlas/">
+  <meta property="og:title" content="Naturgeografisk atlas — smbi.dk">
+  <meta property="og:description" content="Fra sted og proces til interaktiv simulation. Udforsk naturgeografien på en globus.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta property="og:image:alt" content="smbi.dk — naturgeografi">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="atlas.css">
+  <script defer src="vendor/d3-array.min.js"></script>
+  <script defer src="vendor/d3-geo.min.js"></script>
+  <script defer src="vendor/topojson-client.min.js"></script>
+  <script type="module" src="atlas.js"></script>
+</head>
+<body>
+  <a class="spring" href="#indgange">Spring til atlasbetjening</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+      <a href="/geografi.html">Alle geografisimulationer →</a>
+    </div>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="overlinje">Naturgeografi · interaktivt atlas</p><h1>Verden er dit udgangspunkt<span>.</span></h1></div>
+      <p>Drej kloden. Vælg et sted.<br>Undersøg processen.</p>
+    </div>
+    <section class="atlas" aria-label="Globus og atlasbetjening">
+      <nav id="indgange" class="vaerktoejer" aria-label="Find en simulation">
+        <div class="indgange">
+          <button aria-label="Steder" data-indgang="steder" aria-haspopup="dialog">⌖ <span>Steder</span></button>
+          <button aria-label="Processer" data-indgang="processer" aria-haspopup="dialog">≋ <span>Processer</span></button>
+          <button aria-label="Søg" data-indgang="soeg" aria-haspopup="dialog">⌕ <span>Søg</span></button>
+        </div>
+        <button id="fokus" aria-pressed="false">Fokus</button>
+      </nav>
+      <div id="globusrum" class="globusrum">
+        <canvas id="globus" tabindex="0" role="img" aria-label="Interaktiv jordglobus med lande, hav og tre faglige adgangspunkter" aria-describedby="betjening"></canvas>
+        <div id="markoerer" aria-label="Steder på den synlige halvklode"></div>
+        <div class="globusnote" aria-hidden="true"><span class="overlinje">Fra sted til model</span><p>Hvilke kræfter<br>former verden?</p><span class="lille">Vælg en markør<br>og gå på opdagelse.</span></div>
+        <p id="kortstatus" class="kortstatus" role="status">Henter verdenskort …</p>
+        <div class="kompas" aria-hidden="true">N ↑</div>
+      </div>
+      <div class="betjeningslinje">
+        <div class="rotation" role="group" aria-label="Drej globussen">
+          <button data-drej="vest" aria-label="Drej mod vest">←</button>
+          <button data-drej="nord" aria-label="Drej mod nord">↑</button>
+          <button data-drej="syd" aria-label="Drej mod syd">↓</button>
+          <button data-drej="oest" aria-label="Drej mod øst">→</button>
+        </div>
+        <div role="group" aria-label="Zoom og nulstilling">
+          <button id="zoom-ud" aria-label="Zoom ud">−</button>
+          <output id="zoomniveau" aria-label="Zoomniveau">1×</output>
+          <button id="zoom-ind" aria-label="Zoom ind">+</button>
+          <button id="nulstil">Nulstil</button>
+        </div>
+        <button id="hjaelp" aria-haspopup="dialog">Hjælp</button>
+      </div>
+    </section>
+    <div class="eftertekst">
+      <p id="betjening">Træk for at dreje · Zoom med to fingre eller +/− · Brug piletaster på globussen.</p>
+      <p>Markørerne er faglige eksempler. <button class="tekstknap" data-indgang="processer">Globale temaer findes under Processer →</button></p>
+    </div>
+    <noscript><p class="uden-script">Atlasset kræver JavaScript. Du kan stadig åbne alle simulationer i <a href="/geografi.html">geografibiblioteket</a>.</p></noscript>
+  </main>
+  <dialog id="udforsker" aria-labelledby="dialogtitel">
+    <div class="dialogtop"><h2 id="dialogtitel">Udforsk atlasset</h2><button id="luk" aria-label="Luk og vend tilbage til globussen">Luk ×</button></div>
+    <div id="dialogindhold"></div>
+  </dialog>
+</body>
+</html>
