@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
+from piletaster import afproev_piletaster
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
 UD = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-atlas-test'))
@@ -64,6 +65,7 @@ with sync_playwright() as p:
             assert svar.status == 200
         side.keyboard.press('Escape')
         canvas = side.locator('#globus')
+        afproev_piletaster(side)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')

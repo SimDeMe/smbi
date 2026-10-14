@@ -86,8 +86,14 @@ python3 -m http.server 8777
 ```
 
 Træk med mus/én finger for at dreje; zoom med to fingre eller +/−. Musehjulet
-zoomer, når globussen har fokus (eller Ctrl holdes nede). Med tastatur: Tab til
-globussen, piletaster, +/− og Home. Alle funktioner har også synlige knapper.
+zoomer, når globussen har fokus (eller Ctrl holdes nede). Piletaster drejer
+globussen på tværs af siden, også efter klik på topbaren eller med fokus på
+et almindeligt link, en knap eller en markør. Fokus flyttes ikke automatisk.
+Søgefelter, input, tekstfelter, select, redigerbar tekst og widgets med egen
+piletastbetjening beholder tasterne; åbne dialoger stopper globusgenvejene.
+Allerede håndterede events, tekstkomposition og pile med Alt/Ctrl/Meta/Shift
+overlades til komponenten, browseren eller hjælpeteknologien. Med fokus på
+globussen virker +/− og Home som før. Alle funktioner har også synlige knapper.
 Escape lukker dialogen og afslutter fokus. Ingen automatisk rotation eller
 vedvarende animation; reduced motion respekteres.
 
@@ -107,12 +113,24 @@ kortdata, bibliotek og Canvas 2D. Den køres med WebGL deaktiveret og reduced
 motion. Den måler figur og primære kontroller direkte frem for det ældre
 pladstjekværktøjs `.rig`-antagelse.
 
+`test/piletaster.py` indgår i samme kørsel og dækker regressionen i #51:
+rotation efter klik på topbar, links, knapper og markører; samme enkelttrin
+med og uden canvasfokus; uændret Enter/Space; tekstcursor i søgning; dialoger,
+native formularfelter, slider, redigerbar tekst og sammensatte ARIA-widgets.
+Den kontrollerer også allerede håndterede events, modifiers og tekstkomposition.
+Testen sammenligner canvas' faktiske pixels, så fokusrammer ikke kan give et
+falsk positivt resultat.
+
 ## Teststatus — 14. oktober 2026
 
 Bestået i headless Chromium på 1280×577, 1366×625, 1536×730, mobil 390×750
 og smal sidevisning 640×625. Ingen JavaScript- eller konsolfejl ved normal
 brug. Alle funktioner og de tre fejltilstande i browsertesten består, også
 med WebGL deaktiveret. Skærmbilleder er visuelt gennemgået.
+
+Regressionen for #51 blev først reproduceret med den gamle canvas-lytter.
+Efter rettelsen består global piletastnavigation og undtagelserne på alle fem
+visninger sammen med de eksisterende atlasprøver.
 
 På de tre laptopstørrelser er både globus og primære kontroller synlige uden
 scroll; figurfladerne er henholdsvis 1228×363, 1314×411 og 1484×516 px.
