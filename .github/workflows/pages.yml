@@ -49,6 +49,9 @@ jobs:
         run: python3 atlas/test/versionsnummer.py
       - name: Stempl atlas og kontroller simulationer
         run: |
+          # Jekyll-containeren opretter artefaktet som root. Kun headerfilen
+          # skal kunne skrives af runnerens bruger før pakningen.
+          sudo chown "$(id -u):$(id -g)" _site/atlas/index.html
           python3 atlas/versionsnummer.py _site/atlas/index.html
           python3 atlas/test/udgivelse.py _site
       - name: Pak det færdige site

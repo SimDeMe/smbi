@@ -34,9 +34,9 @@ Ejeren skal én gang vælge **Settings → Pages → Build and deployment → So
 → GitHub Actions**, og derefter køre **Actions → Udgiv smbi.dk → Run workflow**.
 Indtil da bygges og kontrolleres artefaktet, men workflowets udgivelsesjob
 springes over for at undgå to konkurrerende Pages-udgivelser. Den hidtidige
-branch-udgivelse fungerer fortsat med startmærket `v403`.
+branch-udgivelse fungerer fortsat med startmærket i kildefilen.
 
-Kildetræets `v403` er startversionen; workflowet erstatter det automatisk. Lokalt kan en kopi stemples med:
+Kildetræet har et startmærke; workflowet erstatter det automatisk. Lokalt kan en kopi stemples med:
 
 ```sh
 cp atlas/index.html /tmp/atlas-version.html
