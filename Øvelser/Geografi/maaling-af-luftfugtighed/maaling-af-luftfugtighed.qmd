@@ -17,17 +17,17 @@ Luften indeholder altid noget usynlig vanddamp, men hvor meget? I denne øvelse 
 
 ## Baggrund
 
-Jo varmere luften er, jo mere vanddamp kan den højst indeholde. Sammenhængen kan vises med **dugpunktskurven** — se @tbl-1 og simuleringen *Dugpunkt* på smbi.dk.
+Jo varmere luften er, jo mere vanddamp kan den højst indeholde. Sammenhængen kan vises med dugpunktskurven — se @tbl-1 og simuleringen *Dugpunkt* på smbi.dk.
 
-- Den **absolutte luftfugtighed** er, hvor mange gram vanddamp der faktisk er i 1 m³ luft (g/m³).
-- Den **maksimale luftfugtighed** er, hvor mange gram vanddamp 1 m³ luft højst kan indeholde ved den aktuelle temperatur. Så er luften *mættet*.
-- Den **relative luftfugtighed** er den absolutte luftfugtighed i procent af den maksimale:
+- Den absolutte luftfugtighed er, hvor mange gram vanddamp der faktisk er i 1 m³ luft (g/m³).
+- Den maksimale luftfugtighed er, hvor mange gram vanddamp 1 m³ luft højst kan indeholde ved den aktuelle temperatur. Så er luften *mættet*.
+- Den relative luftfugtighed er den absolutte luftfugtighed i procent af den maksimale:
 
 $$\text{relativ luftfugtighed} = \frac{\text{absolut luftfugtighed}}{\text{maksimal luftfugtighed}} \cdot 100\ \%$$
 
-- **Dugpunktet** er den temperatur, luften skal køles ned til, før den bliver mættet, og vanddampen begynder at fortætte til dråber — dug, tåge eller skyer.
+- Dugpunktet er den temperatur, luften skal køles ned til, før den bliver mættet, og vanddampen begynder at fortætte til dråber — dug, tåge eller skyer.
 
-Et **psykrometer** består af to termometre. Det ene er almindeligt (*tørtermometeret*). Det andet har en stofstrømpe om kuglen, der suger vand op fra en lille beholder (*vådtermometeret*). Fra den våde strømpe fordamper der vand, og fordampningen bruger energi, så vådtermometeret bliver koldere. Jo tørrere luften er, jo hurtigere fordamper vandet, og jo større bliver forskellen mellem de to termometre. Ud fra tørtemperaturen og forskellen kan man aflæse den relative luftfugtighed i tabellen mellem termometrene.
+Et psykrometer består af to termometre. Det ene er almindeligt (*tørtermometeret*). Det andet har en stofstrømpe om kuglen, der suger vand op fra en lille beholder (*vådtermometeret*). Fra den våde strømpe fordamper der vand, og fordampningen bruger energi, så vådtermometeret bliver koldere. Jo tørrere luften er, jo hurtigere fordamper vandet, og jo større bliver forskellen mellem de to termometre. Ud fra tørtemperaturen og forskellen kan man aflæse den relative luftfugtighed i tabellen mellem termometrene.
 
 ![Psykrometeret. Tørtermometeret sidder til venstre, vådtermometeret til højre. Tabellen i midten giver den relative luftfugtighed: gå ind i rækken med tørtemperaturen og kolonnen med temperaturforskellen.](figurer/psykrometer.jpg){#fig-psykrometer width="45%"}
 

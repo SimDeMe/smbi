@@ -13,7 +13,7 @@ format:
 
 ## Om øvelsen
 
-De fleste sten, man finder på en dansk mark eller strand, er ikke danske. De er revet løs fra grundfjeldet i Norge, Sverige og Finland og ført hertil af isen under istiderne. Nogle af dem kommer fra et så lille og velkendt område, at man kan se præcis, hvor de stammer fra. De kaldes **ledeblokke**. I denne øvelse bestemmer I ledeblokke, finder deres oprindelsessted på et kort og bruger dem til at finde ud af, hvilken vej isen er kommet.
+De fleste sten, man finder på en dansk mark eller strand, er ikke danske. De er revet løs fra grundfjeldet i Norge, Sverige og Finland og ført hertil af isen under istiderne. Nogle af dem kommer fra et så lille og velkendt område, at man kan se præcis, hvor de stammer fra. De kaldes ledeblokke. I denne øvelse bestemmer I ledeblokke, finder deres oprindelsessted på et kort og bruger dem til at finde ud af, hvilken vej isen er kommet.
 
 ## Baggrund
 
@@ -21,9 +21,9 @@ En ledeblok er en sten, hvis oprindelsessted som fast klippe kendes, fordi bjerg
 
 Under den sidste istid, Weichsel-istiden, kom isen ind over Danmark i flere *isfremstød* fra forskellige retninger. Tre af de vigtigste er:
 
-- **Det norske isfremstød** — is fra Norge, der kom ned over Skagerrak og ind over det nordlige Danmark.
-- **NØ-isen** (hovedfremstødet) — is fra Sverige mod nordøst, der nåede frem til hovedopholdslinjen i Midtjylland.
-- **Det ungbaltiske isfremstød** — en isstrøm, der løb ned gennem Østersølavningen og ind over Øerne og Østjylland fra sydøst.
+- Det norske isfremstød — is fra Norge, der kom ned over Skagerrak og ind over det nordlige Danmark.
+- NØ-isen (hovedfremstødet) — is fra Sverige mod nordøst, der nåede frem til hovedopholdslinjen i Midtjylland.
+- Det ungbaltiske isfremstød — en isstrøm, der løb ned gennem Østersølavningen og ind over Øerne og Østjylland fra sydøst.
 
 | Ledeblok | Kendetegn | Oprindelsessted |
 |:---|:---|:---|

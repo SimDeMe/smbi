@@ -19,17 +19,17 @@ Alle bjergarter på Jorden indgår i et kæmpe kredsløb, der tager millioner af
 
 Besvar spørgsmålene ud fra jeres lærebog, før I går i gang med prøverne:
 
-1. Hvad kendetegner **magmatiske** bjergarter, og hvordan dannes de? Hvad er forskellen på dybbjergarter og lavabjergarter?
-2. Hvad kendetegner **sedimentære** bjergarter, og hvordan dannes de? Nævn eksempler på klastiske, kemiske og organiske sedimentære bjergarter.
-3. Hvad kendetegner **metamorfe** bjergarter, og hvordan dannes de?
+1. Hvad kendetegner magmatiske bjergarter, og hvordan dannes de? Hvad er forskellen på dybbjergarter og lavabjergarter?
+2. Hvad kendetegner sedimentære bjergarter, og hvordan dannes de? Nævn eksempler på klastiske, kemiske og organiske sedimentære bjergarter.
+3. Hvad kendetegner metamorfe bjergarter, og hvordan dannes de?
 
 ::: {.callout-note}
 ## Kendetegn, der hjælper ved bestemmelsen
 
-- **Kornstørrelse:** grovkornet (korn over ca. 5 mm), middelkornet (1–5 mm) eller finkornet (under 1 mm, kornene kan ikke skelnes med det blotte øje). Magma, der størkner langsomt dybt nede, giver store korn; lava, der størkner hurtigt, giver små korn.
-- **Struktur:** ligger mineralerne hulter til bulter (typisk magmatisk), i lag (typisk sedimentær), eller er de presset ud i striber og bånd (typisk metamorf)?
-- **Hårdhed:** en stålkniv ridser mineraler med en hårdhed under ca. 5,5. Kvarts (hårdhed 7) og feldspat (6) kan ikke ridses af kniven; glimmer og kalkspat kan.
-- **Magnetisme:** en magnet, der hænger fast, afslører mineralet magnetit, som er almindeligt i mørke bjergarter som basalt og gabbro.
+- Kornstørrelse: grovkornet (korn over ca. 5 mm), middelkornet (1–5 mm) eller finkornet (under 1 mm, kornene kan ikke skelnes med det blotte øje). Magma, der størkner langsomt dybt nede, giver store korn; lava, der størkner hurtigt, giver små korn.
+- Struktur: ligger mineralerne hulter til bulter (typisk magmatisk), i lag (typisk sedimentær), eller er de presset ud i striber og bånd (typisk metamorf)?
+- Hårdhed: en stålkniv ridser mineraler med en hårdhed under ca. 5,5. Kvarts (hårdhed 7) og feldspat (6) kan ikke ridses af kniven; glimmer og kalkspat kan.
+- Magnetisme: en magnet, der hænger fast, afslører mineralet magnetit, som er almindeligt i mørke bjergarter som basalt og gabbro.
 :::
 
 ## Del II — Sortér bjergarterne i kredsløbet

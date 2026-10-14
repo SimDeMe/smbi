@@ -17,10 +17,10 @@ Den 23. juni 2010 lidt over kl. 13:41 lokal tid (17:41 UTC) rystede jorden i det
 
 ## Baggrund
 
-Et jordskælv sender flere slags bølger ud fra **hypocentret** (stedet i dybet, hvor bruddet sker). Punktet på overfladen lige over hypocentret er **epicentret**.
+Et jordskælv sender flere slags bølger ud fra hypocentret (stedet i dybet, hvor bruddet sker). Punktet på overfladen lige over hypocentret er epicentret.
 
-- **P-bølger** (primære bølger) er trykbølger, der svinger frem og tilbage i bølgens retning. De er hurtigst og kommer først. I jordskorpen bevæger de sig med ca. 6,2 km/s.
-- **S-bølger** (sekundære bølger) er tværbølger, der svinger på tværs af bølgens retning. De er langsommere, ca. 3,65 km/s, og kommer derfor senere — men de er ofte kraftigere.
+- P-bølger (primære bølger) er trykbølger, der svinger frem og tilbage i bølgens retning. De er hurtigst og kommer først. I jordskorpen bevæger de sig med ca. 6,2 km/s.
+- S-bølger (sekundære bølger) er tværbølger, der svinger på tværs af bølgens retning. De er langsommere, ca. 3,65 km/s, og kommer derfor senere — men de er ofte kraftigere.
 
 Jo længere væk stationen er, jo større bliver forspringet for P-bølgen. Tidsforskellen $\Delta t$ mellem S- og P-bølgens ankomst fortæller derfor, hvor langt der er til jordskælvet. Bølgerne har tilbagelagt den samme afstand $D$:
 
@@ -55,8 +55,8 @@ Stationerne findes også som en færdig fil, [seismografstationer.kml](seismogra
 
 ## Fremgangsmåde
 
-1. Find for hver station det tidspunkt, hvor **P-bølgen** ankommer: det første sted, hvor sporet begynder at svinge tydeligt. Aflæs tidspunktet så præcist som muligt (på et halvt sekund nær), og skriv det i @tbl-2.
-2. Find tidspunktet, hvor **S-bølgen** ankommer: det sted, hvor udsvingene pludselig bliver meget større igen. Skriv det i @tbl-2.
+1. Find for hver station det tidspunkt, hvor P-bølgen ankommer: det første sted, hvor sporet begynder at svinge tydeligt. Aflæs tidspunktet så præcist som muligt (på et halvt sekund nær), og skriv det i @tbl-2.
+2. Find tidspunktet, hvor S-bølgen ankommer: det sted, hvor udsvingene pludselig bliver meget større igen. Skriv det i @tbl-2.
 3. Åbn Google Earth Pro, og sæt et mærke ved hver af de fire stationer (eller åbn kml-filen).
 4. Når I har beregnet afstandene (se databehandlingen), så tegn en cirkel om hver station: vælg linealværktøjet, fanen *Cirkel*, sæt centrum i stationen, og træk ud, til radius svarer til den beregnede afstand.
 5. Find det sted, hvor cirklerne skærer hinanden, eller hvor de kommer tættest på hinanden. Sæt et mærke, og aflæs koordinaterne og navnet på den nærmeste by.

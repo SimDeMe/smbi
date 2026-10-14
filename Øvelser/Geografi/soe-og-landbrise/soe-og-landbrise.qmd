@@ -19,11 +19,11 @@ En varm sommerdag ved kysten blæser det ofte ind fra havet om eftermiddagen —
 
 Land og hav reagerer forskelligt på solens stråling:
 
-- Vand har en høj **specifik varmekapacitet** (ca. 4,2 kJ/(kg·K)) — det skal have meget energi for at blive én grad varmere. Tørt sand har en langt lavere varmekapacitet (under 1 kJ/(kg·K)).
+- Vand har en høj specifik varmekapacitet (ca. 4,2 kJ/(kg·K)) — det skal have meget energi for at blive én grad varmere. Tørt sand har en langt lavere varmekapacitet (under 1 kJ/(kg·K)).
 - I sand bliver varmen i de øverste få centimeter. I vand trænger lyset et stykke ned, og vandet blandes, så varmen fordeles i et tykkere lag.
 - Fra en vandoverflade fordamper der vand, og fordampningen bruger energi.
 
-Når luften over land bliver varmere end luften over havet, udvider den sig og stiger op. Ved jordoverfladen opstår et **termisk lavtryk** over land og et **termisk højtryk** over havet, og luften strømmer fra højtryk mod lavtryk. Om natten kan forholdet vende. Den samme mekanisme driver monsunen, bare over et helt kontinent og et helt år.
+Når luften over land bliver varmere end luften over havet, udvider den sig og stiger op. Ved jordoverfladen opstår et termisk lavtryk over land og et termisk højtryk over havet, og luften strømmer fra højtryk mod lavtryk. Om natten kan forholdet vende. Den samme mekanisme driver monsunen, bare over et helt kontinent og et helt år.
 
 ## Hypotese
 
@@ -50,7 +50,7 @@ Lampen bliver varm. Rør ikke ved skærmen, og hold vand væk fra lampe og ledni
 ### Klargøring
 
 1. Fyld den ene skål med sand og den anden med vand fra hanen, så de er fyldt lige højt. Lad dem stå et stykke tid, så de har samme temperatur som rummet.
-2. Stil skålene tæt ved siden af hinanden, og indstil lampen, så den hænger ca. 20 cm over midten mellem dem og lyser lige meget på begge. Lampen skal være **slukket**.
+2. Stil skålene tæt ved siden af hinanden, og indstil lampen, så den hænger ca. 20 cm over midten mellem dem og lyser lige meget på begge. Lampen skal være slukket.
 3. Mål starttemperaturen på overfladen af sandet og vandet med IR-termometeret, og skriv den i @tbl-1 ud for 0 min. Hold termometeret i samme afstand og peg på midten af skålen hver gang.
 
 ### «Dag» — solen skinner

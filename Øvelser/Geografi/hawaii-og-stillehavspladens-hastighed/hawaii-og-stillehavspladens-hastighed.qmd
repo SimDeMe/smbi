@@ -17,13 +17,13 @@ Pladerne bevæger sig så langsomt, at vi ikke kan se det. Men ved Hawaii har na
 
 ## Baggrund
 
-Hawaii ligger midt på Stillehavspladen, langt fra nærmeste pladegrænse. Vulkanerne skyldes et **hotspot**: en søjle af varmt materiale (en *kappediapir*), der stiger op fra dybt nede i kappen. Når det varme materiale kommer tæt på overfladen, falder trykket, og en del af det smelter. Magmaet bryder op gennem pladen og danner en vulkan.
+Hawaii ligger midt på Stillehavspladen, langt fra nærmeste pladegrænse. Vulkanerne skyldes et hotspot: en søjle af varmt materiale (en *kappediapir*), der stiger op fra dybt nede i kappen. Når det varme materiale kommer tæt på overfladen, falder trykket, og en del af det smelter. Magmaet bryder op gennem pladen og danner en vulkan.
 
 Hotspottet ligger stort set fast, mens pladen glider hen over det. En vulkan bliver derfor ført væk fra hotspottet, holder op med at være aktiv og bliver efterhånden eroderet og synker ned under havoverfladen som et *seamount* (et undersøisk bjerg). Imens dannes en ny vulkan over hotspottet. Resultatet er en kæde af vulkaner, hvor alderen vokser med afstanden fra hotspottet:
 
 $$\text{pladens hastighed} = \frac{\text{afstand}}{\text{tid}}$$
 
-Kæden består af to dele: **Hawaii-kæden** fra Hawaii mod nordvest til omkring Midway og videre til et knæk, og **Emperor-kæden** (Kejserkæden), der fortsætter mod nord fra knækket.
+Kæden består af to dele: Hawaii-kæden fra Hawaii mod nordvest til omkring Midway og videre til et knæk, og Emperor-kæden (Kejserkæden), der fortsætter mod nord fra knækket.
 
 ## Del 1 — Økæden i Google Earth
 
@@ -78,7 +78,7 @@ Kæden består af to dele: **Hawaii-kæden** fra Hawaii mod nordvest til omkring
 
 ## Del 3 — Beregn pladens hastighed
 
-**Regneeksempel:** Mellem Kauai og Midway:
+Regneeksempel: Mellem Kauai og Midway:
 
 $$\text{tid} = \text{27,7} - \text{5,1} = \text{22,6}\ \text{mio. år} \qquad \text{afstand} = 2432 - 519 = 1913\ \text{km}$$
 

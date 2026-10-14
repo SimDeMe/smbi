@@ -13,12 +13,12 @@ format:
 
 ## Om øvelsen
 
-Et jordskælv sender to slags bølger gennem Jorden: P-bølger og S-bølger. Med en lang slinky-fjeder kan I lave begge slags og se forskellen på dem. I denne øvelse skal I **selv tilrettelægge et forsøg**, der måler, hvor hurtigt de to bølgetyper bevæger sig i slinkyen, og I skal filme bølgerne. I arbejder tre sammen og fremlægger til sidst jeres metode, resultater og videoer.
+Et jordskælv sender to slags bølger gennem Jorden: P-bølger og S-bølger. Med en lang slinky-fjeder kan I lave begge slags og se forskellen på dem. I denne øvelse skal I selv tilrettelægge et forsøg, der måler, hvor hurtigt de to bølgetyper bevæger sig i slinkyen, og I skal filme bølgerne. I arbejder tre sammen og fremlægger til sidst jeres metode, resultater og videoer.
 
 ## Baggrund
 
-- **P-bølger** (primære bølger) er *trykbølger* (længdebølger). Delene af mediet svinger frem og tilbage i samme retning, som bølgen bevæger sig. Der opstår skiftevis fortætninger og fortyndinger.
-- **S-bølger** (sekundære bølger) er *tværbølger*. Delene af mediet svinger på tværs af den retning, bølgen bevæger sig.
+- P-bølger (primære bølger) er *trykbølger* (længdebølger). Delene af mediet svinger frem og tilbage i samme retning, som bølgen bevæger sig. Der opstår skiftevis fortætninger og fortyndinger.
+- S-bølger (sekundære bølger) er *tværbølger*. Delene af mediet svinger på tværs af den retning, bølgen bevæger sig.
 
 I Jordens skorpe bevæger P-bølger sig med ca. 6,2 km/s og S-bølger med ca. 3,65 km/s. P-bølgen er altså omkring 1,7 gange så hurtig og når derfor altid først frem.
 
@@ -56,12 +56,12 @@ Der er ingen færdig opskrift. I bestemmer selv, hvordan I vil gøre — men for
 1. I skal kunne lave både en P-bølge og en S-bølge, og I skal kunne forklare, hvordan I gør.
 2. I skal måle en strækning og en tid, så I kan beregne farten. Overvej, hvordan I får målt tiden så præcist som muligt: er strækningen lang nok? Kan bølgen løbe frem og tilbage? Kan I tage tiden på en video i stedet for med stopur?
 3. Slinkyen skal være strakt lige meget i alle målinger. Notér, hvor lang den er.
-4. Hver bølgetype skal måles **mindst fem gange**.
+4. Hver bølgetype skal måles mindst fem gange.
 5. I skal optage en kort video af hver bølgetype, som tydeligt viser, hvordan slinkyen bevæger sig.
 
 Skriv jeres plan ned, og vis den til læreren, før I begynder at måle.
 
-**Vores plan:**
+Vores plan:
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 

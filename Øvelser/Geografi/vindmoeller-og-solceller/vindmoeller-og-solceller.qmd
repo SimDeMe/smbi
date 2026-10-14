@@ -15,19 +15,23 @@ format:
 
 Vind og sol leverer i dag langt størstedelen af Danmarks el. Men hvor blæser det mest, hvordan skal et solcellepanel vende, og hvor må man egentlig stille en vindmølle op? Øvelsen har tre dele, som kan bruges hver for sig:
 
-- **Del 1:** Modelforsøg udendørs med en lille vindmølle og et solcellepanel.
-- **Del 2:** Elsystemet lige nu — hvor kommer Danmarks strøm fra i dag?
-- **Del 3:** Planlægning af en vindmøllepark på Fyn med digitale kort.
+- Del 1: Modelforsøg udendørs med en lille vindmølle og et solcellepanel.
+- Del 2: Elsystemet lige nu — hvor kommer Danmarks strøm fra i dag?
+- Del 3: Planlægning af en vindmøllepark på Fyn med digitale kort.
 
 ## Baggrund
 
-**Vindens energi.** Den effekt, en vindmølle kan høste, vokser med vindhastigheden $v$ i *tredje* potens:
+### Vindens energi
+
+Den effekt, en vindmølle kan høste, vokser med vindhastigheden $v$ i *tredje* potens:
 
 $$P \propto v^3$$
 
 Fordobles vindhastigheden, bliver effekten altså $2^3 = 8$ gange så stor. Derfor betyder placeringen meget: på åbent land og ved kysten blæser det mere end i læ af huse og træer, og vinden tager til med højden over jorden. I Danmark kommer vinden oftest fra vest og sydvest.
 
-**Solens energi.** Et solcellepanel giver mest strøm, når sollyset rammer det vinkelret. I Danmark vender man derfor faste paneler mod syd med en hældning på omkring 35–40° — men skyer betyder mere end vinklen.
+### Solens energi
+
+Et solcellepanel giver mest strøm, når sollyset rammer det vinkelret. I Danmark vender man derfor faste paneler mod syd med en hældning på omkring 35–40° — men skyer betyder mere end vinklen.
 
 ## Del 1 — Modelforsøg med vindmølle og solcelle
 
@@ -50,9 +54,9 @@ Fordobles vindhastigheden, bliver effekten altså $2^3 = 8$ gange så stor. Derf
 ### Fremgangsmåde
 
 1. Find dagens vejrudsigt hos DMI, og notér vindretning, vindhastighed og skydække i @tbl-1.
-2. **Vind:** Vælg mindst tre steder omkring skolen: et åbent sted, et sted i læ og et højt sted (fx en bakketop eller et åbent område langt fra bygninger). Mål vindhastigheden hvert sted i 30 sekunder, og notér den gennemsnitlige vindhastighed. Tilslut vindmøllen, og notér, hvor kraftigt lysdioderne lyser, eller hvilken spænding multimeteret viser.
+2. Vind: Vælg mindst tre steder omkring skolen: et åbent sted, et sted i læ og et højt sted (fx en bakketop eller et åbent område langt fra bygninger). Mål vindhastigheden hvert sted i 30 sekunder, og notér den gennemsnitlige vindhastighed. Tilslut vindmøllen, og notér, hvor kraftigt lysdioderne lyser, eller hvilken spænding multimeteret viser.
 3. Afprøv også forskellige vinger det mest blæsende sted.
-4. **Sol:** Læg solcellepanelet fladt, og notér lysdioderne eller spændingen. Vend det derefter mod syd, øst og vest, og prøv hældninger på fx 0°, 30°, 45°, 60° og 90°. Notér resultaterne i @tbl-2.
+4. Sol: Læg solcellepanelet fladt, og notér lysdioderne eller spændingen. Vend det derefter mod syd, øst og vest, og prøv hældninger på fx 0°, 30°, 45°, 60° og 90°. Notér resultaterne i @tbl-2.
 5. Tag fotos af jeres opstillinger.
 
 | Sted | Beskrivelse (åbent, læ, højt) | Vindhastighed (m/s) | Lysdioder / spænding (V) |
@@ -102,9 +106,9 @@ Brug kortet [Sol og vind info](https://www.sologvindinfo.dk/) fra Klimadatastyre
 ::: {.callout-important}
 ## Regler for opstilling af vindmøller (forenklet)
 
-- Afstanden til nærmeste nabobolig skal være mindst **4 gange møllens totalhøjde**. En moderne landmølle er ofte 150 m høj, så afstanden bliver mindst 600 m.
-- Inden for **kystnærhedszonen** (ca. 3 km fra kysten) må der kun opstilles møller i særlige tilfælde.
-- **Beskyttelseslinjer** skal respekteres: åbeskyttelseslinjen (150 m), søbeskyttelseslinjen (150 m), skovbyggelinjen (300 m) og kirkebyggelinjen (300 m).
+- Afstanden til nærmeste nabobolig skal være mindst 4 gange møllens totalhøjde. En moderne landmølle er ofte 150 m høj, så afstanden bliver mindst 600 m.
+- Inden for kystnærhedszonen (ca. 3 km fra kysten) må der kun opstilles møller i særlige tilfælde.
+- Beskyttelseslinjer skal respekteres: åbeskyttelseslinjen (150 m), søbeskyttelseslinjen (150 m), skovbyggelinjen (300 m) og kirkebyggelinjen (300 m).
 - Der skal være god afstand til større veje, jernbaner og luftledninger.
 :::
 
@@ -124,14 +128,14 @@ Brug kortet [Sol og vind info](https://www.sologvindinfo.dk/) fra Klimadatastyre
 
 ## Databehandling
 
-1. **Vind (Del 1):** Find stedet med den største vindhastighed $v_\text{maks}$. Beregn for hvert sted, hvor stor en del af den maksimale effekt vindmøllen ville kunne høste:
+1. Vind (Del 1): Find stedet med den største vindhastighed $v_\text{maks}$. Beregn for hvert sted, hvor stor en del af den maksimale effekt vindmøllen ville kunne høste:
 
    $$\frac{P}{P_\text{maks}} = \left(\frac{v}{v_\text{maks}}\right)^3 \cdot 100\ \%$$
 
    Passer rækkefølgen med det, I så på lysdioderne eller multimeteret?
 
-2. **Sol (Del 1):** Lav et diagram over spændingen (eller lysstyrken) som funktion af hældningen for panelet mod syd. Ved hvilken hældning var udbyttet størst?
-3. **Elsystemet (Del 2):** Beregn hver kildes andel af den samlede produktion i procent, og lav et cirkel- eller søjlediagram:
+2. Sol (Del 1): Lav et diagram over spændingen (eller lysstyrken) som funktion af hældningen for panelet mod syd. Ved hvilken hældning var udbyttet størst?
+3. Elsystemet (Del 2): Beregn hver kildes andel af den samlede produktion i procent, og lav et cirkel- eller søjlediagram:
 
    $$\text{andel} = \frac{\text{kildens effekt}}{\text{samlet produktion}} \cdot 100\ \%$$
 

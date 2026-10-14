@@ -17,21 +17,21 @@ Næsten hele Danmarks landskab er formet af istiderne. I denne øvelse bruger I 
 
 ## Baggrund
 
-Under den sidste istid, **Weichsel-istiden**, nåede isen fra nord og øst for omkring 22 000 år siden ind over Danmark. Isranden lå i lang tid stille ned gennem Jylland. Den linje kaldes **hovedopholdslinjen**. Den går fra Bovbjerg ved Vestkysten mod øst til Viborg-egnen og derfra mod syd ned gennem Midtjylland til grænsen ved Padborg.
+Under den sidste istid, Weichsel-istiden, nåede isen fra nord og øst for omkring 22 000 år siden ind over Danmark. Isranden lå i lang tid stille ned gennem Jylland. Den linje kaldes hovedopholdslinjen. Den går fra Bovbjerg ved Vestkysten mod øst til Viborg-egnen og derfra mod syd ned gennem Midtjylland til grænsen ved Padborg.
 
-- **Øst for linjen** lå isen selv. Den efterlod **moræne** — en usorteret blanding af ler, sand, sten og grus, som isen havde skubbet og slæbt med sig.
-- **Vest for linjen** løb smeltevandet ud fra isen og aflejrede sand og grus i store, flade **smeltevandssletter** (hedesletter). Her og der stikker højere **bakkeøer** op — gamle morænebakker fra en tidligere istid, som Weichsel-isen ikke nåede.
-- **Nord for Limfjorden** stod havet højere end i dag, da isen smeltede. Landet var presset ned af isens vægt og har siden hævet sig, så der i dag ligger aflejringer fra havet på tørt land.
+- Øst for linjen lå isen selv. Den efterlod moræne — en usorteret blanding af ler, sand, sten og grus, som isen havde skubbet og slæbt med sig.
+- Vest for linjen løb smeltevandet ud fra isen og aflejrede sand og grus i store, flade smeltevandssletter (hedesletter). Her og der stikker højere bakkeøer op — gamle morænebakker fra en tidligere istid, som Weichsel-isen ikke nåede.
+- Nord for Limfjorden stod havet højere end i dag, da isen smeltede. Landet var presset ned af isens vægt og har siden hævet sig, så der i dag ligger aflejringer fra havet på tørt land.
 
 ## Sådan bruger I kortet
 
 1. Åbn Danmarks geologiportal: [data.geus.dk/geusmap/?mapname=denmark](https://data.geus.dk/geusmap/?mapname=denmark).
 2. Klik på «For nemmere søgning, klik her for at udvide alle menuer» øverst til venstre. Så kan I se alle lagene.
 3. I skal bruge disse lag under *Terrænnære kort*:
-   - **Højde- og dybdekort** (under *Digital højdemodel*)
-   - **Jordartskort 1:200 000** (under *Geologi*)
-   - **Israndslinjer i Norden** (under *Geologi*) — viser, hvor isranden lå på forskellige tidspunkter
-   - **Geomorfologi** (under *Geologi*) — viser landskabsformerne
+   - Højde- og dybdekort (under *Digital højdemodel*)
+   - Jordartskort 1:200 000 (under *Geologi*)
+   - Israndslinjer i Norden (under *Geologi*) — viser, hvor isranden lå på forskellige tidspunkter
+   - Geomorfologi (under *Geologi*) — viser landskabsformerne
 4. Tænd ét lag ad gangen. Klik på lagets symbol for at se signaturforklaringen, og zoom ind og ud for at se detaljerne.
 
 ::: {.callout-tip}

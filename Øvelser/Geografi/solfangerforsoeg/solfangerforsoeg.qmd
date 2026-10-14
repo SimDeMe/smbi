@@ -13,27 +13,33 @@ format:
 
 ## Om øvelsen
 
-En solfanger omsætter solens stråling til varme, som fx kan bruges til varmt brugsvand eller fjernvarme. I denne øvelse belyser I en lille solfanger med en kraftig lampe i 30 minutter og måler, hvor meget vandet i en lagertank bliver opvarmet. Ud fra det beregner I solfangerens **nyttevirkning**: hvor stor en del af den indstrålede energi der ender som varme i vandet.
+En solfanger omsætter solens stråling til varme, som fx kan bruges til varmt brugsvand eller fjernvarme. I denne øvelse belyser I en lille solfanger med en kraftig lampe i 30 minutter og måler, hvor meget vandet i en lagertank bliver opvarmet. Ud fra det beregner I solfangerens nyttevirkning: hvor stor en del af den indstrålede energi der ender som varme i vandet.
 
 ## Baggrund
 
-Solfangerens absorber er en sortmalet metalplade med påloddede kobberrør. Den sorte flade absorberer det meste af lyset og bliver varm. Bagsiden er isoleret, og på forsiden sidder en gennemsigtig akrylplade, der mindsker varmetabet ved konvektion. En lille cirkulationspumpe fører vand rundt i et lukket kredsløb: gennem kobberrørene i solfangeren og videre gennem en kobberspiral i lagertanken. Spiralen er en **varmeveksler** — den afgiver varmen til vandet i tanken uden at de to vandmængder blandes. Tanken svarer til varmtvandsbeholderen i et hus.
+Solfangerens absorber er en sortmalet metalplade med påloddede kobberrør. Den sorte flade absorberer det meste af lyset og bliver varm. Bagsiden er isoleret, og på forsiden sidder en gennemsigtig akrylplade, der mindsker varmetabet ved konvektion. En lille cirkulationspumpe fører vand rundt i et lukket kredsløb: gennem kobberrørene i solfangeren og videre gennem en kobberspiral i lagertanken. Spiralen er en varmeveksler — den afgiver varmen til vandet i tanken uden at de to vandmængder blandes. Tanken svarer til varmtvandsbeholderen i et hus.
 
 ![Opstillingen: lampen («solen») hænger i stativet til venstre, solfangeren står i midten, og lagertanken med kobberspiralen står til højre.](figurer/opstilling.jpg){#fig-opstilling width="85%"}
 
-**Energi ind.** Lampens stråling måles med et pyranometer som en *bestrålingsstyrke* $\varphi$ i W/m² (watt pr. kvadratmeter). Den energi, der rammer absorberen i tiden $t$, er
+### Energi ind
+
+Lampens stråling måles med et pyranometer som en *bestrålingsstyrke* $\varphi$ i W/m² (watt pr. kvadratmeter). Den energi, der rammer absorberen i tiden $t$, er
 
 $$Q_\text{ind} = \varphi \cdot A \cdot t$$
 
 hvor $A$ er absorberens areal i m² og $t$ er tiden i sekunder. Det giver energien i joule (J), fordi 1 W = 1 J/s.
 
-**Energi opsamlet.** Den energi, vandet i tanken har modtaget, findes ud fra temperaturstigningen:
+### Energi opsamlet
+
+Den energi, vandet i tanken har modtaget, findes ud fra temperaturstigningen:
 
 $$Q_\text{vand} = c_\text{vand} \cdot m_\text{vand} \cdot \Delta T$$
 
 hvor $c_\text{vand}$ = 4,18 kJ/(kg·K) er vands specifikke varmekapacitet, $m_\text{vand}$ er vandets masse i kg, og $\Delta T$ er temperaturstigningen. En stigning på 1 °C er det samme som en stigning på 1 K, så $\Delta T$ kan regnes direkte i °C.
 
-**Nyttevirkning.** Forholdet mellem den nyttige energi og den tilførte energi:
+### Nyttevirkning
+
+Forholdet mellem den nyttige energi og den tilførte energi:
 
 $$\eta = \frac{Q_\text{vand}}{Q_\text{ind}} \cdot 100\ \%$$
 

@@ -2361,13 +2361,13 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="baggrund">Baggrund</h2>
 <p>Den nedbør <span class="math inline">\(N\)</span>, der falder på et område, kan gå tre veje:</p>
 <ul>
-<li>Den kan <strong>fordampe</strong> igen fra jordoverfladen og gennem planterne. Den samlede fordampning kaldes <em>evapotranspiration</em>, <span class="math inline">\(E\)</span>.</li>
-<li>Den kan blive <strong>i jorden</strong> som jordvand i planternes rodzone. Ændringen i rodzonens vandindhold kaldes <span class="math inline">\(\Delta M\)</span>.</li>
-<li>Resten er <strong>overskud</strong> — også kaldet <em>nettonedbør</em> — <span class="math inline">\(O\)</span>. I Danmark siver det meste af overskuddet ned til grundvandet eller løber gennem dræn til vandløbene. Kun lidt løber af på overfladen.</li>
+<li>Den kan fordampe igen fra jordoverfladen og gennem planterne. Den samlede fordampning kaldes <em>evapotranspiration</em>, <span class="math inline">\(E\)</span>.</li>
+<li>Den kan blive i jorden som jordvand i planternes rodzone. Ændringen i rodzonens vandindhold kaldes <span class="math inline">\(\Delta M\)</span>.</li>
+<li>Resten er overskud — også kaldet <em>nettonedbør</em> — <span class="math inline">\(O\)</span>. I Danmark siver det meste af overskuddet ned til grundvandet eller løber gennem dræn til vandløbene. Kun lidt løber af på overfladen.</li>
 </ul>
 <p>Over et år går regnskabet op:</p>
 <p><span class="math display">\[N = E + O + \Delta M\]</span></p>
-<p>Om vinteren fordamper der meget lidt, og jorden er fyldt med så meget vand, som den kan holde (<em>markkapacitet</em>). Al nedbør ud over fordampningen bliver derfor til overskud. Om sommeren er fordampningen større end nedbøren. Så tærer planterne på vandet i rodzonen, og der opstår et <strong>jordvandsunderskud</strong> <span class="math inline">\(U\)</span>. Først når underskuddet er fyldt op igen om efteråret, begynder der igen at komme overskud.</p>
+<p>Om vinteren fordamper der meget lidt, og jorden er fyldt med så meget vand, som den kan holde (<em>markkapacitet</em>). Al nedbør ud over fordampningen bliver derfor til overskud. Om sommeren er fordampningen større end nedbøren. Så tærer planterne på vandet i rodzonen, og der opstår et jordvandsunderskud <span class="math inline">\(U\)</span>. Først når underskuddet er fyldt op igen om efteråret, begynder der igen at komme overskud.</p>
 <p>Fordampningstallene fra DMI er <em>potentiel fordampning</em>: så meget vand, der ville fordampe, hvis planterne altid havde rigeligt vand. Det vender vi tilbage til i databehandlingen.</p>
 </section>
 <section id="sådan-regner-i" class="level2">
@@ -2375,10 +2375,10 @@ window.Quarto = {
 <p>Start i januar med et underskud på <span class="math inline">\(U = 0\)</span> (jorden er fyldt op efter vinteren). Gå derefter frem måned for måned:</p>
 <ol type="1">
 <li>Beregn <span class="math inline">\(N - E\)</span>.</li>
-<li><strong>Er <span class="math inline">\(N - E\)</span> negativ</strong>, er der ikke noget overskud (<span class="math inline">\(O = 0\)</span>), og underskuddet vokser: læg <span class="math inline">\(N - E\)</span> til <span class="math inline">\(U\)</span>.</li>
-<li><strong>Er <span class="math inline">\(N - E\)</span> positiv</strong>, bruges vandet først til at fylde underskuddet op. Kun det, der er tilbage, når <span class="math inline">\(U\)</span> er nået op på 0, bliver til overskud <span class="math inline">\(O\)</span>.</li>
+<li>Er <span class="math inline">\(N - E\)</span> negativ, er der ikke noget overskud (<span class="math inline">\(O = 0\)</span>), og underskuddet vokser: læg <span class="math inline">\(N - E\)</span> til <span class="math inline">\(U\)</span>.</li>
+<li>Er <span class="math inline">\(N - E\)</span> positiv, bruges vandet først til at fylde underskuddet op. Kun det, der er tilbage, når <span class="math inline">\(U\)</span> er nået op på 0, bliver til overskud <span class="math inline">\(O\)</span>.</li>
 </ol>
-<p><strong>Eksempel:</strong> I september er <span class="math inline">\(N - E = 80 - 55 = 25\)</span> mm, og underskuddet fra august er <span class="math inline">\(-165\)</span> mm. Hele de 25 mm går til at fylde jorden op, så <span class="math inline">\(U = -165 + 25 = -140\)</span> mm, og overskuddet er <span class="math inline">\(O = 0\)</span>.</p>
+<p>Eksempel: I september er <span class="math inline">\(N - E = 80 - 55 = 25\)</span> mm, og underskuddet fra august er <span class="math inline">\(-165\)</span> mm. Hele de 25 mm går til at fylde jorden op, så <span class="math inline">\(U = -165 + 25 = -140\)</span> mm, og overskuddet er <span class="math inline">\(O = 0\)</span>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2674,7 +2674,7 @@ Tabel 2: Vandbalancen for Danmark i tørkeåret 2018. DMI’s landsværdier for
 <li><p>Lav et diagram over året med månederne på x-aksen: nedbør <span class="math inline">\(N\)</span> og fordampning <span class="math inline">\(E\)</span> som to søjler eller kurver, og underskuddet <span class="math inline">\(U\)</span> som en kurve under nul. Markér de måneder, hvor der dannes overskud.</p></li>
 <li><p>Beregn, hvor stor en del af årets nedbør der bliver til overskud:</p>
 <p><span class="math display">\[\text{andel overskud} = \frac{O_\text{år}}{N_\text{år}} \cdot 100\ \%\]</span></p></li>
-<li><p><strong>Rodzonens kapacitet.</strong> Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den <em>faktiske</em> fordampning bliver mindre end den potentielle. Find i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>, i hvilken måned underskuddet ville komme under <span class="math inline">\(-100\)</span> mm. Hvad betyder det for planterne på en sandjord?</p></li>
+<li><p>Rodzonens kapacitet. Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den <em>faktiske</em> fordampning bliver mindre end den potentielle. Find i <a href="#tbl-1" class="quarto-xref">Tabel 1</a>, i hvilken måned underskuddet ville komme under <span class="math inline">\(-100\)</span> mm. Hvad betyder det for planterne på en sandjord?</p></li>
 <li><p>Udfyld <a href="#tbl-2" class="quarto-xref">Tabel 2</a> for 2018 på samme måde, og sammenlign med gennemsnitsåret: hvor stort blev det største underskud, og i hvilken måned begyndte der igen at komme overskud? Går regnskabet <span class="math inline">\(N_\text{år} - E_\text{år} = O_\text{år}\)</span> op for 2018? Forklar hvorfor eller hvorfor ikke.</p></li>
 </ol>
 <div id="tbl-3" class="quarto-float quarto-figure quarto-figure-center anchored">

@@ -19,15 +19,15 @@ Der falder nedbør i Danmark hele året, men det er ikke hele året, at der dann
 
 Den nedbør $N$, der falder på et område, kan gå tre veje:
 
-- Den kan **fordampe** igen fra jordoverfladen og gennem planterne. Den samlede fordampning kaldes *evapotranspiration*, $E$.
-- Den kan blive **i jorden** som jordvand i planternes rodzone. Ændringen i rodzonens vandindhold kaldes $\Delta M$.
-- Resten er **overskud** — også kaldet *nettonedbør* — $O$. I Danmark siver det meste af overskuddet ned til grundvandet eller løber gennem dræn til vandløbene. Kun lidt løber af på overfladen.
+- Den kan fordampe igen fra jordoverfladen og gennem planterne. Den samlede fordampning kaldes *evapotranspiration*, $E$.
+- Den kan blive i jorden som jordvand i planternes rodzone. Ændringen i rodzonens vandindhold kaldes $\Delta M$.
+- Resten er overskud — også kaldet *nettonedbør* — $O$. I Danmark siver det meste af overskuddet ned til grundvandet eller løber gennem dræn til vandløbene. Kun lidt løber af på overfladen.
 
 Over et år går regnskabet op:
 
 $$N = E + O + \Delta M$$
 
-Om vinteren fordamper der meget lidt, og jorden er fyldt med så meget vand, som den kan holde (*markkapacitet*). Al nedbør ud over fordampningen bliver derfor til overskud. Om sommeren er fordampningen større end nedbøren. Så tærer planterne på vandet i rodzonen, og der opstår et **jordvandsunderskud** $U$. Først når underskuddet er fyldt op igen om efteråret, begynder der igen at komme overskud.
+Om vinteren fordamper der meget lidt, og jorden er fyldt med så meget vand, som den kan holde (*markkapacitet*). Al nedbør ud over fordampningen bliver derfor til overskud. Om sommeren er fordampningen større end nedbøren. Så tærer planterne på vandet i rodzonen, og der opstår et jordvandsunderskud $U$. Først når underskuddet er fyldt op igen om efteråret, begynder der igen at komme overskud.
 
 Fordampningstallene fra DMI er *potentiel fordampning*: så meget vand, der ville fordampe, hvis planterne altid havde rigeligt vand. Det vender vi tilbage til i databehandlingen.
 
@@ -36,10 +36,10 @@ Fordampningstallene fra DMI er *potentiel fordampning*: så meget vand, der vill
 Start i januar med et underskud på $U = 0$ (jorden er fyldt op efter vinteren). Gå derefter frem måned for måned:
 
 1. Beregn $N - E$.
-2. **Er $N - E$ negativ**, er der ikke noget overskud ($O = 0$), og underskuddet vokser: læg $N - E$ til $U$.
-3. **Er $N - E$ positiv**, bruges vandet først til at fylde underskuddet op. Kun det, der er tilbage, når $U$ er nået op på 0, bliver til overskud $O$.
+2. Er $N - E$ negativ, er der ikke noget overskud ($O = 0$), og underskuddet vokser: læg $N - E$ til $U$.
+3. Er $N - E$ positiv, bruges vandet først til at fylde underskuddet op. Kun det, der er tilbage, når $U$ er nået op på 0, bliver til overskud $O$.
 
-**Eksempel:** I september er $N - E = 80 - 55 = 25$ mm, og underskuddet fra august er $-165$ mm. Hele de 25 mm går til at fylde jorden op, så $U = -165 + 25 = -140$ mm, og overskuddet er $O = 0$.
+Eksempel: I september er $N - E = 80 - 55 = 25$ mm, og underskuddet fra august er $-165$ mm. Hele de 25 mm går til at fylde jorden op, så $U = -165 + 25 = -140$ mm, og overskuddet er $O = 0$.
 
 ::: {.callout-tip}
 ## Tip
@@ -96,7 +96,7 @@ Lav skemaet i Excel eller Google Sheets. Så kan I bagefter genbruge det til tø
 
    $$\text{andel overskud} = \frac{O_\text{år}}{N_\text{år}} \cdot 100\ \%$$
 
-4. **Rodzonens kapacitet.** Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den *faktiske* fordampning bliver mindre end den potentielle. Find i @tbl-1, i hvilken måned underskuddet ville komme under $-100$ mm. Hvad betyder det for planterne på en sandjord?
+4. Rodzonens kapacitet. Jorden kan kun holde på en begrænset mængde plantetilgængeligt vand: groft sagt under 100 mm i en grov sandjord og 150 mm eller mere i en lerjord. Når underskuddet når den grænse, er rodzonen tom — så kan planterne ikke fordampe mere, end det regner, og den *faktiske* fordampning bliver mindre end den potentielle. Find i @tbl-1, i hvilken måned underskuddet ville komme under $-100$ mm. Hvad betyder det for planterne på en sandjord?
 5. Udfyld @tbl-2 for 2018 på samme måde, og sammenlign med gennemsnitsåret: hvor stort blev det største underskud, og i hvilken måned begyndte der igen at komme overskud? Går regnskabet $N_\text{år} - E_\text{år} = O_\text{år}$ op for 2018? Forklar hvorfor eller hvorfor ikke.
 
 | | Gennemsnit 2011–2025 | 2018 |
