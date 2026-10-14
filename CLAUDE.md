@@ -41,6 +41,16 @@ modelmetadata. En lille synlig versionsmarkering er valgfri; den må ikke
 optage væsentlig plads i elevens arbejdsområde. Ingen automatisk tvungen
 versionsopskrivning ved enhver kosmetisk rettelse.
 
+**Atlas har efter ejerens ønske automatisk versionsnummer ved hver ny commit
+på mains hovedlinje**, også commits uden atlasændringer. Pages-workflowet
+`.github/workflows/pages.yml` bruger fuld Git-historik og stempler kun den
+byggede `atlas/index.html` via `atlas/versionsnummer.py`. Nummeret følger
+`git rev-list --first-parent --count HEAD`; ingen manuelle versionscommits
+eller lokal hook. Bevar versionsmærkerne i headeren. Kilden har startmærket
+`v403`; workflowet erstatter det med version og link til den konkrete commit.
+Automatikken kræver Pages-kilden **GitHub Actions**; integrationsadgangen kan
+ikke ændre den indstilling (HTTP 403), så ejeren skal aktivere den én gang.
+
 ## Øvelsesvejledninger (`Øvelser/`)
 
 Quarto-projekt med én mappe pr. øvelse under `Biologi/` og `Geografi/`. Filen

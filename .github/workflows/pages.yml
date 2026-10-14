@@ -1,0 +1,70 @@
+name: Udgiv smbi.dk
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  byg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      pages-klar: ${{ steps.pages-kilde.outputs.klar }}
+    steps:
+      - name: Hent hele historikken til versionsnummeret
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Konfigurer Pages
+        uses: actions/configure-pages@v5
+      - name: Kontroller Pages-kilde
+        id: pages-kilde
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pages_type=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type)
+          if [ "$pages_type" = workflow ]; then
+            echo 'klar=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'klar=false' >> "$GITHUB_OUTPUT"
+            echo '::warning::Vælg GitHub Actions under Settings → Pages → Source for at aktivere automatisk atlasversion.'
+            echo 'Versionsartefaktet bygges og kontrolleres, men udgivelsen afventer Pages-kilden GitHub Actions.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Byg med Pages' Jekyll som hidtil
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Afprøv versionsstemplingen
+        run: python3 atlas/test/versionsnummer.py
+      - name: Stempl atlas og kontroller simulationer
+        run: |
+          python3 atlas/versionsnummer.py _site/atlas/index.html
+          python3 atlas/test/udgivelse.py _site
+      - name: Pak det færdige site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  udgiv:
+    needs: byg
+    if: needs.byg.outputs.pages-klar == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.udgivelse.outputs.page_url }}
+    steps:
+      - name: Udgiv på Pages
+        id: udgivelse
+        uses: actions/deploy-pages@v4
