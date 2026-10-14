@@ -1,0 +1,158 @@
+---
+title: "Vindmøller og solceller"
+subtitle: "Modelforsøg, elsystemet lige nu og planlægning af en vindmøllepark"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Vind og sol leverer i dag langt størstedelen af Danmarks el. Men hvor blæser det mest, hvordan skal et solcellepanel vende, og hvor må man egentlig stille en vindmølle op? Øvelsen har tre dele, som kan bruges hver for sig:
+
+- **Del 1:** Modelforsøg udendørs med en lille vindmølle og et solcellepanel.
+- **Del 2:** Elsystemet lige nu — hvor kommer Danmarks strøm fra i dag?
+- **Del 3:** Planlægning af en vindmøllepark på Fyn med digitale kort.
+
+## Baggrund
+
+**Vindens energi.** Den effekt, en vindmølle kan høste, vokser med vindhastigheden $v$ i *tredje* potens:
+
+$$P \propto v^3$$
+
+Fordobles vindhastigheden, bliver effekten altså $2^3 = 8$ gange så stor. Derfor betyder placeringen meget: på åbent land og ved kysten blæser det mere end i læ af huse og træer, og vinden tager til med højden over jorden. I Danmark kommer vinden oftest fra vest og sydvest.
+
+**Solens energi.** Et solcellepanel giver mest strøm, når sollyset rammer det vinkelret. I Danmark vender man derfor faste paneler mod syd med en hældning på omkring 35–40° — men skyer betyder mere end vinklen.
+
+## Del 1 — Modelforsøg med vindmølle og solcelle
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Lille modelvindmølle med forskellige vinger
+- Lille solcellepanel
+- Ledninger og en enhed med to lysdioder — eller et multimeter, der måler spænding (V)
+- Vindmåler (anemometer)
+- Kompas og vinkelmåler
+- Mobiltelefon til fotos
+:::
+
+### Hypoteser
+
+1. Hvordan skal solcellepanelet vende og hælde for at give mest strøm?
+2. Hvor omkring skolen tror I, vindmøllen giver mest strøm?
+
+### Fremgangsmåde
+
+1. Find dagens vejrudsigt hos DMI, og notér vindretning, vindhastighed og skydække i @tbl-1.
+2. **Vind:** Vælg mindst tre steder omkring skolen: et åbent sted, et sted i læ og et højt sted (fx en bakketop eller et åbent område langt fra bygninger). Mål vindhastigheden hvert sted i 30 sekunder, og notér den gennemsnitlige vindhastighed. Tilslut vindmøllen, og notér, hvor kraftigt lysdioderne lyser, eller hvilken spænding multimeteret viser.
+3. Afprøv også forskellige vinger det mest blæsende sted.
+4. **Sol:** Læg solcellepanelet fladt, og notér lysdioderne eller spændingen. Vend det derefter mod syd, øst og vest, og prøv hældninger på fx 0°, 30°, 45°, 60° og 90°. Notér resultaterne i @tbl-2.
+5. Tag fotos af jeres opstillinger.
+
+| Sted | Beskrivelse (åbent, læ, højt) | Vindhastighed (m/s) | Lysdioder / spænding (V) |
+|:-:|:---|:-:|:-:|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+
+: Vindmøllen forskellige steder. Vejret: vindretning \_\_\_\_\_\_, vindhastighed \_\_\_\_\_\_ m/s, skydække \_\_\_\_\_\_\_\_. {#tbl-1}
+
+| Retning | Hældning (°) | Lysdioder / spænding (V) |
+|:-:|:-:|:-:|
+| — | 0 (fladt) | |
+| Syd | 30 | |
+| Syd | 45 | |
+| Syd | 60 | |
+| Syd | 90 | |
+| Øst | 45 | |
+| Vest | 45 | |
+
+: Solcellepanelets retning og hældning. {#tbl-2}
+
+## Del 2 — Elsystemet lige nu
+
+Åbn Energinets kort [Energisystemet lige nu](https://energikort.energinet.dk/). Det viser Danmarks elproduktion, forbrug og udveksling med nabolandene, og tallene opdateres løbende. Notér dato og klokkeslæt, og skriv tallene i @tbl-3. Tag et skærmbillede.
+
+| Kilde | Effekt (MW) | Andel af produktionen (%) |
+|:---|:-:|:-:|
+| Større værker (over 100 MW) | | |
+| Mindre anlæg (under 100 MW) | | |
+| Vindmøller | | |
+| Solceller | | |
+| **Samlet produktion** | | 100 % |
+| Forbrug i Danmark | | — |
+| Nettoudveksling (import + / eksport −) | | — |
+| CO₂-udledning (g/kWh) | | — |
+
+: Elsystemet. Dato og klokkeslæt: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ {#tbl-3}
+
+## Del 3 — Planlægning af en vindmøllepark
+
+I er ansat i et rådgivende ingeniørfirma og skal finde den bedste placering til nye vindmøller på Fyn. Fire områder er udpeget på forhånd: åbn filen [mulige-vindmoelleplaceringer.kml](mulige-vindmoelleplaceringer.kml) i Google Earth.
+
+Brug kortet [Sol og vind info](https://www.sologvindinfo.dk/) fra Klimadatastyrelsen. Her kan I tænde lag for eksisterende vindmøller, boliger, bygge- og beskyttelseslinjer, afstandskort og vindhastighed.
+
+::: {.callout-important}
+## Regler for opstilling af vindmøller (forenklet)
+
+- Afstanden til nærmeste nabobolig skal være mindst **4 gange møllens totalhøjde**. En moderne landmølle er ofte 150 m høj, så afstanden bliver mindst 600 m.
+- Inden for **kystnærhedszonen** (ca. 3 km fra kysten) må der kun opstilles møller i særlige tilfælde.
+- **Beskyttelseslinjer** skal respekteres: åbeskyttelseslinjen (150 m), søbeskyttelseslinjen (150 m), skovbyggelinjen (300 m) og kirkebyggelinjen (300 m).
+- Der skal være god afstand til større veje, jernbaner og luftledninger.
+:::
+
+1. Undersøg de fire områder i Sol og vind info. Opstil argumenter for og imod hvert område i @tbl-4.
+2. Vælg det bedste område. Hvilke problemer kunne der opstå ved den placering?
+3. Find eksisterende vindmøller i jeres egen kommune. Klik på en mølle for at se dens højde og produktion. Er der et mønster i, hvor møllerne står?
+4. Kan I finde en endnu bedre placering på Fyn? Argumentér for jeres valg.
+
+| Område | Vindforhold | Afstand til boliger | Beskyttelseslinjer / natur | Andet (veje, kyst, landskab) | Samlet vurdering |
+|:-:|:---|:---|:---|:---|:-:|
+| 1 | | | | | |
+| 2 | | | | | |
+| 3 | | | | | |
+| 4 | | | | | |
+
+: Vurdering af de fire områder. {#tbl-4}
+
+## Databehandling
+
+1. **Vind (Del 1):** Find stedet med den største vindhastighed $v_\text{maks}$. Beregn for hvert sted, hvor stor en del af den maksimale effekt vindmøllen ville kunne høste:
+
+   $$\frac{P}{P_\text{maks}} = \left(\frac{v}{v_\text{maks}}\right)^3 \cdot 100\ \%$$
+
+   Passer rækkefølgen med det, I så på lysdioderne eller multimeteret?
+
+2. **Sol (Del 1):** Lav et diagram over spændingen (eller lysstyrken) som funktion af hældningen for panelet mod syd. Ved hvilken hældning var udbyttet størst?
+3. **Elsystemet (Del 2):** Beregn hver kildes andel af den samlede produktion i procent, og lav et cirkel- eller søjlediagram:
+
+   $$\text{andel} = \frac{\text{kildens effekt}}{\text{samlet produktion}} \cdot 100\ \%$$
+
+4. Sammenlign med andre gruppers målinger fra andre dage og tidspunkter, fx fra en blæsende og en vindstille dag, eller dag og nat. Hvad sker der med import og eksport, når det blæser meget?
+
+## Journalspørgsmål
+
+1. Hvor høstede vindmøllen mest energi, og hvorfor? Brug sammenhængen $P \propto v^3$ og begreberne læ og ruhed.
+2. Hvordan skulle solcellepanelet stå for at give mest strøm, og hvorfor? Hvordan passer det med, hvordan solceller vender på danske tage?
+3. Hvorfor kommer vinden oftest fra vest og sydvest i Danmark? Hvad betyder det for, hvor man placerer havvindmølleparker?
+4. Hvordan har Danmark skaffet energi fra industrialiseringen og frem til i dag? Forklar forskellen på fossile og vedvarende energikilder.
+5. Vind og sol svinger med vejret og døgnet. Hvordan sørger elsystemet for, at der altid er strøm nok? Inddrag udvekslingen med nabolandene, biomasse og lagring.
+6. Hvad vil det sige, at energiproduktion er bæredygtig? Diskutér fordele og ulemper ved vindmøller og solcelleparker på land — fx for naboer, landskab, natur og landbrugsjord.
+7. Vurdér fejlkilderne i Del 1: hvor præcist kan man måle med lysdioder og en lille vindmåler, og hvad betyder det, at vinden skifter fra sekund til sekund?
+
+## Om denne udgave
+
+Bygger på to ældre opgaver: et NF-modelforsøg med vindmølle og solcelle med diskussionsspørgsmål om energiforsyning (2017), og opgaven «Planlægning af vindmølleparker» fra naturgeografi (Geolink, 2022/23) med fire mulige placeringer på Fyn. Teksten til modelforsøget er skrevet helt ny. Ændret i forhold til originalerne:
+
+- Vejrudsigten fra en bestemt dag i 2017 er erstattet af dagens udsigt fra DMI. Faktaarket om kulstop hos et energiselskab fra 2017 og et vindkort uden kildeangivelse er taget ud.
+- Energinets gamle flashside over elsystemet er død og erstattet af [energikort.energinet.dk](https://energikort.energinet.dk/), som nu også viser forbindelserne til Holland og England.
+- Plandatas kortprofil til vedvarende energi og vindinfo.dk findes ikke længere. Begge er erstattet af [sologvindinfo.dk](https://www.sologvindinfo.dk/). Google Earth-projektet med de fire områder er erstattet af en kml-fil.
+- Afstandsreglen «minimum 400 m til beboelse» er opdateret til den gældende regel om 4 gange møllens totalhøjde.
+- Nyt: målinger af vindhastighed og evt. spænding, beregning af $P \propto v^3$, solcellepanelets hældning og andelen af hver energikilde i elsystemet.

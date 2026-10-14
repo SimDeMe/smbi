@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Mulige vindmølleplaceringer på Fyn</name>
+  <description>Fire områder til øvelsen «Vindmøller og solceller», del 3.</description>
+  <Placemark><name>Område 1</name><Point><coordinates>9.923433,55.416509,0</coordinates></Point></Placemark>
+  <Placemark><name>Område 2</name><Point><coordinates>9.769393,55.435205,0</coordinates></Point></Placemark>
+  <Placemark><name>Område 3</name><Point><coordinates>9.896443,55.403576,0</coordinates></Point></Placemark>
+  <Placemark><name>Område 4</name><Point><coordinates>10.067250,55.401363,0</coordinates></Point></Placemark>
+</Document>
+</kml>
