@@ -70,7 +70,7 @@ def afproev_pladevisning(side, ud):
         .map(p => ({p,xy:proj(p.slice(4,6))}));
     }''', kildepunkter)
     tegnede = side.evaluate('window.graensepunkter')
-    assert tegnede and any('Fra ' in p.get('tekst', '') for p in tegnede), tegnede
+    assert tegnede, tegnede
     for tegnet in tegnede:
         match = min(projektioner, key=lambda k: (k['xy'][0]-tegnet['x'])**2 + (k['xy'][1]-tegnet['y'])**2)
         assert abs(match['xy'][0]-tegnet['x']) < .001 and abs(match['xy'][1]-tegnet['y']) < .001
@@ -79,8 +79,7 @@ def afproev_pladevisning(side, ud):
         mm = p[8] if transform else p[7]
         cm = abs(Decimal(str(mm)) / 10)
         tal = '<0,1' if 0 < cm < Decimal('.05') else str(cm.quantize(Decimal('.1'), rounding=ROUND_HALF_UP)).replace('.', ',')
-        ord = 'Langs' if transform else 'Fra' if mm > 0 else 'Mod' if mm < 0 else 'Tværs'
-        assert tegnet['tekst'] == ('≈ ' if p[3] else '') + f'{ord} {tal} cm/år', (tegnet, p)
+        assert tegnet['tekst'] == ('≈ ' if p[3] else '') + f'{tal} cm/år', (tegnet, p)
     side.locator('#globus').scroll_into_view_if_needed()
     side.evaluate('window.gendanCanvasproeve()')
     side.screenshot(path=str(ud / f'{w}x{h}-pladebevaegelse.png'))

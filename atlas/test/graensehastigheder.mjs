@@ -12,8 +12,8 @@ assert.equal(tvaerstekst(1.84), 'Fra 1,8 cm/år'); // Samlet åbning, ikke 0,9.
 assert.equal(tvaerstekst(-7.59), 'Mod 7,6 cm/år');
 assert.equal(tvaerstekst(0), 'Tværs 0,0 cm/år');
 assert.equal(formaterKomponent(.02), '<0,1 cm/år');
-assert.equal(hastighedstekst({ klasse: 'CTF', langs: -4.55, aabning: -.42, usikker: true }), '≈ Langs 4,6 cm/år');
-assert.equal(hastighedstekst({ klasse: 'SUB', langs: 2.46, aabning: -7.59 }), 'Mod 7,6 cm/år');
+assert.equal(hastighedstekst({ klasse: 'CTF', langs: -4.55, aabning: -.42, usikker: true }), '≈ 4,6 cm/år');
+assert.equal(hastighedstekst({ klasse: 'SUB', langs: 2.46, aabning: -7.59 }), '7,6 cm/år');
 const data = JSON.parse(fs.readFileSync(new URL('../data/graensehastigheder.json', import.meta.url)));
 assert.equal(data.enhed, 'mm/år'); assert.equal(data.kildetrin, 5819);
 assert.equal(data.punkter.length, 1937);

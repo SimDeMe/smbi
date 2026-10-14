@@ -142,11 +142,13 @@ pladegrænselaget i samme besøg. Indstillingerne åbnes midlertidigt oven på
 figuren og gør ikke globussen mindre. Escape og klik udenfor lukker dem;
 i fokusvisning lukker første Escape indstillingerne, næste afslutter fokus.
 
-Hastighederne står **ved grænserne**, med henvisningslinje og et kildepunkt:
+Hastighederne står **ved grænserne**, med henvisningslinje og et kildepunkt.
+Etiketterne viser kun tal og enhed, fx **1,8 cm/år** (samt ≈ ved usikre tal).
+Pile og grænsetype viser bevægelsens karakter:
 
-- **Fra**: samlet åbning på tværs af en konstruktiv grænse.
-- **Mod**: samlet lukning på tværs af en destruktiv grænse.
-- **Langs**: forskydning langs en transformforkastning.
+- Samlet åbning på tværs af en konstruktiv grænse.
+- Samlet lukning på tværs af en destruktiv grænse.
+- Forskydning langs en transformforkastning.
 
 Alle tal er cm/år **mellem de to naboplader**. De er ikke halvspredning eller
 hastigheden af én plade i forhold til en fast tredje plade. Den gamle
@@ -156,7 +158,7 @@ lige store absolutte hastigheder for de to plader. Begge komponenter kan være
 til stede ved skrå bevægelse. ≈ markerer mere usikre modeltal i diffuse zoner;
 langs den hypotetiske Shetlandplade vises ingen tal/pile.
 
-Den synlige signatur forklarer Fra/Mod/Langs, cm/år og ≈. Overlap med markører,
+Den synlige signatur forklarer komponenterne, cm/år og ≈. Overlap med markører,
 andre etiketter, betjening og figurens kant undgås. Zoom og rotation viser
 flere lokale værdier. De tre bevægelsestyper får på skift plads ved udvælgelsen,
 så mange transformstykker ikke skjuler en tilstødende spredningsryg.

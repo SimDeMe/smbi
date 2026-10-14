@@ -11,7 +11,7 @@ export function formaterKomponent(cm) {
 export function tvaerstekst(cm) {
   return `${cm > 0 ? 'Fra' : cm < 0 ? 'Mod' : 'Tværs'} ${formaterKomponent(cm)}`;
 }
-export const hastighedstekst = p => (p.usikker ? '≈ ' : '') + (erTransform(p) ? `Langs ${formaterKomponent(p.langs)}` : tvaerstekst(p.aabning));
+export const hastighedstekst = p => (p.usikker ? '≈ ' : '') + formaterKomponent(erTransform(p) ? p.langs : p.aabning);
 
 export async function hentGraensehastigheder() {
   if (data) return data;

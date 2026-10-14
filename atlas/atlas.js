@@ -325,7 +325,7 @@ const valgstatus = document.querySelector('#pladevalgstatus');
 
 function opdaterPladebeskrivelse() {
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
-  bevaegelsesnote.textContent = 'cm/år mellem pladerne. Fra/mod: samlet åbning/lukning på tværs. Langs: forskydning. ≈: diffus zone.';
+  bevaegelsesnote.textContent = 'cm/år mellem pladerne: samlet åbning/lukning på tværs; forskydning langs transformforkastninger. ≈: diffus zone.';
   document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
   canvas.setAttribute('aria-label', pladeknap.getAttribute('aria-pressed') === 'true'
     ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
