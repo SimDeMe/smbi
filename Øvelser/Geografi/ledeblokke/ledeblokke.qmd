@@ -1,0 +1,119 @@
+---
+title: "Ledeblokke"
+subtitle: "Hvor kom isen fra? Spor istidens sten tilbage til Norge, Sverige og Østersøen"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+De fleste sten, man finder på en dansk mark eller strand, er ikke danske. De er revet løs fra grundfjeldet i Norge, Sverige og Finland og ført hertil af isen under istiderne. Nogle af dem kommer fra et så lille og velkendt område, at man kan se præcis, hvor de stammer fra. De kaldes **ledeblokke**. I denne øvelse bestemmer I ledeblokke, finder deres oprindelsessted på et kort og bruger dem til at finde ud af, hvilken vej isen er kommet.
+
+## Baggrund
+
+En ledeblok er en sten, hvis oprindelsessted som fast klippe kendes, fordi bjergarten kun findes i ét afgrænset område. Når isen gled hen over klippen, rev den stykker løs og slæbte dem med sig. Finder man en ledeblok i en dansk moræne, ved man derfor, at isen på et tidspunkt er kommet fra det område.
+
+Under den sidste istid, Weichsel-istiden, kom isen ind over Danmark i flere *isfremstød* fra forskellige retninger. Tre af de vigtigste er:
+
+- **Det norske isfremstød** — is fra Norge, der kom ned over Skagerrak og ind over det nordlige Danmark.
+- **NØ-isen** (hovedfremstødet) — is fra Sverige mod nordøst, der nåede frem til hovedopholdslinjen i Midtjylland.
+- **Det ungbaltiske isfremstød** — en isstrøm, der løb ned gennem Østersølavningen og ind over Øerne og Østjylland fra sydøst.
+
+| Ledeblok | Kendetegn | Oprindelsessted |
+|:---|:---|:---|
+| Rhombeporfyr | Brun, grå eller grønlig finkornet grundmasse med store lyse feldspatkrystaller, der i snit ligner skæve firkanter (rhomber) | Oslo-feltet, Norge |
+| Larvikit | Grovkornet, grå til blågrå, med store feldspatkrystaller, der skinner blåligt i lyset | Larvik i Oslo-feltet, Norge |
+| Kinnediabas | Grå, middelkornet, ensartet; mørk på en frisk brudflade | Kinnekulle i Västergötland, Sverige |
+| Påskallavikporfyr | Mørk grundmasse med røde og hvide feldspatkorn | Påskallavik ved Kalmarsund i Småland, Sverige |
+| Østersøkvartsporfyr | Rødbrun eller brun, tæt grundmasse med små korn af kvarts og feldspat | Fast klippe på bunden af Østersøen, bl.a. i Ålands hav |
+| Ålandsrapakivi | Rød granit med store, runde feldspatkorn, der ofte har en grønlig eller hvid kant | Ålandsøerne, Finland |
+
+: Nogle af de mest kendte ledeblokke i Danmark. {#tbl-1}
+
+::: {.callout-tip}
+## Tip
+
+Sitets stensamling har billeder og beskrivelser af flere af ledeblokkene: [rhombeporfyr](https://smbi.dk/geografi/stensamling.html?sten=MA-06), [kinnediabas](https://smbi.dk/geografi/stensamling.html?sten=MA-17), [østersøkvartsporfyr](https://smbi.dk/geografi/stensamling.html?sten=MA-15) og [påskallavikporfyr](https://smbi.dk/geografi/stensamling.html?sten=MA-14).
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- Et sæt nummererede stenprøver (udleveret af læreren) eller en bunke sten fra en strand, en grusgrav eller en mark
+- Lup og evt. en vandforstøver — mange sten ses bedst, når de er våde
+- Computer med Google Earth eller Google Maps
+:::
+
+## Fremgangsmåde
+
+### Del 1 — Bestem ledeblokkene
+
+1. Undersøg stenprøverne én ad gangen. Gør dem våde, og se på farve, kornstørrelse og krystaller med luppen.
+2. Sammenlign med @tbl-1 og med billederne i stensamlingen. Skriv jeres beskrivelse og bestemmelse i @tbl-2.
+
+### Del 2 — Find oprindelsesstederne
+
+3. Find oprindelsesstedet for hver ledeblok i Google Earth eller Google Maps, og sæt et mærke.
+4. Mål afstanden i en lige linje fra oprindelsesstedet til jeres skole med linealværktøjet, og notér den omtrentlige kompasretning, isen må være kommet fra.
+
+### Del 3 (valgfri) — Tæl ledeblokke i en stenbunke
+
+5. Gennemgå en bunke sten fra en strand eller en mark. Læg alle de sten til side, I kan bestemme som ledeblokke, og tæl, hvor mange der er af hver slags. Skriv antallene i @tbl-3.
+
+## Registrering
+
+| Prøve | Beskrivelse (farve, kornstørrelse, krystaller) | Ledeblok | Oprindelsessted | Afstand til skolen (km) | Isen kom fra (retning) |
+|:-:|:---|:-:|:-:|:-:|:-:|
+| 1 | | | | | |
+| 2 | | | | | |
+| 3 | | | | | |
+| 4 | | | | | |
+| 5 | | | | | |
+| 6 | | | | | |
+
+: Bestemmelse af stenprøverne. {#tbl-2}
+
+| Ledeblok | Antal | Andel (%) | Isfremstød |
+|:---|:-:|:-:|:-:|
+| Rhombeporfyr | | | |
+| Larvikit | | | |
+| Kinnediabas | | | |
+| Påskallavikporfyr | | | |
+| Østersøkvartsporfyr | | | |
+| Ålandsrapakivi | | | |
+| **I alt** | | 100 % | |
+
+: Optælling af ledeblokke i en stenbunke (Del 3). Sted: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ {#tbl-3}
+
+## Databehandling
+
+1. Udfyld afstand og retning i @tbl-2. Hvilken ledeblok er transporteret længst?
+2. Tegn pile på et kort over Skandinavien og Østersøen fra hvert oprindelsessted til jeres skole. Farv pilene efter, hvilket isfremstød de hører til.
+3. Hvis I har talt ledeblokke (Del 3): beregn andelen af hver slags i procent, og lav et søjlediagram. Hvilket isfremstød har efterladt flest ledeblokke dér, hvor stenene er fundet?
+
+   $$\text{andel} = \frac{\text{antal af én slags ledeblok}}{\text{samlet antal ledeblokke}} \cdot 100\ \%$$
+4. Sammenlign med en anden gruppe eller et andet findested. Er fordelingen den samme?
+
+## Journalspørgsmål
+
+1. Hvad er en ledeblok, og hvorfor er det vigtigt at kende dens oprindelsessted?
+2. Hvorfor er det kun nogle få bjergarter, der kan bruges som ledeblokke? Hvorfor kan fx almindelig granit ikke bruges?
+3. Hvis man finder både larvikit og rhombeporfyr i en grusgrav, hvad fortæller det så om isens bevægelse i det område?
+4. I Nordjylland er der mange norske ledeblokke, mens østersøkvartsporfyr er almindelige i Sydøstdanmark. Forklar fordelingen ud fra de tre isfremstød.
+5. Hvorfor kan man finde ledeblokke fra flere forskellige isfremstød samme sted?
+6. Hvorfor er stenene i en moræne ofte kantede eller kun lidt afrundede, mens sten på en strand er rundslidte? Hvad siger det om, hvordan de er transporteret?
+7. Hvilke fejlkilder er der ved bestemmelse af ledeblokke? Tænk på forveksling med andre bjergarter, og at nogle ledeblokke kun er sjældne i en stenbunke.
+
+## Om denne udgave
+
+Bygger på laboratorieøvelsen «Ledeblokke» fra NF-forløbet *Mammutter* 2025/26 og den tilsvarende øvelse i naturgeografi C (Geolink, *Vand og jord*, 2025/26). Spørgsmålene om ledeblokkenes definition, det norske isfremstød, identifikation af stenprøver og konklusionen om larvikit og rhombeporfyr er ført videre. Ændret i forhold til originalen:
+
+- Originalen byggede på en scannet lærebogsside med kort og fotos, som ikke kan bruges på en offentlig hjemmeside. Den er erstattet af en tabel over ledeblokke og deres oprindelsessteder, et baggrundsafsnit om de tre isfremstød og links til fotos i sitets egen stensamling.
+- Nyt: eleverne finder selv oprindelsesstederne i Google Earth, måler afstand og retning, og kan som en valgfri del tælle ledeblokke i en stenbunke med procentberegning og søjlediagram.
+- Journalspørgsmålene er udvidet med fordelingen af ledeblokke i Danmark, blandede isfremstød og stenenes form.
