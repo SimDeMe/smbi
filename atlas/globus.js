@@ -111,7 +111,9 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const taethed = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(bredde * taethed); canvas.height = Math.round(hoejde * taethed);
     ctx.setTransform(taethed, 0, 0, taethed, 0, 0);
-    opdater();
+    // Ny størrelse tømmer lærredet; tegn med det samme, så ingen frame vises blank.
+    cancelAnimationFrame(ramme);
+    tegn();
   }
   function drej(retning) {
     if (landekort) {
