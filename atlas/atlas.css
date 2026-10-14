@@ -1,0 +1,43 @@
+:root{--paper:#fff9ee;--ink:#17211f;--blue:#0e86c8;--lys:#c7e6f6;--slate:#49615b;--display:'Archivo',system-ui,sans-serif;--body:'Source Serif 4',Georgia,serif;--mono:'IBM Plex Mono',monospace}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 var(--body)}
+[hidden]{display:none!important}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}button,a,input{-webkit-tap-highlight-color:transparent}
+button{min-height:44px;border:2px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink);padding:7px 13px;font:600 14px var(--display)}
+button:hover{background:var(--lys)}button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #7a4fd6;outline-offset:3px}
+.spring{position:absolute;left:10px;top:-80px;z-index:10;background:white;padding:12px}.spring:focus{top:8px}
+.regnbue{height:6px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
+.site-linje{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 24px;border-bottom:2px solid var(--ink);font:600 13px var(--display)}
+.brand{display:flex;align-items:center;gap:6px;text-decoration:none;font:bold 23px var(--display)}.brand small{font:12px var(--mono);margin-left:-5px}.brand span{width:23px;height:23px;border:2px solid var(--ink);border-radius:7px;background:conic-gradient(#e8336d,#ffb300,#5fb030,#0e86c8,#7a4fd6,#e8336d)}
+main{padding:0 24px 12px;max-width:1800px;margin:auto}
+.intro{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 0}
+.overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 5px;color:var(--slate)}
+h1{font:800 clamp(22px,2.7vw,36px)/1.1 var(--display);letter-spacing:-.035em;margin:0}h1 span{color:var(--blue)}.intro>p{font-size:15px;line-height:1.35;margin:0;color:var(--slate)}
+.atlas{border:2px solid var(--ink);border-radius:9px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
+.vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--ink)}.indgange{display:flex;gap:8px}.indgange button:first-child{background:var(--lys)}
+.globusrum{position:relative;height:calc(100svh - 258px);min-height:250px;background:radial-gradient(ellipse at center,#e4efe9 0, #f3f5eb 48%,#fffdf7 76%);overflow:hidden}
+#globus{display:block;width:100%;height:100%;touch-action:none;cursor:grab}#globus:active{cursor:grabbing}#globus:focus-visible{outline-offset:-5px}
+#markoerer{position:absolute;inset:0;pointer-events:none}.markoer{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:44px;height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;border-radius:50%}
+.markoer:hover{background:#fff9ee99}.markoer .prik{width:20px;height:20px;background:#ffb300;border:3px solid var(--ink);border-radius:50%;box-shadow:0 0 0 4px #fff9eec9}
+.markoer .etiket{position:absolute;left:36px;top:10px;white-space:nowrap;font:700 13px var(--display);padding:3px 6px;border:1px solid var(--ink);border-radius:3px;background:var(--paper);box-shadow:2px 2px 0 var(--ink)}
+.markoer[data-sted="nordatlanten"] .etiket{left:auto;right:36px}
+.globusnote{position:absolute;left:26px;top:24px;pointer-events:none}.globusnote p{font:700 clamp(20px,2vw,28px)/1.2 var(--display);letter-spacing:-.03em;margin:10px 0 14px}.lille{font-size:14px;color:var(--slate)}
+.kompas{position:absolute;right:20px;top:18px;font:14px var(--mono)}
+.kortstatus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;padding:16px;max-width:90%;width:400px;background:var(--paper);border:2px solid var(--ink);border-radius:6px;text-align:center}
+.betjeningslinje{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;border-top:1px solid var(--ink);padding:8px}
+.betjeningslinje>div{display:flex;align-items:center;gap:5px}.rotation button,#zoom-ind,#zoom-ud{width:44px;padding:5px}.betjeningslinje output{min-width:42px;text-align:center;font:13px var(--mono)}
+.eftertekst{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--slate);padding-top:10px}.eftertekst p{margin:0}.tekstknap{border:0;padding:0;background:transparent;min-height:24px;font:inherit;text-decoration:underline}.tekstknap:hover{background:none;color:var(--ink)}
+body.fokus .site-header,body.fokus .intro,body.fokus .eftertekst{display:none}body.fokus main{padding:8px}body.fokus .globusrum{height:calc(100svh - 144px);min-height:240px}
+dialog{width:min(720px,calc(100% - 28px));max-height:calc(100svh - 32px);padding:0;border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);box-shadow:7px 7px 0 var(--ink)}dialog::backdrop{background:#17211f85}
+.dialogtop{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:1}.dialogtop h2{font:800 24px/1.15 var(--display);margin:0}#dialogindhold{padding:20px}
+.valg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.valg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.kortliste{display:grid;gap:14px}.stedkort,.modelkort{border:2px solid var(--ink);border-radius:6px;padding:16px;background:#fffdf7}.stedkort{width:100%;text-align:left;box-shadow:3px 3px 0 var(--ink)}.stedkort strong{display:block;font:700 20px var(--display);margin-bottom:7px}.stedkort span{font:15px/1.5 var(--body)}
+.metadata{font:500 12px/1.5 var(--mono);color:var(--slate);margin:0 0 7px}.modelkort h3{font:700 20px/1.2 var(--display);margin:0 0 8px}.modelkort p{margin:0 0 12px}.modelkort a{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;background:var(--lys);border:2px solid var(--ink);border-radius:5px;font:700 14px var(--display);text-decoration:none}
+.forbehold{border-left:4px solid var(--blue);padding:10px 14px;margin:16px 0 20px;background:#e9f3f7;font-size:15px}.soegefelt{display:block;font:600 16px var(--display)}.soegefelt input{display:block;width:100%;min-height:48px;padding:10px;border:2px solid var(--ink);border-radius:5px;background:white;margin:8px 0}.antal{font-size:14px;color:var(--slate)}.tilbage{margin-bottom:16px}.uden-script{padding:20px;border:2px solid var(--ink)}
+@media(max-width:800px){.globusnote{display:none}.intro>p{display:none}.eftertekst{font-size:12px}.markoer .etiket{font-size:11px}.globusrum{height:calc(100svh - 255px)}}
+@media(max-width:500px){main{padding:0 10px 14px}.site-linje{padding:8px 12px}.site-linje>a:last-child{max-width:190px;text-align:right;font-size:12px}.intro{padding:14px 0}.overlinje{font-size:10px}h1{font-size:25px;max-width:310px}.vaerktoejer{padding:7px;gap:5px}.indgange{gap:5px}.vaerktoejer button{padding:7px 10px}.globusrum{height:max(340px,calc(100svh - 340px))}.betjeningslinje{gap:6px;padding:7px 4px}.betjeningslinje button{font-size:12px}.rotation button{width:44px}.betjeningslinje>div{gap:3px}.betjeningslinje>button{min-height:44px}.betjeningslinje output{min-width:34px}.kompas{right:12px;top:12px}.markoer .etiket{left:31px}.markoer[data-sted="nordatlanten"] .etiket{right:31px}.dialogtop{padding:12px}.dialogtop h2{font-size:21px}#dialogindhold{padding:14px}body.fokus .globusrum{height:calc(100svh - 185px)}}
+/* På brede elevskærme kan betjeningen ligge i hjørnerne og give kloden
+   hele figurhøjden. Smalle vinduer beholder betjeningen under figuren. */
+@media(min-width:900px){.atlas{position:relative}.globusrum{height:calc(100svh - 214px)}.betjeningslinje{position:absolute;bottom:10px;left:12px;right:12px;border:0;padding:0;display:grid;grid-template-columns:1fr auto auto;pointer-events:none}.betjeningslinje>*{pointer-events:auto}.betjeningslinje output{background:var(--paper);border-radius:4px}body.fokus .globusrum{height:calc(100svh - 86px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
