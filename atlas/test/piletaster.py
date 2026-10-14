@@ -47,7 +47,7 @@ def afproev_piletaster(side):
     side.get_by_role('button', name='Søg', exact=True).click()
     felt = side.get_by_role('searchbox')
     felt.fill('Island')
-    felt.press('End')
+    felt.evaluate('(felt) => felt.setSelectionRange(6, 6)')
     foer = billede(side)
     felt.press('ArrowLeft')
     assert felt.evaluate('(felt) => felt.selectionStart') == 5
@@ -55,7 +55,14 @@ def afproev_piletaster(side):
     side.locator('#luk').focus()
     side.keyboard.press('ArrowDown')
     assert billede(side) == foer, 'Globussen drejer bag en åben dialog'
+    # Dialogens close-event (med atlassets fokusretur) kommer en opgave efter
+    # Escape. Vent på det, så det ikke stjæler fokus fra prøvefelterne nedenfor.
+    side.locator('#udforsker').evaluate('''(d) => d.addEventListener('close',
+      () => { d.dataset.lukket = 'ja'; }, { once: true })''')
     side.keyboard.press('Escape')
+    expect(side.locator('#udforsker')).to_have_attribute('data-lukket', 'ja')
+    side.locator('#udforsker').evaluate('(d) => delete d.dataset.lukket')
+    expect(side.get_by_role('button', name='Søg', exact=True)).to_be_focused()
     expect(side.get_by_role('button', name='Søg', exact=True)).to_be_focused()
 
     # Prøv native kontroller og sammensatte widgets, selv om de ikke alle
@@ -79,17 +86,25 @@ def afproev_piletaster(side):
     for maal in ['#proeve-input', '#proeve-tekst', '#proeve-valg', '#proeve-skyder',
                  '#proeve-redigerbar', '#proeve-gitter', '#proeve-radio', '#proeve-menu', '#proeve-ejer']:
         side.locator(maal).focus()
+        expect(side.locator(maal)).to_be_focused()
         foer = billede(side)
         side.keyboard.press('ArrowRight')
         assert billede(side) == foer, f'Globussen kaprer piletaster fra {maal}'
     expect(side.locator('#proeve-skyder')).to_have_value('51')
-    side.locator('#proeve-tekst').focus()
-    side.locator('#proeve-tekst').press('End')
+    # End flytter ikke markøren i tekstfelter på macOS; sæt den direkte.
+    side.locator('#proeve-tekst').evaluate('(felt) => { felt.focus(); felt.setSelectionRange(5, 5); }')
     side.keyboard.press('ArrowLeft')
     assert side.locator('#proeve-tekst').evaluate('(felt) => felt.selectionStart') == 4
-    side.locator('#proeve-valg').focus()
+    # På Linux skifter ↓ værdien i en lukket select; på macOS åbner den listen.
+    # Kontrollér derfor platformsuafhængigt, at globussen lader tasten være.
+    valg = side.locator('#proeve-valg')
+    valg.evaluate('''(el) => window.addEventListener('keydown', e => {
+      if (e.target === el) el.dataset.blokeret = String(e.defaultPrevented);
+    }, { once: true })''')
+    valg.focus()
     side.keyboard.press('ArrowDown')
-    expect(side.locator('#proeve-valg')).to_have_value('b')
+    assert valg.get_attribute('data-blokeret') == 'false', 'Globussen blokerer ↓ i select'
+    side.keyboard.press('Escape')
     side.locator('#tastaturproeve').evaluate('(el) => el.remove()')
 
     # Browser-/hjælpeteknologigenveje og IME må ikke få preventDefault.
