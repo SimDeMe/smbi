@@ -1,0 +1,18 @@
+Danmark: Natural Earth, public domain.
+https://www.naturalearthdata.com/about/terms-of-use/
+
+Kilde: world-atlas 2.0.2, countries-10m.json (1:10 mio.)
+https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-10m.json
+Kildens SHA-256: 3bc6f1d367a9bcec479841bae0e76092f512838411d0cef124e92eec4db45f79
+world-atlas: ISC, se world-atlas.LICENSE.
+
+Udtag: topojson-client 3.1.0 feature() på ISO 208.
+Ingen ændring af koordinater eller kyster. Danmark vises i en Mercatorprojektion
+med nord opad; nabolande er kontekst. Danmark her omfatter Jylland og øerne,
+inklusive Bornholm, ikke Grønland eller Færøerne. Småøer og kyster er generaliserede.
+
+Omgivelser: countries-50m.json fra samme world-atlas 2.0.2 (1:50 mio.), uændret.
+https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json
+SHA-256: 04342cdc1e3016bcd7db1630de95684d67b79fe3c8c460321e87aef469502394
+Samme Natural Earth public domain og world-atlas ISC-licens som ovenfor.
+Hele baggrundskortet bevares, så lande ikke mangler ved panorering eller i brede vinduer.

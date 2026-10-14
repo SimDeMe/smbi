@@ -1,7 +1,40 @@
-# Naturgeografisk atlas
+# Atlas
 
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
+
+## Første landekort: Danmark (v410)
+
+Danmark er fremhævet på globussen. Tryk på selve landets geometri for at åbne
+landekortet; zoom ind ved behov. Ingen landeknap ligger oven på globussen.
+**Steder → Danmark** er det
+tastaturtilgængelige alternativ, også når landet vender væk. Der er endnu ikke
+landekort for andre lande. De tre faglige markører har deres hidtidige funktion.
+
+Landekortet viser Jylland og øerne inklusive Bornholm, med nabolande nedtonet,
+fem orienteringsbyer og en lokal, omtrentlig målestok. Grønland og Færøerne indgår
+ikke i denne visning. Natural Earth 1:10 mio. giver mere detaljerede kyster end
+globussen (1:110 mio.), men er stadig generaliseret: småøer kan mangle; terræn,
+veje og lokale faglige temalag er ikke med. Kilde og forbehold åbnes med ⓘ.
+Omgivelserne vises i 1:50 mio. fra et helt verdenskort, så der ikke mangler
+land ved panorering eller i brede vinduer. De to lokale kortfiler på i alt ca.
+841 kB hentes først ved valg af Danmark.
+Kun synlige baggrundspolygoner projekteres ved træk og zoom; kyster og data
+ændres ikke ved denne frasortering.
+
+Træk/piletaster flytter landekortet; +/−, hjul med fokus og tofingerzoom ændrer
+kortets forstørrelse (1–8×). Nulstil/Home viser hele Danmark igen. **← Globus**
+eller Escape gendanner globussens tidligere vinkel, zoom og tilvalg. Pladelagene
+er kun synlige på globussen. Steder, Processer, Søg og Island-modulet er bevaret.
+Træk, knib og afbrudte berøringer udløser ikke landevalg.
+
+`test/landekort.py` indgår i den samlede browsertest og kan køres særskilt.
+Den kontrollerer fem elevskærme (1280×577, 1366×625, 1536×730, 390×750 og
+640×625), tastatur/fokus, faktisk tryk på landgeometrien, zoom/panorering,
+tilbage-navigation med alle pladetilvalg, skærmskift, touch/knib, datakilder,
+Bornholm og kendte danske/udenlandske koordinater samt data-/modulfejl og nyt
+forsøg. Prøverne bruger Chromium med WebGL deaktiveret. Safari, fysiske
+telefoner og skærmlæser er ikke afprøvet i dette miljø.
 
 ## Faglig kortlægning og næste review
 
@@ -35,6 +68,8 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
 - `globus.js`: D3's ortografiske projektion tegnet med Canvas 2D. Den håndterer
   horisontklipning, landegrænser, bredde-/længdegrader og projektion af markører.
   Canvas bruger højst dobbelt pixeltæthed; kun ændringer udløser tegning.
+- `landekort.js`: separat Mercatorvisning af Danmark i samme store kortområde.
+  Hentes først ved landevalg; globussens vinkel, zoom og pladelag bevares.
 - `pladelag.js`: valgfrit pladegrænselag (#48). Henter først data, når laget
   slås til, og tegner signaturen i samme Canvas som globussen.
 - `pladebevaegelse.js`: valgfrie navne for PB2002's 52 plader. Eulerberegningen
@@ -225,6 +260,8 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | d3-geo | 3.1.1 | [D3](https://github.com/d3/d3-geo), ISC; `vendor/d3-geo.LICENSE` |
 | topojson-client | 3.1.0 | [TopoJSON](https://github.com/topojson/topojson-client), ISC; `vendor/topojson-client.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
+| countries-50m.json | world-atlas 2.0.2, 1:50 mio. | Uændret baggrundskort, samme world-atlas/Natural Earth-licens; kontrolsum i `data/danmark-10m.LICENSE` |
+| danmark-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; kildens SHA-256 og bearbejdning i `data/danmark-10m.LICENSE` |
 | pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 | plader.json | PB2002 (Bird 2003), tabel 1 | Samme kilde/licens; poler og pladepolygoner, bearbejdet som beskrevet i `data/plader.LICENSE` |
 | graensehastigheder.json | PB2002 (Bird 2003), tabel 2 | Samme kilde/licens; lokale komponenter, kildeudtag og koordinater i `data/graensehastigheder.LICENSE` |

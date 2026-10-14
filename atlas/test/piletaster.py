@@ -5,6 +5,7 @@ from playwright.sync_api import expect
 def billede(side):
     # Sammenlign selve tegningen, så ændret CSS-fokus ikke kan give falsk positiv.
     return side.evaluate('''async () => {
+      await document.fonts.ready;
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       return document.querySelector('#globus').toDataURL();
     }''')

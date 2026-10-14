@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Naturgeografisk atlas — smbi.dk</title>
+  <title>Atlas — smbi.dk</title>
   <meta name="description" content="Drej globussen, find et sted eller en proces, og undersøg naturgeografien med interaktive simulationer. Uden login.">
   <link rel="canonical" href="https://smbi.dk/atlas/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="smbi.dk">
   <meta property="og:locale" content="da_DK">
   <meta property="og:url" content="https://smbi.dk/atlas/">
-  <meta property="og:title" content="Naturgeografisk atlas — smbi.dk">
+  <meta property="og:title" content="Atlas — smbi.dk">
   <meta property="og:description" content="Fra sted og proces til interaktiv simulation. Udforsk naturgeografien på en globus.">
   <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
   <meta property="og:image:alt" content="smbi.dk — naturgeografi">
@@ -32,14 +32,14 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v409</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v410</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
   </header>
   <main>
     <div class="intro">
-      <div><p class="overlinje">Naturgeografi · interaktivt atlas</p><h1>Verden er dit udgangspunkt<span>.</span></h1></div>
+      <div><p class="overlinje">Atlas</p><h1>Verden er dit udgangspunkt<span>.</span></h1></div>
       <p>Drej kloden. Vælg et sted.<br>Undersøg processen.</p>
     </div>
     <section class="atlas" aria-label="Globus og atlasbetjening">
@@ -57,8 +57,10 @@
       <div id="globusrum" class="globusrum">
         <canvas id="globus" tabindex="0" role="img" aria-label="Interaktiv jordglobus med lande, hav og tre faglige adgangspunkter" aria-describedby="betjening"></canvas>
         <div id="markoerer" aria-label="Steder på den synlige halvklode"></div>
+        <div id="landetop" class="landetop" hidden><button id="til-globus">← Globus</button><strong>Danmark</strong><button id="landekilde" aria-label="Om Danmarkskortet" aria-haspopup="dialog">ⓘ</button></div>
         <div class="globusnote" aria-hidden="true"><span class="overlinje">Fra sted til model</span><p>Hvilke kræfter<br>former verden?</p><span class="lille">Vælg en markør<br>og gå på opdagelse.</span></div>
         <p id="kortstatus" class="kortstatus" role="status">Henter verdenskort …</p>
+        <p id="visningsstatus" class="kun-oplaesning" role="status"></p>
         <div class="kompas" aria-hidden="true">N ↑</div>
       </div>
       <div class="betjeningslinje">
@@ -91,7 +93,7 @@
       </section>
     </section>
     <div class="eftertekst">
-      <p id="betjening">Drej med træk eller piletaster · Zoom med to fingre eller +/−.</p>
+      <p id="betjening">Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på Danmark for landekort.</p>
       <p>Markørerne er faglige eksempler. <button class="tekstknap" data-indgang="processer">Globale temaer findes under Processer →</button></p>
     </div>
     <noscript><p class="uden-script">Atlasset kræver JavaScript. Du kan stadig åbne alle simulationer i <a href="/geografi.html">geografibiblioteket</a>.</p></noscript>

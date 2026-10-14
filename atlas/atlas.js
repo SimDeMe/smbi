@@ -6,6 +6,74 @@ const indhold = document.querySelector('#dialogindhold');
 const titel = document.querySelector('#dialogtitel');
 let globus;
 let senesteFokus;
+let danmarkskort;
+let landAktivt = false;
+let henterLand = false;
+
+async function visDanmark() {
+  if (!globus || henterLand) return;
+  henterLand = true;
+  const status = document.querySelector('#kortstatus');
+  status.classList.add('landestatus');
+  canvas.setAttribute('aria-busy', 'true');
+  status.textContent = 'Henter Danmarkskort …'; status.hidden = false;
+  try {
+    if (!danmarkskort) {
+      const { hentDanmark } = await import('./landekort.js');
+      danmarkskort = await hentDanmark();
+    }
+    danmarkskort.nulstil();
+    skiftLand(true);
+    if (dialog.open) {
+      senesteFokus = document.querySelector('#til-globus');
+      dialog.close();
+    }
+    document.querySelector('#til-globus').focus({ preventScroll: true });
+    status.hidden = true;
+  } catch {
+    status.textContent = 'Danmarkskortet kunne ikke hentes. Globussen og simulationerne virker stadig. Prøv igen, eller genindlæs siden, hvis fejlen fortsætter.';
+    // Samme fejl er synlig, hvis valget kom fra den åbne stedliste.
+    const besked = document.querySelector('#landefejl');
+    if (besked) { besked.textContent = status.textContent; besked.hidden = false; }
+  } finally {
+    henterLand = false;
+    canvas.removeAttribute('aria-busy');
+  }
+}
+
+function skiftLand(aktiv) {
+  landAktivt = aktiv;
+  document.querySelector('.atlas').classList.toggle('landekort', aktiv);
+  document.querySelector('#landetop').hidden = !aktiv;
+  document.querySelector('#pladelag').hidden = aktiv;
+  if (valgpanel.matches(':popover-open')) valgpanel.hidePopover();
+  globus.visLand(aktiv ? danmarkskort : null);
+  document.querySelector('.rotation').setAttribute('aria-label', aktiv ? 'Flyt landekortet' : 'Drej globussen');
+  for (const knap of document.querySelectorAll('[data-drej]')) {
+    const retning = { vest: 'vest', oest: 'øst', nord: 'nord', syd: 'syd' }[knap.dataset.drej];
+    knap.setAttribute('aria-label', `${aktiv ? 'Flyt kortet' : 'Drej'} mod ${retning}`);
+  }
+  document.querySelector('#betjening').textContent = aktiv
+    ? 'Danmark: Jylland og øerne inkl. Bornholm · Træk eller brug piletaster · Zoom med to fingre eller +/−.'
+    : 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på Danmark for landekort.';
+  document.querySelector('#visningsstatus').textContent = aktiv ? 'Danmarkskort åbnet. Tilbage til globussen med knappen Globus eller Escape.' : 'Tilbage på globussen.';
+  opdaterPladebeskrivelse();
+}
+
+function tilbageTilGlobus(fokus = true) {
+  if (!landAktivt) return;
+  skiftLand(false);
+  if (fokus) canvas.focus({ preventScroll: true });
+}
+document.querySelector('#til-globus').onclick = () => tilbageTilGlobus();
+document.querySelector('#landekilde').onclick = () => {
+  aabn('Om Danmarkskortet');
+  indhold.append(element('p', 'Kortet viser Jylland og de danske øer, inklusive Bornholm. Grønland og Færøerne indgår ikke i denne første landevisning. Nord er opad. Byerne er orienteringspunkter.'));
+  indhold.append(element('p', 'Kyster og landegrænser: Natural Earth via world-atlas 2.0.2. Danmark vises i 1:10 mio.; omgivelserne er nedtonet i 1:50 mio. Kortet er generaliseret: småøer og kystdetaljer kan mangle. Det er et oversigtskort uden terræn, veje eller aktuelle måledata. Projektionen er Mercator. Målestokken viser en lokal, omtrentlig afstand.'));
+  const kilde = element('a', 'Natural Earth: data og vilkår →');
+  kilde.href = 'https://www.naturalearthdata.com/about/terms-of-use/';
+  indhold.append(kilde);
+};
 
 function element(type, tekst, klasse) {
   const el = document.createElement(type);
@@ -54,6 +122,7 @@ function visSted(sted) {
   if (globus) {
     const find = element('button', 'Vis på globussen', 'tilbage');
     find.onclick = () => {
+      tilbageTilGlobus(false);
       senesteFokus = document.querySelector('#globus');
       dialog.close();
       globus.visSted(sted);
@@ -78,6 +147,11 @@ function visFordybelse({ titel, beskrivelse, sti }) {
 
 function visSteder() {
   aabn('Steder');
+  const land = element('button', 'Danmark — åbn landekort', 'tilbage');
+  land.onclick = visDanmark;
+  land.disabled = !globus;
+  const fejl = element('p'); fejl.id = 'landefejl'; fejl.hidden = true; fejl.setAttribute('role', 'status');
+  indhold.append(land, fejl);
   indhold.append(element('p', 'Vælg et geografisk eksempel. Simulationerne er generelle modeller, som hjælper dig med at undersøge processerne.'));
   const liste = element('div', '', 'kortliste');
   for (const sted of steder) {
@@ -168,11 +242,14 @@ document.addEventListener('keydown', event => {
     event.preventDefault();
     panel.hidePopover();
     document.querySelector('#pladevisning').focus({ preventScroll: true });
+  } else if (!dialog.open && landAktivt) {
+    event.preventDefault(); tilbageTilGlobus();
   } else if (!dialog.open && document.body.classList.contains('fokus')) document.querySelector('#fokus').click();
 });
 document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
+  indhold.append(element('p', 'Tryk på selve Danmark på globussen for at åbne landekortet. Zoom ind, hvis landet er for lille at ramme. Danmark kan også vælges med tastatur under Steder. Det er det første land med eget kort. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
   indhold.append(lavInformation({
@@ -266,6 +343,7 @@ function visPladeopgave() {
   if (globus) {
     const find = element('button', 'Vis Island med pladegrænser', 'tilbage');
     find.onclick = async () => {
+      tilbageTilGlobus(false);
       senesteFokus = document.querySelector('#globus');
       dialog.close();
       if (pladeknap.getAttribute('aria-pressed') !== 'true') await skiftPladelag();
@@ -339,7 +417,7 @@ function opdaterPladebeskrivelse() {
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
   bevaegelsesnote.textContent = 'cm/år mellem pladerne: samlet åbning/lukning på tværs; forskydning langs transformforkastninger. ≈: diffus zone.';
   document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
-  canvas.setAttribute('aria-label', pladeknap.getAttribute('aria-pressed') === 'true'
+  canvas.setAttribute('aria-label', landAktivt ? 'Interaktivt Danmarkskort med Jylland, de danske øer inklusive Bornholm og orienteringsbyer. Nord er opad.' : pladeknap.getAttribute('aria-pressed') === 'true'
     ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
     : canvasbeskrivelse);
 }
@@ -387,6 +465,7 @@ async function skiftPladelag() {
   const vis = pladeknap.getAttribute('aria-pressed') !== 'true';
   const havdeFokus = document.activeElement === pladeknap;
   const status = document.querySelector('#kortstatus');
+  status.classList.remove('landestatus');
   pladeknap.disabled = true;
   pladeknap.setAttribute('aria-busy', 'true');
   try {
@@ -415,7 +494,7 @@ const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zo
 globusknapper.forEach(knap => { knap.disabled = true; });
 try {
   const { startGlobus } = await import('./globus.js');
-  globus = await startGlobus(steder, visSted);
+  globus = await startGlobus(steder, visSted, visDanmark);
   globusknapper.forEach(knap => { knap.disabled = false; });
   pladeknap.disabled = false;
   // /atlas/#island drejer globussen hen til stedet, fx ved retur fra et tværsnit.

@@ -1,7 +1,7 @@
 // Ortografisk projektion: geografisk klipning og poler håndteres af D3.
 // Canvas 2D kræver hverken grafikkortadgang eller WebGL.
 
-export async function startGlobus(steder, vaelgSted) {
+export async function startGlobus(steder, vaelgSted, vaelgLand) {
   const d3 = window.d3;
   const topojson = window.topojson;
   if (!d3?.geoOrthographic || !topojson?.feature) throw new Error('Kortbibliotek mangler');
@@ -14,6 +14,8 @@ export async function startGlobus(steder, vaelgSted) {
   const topologi = await svar.json();
   const lande = topojson.feature(topologi, topologi.objects.countries);
   const graenser = topojson.mesh(topologi, topologi.objects.countries, (a, b) => a !== b);
+  const danmark = lande.features.find(land => land.id === '208');
+  let landekort;
   const net = d3.geoGraticule10();
   const projektion = d3.geoOrthographic().clipAngle(90).precision(0.4);
   const sti = d3.geoPath(projektion, ctx);
@@ -48,6 +50,11 @@ export async function startGlobus(steder, vaelgSted) {
   function tegn() {
     ramme = 0;
     ctx.clearRect(0, 0, bredde, hoejde);
+    if (landekort) {
+      landekort.tegn(ctx, bredde, hoejde);
+      visZoom(landekort.zoom, 1, 8);
+      return;
+    }
     projektion.translate([bredde / 2, hoejde / 2]).scale(Math.min(bredde, hoejde) * 0.455 * zoom).rotate([-centrum[0], -centrum[1]]);
     for (const { sted, knap, etiket } of markoerer) {
       const [x, y] = projektion(sted.koordinater);
@@ -65,6 +72,7 @@ export async function startGlobus(steder, vaelgSted) {
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
     ctx.beginPath(); sti(lande); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
     ctx.beginPath(); sti(graenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
+    ctx.beginPath(); sti(danmark); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke();
     if (pladelag) plademodul.tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
     // En diskret rand giver rumlighed, men angiver ingen faglige måledata.
     const radius = projektion.scale();
@@ -84,9 +92,12 @@ export async function startGlobus(steder, vaelgSted) {
     }
     ctx.restore();
     ctx.beginPath(); sti({ type: 'Sphere' }); ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2; ctx.stroke();
-    document.querySelector('#zoomniveau').textContent = `${zoom.toFixed(1).replace('.', ',')}×`;
-    document.querySelector('#zoom-ud').disabled = zoom <= .75;
-    document.querySelector('#zoom-ind').disabled = zoom >= 3;
+    visZoom(zoom, .75, 3);
+  }
+  function visZoom(niveau, min, max) {
+    document.querySelector('#zoomniveau').textContent = `${niveau.toFixed(1).replace('.', ',')}×`;
+    document.querySelector('#zoom-ud').disabled = niveau <= min;
+    document.querySelector('#zoom-ind').disabled = niveau >= max;
   }
   function opdater() { if (!ramme) ramme = requestAnimationFrame(tegn); }
   function afgraens() {
@@ -103,6 +114,10 @@ export async function startGlobus(steder, vaelgSted) {
     opdater();
   }
   function drej(retning) {
+    if (landekort) {
+      const delta = { vest: [40, 0], oest: [-40, 0], nord: [0, 40], syd: [0, -40] }[retning];
+      landekort.flyt(...delta); opdater(); return;
+    }
     const delta = 12 / zoom;
     if (retning === 'vest') centrum[0] -= delta;
     if (retning === 'oest') centrum[0] += delta;
@@ -110,8 +125,14 @@ export async function startGlobus(steder, vaelgSted) {
     if (retning === 'syd') centrum[1] -= delta;
     afgraens();
   }
-  function zoomMed(faktor) { zoom *= faktor; afgraens(); }
-  function nulstil() { centrum = [...start]; zoom = 1; afgraens(); }
+  function zoomMed(faktor) {
+    if (landekort) { landekort.zoomMed(faktor); opdater(); }
+    else { zoom *= faktor; afgraens(); }
+  }
+  function nulstil() {
+    if (landekort) { landekort.nulstil(); opdater(); }
+    else { centrum = [...start]; zoom = 1; afgraens(); }
+  }
   for (const knap of document.querySelectorAll('[data-drej]')) knap.onclick = () => drej(knap.dataset.drej);
   document.querySelector('#zoom-ind').onclick = () => zoomMed(1.2);
   document.querySelector('#zoom-ud').onclick = () => zoomMed(1 / 1.2);
@@ -160,6 +181,13 @@ export async function startGlobus(steder, vaelgSted) {
 
   const fingre = new Map();
   let forrigeAfstand = 0;
+  let tryk;
+  function rammerDanmark(event) {
+    const r = canvas.getBoundingClientRect();
+    const punkt = [event.clientX - r.left, event.clientY - r.top];
+    return !landekort && Math.hypot(punkt[0] - bredde / 2, punkt[1] - hoejde / 2) <= projektion.scale() &&
+      d3.geoContains(danmark, projektion.invert(punkt));
+  }
   const afstand = () => {
     const [a, b] = [...fingre.values()];
     return Math.hypot(a.x - b.x, a.y - b.y);
@@ -169,16 +197,28 @@ export async function startGlobus(steder, vaelgSted) {
     canvas.setPointerCapture(event.pointerId);
     canvas.focus({ preventScroll: true });
     fingre.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (fingre.size === 1) tryk = { x: event.clientX, y: event.clientY, flyttet: false };
+    else if (tryk) tryk.flyttet = true;
     if (fingre.size === 2) forrigeAfstand = afstand();
   });
   canvas.addEventListener('pointermove', event => {
     const forrige = fingre.get(event.pointerId);
-    if (!forrige) return;
+    if (!forrige) {
+      if (event.pointerType === 'mouse') {
+        const land = rammerDanmark(event);
+        canvas.style.cursor = land ? 'pointer' : '';
+        canvas.title = land ? 'Danmark — klik for landekort' : '';
+      }
+      return;
+    }
+    if (tryk && Math.hypot(event.clientX - tryk.x, event.clientY - tryk.y) > 6) tryk.flyttet = true;
     fingre.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (fingre.size === 2) {
       const nyAfstand = afstand();
-      if (forrigeAfstand > 0) zoom *= nyAfstand / forrigeAfstand;
+      if (forrigeAfstand > 0) zoomMed(nyAfstand / forrigeAfstand);
       forrigeAfstand = nyAfstand;
+    } else if (landekort) {
+      landekort.flyt(event.clientX - forrige.x, event.clientY - forrige.y);
     } else {
       const graderPrPixel = 90 / (Math.min(bredde, hoejde) * .455 * zoom);
       centrum[0] -= (event.clientX - forrige.x) * graderPrPixel;
@@ -186,14 +226,24 @@ export async function startGlobus(steder, vaelgSted) {
     }
     afgraens();
   });
-  const slip = event => { fingre.delete(event.pointerId); forrigeAfstand = 0; };
+  const slip = event => {
+    if (event.type === 'pointerup' && fingre.size === 1 && tryk && !tryk.flyttet && !landekort &&
+        Math.hypot(event.clientX - tryk.x, event.clientY - tryk.y) <= 6) {
+      if (rammerDanmark(event)) vaelgLand();
+    }
+    fingre.delete(event.pointerId); forrigeAfstand = 0;
+    // En afbrudt berøring eller det sidste løft efter et knib er aldrig et landevalg.
+    if (tryk) tryk.flyttet = true;
+  };
   canvas.addEventListener('pointerup', slip);
   canvas.addEventListener('pointercancel', slip);
   canvas.addEventListener('lostpointercapture', slip);
+  canvas.addEventListener('pointerleave', () => { canvas.style.cursor = ''; canvas.title = ''; });
   new ResizeObserver(tilpas).observe(rum);
   tilpas();
   return {
     gentegn: opdater,
+    visLand(kort) { landekort = kort; fingre.clear(); tryk = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
     visSted(sted) { centrum = [...sted.koordinater]; zoom = 1.4; afgraens(); },
     // Data hentes først, når laget slås til; fejl lader globussen være uændret.
     async visPladegraenser(vis) {

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
+from landekort import afproev_landekort
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
 from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration
@@ -178,6 +179,7 @@ with sync_playwright() as p:
     print('Island: lag, 2D/3D, drejning, animation og fallback: OK')
     afproev_islandintegration(browser, ADRESSE, UD, SKAERME)
     print('Island i atlasset: markør → tværsnit → tilbage til globussen: OK')
+    afproev_landekort(browser, ADRESSE, UD, SKAERME)
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)

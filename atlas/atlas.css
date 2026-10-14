@@ -68,3 +68,11 @@ body.pladelag .globusnote{display:none}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 .graensevaelger{display:block;margin:12px 0;font:600 14px var(--display)}.graensevaelger select{display:block;width:100%;min-width:0;min-height:44px;margin-top:6px;padding:6px;font:14px var(--display);color:var(--ink);background:var(--paper);border:1px solid var(--ink);border-radius:4px}.graensetabel th,.graensetabel td{padding:8px 4px}.graensetabel caption{font-size:14px}
+.landetop{position:absolute;top:10px;left:12px;display:flex;align-items:center;gap:12px;font:700 17px var(--display)}
+.landetop strong{background:var(--paper);padding:4px 7px;border-radius:4px}.landetop #landekilde{width:44px;padding:4px;font-size:23px;border-radius:50%}
+.atlas.landekort #markoerer,.atlas.landekort .globusnote,.atlas.landekort #signatur{display:none}
+.atlas.landekort .globusrum{background:#d6eaf2}
+.kun-oplaesning{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:500px){.landetop{gap:8px;font-size:16px}}
+.kortstatus.landestatus{top:auto;bottom:12px;left:12px;transform:none;width:calc(100% - 24px);max-width:640px;padding:8px;font-size:14px;pointer-events:none}
+@media(min-width:900px){.kortstatus.landestatus{bottom:64px}}

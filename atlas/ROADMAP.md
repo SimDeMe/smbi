@@ -1,4 +1,4 @@
-# Udviklingsplan – SMBI naturgeografisk atlas
+# Udviklingsplan – Atlas
 
 Status: plan vedtaget 14. oktober 2026. Arbejd direkte på `main` i små, testede og tilbagerullelige commits, jf. `CLAUDE.md` og `design_rules.md`.
 
