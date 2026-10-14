@@ -1,6 +1,8 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: plan, ikke implementeret.** Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
+**Status: plan, ikke implementeret.** Udkast til milepæl A – den faglige
+modelbeskrivelse – ligger i [ISLAND-MODEL.md](ISLAND-MODEL.md) og afventer
+ejerens gennemgang. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
 
 Arbejdet styres i [#49](https://github.com/SimDeMe/smbi/issues/49). Navigationen
 bygger på reviewet i [#47](https://github.com/SimDeMe/smbi/issues/47), og
