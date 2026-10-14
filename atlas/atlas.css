@@ -15,7 +15,7 @@ main{padding:0 24px 12px;max-width:1800px;margin:auto}
 .overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 5px;color:var(--slate)}
 h1{font:800 clamp(22px,2.7vw,36px)/1.1 var(--display);letter-spacing:-.035em;margin:0}h1 span{color:var(--blue)}.intro>p{font-size:15px;line-height:1.35;margin:0;color:var(--slate)}
 .atlas{border:2px solid var(--ink);border-radius:9px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
-.vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--ink)}.indgange{display:flex;gap:8px}.indgange button:first-child{background:var(--lys)}
+.vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--ink)}.indgange{display:flex;gap:8px}
 .globusrum{position:relative;height:calc(100svh - 258px);min-height:250px;background:radial-gradient(ellipse at center,#e4efe9 0, #f3f5eb 48%,#fffdf7 76%);overflow:hidden}
 #globus{display:block;width:100%;height:100%;touch-action:none;cursor:grab}#globus:active{cursor:grabbing}#globus:focus-visible{outline-offset:-5px}
 #markoerer{position:absolute;inset:0;pointer-events:none}.markoer{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:44px;height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;border-radius:50%}
@@ -41,4 +41,7 @@ dialog{width:min(720px,calc(100% - 28px));max-height:calc(100svh - 32px);padding
 /* På brede elevskærme kan betjeningen ligge i hjørnerne og give kloden
    hele figurhøjden. Smalle vinduer beholder betjeningen under figuren. */
 @media(min-width:900px){.atlas{position:relative}.globusrum{height:calc(100svh - 214px)}.betjeningslinje{position:absolute;bottom:10px;left:12px;right:12px;border:0;padding:0;display:grid;grid-template-columns:1fr auto auto;pointer-events:none}.betjeningslinje>*{pointer-events:auto}.betjeningslinje output{background:var(--paper);border-radius:4px}body.fokus .globusrum{height:calc(100svh - 86px)}}
+/* Lave laptopvinduer: en kompakt intro giver kloden højden. Introens
+   undertekst gentages i globusnoten og kan derfor undværes her. */
+@media(min-width:900px) and (max-height:760px){.intro{padding:7px 0}.intro>p{display:none}.overlinje{margin-bottom:2px}h1{font-size:26px}.globusrum{height:calc(100svh - 186px)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}

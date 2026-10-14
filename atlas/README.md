@@ -169,7 +169,10 @@ forbehold og datakildetekster er bevaret; globuskode, koordinater og model-links
 er uændrede. De korte nødvendige modelbegrænsninger forbliver synlige.
 
 På de tre laptopstørrelser er både globus og primære kontroller synlige uden
-scroll; figurfladerne er henholdsvis 1228×363, 1314×411 og 1484×516 px.
+scroll; figurfladerne er henholdsvis 1228×391, 1314×439 og 1484×544 px.
+I brede, lave vinduer (≥900 px bredt, ≤760 px højt) er introen kompakt og
+uden undertekst, så kloden får cirka 28 px mere højde. «Steder» har ikke
+længere en fast lyseblå baggrund, der fik den til at ligne en valgt fane.
 Mobil har en 366×410 px figur og betjening under den. Ingen vandret rulning
 på nogen af de fem størrelser. Fokus giver mere plads uden browserfuldskærm.
 
