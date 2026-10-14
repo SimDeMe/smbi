@@ -1,0 +1,125 @@
+---
+title: "P- og S-bølger i en slinky"
+subtitle: "Design selv et forsøg, der måler bølgernes fart"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Et jordskælv sender to slags bølger gennem Jorden: P-bølger og S-bølger. Med en lang slinky-fjeder kan I lave begge slags og se forskellen på dem. I denne øvelse skal I **selv tilrettelægge et forsøg**, der måler, hvor hurtigt de to bølgetyper bevæger sig i slinkyen, og I skal filme bølgerne. I arbejder tre sammen og fremlægger til sidst jeres metode, resultater og videoer.
+
+## Baggrund
+
+- **P-bølger** (primære bølger) er *trykbølger* (længdebølger). Delene af mediet svinger frem og tilbage i samme retning, som bølgen bevæger sig. Der opstår skiftevis fortætninger og fortyndinger.
+- **S-bølger** (sekundære bølger) er *tværbølger*. Delene af mediet svinger på tværs af den retning, bølgen bevæger sig.
+
+I Jordens skorpe bevæger P-bølger sig med ca. 6,2 km/s og S-bølger med ca. 3,65 km/s. P-bølgen er altså omkring 1,7 gange så hurtig og når derfor altid først frem.
+
+Farten findes som
+
+$$v = \frac{s}{t}$$
+
+hvor $s$ er den strækning, bølgen har bevæget sig, og $t$ er den tid, det har taget.
+
+## Forskningsspørgsmål
+
+Hvor hurtigt bevæger P- og S-bølger sig i en slinky, og hvilken af dem er hurtigst?
+
+Skriv en hypotese, før I går i gang.
+
+::: {.callout-important}
+## Sikkerhed
+
+Slip aldrig en udstrakt slinky — den smælder sammen og kan ramme nogen eller filtre sig sammen, så den ødelægges. Lad den glide langsomt sammen, når I er færdige.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- En lang slinky-fjeder (metal)
+- Målebånd
+- Malertape til at markere afstande på gulvet
+- Stopur og en mobiltelefon, der kan filme (gerne i slowmotion)
+:::
+
+## Krav til jeres forsøg
+
+Der er ingen færdig opskrift. I bestemmer selv, hvordan I vil gøre — men forsøget skal leve op til disse krav:
+
+1. I skal kunne lave både en P-bølge og en S-bølge, og I skal kunne forklare, hvordan I gør.
+2. I skal måle en strækning og en tid, så I kan beregne farten. Overvej, hvordan I får målt tiden så præcist som muligt: er strækningen lang nok? Kan bølgen løbe frem og tilbage? Kan I tage tiden på en video i stedet for med stopur?
+3. Slinkyen skal være strakt lige meget i alle målinger. Notér, hvor lang den er.
+4. Hver bølgetype skal måles **mindst fem gange**.
+5. I skal optage en kort video af hver bølgetype, som tydeligt viser, hvordan slinkyen bevæger sig.
+
+Skriv jeres plan ned, og vis den til læreren, før I begynder at måle.
+
+**Vores plan:**
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+::: {.callout-tip}
+## Tip
+
+En video i slowmotion kan bruges som et meget præcist stopur: tæl billederne, fra bølgen starter, til den når frem, og del med antallet af billeder pr. sekund.
+:::
+
+## Registrering af målinger
+
+Slinkyens længde under forsøget: \_\_\_\_\_\_\_\_ m &nbsp;&nbsp;&nbsp;&nbsp; Strækning $s$, bølgen måles over: \_\_\_\_\_\_\_\_ m
+
+| Måling | P-bølge: tid $t$ (s) | P-bølge: fart $v_P$ (m/s) | S-bølge: tid $t$ (s) | S-bølge: fart $v_S$ (m/s) |
+|:-:|:-:|:-:|:-:|:-:|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| **Gennemsnit** | | | | |
+
+: Målte tider og beregnede farter. {#tbl-1}
+
+## Databehandling
+
+1. Beregn farten for hver måling med $v = s/t$, og skriv den i @tbl-1.
+2. Beregn gennemsnittet af farten for hver bølgetype:
+
+$$\bar{v} = \frac{v_1 + v_2 + \dots + v_n}{n}$$
+
+3. Angiv spredningen på jeres målinger som forskellen mellem den største og den mindste fart for hver bølgetype. Er forskellen mellem P og S større end spredningen?
+4. Beregn forholdet mellem farterne, og sammenlign med Jordens skorpe:
+
+$$\frac{\bar{v}_P}{\bar{v}_S} \quad \text{(slinky)} \qquad \text{og} \qquad \frac{\text{6,2 km/s}}{\text{3,65 km/s}} \approx \text{1,7} \quad \text{(Jordens skorpe)}$$
+
+5. Lav et søjlediagram med gennemsnitsfarten for P- og S-bølgen, og vis spredningen.
+6. Saml metode, resultater, diagram og videoer i en kort præsentation (fx Google Slides) til klassen.
+
+## Journalspørgsmål
+
+1. Beskriv, hvordan slinkyen bevægede sig ved henholdsvis P- og S-bølgen. Brug jeres videoer, og forklar forskellen på en længdebølge og en tværbølge.
+2. Blev jeres hypotese bekræftet? Var P-bølgen hurtigst?
+3. I en udstrakt slinky er P-bølgen kun lidt hurtigere end S-bølgen, mens den i Jorden er ca. 1,7 gange så hurtig. Hvad siger det om, hvad slinkyen er en god model for — og hvad den ikke er en god model for?
+4. Hvilke fejlkilder var der i jeres metode? Hvad betød det, hvordan I tog tiden, og hvor langt slinkyen var strakt? Hvordan ville I forbedre forsøget, hvis I skulle gøre det igen?
+5. Sammenlign jeres metode med de andre gruppers. Hvilken metode gav de mindste spredninger, og hvorfor?
+6. S-bølger kan ikke bevæge sig gennem væsker. Forklar ud fra den måde, delene svinger på i en tværbølge, hvorfor det er sådan — og hvordan det har afsløret, at Jordens ydre kerne er flydende.
+7. Hvordan bruger seismologer tidsforskellen mellem P- og S-bølgen til at finde ud af, hvor langt væk et jordskælv er? (Se øvelsen *Lokalisering af jordskælv*.)
+
+## Om denne udgave
+
+Bygger på den korte beskrivelse af forsøget på Geolink (naturgeografi C, *Pladetektonik og naturkatastrofer*, modulet *Jordskælv*, 2025/26): mål P- og S-bølgernes fart i en slinky-fjeder flere gange, bestem middelfarten, optag en film og fremlæg i Google Slides. Der fandtes ingen egentlig vejledning. Forsøget er bevaret som en åben undersøgelse, hvor eleverne selv tilrettelægger metoden. Nyt:
+
+- Baggrund om P- og S-bølger, krav til forsøget (begge bølgetyper, mindst fem målinger, fast strækning, video) og et registreringsskema.
+- Databehandling med gennemsnit, spredning og forholdet mellem farterne, sammenlignet med Jordens skorpe.
+- Journalspørgsmål om, hvor god slinkyen er som model. I en udstrakt slinky er forholdet $v_S/v_P \approx \sqrt{1 - L_0/L}$, hvor $L_0$ er slinkyens længde, når den er samlet, og $L$ er længden, når den er strakt. Når slinkyen er strakt meget, er de to farter derfor næsten ens. Det skal eleverne ikke opfatte som en målefejl.
