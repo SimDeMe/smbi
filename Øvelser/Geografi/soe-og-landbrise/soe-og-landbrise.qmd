@@ -1,0 +1,136 @@
+---
+title: "Sø- og landbrise"
+subtitle: "Hvad bliver hurtigst varmt — og hurtigst koldt igen: sand eller vand?"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+En varm sommerdag ved kysten blæser det ofte ind fra havet om eftermiddagen — en *søbrise*. Om aftenen og natten kan vinden vende og blæse ud mod havet — en *landbrise*. I denne øvelse simulerer I et døgn ved kysten: en skål sand er «land», en skål vand er «hav», og en lampe er «solen». I måler, hvordan de to overflader bliver varmet op om «dagen» og afkølet om «natten», og bruger resultatet til at forklare, hvorfor vinden skifter retning.
+
+## Baggrund
+
+Land og hav reagerer forskelligt på solens stråling:
+
+- Vand har en høj **specifik varmekapacitet** (ca. 4,2 kJ/(kg·K)) — det skal have meget energi for at blive én grad varmere. Tørt sand har en langt lavere varmekapacitet (under 1 kJ/(kg·K)).
+- I sand bliver varmen i de øverste få centimeter. I vand trænger lyset et stykke ned, og vandet blandes, så varmen fordeles i et tykkere lag.
+- Fra en vandoverflade fordamper der vand, og fordampningen bruger energi.
+
+Når luften over land bliver varmere end luften over havet, udvider den sig og stiger op. Ved jordoverfladen opstår et **termisk lavtryk** over land og et **termisk højtryk** over havet, og luften strømmer fra højtryk mod lavtryk. Om natten kan forholdet vende. Den samme mekanisme driver monsunen, bare over et helt kontinent og et helt år.
+
+## Hypotese
+
+Hvad tror I bliver hurtigst varmt, sandet eller vandet? Og hvad bliver hurtigst koldt igen? Skriv jeres hypotese med en kort begrundelse, før I tænder lampen.
+
+::: {.callout-important}
+## Sikkerhed
+
+Lampen bliver varm. Rør ikke ved skærmen, og hold vand væk fra lampe og ledning. Peg aldrig et IR-termometer med laser mod nogens øjne.
+:::
+
+::: {.callout-note}
+## Materialer (pr. gruppe)
+
+- To ens skåle eller kar: ét med tørt sand og ét med vand (samme fyldhøjde)
+- Arkitektlampe med glødepære eller halogenpære (en LED-pære giver næsten ingen varme)
+- IR-termometer
+- Lineal
+- Stopur (fx på mobilen)
+:::
+
+## Fremgangsmåde
+
+### Klargøring
+
+1. Fyld den ene skål med sand og den anden med vand fra hanen, så de er fyldt lige højt. Lad dem stå et stykke tid, så de har samme temperatur som rummet.
+2. Stil skålene tæt ved siden af hinanden, og indstil lampen, så den hænger ca. 20 cm over midten mellem dem og lyser lige meget på begge. Lampen skal være **slukket**.
+3. Mål starttemperaturen på overfladen af sandet og vandet med IR-termometeret, og skriv den i @tbl-1 ud for 0 min. Hold termometeret i samme afstand og peg på midten af skålen hver gang.
+
+### «Dag» — solen skinner
+
+1. Tænd lampen, og start stopuret samtidig.
+2. Mål temperaturen af sand og vand hvert 3. minut, og skriv tallene i @tbl-1.
+3. Fortsæt, til stopuret viser 15 minutter.
+
+### «Nat» — solen er gået ned
+
+1. Sluk lampen ved 15 minutter, men lad stopuret køre videre.
+2. Mål fortsat temperaturen af sand og vand hvert 3. minut.
+3. Stop, når stopuret viser 30 minutter.
+
+::: {.callout-tip}
+## Tip
+
+Flyt ikke lampen eller skålene undervejs. Sluk lampen *efter* målingen ved 15 minutter, så målingerne til og med 15 min hører til «dagen».
+:::
+
+## Registrering af målinger
+
+| Tid (min) | Lampe | Sand (°C) | Vand (°C) | Sand − vand (°C) |
+|:-:|:-:|:-:|:-:|:-:|
+| 0 | slukket | | | |
+| 3 | tændt | | | |
+| 6 | tændt | | | |
+| 9 | tændt | | | |
+| 12 | tændt | | | |
+| 15 | tændt → slukkes | | | |
+| 18 | slukket | | | |
+| 21 | slukket | | | |
+| 24 | slukket | | | |
+| 27 | slukket | | | |
+| 30 | slukket | | | |
+
+: Overfladetemperatur af sand og vand. Den sidste kolonne udfyldes i databehandlingen. {#tbl-1}
+
+Afstand fra lampe til skåle: \_\_\_\_\_\_\_\_ cm
+
+## Databehandling
+
+1. Lav et (x,y)-punktdiagram i Excel eller Google Sheets med tiden i minutter på x-aksen og temperaturen i °C på y-aksen. Tegn sand og vand som to serier i samme diagram, navngiv akserne, og markér, hvor lampen blev slukket.
+2. Beregn temperaturforskellen mellem «land» og «hav» til hvert tidspunkt, og skriv den i sidste kolonne af @tbl-1:
+
+$$\Delta T_\text{land–hav} = T_\text{sand} - T_\text{vand}$$
+
+3. Lav et nyt diagram med $\Delta T_\text{land–hav}$ som funktion af tiden. Tegn en vandret linje ved 0 °C. Hvornår er land varmest, og hvornår er havet varmest?
+4. Beregn for både sand og vand, hvor meget temperaturen ændrede sig om «dagen» og om «natten», og hvor hurtigt det gik:
+
+$$\Delta T_\text{dag} = T_{15} - T_{0} \qquad \Delta T_\text{nat} = T_{30} - T_{15}$$
+
+$$\text{gennemsnitlig ændring} = \frac{\Delta T}{15\ \text{min}}$$
+
+| | Sand | Vand |
+|:---|:-:|:-:|
+| $\Delta T_\text{dag}$ (°C) | | |
+| Opvarmning (°C/min) | | |
+| $\Delta T_\text{nat}$ (°C) | | |
+| Afkøling (°C/min) | | |
+
+: Opvarmning og afkøling af sand og vand. {#tbl-2}
+
+5. Sammenlign med jeres hypotese og med en anden gruppes resultater. Fik I den samme forskel mellem sand og vand?
+
+## Journalspørgsmål
+
+1. Hvad blev hurtigst varmt, og hvad blev hurtigst koldt igen? Forklar forskellen med begreberne specifik varmekapacitet, opblanding og fordampning.
+2. Tegn en skitse af kysten midt på eftermiddagen og en af kysten om natten. Markér termisk højtryk (H) og lavtryk (L) ved jordoverfladen, og tegn pile for luftens bevægelse — både ved jorden og oppe i luften.
+3. Brug jeres diagram over $\Delta T_\text{land–hav}$: hvornår i jeres «døgn» ville der blæse søbrise, og hvornår landbrise? Passede det med, hvornår lampen var tændt og slukket?
+4. Landbrisen er i virkeligheden ofte svagere end søbrisen. Hvordan kan jeres målinger forklare det? Se på, hvor stor temperaturforskellen blev om «dagen» og om «natten».
+5. Hvilke fejlkilder har forsøget? Tænk fx på, at IR-termometeret kun måler overfladen, at lampen måske ikke lyser lige meget på begge skåle, og at vandet kan fordampe.
+6. Hvilke forskelle er der mellem forsøget og en rigtig kyst? Tænk på solens højde i løbet af dagen, skyer, havets dybde og strømme, og at vi måler på overfladerne og ikke på luften over dem.
+7. Monsunen er en slags sø- og landbrise i stor skala. Forklar, hvorfor vinden i Sydasien blæser fra havet ind over land om sommeren og fra land ud mod havet om vinteren — og hvorfor det har stor betydning for landbruget.
+
+## Om denne udgave
+
+Bygger på «Forsøgsvejledning_Sø_og_Landbrise.docx» fra Geolink (naturgeografi C; kopi i Undervisningsmateriale Katalog/Geolink/Øvelser) og på den forenklede NF-udgave «Øvelsesvejledning – Sø- og landbrise» fra NF-forløbet *Mad til milliarder* 2025/26, hvis opdeling i «dag» og «nat» og spørgsmål om forudsigelse er ført videre. Opstillingen (sand, vand, arkitektlampe 20 cm over, målinger hvert 3. minut) er uændret. Ændret i forhold til originalen:
+
+- Originalen angav varigheden til 40 minutter, men måleskemaet og fremgangsmåden dækker 30 minutter (15 med lampe og 15 uden). Vejledningen siger nu 30 minutter.
+- Nyt baggrundsafsnit om varmekapacitet, opblanding, fordampning og termisk tryk.
+- Databehandlingen er udvidet med temperaturforskellen land − hav over tid og opvarmnings- og afkølingshastigheder. Originalens diskussionsspørgsmål og tegneopgave er samlet i journalspørgsmålene.
+- Bemærkning om, at lampen skal have glødepære eller halogenpære.
