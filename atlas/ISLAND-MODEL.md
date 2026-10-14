@@ -10,7 +10,7 @@ originalen, før de citeres i elevmateriale (se «Kontrol før godkendelse»).
 **Sprogligt princip:** Elevteksten skal kunne læses af en 1.g-elev uden
 forkundskaber. Hvert nyt fagord forklares med almindelige ord første gang, det
 bruges, og helst med en hverdagssammenligning. Fagord, som ikke er nødvendige
-på C-niveau (fx *solidus*, *peridotit*, *asthenosfære*), bruges ikke i
+på C-niveau (fx *solidus*, *peridotit*), bruges ikke i
 elevteksten; de står kun i lærernoterne.
 
 ## 1. Kort fortalt
@@ -28,8 +28,7 @@ hvad eleven skal kigge efter i figuren.
 
 ### Trin 1 · To plader glider fra hinanden
 
-Jordens yderste lag er delt i store, stive stykker – **plader** – som langsomt
-bevæger sig. Midt i Atlanterhavet går en lang bjergkæde under vandet, **den
+Jordens yderste lag er delt i **lithosfæreplader**, som langsomt bevæger sig. Midt i Atlanterhavet går en lang bjergkæde under vandet, **den
 Midtatlantiske Ryg**. Her glider den Nordamerikanske plade mod vest og den
 Eurasiske plade mod øst. Island ligger lige oven på ryggen, så øen bliver
 langsomt trukket fra hinanden.
@@ -156,7 +155,7 @@ Navnene i første kolonne er dem, eleven ser.
 | --- | --- | --- |
 | Overflade og hav | Riftdal med revner og vulkaner; havoverfladen | Island over havet; resten af ryggen under havet til sammenligning |
 | Skorpe | Basalt, tykkest under Island | Tydeligt tykkere end ved normal ryg; tal kun med kilde |
-| Plader | Det stive yderlag, tyndest ved ryggen | Pile for bevægelsen hver sin vej |
+| Lithosfæreplader | Det stive yderlag, tyndest ved ryggen | Pile for bevægelsen hver sin vej |
 | Kappe | Varm, fast sten, der flyder langsomt op under ryggen | Langsomme pile; må ikke ligne flydende magma |
 | Her smelter stenen | Område, hvor små dråber magma dannes | Spredte dråber – ikke en stor sø af magma |
 | Magmaens vej | Magmakamre, revner og udbrud | Skematisk |
@@ -167,8 +166,8 @@ med varmere kappe begynder smeltningen dybere, der kommer mere magma, skorpen
 bliver tykkere, og landet når op over havet. Én tydelig sammenligning er
 bedre end flere skydere, eleven skal gætte betydningen af.
 
-*Lærernote om fagord:* Elevens «Plader» svarer til lithosfæren, «Kappe» til
-især asthenosfæren; kappens sten er peridotit. Disse ord kan stå i en
+*Lærernote om fagord:* Elevens «Kappe» svarer her især til asthenosfæren;
+kappens sten er peridotit. Disse ord kan stå i en
 udfoldelig ordliste for B-niveau eller interesserede, men ikke i figuren.
 
 ## 5. Den illustrative animation
@@ -190,7 +189,7 @@ udfoldelig ordliste for B-niveau eller interesserede, men ikke i figuren.
 
 | Ord | Forklaring med almindelige ord |
 | --- | --- |
-| Plade | Et stort, stift stykke af Jordens yderste lag, der langsomt flytter sig |
+| Lithosfæreplade | Et af de stykker, Jordens yderste lag (lithosfæren) er delt i; pladerne flytter sig langsomt |
 | Konstruktiv pladegrænse | Sted hvor to plader glider fra hinanden, og ny skorpe dannes |
 | Midtatlantiske Ryg | Den lange undersøiske bjergkæde midt i Atlanterhavet, hvor pladerne glider fra hinanden |
 | Kappe | Laget under pladerne: varm, næsten fast sten, der kan flyde meget langsomt |
