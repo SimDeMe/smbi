@@ -183,6 +183,10 @@ scroll; figurfladerne er henholdsvis 1228×391, 1314×439 og 1484×544 px.
 I brede, lave vinduer (≥900 px bredt, ≤760 px højt) er introen kompakt og
 uden undertekst, så kloden får cirka 28 px mere højde. «Steder» har ikke
 længere en fast lyseblå baggrund, der fik den til at ligne en valgt fane.
+Fra 900 px bredde ligger hjælpelinjen («Drej med træk …» og linket til
+Processer) i værktøjslinjens tomme midte i stedet for under figuren, hvor den
+blev skåret af. Siden fylder dermed præcis skærmhøjden uden rulning.
+DOM-rækkefølgen er uændret; smallere vinduer har linjen under figuren.
 Mobil har en 366×410 px figur og betjening under den. Ingen vandret rulning
 på nogen af de fem størrelser. Fokus giver mere plads uden browserfuldskærm.
 
