@@ -63,8 +63,7 @@ $$\Delta m\ (\%) = \frac{m_{\text{slut}} - m_{\text{start}}}{m_{\text{start}}} \
 2. Beskriv skivernes konsistens (og eventuelt farve) før og efter forsøget, og sammenlign med referenceskiven, der ikke har ligget i væske. Dokumentér beskrivelsen med jeres fotos — husk figurnummer og figurtekst.
 3. Tegn en graf over vægtændringen i procent som funktion af NaCl-koncentrationen. Koncentrationen i % skal på x-aksen, vægtændringen i % på y-aksen. Husk aksetitler med enheder, figurnummer og figurtekst — og husk, at y-aksen skal gå under nul.
 4. Læg en tendenslinje ind gennem punkterne, og aflæs den koncentration, hvor grafen skærer x-aksen ($\Delta m = 0\ \%$). Ved netop den koncentration er der lige meget vand, der går ind i og ud af cellerne, så opløsningen uden for cellerne er *isotonisk* med cellernes indhold. Aflæsningen er altså jeres bud på, hvor koncentreret kartoffelcellernes eget indhold af opløste stoffer er.
-5. Skriv for hver af de fem skåle, om opløsningen var hypotonisk, isotonisk eller hypertonisk i forhold til kartoffelcellerne, og forklar ud fra osmose, hvorfor vandet bevægede sig, som det gjorde. Hænger det sammen med den konsistens, I noterede?
-6. Sammenlign jeres aflæste koncentration med to andre gruppers i @tbl-2. Er I enige inden for et par tiendedele procent, eller er spredningen større? Diskutér, hvad der kan give forskelle mellem grupperne — fx kartoflens sort og alder, skivernes tykkelse, hvor grundigt der blev duppet, og hvor længe skiverne lå i opløsningen.
+5. Sammenlign jeres aflæste koncentration med to andre gruppers i @tbl-2. Er I enige inden for et par tiendedele procent, eller er spredningen større? Diskutér, hvad der kan give forskelle mellem grupperne — fx kartoflens sort og alder, skivernes tykkelse, hvor grundigt der blev duppet, og hvor længe skiverne lå i opløsningen.
 
 | Gruppe | Isotonisk NaCl-koncentration (%) |
 |:-------------|:---:|
@@ -74,5 +73,13 @@ $$\Delta m\ (\%) = \frac{m_{\text{slut}} - m_{\text{start}}}{m_{\text{start}}} \
 
 : Den aflæste isotoniske koncentration hos tre grupper i klassen. {#tbl-2}
 
+## Journalspørgsmål
+
+1. Skriv for hver af de fem skåle, om opløsningen var hypotonisk, isotonisk eller hypertonisk i forhold til kartoffelcellerne, og forklar ud fra osmose, hvorfor vandet bevægede sig, som det gjorde. Hænger det sammen med den konsistens, I noterede?
+2. Hvorfor er det vand, der bevæger sig gennem cellemembranen, og ikke Na⁺- og Cl⁻-ionerne? Brug begrebet *semipermeabel membran*.
+3. Forklar, hvorfor kartoffelskiven i destilleret vand bliver fast og spændstig, men ikke sprænger — mens en dyrecelle, fx et rødt blodlegeme, ville sprænge i destilleret vand. Hvilken rolle spiller cellevæggen og turgortrykket?
+4. Hvad ville I — ud fra jeres viden om osmose — have forudsagt om vægtændringen i hver af de fem opløsninger før forsøget? Stemte forudsigelserne med resultaterne, og hvor afveg de?
+5. Planter i jord tæt ved kysten eller langs saltede veje kan visne, selv om jorden er fugtig. Forklar hvorfor ud fra jeres resultater.
+6. Hvorfor bruger man et saltvand på 0,9 % NaCl (isotonisk saltvand) til drop og til at skylle sår, og hvordan ligger det i forhold til den koncentration, I fandt for kartoflen?
 7. **Fejlkilder.** Gik noget galt undervejs, skal I skrive hvad, og vurdere hvilken vej det trak resultatet. Gik alt som planlagt, skriver I det. I skal ikke skrive om fejl, der *kunne* være sket.
 8. **Konklusion.** Saml op: hvilken vej gik vandet i de fem skåle, hvad blev kartoffelcellernes indhold af opløste stoffer bestemt til, og hvor sikkert er det tal?

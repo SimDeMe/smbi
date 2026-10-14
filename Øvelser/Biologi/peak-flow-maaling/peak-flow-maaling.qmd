@@ -108,3 +108,12 @@ Skriv derefter dit resultat ind i klassens skema sammen med de andres.
 3. Beregn forskellen i Peak Flow mellem klassens mænd og kvinder i procent:
 
 $$\text{Forskel (\%)} = \frac{\text{Peak Flow for mænd} - \text{Peak Flow for kvinder}}{\text{Peak Flow for mænd}} \cdot 100$$
+
+## Journalspørgsmål
+
+1. Hvor godt passede din målte værdi med den forventede? Diskutér, hvad en afvigelse på fx 10–20 % kan skyldes, og hvornår en afvigelse bør give anledning til at undersøge lungefunktionen nærmere.
+2. Er der forskel på Peak Flow hos klassens mænd og kvinder? Forklar forskellen biologisk, og overvej, hvor meget af den der kan skyldes forskellen i højde.
+3. Forklar forskellen på vitalkapacitet og Peak Flow. Hvorfor kan en person med astma have en normal vitalkapacitet, men nedsat Peak Flow?
+4. Hvad sker der i bronkiegrenene under et astmaanfald, og hvordan virker astmamedicin, der udvider bronkierne?
+5. Hvorfor bruger man den højeste af tre målinger og ikke gennemsnittet? Hvordan kan teknikken påvirke resultatet?
+6. Hvordan kan rygning eller luftforurening på længere sigt påvirke Peak Flow?

@@ -100,9 +100,35 @@ Tænk også over, hvilken farve planterne får under de to betingelser.
 
 : Karsens højde (cm) i lys og i mørke, målt én gang i døgnet. De to første rækker er et eksempel på, hvordan skemaet udfyldes. {#tbl-1}
 
-## Databehandling og rapport
+## Databehandling
 
-1. **Resultater.** Beskriv i hele sætninger, hvad I observerede i løbet af de 14 dage. Hvad var sammenhængen mellem planternes højde og tiden? Hvad var sammenhængen mellem planternes højde og lyset? Henvis til skemaet og til jeres fotos med figurnummer og figurtekst.
-2. **Grafer.** Lav 2–4 grafer over karsens højdevækst som funktion af tiden — husk, at I har to bakker — og sammenlign de to bakker.
-3. **Fejlkilder.** Gik alt som planlagt, skriver I "ingen". Gik noget galt, skal I beskrive fejlkilden og vurdere, hvad den betyder for resultaterne.
-4. **Konklusion.** Vurdér jeres hypoteser ud fra resultaterne: skal de forkastes, eller kan de beholdes indtil videre? Saml de vigtigste resultater — hvad ved I nu om karsens vækst og om lysets betydning for fotosyntesen?
+1. Lav en graf over karsens højde (cm) som funktion af tiden (dage) med begge bakker i samme koordinatsystem, så de kan sammenlignes direkte. Husk aksetitler med enheder, signaturforklaring, figurnummer og figurtekst.
+2. Beregn den gennemsnitlige vækstrate for hver bakke over hele forsøget, og — hvis kurven har en tydelig stejl del — også i den periode, hvor væksten var hurtigst:
+
+$$\text{Vækstrate} = \frac{h_{\text{slut}} - h_{\text{start}}}{t_{\text{slut}} - t_{\text{start}}} \quad (\text{cm/døgn})$$
+
+| | Lys | Mørke |
+|:---|:---:|:---:|
+| Højde ved forsøgets slutning (cm) | | |
+| Gennemsnitlig vækstrate, hele forsøget (cm/døgn) | | |
+| Største vækstrate, periode og værdi (cm/døgn) | | |
+| Dag for første spiring | | |
+
+: Udregnede nøgletal for de to bakker. {#tbl-2}
+
+3. Beskriv kurvernes form: er væksten jævn, accelererende, eller flader den ud mod slutningen? Er der forskel på formen i lys og i mørke?
+4. Har I talt et fast antal frø op, så beregn spiringsprocenten for hver bakke:
+
+$$\text{Spiringsprocent} = \frac{\text{antal spirede frø}}{\text{antal udsåede frø}} \cdot 100$$
+
+5. Beskriv i hele sætninger, hvad I observerede i løbet af de 14 dage — farve, udseende og højde — og henvis til skemaet og til jeres fotos med figurnummer og figurtekst.
+
+## Journalspørgsmål
+
+1. Vurdér jeres to hypoteser ud fra resultaterne: skal de forkastes, eller kan de beholdes indtil videre?
+2. Hvorfor kan karsen i mørke overhovedet spire og vokse i de første dage? Hvor kommer energien og byggestofferne fra, når planten ikke kan lave fotosyntese?
+3. Karse i mørke bliver ofte høj, tynd og gullig (*etiolering*). Forklar, hvorfor det kan være en fordel for en kimplante under jorden eller i skygge at strække sig mod lyset, og hvorfor bladene ikke bliver grønne.
+4. Skriv reaktionsskemaet for fotosyntesen, og forklar ud fra det, hvorfor karsen i lys kan blive ved med at vokse, mens karsen i mørke på et tidspunkt holder op med at vokse og dør.
+5. Hvorfor er det vigtigt, at de to bakker får samme mængde vat, vand og frø og står ved samme temperatur? Hvilke variable lykkedes det at holde konstante, og hvilke ikke?
+6. **Fejlkilder.** Gik alt som planlagt, skriver I "ingen". Gik noget galt, skal I beskrive fejlkilden og vurdere, hvad den betyder for resultaterne.
+7. **Konklusion.** Saml de vigtigste resultater — hvad ved I nu om karsens vækst og om lysets betydning for fotosyntesen?

@@ -102,3 +102,18 @@ Skriv derefter dit resultat ind i klassens skema sammen med de andres.
 1. Beregn klassens gennemsnitlige vitalkapacitet for henholdsvis piger og drenge.
 2. Afsæt vitalkapaciteten som funktion af højden i et koordinatsystem, med piger og drenge i hver sin farve.
 3. Vurdér ud fra grafen, om der i jeres data er en tilnærmelsesvis lineær sammenhæng mellem højde og vitalkapacitet.
+4. Beregn forskellen i gennemsnitlig vitalkapacitet mellem drenge og piger i procent:
+
+$$\text{Forskel (\%)} = \frac{\text{vitalkapacitet for drenge} - \text{vitalkapacitet for piger}}{\text{vitalkapacitet for drenge}} \cdot 100$$
+
+5. Sammenlign klassens gennemsnit med normalområderne for voksne (kvinder 3–5 L, mænd 4–6 L). Ligger klassen inden for dem?
+
+## Journalspørgsmål
+
+1. Er påstanden om, at piger har mindre vitalkapacitet end drenge, rigtig ifølge jeres resultater? Giv en biologisk forklaring på en eventuel forskel — og overvej, om forskellen kan skyldes højden snarere end kønnet.
+2. Forklar ud fra @fig-lungevolumener, hvorfor vitalkapaciteten ikke er den samme som lungernes samlede rumfang.
+3. Beskriv, hvilke muskler der arbejder ved en maksimal indånding og en forceret udånding, og forklar, hvordan trykket i brysthulen ændres undervejs.
+4. Kan man træne sin vitalkapacitet, så den bliver større? Begrund svaret.
+5. Vitalkapaciteten falder med alderen. Giv en forklaring på dette.
+6. Vitalkapaciteten siger noget om lungernes størrelse, men ikke om, hvor let luften strømmer ud. Hvorfor kan en person med astma godt have en normal vitalkapacitet, og hvilken anden måling ville afsløre astmaen?
+7. Hvilke fejlkilder kan have påvirket målingerne (fx teknik, motivation, aflæsning af skalaen), og hvorfor bruger man den højeste af tre målinger i stedet for gennemsnittet?
