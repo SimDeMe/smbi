@@ -52,8 +52,7 @@ Mount Everest koger det ved ca. 70 °C i stedet for 100 °C.
 
 Dybt nede holder det høje tryk kappen fast, selv om den er over 1 000 °C varm.
 Når kappen stiger op, falder trykket, mens temperaturen næsten er den samme.
-Til sidst smelter en lille del – typisk under en femtedel – til magma. Det
-kaldes trykaflastningssmeltning.
+Til sidst smelter noget af den til magma.
 
 *Se efter:* de små dråber magma, der først opstår, når kappen er steget et
 stykke op.
