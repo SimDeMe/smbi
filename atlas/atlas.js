@@ -61,7 +61,19 @@ function visSted(sted) {
     };
     indhold.append(find);
   }
+  if (sted.fordybelse) indhold.append(visFordybelse(sted.fordybelse));
   indhold.append(visModeller(modeller.filter(model => model.steder.includes(sted.id))));
+}
+
+function visFordybelse({ titel, beskrivelse, sti }) {
+  const kort = element('article', '', 'modelkort fordybelse');
+  kort.append(element('p', 'Skematisk tværsnit · hører til dette sted', 'metadata'));
+  kort.append(element('h3', titel), element('p', beskrivelse));
+  const link = element('a', 'Se under overfladen →');
+  link.href = sti;
+  link.setAttribute('aria-label', `Se under overfladen: ${titel}`);
+  kort.append(link);
+  return kort;
 }
 
 function visSteder() {
@@ -406,6 +418,9 @@ try {
   globus = await startGlobus(steder, visSted);
   globusknapper.forEach(knap => { knap.disabled = false; });
   pladeknap.disabled = false;
+  // /atlas/#island drejer globussen hen til stedet, fx ved retur fra et tværsnit.
+  const startsted = steder.find(sted => `#${sted.id}` === location.hash);
+  if (startsted) globus.visSted(startsted);
   document.querySelector('#kortstatus').hidden = true;
 } catch {
   document.querySelector('#globus').hidden = true;

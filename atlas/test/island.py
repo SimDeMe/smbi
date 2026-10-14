@@ -363,3 +363,59 @@ def afproev_islandbevaegelse(browser, adresse, ud, skaerme):
     expect(side.locator('.overside')).to_be_hidden()
     side.close()
     assert not fejl, fejl
+
+
+def afproev_islandintegration(browser, adresse, ud, skaerme):
+    """Milepæl D: globus → Island-markør → tværsnit → tilbage til Island på globussen."""
+    fejl = []
+    for bredde, hoejde in skaerme:
+        side = browser.new_page(viewport={'width': bredde, 'height': hoejde},
+                                has_touch=bredde == 390, is_mobile=bredde == 390, reduced_motion='reduce')
+        side.on('pageerror', lambda e: fejl.append(str(e)))
+        side.on('console', lambda e: fejl.append(e.text) if e.type == 'error' else None)
+        side.goto(adresse + '/atlas/')
+        side.wait_for_function("document.querySelector('#kortstatus').hidden")
+        side.locator('[data-sted="island"]').click()
+        kort = side.locator('#dialogindhold .fordybelse')
+        expect(kort).to_have_count(1)
+        expect(kort).to_contain_text('Skematisk tværsnit')
+        # Kortet står før de generelle simulationer, og de to simulationer er der stadig.
+        assert side.locator('#dialogindhold .modelkort').first.get_attribute('class') == 'modelkort fordybelse'
+        assert sorted(side.locator('#dialogindhold .modelkort:not(.fordybelse) a').evaluate_all('l => l.map(a => a.getAttribute("href"))')) == \
+            ['/geografi/pladegraenser.html', '/geografi/vulkanudbrud.html']
+        # Andre steder får intet tværsnitskort.
+        side.keyboard.press('Escape')
+        side.locator('[data-sted="alperne"]').click()
+        expect(side.locator('#dialogindhold .fordybelse')).to_have_count(0)
+        side.keyboard.press('Escape')
+        side.locator('[data-sted="island"]').click()
+        if bredde == 640:
+            # Tastatur: Tab til linket og Enter.
+            link = kort.get_by_role('link')
+            link.focus()
+            side.keyboard.press('Enter')
+        else:
+            kort.get_by_role('link').click()
+        side.wait_for_url('**/atlas/island/#island')
+        expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
+        # Retur fra modulet: globussen centreres om Island.
+        side.get_by_role('link', name='← Island på globussen').click()
+        side.wait_for_url('**/atlas/#island')
+        side.wait_for_function("document.querySelector('#kortstatus').hidden")
+        side.wait_for_timeout(100)
+        afstand = side.evaluate('''() => {
+          const g = document.querySelector('#globus').getBoundingClientRect();
+          const m = document.querySelector('[data-sted="island"]').getBoundingClientRect();
+          return Math.hypot(m.left + m.width / 2 - g.left - g.width / 2, m.top + m.height / 2 - g.top - g.height / 2) / Math.min(g.width, g.height);
+        }''')
+        assert afstand < .1, (bredde, afstand)
+        expect(side.locator('#udforsker')).to_be_hidden()
+        side.screenshot(path=str(ud / f'island-retur-{bredde}x{hoejde}.png'))
+        side.close()
+    # Uden adresse-anker starter globussen som før; et ukendt anker ignoreres.
+    side = browser.new_page()
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    side.goto(adresse + '/atlas/#findesikke')
+    side.wait_for_function("document.querySelector('#kortstatus').hidden")
+    side.close()
+    assert not fejl, fejl

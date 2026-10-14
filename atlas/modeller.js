@@ -5,7 +5,10 @@ export const steder = [
     id: 'island', navn: 'Island', koordinater: [-19, 64.9],
     forklaring: 'Island ligger på den Midtatlantiske Ryg, hvor pladerne bevæger sig fra hinanden. Et hotspot bidrager også til vulkanismen.',
     modelnote: 'Generelle modeller – ikke en gengivelse af en bestemt islandsk vulkan.',
-    forbehold: 'Et fagligt eksempel på pladetektonik og vulkanisme. Modellerne er generelle og gengiver ikke en bestemt islandsk vulkan.'
+    forbehold: 'Et fagligt eksempel på pladetektonik og vulkanisme. Modellerne er generelle og gengiver ikke en bestemt islandsk vulkan.',
+    // Stedets egen fordybelse: et skematisk tværsnit, der hører til netop dette sted.
+    fordybelse: { titel: 'Under Island', sti: '/atlas/island/#island',
+      beskrivelse: 'Se under overfladen: hvorfor smelter kappen under ryggen, og hvorfor ligger Island over havet? Skematisk tværsnit med lag, 3D-blok og animation.' }
   },
   {
     id: 'nordatlanten', navn: 'Grønland / Nordatlanten', kortnavn: 'Nordatlanten', koordinater: [-37, 58],

@@ -1,6 +1,6 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: milepæl A, B og C er færdige.** Tværsnittet ligger i
+**Status: milepæl A, B, C og D er færdige.** Tværsnittet ligger i
 [`island/`](island/), se «Milepæl B» og «Milepæl C» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
 (zoom til terræn) er udskudt; første version går fra globus til tværsnit. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
@@ -75,8 +75,8 @@ Ingen login, profiler eller LMS-funktioner.
 ## Milepæl B – statisk tværsnit
 
 Selvstændigt modul på `/atlas/island/` (`index.html`, `island.css`,
-`island.js`, `tvaersnit.js`, `tekst.js`). Endnu ikke linket fra atlasset
-(milepæl D); `#island` i adressen åbner Island-tilstanden.
+`island.js`, `tvaersnit.js`, `tekst.js`). Linket fra atlasset siden
+milepæl D; `#island` i adressen åbner Island-tilstanden.
 
 - Hovedkontrollen er skifteknappen «Den Midtatlantiske Ryg / Island». Lagene
   følger ISLAND-MODEL.md afsnit 4; «Hotspot (fortolkning)» kan slås fra.
@@ -135,5 +135,22 @@ Samme modul; ingen nye tal eller påstande ud over ISLAND-MODEL.md afsnit 2–3.
   drejeknapper, træk, grænser, lag og tekstalternativ, trin der viser deres
   lag, Escape og klik udenfor, afspil/pause, reduced motion, kappens og
   magmaens fart, båndenes symmetri, ingen tal i figuren og fallback uden CSS 3D.
+
+## Milepæl D – i atlasset
+
+- **Fra globussen:** Island-markøren (og Steder → Island) viser et kort
+  «Under Island · Skematisk tværsnit · hører til dette sted» før de generelle
+  simulationer, med linket «Se under overfladen →» til `/atlas/island/#island`.
+  Kortet hører til stedet (`fordybelse` i `modeller.js`), ikke til
+  modellisten, så søgning og Processer er uændrede. Andre steder har intet.
+- **Retur:** headerlinket «← Island på globussen» og linket under tværsnittet
+  går til `/atlas/#island`. Et `#<stedets id>` i atlasadressen drejer globussen
+  hen til stedet, når den er klar; dialogen åbnes ikke. Ukendte ankre ignoreres.
+- **Videre:** under tværsnittet linkes til Pladegrænser og Vulkanudbrud; i
+  atlasset står de som før under Island-kortet. Deres URL'er er uændrede.
+- Test: `afproev_islandintegration` i `atlas/test/island.py` – på alle fem
+  skærme: kortet findes kun ved Island og står først, begge simulationer er
+  der, klik (640: tastatur) åbner Island-tilstanden, returlinket centrerer
+  Island på globussen uden åben dialog, og et ukendt anker giver ingen fejl.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.

@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
-from island import afproev_island, afproev_islandbevaegelse
+from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration
 from pladevisning import afproev_pladevisning, afproev_bevaegelsesfejl, afproev_bevaegelsestilpasning, afproev_graensefejl
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
@@ -176,6 +176,8 @@ with sync_playwright() as p:
     print('Island-tværsnit: skærme, skift, hotspot, elevtekst, fokus: OK')
     afproev_islandbevaegelse(browser, ADRESSE, UD, SKAERME)
     print('Island: lag, 2D/3D, drejning, animation og fallback: OK')
+    afproev_islandintegration(browser, ADRESSE, UD, SKAERME)
+    print('Island i atlasset: markør → tværsnit → tilbage til globussen: OK')
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)
