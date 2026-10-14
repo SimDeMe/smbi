@@ -46,9 +46,8 @@ den er næsten helt fast sten. Men den er så varm, at den over meget lang tid
 kan flyde ganske langsomt, lidt ligesom en gletsjer er fast is, der alligevel
 kan flyde ned ad en dal.
 
-Når pladerne glider fra hinanden, bliver der "plads" under ryggen. Kappestenen
-stiger langsomt op og fylder hullet ud – på samme måde som vand strømmer ind,
-hvis man trækker to hænder fra hinanden under vandet.
+Når pladerne glider fra hinanden, stiger kappestenen langsomt op og fylder
+pladsen under ryggen ud.
 
 *Kig efter:* de langsomme pile i kappen, der peger op mod ryggen.
 
