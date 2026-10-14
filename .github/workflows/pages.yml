@@ -26,6 +26,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Konfigurer Pages
+        id: pages
         uses: actions/configure-pages@v5
       - name: Kontroller Pages-kilde
         id: pages-kilde
@@ -48,6 +49,8 @@ jobs:
       - name: Afprøv versionsstemplingen
         run: python3 atlas/test/versionsnummer.py
       - name: Stempl atlas og kontroller simulationer
+        env:
+          PAGES_HOST: ${{ steps.pages.outputs.host }}
         run: |
           # Jekyll-containeren opretter artefaktet som root. Kun headerfilen
           # skal kunne skrives af runnerens bruger før pakningen.

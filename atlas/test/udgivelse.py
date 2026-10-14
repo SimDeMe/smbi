@@ -1,5 +1,6 @@
 """Kontroller Pages-artefakt: versionsstempel og uændrede eksisterende webfiler."""
 import filecmp
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -39,5 +40,9 @@ for navn in git('ls-files', '-z').split('\0'):
     assert filecmp.cmp(kilde, ud / sti, shallow=False), f'Ændret webfil: {sti}'
     antal += 1
 
-assert (ud / 'CNAME').read_text().strip() == 'smbi.dk', 'Forkert Pages-domæne'
+# Den officielle Pages-bygning udelader CNAME fra artefaktet. Domænet
+# ligger i repositoryets Pages-indstilling, som configure-pages læser.
+assert (repo / 'CNAME').read_text().strip() == 'smbi.dk', 'Forkert domæne i kilden'
+if os.environ.get('PAGES_HOST'):
+    assert os.environ['PAGES_HOST'] == 'smbi.dk', 'Forkert domæne i Pages-indstillingen'
 print(f'Atlas v{nummer} ({revision[:7]}) og {antal} uændrede webfiler: OK')
