@@ -65,8 +65,9 @@ export function tegnSide({ bredde: W, hoejde: H, tilstand, side, skjul = new Set
 
 // CSS-transformationen for en given drejning. Blokkens hjørner projiceres
 // med samme perspektiv som browseren, så skala og forskydning altid får hele
-// blokken til at passe i figuren og stå midt i den.
-export function transformation({ bredde: W, hoejde: H, drej, hæld }) {
+// blokken til at passe i figuren og stå midt i den. `bund` holder et stykke
+// forneden fri til drejeknapper og mærker.
+export function transformation({ bredde: W, hoejde: H, drej, hæld, bund = 0 }) {
   const D = dybde(W, H), r = Math.PI / 180;
   const P = Math.round(Math.max(W, H) * 2.4), px = W / 2, py = H * .45;
   const cx = W / 2, cy = H / 2, cz = -D / 2;
@@ -78,7 +79,8 @@ export function transformation({ bredde: W, hoejde: H, drej, hæld }) {
     for (const [x, y, z] of hjoerner) {
       const x1 = x * ca + z * sa, z1 = -x * sa + z * ca;
       const y2 = y * cb - z1 * sb, z2 = y * sb + z1 * cb;
-      const X = cx + s * x1, Y = cy + s * y2 + ty, Z = cz + s * z2;
+      // scale() i CSS er todimensional: x og y skaleres, dybden z gør ikke.
+      const X = cx + s * x1, Y = cy + s * y2 + ty, Z = cz + z2;
       const k = P / (P - Z);
       const sxp = px + (X - px) * k, syp = py + (Y - py) * k;
       v = Math.min(v, sxp); h = Math.max(h, sxp); o = Math.min(o, syp); n = Math.max(n, syp);
@@ -88,9 +90,9 @@ export function transformation({ bredde: W, hoejde: H, drej, hæld }) {
   let s = 1, ty = 0;
   for (let i = 0; i < 4; i++) {
     const k = kasse(s, ty);
-    s *= Math.min(W * .94 / (k.h - k.v), H * .92 / (k.n - k.o));
+    s *= Math.min(W * .94 / (k.h - k.v), (H - bund) * .92 / (k.n - k.o));
     const k2 = kasse(s, ty);
-    ty += H / 2 - (k2.o + k2.n) / 2;
+    ty += (H - bund) / 2 - (k2.o + k2.n) / 2;
   }
   return {
     oprindelse: `50% 50% ${f(cz)}px`,

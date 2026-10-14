@@ -22,6 +22,7 @@ const tilstand = {
 };
 const lagnavn = Object.fromEntries(lagValg.map(v => [v.dataset.vislag, v.closest('label').textContent.trim()]));
 let maal = { W: 0, H: 0 };
+const SMAL_FIGUR = 620; // samme grænse som @container i island.css
 
 // Start i Island-tilstand via adressen (#island), fx fra atlassets markør.
 if (location.hash === '#island') tilstand.visning = 'island';
@@ -57,7 +58,11 @@ function tegnBlok() {
 
 function drej() {
   if (!tilstand.treD) { blok.style.transform = ''; scene.style.perspective = ''; return; }
-  const t = transformation({ bredde: maal.W, hoejde: maal.H, drej: tilstand.drej, hæld: tilstand.hæld });
+  // I en smal figur står drejeknapperne 2×2 forneden (se island.css). Er figuren
+  // også høj (mobil på højkant), er blokken begrænset af bredden, og den kan
+  // holde sig over knapperne uden at blive meget mindre.
+  const bund = maal.W <= SMAL_FIGUR && maal.H > maal.W ? 104 : 0;
+  const t = transformation({ bredde: maal.W, hoejde: maal.H, drej: tilstand.drej, hæld: tilstand.hæld, bund });
   scene.style.perspective = t.perspektiv + 'px';
   blok.style.transformOrigin = t.oprindelse;
   blok.style.transform = t.transform;

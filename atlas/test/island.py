@@ -185,10 +185,31 @@ def afproev_islandbevaegelse(browser, adresse, ud, skaerme):
         assert inden_for(blokmaal(side)), (bredde, blokmaal(side))
         assert side.evaluate('document.documentElement.scrollWidth - innerWidth') == 0
         side.screenshot(path=str(ud / f'island-{bredde}x{hoejde}-3d.png'))
+        # Mærkerne «Skematisk» og tidsmærket må ikke ligge bag drejeknapperne.
+        tryk(side.locator('#afspil')); tryk(side.locator('#afspil'))
+        expect(side.locator('.tidsmaerke')).to_be_visible()
+        overlap = side.evaluate('''() => {
+          const k = document.querySelector('.drejeknapper').getBoundingClientRect();
+          return [...document.querySelectorAll('.maerkater > :not([hidden])')].map(m => m.getBoundingClientRect())
+            .filter(m => m.left < k.right && m.right > k.left && m.top < k.bottom && m.bottom > k.top).length;
+        }''')
+        assert overlap == 0, (bredde, 'mærke bag drejeknapperne')
+        # I en smal figur står knapperne 2×2; er den også høj, holder blokken sig over dem.
+        smal = side.evaluate("document.querySelector('.figur').getBoundingClientRect().width <= 620")
+        hoej = side.evaluate("(r => r.height > r.width)(document.querySelector('.figur').getBoundingClientRect())")
+        def over_knapperne():
+            return side.evaluate('''() => {
+              const k = document.querySelector('.drejeknapper').getBoundingClientRect().top;
+              return Math.max(...['#tvaersnit', '.overside', '.oest', '.vest'].map(s => document.querySelector(s).getBoundingClientRect())
+                .filter(b => b.width).map(b => b.bottom)) <= k + 1;
+            }''')
+        assert side.locator('.drejeknapper').evaluate('k => getComputedStyle(k).display') == ('grid' if smal else 'flex')
+        if smal and hoej: assert over_knapperne(), (bredde, 'blok bag drejeknapperne')
         scene = side.locator('.scene')
         for taster in [['ArrowRight'] * 8 + ['ArrowUp'] * 6, ['ArrowLeft'] * 16, ['ArrowDown'] * 12]:
             for t in taster: scene.press(t)
             assert inden_for(blokmaal(side)), (bredde, taster[0], blokmaal(side))
+            if smal and hoej: assert over_knapperne(), (bredde, taster[0])
         side.close()
 
     side = browser.new_page(viewport={'width': 1366, 'height': 625}, reduced_motion='reduce')
@@ -417,5 +438,43 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
     side.on('pageerror', lambda e: fejl.append(str(e)))
     side.goto(adresse + '/atlas/#findesikke')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
+    side.close()
+    assert not fejl, fejl
+
+
+def afproev_islandtouch(browser, adresse):
+    """Ægte touch gennem Chromiums inputprotokol: vandret strøg drejer, lodret ruller siden."""
+    fejl = []
+    side = browser.new_page(viewport={'width': 390, 'height': 750}, has_touch=True, is_mobile=True, reduced_motion='reduce')
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    side.goto(adresse + '/atlas/island/#island')
+    expect(side.locator('#tvaersnit [data-lag="smelt"]')).to_have_count(1)
+    side.get_by_role('button', name='3D', exact=True).tap()
+    expect(side.locator('.figur.tre-d')).to_have_count(1)
+    session = side.context.new_cdp_session(side)
+    boks = side.locator('.scene').bounding_box()
+    x, y = boks['x'] + boks['width'] * .3, boks['y'] + boks['height'] * .45
+
+    def stroeg(dx, dy):
+        session.send('Input.dispatchTouchEvent', {'type': 'touchStart', 'touchPoints': [{'x': x, 'y': y, 'id': 1}]})
+        for i in range(1, 9):
+            session.send('Input.dispatchTouchEvent', {'type': 'touchMove', 'touchPoints': [{'x': x + dx * i / 8, 'y': y + dy * i / 8, 'id': 1}]})
+        session.send('Input.dispatchTouchEvent', {'type': 'touchEnd', 'touchPoints': []})
+        side.wait_for_timeout(150)
+
+    foer = blokmaal(side)['transform']
+    stroeg(140, 0)
+    efter = blokmaal(side)['transform']
+    assert efter != foer, 'Vandret strøg drejer ikke blokken'
+    assert inden_for(blokmaal(side))
+    # Lodret strøg: siden ruller, blokken drejes ikke (touch-action: pan-y).
+    rul = side.evaluate('scrollY')
+    stroeg(0, -220)
+    assert blokmaal(side)['transform'] == efter, 'Lodret strøg drejede blokken'
+    assert side.evaluate('scrollY') > rul, 'Lodret strøg ruller ikke siden'
+    # Drejeknapperne kan trykkes.
+    side.evaluate('scrollTo(0, 0)')
+    side.get_by_role('button', name='Drej mod venstre', exact=True).tap()
+    assert blokmaal(side)['transform'] != efter
     side.close()
     assert not fejl, fejl

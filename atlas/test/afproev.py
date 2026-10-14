@@ -7,7 +7,7 @@ from piletaster import afproev_piletaster
 from landekort import afproev_landekort
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
-from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration
+from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration, afproev_islandtouch
 from pladevisning import afproev_pladevisning, afproev_bevaegelsesfejl, afproev_bevaegelsestilpasning, afproev_graensefejl
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
@@ -180,6 +180,8 @@ with sync_playwright() as p:
     afproev_islandintegration(browser, ADRESSE, UD, SKAERME)
     print('Island i atlasset: markør → tværsnit → tilbage til globussen: OK')
     afproev_landekort(browser, ADRESSE, UD, SKAERME)
+    afproev_islandtouch(browser, ADRESSE)
+    print('Island: touch-strøg drejer blokken vandret og ruller siden lodret: OK')
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)

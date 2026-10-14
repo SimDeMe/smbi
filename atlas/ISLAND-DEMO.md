@@ -1,6 +1,6 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: milepæl A, B, C og D er færdige.** Tværsnittet ligger i
+**Status: milepæl A–E er færdige; F (elevafprøvning) mangler.** Tværsnittet ligger i
 [`island/`](island/), se «Milepæl B» og «Milepæl C» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
 (zoom til terræn) er udskudt; første version går fra globus til tværsnit. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
@@ -152,5 +152,45 @@ Samme modul; ingen nye tal eller påstande ud over ISLAND-MODEL.md afsnit 2–3.
   skærme: kortet findes kun ved Island og står først, begge simulationer er
   der, klik (640: tastatur) åbner Island-tilstanden, returlinket centrerer
   Island på globussen uden åben dialog, og et ukendt anker giver ingen fejl.
+
+## Milepæl E – test på skærme, input og browsere
+
+Afprøvet 14. oktober 2026 i Chromium (hele `afproev.py`), Firefox og WebKit
+(`andre_browsere.py`) og visuelt i rigtig Safari på macOS.
+
+- **Skærme:** alle fem visninger (1280×577, 1366×625, 1536×730, 390×750,
+  640×625) i 2D og 3D; skærmbilleder er gennemset. Fund og rettelser:
+  - Ved 390 px lå drejeknapperne hen over mærket «Skematisk – ikke målfast».
+    I en figur under 620 px (container query) står knapperne nu 2×2 (▲▼ over
+    ◀▶), så mærker og tidsmærke har plads ved siden af. Er figuren også høj
+    (mobil på højkant), holder blokken sig over knapperne; i en lav figur
+    (640×625) ville det gøre blokken for lille, så der står knapperne over
+    blokkens bagside som på desktop. Testet: intet mærke bag knapperne på
+    nogen skærm, og på mobil ingen flade bag knapperne i nogen drejning.
+  - Blokkens tilpasning regnede med, at CSS' `scale()` også skalerer dybden.
+    Det gør den ikke, så blokken kunne være op til ca. 9 % større end
+    beregnet ved kraftig drejning (skjult af margenen indtil nu). `blok.js`
+    regner nu som browseren; udseendet er uændret.
+- **Touch:** ægte touch gennem Chromiums inputprotokol (`afproev_islandtouch`):
+  vandret strøg drejer blokken, lodret strøg ruller siden og drejer ikke,
+  drejeknapperne kan trykkes. Prøven fejler, hvis `touch-action` ændres.
+- **Tastatur, fokus og 3D-fallback:** dækkes som før af milepæl B–D's prøver
+  (piletaster, Home, Escape, Tab/Enter fra atlasset, 2D uden CSS 3D). Sitet
+  bruger ikke WebGL; testen kører med WebGL slået fra.
+- **Firefox:** fronten blev tegnet forstørret hen over hele figuren, fordi
+  Firefox maler et utransformeret barn i en `preserve-3d`-blok forkert.
+  Rettet med en lille `translateZ` på fronten i 3D. Røgtesten tjekker nu, at
+  figurens hjørne uden for blokken er tomt (fejler uden rettelsen).
+- **WebKit/Safari:** Playwrights WebKit-build på macOS har ingen
+  3D-komposition – selv en minimal CSS-kube tegnes fladt – så her prøves kun
+  layout og betjening. Rigtig Safari tegner blokken korrekt (set på skærmen).
+- **Globussen:** den ustabile `afproev_pladefejl` skyldtes, at
+  `ResizeObserver` satte lærredets størrelse om lige efter start, hvilket
+  tømmer det, og gentegningen ventede en frame. Testen kunne derfor
+  fotografere et blankt lærred (2 af 15 forsøg), og eleven kunne se en blank
+  frame ved hver størrelsesændring. `globus.js` tegner nu med det samme
+  (0 af 30 forsøg derefter).
+- **Ikke afprøvet:** fysisk telefon/iPad, Safari på iOS, skærmlæser og
+  Firefox/Safari med touch på en rigtig enhed.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.

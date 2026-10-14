@@ -309,6 +309,9 @@ python3 atlas/test/afproev.py
 # ATLAS_TEST_UD=/tmp/smbi-atlas-test (standard for skærmbilleder)
 ```
 
+Island-forløbet har desuden en røgtest i Firefox og WebKit (Playwrights egne
+browsere): `cd atlas/test && python3 andre_browsere.py [firefox] [webkit]`.
+
 Testen dækker markører, modelkort, alle seks links (HTTP 200), procesfiltre,
 søgning og tomme søgeresultater, tastatur, fokusretur, rotation, zoomgrænser,
 nulstilling, fokustilstand, touch-rotation og tofingerzoom, samt fejl ved
