@@ -1,0 +1,131 @@
+---
+title: "Hawaii og Stillehavspladens hastighed"
+subtitle: "Hvor hurtigt flytter en plade sig?"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Pladerne bevæger sig så langsomt, at vi ikke kan se det. Men ved Hawaii har naturen selv lavet en målestok. Øerne ligger på en lang række, og jo længere mod nordvest de ligger, jo ældre er de. I denne øvelse undersøger I først økæden i Google Earth og forklarer mønsteret. Derefter bruger I vulkanernes alder og afstand til at beregne, hvor hurtigt Stillehavspladen har bevæget sig de seneste 65 millioner år.
+
+## Baggrund
+
+Hawaii ligger midt på Stillehavspladen, langt fra nærmeste pladegrænse. Vulkanerne skyldes et **hotspot**: en søjle af varmt materiale (en *kappediapir*), der stiger op fra dybt nede i kappen. Når det varme materiale kommer tæt på overfladen, falder trykket, og en del af det smelter. Magmaet bryder op gennem pladen og danner en vulkan.
+
+Hotspottet ligger stort set fast, mens pladen glider hen over det. En vulkan bliver derfor ført væk fra hotspottet, holder op med at være aktiv og bliver efterhånden eroderet og synker ned under havoverfladen som et *seamount* (et undersøisk bjerg). Imens dannes en ny vulkan over hotspottet. Resultatet er en kæde af vulkaner, hvor alderen vokser med afstanden fra hotspottet:
+
+$$\text{pladens hastighed} = \frac{\text{afstand}}{\text{tid}}$$
+
+Kæden består af to dele: **Hawaii-kæden** fra Hawaii mod nordvest til omkring Midway og videre til et knæk, og **Emperor-kæden** (Kejserkæden), der fortsætter mod nord fra knækket.
+
+## Del 1 — Økæden i Google Earth
+
+1. Find Hawaii i Google Earth Pro.
+2. Tegn en sti, der starter sydøst for den største ø (Big Island), og som fortsætter mod nordvest hen over de andre øer. Fortsæt hen over kæden af undersøiske bjerge, helt til knækket, og derfra mod nord ad Emperor-kæden.
+3. Sørg for, at stien følger havbunden (stiens højdeindstilling: «fastgjort til havbund»), og få programmet til at vise en højdeprofil af stien.
+4. Beskriv højdeprofilen: hvor er bjergene højest, og hvordan ændrer de sig mod nordvest?
+5. Lav en hypotese: hvordan kan det være, at bjergene ligger på række, og at de bliver lavere mod nordvest?
+
+## Del 2 — Vulkanernes alder
+
+@tbl-1 viser alderen på en lang række vulkaner i kæden, målt ved radiometrisk datering (kalium-argon-metoden) af lava fra vulkanerne, og deres afstand fra den aktive vulkan Kilauea målt langs kæden.
+
+| Nr. | Vulkan | Afstand fra Kilauea (km) | Alder (mio. år) |
+|:-:|:---|:-:|:-:|
+| 1 | Kilauea | 0 | 0,2 |
+| 3 | Mauna Kea | 54 | 0,375 |
+| 5 | Kohala | 100 | 0,43 |
+| 6 | Haleakala | 182 | 0,75 |
+| 7 | Kahoolawe | 185 | 1,03 |
+| 9 | Lanai | 226 | 1,28 |
+| 10 | East Molokai | 256 | 1,76 |
+| 11 | West Molokai | 280 | 1,90 |
+| 12 | Koolau (Oahu) | 339 | 2,6 |
+| 13 | Waianae (Oahu) | 374 | 3,7 |
+| 14 | Kauai | 519 | 5,1 |
+| 17 | Nihoa | 780 | 7,2 |
+| 20 | Unavngivet | 913 | 9,2 |
+| 23 | Necker | 1058 | 10,3 |
+| 26 | La Perouse Pinnacles | 1209 | 12,0 |
+| 27 | Brooks Bank | 1256 | 13,0 |
+| 36 | Laysan | 1818 | 19,9 |
+| 50 | Pearl and Hermes Reef | 2281 | 20,6 |
+| 52 | Midway | 2432 | 27,7 |
+| 57 | Unavngivet | 2600 | 28,0 |
+| 65 | Colahan | 3128 | 38,6 |
+| 65A | Abbott | 3280 | 38,7 |
+| 67 | Daikakuji (ved knækket) | 3493 | 42,4 |
+| 69 | Yuryaku | 3520 | 43,4 |
+| 74 | Koko (syd) | 3758 | 48,1 |
+| 81 | Ojin | 4102 | 55,2 |
+| 83 | Jingu | 4175 | 55,4 |
+| 86 | Nintoku | 4452 | 56,2 |
+| 90 | Suiko (syd) | 4794 | 59,6 |
+| 91 | Suiko (midt) | 4860 | 64,7 |
+
+: Vulkaner i Hawaii–Emperor-kæden: afstand fra Kilauea langs kæden og alder. Data: Clague & Dalrymple (1987), USGS Professional Paper 1350. {#tbl-1}
+
+1. Hvad viser @tbl-1 om sammenhængen mellem afstand og alder?
+2. Find fire–fem af vulkanerne i Google Earth (fx Kauai, Midway, Daikakuji og Suiko). Ligger de dér, hvor jeres højdeprofil viste bjerge?
+3. Revidér jeres hypotese fra Del 1.
+
+## Del 3 — Beregn pladens hastighed
+
+**Regneeksempel:** Mellem Kauai og Midway:
+
+$$\text{tid} = \text{27,7} - \text{5,1} = \text{22,6}\ \text{mio. år} \qquad \text{afstand} = 2432 - 519 = 1913\ \text{km}$$
+
+$$v = \frac{1913\ \text{km}}{\text{22,6}\ \text{mio. år}} = \text{84,6}\ \frac{\text{km}}{\text{mio. år}}$$
+
+Enheden km pr. million år er let at omregne til cm pr. år: 1 km = 100 000 cm, og 1 million år = 1 000 000 år, så
+
+$$1\ \frac{\text{km}}{\text{mio. år}} = \frac{100\,000\ \text{cm}}{1\,000\,000\ \text{år}} = \text{0,1}\ \frac{\text{cm}}{\text{år}}$$
+
+Pladen har altså bevæget sig med ca. 8,5 cm/år mellem Kauai og Midway.
+
+## Databehandling
+
+1. Beregn på samme måde pladens hastighed i cm/år på de strækninger, der står i @tbl-2.
+
+| Strækning | Afstand (km) | Tid (mio. år) | Hastighed (cm/år) |
+|:---|:-:|:-:|:-:|
+| Kilauea → Kauai | | | |
+| Kauai → Midway | 1913 | 22,6 | 8,5 |
+| Midway → Daikakuji | | | |
+| Daikakuji → Suiko (midt) | | | |
+| Kohala → Haleakala | | | |
+| Kilauea → Suiko (midt) — hele kæden | | | |
+
+: Pladens hastighed på udvalgte strækninger. {#tbl-2}
+
+2. Indtast @tbl-1 i Excel eller Google Sheets, og lav et (x,y)-punktdiagram med alderen (mio. år) på x-aksen og afstanden (km) på y-aksen. Navngiv akserne med enheder.
+3. Indsæt en lineær tendenslinje, og aflæs hældningen. Hældningen er pladens gennemsnitlige hastighed i km/mio. år — omregn den til cm/år.
+4. Lav to tendenslinjer mere: én for Hawaii-kæden (Kilauea til Daikakuji) og én for Emperor-kæden (Daikakuji til Suiko). Har pladen bevæget sig lige hurtigt hele tiden?
+5. Strækningen Kohala → Haleakala giver en meget høj hastighed. Hvorfor bliver hastigheder over korte strækninger med unge vulkaner så usikre? Sammenlign med tendenslinjen.
+
+## Journalspørgsmål
+
+1. Forklar, hvad et hotspot er, og hvorfor der dannes en kæde af vulkaner, når en plade bevæger sig hen over det.
+2. Forklar med jeres resultater, hvorfor vulkanerne bliver lavere og til sidst forsvinder under havoverfladen mod nordvest. Inddrag både erosion og at havbunden synker, når den bliver ældre og koldere.
+3. Hvordan kan man forklare knækket i kæden ved Daikakuji og Yuryaku for 42–43 mio. år siden (nyere dateringer peger på omkring 47–50 mio. år)? Hvad fortæller det om pladens bevægelsesretning før og efter?
+4. Metoden forudsætter, at hotspottet ligger helt stille. Nyere undersøgelser af gammel magnetisme i lavaen tyder på, at Hawaii-hotspottet selv flyttede sig mod syd, mens Emperor-kæden blev dannet. Hvad betyder det for jeres beregnede hastighed for Emperor-kæden?
+5. I dag kan pladernes bevægelse måles direkte med GPS. Ved Hawaii bevæger Stillehavspladen sig omkring 7 cm/år mod nordvest. Hvordan passer det med jeres resultater? Hvilken metode stoler I mest på, og hvorfor?
+6. Vurdér metodens usikkerheder: hvordan måler man en vulkans alder, når vulkanen har været aktiv i lang tid, og hvorfor er afstanden ikke målt i en lige linje?
+7. Hvor langt har Stillehavspladen flyttet sig i jeres levetid? Og hvor lang tid vil det tage, før Big Island er ført 100 km væk fra hotspottet? Den nye vulkan Kamaʻehuakanaloa (tidligere Loihi) er allerede ved at vokse frem under havet sydøst for Big Island — hvad siger det om fremtiden?
+
+## Om denne udgave
+
+Bygger på opbygningen af Hawaii-modulet i naturgeografi C (Geolink, *Pladetektonik og naturkatastrofer*, 2025/26): højdeprofil i Google Earth, forklaring af hotspottet og beregning af pladens hastighed. Regnedelen var et ældre arbejdsark, som denne udgave erstatter med ny tekst. Datatabellen er taget fra den oprindelige kilde (Clague & Dalrymple 1987, USGS Professional Paper 1350). Ændret i forhold til den tidligere udgave:
+
+- Aldrene er markeret som kalium-argon-aldre med kildeangivelse. En række uden vulkannavn (930 km, 9,6 mio. år) er taget ud, og «Colohan» er rettet til Colahan.
+- Hastigheden regnes nu primært med en tendenslinje over hele kæden og hver del for sig, i stedet for kun mellem nabovulkaner. Regneeksemplet Kohala → Haleakala gav 26 cm/år — langt over den reelle hastighed — og bruges nu som eksempel på, hvorfor korte strækninger giver usikre resultater.
+- Omregningen 1 km/mio. år = 0,1 cm/år er tilføjet.
+- Nyt: knækket i kæden, hotspottets egen bevægelse og sammenligning med GPS-målinger.
+- Det gamle kort med øernes alder (uden kildeangivelse) er ikke genbrugt; eleverne finder i stedet vulkanerne i Google Earth.
