@@ -1,11 +1,10 @@
 # Island – faglig modelbeskrivelse (milepæl A i #49)
 
-Status: udkast 14. oktober 2026 til ejerens faglige gennemgang. Intet af
-det følgende er bygget endnu. Ifølge [ISLAND-DEMO.md](ISLAND-DEMO.md) skal
-beskrivelsen, kilderne og elevopgaven godkendes, før tværsnit og animation
-bygges (milepæl B–C). Tal er afrundede størrelsesordener til forklaring, ikke
+Status: gennemgået og godkendt af ejeren 14. oktober 2026 (se «Afgørelser»
+nederst). Intet af det følgende er bygget endnu; næste trin er milepæl B, et
+statisk tværsnit, jf. [ISLAND-DEMO.md](ISLAND-DEMO.md). Tal er afrundede størrelsesordener til forklaring, ikke
 værdier, animationen skal "beregne". Referencerne skal kontrolleres i
-originalen, før de citeres i elevmateriale (se «Kontrol før godkendelse»).
+originalen, før de citeres i elevmateriale (se «Afgørelser»).
 
 Sprogligt princip: Elevteksten skal kunne læses af en 1.g-elev uden
 forkundskaber. Hvert nyt fagord forklares med almindelige ord første gang, det
@@ -80,7 +79,7 @@ Island er kappen varmere. Varmere kappe begynder at smelte dybere nede, så der
 dannes mere magma. Det giver en skorpe på ca. 20–40 km mod ca. 7 km under
 resten af ryggen.
 
-*Se efter:* skift mellem «Normal ryg» og «Island». Hvor begynder
+*Se efter:* skift mellem «Den Midtatlantiske Ryg» og «Island». Hvor begynder
 smeltningen, og hvor tyk bliver skorpen?
 
 ### Trin 6 · Hvor kommer den ekstra varme fra?
@@ -122,14 +121,15 @@ Navnene i første kolonne er dem, eleven ser.
 | Lag (elevens ord) | Viser | Krav til visningen |
 | --- | --- | --- |
 | Overflade og hav | Riftdal med revner og vulkaner; havoverfladen | Island over havet; resten af ryggen under havet til sammenligning |
-| Skorpe | Basalt, tykkest under Island | Tydeligt tykkere end ved normal ryg; tal kun med kilde |
+| Skorpe | Basalt, tykkest under Island | Tydeligt tykkere end andre steder på ryggen; tal kun med kilde |
 | Lithosfæreplader | Det stive yderlag, tyndest ved ryggen | Pile for bevægelsen hver sin vej |
 | Kappe | Varm, fast sten, der flyder langsomt op under ryggen | Langsomme pile; må ikke ligne flydende magma |
 | Her smelter stenen | Område, hvor små dråber magma dannes | Spredte dråber – ikke en stor sø af magma |
 | Magmaens vej | Magmakamre, revner og udbrud | Skematisk |
 | Hotspot (fortolkning) | Ekstra varm kappe under Island | Tydeligt mærket som fortolkning |
 
-Hovedkontrol: én knap «Normal ryg / Island». Samme pladebevægelse – men
+Hovedkontrol: én skifteknap «Den Midtatlantiske Ryg / Island». Den første
+tilstand viser et typisk stykke af ryggen langt fra Island. Samme pladebevægelse – men
 med varmere kappe begynder smeltningen dybere, der kommer mere magma, skorpen
 bliver tykkere, og landet når op over havet. Én tydelig sammenligning er
 bedre end flere skydere, eleven skal gætte betydningen af.
@@ -180,7 +180,7 @@ Støttespørgsmål undervejs:
 2. Stenen i kappen bliver ikke varmere, når den stiger op. Hvorfor smelter
    den så alligevel? (Tænk på vand, der koger ved lavere temperatur på et
    højt bjerg.)
-3. Skift mellem «Normal ryg» og «Island». Hvad er forskellen på skorpen, og
+3. Skift mellem «Den Midtatlantiske Ryg» og «Island». Hvad er forskellen på skorpen, og
    hvorfor betyder det, at Island ligger over havet?
 4. Hvilke dele af forklaringen er målt, og hvilken del er en fortolkning?
 
@@ -198,7 +198,8 @@ gangen".
 
 ## 8. Data til zoom-trinnet
 
-Ikke valgt endnu. Kandidater, som skal undersøges for licens, opløsning og
+Udskudt (afgørelse 6): første version går direkte fra Island på globussen,
+med pladegrænselaget, til tværsnittet. Et nærkort med terræn tilføjes senere. Kandidater, som skal undersøges for licens, opløsning og
 filstørrelse før brug: Copernicus DEM (GLO-30/90), NOAA ETOPO 2022 og GEBCO
 (terræn og havbund), samt Islands officielle kortdata (Náttúrufræðistofnun /
 Landmælingar Íslands) for vulkanske zoner. Indtil da kan trinnet vise
@@ -226,17 +227,19 @@ vulkanzoner eller riftlinjer.
 - Thordarson, T. & Larsen, G. (2007). Volcanism in Iceland in historical time.
   *J. Geodynamics* 43, 118–152.
 
-## Kontrol før godkendelse
+## Afgørelser
 
-Ejeren bedes tage stilling til:
+Ejerens gennemgang 14. oktober 2026:
 
-1. Er elevteksten i afsnit 2 fagligt korrekt, og rammer sproget 1.g/C-niveau?
-   Er der flere ord, der skal forklares eller fjernes?
-2. Virker sammenligningerne (negle, gletsjer, kogning på Mount Everest), eller er nogen af dem misvisende?
-3. Skal hotspot-/plumetrinnet med på C-niveau, og er formuleringen om, at
-   forskerne er uenige, passende?
-4. Er «Normal ryg / Island» den rigtige hovedkontrol?
-5. Tallene 2 cm/år, 7 km og 20–40 km: skal de vises for eleven? Referencerne
-   bør slås op i originalen, før tal citeres i elevmateriale.
-6. Skal zoom-trinnet vente på et dokumenteret terræn-/vulkanzonelag, eller
-   kan første version gå direkte fra globus til tværsnit?
+1. Elevteksten i afsnit 2 er godkendt efter forenkling: kortere trin, færre
+   analogier, ingen fed skrift, «lithosfæreplader» og ingen detaljer om
+   smelteandel eller ordet trykaflastningssmeltning i brødteksten.
+2. Sammenligningerne er skåret ned til negle, gletsjer og kogning på
+   Mount Everest.
+3. Hotspot-/plumetrinnet kommer med på C-niveau, med formuleringen om at
+   forskerne er uenige.
+4. Hovedkontrollen er en skifteknap «Den Midtatlantiske Ryg / Island».
+5. Tallene 2 cm/år, 7 km og 20–40 km må vises for eleven. Referencerne skal
+   stadig slås op i originalen, før tallene kildeangives i figuren.
+6. Zoom-trinnet med terræn udskydes; første version går direkte fra globus
+   til tværsnit.
