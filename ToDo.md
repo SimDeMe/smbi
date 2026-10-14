@@ -149,55 +149,70 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
   fridag registreres som 7t 24m på den. Indstillinger og hjælpesiden siger
   det nu; intet ekstra felt i appen.
 
-## Sidespalte og højdebudget — de øvrige simuleringer
+## Figur og kontroller samtidig — de øvrige simuleringer
 
-Læg dem om én ad gangen efter `geografi/Stigningsregn.html` (afsnit 7 i
-`design_rules.md`): `node værktøj/pladstjek.mjs <side>` før og efter, kig på
-skærmbillederne, nyt versionsnummer, modellen uændret.
-`geografi/TermiskTryk3.html` (v2.0) er lagt om med faner i sidespalten og
-aflæsningerne inde i tegningen — et forlæg, når sidespalten skal rumme mere
-end instrumenter og skydere. Tallet er, hvor meget
-panelet manglede ved 1366×625 (`pladstjek --alle`, 5. oktober 2026).
+Målet er `design_rules.md` afsnit 3: på en skolelaptop skal **den centrale
+figur og de primære kontroller** kunne bruges samtidig uden at scrolle. Hele
+panelet behøver ikke kunne ses; grafer, forklaring og sekundære
+indstillinger må ligge i faner, fold-ud-paneler eller længere nede, og
+panelet låses ikke til det længste trins højde. Vælg layout efter modellen
+— `geografi/Stigningsregn.html`, `geografi/TermiskTryk3.html` (v2.0, faner i
+sidespalten) og `geografi/raastoffer.html` er eksempler, ikke skabeloner.
+Modellen bevares; kør `node værktøj/pladstjek.mjs <side>` før og efter og kig
+på skærmbillederne (også `…_rullet.png`). Udpeger værktøjet forkert figur
+eller kontrol, så sæt `data-pladstjek="figur"`/`"kontrol"` på siden.
 
-Først (mangler mest plads): `biologi/enzymkinetik.html` (858), `geografi/vulkanudbrud.html` (596),
-`geografi/drivhuseffekten.html` (564).
+Tallet er, hvor meget spændet fra figurens top til den nederste primære
+kontrol er højere end skærmen ved 1366×625 (`pladstjek --alle`, 14. oktober
+2026) — dvs. figur og kontroller kan ikke ses samtidig, heller ikke efter
+rulning. Den fælles årsag er næsten overalt, at kontrollerne ligger i en
+række *under* en stor figur; site-header og sidehoved (≈ 300 px) gør det
+værre ved start, men en fokustilstand alene løser det ikke.
 
-Derefter — kan ikke ses straks på nogen af de lave skærme:
+Mest:
 
-- [ ] `geografi/magnetiskNord.html` — 544 px (mangler også ved 1920×940)
-- [ ] `biologi/DNA_Simulering.html` — 540 px
-- [ ] `geografi/Aarstider.html` — 522 px (mangler også ved 1920×940)
-- [ ] `geografi/pladegraenser.html` — 491 px
-- [ ] `biologi/oelbrygning.html` — 490 px (v2.0)
-- [ ] `biologi/enzymhastighed.html` — 472 px
-- [ ] `biologi/bio-blocks/index.html` — 472 px (blokprogrammering; figuren er
-  hele bredden, så sidespalten skal måske tænkes anderledes)
-- [ ] `geografi/poroesitetPermeabilitet.html` — 452 px
-- [ ] `geografi/Tidevand.html` — 450 px (three.js → `window.tilpasFigur`;
-  mangler også ved 1920×940)
-- [ ] `biologi/transkription.html` — 449 px (v1.0; mangler også ved 1920×940)
-- [ ] `biologi/fotosyntese.html` — 441 px
-- [ ] `biologi/KvindensCyklus/FinalSim.html` — 428 px
-- [ ] `biologi/osmose.html` — 391 px
-- [ ] `geografi/drivhuseffektenSimpel.html` — 342 px (v1.0; trinvis, så
-  højdelåsen fra afsnit 5 skal med)
-- [ ] `biologi/membran.html` — 317 px (three.js → `window.tilpasFigur`)
-- [ ] `geografi/Dugpunkt.html` — 261 px
-- [ ] `geografi/boelger.html` — 194 px
+- [ ] `biologi/enzymkinetik.html` — 706 px
+- [ ] `biologi/enzymhastighed.html` — 381 px
+- [ ] `geografi/Aarstider.html` — 370 px
+- [ ] `geografi/magnetiskNord.html` — 347 px
+- [ ] `biologi/oelbrygning.html` — 330 px (11 kontroller under figuren)
+- [ ] `geografi/vulkanudbrud.html` — 320 px (trinknapperne under figuren)
+- [ ] `geografi/Tidevand.html` — 298 px (three.js → `window.tilpasFigur`)
+- [ ] `biologi/fotosyntese.html` — 290 px
+- [ ] `biologi/KvindensCyklus/FinalSim.html` — 285 px
+- [ ] `geografi/pladegraenser.html` — 274 px
+- [ ] `geografi/poroesitetPermeabilitet.html` — 270 px
+- [ ] `biologi/DNA_Simulering.html` — 268 px (figuren alene er 660 px høj)
+- [ ] `biologi/osmose.html` — 238 px
 
-Kan ses efter rulning ved 1366×625, men ikke ved 1280×577 — mindst haster:
+Mindre:
 
-- [ ] `geografi/kompas.html` — mangler 274 px ved 1280×577
-- [ ] `biologi/gaerbobler.html` — mangler 216 px ved 1280×577
-- [ ] `biologi/membran2d.html` — mangler 147 px ved 1280×577
+- [ ] `biologi/bio-blocks/index.html` — 230 px (byggestenene står *over*
+  byggebordet, som alene er 620 px højt)
+- [ ] `biologi/transkription.html` — 190 px
+- [ ] `geografi/drivhuseffekten.html` — 174 px
+- [ ] `biologi/membran.html` — 138 px (three.js; figuren er selv betjeningen,
+  men skyderne for koncentration ligger under)
+- [ ] `geografi/Dugpunkt.html` — 108 px
+- [ ] `geografi/drivhuseffektenSimpel.html` — 91 px (trinvis; trinknapperne
+  under figuren, og svg'en har tom luft over og under tegningen)
+- [ ] `geografi/boelger.html` — 42 px
 
-Skal ses på, før de lægges om:
+Kan ses samtidig efter rulning ved 1366×625, men ikke ved 1280×577:
 
-- [ ] `geografi/groenlandspumpen.html` — «efter rul» overalt, men pladstjek
-  måler figuren til 15×15 px; find ud af, hvad der skal måles som figur.
-- [ ] `geografi/stensamling.html` (v2.4) og `geografi/stensamling/beskaer.html`
-  — en samling og et værktøj, ikke en figur med skydere. Nok bedre at lade
-  pladstjek springe dem over end at presse dem ind i et højdebudget.
-- [ ] `biologi/gaerbobler2/index.html` — har intet `.rig`-panel og kommer
-  derfor ikke med i `pladstjek --alle`. Gammelt design, eller afløst af
-  `gaerbobler.html`?
+- [ ] `geografi/kompas.html` — 121 px ved 1280×577 (figuren bliver større,
+  når layoutet skifter under 1366 px)
+- [ ] `biologi/gaerbobler.html` — 71 px ved 1280×577
+- [ ] `biologi/membran2d.html` — 62 px ved 1280×577
+
+I orden: `geografi/Stigningsregn.html`, `geografi/TermiskTryk3.html`,
+`geografi/raastoffer.html` og `biologi/gaerbobler2/index.html` (straks på
+alle tre laptopstørrelser); `geografi/groenlandspumpen.html` (efter rul).
+Ingen side ruller vandret på telefon (390×750).
+
+Ikke simuleringer: `geografi/stensamling.html` og
+`geografi/stensamling/beskaer.html` — en samling og et værktøj; pladstjek
+finder ingen figur og melder dem ikke som problem.
+
+- [ ] `biologi/gaerbobler2/index.html` — eget design uden site-header. Afløser
+  den `gaerbobler.html`, eller skal de begge blive?
