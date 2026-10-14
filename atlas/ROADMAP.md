@@ -106,7 +106,11 @@ deres implementation automatisk.
 
 ## Næste handling
 
-**Anbefalet første opgave: #46**, så nyudvikling kan prioriteres ud fra den
-officielle læreplan og hele det eksisterende bibliotek. Start gerne #47
-sideløbende, især afprøvning på faktiske elevlaptops og telefoner. Fortsæt
-derefter med #48's pladegrænser og #49's kvalitetssikrede Island-model.
+**#46's repositorygennemgang er udført 14. oktober 2026** i
+[KERNESTOF.md](KERNESTOF.md), med komplet
+[ressourceinventar](SIMULATIONSOVERSIGT.md) og afprøvningsbelæg. Næste del er
+[Claudes sammenligning med ejerens lokale materialer](OVERDRAGELSE-CLAUDE.md)
+og den faglige gennemgang med ejeren; #46 er derfor fortsat åben. Prioritér
+genbrug før større nye modeller. #47 kan fortsætte sideløbende, især på
+faktiske elevlaptops og telefoner. Fortsæt derefter med #48's pladegrænser
+og #49's kvalitetssikrede Island-model.

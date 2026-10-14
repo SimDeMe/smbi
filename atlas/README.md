@@ -3,6 +3,16 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Faglig kortlægning og næste review
+
+[#46](https://github.com/SimDeMe/smbi/issues/46) har nu en
+[mapping af alle C-kernestofpunkter og faglige mål](KERNESTOF.md), et
+[inventar over hele geografibiblioteket](SIMULATIONSOVERSIGT.md) og
+[afprøvningsbelæg](gennemgang-46.json). Næste del er
+[Claudes sammenligning med de lokale materialer](OVERDRAGELSE-CLAUDE.md)
+og ejerens faglige review. Repositorygennemgangen udvider ikke automatisk
+atlasregisteret og dokumenterer ikke fuld læreplansdækning.
+
 ## Arkitektur
 
 - `index.html` og `atlas.css`: dansk, responsiv brugerflade. På brede skærme
