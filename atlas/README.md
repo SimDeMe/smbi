@@ -13,43 +13,14 @@ login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 og ejerens faglige review. Repositorygennemgangen udvider ikke automatisk
 atlasregisteret og dokumenterer ikke fuld læreplansdækning.
 
-## Automatisk versionsnummer
+## Versionsnummer
 
-Headeren viser en kompakt version, fx **v403**, med link til den præcise
-udgivne commit. Hver ny commit på mains hovedlinje øger tallet med én, også
-når kun andre dele af sitet ændres. En merge tæller som én ny main-commit.
-Et push med flere commits øger tilsvarende med flere. Genudgivelse af samme
-commit giver samme nummer; en ændring af selve Git-historikken kan ændre det.
+Headeren viser en kompakt version, fx **v406**, direkte fra `index.html`.
+Når Atlas ændres, øges tallet med én i samme commit (fx `v406` → `v407`).
+Ændringer andre steder på sitet ændrer ikke atlasversionen.
 
-`.github/workflows/pages.yml` kører ved alle pushes til main og ved manuel
-udgivelse. Den henter fuld historik, bygger med GitHub Pages' Jekyll som hidtil,
-og kører `versionsnummer.py` på **den byggede** `atlas/index.html`, før artefaktet
-udgives. Der oprettes ingen ekstra commits med versionsnumre. Nummeret er
-indlejret i den udgivne HTML, så elevens browser ikke skal kalde GitHub API.
-Pages-kilden skal stå til **GitHub Actions**. Hvis workflowet fjernes ved en
-tilbagerulning, skal Pages-kilden samtidig sættes tilbage til `main` / rod;
-elles udgives senere commits ikke automatisk.
-**Aktivering:** integrationsadgangen kan ikke ændre Pages-kilden (HTTP 403).
-Ejeren skal én gang vælge **Settings → Pages → Build and deployment → Source
-→ GitHub Actions**, og derefter køre **Actions → Udgiv smbi.dk → Run workflow**.
-Indtil da bygges og kontrolleres artefaktet, men workflowets udgivelsesjob
-springes over for at undgå to konkurrerende Pages-udgivelser. Den hidtidige
-branch-udgivelse fungerer fortsat med startmærket i kildefilen.
-
-Kildetræet har et startmærke; workflowet erstatter det automatisk. Lokalt kan en kopi stemples med:
-
-```sh
-cp atlas/index.html /tmp/atlas-version.html
-python3 atlas/versionsnummer.py /tmp/atlas-version.html
-python3 atlas/test/versionsnummer.py
-```
-
-`test/versionsnummer.py` bruger en isoleret Git-historik til at kontrollere
-stigning ved commits uden atlasændringer, merge, commitlink, idempotens og
-fejl ved overfladisk historik/manglende mærke. `test/udgivelse.py _site`
-kontrollerer efter Jekyll, at versionen matcher committen, at atlas-HTML kun
-er ændret ved versionsmærket, og at de øvrige eksisterende webfiler er
-byte-identiske. Først derefter uploades og udgives Pages-artefaktet.
+Sitet udgives som hidtil med GitHub Pages fra `main` / rod. Versionsnummeret
+kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
 
 ## Arkitektur
 
