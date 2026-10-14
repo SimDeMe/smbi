@@ -3,7 +3,7 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
-## Find landet — Europa (v413)
+## Find landet — Europa (v414)
 
 **Quiz → Start Europa-quiz** giver ét landenavn ad gangen i en blandet
 rækkefølge uden gentagelser. Klik/tryk på landet på den eksisterende globus.
@@ -43,6 +43,8 @@ gendanner globussens tidligere vinkel, zoom og tilvalg. Danmarkskort,
 simulationer og Island-modul bevares. Start fra et åbent Danmarkskort fører
 til globusquizzen og tilbage til globussen. Data-/biblioteksfejl bevarer
 atlasnavigationen; en lukket startdialog må ikke starte spillet senere.
+Åbnes quizmenuen før grundkortet er klart, aktiveres startknappen automatisk,
+når globussen er indlæst.
 
 `node atlas/test/quizmodel.mjs` kontrollerer rækkefølge, 47 unikke spørgsmål,
 fejl, hjælp, gentagne svar, afslutning og nyt spil. `test/europa_quiz.py`

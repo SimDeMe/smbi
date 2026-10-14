@@ -151,6 +151,20 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
     side.wait_for_function("!document.querySelector('#quiz-start').hasAttribute('aria-busy')")
     assert not side.locator('body').evaluate("el=>el.classList.contains('quiz')")
     side.close()
+    # Menuen kan åbnes før grundkortet: Start bliver aktiv uden at genåbne den.
+    side=browser.new_page();ventende=[]
+    side.route('**/countries-110m.json',lambda r:ventende.append(r))
+    side.goto(adresse+'/atlas/',wait_until='domcontentloaded')
+    side.wait_for_function("document.querySelector('#zoom-ind').disabled")
+    side.locator('#quiz').click()
+    expect(side.locator('#quiz-start')).to_be_disabled()
+    assert ventende
+    ventende[0].fulfill(path=str(Path(__file__).parents[1]/'data/countries-110m.json'))
+    expect(side.locator('#quiz-start')).to_be_enabled()
+    expect(side.locator('#quiz-status')).to_be_empty()
+    side.locator('#quiz-start').click()
+    expect(side.locator('#quizlinje')).to_be_visible()
+    side.locator('#quiz-stop').click();side.close()
     assert not fejl,fejl
     print('Europa: alle 47 lande, mikrostaters ringe, fejl, tastatur og afbrudt start OK',flush=True)
 

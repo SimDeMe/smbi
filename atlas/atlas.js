@@ -538,6 +538,12 @@ try {
   globus = await startGlobus(steder, visSted, visDanmark);
   globusknapper.forEach(knap => { knap.disabled = false; });
   pladeknap.disabled = false;
+  // Quizmenuen kan allerede være åbnet, mens grundkortet blev hentet.
+  const quizstart = document.querySelector('#quiz-start');
+  if (quizstart) {
+    quizstart.disabled = false;
+    document.querySelector('#quiz-status').textContent = '';
+  }
   // /atlas/#island drejer globussen hen til stedet, fx ved retur fra et tværsnit.
   const startsted = steder.find(sted => `#${sted.id}` === location.hash);
   if (startsted) globus.visSted(startsted);
