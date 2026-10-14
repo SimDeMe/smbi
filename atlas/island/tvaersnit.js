@@ -37,7 +37,8 @@ export function geometri(W, H, island) {
     const ryg = hav + H * (.045 + .06 * Math.sqrt(r));
     if (!island) return ryg + riftdal(x);
     const t = smooth(kyst - .06, kyst + .1, r);
-    return lerp(hav - H * .035, hav + H * (.03 + .04 * Math.sqrt(r)), t) + riftdal(x);
+    const relief = H * .008 * (Math.cos((x - x0) / W * 38) + .4 * Math.sin(x / W * 73));
+    return lerp(hav - H * .04 + relief, hav + H * (.03 + .04 * Math.sqrt(r)), t) + riftdal(x);
   };
   const skorpetykkelse = x => island ? lerp(H * .17, H * .075, smooth(.35, .95, d(x))) : H * .045;
   const skorpebund = x => overflade(x) - riftdal(x) + skorpetykkelse(x);
@@ -74,7 +75,10 @@ function former(W, H, island) {
   // Gange som kubiske kurver [x0 y0 x1 y1 x2 y2 x3 y3]; de tynde er rette linjer.
   const gange = [[x0 - 3, fod, x0 - 8, lerp(fod, kd, .5), x0 + 6, lerp(fod, kd, .6), kamre[0][0], kamre[0][1]]];
   if (island) gange.push([x0 + 4, fod, x0 + 10, lerp(fod, kamre[1][1], .5), kamre[1][0], kamre[1][1] + H * .04, kamre[1][0], kamre[1][1]]);
-  const spalter = kamre.map(([x, y]) => [x, y, x + (x < x0 ? 4 : -4), overflade(x0 + (x - x0) * .4)]);
+  const spalter = kamre.map(([x, y]) => {
+    const topX = x + (x < x0 ? 4 : -4);
+    return [x, y, topX, overflade(topX)];
+  });
 
   return { smal, g, kappekurver, kamre, fod, gange, spalter };
 }
@@ -167,7 +171,7 @@ export function bevaegelse({ bredde: W, hoejde: H, tilstand, tid = 0, spor = fal
       magma += `<circle cx="${f(lerp(x1, x2, u))}" cy="${f(lerp(y1, y2, u))}" r="2" opacity="${f(toning(u))}"/>`;
     }
   }
-  return { plader: baand, skorpe: baand, smelt: draaber, kappe, magma };
+  return { plader: spor ? baand : '', skorpe: spor ? baand : '', smelt: draaber, kappe, magma };
 }
 
 // Pladsholdere, som animationen fylder ud billede for billede.
@@ -210,7 +214,7 @@ export function tegnTvaersnit({ bredde: W, hoejde: H, tilstand, hotspot = true, 
       ${anim('smelt', b.smelt, ' class="draaber"')}
       <path d="M${f(x0 - sb - 12)} ${f(ys)}H${f(x0 + sb + 12)}" class="smeltestart"/>
       ${etiket(x0 + sb + 16, ys + 4, smal ? 'Smeltningen\nbegynder' : 'Her begynder\nsmeltningen', { klasse: 'lille' })}
-      ${etiket(x0, lerp(pladebund(x0), ys, .62), 'Her smelter\nstenen', { anker: 'middle', klasse: 'midt', maerke: 'Model' })}
+      ${etiket(x0, lerp(pladebund(x0), ys, .62), 'Delvis\nsmeltning', { anker: 'middle', klasse: 'midt', maerke: 'Model' })}
     </g>` : '';
 
   // Magmaens vej: gange op gennem pladen til magmakamre og ud i riftzonen.
@@ -220,13 +224,15 @@ export function tegnTvaersnit({ bredde: W, hoejde: H, tilstand, hotspot = true, 
   magma += anim('magma', b.magma, ' class="magmaspor"');
   if (island) {
     // En spalte og en lille vulkan i riftzonen.
-    const vx = x0 + W * .06, vy = overflade(vx);
-    magma += `<path d="M${f(vx - W * .025)} ${f(vy + 1)}L${f(vx)} ${f(vy - H * .03)}L${f(vx + W * .025)} ${f(vy + 1)}Z" class="vulkan"/>`;
-    magma += `<path d="M${f(x0 - W * .012)} ${f(overflade(x0 - W * .012) - 1)}l3 -6m4 7l3 -7m4 7l2 -6" class="lava"/>`;
+    const [, , vx, vy] = spalter[spalter.length - 1];
+    magma += `<path d="M${f(vx - W * .025)} ${f(vy + 1)}L${f(vx)} ${f(vy - H * .016)}L${f(vx + W * .025)} ${f(vy + 1)}Z" class="vulkan"/>`;
+    magma += `<path d="M${f(vx)} ${f(vy)}v${f(-H * .016)}l${f(W * .019)} ${f(H * .014)}" class="lava"/>`;
   }
   const [kx, ky, krx] = kamre[kamre.length - 1];
   const kammerEtiket = island
-    ? etiket(kx + krx + 8, ky + 4, smal ? 'Magma-\nkamre' : 'Magmakamre', { klasse: 'lille' })
+    ? (smal
+      ? `<path d="M${f(kx + krx)} ${f(ky)}L${f(W * .68)} ${f(skorpebund(x0) + H * .018)}" class="henvisning"/>` + etiket(W * .68, skorpebund(x0) + H * .045, 'Magma-\nkamre', { klasse: 'lille' })
+      : etiket(kx + krx + 8, ky + 4, 'Magmakamre', { klasse: 'lille' }))
     : `<path d="M${f(x0 + W * .065)} ${f(skorpebund(x0 + W * .07) + H * .03)}L${f(kx + krx)} ${f(ky + 2)}" class="henvisning"/>` +
       etiket(x0 + W * .07, skorpebund(x0 + W * .07) + H * .045, 'Magmakammer', { klasse: 'lille' });
   const magmalag = vis('magma') ? `<g data-lag="magma">${magma}${kammerEtiket}</g>` : '';
@@ -254,7 +260,7 @@ export function tegnTvaersnit({ bredde: W, hoejde: H, tilstand, hotspot = true, 
   const gy = overflade(x0);
   const graense = vis('plader') ? `<g data-lag="graense">
       <path d="M${f(x0)} ${f(gy - H * .055)}V${f(gy - 3)}" class="graense-ydre"/><path d="M${f(x0)} ${f(gy - H * .055)}V${f(gy - 3)}" class="graense-indre"/>
-      ${etiket(x0, gy - H * .055 - 6, 'Ryggen', { anker: 'middle', klasse: 'lille' })}
+      ${etiket(x0, gy - H * .055 - 6, island ? 'Riftzone' : 'Ryggen', { anker: 'middle', klasse: 'lille' })}
     </g>` : '';
 
   // Lagnavne i venstre side; et skjult lag mister også sit navn.
@@ -263,15 +269,19 @@ export function tegnTvaersnit({ bredde: W, hoejde: H, tilstand, hotspot = true, 
   const lagnavne = `<g data-lag="navne">
       ${vis('overflade') ? etiket(lx, hav + (island ? 16 : Math.min(16, (overflade(mx) - hav) / 2 + 5)), 'Hav', { klasse: 'lille' }) : ''}
       ${vis('skorpe') ? etiket(lx, lerp(overflade(mx), skorpebund(mx), .5) + 5, 'Skorpe', { klasse: 'lille lagnavn' }) : ''}
-      ${vis('plader') ? etiket(lx, lerp(skorpebund(mx), pladebund(mx), .45) + 5, smal ? 'Lithosfære-\nplade' : 'Lithosfæreplade', { klasse: 'lille lagnavn' }) : ''}
-      ${vis('kappe') ? etiket(lx, ky2, 'Kappe', { klasse: 'lille lagnavn' }) + etiket(lx, ky2 + 17, smal ? 'fast sten,\nder flyder\nlangsomt' : 'fast sten, der\nflyder langsomt', { klasse: 'lille note' }) : ''}
+      ${vis('plader') ? etiket(lx, lerp(skorpebund(mx), pladebund(mx), .45) + 5, 'Stiv kappe', { klasse: 'lille lagnavn' }) : ''}
+      ${vis('kappe') ? etiket(lx, ky2, 'Kappe under pladerne', { klasse: 'lille lagnavn' }) + etiket(lx, ky2 + 17, smal ? 'fast sten,\nder flyder\nlangsomt' : 'fast sten, der\nflyder langsomt', { klasse: 'lille note' }) : ''}
       ${island && vis('overflade') ? etiket(x0 - g.kyst * .55, overflade(x0 - g.kyst * .55) - 8, 'Island', { anker: 'middle', klasse: 'lille' }) : ''}
-      ${island && vis('skorpe') ? etiket(W - lx, lerp(overflade(W - mx), skorpebund(W - mx), .5) + 5, 'Tyk skorpe', { anker: 'end', klasse: 'lille', maerke: 'Målt' }) : ''}
+      ${island && vis('skorpe') && !smal ? etiket(x0 - W * .13, lerp(overflade(x0 - W * .13), skorpebund(x0 - W * .13), .6), 'Tyk skorpe', { anker: 'end', klasse: 'lille', maerke: 'Målt' }) : ''}
     </g>`;
 
   return `<defs>
       ${['pladepil', 'kappepil', 'skorpepil'].map(k => `<marker id="pilhoved-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="${k === 'pladepil' ? 4 : 5}" markerHeight="${k === 'pladepil' ? 4 : 5}" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" class="hoved-${k}"/></marker>`).join('')}
       <linearGradient id="hotspotfarve" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff6a3d" stop-opacity=".55"/><stop offset="1" stop-color="#ff6a3d" stop-opacity=".15"/></linearGradient>
+      <linearGradient id="havfarve" x2="0" y2="1"><stop stop-color="#d3eef5"/><stop offset="1" stop-color="#8fc4d9"/></linearGradient>
+      <linearGradient id="skorpefarve" x2="0" y2="1"><stop stop-color="#637b78"/><stop offset="1" stop-color="#435c5d"/></linearGradient>
+      <linearGradient id="pladefarve" x2="0" y2="1"><stop stop-color="#c0b195"/><stop offset="1" stop-color="#a99476"/></linearGradient>
+      <linearGradient id="kappefarve" x2="0" y2="1"><stop stop-color="#f0e3c7"/><stop offset="1" stop-color="#dfc69f"/></linearGradient>
       <clipPath id="pladeklip"><path d="${pladeform}"/></clipPath>
       <clipPath id="skorpeklip"><path d="${skorpeform}"/></clipPath>
     </defs>
@@ -282,7 +292,7 @@ export function tegnTvaersnit({ bredde: W, hoejde: H, tilstand, hotspot = true, 
     ${smeltlag}
     ${vis('overflade') ? `<g data-lag="overflade">${luft}${havflade}</g>` : ''}
     ${vis('skorpe') ? `<g data-lag="skorpe">${skorpe}${anim('skorpe', b.skorpe, ' class="baand" clip-path="url(#skorpeklip)"')}</g>` : ''}
-    ${vis('overflade') ? `<g data-lag="overflade"><path d="${kurve(0, W, overflade)}" class="overflade-linje"/></g>` : ''}
+    ${vis('overflade') ? `<g data-lag="overflade"><path d="M0 ${f(hav)}H${W}" class="havniveau"/><path d="${kurve(0, W, overflade)}" class="overflade-linje"/></g>` : ''}
     ${magmalag}
     ${skorpelag}
     ${pladelag}

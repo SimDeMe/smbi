@@ -81,6 +81,23 @@ def afproev_island(browser, adresse, ud, skaerme):
     assert g['island']['land'] and not g['ryg']['land'], g
     assert g['island']['plade'] > g['ryg']['plade'], g
 
+    # Geologisk lagfølge på tværs af hele figuren, også med terræn på mobil.
+    lagfoelge = side.evaluate('''async () => {
+      const { geometri } = await import('./tvaersnit.js');
+      for (const [W, H] of [[366, 520], [800, 400], [1100, 550]]) {
+        for (const island of [false, true]) {
+          const g = geometri(W, H, island);
+          for (let i = 0; i <= 100; i++) {
+            const x = W * i / 100;
+            if (!(g.overflade(x) < g.skorpebund(x) && g.skorpebund(x) < g.pladebund(x))) return false;
+          }
+          if (!(g.pladebund(W / 2) < g.smeltestart && g.smeltestart < H)) return false;
+        }
+      }
+      return true;
+    }''')
+    assert lagfoelge, 'Skorpe og stiv kappe skal ligge over smeltezonen'
+
     # Skifteknappen og tekstalternativet.
     beskr = side.locator('#figurbeskrivelse')
     expect(beskr).to_contain_text('Den Midtatlantiske Ryg')
@@ -92,6 +109,20 @@ def afproev_island(browser, adresse, ud, skaerme):
     assert side.evaluate('location.hash') == '#island'
     expect(beskr).to_contain_text('fortolkning')
     expect(side.locator('#hotspot')).to_be_enabled()
+    expect(side.locator('.modelnote')).to_contain_text('En plade = skorpe + stiv kappe.')
+    expect(side.locator('#tvaersnit')).to_contain_text('Stiv kappe')
+    # Hver magmaspalte skal nå den tegnede overflade, også når den bølger.
+    afstande = side.evaluate('''async () => {
+      const { geometri } = await import('./tvaersnit.js');
+      const svg = document.querySelector('#tvaersnit');
+      const { width: W, height: H } = svg.getBoundingClientRect();
+      const g = geometri(Math.round(W), Math.round(H), true);
+      return [...svg.querySelectorAll('.gang.tynd')].map(p => {
+        const [x, y] = p.getAttribute('d').split('L')[1].split(' ').map(Number);
+        return Math.abs(y - g.overflade(x));
+      });
+    }''')
+    assert len(afstande) == 2 and max(afstande) < .2, afstande
     side.locator('#lagknap').click()
     side.locator('#hotspot').uncheck()
     expect(side.locator('#tvaersnit [data-lag="hotspot"]')).to_have_count(0)

@@ -18,7 +18,7 @@ main{padding:0 24px 16px;max-width:1800px;margin:auto}
 .overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 3px;color:var(--slate)}
 h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;margin:0}h1 span{color:var(--blue)}.intro>p{font-size:15px;line-height:1.35;margin:0;color:var(--slate);max-width:340px;text-align:right}
 
-.snit{border:2px solid var(--ink);border-radius:9px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
+.snit{border:2px solid var(--ink);border-radius:12px;box-shadow:3px 4px 0 var(--ink);overflow:hidden;background:#fffdf7}
 .vaerktoejer{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--ink)}
 .skift{display:flex}.skift button{border-radius:0}.skift button:first-child{border-radius:6px 0 0 6px}.skift button:last-child{border-radius:0 6px 6px 0;border-left:0}
 .ekstra{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -49,7 +49,7 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .vest{transform-origin:100% 50%;transform:rotateY(-90deg)}
 .tre-d .luft-flade{fill:none}
 .sidekant{fill:none;stroke:var(--ink);stroke-width:1.5}
-.land-flade{fill:#6b6f6a;stroke:var(--ink);stroke-width:1.5}
+.land-flade{fill:#637b78;stroke:var(--ink);stroke-width:1.5}
 .hav-flade.top{stroke:var(--ink);stroke-width:2}
 .maerkater{position:absolute;left:8px;bottom:6px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none}
 .skematisk,.tidsmaerke{margin:0;padding:2px 7px;font:500 12px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px}
@@ -58,24 +58,24 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .drejeknapper button{min-width:44px;padding:4px 8px;background:#fffdf7e6}
 /* I en smal figur står drejeknapperne 2×2 (▲▼ over ◀▶), så mærkerne ikke ligger bag dem. */
 @container(max-width:620px){.drejeknapper{display:grid;grid-template-columns:repeat(2,auto)}.drejeknapper [data-drej$=",0"]{order:1}}
-.forklaring{display:flex;flex-direction:column;min-height:0;padding:10px 14px}
+.forklaring{background:linear-gradient(145deg,#fffdf7,#f7f2e7);display:flex;flex-direction:column;min-height:0;padding:10px 14px}
 .tekstrum{flex:1;min-height:0;overflow:auto;padding-right:4px}
-.trinvalg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.trinvalg button{min-width:40px;padding:4px 8px;font-size:13px}
-.forklaring h2{font:700 19px/1.2 var(--display);margin:0 0 6px}
+.trinvalg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.trinvalg button{min-width:40px;padding:4px 8px;font-size:13px;border-width:1px;border-color:#49615b55;border-radius:50%}.trinvalg button:first-child{border-radius:6px}.trinvalg button[aria-pressed="true"]{border-color:var(--ink)}
+.forklaring h2{font:700 22px/1.15 var(--display);margin:0 0 6px}
 #trintekst p{margin:0 0 8px;font-size:16px;line-height:1.45}
 .seefter{margin:2px 0 10px;padding:8px 10px;border-left:4px solid var(--blue);background:#eef6fa;font-size:15px;line-height:1.4}.seefter .hint{color:var(--slate)}
 .trinpile{display:flex;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #49615b40}
 
 /* Figurens farver. Kappen er fast sten: varm, men ikke glødende rød. */
-.luft-flade{fill:#fffdf7}.hav-flade{fill:#bfe0f2}.overflade-linje{fill:none;stroke:var(--ink);stroke-width:1.5}
-.skorpe-flade{fill:#6b6f6a;stroke:var(--ink);stroke-width:1}
-.plade-flade{fill:#b9a88a;stroke:var(--ink);stroke-width:1.5}
-.kappe-flade{fill:#e9d5b0}
+.luft-flade{fill:#fffdf7}.hav-flade{fill:url(#havfarve)}.overflade-linje{fill:none;stroke:var(--ink);stroke-width:1.5}
+.skorpe-flade{fill:url(#skorpefarve);stroke:#314846;stroke-width:1.2}
+.plade-flade{fill:url(#pladefarve);stroke:#796b54;stroke-width:1.2}
+.kappe-flade{fill:url(#kappefarve)}
 .hotspot-flade{fill:url(#hotspotfarve);stroke:#c4471c;stroke-width:1.5;stroke-dasharray:6 5}
-.kappepil{fill:none;stroke:#7a5a33;stroke-width:2.2;stroke-dasharray:1 0}.hoved-kappepil{fill:#7a5a33}
-.smelte-flade{fill:#ffb30040;stroke:#c4471c;stroke-width:1;stroke-dasharray:3 3}
+.kappepil{fill:none;stroke:#7a5a33;stroke-width:1.8;opacity:.7}.hoved-kappepil{fill:#7a5a33}
+.smelte-flade{fill:#efad4428;stroke:#b47837;stroke-width:1.2;stroke-dasharray:4 5}
 .draaber circle{fill:#e2521f;stroke:#7d1d0a;stroke-width:.6}
-.baand{fill:#fff9ee;opacity:.13}
+.baand{fill:#fff9ee;opacity:.045}
 .kappespor circle{fill:#7a5a33;stroke:#fff9ee;stroke-width:1}
 .magmaspor circle{fill:#ffb300;stroke:#7d1d0a;stroke-width:.8}
 .smeltestart{stroke:#c4471c;stroke-width:1.5;stroke-dasharray:5 4}
@@ -85,9 +85,9 @@ h1{font:800 clamp(22px,2.4vw,32px)/1.1 var(--display);letter-spacing:-.035em;mar
 .pladepil{stroke:var(--ink);stroke-width:5;fill:none}.hoved-pladepil{fill:var(--ink)}
 .skorpepil{stroke:#fff9ee;stroke-width:2.2;fill:none}.hoved-skorpepil{fill:#fff9ee}
 .graense-ydre{stroke:var(--rod);stroke-width:7;stroke-linecap:round}.graense-indre{stroke:#fff9ee;stroke-width:2.2}
-.etiket{font:700 14px var(--display);fill:var(--ink);paint-order:stroke;stroke:#fffdf7;stroke-width:3.5px;stroke-linejoin:round}
-.etiket.lille{font-size:13px}.etiket.note{font:400 12px var(--body);fill:var(--slate)}
-.etiket.plade{font-size:13px}.etiket .maerke{font:500 11px var(--mono);fill:var(--slate)}
+.etiket{font:600 14px var(--display);fill:var(--ink);paint-order:stroke;stroke:#fffdf7;stroke-width:3px;stroke-linejoin:round}
+.etiket.lille{font-size:13px}.etiket.note{font:400 12px var(--display);fill:#46554d;stroke:#f0e3c7}
+.etiket.plade{font-size:13px}.etiket .maerke{font:500 10px var(--mono);fill:#46554d}
 .etiket.midt{font-size:13px}
 
 /* Trinvis fremhævning: andre lag tones ned, men forbliver synlige. */
@@ -124,3 +124,12 @@ body.fokus .arbejdsflade{height:calc(100svh - 82px)}
   .forklaring{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Havniveau og tydelig forskel mellem plade og kappe. */
+.havniveau{fill:none;stroke:#388ba7;stroke-width:1;stroke-dasharray:5 6;opacity:.65}
+.modelnote{margin:8px 0 0;padding:8px 0;color:var(--slate);font:13px/1.4 var(--display);border-top:1px solid #49615b30}
+.modelnote strong{color:var(--ink);font-weight:600}
+.oest .skorpe-flade,.vest .skorpe-flade{fill:#435c5d}
+.oest .plade-flade,.vest .plade-flade{fill:#a99476}
+.oest .kappe-flade,.vest .kappe-flade{fill:#dfc69f}
+.overside .hav-flade,.oest .hav-flade,.vest .hav-flade{fill:#b4dce8}

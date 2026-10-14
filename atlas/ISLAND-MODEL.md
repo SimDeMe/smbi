@@ -1,6 +1,7 @@
 # Island – faglig modelbeskrivelse (milepæl A i #49)
 
-Status: gennemgået og godkendt af ejeren 14. oktober 2026 (se «Afgørelser»
+Status: oprindelig tekst gennemgået og godkendt af ejeren 14. oktober 2026.
+Faglige præciseringer efter ejerens ønske samme dag (se afsnit 10 og «Afgørelser»
 nederst). Milepæl B og C – tværsnittet med elevteksten fra afsnit 2, lag fra
 afsnit 4 og animationen fra afsnit 5 – ligger i [`island/`](island/)
 (`/atlas/island/`); se [ISLAND-DEMO.md](ISLAND-DEMO.md). Tal er afrundede størrelsesordener til forklaring, ikke
@@ -18,7 +19,8 @@ elevteksten; de står kun i lærernoterne.
 > Island ligger på Den Midtatlantiske Ryg, hvor to lithosfæreplader bevæger
 > sig fra hinanden. Kappen stiger op under ryggen, og når trykket falder,
 > smelter en lille del af den til magma. Under Island er kappen varmere end
-> normalt, så der dannes mere magma og en tykkere skorpe, som når over havet.
+> normalt, så der dannes mere magma og en tykkere skorpe. Den tykke skorpe
+> og den varme kappe bidrager til at løfte Island over havet.
 
 ## 2. Forklaringen trin for trin (elevtekst)
 
@@ -37,22 +39,15 @@ vej.
 
 ### Trin 2 · Kappen stiger op
 
-Under pladerne ligger kappen. Den er ikke flydende magma, men fast sten, der
-er så varm, at den kan flyde meget langsomt – ligesom isen i en gletsjer. Når
-pladerne bevæger sig fra hinanden, stiger kappen op under ryggen.
+En lithosfæreplade består af skorpen og den stive, øverste del af kappen. Under pladerne er kappen også overvejende fast sten, men den er så varm, at den kan flyde meget langsomt – ligesom isen i en gletsjer. Når pladerne bevæger sig fra hinanden, stiger denne kappe op under ryggen.
 
 *Se efter:* pilene i kappen, der peger op mod ryggen.
 
 ### Trin 3 · Lavere tryk får stenen til at smelte
 
-Kappen smelter, uden at den bliver varmere. Det skyldes, at den temperatur,
-hvor sten smelter, afhænger af trykket: Jo lavere tryk, jo lavere
-smeltetemperatur. Vand opfører sig på samme måde, når det koger: På toppen af
-Mount Everest koger det ved ca. 70 °C i stedet for 100 °C.
+En lille del af kappens sten smelter, uden at stenen bliver varmere. Når stenen stiger op, falder trykket, og dermed falder den temperatur, hvor smeltningen begynder. Stenen køler lidt af under opstigningen, men smeltetemperaturen falder hurtigere. Derfor kan der dannes magma, mens det meste af stenen stadig er fast.
 
-Dybt nede holder det høje tryk kappen fast, selv om den er over 1 000 °C varm.
-Når kappen stiger op, falder trykket, mens temperaturen næsten er den samme.
-Til sidst smelter noget af den til magma.
+Tryk påvirker også vands kogepunkt: På Mount Everest koger vand ved ca. 70 °C. Det er en sammenligning med trykkets betydning; kappens sten smelter, den koger ikke.
 
 *Se efter:* de små dråber magma, der først opstår, når kappen er steget et
 stykke op.
@@ -63,35 +58,26 @@ smeltetemperaturkurven er *solidus*; det bruges ikke i elevteksten.
 
 ### Trin 4 · Magmaen bliver til ny skorpe
 
-Magma er lettere end stenen omkring den og stiger derfor op. Den samler sig i
-magmakamre nogle kilometer under overfladen og kommer op gennem sprækker som
-spalteudbrud eller i vulkaner. Den størkner til basalt, som det meste af
-Island og havbunden består af.
+Magma er mindre tæt end stenen omkring den og kan stige op gennem små mellemrum og sprækker. Noget samler sig i magmaområder i skorpen, her tegnet som magmakamre. De kan bestå af både smelte og krystaller. Noget størkner i dybet; noget når overfladen som lava ved spalteudbrud og vulkaner. Det meste bliver til basalt og beslægtede bjergarter.
 
-Pladerne fører den nye skorpe væk til begge sider. Derfor er klipperne yngst
-midt på Island og ældst mod øst- og vestkysten.
+Pladerne fører den nye skorpe væk fra de aktive riftzoner. Derfor er klipperne generelt yngst i de aktive zoner og ældre mod øst og vest. Islands riftzoner har flyttet sig gennem tiden; den ene midterlinje i figuren er en forenkling.
 
 *Se efter:* magmakamrene og den nye skorpe, der flytter sig ud til siderne.
 
 ### Trin 5 · Hvorfor ligger Island over havet?
 
-Resten af Den Midtatlantiske Ryg ligger 2–3 km under havoverfladen. Under
-Island er kappen varmere. Varmere kappe begynder at smelte dybere nede, så der
-dannes mere magma. Det giver en skorpe på ca. 20–40 km mod ca. 7 km under
-resten af ryggen.
+Et typisk stykke af Den Midtatlantiske Ryg ligger under havet. Under Island forbindes den ekstra magmatilførsel med varmere, opstrømmende kappe. I denne model begynder smeltningen derfor dybere, og mere magma danner en tykkere skorpe. Skorpen er omtrent 20–40 km tyk mange steder under Island, mod ca. 7 km for almindelig havbundsskorpe; tykkelsen varierer.
+
+Den tykke skorpe er mindre tæt end kappen og giver øen opdrift. Varm kappe er også mindre tæt og bidrager til at løfte området. Det er altså både skorpen og forholdene i kappen, der hjælper Island op over havet.
 
 *Se efter:* skift mellem «Den Midtatlantiske Ryg» og «Island». Hvor begynder
 smeltningen, og hvor tyk bliver skorpen?
 
 ### Trin 6 · Hvor kommer den ekstra varme fra?
 
-Et område med usædvanlig varm kappe kaldes et hotspot. Mange geologer
-forklarer det med en kappeplume: en søjle af varm kappe, der stiger langsomt op
-fra stor dybde.
+Et hotspot er et område med usædvanlig stor og langvarig vulkansk aktivitet. Under Island forbindes det med ekstra varm, opstrømmende kappe. Mange geologer forklarer det med en kappeplume: varm, overvejende fast sten, der stiger langsomt op fra stor dybde.
 
-Ingen har set plumen direkte. Jordskælvsbølger bevæger sig langsommere gennem
-kappen under Island, hvilket tyder på varm sten. Hvor dybt den varme kappe
-når, og om der er en egentlig søjle, er forskerne stadig uenige om.
+Plumen er en fortolkning af målinger, ikke en søjle, man har set direkte. Langsomme jordskælvsbølger og magmaens kemi støtter forklaringen, men bølgerne påvirkes også af stenens sammensætning og smelte. Den dybe opstrømnings form og oprindelse diskuteres stadig.
 
 *Se efter:* laget «Hotspot (fortolkning)», som kan slås til og fra.
 
@@ -158,15 +144,15 @@ udfoldelig ordliste for B-niveau eller interesserede, men ikke i figuren.
 
 | Ord | Forklaring med almindelige ord |
 | --- | --- |
-| Lithosfæreplade | Et af de stykker, Jordens yderste lag (lithosfæren) er delt i; pladerne flytter sig langsomt |
+| Lithosfæreplade | Et stift stykke af Jordens yderlag, der består af skorpe og øverste kappe; pladerne flytter sig langsomt |
 | Konstruktiv pladegrænse | Sted hvor to plader glider fra hinanden, og ny skorpe dannes |
 | Midtatlantiske Ryg | Den lange undersøiske bjergkæde midt i Atlanterhavet, hvor pladerne glider fra hinanden |
-| Kappe | Laget under pladerne: varm, næsten fast sten, der kan flyde meget langsomt |
+| Kappe | Stenlaget under skorpen; dets stive top indgår i pladerne, mens varmere sten længere nede kan flyde langsomt |
 | Magma | Smeltet sten under jorden. Når den kommer op, kaldes den lava |
 | Trykaflastningssmeltning | Sten smelter, fordi trykket falder – ikke fordi den bliver varmere |
 | Magmakammer | Et sted i skorpen, hvor magma samler sig før et udbrud |
 | Basalt | Mørk vulkansk sten; det meste af Island og havbunden består af den |
-| Hotspot | Et sted, hvor kappen er ekstra varm, så der dannes ekstra meget magma |
+| Hotspot | Et område med usædvanlig stor og langvarig vulkansk aktivitet, ofte forklaret med varm kappeopstrømning |
 | Kappeplume | En mulig søjle af varm sten, der stiger op fra dybt i kappen (en fortolkning) |
 
 ## 7. Elevopgave (10–15 minutter)
@@ -227,6 +213,40 @@ vulkanzoner eller riftlinjer.
   Wiley-Blackwell. (Kritik af den dybe plume.)
 - Thordarson, T. & Larsen, G. (2007). Volcanism in Iceland in historical time.
   *J. Geodynamics* 43, 118–152.
+
+## 10. Faglig præcisering og figurrevision — 14. oktober 2026
+
+Ejerens nye ønske om en flottere og mere korrekt model er fulgt op med:
+
+- Lithosfære = skorpe + stiv øvre kappe; figuren kalder nu den nederste del
+  af pladen «Stiv kappe». Kappen under pladen er overvejende fast.
+- Trykfald sænker temperaturen, hvor smeltning begynder, hurtigere end
+  opstigningen køler stenen. Der vises delvis smeltning, ikke en magmasø.
+- Magmakamre er skematiske magmaområder, som kan rumme smelte og krystaller.
+  Gange ender nu på den samme overflade, som figuren tegner, og er forbundet
+  til den viste lille vulkan.
+- Islands højde forklares med både tyk skorpe og kappeforhold. Figuren
+  beregner ikke isostasi eller dynamisk løft og bestemmer ikke deres andele.
+- Klippernes alder knyttes til aktive riftzoner; en enkelt central linje
+  og et enkelt glat landprofil er forenklinger. Intet nyt terrændatasæt.
+- Hotspot betegner vulkansk aktivitet; varm kappe og dyb plume er
+  fortolkninger. Lav seismisk hastighed er ikke alene et termometer.
+
+Kilder åbnet og kontrolleret til disse præciseringer:
+
+- [USGS: Are the tectonic plates floating on magma?](https://www.usgs.gov/faqs/are-tectonic-plates-floating-magma)
+  — fast, langsomt flydende kappe og smeltning ved trykfald.
+- [Allen m.fl. (2002): Plume-driven plumbing and crustal formation in Iceland](https://www.usgs.gov/publications/plume-driven-plumbing-and-crustal-formation-iceland)
+  — varierende skorpetykkelse og fortolkning af magmatilførsel under Island.
+- [Ito, Lin & Graham (2003)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2002RG000117)
+  — samspil mellem ryg og plume samt bidrag fra skorpe og kappe til topografi.
+- [USGS: Crystal resorption as a driver for mush maturation (2024)](https://www.usgs.gov/publications/crystal-resorption-a-driver-mush-maturation-experimental-investigation)
+  — magmaområder kan være blandinger af smelte og krystaller; generelt
+  procesgrundlag, ikke en måling af de to tegnede kamre på Island.
+
+Ingen nye tal i selve figuren. De tidligere afrundede tykkelser i elevteksten
+bevares med lokal variation og uden at gøre geometriens pixelmål til data.
+De ældre referencer i afsnit 9 er ikke alle genkontrolleret i fuldtekst.
 
 ## Afgørelser
 
