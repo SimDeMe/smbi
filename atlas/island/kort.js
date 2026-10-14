@@ -6,6 +6,8 @@
 // rotation fra islandskort.json). Vektorerne projiceres her med samme
 // projektion, så de ligger præcist oven på billedet.
 
+import { HOTSPOT, RYGGE, PLADER } from './navne.js';
+
 const svg = document.querySelector('#islandskort');
 const figur = document.querySelector('.kortfigur');
 const aflaesning = document.querySelector('.aflaesning');
@@ -15,18 +17,6 @@ const lagValg = [...document.querySelectorAll('[data-vislag]')];
 // Udsnittet, der altid skal kunne ses ved zoom 1: Island med ryggens start.
 const FOKUS = { lon: [-25.4, -12.9], lat: [63.05, 66.75] };
 const ZOOM = [1, 1.5, 2.25, 3.4, 5];
-// Hotspot (fortolkning): langsomme jordskælvsbølger under det centrale Island og
-// det vestlige Vatnajökull (Wolfe m.fl. 1997; Allen m.fl. 2002). Omtrentlig placering.
-export const HOTSPOT = { centrum: [-17.6, 64.6], radius_km: 125 };
-// Ryggene under havet: navnenes placering (fagligt navngivne strukturer, ikke data).
-const RYGGE = [
-  { navn: 'Reykjanesryggen', lon: -24.15, lat: 63.3, anker: 'end' },
-  { navn: 'Kolbeinseyryggen', lon: -18.15, lat: 66.9, anker: 'start' }
-];
-const PLADER = [
-  { navn: '← Nordamerikanske plade', lon: -24.9, lat: 66.85, anker: 'start' },
-  { navn: 'Eurasiske plade →', lon: -13.3, lat: 63.55, anker: 'end' }
-];
 
 const tilstand = { zoom: 0, midte: null, skjul: new Set(['hotspot']), maal: { W: 0, H: 0 }, kryds: null };
 let data, projektion, hoejder, graenselinjer;
