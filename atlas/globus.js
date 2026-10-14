@@ -98,10 +98,37 @@ export async function startGlobus(steder, vaelgSted) {
   document.querySelector('#zoom-ind').onclick = () => zoomMed(1.2);
   document.querySelector('#zoom-ud').onclick = () => zoomMed(1 / 1.2);
   document.querySelector('#nulstil').onclick = nulstil;
+
+  // Piletaster virker også efter klik uden for canvas. Komponenters egne
+  // tastaturhandlinger har forrang; lyt i bubble-fasen uden at flytte fokus.
+  const retninger = { ArrowLeft: 'vest', ArrowRight: 'oest', ArrowUp: 'nord', ArrowDown: 'syd' };
+  const egnePiletaster = [
+    'slider', 'spinbutton', 'textbox', 'searchbox', 'combobox', 'listbox', 'option',
+    'menu', 'menubar', 'menuitem', 'menuitemcheckbox', 'menuitemradio', 'radiogroup',
+    'radio', 'tablist', 'tab', 'tree', 'treeitem', 'treegrid', 'grid', 'gridcell',
+    'row', 'columnheader', 'rowheader', 'scrollbar', 'separator', 'toolbar',
+    'application', 'dialog', 'alertdialog'
+  ];
+  const egenBetjening = ['input', 'textarea', 'select', '[aria-activedescendant]', '[popover]',
+    ...egnePiletaster.map(rolle => `[role~="${rolle}"]`)].join(',');
+  document.addEventListener('keydown', event => {
+    const retning = retninger[event.key];
+    if (!retning || event.defaultPrevented || event.isComposing ||
+        event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if ([...document.querySelectorAll('dialog[open], [aria-modal="true"]')]
+      .some(visning => visning.getClientRects().length)) return;
+    if (event.composedPath().some(el => el instanceof Element &&
+      (el.isContentEditable || el.matches(egenBetjening)))) return;
+    drej(retning);
+    event.preventDefault();
+  });
+
+  // Zoom og Home beholder deres lokale fokuskrav. Pile håndteres kun ovenfor,
+  // så et tastetryk på canvas ikke også giver endnu en rotation via bubbling.
   canvas.addEventListener('keydown', event => {
-    const retninger = { ArrowLeft: 'vest', ArrowRight: 'oest', ArrowUp: 'nord', ArrowDown: 'syd' };
-    if (retninger[event.key]) drej(retninger[event.key]);
-    else if (event.key === '+' || event.key === '=') zoomMed(1.2);
+    if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey ||
+        event.metaKey || (event.shiftKey && event.key !== '+')) return;
+    if (event.key === '+' || event.key === '=') zoomMed(1.2);
     else if (event.key === '-') zoomMed(1 / 1.2);
     else if (event.key === 'Home') nulstil();
     else return;
