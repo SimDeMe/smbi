@@ -1,0 +1,76 @@
+---
+title: "Kortøvelse til istidslandskaber"
+subtitle: "Hovedopholdslinjen, jordarterne og landskabet i GEUS' kortportal"
+fag: "Naturgeografi"
+hold: ""
+format:
+  typst: default
+  html: default
+  docx: default
+---
+
+**Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+## Om øvelsen
+
+Næsten hele Danmarks landskab er formet af istiderne. I denne øvelse bruger I GIS — geografiske informationssystemer — til at undersøge, hvordan isen har efterladt forskellige landskaber og jordarter i forskellige dele af landet. I bruger *Danmarks geologiportal* fra GEUS (De Nationale Geologiske Undersøgelser for Danmark og Grønland), hvor man kan tænde og slukke for forskellige kortlag og lægge dem oven på hinanden.
+
+## Baggrund
+
+Under den sidste istid, **Weichsel-istiden**, nåede isen fra nord og øst for omkring 22 000 år siden ind over Danmark. Isranden lå i lang tid stille ned gennem Jylland. Den linje kaldes **hovedopholdslinjen**. Den går fra Bovbjerg ved Vestkysten mod øst til Viborg-egnen og derfra mod syd ned gennem Midtjylland til grænsen ved Padborg.
+
+- **Øst for linjen** lå isen selv. Den efterlod **moræne** — en usorteret blanding af ler, sand, sten og grus, som isen havde skubbet og slæbt med sig.
+- **Vest for linjen** løb smeltevandet ud fra isen og aflejrede sand og grus i store, flade **smeltevandssletter** (hedesletter). Her og der stikker højere **bakkeøer** op — gamle morænebakker fra en tidligere istid, som Weichsel-isen ikke nåede.
+- **Nord for Limfjorden** stod havet højere end i dag, da isen smeltede. Landet var presset ned af isens vægt og har siden hævet sig, så der i dag ligger aflejringer fra havet på tørt land.
+
+## Sådan bruger I kortet
+
+1. Åbn Danmarks geologiportal: [data.geus.dk/geusmap/?mapname=denmark](https://data.geus.dk/geusmap/?mapname=denmark).
+2. Klik på «For nemmere søgning, klik her for at udvide alle menuer» øverst til venstre. Så kan I se alle lagene.
+3. I skal bruge disse lag under *Terrænnære kort*:
+   - **Højde- og dybdekort** (under *Digital højdemodel*)
+   - **Jordartskort 1:200 000** (under *Geologi*)
+   - **Israndslinjer i Norden** (under *Geologi*) — viser, hvor isranden lå på forskellige tidspunkter
+   - **Geomorfologi** (under *Geologi*) — viser landskabsformerne
+4. Tænd ét lag ad gangen. Klik på lagets symbol for at se signaturforklaringen, og zoom ind og ud for at se detaljerne.
+
+::: {.callout-tip}
+## Tip
+
+Lagene kan lægges oven på hinanden. Prøv fx at tænde *Israndslinjer i Norden* oven på *Jordartskort 1:200 000*, så I kan se, hvordan jordarterne skifter ved isranden.
+:::
+
+## Fremgangsmåde og registrering
+
+1. Tænd *Israndslinjer i Norden*. Find hovedopholdslinjen: den israndslinje, der går ned gennem Midtjylland fra Viborg-egnen til Padborg. Tegn den ind på et kort over Danmark, eller tag et skærmbillede.
+2. Tænd *Højde- og dybdekort*. Beskriv terrænet øst og vest for linjen: er det fladt eller bakket, højt eller lavt? Finder I bakkeøer vest for linjen?
+3. Tænd *Jordartskort 1:200 000*. Find de dominerende jordarter vest for hovedopholdslinjen, øst for hovedopholdslinjen og nord for Limfjorden.
+4. Tænd *Geomorfologi*. Hvilke landskabstyper dominerer de tre steder?
+5. Skriv jeres iagttagelser i @tbl-1.
+
+| | Vest for hovedopholdslinjen | Øst for hovedopholdslinjen | Nord for Limfjorden |
+|:---|:-:|:-:|:-:|
+| Terræn (fladt/bakket, højt/lavt) | | | |
+| Dominerende jordarter | | | |
+| Landskabstype (geomorfologi) | | | |
+| Eksempel på en by i området | | | |
+
+: Iagttagelser fra GEUS' kortlag. {#tbl-1}
+
+## Journalspørgsmål
+
+1. Hvad er hovedopholdslinjen, og hvorfor er den så vigtig for at forstå Danmarks landskab?
+2. Forklar, hvorfor jordarterne er forskellige vest og øst for hovedopholdslinjen og nord for Limfjorden. Brug begreberne moræne, smeltevandsslette og hævet havbund.
+3. Hvorfor er terrænet fladt på smeltevandssletterne og mere bakket i morænelandskabet?
+4. Hvordan kan bakkeøerne i Vestjylland være ældre end resten af landskabet omkring dem?
+5. Hvorfor er lerjordene øst for linjen generelt bedre landbrugsjord end sandjordene mod vest? Tænk på næringsstoffer og evnen til at holde på vand. Hvad betyder det for, hvor landmændene vander mest?
+6. Hvordan kan det være, at der ligger aflejringer fra havet flere meter over havniveau nord for Limfjorden?
+7. Vurdér kortene som kilde: hvad kan et jordartskort i målestok 1:200 000 vise, og hvad kan det ikke vise? Hvornår ville man have brug for kortet i 1:25 000?
+
+## Om denne udgave
+
+Bygger på «Kortøvelse til istidslandskaber» fra NF-forløbet *Fødevarer* (2016, brugt igen i 2018/19), hvor GEUS' danmarkskort bruges til at finde hovedopholdslinjen og sammenligne højde og jordarter. Spørgsmålene er bevaret og samlet i registreringsskemaet og journalspørgsmålene. Ændret i forhold til originalen:
+
+- GEUS' kortportal hedder nu *Danmarks geologiportal*, og lagene har fået nye navne. Det lange link med zoomniveau og koordinater er skiftet til et kort link, og lagnavnene er opdateret: «Højde og dybde» → *Højde- og dybdekort*, «Jordartskort» → *Jordartskort 1:200 000*, «Israndslinjer og isafsmeltning» → *Israndslinjer i Norden*. Laget viser ikke længere hovedopholdslinjen med navn, så vejledningen beskriver nu, hvor den går.
+- Nyt: laget *Geomorfologi*, et baggrundsafsnit om Weichsel-istiden, moræne, smeltevandsslette, bakkeøer og hævet havbund, og journalspørgsmål om landbrugsjord og om kortenes målestok.
+- Øvelsen er en kortøvelse uden målinger og har derfor ikke noget afsnit med databehandling.
