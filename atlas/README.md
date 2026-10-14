@@ -3,6 +3,54 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Find landet — Europa (v413)
+
+**Quiz → Start Europa-quiz** giver ét landenavn ad gangen i en blandet
+rækkefølge uden gentagelser. Klik/tryk på landet på den eksisterende globus.
+Rigtigt svar farver landet grønt og giver automatisk næste spørgsmål efter
+ét sekund. Forkert quizland giver feedback og et nyt forsøg på samme land.
+Tryk uden for quizlandene ændrer ikke scoren. Gentagne klik i feedbackpausen
+tæller ikke som nye svar. Efter alle 47 vises antal rigtige i første forsøg,
+forkerte svar og lande, som blev vist med hjælp. Der er ingen tidspres eller
+login. Nyt spil nulstiller forløbet.
+
+**Vis landet** centrerer landet og tæller som hjælp; eleven vælger selv
+**Næste land**. **Europa/Home** viser Europa igen uden at nulstille spørgsmål.
+Træk, tofingerzoom, +/− og de eksisterende piletaster bevares; quizzen kan
+zoome op til 8×. Med fokus på canvas finjusterer Shift+pil rotationen, og
+Enter vælger landet under sigtekornet. Syv små lande har diskrete ringe ved
+deres geografiske sigtepunkter. Ringene er ikke deres areal; zoom ind for at
+skelne tætte placeringer. Der vises ingen landenavne ved hover i quizzen.
+
+Quizzen bruger FN M49's 44 europæiske stater samt Cypern, Tyrkiet og Kosovo
+som selvstændigt quizområde: 47 i alt. Rusland og Tyrkiets fulde territorier
+kan udpeges. Cypern samler kildens tre administrative områder til ét
+quizområde. Selvstyrende og afhængige territorier er ikke egne spørgsmål.
+Dette er en oplyst skoleinddeling; Europabegrebet er ikke entydigt.
+Danske navne, sigtepunkter og den fulde liste står i `quizmodel.js`.
+
+`europa-quiz.js` hentes først ved start; det samme gælder det lokale,
+versionsbundne `europa-10m.json` (ca. 824 kB) og topojson-simplify (5,7 kB).
+Natural Earth 1:10 mio. har generaliserede kyster. Vatikanets polygon
+kollapser ved kildens kvantisering og repræsenteres derfor af sin ring.
+Kilde, kontrolsum, bearbejdning og licens står i `data/europa-10m.LICENSE`.
+Tegningen bruger topologisk fælles forenklede buer efter zoomniveau; hit-test
+bruger altid de oprindelige polygoner og de synlige smålandes ringe.
+
+Quizzen bruger hele det eksisterende kortområde med en kompakt spørgelinje.
+Markører og pladelag skjules under spillet, og **Afslut quiz/Escape**
+gendanner globussens tidligere vinkel, zoom og tilvalg. Danmarkskort,
+simulationer og Island-modul bevares. Start fra et åbent Danmarkskort fører
+til globusquizzen og tilbage til globussen. Data-/biblioteksfejl bevarer
+atlasnavigationen; en lukket startdialog må ikke starte spillet senere.
+
+`node atlas/test/quizmodel.mjs` kontrollerer rækkefølge, 47 unikke spørgsmål,
+fejl, hjælp, gentagne svar, afslutning og nyt spil. `test/europa_quiz.py`
+indgår i den samlede browsertest: et fuldt forløb med korrekte landetryk på
+alle 47, fem elevskærme, touch, tastatur, finjustering, hjælp, scorenulstilling,
+tilbage-navigation med pladetilvalg, indlæsningsfejl og afbrudt start.
+Afprøvet i Chromium uden WebGL; Safari og fysiske telefoner er ikke testet.
+
 ## Første landekort: Danmark (v410)
 
 Danmark er fremhævet på globussen. Tryk på selve landets geometri for at åbne
@@ -259,6 +307,8 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | d3-array | 3.2.4 | [D3](https://github.com/d3/d3-array), ISC; `vendor/d3-array.LICENSE` |
 | d3-geo | 3.1.1 | [D3](https://github.com/d3/d3-geo), ISC; `vendor/d3-geo.LICENSE` |
 | topojson-client | 3.1.0 | [TopoJSON](https://github.com/topojson/topojson-client), ISC; `vendor/topojson-client.LICENSE` |
+| topojson-simplify | 3.0.3 | [TopoJSON](https://github.com/topojson/topojson-simplify), ISC; `vendor/topojson-simplify.LICENSE`; hentes kun til quiz |
+| europa-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/europa-10m.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
 | countries-50m.json | world-atlas 2.0.2, 1:50 mio. | Uændret baggrundskort, samme world-atlas/Natural Earth-licens; kontrolsum i `data/danmark-10m.LICENSE` |
 | danmark-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; kildens SHA-256 og bearbejdning i `data/danmark-10m.LICENSE` |

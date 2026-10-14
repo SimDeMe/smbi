@@ -76,3 +76,18 @@ body.pladelag .globusnote{display:none}
 @media(max-width:500px){.landetop{gap:8px;font-size:16px}}
 .kortstatus.landestatus{top:auto;bottom:12px;left:12px;transform:none;width:calc(100% - 24px);max-width:640px;padding:8px;font-size:14px;pointer-events:none}
 @media(min-width:900px){.kortstatus.landestatus{bottom:64px}}
+/* Quizzen bruger selve globussen; kun en kompakt spørgelinje tilføjes. */
+.vaerktoejer{flex-wrap:wrap}.lagvalg{margin-left:auto}
+.quizlinje{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.quiz-spoergsmaal{flex:1;min-width:190px;font:500 17px/1.25 var(--display)}#quiz-land{font-size:22px}#quiz-fremskridt{font:12px var(--mono);white-space:nowrap;margin-left:8px}
+#quiz-besked{display:block;margin-top:4px;font:14px/1.25 var(--body)}.quiz-handlinger{display:flex;gap:6px;flex-wrap:wrap}
+body.quiz .intro,body.quiz .eftertekst,body.quiz .indgange,body.quiz #pladelag,body.quiz #markoerer,body.quiz .globusnote,body.quiz #signatur{display:none}
+body.quiz .globusrum{height:calc(100svh - 290px);min-height:340px}
+.quizsigte{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:32px/1 monospace;color:var(--ink);text-shadow:0 0 3px white,0 0 3px white;pointer-events:none}
+body.quiz #globus:focus-visible~.quizsigte{display:block}
+@media(min-width:900px){.eftertekst{margin-left:420px}body.quiz .globusrum{height:calc(100svh - 154px);min-height:300px}body.quiz.fokus .globusrum{height:calc(100svh - 110px)}}
+@media(max-width:500px){.quizlinje{gap:6px}.quiz-spoergsmaal{flex-basis:100%;min-width:0;font-size:15px}#quiz-land{font-size:19px}.quiz-handlinger button{padding:6px 9px;font-size:12px}body.quiz .lagvalg{align-self:flex-start}body.quiz.fokus .globusrum{height:calc(100svh - 240px)}}
+/* To tekstlinjer feedback holder kontrollerne i ro mellem spørgsmål. */
+#quiz-besked{min-height:2.5em}
+@media(max-width:500px){body.quiz .globusrum{height:calc(100svh - 320px)}.quiz-spoergsmaal{min-height:90px}body.quiz.fokus .globusrum{height:calc(100svh - 280px)}}
+@media(min-width:501px) and (max-width:800px){.vaerktoejer .ikon{display:none}}

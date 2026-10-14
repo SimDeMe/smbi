@@ -9,9 +9,11 @@ let senesteFokus;
 let danmarkskort;
 let landAktivt = false;
 let henterLand = false;
+let quiz;
+let henterQuiz = false;
 
 async function visDanmark() {
-  if (!globus || henterLand) return;
+  if (!globus || henterLand || henterQuiz || quiz) return;
   henterLand = true;
   const status = document.querySelector('#kortstatus');
   status.classList.add('landestatus');
@@ -73,6 +75,42 @@ document.querySelector('#landekilde').onclick = () => {
   const kilde = element('a', 'Natural Earth: data og vilkår →');
   kilde.href = 'https://www.naturalearthdata.com/about/terms-of-use/';
   indhold.append(kilde);
+};
+
+document.querySelector('#quiz').onclick = () => {
+  aabn('Find landet — Europa');
+  indhold.append(element('p', 'Du får ét landenavn ad gangen. Udpeg landet på globussen. Et rigtigt svar sender dig videre til det næste land, indtil du har været igennem alle 47 i tilfældig rækkefølge.'));
+  indhold.append(element('p', 'Forkert land? Prøv igen. Vis landet hjælper dig videre og tæller som hjælp. Små lande er markeret med ringe; zoom ind for at skelne dem. Du kan dreje og zoome hele tiden.'));
+  indhold.append(element('p', 'Tastatur: brug piletaster til at dreje og +/− til zoom med fokus på globussen. Shift+pil finjusterer. Enter vælger landet under sigtekornet midt på globussen.'));
+  const detaljer = element('details', '', 'pladeoversigt');
+  detaljer.append(element('summary', 'Lande, afgrænsning og kortkilde'));
+  detaljer.append(element('p', 'Quizzen bruger en bred europæisk skoleinddeling: FN’s 44 europæiske stater samt Cypern, Tyrkiet og Kosovo som selvstændigt quizområde. Selvstyrende områder og afhængige territorier er ikke egne spørgsmål. Rusland og Tyrkiet kan udpeges på begge sider af Europa/Asien-grænsen. Storbritannien og Nordirland er ét land. Cypern behandles som ét quizområde.'));
+  detaljer.append(element('p', 'Natural Earth 1:10 mio. via world-atlas 2.0.2, public domain / ISC. Kyster og grænser er generaliserede og er ikke en stillingtagen til omstridte områder. Ringene viser placering, ikke landenes areal. Vatikanets polygon kollapser i kildens koordinatkvantisering og repræsenteres af sin ring.'));
+  const kilde = element('a', 'FN’s geografiske inddeling →'); kilde.href = 'https://unstats.un.org/unsd/methodology/m49/'; detaljer.append(kilde);
+  const start = element('button', 'Start Europa-quiz'); start.id = 'quiz-start'; start.disabled = !globus;
+  const status = element('p', !globus ? 'Quizzen kræver, at globussen kan vises. Alle simulationer er stadig tilgængelige.' : '');
+  status.id = 'quiz-status'; status.setAttribute('role', 'status');
+  start.onclick = async () => {
+    if (henterQuiz || henterLand || quiz) return;
+    henterQuiz = true; start.disabled = true; start.setAttribute('aria-busy', 'true'); status.textContent = 'Henter Europakort …';
+    try {
+      const { startEuropaQuiz } = await import('./europa-quiz.js');
+      quiz = await startEuropaQuiz(globus, () => {
+        if (!dialog.open || document.querySelector('#quiz-start') !== start) throw new Error('Quizstart afbrudt');
+        tilbageTilGlobus(false);
+        if (valgpanel.matches(':popover-open')) valgpanel.hidePopover();
+        senesteFokus = canvas; dialog.close();
+        document.querySelector('#kortstatus').hidden = true;
+      }, () => {
+        quiz = null; opdaterPladebeskrivelse();
+        document.querySelector('#betjening').textContent = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på Danmark for landekort.';
+        document.querySelector('#quiz').focus({ preventScroll: true });
+      });
+    } catch {
+      status.textContent = 'Europakortet kunne ikke hentes. Prøv igen, eller genindlæs siden. Globussen og simulationerne kan stadig bruges.';
+    } finally { henterQuiz = false; start.disabled = false; start.removeAttribute('aria-busy'); }
+  };
+  indhold.append(detaljer, start, status);
 };
 
 function element(type, tekst, klasse) {
@@ -242,12 +280,15 @@ document.addEventListener('keydown', event => {
     event.preventDefault();
     panel.hidePopover();
     document.querySelector('#pladevisning').focus({ preventScroll: true });
+  } else if (!dialog.open && quiz) {
+    event.preventDefault(); quiz.stop();
   } else if (!dialog.open && landAktivt) {
     event.preventDefault(); tilbageTilGlobus();
   } else if (!dialog.open && document.body.classList.contains('fokus')) document.querySelector('#fokus').click();
 });
 document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
+  indhold.append(element('p', 'Quiz → Europa: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Europa/Home viser hele Europa igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på selve Danmark på globussen for at åbne landekortet. Zoom ind, hvis landet er for lille at ramme. Danmark kan også vælges med tastatur under Steder. Det er det første land med eget kort. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));

@@ -1,0 +1,15 @@
+Europa-quiz: Natural Earth, public domain, via world-atlas 2.0.2 (ISC).
+Se world-atlas.LICENSE og https://www.naturalearthdata.com/about/terms-of-use/
+Kilde: https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-10m.json
+Kildens SHA-256: 3bc6f1d367a9bcec479841bae0e76092f512838411d0cef124e92eec4db45f79
+
+Udtag af 47 lande/quizområder i quizmodel.js. Ubrugte topologibuer fjernet;
+bevarede buer omnummereret uden ændring af koordinater eller transform.
+Danske navne erstatter name. Kosovo tildeles lokal quizkode XKX (ingen ISO-kode).
+Cypern samler kildens Cyprus, N. Cyprus og Cyprus U.N. Buffer Zone i samme
+quizområde; de oprindelige polygoner bevares. Kortgrænser er orientering,
+ikke en stillingtagen til omstridte områder. Generaliserede kyster, 1:10 mio.
+Små landes ringe er orienteringsmærker ved sigtepunkter, ikke deres areal.
+Udvalget: FN M49 Europas 44 stater + Cypern, Tyrkiet og Kosovo. Selvstyrende
+områder som Færøerne og afhængige territorier indgår ikke som spørgsmål.
+https://unstats.un.org/unsd/methodology/m49/

@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v412</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v413</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -48,6 +48,11 @@
           <button aria-label="Steder" data-indgang="steder" aria-haspopup="dialog"><span class="ikon" aria-hidden="true">⌖</span> <span>Steder</span></button>
           <button aria-label="Processer" data-indgang="processer" aria-haspopup="dialog"><span class="ikon" aria-hidden="true">≋</span> <span>Processer</span></button>
           <button aria-label="Søg" data-indgang="soeg" aria-haspopup="dialog"><span class="ikon" aria-hidden="true">⌕</span> <span>Søg</span></button>
+          <button id="quiz" aria-haspopup="dialog">Quiz</button>
+        </div>
+        <div id="quizlinje" class="quizlinje" hidden>
+          <div class="quiz-spoergsmaal" role="status" aria-live="polite" aria-atomic="true"><span id="quiz-find">Find </span><strong id="quiz-land"></strong> <output id="quiz-fremskridt" aria-label="Fundne lande"></output><span id="quiz-besked"></span></div>
+          <div class="quiz-handlinger"><button id="quiz-vis">Vis landet</button><button id="quiz-naeste" hidden>Næste land →</button><button id="quiz-igen" hidden>Prøv igen</button><button id="quiz-stop">Afslut quiz</button></div>
         </div>
         <div class="lagvalg">
           <button id="pladelag" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
@@ -56,6 +61,7 @@
       </nav>
       <div id="globusrum" class="globusrum">
         <canvas id="globus" tabindex="0" role="img" aria-label="Interaktiv jordglobus med lande, hav og tre faglige adgangspunkter" aria-describedby="betjening"></canvas>
+        <span class="quizsigte" aria-hidden="true">+</span>
         <div id="markoerer" aria-label="Steder på den synlige halvklode"></div>
         <div id="landetop" class="landetop" hidden><button id="til-globus">← Globus</button><strong>Danmark</strong><button id="landekilde" aria-label="Om Danmarkskortet" aria-haspopup="dialog">ⓘ</button></div>
         <div class="globusnote" aria-hidden="true"><span class="overlinje">Fra sted til model</span><p>Hvilke kræfter<br>former verden?</p><span class="lille">Vælg en markør<br>og gå på opdagelse.</span></div>
