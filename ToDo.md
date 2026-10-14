@@ -12,8 +12,9 @@ reduceret bevægelse vises trinnene færdige.
 
 - `geografi/pladegraenser.html` — glid mellem grænsetyperne, så det ses, at det
   er samme plader med en anden bevægelsesretning.
-- `geografi/TermiskTryk3.html` — har allerede bløde overgange i «Trin for trin»;
-  se om rækkefølgen inden for hvert trin kan vise årsagskæden
+- `geografi/TermiskTryk3.html` (v2.0) — har allerede bløde overgange, når
+  figuren bygges op trin for trin i Forklaring-fanen; se om rækkefølgen inden
+  for hvert trin kan vise årsagskæden
   (opvarmning → luften udvider sig → trykket falder → vinden blæser).
 
 ## Video af simuleringerne (HyperFrames el.lign.)
@@ -152,11 +153,13 @@ Testet i Chromium med en falsk Firebase (auth + Firestore i hukommelsen) i
 
 Læg dem om én ad gangen efter `geografi/Stigningsregn.html` (afsnit 7 i
 `design_rules.md`): `node værktøj/pladstjek.mjs <side>` før og efter, kig på
-skærmbillederne, nyt versionsnummer, modellen uændret. Tallet er, hvor meget
+skærmbillederne, nyt versionsnummer, modellen uændret.
+`geografi/TermiskTryk3.html` (v2.0) er lagt om med faner i sidespalten og
+aflæsningerne inde i tegningen — et forlæg, når sidespalten skal rumme mere
+end instrumenter og skydere. Tallet er, hvor meget
 panelet manglede ved 1366×625 (`pladstjek --alle`, 5. oktober 2026).
 
-Først (mangler mest plads): `geografi/TermiskTryk3.html` (1190 px),
-`biologi/enzymkinetik.html` (858), `geografi/vulkanudbrud.html` (596),
+Først (mangler mest plads): `biologi/enzymkinetik.html` (858), `geografi/vulkanudbrud.html` (596),
 `geografi/drivhuseffekten.html` (564).
 
 Derefter — kan ikke ses straks på nogen af de lave skærme:

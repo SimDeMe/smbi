@@ -54,8 +54,9 @@
 
   --wide:'wdth' 118;
   --max:1180px;
-  --fig:560px;         /* figurens højdebudget — sættes af
+  --fig:420px;         /* figurens højdebudget — sættes af
                         scriptet "Højdebudget" nederst */
+  --side:340px;        /* sidespalten med fanerne */
 
   --hard:4px 4px 0 var(--ink);
   --hard-lg:7px 7px 0 var(--ink);
@@ -162,16 +163,15 @@ h1{
   padding:11px 15px;border-bottom:2px solid var(--ink);
   background:#E7F4FB;
 }
+.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  letter-spacing:0.08em;color:var(--slate)}
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
 .dot{
   width:9px;height:9px;border-radius:50%;background:var(--accent);
   border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite;
 }
-.rig-head .who{
-  margin-left:auto;font-family:var(--mono);font-size:0.6rem;font-weight:600;
-  letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69;
-}
+#btn-projektor{margin-left:auto}
 .btn-mini{
   font-family:var(--display);font-size:0.72rem;font-weight:700;
   background:#fff;border:2px solid var(--ink);color:var(--ink);
@@ -189,15 +189,10 @@ h1{
 /* ── Rækkeetiket ───────────────────────────────────────── */
 .rowlab{
   font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.13em;
-  text-transform:uppercase;color:#5A6C69;margin-bottom:9px;display:block;
+  text-transform:uppercase;color:#5A6C69;margin-bottom:7px;display:block;
 }
 
-/* ── Cases ─────────────────────────────────────────────── */
-.cases{
-  border-top:2px solid var(--ink);background:var(--paper-2);
-  padding:14px 15px 15px;
-}
-.case-row{display:flex;gap:8px;flex-wrap:wrap}
+/* ── Knapper ───────────────────────────────────────────── */
 .btn{
   font-family:var(--display);font-size:0.82rem;font-weight:700;color:var(--ink);
   background:#fff;border:2px solid var(--ink);border-radius:20px;
@@ -214,137 +209,31 @@ h1{
 .btn-sm{font-size:0.74rem;padding:5px 12px;box-shadow:2px 2px 0 var(--ink)}
 .btn-sm:hover{box-shadow:4px 4px 0 var(--ink)}
 .btn-sm:active,.btn-sm[aria-pressed="true"]{box-shadow:0 0 0 var(--ink)}
-.case-desc{
-  margin-top:11px;font-size:0.95rem;color:#3E4E4C;max-width:78ch;
-}
+.btn-sm:disabled:hover{transform:none;box-shadow:1px 1px 0 var(--ink)}
 
-/* ── Scenen ────────────────────────────────────────────── */
+/* ── Figurspalten: scenen og tidsrækken under den ──────── */
 .stage{
-  position:relative;border-top:2px solid var(--ink);
-  padding:12px 12px 12px;
+  position:relative;padding:10px;
   background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
 }
 canvas{
   display:block;width:100%;
   border:2px solid var(--ink);border-radius:12px;background:var(--paper);
 }
-
-/* ── Trin-navigation ───────────────────────────────────── */
-.steps{
-  border-top:2px solid var(--ink);background:#fff;
-  padding:11px 15px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.step-ind{
-  font-family:var(--display);font-variation-settings:'wdth' 108;
-  font-weight:800;font-size:0.9rem;letter-spacing:-0.01em;
-  border:2px solid var(--ink);border-radius:18px;padding:3px 13px;background:var(--paper-2);
-  font-variant-numeric:tabular-nums;
-}
-.steps .spacer{margin-left:auto}
-
-/* ── Kausalkæden ───────────────────────────────────────── */
-.chain-wrap{border-top:2px solid var(--ink);background:var(--panel);padding:15px 15px 18px}
-.chain{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 14px}
-.chain-btn{
-  display:flex;gap:11px;align-items:flex-start;width:100%;height:100%;text-align:left;
-  font-family:var(--body);font-size:0.92rem;line-height:1.4;color:#3E4E4C;
-  background:var(--paper);border:2px solid var(--ink);border-radius:14px;
-  padding:9px 13px;cursor:pointer;
-  transition:transform .12s,box-shadow .12s,background .16s,color .16s,opacity .2s;
-}
-.chain-btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
-.chain-n{
-  flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--ink);
-  background:#fff;font-family:var(--display);font-weight:800;font-size:0.72rem;
-  display:flex;align-items:center;justify-content:center;line-height:1;
-}
-.chain li.on .chain-btn{
-  background:var(--paper-2);color:var(--ink);box-shadow:3px 3px 0 var(--ink);
-}
-.chain li.on .chain-n{background:var(--amber)}
-.chain li.dim .chain-btn{opacity:.4}
-
-/* ── Instrumenter ──────────────────────────────────────── */
-.gauges{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  border-top:2px solid var(--ink);
-}
-.gauge{
-  padding:13px 15px 14px;border-left:2px solid var(--ink);
-  display:flex;flex-direction:column;gap:8px;
-}
-.gauge:first-child{border-left:none}
-.g-l{background:#FFF1EC}
-.g-r{background:#E7F4FB}
-.g-dt{background:#F1ECFC}
-.g-wind{background:#EDF8E4}
-.gauge dt{
-  font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;
-  text-transform:uppercase;color:#5A6C69;
-}
-.gauge dd{
-  font-family:var(--display);font-variation-settings:'wdth' 108;
-  font-weight:800;font-size:1.28rem;line-height:1;font-variant-numeric:tabular-nums;
-}
-.gauge dd small{font-size:0.66em;font-weight:700;color:#5A6C69;margin-left:2px}
-.g-viz{display:flex;align-items:flex-end;gap:10px;height:46px}
-.g-sub{
-  font-family:var(--mono);font-size:0.55rem;font-weight:500;letter-spacing:0.08em;
-  text-transform:uppercase;color:#5A6C69;line-height:1.5;
-}
-.g-sub b{font-family:var(--display);font-size:0.78rem;font-weight:800;letter-spacing:0;color:var(--ink)}
-
-/* termometer */
-.thermo{
-  position:relative;width:14px;height:44px;flex:none;
-  border:2px solid var(--ink);border-radius:9px;background:#fff;overflow:hidden;
-}
-.thermo i{
-  position:absolute;left:0;right:0;bottom:0;display:block;
-  background:var(--tc,var(--coral));height:50%;
-  transition:height .18s linear,background .3s;
-}
-.ticks{display:flex;flex-direction:column;justify-content:space-between;height:44px}
-.ticks span{font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#7E8F8C;letter-spacing:.04em}
-
-/* ΔT-bjælke: nulpunkt i midten, udslag til begge sider */
-.dtbar{
-  position:relative;width:100%;height:24px;flex:1;
-  border:2px solid var(--ink);border-radius:9px;background:#fff;overflow:hidden;
-}
-.dtbar i{
-  position:absolute;top:0;bottom:0;display:block;background:var(--dc,var(--grape));
-  left:50%;width:0;transition:left .18s linear,width .18s linear,background .3s;
-}
-.dtbar u{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:var(--ink)}
-.dtbar b{
-  position:absolute;left:5px;bottom:2px;
-  font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#5A6C69;letter-spacing:.06em;
-}
-.dtbar b.hi-end{left:auto;right:5px}
-
-/* vindpil */
-.wind-arrow{
-  font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1;
-  border:2px solid var(--ink);border-radius:12px;background:#fff;
-  padding:8px 12px;display:inline-flex;align-items:center;gap:8px;
-}
-
-/* ── Kontrolpanel ──────────────────────────────────────── */
-.knobs{
+.tid{
   border-top:2px solid var(--ink);background:var(--paper-2);
-  padding:18px 15px 20px;
-  display:grid;grid-template-columns:1fr 1fr;gap:20px 26px;
+  padding:9px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
 }
-.knob{display:flex;flex-direction:column;gap:7px}
-.knob-top{display:flex;align-items:baseline;gap:10px}
-.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.tid input[type=range]{flex:1 1 120px;min-width:70px}
+@media (min-width:960px){.tid{flex-wrap:nowrap}}
 .knob-val{
-  margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
-  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
-  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;
+  font-family:var(--display);font-variation-settings:'wdth' 108;
+  font-weight:800;font-size:0.9rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 10px;
   white-space:nowrap;
 }
+#btn-play{min-width:5.6em}
+
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;
 }
@@ -368,38 +257,122 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 #sl-time{--track:linear-gradient(90deg,#2E4A6A,#9BE0F5 25%,#FFB300 50%,#9BE0F5 75%,#2E4A6A);--kc:var(--amber)}
 #sl-dt{--track:linear-gradient(90deg,#0E86C8,#FFFFFF,#FF6A3D);--kc:var(--coral)}
 
-.btn-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-select{
-  font-family:var(--display);font-size:0.82rem;font-weight:700;color:var(--ink);
-  background:#fff;border:2px solid var(--ink);border-radius:14px;
-  padding:5px 9px;width:100%;cursor:pointer;
+/* ── Sidespalten: tre faner ────────────────────────────── */
+.side{border-top:2px solid var(--ink);background:var(--paper-2)}
+.side-in{display:flex;flex-direction:column}
+.tabs{display:flex;background:#fff}
+.tab{
+  flex:1;font-family:var(--display);font-size:0.8rem;font-weight:700;color:var(--ink);
+  background:#fff;border:none;border-bottom:2px solid var(--ink);
+  padding:9px 6px 8px;cursor:pointer;transition:background .16s;
 }
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tab + .tab{border-left:2px solid var(--ink)}
+.tab:hover{background:#E7F4FB}
+.tab[aria-selected="true"]{
+  background:var(--paper-2);border-bottom-color:transparent;
+  box-shadow:inset 0 4px 0 var(--accent);
+}
+.tab:focus-visible{outline-offset:-4px}
+.fane{
+  flex:1;min-height:0;overflow:auto;
+  padding:12px 14px 13px;display:flex;flex-direction:column;gap:10px;
+}
+.fane[hidden]{display:none}
+
+/* Forklaring */
+.trin-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.trin-ind{
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.13em;
+  text-transform:uppercase;color:#5A6C69;margin-left:auto;
+}
+.trin-prikker{display:flex;gap:5px}
+.trin-prik{
+  width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);
+  background:#fff;font-family:var(--display);font-weight:800;font-size:0.74rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;
+  opacity:.45;transition:transform .12s,box-shadow .12s,background .16s,opacity .16s;
+}
+.trin-prik.naaet{opacity:1}
+.trin-prik:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--ink)}
+.trin-prik[aria-current="step"]{background:var(--amber);opacity:1;box-shadow:2px 2px 0 var(--ink)}
+.trin-tekst{display:none}
+.trin-tekst.on{display:block}
+.trin-tekst h3{
+  font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;
+  font-size:1.02rem;line-height:1.2;letter-spacing:-0.01em;margin-bottom:6px;
+}
+.trin-tekst p{font-size:0.94rem;line-height:1.48;color:#2E3B39}
+.byg{margin-top:auto;padding-top:10px;border-top:2px dashed #C9C2B0}
+
+/* Case */
+.case-liste{display:flex;flex-direction:column;gap:8px}
+.case-liste .btn{text-align:left;width:100%}
+.case-desc{font-size:0.92rem;line-height:1.45;color:#3E4E4C}
+
+/* Indstillinger */
+.felt-valg{display:grid;grid-template-columns:auto 1fr;gap:7px 10px;align-items:center}
 .field-lab{
   font-family:var(--mono);font-size:0.55rem;font-weight:600;letter-spacing:0.1em;
-  text-transform:uppercase;color:#5A6C69;display:block;margin-bottom:4px;
+  text-transform:uppercase;color:#5A6C69;
 }
-.knob-lag{grid-column:1 / -1}
-.checks{display:flex;gap:8px 20px;flex-wrap:wrap}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.knob-top{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.knob-top .rowlab{margin:0}
+.knob-top .knob-val{margin-left:auto;font-size:0.82rem}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
 .check{
-  display:inline-flex;align-items:center;gap:7px;font-size:0.88rem;color:#3E4E4C;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;font-size:0.86rem;line-height:1.3;color:#3E4E4C;cursor:pointer;
 }
 .check input{
   width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:none;
 }
+.blok + .blok{padding-top:9px;border-top:2px dashed #C9C2B0}
+.note{font-size:0.8rem;color:#5A6C69;margin-top:5px;line-height:1.35}
 
-/* ── Fakta-fod ─────────────────────────────────────────── */
-.facts{
-  border-top:2px solid var(--ink);background:#fff;
-  padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+/* ── Sidespalte fra 960 px ─────────────────────────────────
+   Skærmene er brede, ikke høje. Figuren og tidsrækken står til
+   venstre, fanerne til højre. Sidespalten er lagt absolut ind i sin
+   celle, så det er figuren, der bestemmer panelets højde; er en fane
+   længere, ruller den i sit eget felt. Hoved og panel deler én spalte,
+   der er præcis så bred som panelet, så kanterne flugter. */
+@media (min-width:960px){
+  .sim{display:grid;justify-content:center}
+  .sim > .head{width:0;min-width:100%}   /* spalten følger panelet, ikke titlen */
+  .rig-body{
+    display:grid;
+    grid-template-columns:
+      min(calc(var(--fig)*1.9 + 24px),
+          calc(var(--max) - 48px - var(--side) - 7px),
+          calc(100vw - 48px - var(--side) - 7px))
+      var(--side);
+  }
+  .rig-head{width:0;min-width:100%}       /* hovedet følger panelet, ikke omvendt */
+  .side{border-top:none;border-left:2px solid var(--ink);position:relative}
+  .side-in{position:absolute;inset:0}
 }
-.fact{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--paper);border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
-  font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+
+/* ── Lave skærme ───────────────────────────────────────────
+   En laptop med faner og adresselinje har 580–700 px i højden.
+   Topbjælken bliver smal og klæber ikke, og sidehovedet lægger
+   indledningen ved siden af titlen, så panelet kan ses straks. */
+@media (max-height:820px){
+  .top{position:relative}
+  .top-in{height:46px}
+  .brand-mark{width:21px;height:21px;border-radius:8px}
 }
-.fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
-.fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0}
+@media (min-width:960px) and (max-height:820px){
+  .head{padding:12px 0 0}
+  .head::before{width:300px;height:300px;top:-190px;right:-60px}
+  .head-in{
+    display:grid;grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"eye lead" "h1 lead";column-gap:32px;align-items:end;
+  }
+  .eyebrow{grid-area:eye;justify-self:start}
+  h1{grid-area:h1;font-size:clamp(1.7rem,2.6vw,2.2rem);margin:10px 0 0}
+  .lead{grid-area:lead;font-size:0.94rem;line-height:1.45;max-width:46ch;justify-self:end}
+  .rig{margin-top:14px}
+  .rig-head{padding:8px 15px}
+}
 
 /* ── Bund ──────────────────────────────────────────────── */
 .foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
@@ -423,48 +396,36 @@ select{
 body[data-projektor="1"] .top,
 body[data-projektor="1"] .head,
 body[data-projektor="1"] .foot{display:none}
+body[data-projektor="1"]{--max:100vw;--side:420px}
 body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
 body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
-body[data-projektor="1"] .gauge dt{font-size:0.74rem}
-body[data-projektor="1"] .gauge dd{font-size:1.9rem}
-body[data-projektor="1"] .gauge dd small{font-size:0.95rem}
-body[data-projektor="1"] .g-sub{font-size:0.68rem}
-body[data-projektor="1"] .g-sub b{font-size:0.95rem}
 body[data-projektor="1"] .rig-live .mono{font-size:0.9rem}
-body[data-projektor="1"] .chain-btn{font-size:1.02rem}
+body[data-projektor="1"] .tab{font-size:1rem}
+body[data-projektor="1"] .trin-tekst h3{font-size:1.25rem}
+body[data-projektor="1"] .trin-tekst p{font-size:1.12rem}
 body[data-projektor="1"] .case-desc{font-size:1.05rem}
-body[data-projektor="1"] .knob-top .mono{font-size:0.8rem}
 body[data-projektor="1"] .knob-val{font-size:1.05rem}
-body[data-projektor="1"] .fact{font-size:0.72rem}
-body[data-projektor="1"] .fact b{font-size:0.92rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
-@media (max-width:960px){
-  .chain{grid-template-columns:1fr}
-  .knobs{grid-template-columns:1fr}
-}
-@media (max-width:820px){
-  .gauges{grid-template-columns:1fr 1fr}
-  .gauge:nth-child(3){border-left:none}
-  .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
+@media (max-width:959px){
+  #btn-fuld{display:none}   /* fuld skærm er til laptops */
 }
 @media (max-width:620px){
   body{font-size:16px}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
   .head{padding:24px 0 18px}
   .rig{border-radius:14px;box-shadow:var(--hard)}
-  .stage{padding:10px}
+  .stage{padding:8px}
   .rig-live .mono{font-size:0.6rem}
-  .gauge dd{font-size:1.1rem}
-  .two-col{grid-template-columns:1fr}
+  .checks{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
 @media print{
-  .top,.foot,.knobs,.steps,.btn-mini,.case-row{display:none!important}
+  .top,.foot,.btn-mini,.tid,.tabs,.trin-nav,.byg{display:none!important}
   .rig{box-shadow:none;break-inside:avoid}
-  .chain li.dim .chain-btn{opacity:1}
+  .side-in{position:static!important}
 }
 </style>
 <script type="application/ld+json">
@@ -541,170 +502,137 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
 </header>
 
 <main>
-  <div class="wrap head">
+  <div class="wrap sim">
+  <div class="head">
     <div class="head-in">
       <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · tryk &amp; vind</span>
       <h1>Termiske <span class="hi" style="--hc:#C7E6F6">tryksystemer</span></h1>
-      <p class="lead">Solen varmer land og hav forskelligt. Følg kæden hele vejen: varm luftsøjle → trykflader der bules op → høj- og lavtryk → vind ved jorden. Samme mekanisme bag havbrisen ved Lillebælt, det sibiriske vinterhøjtryk og monsunen.</p>
+      <p class="lead">Solen varmer land og hav forskelligt. Følg kæden fra varm luftsøjle over trykflader og høj- og lavtryk til vind ved jorden — samme mekanisme bag havbrisen, det sibiriske højtryk og monsunen.</p>
     </div>
   </div>
 
-  <div class="wrap">
     <section class="rig">
       <div class="rig-bar"></div>
 
       <div class="rig-head">
+        <span class="version" title="Simuleringens version">v2.0</span>
         <span class="rig-live"><span class="dot"></span><span class="mono" id="live-txt">Lillebælt · land/hav-brise · kl. 13:00</span></span>
-        <button type="button" class="btn-mini" id="mode-fri" aria-pressed="true">Fri simulation</button>
-        <button type="button" class="btn-mini" id="mode-trin" aria-pressed="false">Trin for trin</button>
-        <button type="button" class="btn-mini" id="btn-reset">Nulstil case</button>
-        <span class="who">Konceptuel model · Coriolis udeladt</span>
         <button type="button" class="btn-mini" id="btn-projektor" aria-pressed="false"
-                title="Skjul sidens krom og forstør aflæsningerne">Projektor</button>
+                title="Skjul sidens krom og forstør teksten">Projektor</button>
+        <button type="button" class="btn-mini" id="btn-fuld" aria-pressed="false" hidden
+                title="Skjul browserens faner og adresselinje, så figuren får mere plads">⤢ Fuld skærm</button>
       </div>
 
-      <div class="cases">
-        <span class="rowlab" id="case-lab">Case</span>
-        <div class="case-row" id="case-btns" role="group" aria-labelledby="case-lab">
-          <button type="button" class="btn" data-case="lillebaelt" aria-pressed="true">Land/hav-brise · Lillebælt</button>
-          <button type="button" class="btn" data-case="sibirien" aria-pressed="false">Sibirisk vinterhøjtryk</button>
-          <button type="button" class="btn" data-case="monsun" aria-pressed="false">Sommermonsun · Indien</button>
-          <button type="button" class="btn" data-case="monsunvinter" aria-pressed="false">Vintermonsun · Indien</button>
-        </div>
-        <p class="case-desc" id="case-desc"></p>
-      </div>
-
-      <div class="stage" id="stage">
-        <canvas id="stage-canvas" role="img"
-                aria-label="Vertikalt snit gennem atmosfæren fra jorden til 3 km. To overflader side om side, trykflader, høj- og lavtryk samt cirkulationspile. Aflæsningerne står i instrumenterne under figuren."></canvas>
-      </div>
-
-      <div class="steps">
-        <button type="button" class="btn btn-sm" id="btn-prev">◀ Forrige</button>
-        <span class="step-ind" id="step-ind">Alle trin vist</span>
-        <button type="button" class="btn btn-sm" id="btn-next">Næste ▶</button>
-        <span class="spacer"></span>
-        <label class="check"><input type="checkbox" id="chk-tour" checked> Auto-gennemgang af forklaringen</label>
-      </div>
-
-      <div class="chain-wrap">
-        <span class="rowlab">Forklaring · kausalkæden</span>
-        <ol class="chain" id="chain">
-          <li data-step="1"><button type="button" class="chain-btn"><span class="chain-n">1</span><span>Solen opvarmer overfladerne forskelligt: land bliver hurtigt varmt, mens havet kun ændrer sig lidt, fordi vand har stor varmekapacitet.</span></button></li>
-          <li data-step="2"><button type="button" class="chain-btn"><span class="chain-n">2</span><span>Den varme luft udvider sig, så luftsøjlen over det varme felt bliver tykkere, og trykfladerne løftes i højden. Nede ved jorden er trykket endnu uændret.</span></button></li>
-          <li data-step="3"><button type="button" class="chain-btn"><span class="chain-n">3</span><span>I højden ligger trykfladerne nu højest over det varme felt. Deroppe er trykket derfor højest over det varme (H) og lavest over det kolde (L), og luften strømmer fra varmt mod koldt.</span></button></li>
-          <li data-step="4"><button type="button" class="chain-btn"><span class="chain-n">4</span><span>Den luft, der strømmer væk i højden, mangler nu i søjlen over det varme felt. Søjlen vejer mindre, og trykket ved jorden falder: et termisk lavtryk (L). Over det kolde felt lægges der ekstra luft oveni, så trykket ved jorden stiger: et termisk højtryk (H).</span></button></li>
-          <li data-step="5"><button type="button" class="chain-btn"><span class="chain-n">5</span><span>Ved jorden blæser vinden fra højtrykket over det kolde felt mod lavtrykket over det varme felt. Jo større temperaturforskel, desto stærkere vind.</span></button></li>
-          <li data-step="6"><button type="button" class="chain-btn"><span class="chain-n">6</span><span>Luften stiger op over det varme felt og synker ned over det kolde. Dermed er kredsløbet sluttet: en lukket cirkulationscelle.</span></button></li>
-        </ol>
-      </div>
-
-      <dl class="gauges">
-        <div class="gauge g-l">
-          <dt>Venstre felt · <span id="inst-name-l">Land</span></dt>
-          <div class="g-viz">
-            <div class="thermo"><i id="th-l"></i></div>
-            <div class="ticks"><span>40°</span><span>5°</span><span>−30°</span></div>
+      <div class="rig-body">
+        <div class="fig-col">
+          <div class="stage" id="stage">
+            <canvas id="stage-canvas" role="img"
+                    aria-label="Vertikalt snit gennem atmosfæren fra jorden til 3 km over to felter side om side, fx land og hav. Figuren viser trykflader, høj- og lavtryk og cirkulationspile. Temperatur og tryk ved jorden står i jordstriben, trykket i 1,5 km over hvert felt, og vindhastigheden ved pilen langs jorden."></canvas>
           </div>
-          <dd id="temp-l">—<small>°C</small></dd>
-          <p class="g-sub">Jorden <b id="p0-l">—</b> <span class="enhed">hPa</span><br>1500 <span class="enhed">m</span> <b id="p1-l">—</b> <span class="enhed">hPa</span></p>
-        </div>
 
-        <div class="gauge g-r">
-          <dt>Højre felt · <span id="inst-name-r">Hav</span></dt>
-          <div class="g-viz">
-            <div class="thermo"><i id="th-r"></i></div>
-            <div class="ticks"><span>40°</span><span>5°</span><span>−30°</span></div>
-          </div>
-          <dd id="temp-r">—<small>°C</small></dd>
-          <p class="g-sub">Jorden <b id="p0-r">—</b> <span class="enhed">hPa</span><br>1500 <span class="enhed">m</span> <b id="p1-r">—</b> <span class="enhed">hPa</span></p>
-        </div>
-
-        <div class="gauge g-dt">
-          <dt>Temperaturforskel ΔT</dt>
-          <div class="g-viz">
-            <div class="dtbar"><i id="dt-fill"></i><u></u><b>−15</b><b class="hi-end">+15</b></div>
-          </div>
-          <dd id="val-dt">—<small>°C</small></dd>
-          <p class="g-sub">Venstre minus højre</p>
-        </div>
-
-        <div class="gauge g-wind">
-          <dt>Vind ved overfladen</dt>
-          <div class="g-viz">
-            <span class="wind-arrow" id="wind-arrow" aria-hidden="true">·</span>
-          </div>
-          <dd id="val-wind">0,0<small>m/s</small></dd>
-          <p class="g-sub" id="wind-name">Vindstille ved overfladen</p>
-        </div>
-      </dl>
-
-      <div class="knobs">
-        <div class="knob">
-          <span class="knob-top"><label class="mono" for="sl-time">Tid på døgnet</label><span class="knob-val" id="clock">kl. 13:00</span></span>
-          <input type="range" id="sl-time" min="0" max="24" step="0.25" value="13">
-          <div class="btn-row">
+          <div class="tid">
             <button type="button" class="btn btn-sm" id="btn-play" aria-pressed="true">⏸ Pause</button>
+            <label class="sr" for="sl-time">Tid på døgnet</label>
+            <input type="range" id="sl-time" min="0" max="24" step="0.25" value="13">
+            <span class="knob-val" id="clock">kl. 13:00</span>
             <button type="button" class="btn btn-sm" id="btn-day">☀ Dag</button>
             <button type="button" class="btn btn-sm" id="btn-night">☾ Nat</button>
             <button type="button" class="btn btn-sm" id="btn-speed" title="Simulationshastighed">1×</button>
           </div>
         </div>
 
-        <div class="knob">
-          <span class="knob-top"><label class="mono" for="sl-dt">ΔT sættes direkte (ekspert)</label><span class="knob-val" id="lbl-dt">+6,0 °C</span></span>
-          <input type="range" id="sl-dt" min="-15" max="15" step="0.5" value="6" disabled>
-          <div class="btn-row">
-            <label class="check"><input type="checkbox" id="chk-expert"> <span>Lås temperaturforskellen, og styr den med skyderen</span></label>
-          </div>
-        </div>
-
-        <div class="knob">
-          <span class="rowlab">Overflader</span>
-          <div class="two-col">
-            <div>
-              <span class="field-lab" id="lab-surf-l">Venstre felt</span>
-              <select id="surf-l" aria-labelledby="lab-surf-l">
-                <option value="land">Land</option>
-                <option value="hav">Hav</option>
-                <option value="sne">Sne / is</option>
-              </select>
+        <div class="side">
+          <div class="side-in">
+            <div class="tabs" role="tablist" aria-label="Sidespalte">
+              <button type="button" class="tab" role="tab" id="tab-forklaring" data-fane="forklaring" aria-controls="fane-forklaring" aria-selected="true">Forklaring</button>
+              <button type="button" class="tab" role="tab" id="tab-case" data-fane="case" aria-controls="fane-case" aria-selected="false" tabindex="-1">Case</button>
+              <button type="button" class="tab" role="tab" id="tab-indst" data-fane="indst" aria-controls="fane-indst" aria-selected="false" tabindex="-1">Indstillinger</button>
             </div>
-            <div>
-              <span class="field-lab" id="lab-surf-r">Højre felt</span>
-              <select id="surf-r" aria-labelledby="lab-surf-r">
-                <option value="land">Land</option>
-                <option value="hav" selected>Hav</option>
-                <option value="sne">Sne / is</option>
-              </select>
+
+            <div class="fane" role="tabpanel" id="fane-forklaring" aria-labelledby="tab-forklaring">
+              <div class="trin-nav">
+                <button type="button" class="btn btn-sm" id="btn-prev" aria-label="Forrige trin">◀</button>
+                <div class="trin-prikker" role="group" aria-label="Vælg trin">
+                  <button type="button" class="trin-prik" data-step="1" aria-label="Trin 1: Forskellig opvarmning">1</button>
+                  <button type="button" class="trin-prik" data-step="2" aria-label="Trin 2: Luften udvider sig">2</button>
+                  <button type="button" class="trin-prik" data-step="3" aria-label="Trin 3: Trykket i højden">3</button>
+                  <button type="button" class="trin-prik" data-step="4" aria-label="Trin 4: Trykket ved jorden">4</button>
+                  <button type="button" class="trin-prik" data-step="5" aria-label="Trin 5: Vind ved jorden">5</button>
+                  <button type="button" class="trin-prik" data-step="6" aria-label="Trin 6: Cirkulationscellen">6</button>
+                </div>
+                <button type="button" class="btn btn-sm" id="btn-next" aria-label="Næste trin">▶</button>
+                <span class="trin-ind" id="trin-ind">Trin 1 af 6</span>
+              </div>
+
+              <div class="trin-tekster" aria-live="polite">
+                <div class="trin-tekst" data-step="1"><h3>Forskellig opvarmning</h3><p>Solen opvarmer overfladerne forskelligt: land bliver hurtigt varmt, mens havet kun ændrer sig lidt, fordi vand har stor varmekapacitet.</p></div>
+                <div class="trin-tekst" data-step="2"><h3>Luften udvider sig</h3><p>Den varme luft udvider sig, så luftsøjlen over det varme felt bliver tykkere, og trykfladerne løftes i højden. Nede ved jorden er trykket endnu uændret.</p></div>
+                <div class="trin-tekst" data-step="3"><h3>Trykket i højden</h3><p>I højden ligger trykfladerne nu højest over det varme felt. Deroppe er trykket derfor højest over det varme (H) og lavest over det kolde (L), og luften strømmer fra varmt mod koldt.</p></div>
+                <div class="trin-tekst" data-step="4"><h3>Trykket ved jorden</h3><p>Den luft, der strømmer væk i højden, mangler nu i søjlen over det varme felt. Søjlen vejer mindre, og trykket ved jorden falder: et termisk lavtryk (L). Over det kolde felt lægges der ekstra luft oveni, så trykket ved jorden stiger: et termisk højtryk (H).</p></div>
+                <div class="trin-tekst" data-step="5"><h3>Vind ved jorden</h3><p>Ved jorden blæser vinden fra højtrykket over det kolde felt mod lavtrykket over det varme felt. Jo større temperaturforskel, desto stærkere vind.</p></div>
+                <div class="trin-tekst" data-step="6"><h3>Cirkulationscellen</h3><p>Luften stiger op over det varme felt og synker ned over det kolde. Dermed er kredsløbet sluttet: en lukket cirkulationscelle.</p></div>
+              </div>
+
+              <label class="check byg"><input type="checkbox" id="chk-byg"> Byg figuren op trin for trin</label>
+            </div>
+
+            <div class="fane" role="tabpanel" id="fane-case" aria-labelledby="tab-case" hidden>
+              <div class="case-liste" id="case-btns" role="group" aria-label="Case">
+                <button type="button" class="btn btn-sm" data-case="lillebaelt" aria-pressed="true">Land/hav-brise · Lillebælt</button>
+                <button type="button" class="btn btn-sm" data-case="sibirien" aria-pressed="false">Sibirisk vinterhøjtryk</button>
+                <button type="button" class="btn btn-sm" data-case="monsun" aria-pressed="false">Sommermonsun · Indien</button>
+                <button type="button" class="btn btn-sm" data-case="monsunvinter" aria-pressed="false">Vintermonsun · Indien</button>
+              </div>
+              <p class="case-desc" id="case-desc"></p>
+              <div><button type="button" class="btn btn-sm" id="btn-reset">↺ Nulstil case</button></div>
+              <p class="note">Konceptuel model: tallene viser mekanismen, ikke målte værdier, og jordens rotation (Coriolis) er udeladt.</p>
+            </div>
+
+            <div class="fane" role="tabpanel" id="fane-indst" aria-labelledby="tab-indst" hidden>
+              <div class="blok">
+                <span class="rowlab">Overflader</span>
+                <div class="felt-valg">
+                  <span class="field-lab" id="lab-surf-l">Venstre</span>
+                  <div class="seg" role="group" aria-labelledby="lab-surf-l">
+                    <button type="button" class="btn btn-sm" data-side="l" data-surf="land">Land</button>
+                    <button type="button" class="btn btn-sm" data-side="l" data-surf="hav">Hav</button>
+                    <button type="button" class="btn btn-sm" data-side="l" data-surf="sne">Sne/is</button>
+                  </div>
+                  <span class="field-lab" id="lab-surf-r">Højre</span>
+                  <div class="seg" role="group" aria-labelledby="lab-surf-r">
+                    <button type="button" class="btn btn-sm" data-side="r" data-surf="land">Land</button>
+                    <button type="button" class="btn btn-sm" data-side="r" data-surf="hav">Hav</button>
+                    <button type="button" class="btn btn-sm" data-side="r" data-surf="sne">Sne/is</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="blok">
+                <span class="knob-top"><label class="rowlab" for="sl-dt">ΔT sættes direkte</label><span class="knob-val" id="lbl-dt">+6,0 °C</span></span>
+                <input type="range" id="sl-dt" min="-15" max="15" step="0.5" value="6" disabled>
+                <label class="check"><input type="checkbox" id="chk-expert"> Lås temperaturforskellen, og styr den med skyderen</label>
+              </div>
+
+              <div class="blok">
+                <span class="rowlab">Lag i figuren</span>
+                <div class="checks">
+                  <label class="check"><input type="checkbox" id="lay-isobar" checked> Trykflader</label>
+                  <label class="check"><input type="checkbox" id="lay-ref" checked> Reference (stiplet)</label>
+                  <label class="check"><input type="checkbox" id="lay-hl" checked> H/L-mærker</label>
+                  <label class="check"><input type="checkbox" id="lay-arrows" checked> Vindpile</label>
+                  <label class="check"><input type="checkbox" id="lay-parcels" checked> Luftpakker</label>
+                  <label class="check"><input type="checkbox" id="lay-tracer"> Følg én luftpakke</label>
+                </div>
+                <p class="note">Luftpakkerne er farvet efter temperatur: koral er varm, blå er kold.</p>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="knob knob-lag">
-          <span class="rowlab">Lag i figuren</span>
-          <div class="checks">
-            <label class="check"><input type="checkbox" id="lay-isobar" checked> Trykflader</label>
-            <label class="check"><input type="checkbox" id="lay-ref" checked> Uforstyrret reference (stiplet)</label>
-            <label class="check"><input type="checkbox" id="lay-hl" checked> H/L-markeringer</label>
-            <label class="check"><input type="checkbox" id="lay-arrows" checked> Vindpile</label>
-            <label class="check"><input type="checkbox" id="lay-parcels" checked> Luftpakker</label>
-            <label class="check"><input type="checkbox" id="lay-tracer"> Følg én luftpakke</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="facts">
-        <span class="fact" style="--fc:var(--coral)">Varm søjle <b>flader bules op</b></span>
-        <span class="fact" style="--fc:var(--grape)">Vendeniveau <b>L nede · H oppe</b></span>
-        <span class="fact" style="--fc:var(--blue)">Vindstyrke <b>∝ ΔT</b></span>
-        <span class="fact" style="--fc:var(--slate)">Luftpakker: koral = varm, blå = kold</span>
       </div>
     </section>
 
-    <!-- Instrumenterne opdateres for hver optegning og kan derfor ikke selv være
-         aria-live. I stedet opsummeres aflæsningen her, når modellen har stået
-         stille et øjeblik. -->
+    <!-- Aflæsningerne står i lærredet og ændrer sig for hver optegning.
+         I stedet opsummeres de her, når modellen har stået stille et øjeblik. -->
     <p class="sr" id="sr-status" aria-live="polite"></p>
   </div>
 </main>
@@ -732,1021 +660,62 @@ body[data-projektor="1"] .fact b{font-size:0.92rem}
 }}catch(x){}})();
 </script>
 
-<script>
-'use strict';
-/* ================================================================
-   MODEL — al tilstand i ét objekt; afledte størrelser beregnes
-   rent fra state hver frame. Uændret fra den gamle udgave.
-   ================================================================ */
-
-const SURFACES = {
-  land: { label: 'Land',    amp: 13,  resp: 0.9,  style: 'land' },
-  hav:  { label: 'Hav',     amp: 1.2, resp: 0.06, style: 'hav'  },
-  sne:  { label: 'Sne/is',  amp: 4,   resp: 0.5,  style: 'sne'  },
-};
-
-const CASES = {
-  lillebaelt: {
-    surfL: 'land', surfR: 'hav', baseL: 16, baseR: 16, insol: 1.0, time: 13,
-    labelL: 'Fyn (land)', labelR: 'Lillebælt (hav)',
-    desc: 'Sommerdøgn ved kysten: dag = havbrise (pålandsvind), nat = landbrise (fralandsvind). Lad tiden køre og se brisen vende.',
-  },
-  sibirien: {
-    surfL: 'sne', surfR: 'hav', baseL: -24, baseR: 2, insol: 0.15, time: 12,
-    labelL: 'Sibirien (snedækket land)', labelR: 'Stillehavet (hav)',
-    desc: 'Vinter: kontinentet udstråler varme og bliver ekstremt koldt → vedvarende termisk højtryk over land, døgnet rundt.',
-  },
-  monsun: {
-    surfL: 'land', surfR: 'hav', baseL: 30, baseR: 26, insol: 1.0, time: 13,
-    labelL: 'Indien (land)', labelR: 'Det Indiske Ocean',
-    desc: 'Sommer: landmassen er varmest både dag og nat → vedvarende termisk lavtryk over land og fugtig pålandsvind. Det er sommermonsunens motor.',
-  },
-  monsunvinter: {
-    surfL: 'land', surfR: 'hav', baseL: 13, baseR: 24, insol: 0.7, time: 13,
-    labelL: 'Indien (land)', labelR: 'Det Indiske Ocean',
-    desc: 'Vinter: landmassen er kølet af, mens havet stadig er varmt → termisk højtryk over land og tør fralandsvind (vintermonsun). Sommerens mønster er vendt om.',
-  },
-};
-
-const SPEEDS = [ {mul: 0.20, txt: '½×'}, {mul: 0.42, txt: '1×'}, {mul: 1.0, txt: '2×'} ]; // sim-timer pr. reel sekund
-
-const state = {
-  caseId: 'lillebaelt',
-  surfL: 'land', surfR: 'hav',
-  baseL: 16, baseR: 16, insol: 1.0,
-  labelL: 'Fyn (land)', labelR: 'Lillebælt (hav)',
-  tL: 20, tR: 16,
-  timeOfDay: 13, running: true, speedIx: 1,
-  mode: 'fri',            // 'fri' | 'trin'
-  step: 6,                // synligt til og med (trin-tilstand)
-  focusStep: 1, focusT: 0, tour: true,
-  expert: false, dtManual: 6,
-  layers: { isobar: true, ref: true, hl: true, arrows: true, parcels: true, tracer: false },
-};
-
-// Bløde overgange når lag/trin tændes (0..1 pr. trin 2-6)
-const gates = { g2: 1, g3: 1, g4: 1, g5: 1, g6: 1 };
-
-/* ── Fysik-hjælpere ── */
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const lerp  = (a, b, t) => a + (b - a) * t;
-
-function insolation(t) { // 0..1, solhøjde-agtig kurve
-  return t > 6 && t < 18 ? Math.sin(Math.PI * (t - 6) / 12) : 0;
-}
-
-function targetTemp(base, surf, I) {
-  // Ligevægtstemperatur: dagopvarmning og natafkøling omkring basen
-  return base + SURFACES[surf].amp * (I - 0.35);
-}
-
-function stepTemps(dtH) {
-  const I = insolation(state.timeOfDay) * state.insol;
-  const rl = 1 - Math.exp(-SURFACES[state.surfL].resp * dtH);
-  const rr = 1 - Math.exp(-SURFACES[state.surfR].resp * dtH);
-  state.tL += (targetTemp(state.baseL, state.surfL, I) - state.tL) * rl;
-  state.tR += (targetTemp(state.baseR, state.surfR, I) - state.tR) * rr;
-}
-
-// Afledte størrelser — beregnes rent fra state
-function derive() {
-  const dT = state.expert ? state.dtManual : state.tL - state.tR;
-  const s  = clamp(dT / 12, -1, 1);         // normeret cellestyrke, fortegn = varm side
-  const p0L = 1013 - 1.4 * dT / 2,  p0R = 1013 + 1.4 * dT / 2;   // overflade-hPa
-  const p1L = 846 + 0.9 * dT / 2,   p1R = 846 - 0.9 * dT / 2;    // ~1500 m
-  const wind = Math.abs(dT) * 0.75;          // m/s, konceptuel skala
-  return { dT, s, p0L, p0R, p1L, p1R, wind };
-}
-
-/* ================================================================
-   CANVAS-SCENE — 2D vertikalt snit i sidens blæk-formsprog
-   ================================================================ */
-const canvas = document.getElementById('stage-canvas');
-const stageEl = document.getElementById('stage');
-const ctx = canvas.getContext('2d');
-let W = 900, H = 480, DPR = 1;
-
-// t giver luft over den øverste trykflade, så H/L i højden ikke klemmes op mod kanten
-const PAD = { l: 52, r: 62, t: 40 };
-const GROUND_H = 56;
-let plotW, plotH, groundY;
-
-const F_DISP = "'Archivo', system-ui, sans-serif";
-const F_MONO = "'IBM Plex Mono', ui-monospace, monospace";
-
-function resizeCanvas() {
-  const cs = getComputedStyle(stageEl);
-  const inner = stageEl.getBoundingClientRect().width
-              - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  const cssW = Math.max(320, Math.round(inner));
-  /* Højdebudget: figuren følger vinduets højde, når den er den
-     knappe — ellers som før, af bredden. Lærredet har intet fast
-     formatforhold, så det er kun højden, der bindes. */
-  const budget = parseFloat(getComputedStyle(stageEl).getPropertyValue('--fig')) || 560;
-  const cssH = Math.min(clamp(Math.round(cssW * 0.55), 330, 560), budget);
-  canvas.style.width = cssW + 'px';
-  canvas.style.height = cssH + 'px';
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = canvas.clientWidth;          // indvendigt mål — rammen tælles ikke med
-  H = canvas.clientHeight;
-  canvas.width = Math.round(W * DPR);
-  canvas.height = Math.round(H * DPR);
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  plotW = W - PAD.l - PAD.r;
-  groundY = H - GROUND_H;
-  plotH = groundY - PAD.t;
-}
-window.addEventListener('resize', () => { resizeCanvas(); laasHoejder(); });
-/* Kaldes af scriptet "Højdebudget" nederst, når --fig har ændret sig. */
-window.tilpasFigur = resizeCanvas;
-
-// Normaliserede koordinater: xn 0..1 (venstre..højre), zn 0..1 (jord..3 km)
-const X = xn => PAD.l + xn * plotW;
-const Z = zn => groundY - zn * plotH;
-
-/* ── Trykflade-anomali ──
-   disp > 0 = fladen hæves. Over den varme søjle: hævet i højden (g2),
-   sænket ved jorden (g4). cos(πx) giver glat +1 → −1 hen over snittet. */
-const K_UP = 0.085, K_DN = 0.048;
-
-function dispAt(xn, zn, s) {
-  const prof = gates.g2 * K_UP * Math.pow(zn, 1.25)
-             - gates.g4 * K_DN * Math.pow(1 - zn, 1.6);
-  return s * Math.cos(Math.PI * xn) * prof;
-}
-
-// Vendeniveau: hvor anomalien skifter fortegn (kun meningsfuldt når g4 > 0)
-function crossoverZ() {
-  let lo = 0.01, hi = 0.99;
-  const f = z => gates.g2 * K_UP * Math.pow(z, 1.25) - gates.g4 * K_DN * Math.pow(1 - z, 1.6);
-  if (f(lo) > 0 || f(hi) < 0) return null;
-  for (let i = 0; i < 24; i++) { const m = (lo + hi) / 2; (f(m) < 0 ? lo = m : hi = m); }
-  return (lo + hi) / 2;
-}
-
-/* ── Strømfunktion for den lukkede celle ──
-   ψ = S·sin(πx)·sin(πz);  u = ∂ψ/∂z, w = −∂ψ/∂x.
-   S > 0 → opstigning over højre; varm venstre kræver S < 0. */
-function cellVel(xn, zn, s) {
-  const S = -s * gates.g6;
-  const u =  S * Math.PI * Math.sin(Math.PI * xn) * Math.cos(Math.PI * zn);
-  const w = -S * Math.PI * Math.cos(Math.PI * xn) * Math.sin(Math.PI * zn);
-  return { u, w };
-}
-
-/* ── Partikler (luftpakker) ── */
-const N_PARCELS = 110;
-let parcels = [];
-function initParcels() {
-  parcels = [];
-  for (let i = 0; i < N_PARCELS; i++) {
-    parcels.push({
-      x: Math.random(), z: Math.pow(Math.random(), 1.4),
-      t: 10, trail: [],
-    });
-  }
-}
-
-function surfTempAt(xn) {
-  const b = clamp((xn - 0.45) / 0.10, 0, 1); // glat kyst-overgang
-  return lerp(state.tL, state.tR, b);
-}
-
-function stepParcels(dtReal, s) {
-  const SPEED = 0.11; // domæne-enheder/s ved fuld styrke
-  parcels.forEach((p, i) => {
-    const { u, w } = cellVel(p.x, p.z, s);
-    p.x += u * SPEED * dtReal + (Math.random() - 0.5) * 0.0012;
-    p.z += w * SPEED * dtReal + (Math.random() - 0.5) * 0.0012;
-    p.x = clamp(p.x, 0.008, 0.992);
-    p.z = clamp(p.z, 0.006, 0.985);
-    // Pakketemperatur: relaksér mod omgivelserne (overflade − lapse)
-    const ambient = surfTempAt(p.x) - 20 * p.z;
-    p.t += (ambient - p.t) * Math.min(1, 1.4 * dtReal);
-    if (state.layers.tracer && i === 0) {
-      p.trail.push([p.x, p.z]);
-      if (p.trail.length > 90) p.trail.shift();
-    } else if (p.trail.length) p.trail = [];
-  });
-}
-
-function parcelColor(t, alpha) {
-  // −25 °C (blå blæk) → +35 °C (koral)
-  const k = clamp((t + 25) / 60, 0, 1);
-  const r = Math.round(lerp(14, 255, k));
-  const g = Math.round(lerp(134, 106, k));
-  const b = Math.round(lerp(200, 61, k));
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-/* ── Tegnehjælpere ── */
-function inkArrow(x1, y1, x2, y2, curve, alpha, width) {
-  if (alpha <= 0.02) return;
-  const mx = (x1 + x2) / 2 + curve * (y2 - y1) * 0.5;
-  const my = (y1 + y2) / 2 - curve * (x2 - x1) * 0.5;
-  ctx.strokeStyle = `rgba(23,33,31,${alpha})`;
-  ctx.fillStyle = ctx.strokeStyle;
-  ctx.lineWidth = width;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.quadraticCurveTo(mx, my, x2, y2);
-  ctx.stroke();
-  // pilespids langs kurvens sluttangent
-  const ang = Math.atan2(y2 - my, x2 - mx);
-  const hl = 8 + width * 2;
-  ctx.beginPath();
-  ctx.moveTo(x2, y2);
-  ctx.lineTo(x2 - hl * Math.cos(ang - 0.42), y2 - hl * Math.sin(ang - 0.42));
-  ctx.lineTo(x2 - hl * Math.cos(ang + 0.42), y2 - hl * Math.sin(ang + 0.42));
-  ctx.closePath();
-  ctx.fill();
-  ctx.lineCap = 'butt';
-}
-
-function roundRect(x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-/* H og L får både bogstav, ord og egen form — farven står aldrig alene */
-function drawHL(letter, xn, zn, alpha, big) {
-  if (alpha <= 0.02) return;
-  const low = letter === 'L';               // L ligger over det varme felt
-  const col = low ? '255,106,61' : '14,134,200';
-  const r = big ? 22 : 17;
-  const cx = X(xn), cy = Z(zn);
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, 7);
-  ctx.fillStyle = `rgb(${col})`;
-  ctx.fill();
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = '#17211F';
-  ctx.stroke();
-  ctx.fillStyle = '#FFF9EE';
-  ctx.font = `800 ${big ? 26 : 21}px ${F_DISP}`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(letter, cx, cy + 1);
-  // mærkat under symbolet
-  const txt = low ? 'LAVTRYK' : 'HØJTRYK';
-  ctx.font = `600 ${big ? 10 : 9}px ${F_MONO}`;
-  const w = ctx.measureText(txt).width + 12;
-  const by = cy + r + 4;
-  ctx.fillStyle = '#FFF9EE';
-  roundRect(cx - w / 2, by, w, 15, 7); ctx.fill();
-  ctx.lineWidth = 1.5; ctx.strokeStyle = '#17211F';
-  roundRect(cx - w / 2, by, w, 15, 7); ctx.stroke();
-  ctx.fillStyle = '#17211F';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(txt, cx, by + 8);
-  ctx.restore();
-  ctx.textBaseline = 'alphabetic';
-}
-
-/* ── Grund-teksturer ── */
-function drawGround() {
-  const midX = X(0.5);
-  const fields = [
-    { style: SURFACES[state.surfL].style, x0: PAD.l, x1: midX, label: state.labelL, temp: state.tL },
-    { style: SURFACES[state.surfR].style, x0: midX, x1: W - PAD.r, label: state.labelR, temp: state.tR },
-  ];
-  fields.forEach(f => {
-    const w = f.x1 - f.x0;
-    ctx.fillStyle = f.style === 'hav' ? '#C7E6F6' : f.style === 'sne' ? '#F6F8F7' : '#E8D9A8';
-    ctx.fillRect(f.x0, groundY, w, GROUND_H);
-    ctx.save();
-    ctx.beginPath(); ctx.rect(f.x0, groundY, w, GROUND_H); ctx.clip();
-    ctx.lineWidth = 1;
-    if (f.style === 'land') {
-      ctx.strokeStyle = 'rgba(23,33,31,0.20)';
-      for (let x = f.x0 - GROUND_H; x < f.x1; x += 8) {
-        ctx.beginPath(); ctx.moveTo(x, groundY + GROUND_H); ctx.lineTo(x + GROUND_H, groundY); ctx.stroke();
-      }
-    } else if (f.style === 'hav') {
-      ctx.strokeStyle = 'rgba(14,134,200,0.55)';
-      ctx.lineWidth = 1.4;
-      for (let y = groundY + 10; y < groundY + GROUND_H; y += 10) {
-        ctx.beginPath();
-        for (let x = f.x0; x <= f.x1; x += 6) {
-          const yy = y + Math.sin((x + y * 3) * 0.09) * 2;
-          x === f.x0 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
-        }
-        ctx.stroke();
-      }
-    } else { // sne
-      ctx.fillStyle = 'rgba(23,33,31,0.30)';
-      for (let x = f.x0 + 5; x < f.x1; x += 11) {
-        for (let y = groundY + 8; y < groundY + GROUND_H - 4; y += 12) {
-          ctx.beginPath(); ctx.arc(x + (y % 24 < 12 ? 3 : 0), y, 1.2, 0, 7); ctx.fill();
-        }
-      }
-    }
-    ctx.restore();
-    // etiket + temperatur
-    ctx.textAlign = 'center';
-    ctx.font = `700 13px ${F_DISP}`;
-    ctx.fillStyle = '#17211F';
-    ctx.fillText(f.label, f.x0 + w / 2, groundY + 21);
-    ctx.font = `600 13px ${F_MONO}`;
-    ctx.fillStyle = f.temp >= surfMean() ? '#C63C12' : '#0B6EA6';
-    ctx.fillText(f.temp.toFixed(1).replace('.', ',') + ' °C', f.x0 + w / 2, groundY + 40);
-  });
-  // kystlinje
-  ctx.strokeStyle = '#17211F'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(midX, groundY); ctx.lineTo(midX, groundY + GROUND_H); ctx.stroke();
-  // jordoverflade-streg
-  ctx.lineWidth = 2.5;
-  ctx.beginPath(); ctx.moveTo(PAD.l, groundY); ctx.lineTo(W - PAD.r, groundY); ctx.stroke();
-  ctx.textAlign = 'left';
-}
-
-function surfMean() { return (state.tL + state.tR) / 2; }
-
-/* ── Himmel: sol, måne og nattetone ── */
-function drawSky() {
-  const I = insolation(state.timeOfDay) * state.insol;
-  // himlen fylder hele figuren ned til jordoverfladen — ingen lys ramme om snittet
-  const g = ctx.createLinearGradient(0, 0, 0, groundY);
-  g.addColorStop(0, '#BFE4F7');
-  g.addColorStop(1, '#F1FAFE');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, groundY);
-  // natte-wash
-  const nightA = (1 - clamp(I * 1.8, 0, 1)) * 0.28;
-  if (nightA > 0.01) {
-    ctx.fillStyle = `rgba(20,44,80,${nightA})`;
-    ctx.fillRect(0, 0, W, groundY);
-  }
-  const t = state.timeOfDay;
-  if (t > 5.5 && t < 18.5) {
-    // sol vandrer hen over himlen
-    const sx = X(clamp((t - 6) / 12, 0.02, 0.98));
-    const sy = 24;               // solen står i luftrummet over snittet
-    ctx.strokeStyle = '#17211F';
-    ctx.lineWidth = 2;
-    for (let i = 0; i < 12; i++) {
-      const a = i * Math.PI / 6;
-      ctx.beginPath();
-      ctx.moveTo(sx + Math.cos(a) * 15, sy + Math.sin(a) * 15);
-      ctx.lineTo(sx + Math.cos(a) * (19 + I * 5), sy + Math.sin(a) * (19 + I * 5));
-      ctx.stroke();
-    }
-    ctx.beginPath(); ctx.arc(sx, sy, 12, 0, 7);
-    ctx.fillStyle = `rgba(255,179,0,${0.45 + I * 0.55})`;
-    ctx.fill(); ctx.stroke();
-  } else {
-    // måne
-    const mt = (t < 6 ? t + 24 : t); // 18.5..30
-    const mx = X(clamp((mt - 19) / 10, 0.02, 0.98));
-    const my = 24;
-    ctx.save();
-    ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7);
-    ctx.fillStyle = '#FFF6E0'; ctx.fill();
-    ctx.strokeStyle = '#17211F'; ctx.lineWidth = 2; ctx.stroke();
-    ctx.clip();
-    ctx.beginPath(); ctx.arc(mx + 5, my - 3, 9.5, 0, 7);
-    ctx.fillStyle = 'rgba(28,46,68,0.28)'; ctx.fill();
-    ctx.restore();
-  }
-}
-
-/* ── Opvarmnings-/afkølingsglød ved jorden ── */
-function drawHeatGlow(s) {
-  if (Math.abs(s) < 0.03) return;
-  const warmLeft = s > 0;
-  // rund glød, så den toner ud til alle sider og ikke efterlader synlige kanter
-  [[0.25, warmLeft], [0.75, !warmLeft]].forEach(([cx, isWarm]) => {
-    const r = Math.max(plotW * 0.24, plotH * 0.34);
-    const g = ctx.createRadialGradient(X(cx), groundY, 0, X(cx), groundY, r);
-    const col = isWarm ? '255,106,61' : '14,134,200';
-    g.addColorStop(0, `rgba(${col},${0.26 * Math.abs(s)})`);
-    g.addColorStop(1, `rgba(${col},0)`);
-    ctx.fillStyle = g;
-    ctx.fillRect(X(cx) - r, groundY - r, r * 2, r);
-  });
-}
-
-/* ── Trykflader ── */
-const P_LEVELS = [
-  { z: 0.055, p: 1000 }, { z: 0.20, p: 950 }, { z: 0.345, p: 900 },
-  { z: 0.49, p: 850 }, { z: 0.645, p: 800 }, { z: 0.80, p: 750 },
-];
-
-function drawIsobars(s) {
-  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  P_LEVELS.forEach(lv => {
-    // uforstyrret reference — stiplet, så stregtypen bærer forskellen
-    if (state.layers.ref && gates.g2 > 0.05 && Math.abs(s) > 0.04) {
-      ctx.strokeStyle = 'rgba(86,107,104,0.55)';
-      ctx.lineWidth = 1.2; ctx.setLineDash([4, 6]);
-      ctx.beginPath(); ctx.moveTo(X(0), Z(lv.z)); ctx.lineTo(X(1), Z(lv.z)); ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    // forstyrret flade — fuldt optrukket i blæk
-    ctx.strokeStyle = 'rgba(23,33,31,0.85)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    const STEPS = 48;
-    for (let i = 0; i <= STEPS; i++) {
-      const xn = i / STEPS;
-      const zn = lv.z + dispAt(xn, lv.z, s);
-      i === 0 ? ctx.moveTo(X(xn), Z(zn)) : ctx.lineTo(X(xn), Z(zn));
-    }
-    ctx.stroke();
-    // hPa-etiket i højre side
-    const zEnd = lv.z + dispAt(1, lv.z, s);
-    ctx.font = `600 10px ${F_MONO}`;
-    ctx.fillStyle = '#17211F';   // står på himlen — skal kunne læses også om natten
-    ctx.fillText(lv.p + ' hPa', X(1) + 7, Z(zEnd));
-  });
-  // vendeniveau
-  if (gates.g4 > 0.5 && Math.abs(s) > 0.06) {
-    const zc = crossoverZ();
-    if (zc != null) {
-      ctx.strokeStyle = 'rgba(122,79,214,0.85)';
-      ctx.lineWidth = 1.6; ctx.setLineDash([2, 6]);
-      ctx.beginPath(); ctx.moveTo(X(0), Z(zc)); ctx.lineTo(X(1), Z(zc)); ctx.stroke();
-      ctx.setLineDash([]);
-      const txt = 'VENDENIVEAU';
-      ctx.font = `600 10px ${F_MONO}`;
-      const w = ctx.measureText(txt).width + 14;
-      const bx = X(1) - w - 4, by = Z(zc) - 19;
-      ctx.fillStyle = '#7A4FD6';
-      roundRect(bx, by, w, 16, 8); ctx.fill();
-      ctx.strokeStyle = '#17211F'; ctx.lineWidth = 1.5;
-      roundRect(bx, by, w, 16, 8); ctx.stroke();
-      ctx.fillStyle = '#fff';
-      ctx.fillText(txt, bx + 7, by + 8.5);
-    }
-  }
-  ctx.textBaseline = 'alphabetic';
-}
-
-/* ── Højdeakse ── */
-function drawAxis() {
-  ctx.strokeStyle = '#17211F'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, groundY); ctx.stroke();
-  ctx.font = `600 10px ${F_MONO}`;
-  ctx.fillStyle = '#17211F';
-  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-  for (let km = 0; km <= 3; km++) {
-    const y = Z(km / 3);
-    ctx.beginPath(); ctx.moveTo(PAD.l - 5, y); ctx.lineTo(PAD.l, y); ctx.stroke();
-    ctx.fillText(km + ' km', PAD.l - 8, y);
-  }
-  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-}
-
-/* ── H/L-markeringer ── */
-function drawPressureMarks(s) {
-  if (Math.abs(s) < 0.06) return;
-  const warmX = s > 0 ? 0.25 : 0.75;
-  const coldX = 1 - warmX;
-  const a = clamp(Math.abs(s) * 2.2, 0, 1);
-  drawHL('L', warmX, 0.115, a * gates.g4, true);   // overflade, varm
-  drawHL('H', coldX, 0.115, a * gates.g4, true);   // overflade, kold
-  drawHL('H', warmX, 0.90, a * gates.g3, false);   // i højden, varm
-  drawHL('L', coldX, 0.90, a * gates.g3, false);   // i højden, kold
-}
-
-/* ── Cirkulationspile — længde ∝ ΔT (trykgradient) ── */
-function drawArrows(s) {
-  if (Math.abs(s) < 0.05) return;
-  const dir = s > 0 ? 1 : -1;    // 1: varm venstre
-  const a = clamp(Math.abs(s) * 1.7, 0, 1);
-  const warmX = dir > 0 ? 0.25 : 0.75;
-  const coldX = 1 - warmX;
-  const span = 0.30 + 0.32 * Math.abs(s);         // vandret pillængde
-  const rise = 0.42 * (0.45 + 0.55 * Math.abs(s)); // lodret pillængde
-  const lw   = 1.8 + Math.abs(s) * 1.8;
-  // overflade: fra kold mod varm
-  inkArrow(X(0.5 + (coldX - 0.5) * span), Z(0.06), X(0.5 + (warmX - 0.5) * span), Z(0.06), 0.12 * dir, a * gates.g5, lw);
-  // op over varm
-  inkArrow(X(warmX), Z(0.17), X(warmX), Z(0.17 + rise), 0.14 * dir, a * gates.g6, lw);
-  // i højden: fra varm mod kold
-  inkArrow(X(0.5 + (warmX - 0.5) * span), Z(0.86), X(0.5 + (coldX - 0.5) * span), Z(0.86), 0.12 * dir, a * gates.g3, lw);
-  // ned over kold
-  inkArrow(X(coldX), Z(0.17 + rise), X(coldX), Z(0.17), 0.14 * dir, a * gates.g6, lw);
-}
-
-/* ── Partikler ── */
-function drawParcels(showAll) {
-  if (showAll) parcels.forEach((p, i) => {
-    if (state.layers.tracer && i === 0) return; // tegnes til sidst
-    ctx.beginPath();
-    ctx.arc(X(p.x), Z(p.z), 2.4, 0, 7);
-    ctx.fillStyle = parcelColor(p.t, 0.62);
-    ctx.fill();
-  });
-  if (state.layers.tracer && parcels.length) {
-    const p = parcels[0];
-    if (p.trail.length > 1) {
-      ctx.strokeStyle = 'rgba(23,33,31,0.45)';
-      ctx.lineWidth = 1.6;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      p.trail.forEach(([tx, tz], j) => j === 0 ? ctx.moveTo(X(tx), Z(tz)) : ctx.lineTo(X(tx), Z(tz)));
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    ctx.beginPath(); ctx.arc(X(p.x), Z(p.z), 6, 0, 7);
-    ctx.fillStyle = parcelColor(p.t, 1); ctx.fill();
-    ctx.strokeStyle = '#17211F'; ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.beginPath(); ctx.arc(X(p.x), Z(p.z), 10, 0, 7);
-    ctx.strokeStyle = 'rgba(23,33,31,0.55)'; ctx.lineWidth = 1.4;
-    ctx.stroke();
-  }
-}
-
-/* ── Spotlight: fremhæv det aktuelle trin i snittet ── */
-function drawSpotlight(s) {
-  const st = state.focusStep;
-  if (!st || Math.abs(s) < 0.04 && st > 1) return;
-  const warmX = (s >= 0) ? 0.25 : 0.75;
-  const coldX = 1 - warmX;
-  const pulse = reduceMotion ? 0.8 : 0.6 + 0.25 * Math.sin(performance.now() / 300);
-  ctx.strokeStyle = `rgba(255,179,0,${pulse})`;
-  ctx.lineWidth = 3;
-  ctx.setLineDash([7, 6]);
-  const ell = (xn, zn, rx, ry) => {
-    ctx.beginPath();
-    ctx.ellipse(X(xn), Z(zn), rx * plotW, ry * plotH, 0, 0, 7);
-    ctx.stroke();
-  };
-  switch (st) {
-    case 1: ell(warmX, 0.035, 0.17, 0.06); break;
-    case 2: ell(warmX, 0.55, 0.16, 0.38); break;
-    case 3: ell(0.5, 0.88, 0.30, 0.10); break;
-    case 4: ell(warmX, 0.10, 0.09, 0.09); ell(coldX, 0.10, 0.09, 0.09); break;
-    case 5: ell(0.5, 0.06, 0.28, 0.055); break;
-    case 6: ell(0.5, 0.5, 0.36, 0.44); break;
-  }
-  ctx.setLineDash([]);
-}
-
-function clockStr() {
-  const h = Math.floor(state.timeOfDay) % 24;
-  const m = Math.floor((state.timeOfDay % 1) * 60);
-  return `kl. ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
-/* ================================================================
-   UI-OPDATERING
-   ================================================================ */
-const $ = id => document.getElementById(id);
-const fmt1 = v => v.toFixed(1).replace('.', ',');
-const CASE_NAVNE = {
-  lillebaelt: 'Lillebælt · land/hav-brise',
-  sibirien: 'Sibirien · vinter',
-  monsun: 'Indien · sommermonsun',
-  monsunvinter: 'Indien · vintermonsun',
-};
-const reduceMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-
-function tempFarve(t) {
-  return t < -5 ? '#0E86C8' : t < 8 ? '#0FA593' : t < 20 ? '#FFB300' : '#FF6A3D';
-}
-
-function updateReadouts(d) {
-  const ur = clockStr();
-  $('clock').textContent = ur;
-  $('live-txt').textContent = CASE_NAVNE[state.caseId] + ' · ' + ur;
-  $('inst-name-l').textContent = state.labelL;
-  $('inst-name-r').textContent = state.labelR;
-  $('temp-l').innerHTML = fmt1(state.tL) + '<small>°C</small>';
-  $('temp-r').innerHTML = fmt1(state.tR) + '<small>°C</small>';
-  const thPct = t => clamp((t + 30) / 70, 0, 1) * 100;
-  $('th-l').style.height = thPct(state.tL) + '%';
-  $('th-r').style.height = thPct(state.tR) + '%';
-  $('th-l').style.background = tempFarve(state.tL);
-  $('th-r').style.background = tempFarve(state.tR);
-  $('p0-l').textContent = d.p0L.toFixed(0);
-  $('p0-r').textContent = d.p0R.toFixed(0);
-  $('p1-l').textContent = d.p1L.toFixed(0);
-  $('p1-r').textContent = d.p1R.toFixed(0);
-
-  const fortegn = d.dT >= 0 ? '+' : '−';
-  $('val-dt').innerHTML = fortegn + fmt1(Math.abs(d.dT)) + '<small>°C</small>';
-  $('lbl-dt').textContent = (state.dtManual >= 0 ? '+' : '−') + fmt1(Math.abs(state.dtManual)) + ' °C';
-
-  // ΔT-bjælke: udslag fra midten, −15…+15
-  const frac = clamp(d.dT / 15, -1, 1) / 2;      // −0.5..0.5
-  const fill = $('dt-fill');
-  fill.style.left  = (50 + Math.min(0, frac) * 100) + '%';
-  fill.style.width = Math.abs(frac) * 100 + '%';
-  fill.style.background = d.dT >= 0 ? 'var(--coral)' : 'var(--blue)';
-
-  // vind
-  const wa = $('wind-arrow'), wn = $('wind-name');
-  const stille = Math.abs(d.dT) < 0.8 || gates.g5 < 0.5;
-  $('val-wind').innerHTML = (stille ? '0,0' : fmt1(d.wind)) + '<small>m/s</small>';
-  if (stille) {
-    wa.textContent = '·';
-    wn.textContent = 'Vindstille ved overfladen';
-  } else {
-    const towardLeft = d.dT > 0; // vind mod varm side
-    wa.textContent = towardLeft ? '⟵' : '⟶';
-    if (state.caseId === 'lillebaelt') {
-      wn.textContent = towardLeft ? 'Havbrise — pålandsvind (hav → land)' : 'Landbrise — fralandsvind (land → hav)';
-    } else {
-      wn.textContent = towardLeft
-        ? `Overfladevind mod ${state.labelL}`
-        : `Overfladevind mod ${state.labelR}`;
-    }
-  }
-  planlaegStatus(d, stille);
-}
-
-function updateChain() {
-  document.querySelectorAll('#chain li').forEach(li => {
-    const n = +li.dataset.step;
-    li.classList.toggle('on', n === state.focusStep);
-    li.classList.toggle('dim', state.mode === 'trin' && n > state.step);
-    li.querySelector('.chain-btn').setAttribute('aria-current', n === state.focusStep ? 'step' : 'false');
-  });
-  $('step-ind').textContent = state.mode === 'trin' ? `Trin ${state.step} af 6` : 'Alle trin vist';
-}
-
-/* ── Skærmlæser-status ──────────────────────────────────
-   Instrumenterne opdateres for hver optegning, så de kan ikke selv være
-   aria-live. Feltet skrives først, når aflæsningen har stået stille i 800 ms. */
-const elSr = $('sr-status');
-let srTimer = 0, srOplaest = '', srVentende = '';
-
-function planlaegStatus(d, stille) {
-  const tekst =
-    CASE_NAVNE[state.caseId] + ', ' + clockStr() + '. ' +
-    state.labelL + ' ' + Math.round(state.tL) + ' grader, ' +
-    state.labelR + ' ' + Math.round(state.tR) + ' grader. ' +
-    'Temperaturforskel ' + (d.dT >= 0 ? 'plus ' : 'minus ') + Math.abs(d.dT).toFixed(0) + ' grader. ' +
-    (stille ? 'Vindstille ved overfladen. ' : 'Overfladevind ' + d.wind.toFixed(0) + ' meter i sekundet: ' + $('wind-name').textContent + '. ') +
-    (state.mode === 'trin' ? 'Trin ' + state.step + ' af 6.' : 'Trin ' + state.focusStep + ' er fremhævet.');
-
-  if (tekst === srVentende) return;      // uændret siden sidste optegning
-  srVentende = tekst;
-  clearTimeout(srTimer);
-  if (tekst === srOplaest) return;       // tilbage til det, der allerede er læst op
-  srTimer = setTimeout(function () {
-    srOplaest = tekst;
-    elSr.textContent = tekst;
-  }, 800);
-}
-
-/* ── Rammen skal stå stille ─────────────────────────────
-   Case-teksten og vindteksten skifter længde. Alle varianter måles én gang,
-   og felterne låses til den højeste, så panelet ikke hopper. */
-function maalHoejeste(el, tekster) {
-  const org = el.textContent;
-  el.style.minHeight = '';
-  let maks = 0;
-  tekster.forEach(t => { el.textContent = t; maks = Math.max(maks, el.offsetHeight); });
-  el.textContent = org;
-  el.style.minHeight = maks + 'px';
-}
-
-const VIND_TEKSTER = [
-  'Vindstille ved overfladen',
-  'Havbrise — pålandsvind (hav → land)',
-  'Landbrise — fralandsvind (land → hav)',
-];
-function maalBredeste(el, tekster) {
-  const org = el.textContent;
-  el.style.minWidth = '';
-  let maks = 0;
-  tekster.forEach(t => { el.textContent = t; maks = Math.max(maks, el.offsetWidth); });
-  el.textContent = org;
-  el.style.minWidth = maks + 'px';
-}
-
-function laasHoejder() {
-  // statuslinjen må ikke ombryde forskelligt fra case til case
-  maalBredeste($('live-txt'), Object.values(CASE_NAVNE).map(n => n + ' · kl. 00:00'));
-  maalHoejeste($('case-desc'), Object.values(CASES).map(c => c.desc));
-  maalHoejeste($('wind-name'), VIND_TEKSTER.concat([
-    'Overfladevind mod ' + state.labelL,
-    'Overfladevind mod ' + state.labelR,
-  ]));
-}
-
-/* ================================================================
-   HOVEDLØKKE
-   ================================================================ */
-let lastT = performance.now();
-
-function frame(now) {
-  const dtReal = Math.min(0.1, (now - lastT) / 1000);
-  lastT = now;
-
-  // Tid & temperaturer — står helt stille når der er pauset
-  if (!state.expert && state.running) {
-    const dtH = SPEEDS[state.speedIx].mul * dtReal;
-    state.timeOfDay = (state.timeOfDay + dtH) % 24;
-    stepTemps(dtH);
-    $('sl-time').value = state.timeOfDay;
-  }
-
-  const d = derive();
-
-  // Gates: i trin-tilstand åbnes effekterne kumulativt; ellers alt åbent
-  const tgt = n => (state.mode === 'fri' || state.step >= n) ? 1 : 0;
-  ['g2','g3','g4','g5','g6'].forEach((g, i) => {
-    const t = tgt(i + 2);
-    gates[g] += (t - gates[g]) * Math.min(1, 3.2 * dtReal);
-  });
-
-  // Auto-gennemgang af kausalkæden (fri tilstand) — står stille ved pause
-  if (state.mode === 'fri' && state.tour && state.running) {
-    state.focusT += dtReal;
-    if (state.focusT > 4.5) {
-      state.focusT = 0;
-      state.focusStep = state.focusStep % 6 + 1;
-      updateChain();
-    }
-  }
-
-  // Partikler — står stille ved pause ligesom uret og temperaturerne
-  if (state.running && (state.layers.parcels || state.layers.tracer)) stepParcels(dtReal, d.s);
-
-  // ── Tegn ──
-  ctx.clearRect(0, 0, W, H);
-  drawSky();
-  drawHeatGlow(d.s * (0.4 + 0.6 * gates.g2));
-  if (state.layers.isobar) drawIsobars(d.s);
-  drawAxis();
-  if (state.layers.parcels || state.layers.tracer) drawParcels(state.layers.parcels);
-  if (state.layers.arrows) drawArrows(d.s);
-  if (state.layers.hl) drawPressureMarks(d.s);
-  drawGround();
-  drawSpotlight(d.s);
-
-  updateReadouts(d);
-  requestAnimationFrame(frame);
-}
-
-/* ================================================================
-   EVENTS
-   ================================================================ */
-function applyCase(id) {
-  const c = CASES[id];
-  state.caseId = id;
-  state.surfL = c.surfL; state.surfR = c.surfR;
-  state.baseL = c.baseL; state.baseR = c.baseR;
-  state.insol = c.insol;
-  state.labelL = c.labelL; state.labelR = c.labelR;
-  state.timeOfDay = c.time;
-  const I = insolation(c.time) * c.insol;
-  state.tL = targetTemp(c.baseL, c.surfL, I);
-  state.tR = targetTemp(c.baseR, c.surfR, I);
-  $('sl-time').value = c.time;
-  $('surf-l').value = c.surfL;
-  $('surf-r').value = c.surfR;
-  $('case-desc').textContent = c.desc;
-  document.querySelectorAll('#case-btns .btn').forEach(b =>
-    b.setAttribute('aria-pressed', b.dataset.case === id ? 'true' : 'false'));
-  initParcels();
-}
-
-document.querySelectorAll('#case-btns .btn').forEach(b =>
-  b.addEventListener('click', () => { applyCase(b.dataset.case); gemTilstand(); }));
-
-$('btn-reset').addEventListener('click', () => { applyCase(state.caseId); gemTilstand(); });
-
-// Tilstand: fri / trin
-function setMode(m) {
-  state.mode = m;
-  $('mode-fri').setAttribute('aria-pressed', m === 'fri' ? 'true' : 'false');
-  $('mode-trin').setAttribute('aria-pressed', m === 'trin' ? 'true' : 'false');
-  $('btn-prev').disabled = m !== 'trin';
-  $('btn-next').disabled = m !== 'trin';
-  if (m === 'trin') {
-    state.running = false;
-    saetPlayKnap();
-    state.step = 1; state.focusStep = 1;
-  } else {
-    state.step = 6;
-  }
-  updateChain();
-}
-$('mode-fri').addEventListener('click', () => { setMode('fri'); gemTilstand(); });
-$('mode-trin').addEventListener('click', () => { setMode('trin'); gemTilstand(); });
-
-$('btn-prev').addEventListener('click', () => {
-  state.step = Math.max(1, state.step - 1);
-  state.focusStep = state.step; updateChain(); gemTilstand();
-});
-$('btn-next').addEventListener('click', () => {
-  state.step = Math.min(6, state.step + 1);
-  state.focusStep = state.step; updateChain(); gemTilstand();
-});
-
-// Klik på et trin i kæden fokuserer det
-document.querySelectorAll('#chain li').forEach(li =>
-  li.querySelector('.chain-btn').addEventListener('click', () => {
-    const n = +li.dataset.step;
-    if (state.mode === 'trin') state.step = n;
-    state.focusStep = n; state.focusT = -6; // hold fokus lidt længere
-    updateChain(); gemTilstand();
-  }));
-
-$('chk-tour').addEventListener('change', e => { state.tour = e.target.checked; });
-
-// Tid — ved manuelle spring integreres temperaturerne hen over intervallet,
-// så billedet følger uret selv når simulationen er pauset
-function jumpToTime(newT) {
-  newT = (newT + 24) % 24;
-  if (!state.expert) {
-    let span = newT - state.timeOfDay;
-    if (Math.abs(span) > 12) span -= Math.sign(span) * 24; // korteste vej rundt om døgnet
-    const steps = Math.max(1, Math.ceil(Math.abs(span) / 0.25));
-    for (let i = 1; i <= steps; i++) {
-      state.timeOfDay = (state.timeOfDay + span / steps + 24) % 24;
-      stepTemps(Math.abs(span) / steps);
-    }
-  }
-  state.timeOfDay = newT;
-  $('sl-time').value = newT;
-}
-$('sl-time').addEventListener('input', e => { jumpToTime(+e.target.value); gemTilstand(); });
-
-function saetPlayKnap() {
-  const b = $('btn-play');
-  b.textContent = state.running ? '⏸ Pause' : '▶ Kør';
-  b.setAttribute('aria-pressed', state.running ? 'true' : 'false');
-}
-$('btn-play').addEventListener('click', () => {
-  state.running = !state.running;
-  saetPlayKnap();
-  gemTilstand();
-});
-$('btn-day').addEventListener('click', () => { jumpToTime(13); gemTilstand(); });
-$('btn-night').addEventListener('click', () => { jumpToTime(1); gemTilstand(); });
-$('btn-speed').addEventListener('click', () => {
-  state.speedIx = (state.speedIx + 1) % SPEEDS.length;
-  $('btn-speed').textContent = SPEEDS[state.speedIx].txt;
-});
-
-// Overflader — snap til ny ligevægt, så skiftet også ses under pause
-$('surf-l').addEventListener('change', e => {
-  state.surfL = e.target.value;
-  state.labelL = SURFACES[state.surfL].label + ' (venstre)';
-  state.tL = targetTemp(state.baseL, state.surfL, insolation(state.timeOfDay) * state.insol);
-  laasHoejder();
-});
-$('surf-r').addEventListener('change', e => {
-  state.surfR = e.target.value;
-  state.labelR = SURFACES[state.surfR].label + ' (højre)';
-  state.tR = targetTemp(state.baseR, state.surfR, insolation(state.timeOfDay) * state.insol);
-  laasHoejder();
-});
-
-// Ekspert-ΔT
-$('chk-expert').addEventListener('change', e => {
-  state.expert = e.target.checked;
-  $('sl-dt').disabled = !state.expert;
-  if (state.expert) {
-    state.dtManual = +$('sl-dt').value;
-    // frys temperaturerne omkring middel, så visningen matcher slideren
-    const m = surfMean();
-    state.tL = m + state.dtManual / 2;
-    state.tR = m - state.dtManual / 2;
-  }
-});
-$('sl-dt').addEventListener('input', e => {
-  state.dtManual = +e.target.value;
-  const m = surfMean();
-  state.tL = m + state.dtManual / 2;
-  state.tR = m - state.dtManual / 2;
-});
-
-// Lag
-[['lay-isobar','isobar'], ['lay-ref','ref'], ['lay-hl','hl'],
- ['lay-arrows','arrows'], ['lay-parcels','parcels'], ['lay-tracer','tracer']]
-  .forEach(([id, key]) =>
-    $(id).addEventListener('change', e => { state.layers[key] = e.target.checked; }));
-
-/* ── Projektortilstand ──────────────────────────────────── */
-const btnProjektor = $('btn-projektor');
-function saetProjektor(til) {
-  document.body.setAttribute('data-projektor', til ? '1' : '0');
-  btnProjektor.setAttribute('aria-pressed', til ? 'true' : 'false');
-  resizeCanvas();
-  laasHoejder();
-}
-btnProjektor.addEventListener('click', function () {
-  saetProjektor(document.body.getAttribute('data-projektor') !== '1');
-});
-
-/* ── Deling: tilstanden ligger i adressen ───────────────
-   #case=lillebaelt&trin=3&t=13.00 — de samme nøgler accepteres som query,
-   så et link til et bestemt trin kan deles direkte. */
-let hashTimer = 0, hashSidste = '';
-
-function tilstandStreng() {
-  let s = '#case=' + state.caseId;
-  if (state.mode === 'trin') s += '&trin=' + state.step;
-  return s + '&t=' + state.timeOfDay.toFixed(2);
-}
-
-function gemTilstand() {
-  const h = tilstandStreng();
-  if (h === hashSidste) return;
-  hashSidste = h;
-  clearTimeout(hashTimer);
-  hashTimer = setTimeout(function () {
-    if (location.hash !== h) history.replaceState(null, '', h);
-  }, 400);
-}
-
-function laesTilstand() {
-  const p = new URLSearchParams(location.search);
-  new URLSearchParams(location.hash.replace(/^#/, '')).forEach(function (v, k) { p.set(k, v); });
-
-  const c = p.get('case');
-  if (c && CASES[c]) applyCase(c);
-
-  const trin = parseInt(p.get('trin'), 10);
-  if (isFinite(trin) && trin >= 1 && trin <= 6) {
-    setMode('trin');
-    state.step = clamp(trin, 1, 6);
-    state.focusStep = state.step;
-    updateChain();
-  }
-
-  const t = parseFloat(p.get('t'));
-  if (isFinite(t)) jumpToTime(clamp(t, 0, 24));
-
-  if (/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
-
-  hashSidste = tilstandStreng();   // adressen skrives først, når noget faktisk ændres
-}
-
-/* ── Start ── */
-resizeCanvas();
-applyCase('lillebaelt');
-if (reduceMotion) {                 // ingen løbende bevægelse uden brugerens ønske
-  state.running = false;
-  state.tour = false;
-  $('chk-tour').checked = false;
-}
-setMode('fri');
-saetPlayKnap();
-laesTilstand();
-updateChain();
-laasHoejder();
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(laasHoejder);
-requestAnimationFrame(t => { lastT = t; frame(t); });
-</script>
+<script type="module" src="TermiskTryk3/side.js"></script>
 
 <!-- ── Højdebudget ──────────────────────────────────────
-     Figuren blev før målt efter spaltens bredde alene, og så voksede
-     panelet ud over skærmen: figur, instrumenter og skydere kunne ikke
-     ses på én gang. Her måles i stedet, hvad panelet bruger til alt
-     andet end figuren, og resten af skærmhøjden lægges i --fig.
-     Budgettet kan kun gøre figuren mindre — aldrig større end spalten
-     i forvejen tillod — og det rører den slet ikke, hvis panelet
-     alligevel ikke kan komme til at passe.                          -->
+     Skærmene er brede og lave: en laptop med faner og adresselinje har
+     580–700 px i højden. Figuren får derfor den højde, der er tilbage,
+     når panelets øvrige dele er trukket fra, så hele apparatet kan ses
+     på én gang.
+
+     Bred skærm (sidespalte): pladsen regnes fra panelets top, som det
+     står, når siden åbner, til skærmens bund — så eleven ser det hele
+     uden at rulle. Fanerne står ved siden af figuren og tæller ikke med;
+     de ruller selv, hvis de er længere. Budgettet giver aldrig op.
+
+     Smal skærm (alt under hinanden): her er rulning det normale.
+     Figuren gøres kun mindre, hvis panelet så kan passe, når man har
+     rullet ned til det — ellers beholder den sin fulde størrelse.   -->
 <script>
 (function(){
   const rig = document.querySelector('.rig');
   const fig = document.querySelector('#stage-canvas');
   if(!rig || !fig) return;
   const bjaelke = document.querySelector('.top');
-  const MIN = 260, MAKS = 560, LUFT = 16;
+  const bred = matchMedia('(min-width:960px)');
+  const MIN = 230, MAKS = 560, LUFT = 14;
+  const MIN_SMAL = 300;          /* på telefonen bliver snittet ulæseligt lavere end det */
   let sidst = 0, panel = 0, ventende = false;
 
   function saet(h){
     if(h === sidst) return;
     sidst = h;
     rig.style.setProperty('--fig', h + 'px');
-    /* Sider, der selv sætter lærredets størrelse, skal måle om. */
+    /* Lærredet sætter selv sin størrelse og skal måle om. */
     if(window.tilpasFigur) window.tilpasFigur();
   }
+  const hoejde = function(el){ return el ? el.getBoundingClientRect().height : 0; };
 
   function maal(){
-    /* Først slippes figuren fri: så er "alt andet end figuren" det
-       samme tal, uanset hvad budgettet gav sidste gang. Uden det ville
-       en sidespalte, der er højere end figuren, presse budgettet i bund. */
-    saet(MAKS);
-    const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
-               ? bjaelke.getBoundingClientRect().height : 0;   /* den klæbende topbjælke */
-    const rum  = innerHeight - krom - LUFT;                    /* det, panelet må fylde */
-    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
-    const h    = Math.round(rum - fast);
-    if(h < MAKS){
-      saet(Math.max(MIN, h));
-      /* Hjalp det ikke — fx fordi en sidespalte er højere end figuren —
-         så får figuren pladsen igen. */
-      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+    const klaeber = bjaelke && getComputedStyle(bjaelke).position === 'sticky'
+                  ? hoejde(bjaelke) : 0;
+    if(bred.matches){
+      /* Start fra den mindste figur, så resten af panelet kan måles. */
+      saet(MIN);
+      const krom = hoejde(rig) - hoejde(fig);
+      const top = rig.getBoundingClientRect().top + scrollY;   /* når siden åbner */
+      const rum = innerHeight - Math.max(top, klaeber) - LUFT;
+      saet(Math.max(MIN, Math.min(MAKS, Math.round(rum - krom))));
+    } else {
+      saet(MAKS);
+      const rum = innerHeight - klaeber - LUFT;
+      const h = Math.round(rum - (hoejde(rig) - hoejde(fig)));
+      if(h < MAKS){
+        saet(Math.max(MIN_SMAL, h));
+        if(hoejde(rig) > rum + 24) saet(MAKS);
+      }
     }
-    panel = rig.getBoundingClientRect().height;
+    panel = hoejde(rig);
   }
 
   function planlaeg(){
@@ -1755,14 +724,13 @@ requestAnimationFrame(t => { lastT = t; frame(t); });
     requestAnimationFrame(function(){ ventende = false; maal(); });
   }
 
-  maal();
+  /* Modulet bag lærredet indlæses efter dette script; først når det har
+     sat window.tilpasFigur, kan figuren måles rigtigt. */
+  addEventListener('load', planlaeg);
   addEventListener('resize', planlaeg);
-  addEventListener('load', planlaeg);            /* moduler indlæses efter dette script */
   if(document.fonts) document.fonts.ready.then(planlaeg);
-  /* Panelets faste dele kan skifte højde undervejs (trin, tekst, projektor).
-     Vores egne ændringer springes over — dem kender vi højden på. */
   new ResizeObserver(function(){
-    if(Math.abs(rig.getBoundingClientRect().height - panel) > 1) planlaeg();
+    if(Math.abs(hoejde(rig) - panel) > 1) planlaeg();
   }).observe(rig);
 })();
 </script>
