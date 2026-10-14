@@ -71,3 +71,33 @@ Hold igen med lyset mellem tællingerne — det er den hyppigste årsag til, at 
 | 600 mg/L | | | | | |
 
 : Antal hjerteslag pr. minut hos dafnien ved stigende koffeinkoncentration. {#tbl-1}
+
+## Databehandling
+
+1. Beregn for hver koncentration gennemsnittet af de tre tællinger, og skriv det i @tbl-1:
+
+$$\text{Gennemsnitlig puls} = \frac{\text{måling 1} + \text{måling 2} + \text{måling 3}}{3}$$
+
+2. Beregn for hver koncentration, hvor mange procent pulsen har ændret sig i forhold til pulsen uden koffein:
+
+$$\text{Ændring (\%)} = \frac{\text{puls med koffein} - \text{puls ved 0 mg/L}}{\text{puls ved 0 mg/L}} \cdot 100$$
+
+| Koffeinkoncentration (mg/L) | 0 | 18,75 | 37,5 | 75 | 150 | 300 | 600 |
+|:---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Gennemsnitlig puls (slag/min) | | | | | | | |
+| Ændring i forhold til 0 mg/L (%) | 0 | | | | | | |
+
+: Udregnet gennemsnit og procentvis ændring af pulsen. {#tbl-2}
+
+3. Lav en graf (fx i Excel) med koffeinkoncentrationen på x-aksen og den gennemsnitlige puls på y-aksen. Da koncentrationen fordobles fra trin til trin, kan det være en fordel også at prøve en logaritmisk x-akse.
+4. Beskriv grafens form: Stiger pulsen jævnt med koncentrationen, flader den ud, eller falder den igen ved de højeste koncentrationer? Ved hvilken koncentration ses den største virkning?
+5. Sammenlign jeres kurve med en eller to andre gruppers. Ligner de hinanden?
+
+## Journalspørgsmål
+
+1. Hvad var jeres hypotese, og blev den be- eller afkræftet af resultaterne?
+2. Koffein virker stimulerende på nervesystemet og hjertet. Forklar ud fra jeres graf, hvordan dafniens hjerte reagerer på koffein, og diskutér, hvad der kan ske ved de højeste koncentrationer.
+3. Dafnier er vekselvarme. Hvorfor er det vigtigt at slukke lyset i mikroskopet mellem tællingerne, og hvordan ville en stigende temperatur påvirke jeres resultater?
+4. I bruger den samme dafnie til alle koncentrationerne. Hvilke fordele og ulemper har det i forhold til at bruge en ny dafnie til hver koncentration? Hvordan kan rækkefølgen af koncentrationerne påvirke resultatet?
+5. En kop kaffe indeholder ca. 60 mg koffein. Hvor mange mg koffein pr. liter blod ville det svare til, hvis koffeinen fordelte sig i et menneskes ca. 5 L blod, og hvordan ligger det i forhold til de koncentrationer, I har brugt? Diskutér, om man kan overføre resultaterne fra dafnier til mennesker.
+6. Hvilke fejlkilder var der i forsøget (fx tælling af hurtige hjerteslag, dafniens tilstand, varme fra lyset), og hvordan påvirker de konklusionen?

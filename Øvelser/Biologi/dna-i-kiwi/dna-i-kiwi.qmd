@@ -57,3 +57,19 @@ Ethanolen skal være iskold for at virke. Sæt flasken i fryseren mindst et døg
 - Opvaskemiddel kan irritere øjnene ved stænk — skyl straks med rigeligt vand ved kontakt.
 - Vask hænder efter øvelsen. Spis og drik ikke i laboratoriet.
 :::
+
+## Resultater
+
+Tegn eller fotografér det udfældede DNA på træpinden og i grænselaget mellem filtrat og ethanol. Beskriv med egne ord, hvordan DNA'et ser ud (farve, form, konsistens).
+
+Øvelsen er kvalitativ — der er ingen tal at regne på, så der er ikke noget afsnit med databehandling.
+
+## Journalspørgsmål
+
+1. Hvorfor skal kiwien moses, før opvaskemidlet tilsættes?
+2. Hvorfor tilsætter man opvaskemiddel? Forklar ud fra opbygningen af cellemembranen og kernemembranen.
+3. Hvorfor tilsætter man salt, og hvad fjernes ved filtreringen?
+4. Hvad er et enzym, og hvad vil enzymet DNase gøre ved DNA'et? Hvorfor hjælper det at holde det hele koldt under forsøget?
+5. DNase findes normalt i cellevæsken, hvor det beskytter mod fremmed DNA, fx fra virus. Hvorfor er det normalt ikke til fare for cellens eget DNA?
+6. Hvorfor fælder DNA'et ud, når ethanolen tilsættes, og hvorfor ses det netop i grænselaget mellem de to væsker?
+7. Den hvide klump, I kan se, er mange millioner DNA-molekyler viklet sammen. Hvorfor kan man ikke se dobbeltspiralen eller enkelte gener — og hvad skal der til for at undersøge DNA'ets rækkefølge af baser?
