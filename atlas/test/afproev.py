@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
+from pladevisning import afproev_pladevisning, afproev_bevaegelsesfejl, afproev_bevaegelsestilpasning
 
 ADRESSE = os.environ.get('ATLAS_URL', 'http://localhost:8777')
 UD = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-atlas-test'))
@@ -71,6 +72,7 @@ with sync_playwright() as p:
         canvas = side.locator('#globus')
         afproev_piletaster(side)
         afproev_pladelag(side, UD)
+        afproev_pladevisning(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -112,6 +114,13 @@ with sync_playwright() as p:
     canvas = side.locator('#globus')
     side.locator('#pladelag').tap()
     expect(side.locator('#pladelag')).to_have_attribute('aria-pressed', 'true')
+    side.locator('#pladevisning').tap()
+    side.locator('#pladenavne').tap()
+    expect(side.locator('#pladenavne')).to_be_enabled()
+    side.locator('#pladepile').tap()
+    expect(side.locator('#pladepile')).to_be_enabled()
+    side.keyboard.press('Escape')
+    side.evaluate('scrollTo(0, 0)')
     foer = canvas.screenshot()
     session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':150,'y':460,'id':1}]})
     session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':230,'y':490,'id':1}]})
@@ -145,6 +154,8 @@ with sync_playwright() as p:
         expect(side.locator('.pladeoversigt')).to_contain_text('Nordamerikanske')
         expect(side.locator('.opgaveliste')).to_be_visible()
         assert side.locator('.modelkort a').count() == 2
+        side.locator('.pladetabeloversigt summary').click()
+        expect(side.locator('.pladetabel tbody tr')).to_have_count(52)
         side.screenshot(path=str(UD / f'fallback-{fejltype}.png'))
         print('Fallback', fejltype, ': OK')
         side.close()
@@ -152,6 +163,10 @@ with sync_playwright() as p:
     print('Fallback pladedata/modul, ugyldige koordinater og nyt forsøg : OK')
     afproev_pladetilpasning(browser, ADRESSE)
     print('Skærmstørrelsesskift med pladelaget : OK')
+    afproev_bevaegelsesfejl(browser, ADRESSE)
+    print('Navne og bevægelse: data-/modulfejl, validering og nyt forsøg: OK')
+    afproev_bevaegelsestilpasning(browser, ADRESSE)
+    print('Skærmstørrelsesskift med navne, pile og åbne indstillinger: OK')
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)

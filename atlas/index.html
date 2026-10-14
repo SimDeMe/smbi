@@ -82,7 +82,9 @@
           <li><svg viewBox="0 0 36 12" aria-hidden="true"><defs><pattern id="skraa" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 4L4 0" stroke="#5b4a3a" stroke-width=".9"/></pattern></defs><rect x="2" y="1" width="32" height="10" fill="url(#skraa)" stroke="#5b4a3a" stroke-dasharray="2 2"/></svg><span><b>Bred, diffus zone</b> – grænsen er ingen skarp linje</span></li>
         </ul>
         <p class="signaturnote">Model (Bird 2003), ikke målte linjer.</p>
+        <p id="bevaegelsesnote" class="signaturnote" hidden></p>
         <button id="pladeopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
+        <button id="pladevisning" popovertarget="pladevalg" aria-controls="pladevalg" aria-expanded="false">Visning</button>
       </section>
     </section>
     <div class="eftertekst">
@@ -95,5 +97,22 @@
     <div class="dialogtop"><h2 id="dialogtitel">Udforsk atlasset</h2><button id="luk" aria-label="Luk og vend tilbage til globussen">Luk ×</button></div>
     <div id="dialogindhold"></div>
   </dialog>
+  <section id="pladevalg" class="pladevalg" popover="auto" aria-labelledby="pladevalgtitel">
+    <div class="pladevalg-top"><h2 id="pladevalgtitel">Plader på globussen</h2><button popovertarget="pladevalg" popovertargetaction="hide" aria-label="Luk pladevisning">Luk ×</button></div>
+    <label class="pladevalg-felt"><input id="pladenavne" type="checkbox"> Pladenavne</label>
+    <label class="pladevalg-felt"><input id="pladepile" type="checkbox"> Pile og hastighed</label>
+    <div id="pladereferencefelt" hidden>
+      <label for="pladereference">Bevægelse i forhold til</label>
+      <select id="pladereference">
+        <option value="EU">Eurasiske Plade</option>
+        <option value="NA">Nordamerikanske Plade</option>
+        <option value="PA">Stillehavspladen</option>
+        <option value="AF">Afrikanske Plade</option>
+      </select>
+      <p>Pile viser retning; tallene er cm/år ved pilepunktet. Den valgte referenceplade står stille.</p>
+    </div>
+    <p class="pladevalg-note">Zoom ind for at se flere små plader. Navne og pile skjules, hvor der ikke er plads.</p>
+    <p id="pladevalgstatus" role="status" hidden></p>
+  </section>
 </body>
 </html>

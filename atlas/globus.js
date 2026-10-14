@@ -25,6 +25,8 @@ export async function startGlobus(steder, vaelgSted) {
   let ramme = 0;
   let pladelag = false;
   let plademodul;
+  let bevaegelsesmodul;
+  let pladevisning = { navne: false, bevaegelse: false, reference: 'EU' };
   const markoerlag = document.querySelector('#markoerer');
   const markoerer = steder.map(sted => {
     const knap = document.createElement('button');
@@ -46,6 +48,16 @@ export async function startGlobus(steder, vaelgSted) {
     ramme = 0;
     ctx.clearRect(0, 0, bredde, hoejde);
     projektion.translate([bredde / 2, hoejde / 2]).scale(Math.min(bredde, hoejde) * 0.455 * zoom).rotate([-centrum[0], -centrum[1]]);
+    for (const { sted, knap, etiket } of markoerer) {
+      const [x, y] = projektion(sted.koordinater);
+      const synlig = d3.geoDistance(centrum, sted.koordinater) < Math.PI / 2 - .035 && x > 22 && x < bredde - 22 && y > 22 && y < hoejde - 22;
+      knap.hidden = !synlig;
+      if (synlig) {
+        knap.style.left = `${x}px`; knap.style.top = `${y}px`;
+        // Skjul kun etiketten ved kanten; stedets knap bevarer sit navn.
+        etiket.hidden = x < 125 || x > bredde - 90;
+      }
+    }
     ctx.beginPath(); sti({ type: 'Sphere' });
     ctx.fillStyle = '#bcdfee'; ctx.fill();
     ctx.save(); ctx.clip();
@@ -58,18 +70,17 @@ export async function startGlobus(steder, vaelgSted) {
     const skygge = ctx.createRadialGradient(bredde / 2 - radius * .25, hoejde / 2 - radius * .25, radius * .35, bredde / 2, hoejde / 2, radius);
     skygge.addColorStop(0, '#ffffff00'); skygge.addColorStop(.8, '#17211f00'); skygge.addColorStop(1, '#17211f25');
     ctx.fillStyle = skygge; ctx.fillRect(0, 0, bredde, hoejde);
+    if (pladelag && bevaegelsesmodul && (pladevisning.navne || pladevisning.bevaegelse)) {
+      const c = canvas.getBoundingClientRect();
+      const undgaa = [...document.querySelectorAll('.markoer:not([hidden]) .prik, .markoer:not([hidden]) .etiket:not([hidden]), #signatur, #pladevalg:popover-open, .betjeningslinje button')]
+        .filter(el => el.getClientRects().length).map(el => {
+          const r = el.getBoundingClientRect();
+          return { x: r.left - c.left - 4, y: r.top - c.top - 4, w: r.width + 8, h: r.height + 8 };
+        });
+      bevaegelsesmodul.tegnPlader(ctx, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .25, pladevisning, undgaa);
+    }
     ctx.restore();
     ctx.beginPath(); sti({ type: 'Sphere' }); ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2; ctx.stroke();
-    for (const { sted, knap, etiket } of markoerer) {
-      const [x, y] = projektion(sted.koordinater);
-      const synlig = d3.geoDistance(centrum, sted.koordinater) < Math.PI / 2 - .035 && x > 22 && x < bredde - 22 && y > 22 && y < hoejde - 22;
-      knap.hidden = !synlig;
-      if (synlig) {
-        knap.style.left = `${x}px`; knap.style.top = `${y}px`;
-        // Skjul kun etiketten ved kanten; stedets knap bevarer sit navn.
-        etiket.hidden = x < 125 || x > bredde - 90;
-      }
-    }
     document.querySelector('#zoomniveau').textContent = `${zoom.toFixed(1).replace('.', ',')}×`;
     document.querySelector('#zoom-ud').disabled = zoom <= .75;
     document.querySelector('#zoom-ind').disabled = zoom >= 3;
@@ -179,6 +190,7 @@ export async function startGlobus(steder, vaelgSted) {
   new ResizeObserver(tilpas).observe(rum);
   tilpas();
   return {
+    gentegn: opdater,
     visSted(sted) { centrum = [...sted.koordinater]; zoom = 1.4; afgraens(); },
     // Data hentes først, når laget slås til; fejl lader globussen være uændret.
     async visPladegraenser(vis) {
@@ -187,6 +199,15 @@ export async function startGlobus(steder, vaelgSted) {
         await plademodul.hentPladegraenser();
       }
       pladelag = vis;
+      opdater();
+    },
+    async visPladeoplysninger(valg) {
+      const ny = { ...pladevisning, ...valg };
+      if (ny.navne || ny.bevaegelse) {
+        bevaegelsesmodul = await import('./pladebevaegelse.js');
+        await bevaegelsesmodul.hentPlader();
+      }
+      pladevisning = ny;
       opdater();
     }
   };
