@@ -1,0 +1,47 @@
+Pladenavne og bevægelsesmodel: plader.json er afledt af PB2002.
+
+Kilde: Peter Bird (2003), An updated digital model of plate boundaries,
+Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252.
+Tabel 1, afsnit 4 og originalfilerne PB2002_plates.dig og PB2002_poles.dat.
+Original: http://peterbird.name/oldFTP/PB2002/
+Hentet 14. oktober 2026 fra den versionsbundne kopi nedenfor, udgivet under
+Open Data Commons Attribution License 1.0:
+https://opendatacommons.org/licenses/by/1-0/
+https://github.com/fraxen/tectonicplates/blob/339b0c56563c118307b1f4542703047f5f698fae/LICENSE.md
+
+Versionsbundne downloadadresser:
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_plates.dig.txt
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_poles.dat.txt
+
+SHA-256 (CR fjernet, øvrige bytes uændrede):
+PB2002_plates.dig.txt:
+ff7e25dbf29658d4330b38e95e876533c5cdfd292ef71fa806e2340edfa3abc0
+PB2002_poles.dat.txt:
+887d208bda44cea75ee0c778c1883476906757a3d8035608a6cff7b79cf40f2e
+
+Bearbejdning i plader.mjs:
+- De 52 plate-ID'er og Eulerpoler er bevaret uden afrunding. Originalens
+  breddegrad, længdegrad, grader/Ma mod uret er lagret som [lon, lat, rate].
+- Navnene er danske oversættelser af Birds navne fra tabel 1.
+- Navne-/pilepunkter beregnes inde i de originale sfæriske pladepolygoner.
+  De er kartografiske ankre, ikke målestationer. Koordinater og arealer
+  afrundes til 5 decimaler. Polygonerne hentes ikke af elevens browser.
+- Et anker uden for orogenerne foretrækkes, hvis det findes. For NH, BR og
+  CR ligger ankeret i en diffus zone, og der vises ingen hastighed. SL
+  undertrykkes også, da Shetlandrotationen er hypotetisk i kilden.
+  Orogenernes kilde og bearbejdning står i pladegraenser.LICENSE.
+
+Beregning i pladebevaegelse.js:
+Originalens poler er relative til Stillehavspladen (PA). Referenceskift
+foretages ved at trække de kartesiske rotationsvektorer fra hinanden før
+v = (omega_plade - omega_reference) kryds r. Jordradius er 6371 km.
+Hastigheden er lokal ved pilepunktet og vises i cm/år. Pilens længde er
+konstant i skærmpixel og er ingen hastighedsskala. Den valgte referenceplade
+vises som en prik med 0 cm/år. Pile er ikke GPS-målinger eller bevægelse i
+forhold til hotspots; den ældre models småplader kan være særligt usikre.
+
+Efterkontrol: analytiske løsninger, alle 52 originalpoler og ankerpunkters
+placering inden i kildepolygonerne. Alle 5.819 relative hastigheder ved
+grænsetrinnenes midtpunkter er sammenlignet med PB2002_steps.dat.txt,
+med største forskel 0,00730 cm/år og 0,506 grader, inden for den afrundede
+kildetabels præcision. Kilde/versionssum for trin står i pladegraenser.LICENSE.
