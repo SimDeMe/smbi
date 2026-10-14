@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Danner pladegraenser.json (GeoJSON) fra Peter Birds PB2002-model.
+"""Danner pladegraenser.json (kompakte geodata) fra Peter Birds PB2002-model.
 
 Kilde: Bird, P. (2003), An updated digital model of plate boundaries,
 G-cubed 4(3), 1027, doi:10.1029/2001GC000252. Filerne PB2002_steps.dat og
@@ -70,6 +70,11 @@ def orogener(fil):
     features, navn, ring = [], None, []
     for linje in Path(fil).read_text(encoding='latin-1').splitlines():
         if linje.startswith('***'):
+            # Peru-ringen i originalen gentager ikke startpunktet. GeoJSON
+            # kræver en lukket ring; behold alle kildepunkter og gentag det
+            # første frem for at lade D3 kassere det sidste kildepunkt.
+            if ring and ring[-1] != ring[0]:
+                ring.append(ring[0])
             # Bird digitaliserer mod uret set udefra; D3 forventer med uret.
             features.append([navn, flad(ring[::-1])])
             navn, ring = None, []

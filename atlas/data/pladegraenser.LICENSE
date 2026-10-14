@@ -15,3 +15,21 @@ Bearbejdning (data/pladegraenser.py): Birds syv trinklasser er samlet i tre
 sammenhængende trin er slået sammen til linjer; længdegrader er bragt til
 -180…180; koordinater er afrundet til 0,01°; orogenernes ringe er vendt til
 D3's omløbsretning. Ingen grænser er tilføjet eller flyttet.
+
+Præcise, versionsbundne downloadadresser:
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_steps.dat.txt
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_orogens.dig.txt
+Licensmeddelelse ved samme commit:
+https://github.com/fraxen/tectonicplates/blob/339b0c56563c118307b1f4542703047f5f698fae/LICENSE.md
+
+SHA-256 (uden CR, som ovenfor):
+PB2002_steps.dat.txt:
+513babb111c65cd275274e2edcb249085d00e007c79d8755e1b4b79f60806f37
+PB2002_orogens.dig.txt:
+daf4e6ff6c5e6983d70df8977bc989f814b79dd4efda28c24433db012f2e77c6
+
+Efterkontrol 14. oktober 2026: alle 5.819 originaltrin er bevaret, med deres
+klasse, orogenmærke og subduktionsside, i 1.719 sammenhængende linjer.
+Alle kildepunkter i de 13 orogener er bevaret. Peru-polygonen gentager ikke
+startpunktet i originalen; eksportøren gentager nu dette punkt for at lukke
+GeoJSON-ringen korrekt. Der er ikke indført nye geografiske koordinater.

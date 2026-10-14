@@ -1,6 +1,5 @@
 // Ortografisk projektion: geografisk klipning og poler håndteres af D3.
 // Canvas 2D kræver hverken grafikkortadgang eller WebGL.
-import { hentPladegraenser, tegnPladegraenser } from './pladelag.js';
 
 export async function startGlobus(steder, vaelgSted) {
   const d3 = window.d3;
@@ -25,6 +24,7 @@ export async function startGlobus(steder, vaelgSted) {
   let hoejde = 0;
   let ramme = 0;
   let pladelag = false;
+  let plademodul;
   const markoerlag = document.querySelector('#markoerer');
   const markoerer = steder.map(sted => {
     const knap = document.createElement('button');
@@ -52,7 +52,7 @@ export async function startGlobus(steder, vaelgSted) {
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
     ctx.beginPath(); sti(lande); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
     ctx.beginPath(); sti(graenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
-    if (pladelag) tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
+    if (pladelag) plademodul.tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
     // En diskret rand giver rumlighed, men angiver ingen faglige måledata.
     const radius = projektion.scale();
     const skygge = ctx.createRadialGradient(bredde / 2 - radius * .25, hoejde / 2 - radius * .25, radius * .35, bredde / 2, hoejde / 2, radius);
@@ -182,7 +182,10 @@ export async function startGlobus(steder, vaelgSted) {
     visSted(sted) { centrum = [...sted.koordinater]; zoom = 1.4; afgraens(); },
     // Data hentes først, når laget slås til; fejl lader globussen være uændret.
     async visPladegraenser(vis) {
-      if (vis) await hentPladegraenser();
+      if (vis) {
+        plademodul = await import('./pladelag.js');
+        await plademodul.hentPladegraenser();
+      }
       pladelag = vis;
       opdater();
     }

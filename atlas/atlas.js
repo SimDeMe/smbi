@@ -80,6 +80,9 @@ function visSteder() {
 function visProcesser() {
   aabn('Processer');
   indhold.append(element('p', 'Vælg en proces. Global atmosfære handler om hele Jorden og har derfor ingen stedmarkør.'));
+  const pladeopgave = element('button', 'Undersøg pladegrænserne', 'tilbage');
+  pladeopgave.onclick = visPladeopgave;
+  indhold.append(pladeopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -163,19 +166,34 @@ document.querySelector('#hjaelp').onclick = () => {
 
 const PLADEKILDE = 'Pladegrænser: Peter Bird (2003), An updated digital model of plate boundaries, Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252. Data er hentet fra Birds egen side (peterbird.name/oldFTP/PB2002) og er identiske med kopien i github.com/fraxen/tectonicplates, som udgives under Open Data Commons Attribution 1.0. ' +
   'Bird inddeler hvert ca. 45 km langt stykke af grænserne i syv klasser ud fra pladernes beregnede relative bevægelse. Her er de samlet i tre: konstruktiv = pladerne glider fra hinanden, i havet (spredningsryg) eller på land (riftzone); destruktiv = pladerne bevæger sig mod hinanden, enten så den ene glider ned under den anden (subduktion) eller så de presses sammen til bjerge (kollision, fx Himalaya); bevarende = pladerne glider forbi hinanden (transformforkastning). Derfor kan typen skifte flere gange langs den samme grænse. ' +
-  'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er bjergkæder og brede zoner, fx Alperne og Tibet, hvor jordskorpen er presset og foldet over et stort område. Der findes ingen skarp grænse, og linjerne er mindst sikre. ' +
+  'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er brede zoner med fordelt deformation, fx Alperne og Tibet. Der findes ingen enkelt skarp grænse, og linjernes placering er mindre sikker. ' +
   'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Laget viser ikke jordskælv, vulkaner, dybhavsgrave eller pladernes navne.';
 
 function visPladeopgave() {
   aabn('Undersøg pladegrænserne');
-  indhold.append(element('p', 'Slå laget Pladegrænser til, og drej globussen. Brug signaturforklaringen.'));
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Brug det valgfrie lag Pladegrænser og signaturforklaringen. Du kan også åbne tekstoversigten med eksempler på modellens typer.'));
+  const oversigt = element('details', '', 'pladeoversigt');
+  oversigt.open = !globus;
+  oversigt.append(element('summary', 'Modellen i tekst'));
+  const eksempler = element('ul');
+  for (const eksempel of [
+    'Konstruktiv – pladerne bevæger sig fra hinanden. Eksempel: den Midtatlantiske Ryg ved Island mellem den Nordamerikanske og den Eurasiske Plade.',
+    'Destruktiv – pladerne bevæger sig mod hinanden. Ved Andesbjergene subducerer Nazcapladen under den Sydamerikanske Plade; ved Himalaya kolliderer kontinenter.',
+    'Bevarende – pladerne glider forbi hinanden. Eksempel: San Andreas-forkastningen mellem Stillehavspladen og den Nordamerikanske Plade.',
+    'Bred, diffus zone – deformationen er fordelt over et område, fx Alperne og Tibet. Skraveringen markerer den brede zone frem for én skarp grænse.'
+  ]) eksempler.append(element('li', eksempel));
+  oversigt.append(eksempler);
+  indhold.append(oversigt, element('h3', 'Undersøg', 'underoverskrift'));
   const liste = element('ol', '', 'opgaveliste');
   for (const spoergsmaal of [
     'Hvor ligger de konstruktive grænser mest – på land eller i havet? Hvor ligger de destruktive?',
     'Find Island. Hvilken type pladegrænse går gennem øen, og hvilke to plader bevæger sig fra hinanden her?',
     'Følg den Midtatlantiske Ryg mod syd. Hvorfor er den delt op i korte stykker med bevarende grænser imellem?',
     'Find en destruktiv grænse med tænder, fx ved Japan eller Andesbjergene. Hvilken plade ligger øverst, og hvilke landformer og hvilken aktivitet vil du forvente der?',
-    'Hele den Midtatlantiske Ryg er en konstruktiv grænse, men det meste ligger dybt under havet. Hvorfor kan pladegrænsen alene ikke forklare, at Island ligger over havet?',
+    'Langs den Midtatlantiske Ryg dannes ny havbund, men det meste af ryggen ligger dybt under havet. Hvorfor kan pladegrænsen alene ikke forklare, at Island ligger over havet?',
     'Modelkritik: Laget tegner grænserne som skarpe linjer. Hvorfor er det en forenkling? Se fx de skraverede områder ved Alperne og Tibet.'
   ]) liste.append(element('li', spoergsmaal));
   indhold.append(liste);
@@ -184,6 +202,19 @@ function visPladeopgave() {
     introduktion: 'Peter Birds model PB2002 (2003). Grænser og typer er en model – ikke skarpe, målte linjer.',
     tekst: PLADEKILDE
   }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['Bird (2003)', 'https://doi.org/10.1029/2001GC000252'],
+    ['PB2002-originaler', 'https://github.com/fraxen/tectonicplates/tree/339b0c56563c118307b1f4542703047f5f698fae/original'],
+    ['ODC-By 1.0', 'https://opendatacommons.org/licenses/by/1-0/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
   const island = steder.find(sted => sted.id === 'island');
   if (globus) {
     const find = element('button', 'Vis Island med pladegrænser', 'tilbage');
@@ -206,7 +237,10 @@ const canvas = document.querySelector('#globus');
 const canvasbeskrivelse = canvas.getAttribute('aria-label');
 async function skiftPladelag() {
   const vis = pladeknap.getAttribute('aria-pressed') !== 'true';
+  const havdeFokus = document.activeElement === pladeknap;
+  const status = document.querySelector('#kortstatus');
   pladeknap.disabled = true;
+  pladeknap.setAttribute('aria-busy', 'true');
   try {
     await globus.visPladegraenser(vis);
     pladeknap.setAttribute('aria-pressed', String(vis));
@@ -215,12 +249,16 @@ async function skiftPladelag() {
     canvas.setAttribute('aria-label', vis
       ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003`
       : canvasbeskrivelse);
+    status.hidden = true;
   } catch {
-    document.querySelector('#kortstatus').textContent = 'Pladegrænserne kunne ikke indlæses. Globussen virker stadig. Prøv igen senere.';
-    document.querySelector('#kortstatus').hidden = false;
-    setTimeout(() => { document.querySelector('#kortstatus').hidden = true; }, 6000);
+    status.textContent = 'Pladegrænserne kunne ikke indlæses. Globussen virker stadig. Find tekst, opgave og kilder under Processer → Undersøg pladegrænserne. Prøv igen, eller genindlæs siden, hvis problemet fortsætter.';
+    status.hidden = false;
   } finally {
     pladeknap.disabled = false;
+    pladeknap.removeAttribute('aria-busy');
+    // Native disabled kan fjerne fokus. Giv det tilbage efter indlæsning,
+    // hvis eleven ikke i mellemtiden har valgt en anden kontrol eller dialog.
+    if (havdeFokus && document.activeElement === document.body && !dialog.open) pladeknap.focus({ preventScroll: true });
   }
 }
 pladeknap.onclick = skiftPladelag;

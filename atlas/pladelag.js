@@ -10,11 +10,36 @@ export const SIGNATUR = {
 
 let data = null;
 
+// Afvis beskadigede data før de når D3. Fx kan null ellers blive tegnet
+// som 0° og give en opdigtet linje, selv om JSON-filen godt kan læses.
+function kontrollerData(raa) {
+  const klasser = {
+    OSR: 'konstruktiv', CRB: 'konstruktiv',
+    SUB: 'destruktiv', OCB: 'destruktiv', CCB: 'destruktiv',
+    OTF: 'bevarende', CTF: 'bevarende'
+  };
+  const koordinater = (flad, ring = false) => Array.isArray(flad) &&
+    flad.length >= (ring ? 8 : 4) && flad.length % 2 === 0 &&
+    flad.every((tal, i) => Number.isFinite(tal) && Math.abs(tal) <= (i % 2 ? 90 : 180)) &&
+    (!ring || (flad[0] === flad.at(-2) && flad[1] === flad.at(-1)));
+  if (!raa || !Array.isArray(raa.linjer) || !Array.isArray(raa.orogener) || !raa.orogener.length ||
+      Object.entries(klasser).some(([bird, klasse]) => raa.klasser?.[bird] !== klasse) ||
+      raa.linjer.some(l => !Array.isArray(l) || l.length !== 5 || !klasser[l[0]] ||
+        ![0, 1].includes(l[1]) || typeof l[3] !== 'string' ||
+        !(l[0] === 'SUB' ? [1, -1].includes(l[2]) : l[2] === 0) || !koordinater(l[4])) ||
+      raa.orogener.some(o => !Array.isArray(o) || o.length !== 2 ||
+        typeof o[0] !== 'string' || !o[0] || !koordinater(o[1], true)) ||
+      Object.keys(SIGNATUR).some(klasse => !raa.linjer.some(l => klasser[l[0]] === klasse))) {
+    throw new Error('Pladedata er ugyldige eller ufuldstændige');
+  }
+}
+
 export async function hentPladegraenser() {
   if (data) return data;
   const svar = await fetch(new URL('./data/pladegraenser.json', import.meta.url), { signal: AbortSignal.timeout(12000) });
   if (!svar.ok) throw new Error('Pladedata kunne ikke indlæses');
   const raa = await svar.json();
+  kontrollerData(raa);
   const par = flad => {
     const punkter = [];
     for (let i = 0; i < flad.length; i += 2) punkter.push([flad[i], flad[i + 1]]);
@@ -27,7 +52,6 @@ export async function hentPladegraenser() {
     linjer[raa.klasser[bird]].push(punkter);
     if (overliggende) subduktion.push({ punkter, side: overliggende });
   }
-  if (!linjer.konstruktiv.length || !linjer.destruktiv.length) throw new Error('Pladedata er ufuldstændige');
   data = {
     linjer: Object.fromEntries(Object.entries(linjer).map(([klasse, liste]) =>
       [klasse, { type: 'MultiLineString', coordinates: liste }])),
