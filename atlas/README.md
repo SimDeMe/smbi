@@ -177,7 +177,17 @@ Alle seks simulationssider er desuden åbnet med HTTP 200 og uden JavaScript-fej
 Forside, geografibibliotek og de seks simulationsfiler er byte-identiske med
 udgangspunktet. Sitemap indeholder nu `/atlas/`.
 
-Ikke afprøvet på fysiske telefoner, Safari/Firefox eller med en egentlig
+Hele browsertesten består også i headless Chromium på macOS (Playwright,
+Chrome for Testing). Piletastprøven er gjort platformsuafhængig: den venter på
+dialogens asynkrone close-event, sætter tekstmarkøren direkte (End flytter den
+ikke på macOS) og tjekker select uden at forvente Linux' værdiskift på ↓.
+
+En kortere røgtest i Playwrights WebKit (Safari-motoren) og Firefox på
+1366×625 og 390×750 med touch består: siden indlæses uden konsolfejl,
+piletaster drejer globussen efter klik på topbaren, markørkort og søgning
+virker, og der er ingen vandret rulning.
+
+Ikke afprøvet på fysiske telefoner, i en egentlig Safari-app eller med en
 skærmlæser. Touch er testet gennem Chromiums inputprotokol. Ingen ændringer
 af simulationsmodeller; deres faglige beregninger genvalideres ikke her.
 
