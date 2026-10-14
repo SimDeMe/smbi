@@ -1,6 +1,8 @@
 ---
 title: "Porøsitet og permeabilitet — grundvand og landbrug"
 subtitle: "Laboratorieøvelse med databehandling"
+fag: "Naturgeografi"
+hold: ""
 format:
   typst: default
   html: default
@@ -98,7 +100,7 @@ Knus jordprøverne til nogenlunde samme kornstørrelse, så resultaterne kan sam
 
 : Målt volumen af klart vand oven på det bundfældede sediment for hver jordtype. {#tbl-3}
 
-## Resultatbehandling
+## Databehandling
 
 ### Opgave 1: Databehandling af fase 1
 
@@ -130,11 +132,12 @@ Hvor meget vand blev holdt tilbage i prøverne i fase 1? Beregn forskellen melle
 
 : Markkapacitet beregnet som 100 mL minus den gennemløbne vandmængde. {#tbl-5}
 
-## Diskussion og perspektivering
+## Journalspørgsmål
 
-Diskutér spørgsmålene i gruppen, og skriv svarene i journalen.
-
-1. Hvad kan I på baggrund af resultaterne sige om de fire sedimentprøvers porøsitet og permeabilitet?
-2. Diskutér resultaterne i forhold til, hvor hurtigt grundvandet dannes, og hvor stor risikoen er for, at grundvandet forurenes.
-3. Hvilke usikkerheder og fejlkilder er der i forsøget?
-4. Hvad kan resultaterne fortælle om grundvandsdannelsen i områder med forskellige sedimenttyper?
+1. Hvad kan I på baggrund af resultaterne sige om de fire sedimentprøvers porøsitet og permeabilitet? Forklar forskellene ud fra kornstørrelse og sortering.
+2. Er en høj porøsitet det samme som en høj permeabilitet? Brug jeres egne tal til at begrunde svaret.
+3. Diskutér resultaterne i forhold til, hvor hurtigt grundvandet dannes, og hvor stor risikoen er for, at grundvandet forurenes.
+4. Hvilken jordtype holder bedst på vandet (@tbl-5), og hvad betyder det for behovet for kunstvanding i en tør sommer?
+5. Hvad kan resultaterne fortælle om grundvandsdannelsen i områder med forskellige sedimenttyper — fx sandede smeltevandsaflejringer i Vestjylland og moræneler i Østdanmark?
+6. Tropisk rødjord er dannet under et helt andet klima end podsoljord og brunjord. Hvordan kan klimaet forklare forskellene i jordens egenskaber?
+7. Hvilke usikkerheder og fejlkilder er der i forsøget?

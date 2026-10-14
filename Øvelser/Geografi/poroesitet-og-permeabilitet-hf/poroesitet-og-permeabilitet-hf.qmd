@@ -51,7 +51,7 @@ Pak jordprøverne lige hårdt i de to forsøg, og hæld vandet på lige hurtigt 
 - Vand
 :::
 
-## Opgave 1: Dataindsamling
+## Registrering af målinger
 
 | Tid (sek.) | Jordtype 1 | Jordtype 2 |
 |:---|:---:|:---:|
@@ -67,27 +67,30 @@ Pak jordprøverne lige hårdt i de to forsøg, og hæld vandet på lige hurtigt 
 
 : Opsamlet vandmængde (mL) over tid for de to jordtyper. {#tbl-1}
 
-## Opgave 2: Grafisk fremstilling
+## Databehandling
 
-Indtegn resultaterne for begge jordtyper i samme koordinatsystem, med tiden (sekunder) ud ad x-aksen og vandmængden (mL) op ad y-aksen. Brug to forskellige farver eller symboler (fx × og ○), så de to kurver kan kendes fra hinanden.
+1. Indtegn resultaterne for begge jordtyper i samme koordinatsystem, med tiden (sekunder) ud ad x-aksen og vandmængden (mL) op ad y-aksen. Brug to forskellige farver eller symboler (fx × og ○), så de to kurver kan kendes fra hinanden.
+2. Beregn for hver jordtype den gennemsnitlige nedsivningshastighed i de første 60 sekunder. Den er et mål for jordens permeabilitet:
 
-## Opgave 3: Beregning af markkapacitet
+$$\text{Nedsivningshastighed} = \frac{\text{vandmængde efter 60 s (mL)}}{60\ \text{s}} \quad (\text{mL/s})$$
 
-Markkapaciteten er et udtryk for, hvor meget vand jorden kan holde tilbage:
+3. Beregn, hvor meget vand jorden holdt tilbage. Det er et udtryk for jordens markkapacitet:
 
 $$\text{vand tilbageholdt} = 100\ \text{mL} - \text{vand løbet igennem}$$
 
 | | Jordtype 1 | Jordtype 2 |
 |:---|:---:|:---:|
+| Nedsivningshastighed, første 60 s (mL/s) | | |
 | Vand hældt på (mL) | 100 | 100 |
 | Vand løbet igennem i alt (mL) | | |
 | Vand tilbageholdt (mL) | | |
 
-: Markkapacitet for de to jordtyper. {#tbl-2}
+: Nedsivningshastighed og markkapacitet for de to jordtyper. {#tbl-2}
 
-## Opgave 4: Analyse og konklusion
+## Journalspørgsmål
 
-1. **Sammenligning.** Hvilken af de to jordtyper havde den højeste permeabilitet — altså hvor løb vandet hurtigst igennem? Stemte det med jeres hypotese?
-2. **Grundvand.** Hvilken jordtype vil være bedst til at beskytte grundvandet mod nedsivende forurening? Begrund svaret.
-3. **Landbrug.** Hvilken jordtype vil være bedst til landbrug i en tør sommer? Brug resultatet fra opgave 3.
-4. **Fejlkilder.** Nævn mindst én ting, der kan have gjort sammenligningen usikker — fx forskel i pakketæthed eller i den vandmængde, I hældte på.
+1. **Sammenligning.** Hvilken af de to jordtyper havde den højeste permeabilitet — altså hvor løb vandet hurtigst igennem? Stemte det med jeres hypotese? Forklar forskellen ud fra jordtypernes kornstørrelse.
+2. **Grundvand.** Ved hvilken jordtype bliver grundvandsmagasinerne hurtigst fyldt op, og hvilken vil være bedst til at beskytte grundvandet mod nedsivende forurening? Begrund svaret.
+3. **Landbrug.** Hvilken jordtype vil være bedst til landbrug i en tør sommer? Brug resultatet fra @tbl-2. Hvad betyder det for behovet for kunstvanding?
+4. **Danmark.** Sandjord findes især i Vest- og Midtjylland, lerjord især i Østdanmark. Hvor i landet ville I helst være landmand, og hvor ville I helst indvinde drikkevand? Begrund svaret.
+5. **Fejlkilder.** Nævn mindst én ting, der kan have gjort sammenligningen usikker — fx forskel i pakketæthed eller i den vandmængde, I hældte på.
