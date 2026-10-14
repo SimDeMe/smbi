@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Seismografstationer — Val-des-Bois 2010</name>
+  <description>Fire stationer i det canadiske seismografnet (CN). Koordinater fra Natural Resources Canadas stationsregister.</description>
+  <Placemark><name>GRQ · Grand-Remous</name><Point><coordinates>-75.8587,46.6059,0</coordinates></Point></Placemark>
+  <Placemark><name>TRQ · Mont-Tremblant</name><Point><coordinates>-74.5513,46.2176,0</coordinates></Point></Placemark>
+  <Placemark><name>CRLO · Chalk River</name><Point><coordinates>-77.380,46.038,0</coordinates></Point></Placemark>
+  <Placemark><name>KGNO · Kingston</name><Point><coordinates>-76.493,44.227,0</coordinates></Point></Placemark>
+</Document>
+</kml>
