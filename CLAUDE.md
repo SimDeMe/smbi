@@ -24,40 +24,22 @@ ind i dens liste.
 
 ## Simuleringer: gerne flere filer
 
-Alle nye simuleringer — og simuleringer, der lægges om — må deles op i flere
-filer: siden selv (`<navn>.html` med CSS og markup) plus ES-moduler i en
-undermappe med sidens navn (`<navn>/side.js`, `<navn>/model.js` osv.). Ingen
-build og ingen npm-pakker; modulerne kræver en server, ligesom siderne i
-forvejen gør. Se afsnit 0 i `design_rules.md` for, hvordan der deles, og
-`geografi/boelger/` eller `biologi/membran/` som forlæg.
+Byg nye simuleringer som vedligeholdelige, selvstændige moduler. Små sider kan
+være én HTML-fil; større modeller kan opdeles i HTML, CSS og ES-moduler efter
+ansvar og faglig funktion. Fælles CSS og genbrugelige komponenter er tilladt.
+Der er ingen fast grænse for antal linjer eller krav om bestemt filstruktur.
+Sitet fungerer fortsat uden build som udgangspunkt; velbegrundede biblioteker
+og en build-proces for en afgrænset del er tilladt, hvis de gør løsningen
+bedre og ikke bryder GitHub Pages. Se `design_rules.md` og eksisterende
+simulationer som inspiration, ikke tvungne skabeloner.
 
-## Versionsnummer på simuleringer
+## Versioner og ændringshistorik
 
-Hver simulering har et versionsnummer, og **hver gang en simulering rettes,
-får den et nyt** — i samme commit som rettelsen. Nummeret står med småt i
-øverste venstre hjørne af simuleringens vindue: i nyt design som første
-element i `.rig-head`:
-
-```html
-<span class="version" title="Simuleringens version">v1.0</span>
-```
-
-```css
-.version{font-family:var(--mono);font-size:0.58rem;font-weight:500;
-  letter-spacing:0.08em;color:var(--slate)}
-```
-
-(Ingen versaler — det skal stå `v1.0`, ikke `V1.0`.) I gammelt design
-sættes det tilsvarende i øverste venstre hjørne af simuleringens ramme.
-
-* Små rettelser (tekst, fejl, justeringer af layout eller farver) tæller
-  andet tal op: `v1.0` → `v1.1`.
-* Ny funktion, ændret model eller omlægning til nyt design tæller første
-  tal op: `v1.4` → `v2.0`.
-* En simulering, der endnu ikke har et nummer, får `v1.0`, første gang den
-  rettes.
-
-Nævn det nye nummer i commit-beskeden.
+Git er den primære ændringshistorik. Ved faglige eller større funktionelle
+ændringer dokumenteres ændring og evt. modelversion i commit og/eller
+modelmetadata. En lille synlig versionsmarkering er valgfri; den må ikke
+optage væsentlig plads i elevens arbejdsområde. Ingen automatisk tvungen
+versionsopskrivning ved enhver kosmetisk rettelse.
 
 ## Øvelsesvejledninger (`Øvelser/`)
 
@@ -143,8 +125,10 @@ midt i en opgave — gør den færdig først.
 Danske, i bydeform, med en kort forklarende krop når ændringen er stor. Fx:
 `Stigningsregn i sidens nye design: samme model, pænere ramme`.
 
-**Arbejd direkte på `main`.** Commit og push direkte til `main` — ingen
-feature-grene og ingen pull requests, medmindre jeg selv beder om det. Det
-gælder også, når sessionen er sat op med en anden gren. GitHub Pages udgiver
-`main` med det samme, så test i browseren (se «Sådan ser man en side») før
-hvert push.
+**Arbejd som udgangspunkt direkte på `main`.** Projektet er personligt, og
+ejeren ønsker at kunne se ændringer live fra mobilen. Opret ikke branches
+eller pull requests, medmindre ejeren specifikt beder om det eller en konkret
+teknisk begrænsning nødvendiggør det; forklar i så fald afvigelsen. GitHub
+Pages udgiver `main` direkte: test relevante funktioner og skærmstørrelser
+før push, bevar eksisterende links og simulationer, og lav små commits der
+kan rulles tilbage. Stop ved ødelæggende ændringer eller uklar risiko.
