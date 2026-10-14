@@ -1,0 +1,52 @@
+Lokale grænsehastigheder: graensehastigheder.json er afledt af PB2002.
+
+Kilde: Peter Bird (2003), An updated digital model of plate boundaries,
+Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252.
+Tabel 2 og originalen PB2002_steps.dat, udgivet som supplerende materiale.
+Hentet 14. oktober 2026 fra den versionsbundne kopi:
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_steps.dat.txt
+Formatbeskrivelse:
+https://raw.githubusercontent.com/fraxen/tectonicplates/339b0c56563c118307b1f4542703047f5f698fae/original/PB2002_steps_desc.txt
+Originalside: http://peterbird.name/oldFTP/PB2002/
+Kopien udgives under Open Data Commons Attribution License 1.0:
+https://opendatacommons.org/licenses/by/1-0/
+https://github.com/fraxen/tectonicplates/blob/339b0c56563c118307b1f4542703047f5f698fae/LICENSE.md
+
+SHA-256 for PB2002_steps.dat.txt (CR fjernet, øvrige bytes uændrede):
+513babb111c65cd275274e2edcb249085d00e007c79d8755e1b4b79f60806f37
+
+Bearbejdning i graensehastigheder.py:
+- Sammenhængende trin med samme grænse-ID, klasse og orogenstatus deles i
+  højst ca. 400 km lange intervaller. Det originaltrin, der indeholder
+  intervallets midte, vælges. Dette giver 1.937 lokale repræsentationspunkter
+  fra 5.819 originaltrin. Tallene er aldrig rumlige gennemsnit.
+- Hvert punkt er det valgte originaltrins sfæriske midtpunkt, afrundet til
+  0,00001°. Sekvensnummer, grænse-ID, klasse og heltalsazimut bevares.
+- Åbningskomponenten og den højrelaterale forskydningskomponent kopieres
+  uændret fra kolonne 67–72 og 74–79: mm/år med 0,1 mm/års kildepræcision.
+  Positiv åbning = fra hinanden; negativ = mod hinanden. Ingen halvering.
+- JSON-række: [sekvens, grænse, klasse, usikker 0/1, lon, lat,
+  azimut, åbning_mmPrAar, højrelateral_mmPrAar, sammenhængende_længde_km].
+- Usikkerhedsflag følger orogenmærket i kildekolonne 96 eller Shetland (SL).
+
+Visning i graensehastigheder.js:
+mm/år divideres med 10 til cm/år. Fra/mod ved konstruktive/destruktive
+grænser er den lokale samlede åbning/lukning på tværs af grænsen. Langs ved
+transformforkastninger er størrelsen af forskydningen langs grænsen; pilenes
+retning følger det højrelaterale fortegn. Begge komponenter står i teksttabellen.
+Tallene er relative mellem de to naboplader og kræver ingen fast tredje plade.
+Pile på hver side illustrerer kun den relative retning, uden hastighedsskala
+eller en påstand om lige store absolutte enkeltpladehastigheder.
+
+Tal i diffuse zoner markeres med ≈ og kræver større forbehold om grænse og
+bevægelsesmodel. Den hypotetiske Shetlandbevægelse vises ikke som tal/pile.
+Dette er en ældre plademodel, ikke aktuelle GPS-målinger eller en måling af
+bevægelsen under et jordskælv. Ikke alle kildepunkter mærkes samtidig på kortet;
+tekstkataloget, zoom og rotation giver adgang til flere lokale værdier.
+
+Efterkontrol: alle 1.937 udtagne punkter og begge komponenter er sammenlignet
+uafhængigt med originalen. Alle 5.819 trin kontrolleres også med Eulerpolerne
+og v = (omega_venstre - omega_højre) kryds r. Ved opdeling i komponenter
+indregnes kildens afrunding af azimut til hele grader (±0,5°). Det er grunden
+til at bruge Birds publicerede komponenter frem for at genberegne dem fra
+atlassets mere afrundede kortgeometri.
