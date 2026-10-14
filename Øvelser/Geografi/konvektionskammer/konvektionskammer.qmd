@@ -1,6 +1,8 @@
 ---
 title: "Konvektionskammer"
 subtitle: "Laboratorieøvelse"
+fag: "Naturgeografi"
+hold: ""
 format:
   typst: default
   html: default
@@ -50,3 +52,11 @@ Hold en mørk baggrund (fx en jakke eller et bærbar-cover) op bag kammeret, men
 - Sluk fyrfadslyset og røgelsespinden helt efter brug, og lad metalpladen køle af, før den røres eller ryddes væk.
 - Bøj jer ikke ind over den åbne flamme, og undgå at indånde røgen direkte.
 :::
+
+## Journalspørgsmål
+
+1. Hvad sker der med røgen, når I holder den over den kolde skorsten — og hvad sker der, hvis I i stedet holder den over den varme? Forklar hvorfor.
+2. Forklar, hvorfor luften over lyset stiger op. Brug begreberne *densitet* og *opdrift*.
+3. Hvor i kammeret er der højtryk, og hvor er der lavtryk? Begrund jeres placering af H og L.
+4. Langs bunden af kammeret bevæger luften sig fra den kolde til den varme skorsten. Hvad svarer den luftstrøm til i den virkelige atmosfære?
+5. Giv et eksempel fra virkeligheden, hvor forskellig opvarmning af jordoverfladen skaber termiske tryksystemer og vind (fx søbrise og landbrise ved kysten).

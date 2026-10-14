@@ -1,6 +1,8 @@
 ---
 title: "Konvektionskammer — termisk høj- og lavtryk"
 subtitle: "Laboratorieøvelse med journalopgaver"
+fag: "Naturgeografi"
+hold: ""
 format:
   typst: default
   html: default
@@ -55,6 +57,13 @@ Indsæt et foto af jeres forsøg, eller tegn en præcis skitse af, hvordan røge
 - skrive **H** der, hvor I vurderer, at der er højtryk,
 - skrive **L** der, hvor I vurderer, at der er lavtryk.
 
-## Spørgsmål
+## Journalspørgsmål
 
-1. Beskriv, hvordan et termisk lavtryk udvikles, og hvor I ser det i forsøget.
+1. Hvad sker der med røgen, når I holder den over den kolde skorsten — og hvad sker der, hvis I i stedet holder den over den varme? Forklar hvorfor.
+2. Beskriv, hvordan et termisk lavtryk udvikles, og hvor I ser det i forsøget. Brug begreberne *densitet* og *opdrift*.
+3. Beskriv tilsvarende, hvordan et termisk højtryk udvikles, og hvor I ser det i forsøget.
+4. Vind blæser fra højtryk mod lavtryk. Hvor i kammeret ser I vinden ved "jordoverfladen", og hvor ser I returstrømmen i højden?
+5. Forestil jer, at den varme skorsten er ækvator, og den kolde er området omkring 30° N. Hvilken del af den globale cirkulation har I så bygget en model af, og i hvilken retning vil I forvente, at vindene ved jordoverfladen blæser omkring ækvator?
+6. I kammeret blæser det i en lige linje fra højtryk til lavtryk. Hvorfor afbøjes vindene på Jorden — fx passaten — i stedet?
+7. Hvordan er klimaet og plantebælterne omkring ækvator og omkring vendekredsene, og hvordan hænger det sammen med, om luften stiger eller synker de to steder?
+8. Nævn mindst én forenkling i forsøget, som gør, at modellen ikke svarer helt til den virkelige atmosfære.
