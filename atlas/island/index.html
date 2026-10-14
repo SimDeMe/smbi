@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Under Island — tværsnit af Den Midtatlantiske Ryg — smbi.dk</title>
+  <meta name="description" content="Skematisk tværsnit: hvorfor smelter kappen under Den Midtatlantiske Ryg, og hvorfor ligger Island over havet? Sammenlign ryggen med Island.">
+  <link rel="canonical" href="https://smbi.dk/atlas/island/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/atlas/island/">
+  <meta property="og:title" content="Under Island — smbi.dk">
+  <meta property="og:description" content="Skematisk tværsnit af Den Midtatlantiske Ryg og Island: pladebevægelse, kappe, smeltning og magma.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="island.css">
+  <script type="module" src="island.js"></script>
+</head>
+<body>
+  <a class="spring" href="#snit">Spring til tværsnittet</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+      <a href="/atlas/">← Atlas</a>
+    </div>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="overlinje">Naturgeografi · Island</p><h1>Under Island<span>.</span></h1></div>
+      <p>Hvorfor er Island vulkansk – og hvorfor ligger øen over havet?</p>
+    </div>
+    <section id="snit" class="snit" aria-label="Tværsnit og forklaring">
+      <div class="vaerktoejer">
+        <div class="skift" role="group" aria-label="Vælg tværsnit">
+          <button data-tilstand="ryg" aria-pressed="true">Den Midtatlantiske Ryg</button>
+          <button data-tilstand="island" aria-pressed="false">Island</button>
+        </div>
+        <div class="ekstra">
+          <label class="valgfelt"><input id="hotspot" type="checkbox" checked> Hotspot (fortolkning)</label>
+          <button id="fokus" aria-pressed="false">Fokus</button>
+        </div>
+      </div>
+      <div class="arbejdsflade">
+        <figure class="figur">
+          <svg id="tvaersnit" role="img" aria-labelledby="figurtitel figurbeskrivelse" xmlns="http://www.w3.org/2000/svg"></svg>
+          <p class="skematisk">Skematisk – ikke målfast<span> · set fra syd</span></p>
+          <figcaption class="skjult"><span id="figurtitel">Tværsnit</span> <span id="figurbeskrivelse"></span></figcaption>
+        </figure>
+        <aside class="forklaring" aria-labelledby="trintitel">
+          <nav class="trinvalg" aria-label="Forklaringens trin">
+            <button data-trin="0" aria-pressed="true">Overblik</button>
+          </nav>
+          <div class="tekstrum">
+            <h2 id="trintitel">Kort fortalt</h2>
+            <div id="trintekst"></div>
+            <p id="seefter" class="seefter"></p>
+          </div>
+          <div class="trinpile">
+            <button id="forrige" aria-label="Forrige trin">← Forrige</button>
+            <button id="naeste" aria-label="Næste trin">Næste →</button>
+          </div>
+        </aside>
+      </div>
+      <p id="status" class="skjult" role="status"></p>
+    </section>
+    <div class="eftertekst">
+      <details>
+        <summary>Hvad er målt, og hvad er model?</summary>
+        <p>Figuren er en skematisk tegning af en proces, ikke et målt snit gennem et bestemt sted på Island. Lagenes tykkelse og form er ikke målfaste.</p>
+        <table class="maerketabel">
+          <thead><tr><th scope="col">Påstand</th><th scope="col">Mærke</th></tr></thead>
+          <tbody id="maerker"></tbody>
+        </table>
+      </details>
+      <details>
+        <summary>Opgave</summary>
+        <p>Hvorfor er der så mange vulkaner på Island, og hvorfor er det ikke nok at sige, at Island ligger på en pladegrænse? Brug mindst to ting, du har set i modellen eller på globussen, i dit svar.</p>
+        <ol>
+          <li>Hvilke to plader mødes i Island, og hvilken vej bevæger de sig?</li>
+          <li>Stenen i kappen bliver ikke varmere, når den stiger op. Hvorfor smelter den så alligevel? (Tænk på vand, der koger ved lavere temperatur på et højt bjerg.)</li>
+          <li>Skift mellem «Den Midtatlantiske Ryg» og «Island». Hvad er forskellen på skorpen, og hvorfor betyder det, at Island ligger over havet?</li>
+          <li>Hvilke dele af forklaringen er målt, og hvilken del er en fortolkning?</li>
+        </ol>
+      </details>
+      <p class="links">Se også <a href="/geografi/pladegraenser.html">Pladegrænser</a> og <a href="/geografi/vulkanudbrud.html">Vulkanudbrud</a>.</p>
+    </div>
+    <noscript><p class="uden-script">Tværsnittet kræver JavaScript. Kort fortalt: Island ligger på Den Midtatlantiske Ryg, hvor to lithosfæreplader bevæger sig fra hinanden. Kappen stiger op under ryggen, og når trykket falder, smelter en lille del af den til magma. Under Island er kappen varmere end normalt, så der dannes mere magma og en tykkere skorpe, som når over havet.</p></noscript>
+  </main>
+</body>
+</html>

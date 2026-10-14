@@ -41,6 +41,8 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
   er bevaret til uafhængig kontrol af modellens relative hastigheder.
 - `graensehastigheder.js`: valgfrie hastigheder og pile ved grænserne, fra
   PB2002's publicerede komponenter på tværs og langs; også brugt i teksttabellen.
+- `island/`: selvstændigt, statisk tværsnit af Den Midtatlantiske Ryg og
+  Island (#49, milepæl B), SVG uden WebGL. Se `ISLAND-DEMO.md`.
 - `vendor/` og `data/`: lokale, versionsbundne biblioteker, licenser og kortdata.
 
 Globusmodulet indlæses separat med fejlhåndtering. Manglende bibliotek, HTTP-fejl,

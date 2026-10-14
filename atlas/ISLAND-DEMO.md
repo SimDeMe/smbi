@@ -1,6 +1,7 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: plan, ikke implementeret.** Udkast til milepæl A – den faglige
+**Status: milepæl A og B er færdige.** Milepæl B er et statisk tværsnit i
+[`island/`](island/), se «Milepæl B» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
 (zoom til terræn) er udskudt; første version går fra globus til tværsnit. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
 
@@ -70,5 +71,31 @@ F. Afprøv elevopgaven og justér efter observeret forståelse.
 Forløbet er et frivilligt demonstrationsspor; eleven skal kunne gå tilbage,
 springe til en selvstændig model eller vælge noget andet i biblioteket.
 Ingen login, profiler eller LMS-funktioner.
+
+## Milepæl B – statisk tværsnit
+
+Selvstændigt modul på `/atlas/island/` (`index.html`, `island.css`,
+`island.js`, `tvaersnit.js`, `tekst.js`). Endnu ikke linket fra atlasset
+(milepæl D); `#island` i adressen åbner Island-tilstanden.
+
+- Hovedkontrollen er skifteknappen «Den Midtatlantiske Ryg / Island». Lagene
+  følger ISLAND-MODEL.md afsnit 4; «Hotspot (fortolkning)» kan slås fra.
+- Elevteksten i `tekst.js` er ordret afsnit 1–2. Trinknapperne toner de
+  øvrige lag ned, så eleven ser det, «Se efter» peger på. Ingen animation.
+- Figuren er mærket «Skematisk – ikke målfast · set fra syd». Etiketterne
+  bærer mærkerne Målt, Model og Fortolkning fra afsnit 3 som tekst. Der står
+  bevidst ingen tal i figuren, før referencerne er slået op (afgørelse 5);
+  tallene står kun i elevteksten.
+- Kun forholdet mellem tilstandene er en faglig påstand: på Island er
+  skorpen tykkere, lithosfæren dybere, smeltningen begynder dybere, der er
+  flere dråber og kamre, og landet når over havet. Testen kontrollerer det.
+- **Teknikvalg:** tegnet som SVG fra en lille geometrifunktion, ikke
+  Three.js. En statisk figur har ingen gevinst af 3D, virker uden WebGL og
+  bliver dermed det læsbare 2D-alternativ, milepæl C alligevel skal have.
+  Three.js kan stadig bruges til rotation i milepæl C.
+- Test: `atlas/test/island.py` (kaldes fra `afproev.py`) – fem
+  skærmstørrelser, vandret rulning, figur og kontroller uden at rulle,
+  skift, hotspot, tekst mod ISLAND-MODEL.md, trinfremhævning, tastatur,
+  fokus og links.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.
