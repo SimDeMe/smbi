@@ -75,3 +75,14 @@ magma, når blokken drejes om på bagsiden. Kyst-/terrænfilen ændres ikke.
 URL-parameteren `?snit=vatnajokull`, `reykjanes` eller `hekla` gør udsigten
 delbar. Landskabets forrige kameravinkel og højdefaktor gendannes ved lukning.
 De oprindelige procesfigurer og deres adresser findes fortsat.
+
+
+## Elevvisning og dokumentation (v421)
+
+Kilde-/fortolkningsmærkater er samlet i **Om modellen** frem for elevens
+arbejdsflade. Samme kildedata, usikkerheder, dybdedatumer og eksemplet ved
+Grímsvötn er bevaret i dialogen; kammerkortene viser navn og dybde.
+Þingvellirs separate nærvisning er en kvalitativ SVG-illustration, ikke et
+nyt målt terrænudsnit. Dokumentationen i dialogen angiver de visuelle valg,
+Hreppar-mikropladen og kilder fra Þingvellir Nationalpark samt Weismüller
+m.fl. (2019), DOI 10.5194/se-10-1757-2019.

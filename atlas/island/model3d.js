@@ -4,29 +4,34 @@ import { lavTerraen } from './terraen.js';
 import { lavRaster, pakFarve } from './raster.js';
 import { lavSnit, tegnSnit } from './snit3d.js';
 import { SNIT, KILDER } from './snitdata.js';
+import { opretThingvellir, THINGVELLIR } from './thingvellir.js';
 
 const canvas = document.querySelector('#landskab'), figur = canvas.closest('figure');
 const fejltekst = document.querySelector('#hentestatus'), status = document.querySelector('#status');
 const roligt = matchMedia('(prefers-reduced-motion: reduce)');
 const kamera = { drej: -14, vip: 48, zoom: 1, x: 0, z: 0 };
 const tilstand = { sted: 0, havbund: true, geologi: true, faktor: 20, rundtur: false, klar: false, snit: null, dybdefaktor: 1.5 };
-const betjening=[...document.querySelectorAll('.vaerktoejer button,.landskabsknapper button,.destinationer button,#overdrivelse')].filter(b=>b.id!=='fokus');
+const betjening=[...document.querySelectorAll('.vaerktoejer button,.landskabsknapper button,.destinationer button,#overdrivelse')].filter(b=>b.id!=='fokus'&&b.id!=='ommodel');
 betjening.forEach(b=>{b.disabled=true;});
 const steder = [
   { titel: 'En ø på en undersøisk ryg', geo: [-19, 64.95], drej: -14, vip: 48, zoom: 1,
     tekst: 'Island er den del af Den Midtatlantiske Ryg, der når over havet. Drej øen og følg landskabet videre ned på havbunden.',
     se: 'Slå havbunden fra og til. Hvor meget af landskabet skjuler havet?' },
   { titel: 'Her kommer ryggen i land', geo: [-22.25, 63.95], drej: -38, vip: 42, zoom: 2.8,
-    tekst: 'På Reykjanes møder den undersøiske ryg Island. De lange omrids viser kortlagte sprækkesværme og vulkaner. Sprækkerne i selve terrænet er for små til dette højdegitter.',
+    tekst: 'På Reykjanes møder den undersøiske ryg Island. De lange omrids viser kortlagte sprækkesværme og vulkaner. Følg bæltet fra havet ind over land.',
     se: 'Følg de orange vulkansystemer. Hvordan ligger de i forhold til den røde pladegrænse?' },
   { titel: 'Vulkaner under en jøkel', geo: [-17.3, 64.55], drej: 18, vip: 40, zoom: 2.5,
-    tekst: 'Ved Vatnajökull ligger blandt andet Bárðarbunga og Grímsvötn. Højdedataene viser her jøklens overflade. Vulkanernes kortlagte omrids er lagt oven på den.',
-    se: 'Sammenlign landskab og vulkansystemer. Højdefarverne fortæller ikke i sig selv, hvor isen ligger.' },
+    tekst: 'Bárðarbunga og Grímsvötn ligger under Vatnajökull. Se, hvordan vulkansystemerne hænger sammen med landskabet omkring jøklen.',
+    se: 'Find de to vulkaner, og skær landskabet op for at se magmakamrene nedenunder.' },
   { titel: 'Bjergkæden fortsætter under havet', geo: [-24.3, 63.35], drej: -34, vip: 35, zoom: 2.1,
     tekst: 'Reykjanesryggen er en del af Den Midtatlantiske Ryg. Den hæver sig over den omgivende havbund og fortsætter mod Island. Vandet skjuler normalt dette landskab.',
-    se: 'Slå «Vis havbund» fra og til. Følg ryggens retning mod Reykjanes.' }
+    se: 'Slå «Vis havbund» fra og til. Følg ryggens retning mod Reykjanes.' },
+  { titel:'Þingvellir: pladernes spor i landskabet',geo:THINGVELLIR.geo,drej:-14,vip:48,zoom:3.5,
+    tekst:'På Thingvallasletten ses pladebevægelsen i jordoverfladen. Ved Almannagjá brydes klippen op langs riftdalens vestlige kant. Hrafnagjá ligger på den modsatte side af dalen.',
+    se:'Tryk på «Vis pladernes bevægelse». Se, hvordan området strækkes, og jorden mellem forkastningerne synker.' }
 ];
 let ctx, terraen, data, flader, graenser = [], vulkanlinjer = [], navne = [], W = 0, H = 0, skala = 1;
+const thingvellir=opretThingvellir();
 let raster, aktueltSnit=null, gemtKamera=null, snitOffset=null;
 let ramme = 0, flyvning = 0, turTid = 0, revision = 0;
 const rad = Math.PI / 180, klem = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -166,8 +171,9 @@ function stopTur() {
 function stopFlyvning(){cancelAnimationFrame(flyvning);flyvning=0;}
 function vaelgSted(i, anim=true) {
   if(!tilstand.klar)return;
-  stopFlyvning();tilstand.sted=i;const s=steder[i], [x,z]=terraen.fraGeo(s.geo);
-  document.querySelector('#stedsnummer').textContent=`0${i+1} / 04`;
+  stopFlyvning();tilstand.sted=i;document.body.classList.toggle('thingaktiv',i===4);document.querySelector('#thingvellirscene').hidden=i!==4;if(i===4)thingvellir.nulstil();const s=steder[i], [x,z]=terraen.fraGeo(s.geo);
+  document.querySelector('#betjening').textContent=i===4?'Åbn sprækkerne med knappen · Nulstil samler landskabet igen':'Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller';
+  document.querySelector('#stedsnummer').textContent=`0${i+1} / 05`;
   for(const id of ['stedsnavn','rejsetitel'])document.querySelector('#'+id).textContent=s.titel;
   document.querySelector('#rejsetekst').textContent=s.tekst;document.querySelector('#undersoeg').textContent=s.se;
   document.querySelectorAll('[data-sted]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.sted===i)));
@@ -196,6 +202,7 @@ document.querySelectorAll('[data-drej]').forEach(b=>b.addEventListener('click',(
 document.querySelector('#zoomind').addEventListener('click',()=>zoom(1.2));document.querySelector('#zoomud').addEventListener('click',()=>zoom(1/1.2));
 document.querySelector('#nulstil').addEventListener('click',()=>{manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(0);});
 canvas.addEventListener('keydown',e=>{
+  if(document.querySelector('#ommodellen').open)return;
   if(e.altKey||e.ctrlKey||e.metaKey)return;
   const pile={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,5],ArrowDown:[0,-5]};
   if(pile[e.key]){e.preventDefault();drej(...pile[e.key]);}
@@ -212,7 +219,7 @@ canvas.addEventListener('pointermove',e=>{
 const slip=()=>{traek=null;canvas.classList.remove('traekker');};canvas.addEventListener('pointerup',slip);canvas.addEventListener('pointercancel',slip);
 canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!e.ctrlKey)return;e.preventDefault();zoom(e.deltaY<0?1.1:1/1.1);},{passive:false});
 document.querySelector('#fokus').addEventListener('click',e=>{const til=!document.body.classList.contains('fokus');document.body.classList.toggle('fokus',til);e.currentTarget.setAttribute('aria-pressed',String(til));});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){stopTur();stopFlyvning();document.body.classList.remove('fokus');document.querySelector('#fokus').setAttribute('aria-pressed','false');}});
+document.addEventListener('keydown',e=>{if(document.querySelector('#ommodellen').open)return;if(e.key==='Escape'){stopTur();stopFlyvning();document.body.classList.remove('fokus');document.querySelector('#fokus').setAttribute('aria-pressed','false');}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stopTur();stopFlyvning();}});
 roligt.addEventListener('change',()=>{stopFlyvning();stopTur();planlaeg();});
 function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();planlaeg();}
@@ -229,7 +236,8 @@ function tilpasSnit(){
 function snitAdresse(id){const url=new URL(location.href);if(id)url.searchParams.set('snit',id);else url.searchParams.delete('snit');history.replaceState(null,'',url.pathname+url.search+url.hash);}
 function visSnit(id){
   if(!tilstand.klar)return;
-  manuel();if(!tilstand.snit)gemtKamera={...kamera};
+  manuel();document.body.classList.remove('thingaktiv');document.querySelector('#thingvellirscene').hidden=true;if(!tilstand.snit)gemtKamera={...kamera};
+  document.querySelector('#betjening').textContent='Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller';
   aktueltSnit=lavSnit(terraen,id);tilstand.snit=aktueltSnit.valg.id;
   document.body.classList.add('snitaktiv');document.querySelector('#snitknap').setAttribute('aria-pressed','true');document.querySelector('#snitknap').textContent='Luk tværsnit';
   document.querySelector('.snitdestinationer').hidden=false;
@@ -238,15 +246,16 @@ function visSnit(id){
   document.querySelector('#stedsnummer').textContent='SNIT 0'+(SNIT.indexOf(aktueltSnit.valg)+1)+' / 03';
   for(const id of ['stedsnavn','rejsetitel'])document.querySelector('#'+id).textContent=aktueltSnit.valg.titel;
   document.querySelector('#rejsetekst').textContent=aktueltSnit.valg.tekst;document.querySelector('#undersoeg').textContent=aktueltSnit.valg.se;
-  document.querySelector('#datastempel').textContent='ETOPO + geologisk fortolkning';document.querySelector('.snitmaerke').hidden=false;
+  document.querySelector('#datastempel').textContent='ISLAND · TVÆRSNIT';document.querySelector('.snitmaerke').hidden=false;
   document.querySelector('#rundtur').textContent='▷ Følg magma';document.querySelector('.videre').textContent='Tilbage til landskabet →';
   const liste=document.querySelector('#kammerliste');liste.hidden=false;liste.replaceChildren(...aktueltSnit.kamre.map(k=>{
-    const el=document.createElement('div');el.className='kammerkort';el.append(Object.assign(document.createElement('strong'),{textContent:k.navn}),Object.assign(document.createElement('span'),{textContent:k.label}),Object.assign(document.createElement('small'),{textContent:k.sikker}));el.title=k.tekst;return el;
+    const el=document.createElement('div');el.className='kammerkort';el.append(Object.assign(document.createElement('strong'),{textContent:k.navn}),Object.assign(document.createElement('span'),{textContent:k.label}));return el;
   }));
-  const kilde=document.querySelector('#snitkilder');kilde.hidden=false;kilde.replaceChildren('Dybder fra: ',...aktueltSnit.valg.kilder.map(k=>Object.assign(document.createElement('a'),{href:KILDER[k].url,textContent:KILDER[k].titel})),Object.assign(document.createElement('a'),{href:'#snitkildepanel',textContent:'Om det, vi har fortolket →'}));
+  const kilde=document.querySelector('#snitkilder');kilde.hidden=false;kilde.replaceChildren('Dybder fra: ',...aktueltSnit.valg.kilder.map(k=>Object.assign(document.createElement('a'),{href:KILDER[k].url,textContent:KILDER[k].titel})),Object.assign(document.createElement('span'),{textContent:'Se også kildegrundlaget nedenfor.'}));
+  document.querySelector('#kammernoter').replaceChildren(...aktueltSnit.kamre.map(k=>{const p=document.createElement('p');p.textContent=k.navn+' — '+k.sikker+'. '+k.tekst;return p;}));
   const skyder=document.querySelector('#overdrivelse');skyder.min=.5;skyder.max=6;skyder.step=.25;skyder.value=tilstand.dybdefaktor;skyder.setAttribute('aria-label','Dybdernes lodrette overdrivelse');
   document.querySelector('#faktor').value='×'+String(tilstand.dybdefaktor).replace('.',',');document.querySelector('#faktornavn').textContent='Dybder';document.querySelector('#faktorbeskrivelse').textContent='Terræn over havet ×20';
-  const beskrivelse=document.querySelector('#landskabstekst');beskrivelse.textContent='Geografisk tværsnit gennem '+aktueltSnit.valg.navn+'. Overfladen følger det målte ETOPO-terræn. Undergrunden er en kildebaseret fortolkning. Dybdeaksen regnes fra havniveau. '+aktueltSnit.kamre.map(k=>k.navn+': '+k.label+'. '+k.sikker+'.').join(' ');
+  const beskrivelse=document.querySelector('#landskabstekst');beskrivelse.textContent='Geografisk tværsnit gennem '+aktueltSnit.valg.navn+'. Dybdeaksen regnes fra havniveau. '+aktueltSnit.kamre.map(k=>k.navn+': '+k.label+'.').join(' ');
   Object.assign(kamera,{drej:aktueltSnit.retning,vip:30,zoom:1,x:aktueltSnit.midte[0],z:aktueltSnit.midte[1]});
   tilpasSnit();snitAdresse(tilstand.snit);planlaeg();meddel(beskrivelse.textContent);
 }
@@ -254,10 +263,10 @@ function lukSnit(){
   manuel();tilstand.snit=null;aktueltSnit=null;snitOffset=null;document.body.classList.remove('snitaktiv');
   document.querySelector('#snitknap').setAttribute('aria-pressed','false');document.querySelector('#snitknap').textContent='Tværsnit';document.querySelector('.snitdestinationer').hidden=true;
   document.querySelector('#valgoverskrift').textContent='Vælg din udsigt';document.querySelector('.til-snit').textContent='Skær landskabet op →';document.querySelector('#kammerliste').hidden=true;document.querySelector('#snitkilder').hidden=true;document.querySelector('.snitmaerke').hidden=true;
-  document.querySelector('#datastempel').textContent='ETOPO 2022 · terræn og havbund';document.querySelector('#rundtur').textContent='▷ Rundtur';document.querySelector('.videre').textContent='Se inde i landskabet →';
+  document.querySelector('#datastempel').textContent='ISLAND · LANDSKAB';document.querySelector('#rundtur').textContent='▷ Rundtur';document.querySelector('.videre').textContent='Se inde i landskabet →';
   const skyder=document.querySelector('#overdrivelse');skyder.min=1;skyder.max=30;skyder.step=1;skyder.value=tilstand.faktor;skyder.setAttribute('aria-label','Lodret overdrivelse');document.querySelector('#faktor').value='×'+tilstand.faktor;document.querySelector('#faktornavn').textContent='Højder';document.querySelector('#faktorbeskrivelse').textContent='Lodret overdrivelse';
-  document.querySelector('#landskabstekst').textContent='Islands målte terræn og havbund i 3D med lodret overdrivelse. Orange linjer viser kortlagte aktive vulkansystemer. Lyse toppe er højdefarver, ikke isdata.';
-  const før=gemtKamera;vaelgSted(tilstand.sted,false);if(før)Object.assign(kamera,før);stoerrelse();snitAdresse(null);meddel('Viser det målte landskab igen.');
+  document.querySelector('#landskabstekst').textContent='Islands landskab og havbund i 3D. Orange linjer viser aktive vulkansystemer.';
+  const før=gemtKamera;vaelgSted(tilstand.sted,false);if(før)Object.assign(kamera,før);stoerrelse();snitAdresse(null);meddel('Viser landskabet igen.');
 }
 function skiftSnit(){if(tilstand.snit)lukSnit();else visSnit(tilstand.sted===1?'reykjanes':'vatnajokull');}
 document.querySelector('#snitknap').addEventListener('click',skiftSnit);
@@ -288,9 +297,15 @@ try {
   navne=data.navne.map(n=>({...n,punkt:renderPunkt([n.lon,n.lat])})).filter(n=>n.punkt);
   tilstand.klar=true;betjening.forEach(b=>{b.disabled=false;});figur.classList.add('klar');fejltekst.hidden=true;
   new ResizeObserver(stoerrelse).observe(figur);stoerrelse();vaelgSted(0,false);
-  const startSnit=new URLSearchParams(location.search).get('snit');if(startSnit)visSnit(startSnit);
+  const startparam=new URLSearchParams(location.search),startSnit=startparam.get('snit');if(startSnit)visSnit(startSnit);else if(startparam.get('sted')==='thingvellir')vaelgSted(4,false);
 } catch(fejl) {
   stopTur();fejltekst.classList.add('fejl');fejltekst.replaceChildren('3D-landskabet kunne ikke vises. ',Object.assign(document.createElement('a'),{href:'kort.html',textContent:'Åbn kortet og forklaringen →'}));
   betjening.forEach(b=>{b.disabled=true;});
 }
 export const proeve={kamera,tilstand,terraen:()=>terraen,projektion:()=>projektion(),snit:()=>aktueltSnit,steder};
+
+// Supplerende dokumentation åbnes efter elevens eget valg.
+const ommodel=document.querySelector('#ommodellen');
+document.querySelector('#ommodel').addEventListener('click',()=>{stopTur();ommodel.showModal();});
+document.querySelector('#lukommodel').addEventListener('click',()=>ommodel.close());
+ommodel.addEventListener('close',()=>document.querySelector('#ommodel').focus({preventScroll:true}));

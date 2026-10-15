@@ -54,7 +54,12 @@ def afproev_islandsnit(browser, adresse, ud, skaerme):
     side.locator('button[data-snit="vatnajokull"]').click()
     dybder=side.evaluate("async()=>Object.fromEntries((await import('./model3d.js')).proeve.snit().kamre.map(k=>[k.id,k.y]))")
     assert dybder=={'bard':-6500,'grim-lav':-3000,'grim-dyb':-10000},dybder
-    expect(side.locator('#kammerliste')).to_contain_text('Fortolket eksempel')
+    expect(side.locator('#kammerliste')).not_to_contain_text('Fortolket eksempel')
+    expect(side.locator('#ommodellen')).not_to_be_visible()
+    side.locator('#ommodel').click()
+    expect(side.locator('#kammernoter')).to_contain_text('Fortolket eksempel')
+    side.keyboard.press('Escape')
+    expect(side.locator('canvas')).to_have_attribute('data-snit','vatnajokull')
     expect(side.locator('#snitkilder')).to_contain_text('Hudson')
     expect(side.locator('#snitkilder')).to_contain_text('Reverso')
     # Gennemskæringens 3D-occlusion: bagsiden skal skjule kamrene.
@@ -79,7 +84,7 @@ def afproev_islandsnit(browser, adresse, ud, skaerme):
     # Det nye snit kan genåbnes efter lukning og har stadig kilder/skalareference.
     side.locator('.videre').click();expect(side.locator('canvas')).to_have_attribute('data-snit','reykjanes')
     side.locator('button[data-snit="hekla"]').click();expect(side.locator('#snitkilder')).to_contain_text('Ófeigsson')
-    side.locator('#snitkildepanel summary').click();expect(side.locator('#snitkildepanel')).to_contain_text('havniveau')
+    side.locator('#ommodel').click();expect(side.locator('#snitkildepanel')).to_contain_text('havniveau')
     expect(side.locator('#snitkildepanel')).to_contain_text('fortolkning')
     side.close()
     assert not fejl,fejl

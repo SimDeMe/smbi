@@ -12,13 +12,13 @@ export const SNIT = [
   {
     id: 'vatnajokull', navn: 'Vatnajökull', titel: 'Under isen gløder et andet landskab',
     ankre: [[-17.516,64.633],[-17.316,64.416]], halv: 62, bag: 46, bund: 26,
-    tekst: 'Skåret gennem Bárðarbunga og Grímsvötn. Overkanten er det samme målte terræn som før — her jøklernes overflade. Under den ligger vores fortolkning af magmasystemerne.',
+    tekst: 'Bárðarbunga og Grímsvötn ligger under Vatnajökull. Under vulkanerne samles magma i kamre på forskellige dybder, før den bevæger sig op gennem sprækker.',
     se: 'Drej blokken. Følg forbindelsen mellem Grímsvötns dybe og lave magmaområde, eller start magmaens vej.',
     kilder: ['bard','grim'],
     kamre: [
       { id:'bard', navn:'Bárðarbunga', geo:[-17.516,64.633], dybde:6.5, datum:'hav', interval:[6,7], label:'ca. 6–7 km under havet', rx:5.5, ry:.95, kilde:'bard', sikker:'Kildebaseret dybde', tekst:'Seismisk aktivitet og andre målinger støtter magmalagring omkring 6–7 km under havniveau. Kammerets form er tegnet frit.' },
       { id:'grim-lav', navn:'Grímsvötn · lavt', geo:[-17.316,64.416], dybde:3, datum:'hav', interval:[3,4], label:'ca. 3 km under havet', rx:4.3, ry:.65, kilde:'bard', sikker:'Kildebaseret dybde', tekst:'Et lavt magmaområde under Grímsvötn understøttes af seismik og deformation. Der findes flere forskellige dybdeestimater.' },
-      { id:'grim-dyb', navn:'Grímsvötn · dybt', geo:[-17.316,64.416], dybde:10, datum:'hav', interval:[10,35], label:'10 km · valgt model', rx:5.6, ry:1.1, kilde:'grim', sikker:'Fortolket eksempel', tekst:'Et dybt og et lavt reservoir kan forklare deformationen. Her bruges artiklens eksempel med et dybt kammer ved 10 km; dybden er ikke entydigt bestemt.' }
+      { id:'grim-dyb', navn:'Grímsvötn · dybt', geo:[-17.316,64.416], dybde:10, datum:'hav', interval:[10,35], label:'ca. 10 km under havet', rx:5.6, ry:1.1, kilde:'grim', sikker:'Fortolket eksempel', tekst:'Et dybt og et lavt reservoir kan forklare deformationen. Her bruges artiklens eksempel med et dybt kammer ved 10 km; dybden er ikke entydigt bestemt.' }
     ],
     gange: [
       { fra:[-22,26], til:'bard', slags:'dyb' },
@@ -31,8 +31,8 @@ export const SNIT = [
   {
     id:'reykjanes', navn:'Reykjanes', titel:'To veje op gennem halvøen',
     ankre:[[-22.43,63.88],[-22.258,63.895]], halv:37, bag:35, bund:26,
-    tekst:'Snittet går gennem Svartsengi og Fagradalsfjall. Målinger peger på et lavt magmaområde ved Svartsengi og langt dybere lagring ved Fagradalsfjall. De to systemer er vist med hver sin tilførselsvej.',
-    se:'Sammenlign dybderne. De smalle tilførselsveje er en fortolkning; figuren viser ikke et igangværende udbrud.',
+    tekst:'Under Svartsengi ligger magma relativt tæt på overfladen. Ved Fagradalsfjall kommer magmaen fra et langt dybere område. Følg de to veje op gennem halvøen.',
+    se:'Start magmaen, og sammenlign, hvor langt den bevæger sig fra kamrene til overfladen.',
     kilder:['imo','fag'],
     kamre:[
       { id:'svartsengi', navn:'Svartsengi', geo:[-22.43,63.88], dybde:4.5, datum:'overflade', interval:[4,5], label:'ca. 4–5 km dybt', rx:4.4, ry:.65, kilde:'imo', sikker:'Kildebaseret dybde', tekst:'Landhævning og deformation tolkes som magmatilførsel til et bredt område omkring 4–5 km dybde. Det er en blanding af smelte, krystaller og varm sten.' },
@@ -46,7 +46,7 @@ export const SNIT = [
   {
     id:'hekla', navn:'Hekla', titel:'Et dybt reservoir under Hekla',
     ankre:[[-19.866,63.983],[-19.466,63.983]], halv:37, bag:35, bund:26,
-    tekst:'Snittet er centreret under Hekla. Satellitmålinger af deformation omkring udbruddet i 2000 kan forklares med en dyb magmakilde. Den lange forbindelse op til overfladen er illustreret frit.',
+    tekst:'Heklas magma samles dybt i skorpen. Herfra stiger magma op gennem sprækker og forbindelser til vulkanen ved overfladen.',
     se:'Sammenlign Heklas dybe reservoir med de lave magmaområder i de andre snit.',
     kilder:['hekla'],
     kamre:[

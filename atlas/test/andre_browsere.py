@@ -36,7 +36,7 @@ def roeg(browser, motor, bredde, hoejde):
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
     tryk(side.locator('[data-sted="island"]'))
     kort = side.locator('#dialogindhold .fordybelse')
-    expect(kort).to_contain_text('Målt terræn og fortolket undergrund')
+    expect(kort).to_contain_text('Island i 3D · landskab og magmakamre')
     tryk(kort.get_by_role('link', name='Se under overfladen: Under Island'))
     side.wait_for_url('**/atlas/island/model3d.html?snit=vatnajokull')
     expect(side.locator('canvas[data-snit="vatnajokull"]')).to_have_count(1)

@@ -430,7 +430,7 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
         side.locator('[data-sted="island"]').click()
         kort = side.locator('#dialogindhold .fordybelse')
         expect(kort).to_have_count(1)
-        expect(kort).to_contain_text('Målt terræn og fortolket undergrund')
+        expect(kort).to_contain_text('Island i 3D · landskab og magmakamre')
         # Kortet står før de generelle simulationer, og de to simulationer er der stadig.
         assert side.locator('#dialogindhold .modelkort').first.get_attribute('class') == 'modelkort fordybelse'
         assert sorted(side.locator('#dialogindhold .modelkort:not(.fordybelse) a').evaluate_all('l => l.map(a => a.getAttribute("href"))')) == \

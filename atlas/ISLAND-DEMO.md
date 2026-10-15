@@ -336,3 +336,20 @@ globus, lag, fallback, Island-kort og tidligere procesfigur, 3D-landskab,
 nye geografiske snit, Danmark og Europa-quiz på alle fem skærmstørrelser.
 Ingen JavaScript-fejl ved normal brug. Den opdaterede smoke-test til andre
 browsermotorer er bevaret, men ikke kørt for denne udvidelse.
+
+
+## Þingvellir og Om modellen (v421)
+
+Femte destination i landskabet er Þingvellir, også direkte via
+`model3d.html?sted=thingvellir`. En selvstændig SVG-nærvisning viser Almannagjá,
+Hrafnagjá, riftdalen og Þingvallavatn. Knappen åbner forkastningerne og sænker
+midterblokken; nulstilling samler den igen. Illustrationens geometri er
+pædagogisk og bruger ikke højdegitteret. Kildegrundlaget er nationalparkens
+sider om tektoniske bevægelser og Silfra samt Weismüller m.fl. (2019),
+Solid Earth 10, 1757–1784, https://doi.org/10.5194/se-10-1757-2019.
+
+Elevvisningen bruger korte faglige beskrivelser og dybdeangivelser.
+Kildereferencer, usikkerheder, eksempeldybder og formfortolkning er samlet i
+knappen **Om modellen** sammen med Þingvellirs forenklinger og Hreppar-
+mikropladens rolle. Dialogen kan lukkes med Escape og giver fokus tilbage
+til åbningsknappen. Hvert snits detaljer bevares i dokumentationen.
