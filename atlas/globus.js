@@ -65,6 +65,27 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   let navnemodul;
   let graensemodul;
   let pladevisning = { navne: false, bevaegelse: false };
+  // Klimalag: 'vahl', 'koppen' eller null. Aflæsningen viser klassen under
+  // musen, ellers midt i globussen (sigtekorset), så den også virker med taster.
+  let klimalag = null;
+  let klimamodul;
+  let klimapunkt = null;
+  let aflaest;
+  const aflaesning = document.querySelector('#klimaaflaesning');
+  // Opslaget er for tungt til hver frame; det venter, til kloden står stille.
+  let aflaesningstimer;
+  function opdaterAflaesning() {
+    clearTimeout(aflaesningstimer);
+    aflaesningstimer = setTimeout(aflaesNu, 90);
+  }
+  function aflaesNu() {
+    if (!klimalag || landekort || quiz) return;
+    const punkt = klimapunkt || centrum;
+    // Havcellerne er udfyldt til klipning; over havet aflæses ingen klasse.
+    const nr = landVed(punkt) ? klimamodul.klasseI(klimalag, punkt) : null;
+    const tekst = `${klimapunkt ? 'Ved markøren' : 'Midt på globussen'}: ${nr ? klimamodul.beskriv(klimalag, nr) : 'hav'}`;
+    if (tekst !== aflaest) { aflaest = tekst; aflaesning.textContent = tekst; }
+  }
   const markoerlag = document.querySelector('#markoerer');
   const markoerer = steder.map(sted => {
     const knap = document.createElement('button');
@@ -107,8 +128,18 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
     const { lande: landflader, graenser: landegraenser } = kort();
     if (zoom > DETALJE_ZOOM && !henterDetalje) hentDetalje();
-    ctx.beginPath(); sti(landflader); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
-    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
+    // Kystlinjen projiceres én gang; klimalaget genbruger den til klipning og streg.
+    const landsti = new Path2D();
+    d3.geoPath(projektion, landsti)(landflader);
+    ctx.fillStyle = '#d9e2bb'; ctx.fill(landsti); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
+    if (klimalag && !quiz) {
+      // Synsfeltet: halvkuglen, eller kun vinduets udsnit, når kortet er zoomet ind.
+      const r = projektion.scale();
+      const synsvinkel = Math.min(Math.PI / 2, Math.asin(Math.min(1, Math.hypot(bredde, hoejde) / 2 / r)) + .02);
+      klimamodul.tegnKlimalag(ctx, sti, klimalag, landsti, centrum, synsvinkel, r);
+      ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
+    }
+    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = klimalag && !quiz ? '#17211f66' : '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
     if (quiz) quiz.tegn(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .02);
     else {
       if (fremhaevet && fremhaevet.id !== valgtLand?.id) { ctx.beginPath(); sti(fremhaevet); ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
@@ -134,6 +165,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.restore();
     ctx.beginPath(); sti({ type: 'Sphere' }); ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2; ctx.stroke();
     visZoom(zoom, .75, MAKS_ZOOM);
+    opdaterAflaesning();
   }
   function visZoom(niveau, min, max) {
     document.querySelector('#zoomniveau').textContent = `${niveau.toFixed(1).replace('.', ',')}×`;
@@ -250,7 +282,9 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const r = canvas.getBoundingClientRect();
     const punkt = [event.clientX - r.left, event.clientY - r.top];
     if (Math.hypot(punkt[0] - bredde / 2, punkt[1] - hoejde / 2) > projektion.scale()) return null;
-    const [lon, lat] = projektion.invert(punkt);
+    return landVed(projektion.invert(punkt));
+  }
+  function landVed([lon, lat]) {
     for (const [land, [[v, s], [o, n]]] of landebokse(kort())) {
       const iLaengde = v <= o ? lon >= v && lon <= o : lon >= v || lon <= o;
       if (lat >= s && lat <= n && iLaengde && d3.geoContains(land, [lon, lat])) return land;
@@ -288,6 +322,12 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         canvas.title = !quiz && land ? `${landenavn(land)} — klik for landemenu` : '';
         const ny = !quiz && land || null;
         if (ny !== fremhaevet) { fremhaevet = ny; opdater(); }
+        if (klimalag && !quiz) {
+          const r = canvas.getBoundingClientRect();
+          const xy = [event.clientX - r.left, event.clientY - r.top];
+          klimapunkt = Math.hypot(xy[0] - bredde / 2, xy[1] - hoejde / 2) <= projektion.scale() ? projektion.invert(xy) : null;
+          opdaterAflaesning();
+        }
       }
       return;
     }
@@ -327,6 +367,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   canvas.addEventListener('pointerleave', () => {
     canvas.style.cursor = ''; canvas.title = '';
     if (fremhaevet) { fremhaevet = null; opdater(); }
+    if (klimapunkt) { klimapunkt = null; opdaterAflaesning(); }
   });
   new ResizeObserver(tilpas).observe(rum);
   tilpas();
@@ -355,6 +396,15 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         await plademodul.hentPladegraenser();
       }
       pladelag = vis;
+      opdater();
+    },
+    // Henter først data for det valgte system; null slår laget fra.
+    async visKlimalag(system) {
+      if (system) {
+        klimamodul = await import('./klimalag.js');
+        await klimamodul.hentKlimalag(system);
+      }
+      klimalag = system; aflaest = null; klimapunkt = null;
       opdater();
     },
     async visPladeoplysninger(valg) {

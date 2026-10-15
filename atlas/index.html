@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v425</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v426</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -56,6 +56,7 @@
         </div>
         <div class="lagvalg">
           <button id="pladelag" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
+          <button id="klimalag" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
           <button id="fokus" aria-pressed="false">Fokus</button>
         </div>
       </nav>
@@ -96,6 +97,20 @@
         <p id="bevaegelsesnote" class="signaturnote" hidden></p>
         <button id="pladeopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
         <button id="pladevisning" popovertarget="pladevalg" aria-controls="pladevalg" aria-expanded="false">Visning</button>
+      </section>
+      <section id="klimasignatur" class="signatur klimasignatur" aria-labelledby="klimatitel" hidden>
+        <div class="klimatop">
+          <h2 id="klimatitel">Klimazoner</h2>
+          <div class="systemvalg" role="radiogroup" aria-label="Klimasystem">
+            <label><input type="radio" name="klimasystem" value="vahl" checked> Vahl</label>
+            <label><input type="radio" name="klimasystem" value="koppen"> Köppen</label>
+          </div>
+        </div>
+        <div id="klimaforklaring" class="klimaforklaring"></div>
+        <p id="klimaaflaesning" class="klimaaflaesning"></p>
+        <p id="klimanote" class="signaturnote"></p>
+        <p id="klimastatus" class="signaturnote" role="status" hidden></p>
+        <button id="klimaopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
       </section>
     </section>
     <div class="eftertekst">

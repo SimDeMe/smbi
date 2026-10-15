@@ -1,0 +1,46 @@
+Klimazoner: vahl.json og koppen.json er bearbejdet fra Beck m.fl. (2023).
+
+Kilde: Beck, H. E., McVicar, T. R., Vergopolan, N., Berg, A., Lutsko, N. J.,
+Dufour, A., Zeng, Z., Jiang, X., van Dijk, A. I. J. M. og Miralles, D. G.
+(2023), High-resolution (1 km) Köppen-Geiger maps for 1901–2099 based on
+constrained CMIP6 projections, Scientific Data 10, 724,
+doi:10.1038/s41597-023-02549-6.
+Data: figshare, doi:10.6084/m9.figshare.21789074 (artikel 21789074),
+licens CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Hentet 15. oktober 2026:
+  https://ndownloader.figshare.com/files/61012822  koppen_geiger_tif.zip
+  https://ndownloader.figshare.com/files/61012816  climate_data_0p5.zip
+
+Brugte filer (SHA-256):
+  koppen_geiger_tif.zip
+    bb84453d4541f1a0bc5a804ead83f483c19ce70f16a5197f6d3a7b6a63e65562
+  1991_2020/koppen_geiger_0p1.tif
+    59b749fe6711e72c720ff903044eb0efb4373524ee434740ed7384a0284c155b
+  climate_data_0p5.zip
+    40e957d5085bb21ffdb3cbcda1f0fca4c75e2981a6a98ae48ea9fefc72e31c71
+  1991_2020/ensemble_mean_0p5.nc  (månedlig middeltemperatur og nedbør)
+    2f9432df9678e3a6d0e49dda283bd2a5abb4bd69f01c5bd085722aa110c185be
+
+Köppen (koppen.json): Becks 30 klasser for 1991–2020 i 0,1°. Numrene følger
+kildens legend.txt (1 = Af … 30 = EF); farverne er Becks. Csc (tør, kølig sommer;
+kun små bjergområder) forsvinder ved udglatningen, så filen har 29 klasser.
+
+Vahl (vahl.json): beregnet i data/klimazoner.py ud fra månedsnormalerne
+(0,5°) med den gængse skoleversion af Vahls system. v og k er varmeste og
+koldeste måneds middeltemperatur; en måned er fugtig, når nedbør (mm) >
+2 · temperatur (°C).
+  Polar v < 10 °C (is hvis v < 0 °C, ellers tundra) · tropisk k > 15 °C ·
+  subtropisk v > 20 °C og k > 5 °C · ellers tempereret.
+  Fugtige måneder: 10–12 skov, 3–9 savanne/græssteppe/steppe, 1–2 busksteppe,
+  0 ørken. Subtropisk med 3–9 fugtige måneder og tre tørre varmeste måneder:
+  maki. Tempereret skov: nåleskov hvis v < 16,2 − 0,3·k (Vahl), ellers løvskov.
+Vahls egne grænser (Vahl 1911 og senere; se Geografisk Tidsskrift,
+«Vahls Klimainddeling. En Redegørelse») bygger også på regnsandsynlighed og
+skrå grænselinjer, som ikke kan beregnes fra månedsnormaler. Kortet er derfor
+en rekonstruktion med skolekriterierne, ikke Vahls originale kort.
+
+Bearbejdning (begge): havceller får nærmeste landklasse (afstandstransform),
+så laget kan klippes med atlassets kystlinje; flertalsfilter 5×5 (Köppen) og
+3×3 (Vahl) fjerner enkeltceller; cellerne samles til polygoner pr. klasse og
+forenkles med fælles kanter (TopoJSON, tolerance 0,12° og 0,2°, kvantisering
+1e5). Der er ikke tilføjet klimadata.

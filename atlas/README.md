@@ -3,6 +3,43 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Klimazoner som globalt lag: Vahl og Köppen (v426)
+
+Knappen **Klimazoner** ved siden af Pladegrænser slår et andet globalt lag til
+(`klimalag.js`). I signaturen vælges **Vahl** (klimazoner og plantebælter) eller
+**Köppen** (Köppen-Geiger). Begge bygger på Beck m.fl. (2023), klimanormaler
+1991–2020, CC BY 4.0, og de to lag kan vises sammen med pladegrænserne.
+
+- **Köppen** er Becks egne klasser (0,1°) – data, ikke vores beregning.
+- **Vahl** er en *rekonstruktion*, beregnet i `data/klimazoner.py` ud fra samme
+  kildes månedsnormaler (0,5°) med den gængse skoleversion: polar v < 10 °C,
+  tropisk k > 15 °C, subtropisk v > 20 °C og k > 5 °C, ellers tempereret.
+  Fugtig måned: N (mm) > 2·T (°C) som i hydrotermfiguren. Plantebælte efter
+  antal fugtige måneder (10–12 skov, 3–9 savanne/steppe, 1–2 busksteppe,
+  0 ørken), maki ved tør sommer i subtropisk zone, nåleskov/løvskov efter Vahls
+  v = 16,2 − 0,3·k og is ved v < 0 °C. Vahls egne grænser brugte også
+  regnsandsynlighed, som ikke findes i normalerne.
+- Kendte svagheder, der står i dialogen: prærien og den kasakhiske steppe bliver
+  skov (kriteriet for fugtig måned er lempeligt i kolde egne), det midterste
+  Florida bliver tropisk, og 0,5°-cellerne ses som trapper ved stor zoom.
+- Havceller har fået nærmeste landklasse, og laget klippes med atlassets egen
+  kystlinje, så kyster ikke flytter sig. Aflæsningen tjekker landfladen først og
+  viser «hav» over havet.
+- **Aflæsning** under signaturen: klassen ved musen, ellers midt på globussen
+  (sigtekorn), så den også virker med piletaster og touch. Den beregnes først,
+  når kloden står stille (90 ms), fordi opslaget er for tungt til hver frame.
+- **Undersøg og kilde** (også under Processer) har kriterierne for begge
+  systemer, seks opgaver, ⓘ Om data og links til kilderne.
+- Ydeevne (Chrome med grafikkort, 1366×625): Vahl koster intet målbart, og
+  Köppen tager ca. 28 ms pr. billede mod 17 ms uden laget. Kystlinjen projiceres
+  én gang som `Path2D` og genbruges til fyld, klipning og streg. Polygoner uden
+  for synsfeltet eller under en pixel springes over.
+- Data: `data/vahl.json` (113 kB, 19 kB gzip) og `data/koppen.json` (342 kB,
+  100 kB gzip), TopoJSON med fælles kanter. Hentes først ved tilvalg. Kilde,
+  kontrolsummer og bearbejdning står i `data/klimazoner.LICENSE`.
+- Test: `test/klimalag.py` (data, signatur, aflæsning ved København, Sahara og
+  Grønland, tastatur, dialog, fejl og nyt forsøg) indgår i `test/afproev.py`.
+
 ## Landemenu: demografi og klima (v422)
 
 Tryk på et land på globussen. En lille menu ved trykket giver **Demografi** og
@@ -209,6 +246,8 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
   Hentes først ved landevalg; globussens vinkel, zoom og pladelag bevares.
 - `pladelag.js`: valgfrit pladegrænselag (#48). Henter først data, når laget
   slås til, og tegner signaturen i samme Canvas som globussen.
+- `klimalag.js`: valgfrit klimalag (Vahl/Köppen). Henter data og
+  `topojson-simplify` først ved tilvalg og klipper med kystlinjen.
 - `pladebevaegelse.js`: valgfrie navne for PB2002's 52 plader. Eulerberegningen
   er bevaret til uafhængig kontrol af modellens relative hastigheder.
 - `graensehastigheder.js`: valgfrie hastigheder og pile ved grænserne, fra
@@ -399,7 +438,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | d3-array | 3.2.4 | [D3](https://github.com/d3/d3-array), ISC; `vendor/d3-array.LICENSE` |
 | d3-geo | 3.1.1 | [D3](https://github.com/d3/d3-geo), ISC; `vendor/d3-geo.LICENSE` |
 | topojson-client | 3.1.0 | [TopoJSON](https://github.com/topojson/topojson-client), ISC; `vendor/topojson-client.LICENSE` |
-| topojson-simplify | 3.0.3 | [TopoJSON](https://github.com/topojson/topojson-simplify), ISC; `vendor/topojson-simplify.LICENSE`; hentes kun til quiz |
+| topojson-simplify | 3.0.3 | [TopoJSON](https://github.com/topojson/topojson-simplify), ISC; `vendor/topojson-simplify.LICENSE`; hentes kun til quiz og klimalag |
 | europa-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/europa-10m.LICENSE` |
 | afrika-, nordamerika-, sydamerika-, asien-oceanien-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/verdensdele-10m.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
@@ -407,6 +446,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | danmark-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; kildens SHA-256 og bearbejdning i `data/danmark-10m.LICENSE` |
 | pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 | plader.json | PB2002 (Bird 2003), tabel 1 | Samme kilde/licens; poler og pladepolygoner, bearbejdet som beskrevet i `data/plader.LICENSE` |
+| vahl.json, koppen.json | Beck m.fl. (2023), 1991–2020 | [doi:10.1038/s41597-023-02549-6](https://doi.org/10.1038/s41597-023-02549-6), CC BY 4.0; Vahl beregnet her; `data/klimazoner.LICENSE` |
 | graensehastigheder.json | PB2002 (Bird 2003), tabel 2 | Samme kilde/licens; lokale komponenter, kildeudtag og koordinater i `data/graensehastigheder.LICENSE` |
 
 D3, TopoJSON og world-atlas er hentet uændret fra `https://cdn.jsdelivr.net/npm/<pakke>@<version>/`

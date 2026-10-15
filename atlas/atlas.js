@@ -210,6 +210,7 @@ function skiftLand(aktiv) {
   document.querySelector('.atlas').classList.toggle('landekort', aktiv);
   document.querySelector('#landetop').hidden = !aktiv;
   document.querySelector('#pladelag').hidden = aktiv;
+  klimaknap.hidden = aktiv;
   if (valgpanel.matches(':popover-open')) valgpanel.hidePopover();
   globus.visLand(aktiv ? danmarkskort : null);
   document.querySelector('.rotation').setAttribute('aria-label', aktiv ? 'Flyt landekortet' : 'Drej globussen');
@@ -398,7 +399,9 @@ function visProcesser() {
   indhold.append(element('p', 'Vælg en proces. Global atmosfære handler om hele Jorden og har derfor ingen stedmarkør.'));
   const pladeopgave = element('button', 'Undersøg pladegrænserne', 'tilbage');
   pladeopgave.onclick = visPladeopgave;
-  indhold.append(pladeopgave);
+  const klimaopgave = element('button', 'Undersøg klimazonerne', 'tilbage');
+  klimaopgave.onclick = visKlimaopgave;
+  indhold.append(pladeopgave, ' ', klimaopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -517,13 +520,14 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Quiz → vælg verdensdel: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Knappen med verdensdelens navn (eller Home) viser hele området igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
+  indhold.append(element('p', 'Klimazoner farver landene efter Vahls klimazoner og plantebælter eller efter Köppen – vælg i signaturen. Feltet under farverne viser klassen ved musen, eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Laget kan vises sammen med pladegrænserne.'));
   indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
   indhold.append(lavInformation({
     navn: 'Globussen', overskrift: 'Om kortet',
-    introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænselaget er en model.',
-    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde.'
+    introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænse- og klimalagene er modeller.',
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde.'
   }));
 };
 
@@ -531,6 +535,87 @@ const PLADEKILDE = 'Pladegrænser: Peter Bird (2003), An updated digital model o
   'Bird inddeler hvert ca. 45 km langt stykke af grænserne i syv klasser ud fra pladernes beregnede relative bevægelse. Her er de samlet i tre: konstruktiv = pladerne glider fra hinanden, i havet (spredningsryg) eller på land (riftzone); destruktiv = pladerne bevæger sig mod hinanden, enten så den ene glider ned under den anden (subduktion) eller så de presses sammen til bjerge (kollision, fx Himalaya); bevarende = pladerne glider forbi hinanden (transformforkastning). Derfor kan typen skifte flere gange langs den samme grænse. ' +
   'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er brede zoner med fordelt deformation, fx Alperne og Tibet. Der findes ingen enkelt skarp grænse, og linjernes placering er mindre sikker. ' +
   'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Pladenavne og grænsehastigheder kan vælges under Visning. Ved grænserne vises PB2002-modellens lokale relative hastigheder: Fra og Mod er den samlede åbning eller lukning på tværs af grænsen, ikke halvspredning eller hastigheden af én plade. Langs er forskydningen langs transformforkastninger. Ved skrå bevægelse findes begge komponenter i teksttabellen. Tallene er modelværdier, ikke aktuelle GPS-målinger, og kan variere langs samme grænse. Pilene viser kun retning og har ingen hastighedsskala. I diffuse zoner mærkes tal med ≈, fordi grænse og pladebevægelse er mere usikre. Langs den hypotetiske Shetlandplade vises ingen hastighed. Laget viser ikke jordskælvs- eller vulkankataloger.';
+
+const KLIMAKILDE = 'Data: Beck, H. E., McVicar, T. R., Vergopolan, N. m.fl. (2023), High-resolution (1 km) Köppen-Geiger maps for 1901–2099 based on constrained CMIP6 projections, Scientific Data 10, 724, doi:10.1038/s41597-023-02549-6. Datasættet (figshare 21789074) udgives under CC BY 4.0. ' +
+  'Köppen-laget er Becks egne klasser for perioden 1991–2020 i 0,1° opløsning (ca. 10 km). Vahl-laget er beregnet til atlasset ud fra samme kildes månedsnormaler for temperatur og nedbør 1991–2020 i 0,5° opløsning (ca. 50 km) med skolekriterierne ovenfor. Det er altså en rekonstruktion: Vahl selv (1911 og senere) afgrænsede plantebælterne bl.a. med regnsandsynlighed og skrå grænselinjer, som ikke kan beregnes ud fra månedsnormaler. ' +
+  'Bearbejdning: Enkeltceller er udglattet med et flertalsfilter, og grænserne er forenklet med fælles kanter. Havceller har fået nærmeste landklasse, og laget klippes med atlassets egen kystlinje (Natural Earth); meget små øer uden egne data får derfor naboområdets klasse. Bjerge får deres faktiske, koldere klima, fx i Andes og Tibet. Laget viser klimanormaler – ikke vejret et bestemt år og ikke den faktiske vegetation, som også afhænger af jordbund og menneskers arealanvendelse.';
+
+function visKlimaopgave() {
+  aabn('Undersøg klimazonerne');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå laget Klimazoner til, og skift mellem Vahl og Köppen i signaturen. Aflæsningen under farverne viser klassen ved musen eller midt på globussen (sigtekornet), når du drejer med piletasterne.'));
+  const vahl = element('details', '', 'klimakriterier');
+  vahl.open = true;
+  vahl.append(element('summary', 'Sådan er Vahl-kortet lavet'));
+  const regler = element('ul');
+  for (const tekst of [
+    'v = varmeste måneds middeltemperatur, k = koldeste måneds middeltemperatur.',
+    'Polar zone: v < 10 °C. Tundra; is, hvis v < 0 °C.',
+    'Tropisk zone: k > 15 °C (ingen frost).',
+    'Subtropisk zone: v > 20 °C og k > 5 °C.',
+    'Tempereret zone: resten, dvs. v ≥ 10 °C.',
+    'En måned er fugtig, når nedbøren i mm er større end 2 × temperaturen i °C – som når nedbørssøjlen rager op over temperaturkurven i en hydrotermfigur.',
+    'Plantebælte efter antal fugtige måneder: 10–12 skov (tropisk regnskov, subtropisk skov, løvskov/nåleskov), 3–9 savanne eller steppe, 1–2 busksteppe, 0 ørken.',
+    'Maki: subtropisk med 3–9 fugtige måneder, hvor de tre varmeste måneder alle er tørre (vinterregn).',
+    'Nåleskov eller løvskov: Vahls grænse v = 16,2 − 0,3 · k. Er sommeren koldere end det, bliver det nåleskov.'
+  ]) regler.append(element('li', tekst));
+  vahl.append(regler);
+  vahl.append(element('p', 'Grænserne mellem zonerne er ikke skarpe i naturen, og lærebøgerne bruger lidt forskellige tal (fx 14–16 °C for den tropiske grænse). Kriteriet for fugtig måned er lempeligt i kolde egne: Prærien i USA og steppen i Kasakhstan får fx 10–12 fugtige måneder og bliver skov på kortet, selv om den naturlige vegetation er græs. Med k > 15 °C bliver det midterste Florida tropisk.', 'antal'));
+  const koppen = element('details', '', 'klimakriterier');
+  koppen.append(element('summary', 'Köppen-Geiger kort fortalt'));
+  const koppenregler = element('ul');
+  for (const tekst of [
+    'A tropisk: koldeste måned ≥ 18 °C. f = ingen tørtid, m = monsun, w = tør vinter.',
+    'B tørt: nedbøren er mindre end en tærskel, der stiger med temperaturen. W = ørken, S = steppe; h = varm, k = kold.',
+    'C tempereret: koldeste måned mellem 0 og 18 °C. D koldt: koldeste måned ≤ 0 °C og varmeste > 10 °C.',
+    'Andet bogstav: s = tør sommer, w = tør vinter, f = ingen tørtid. Tredje bogstav: a = hed, b = varm, c = kølig sommer, d = meget kold vinter.',
+    'E polart: varmeste måned < 10 °C. T = tundra, F = evig frost.'
+  ]) koppenregler.append(element('li', tekst));
+  koppen.append(koppenregler);
+  indhold.append(vahl, koppen, element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Følg en længdekreds fra Ækvator mod nord gennem Afrika og Europa. Hvilke plantebælter passerer du, og hvorfor kommer de i den rækkefølge?',
+    'Hvorfor ligger de store ørkener omkring 20–30° nord og syd? Brug den globale atmosfæriske cirkulation i din forklaring.',
+    'Sammenlign vestkysten og østkysten af et kontinent på samme breddegrad, fx Portugal og Kina eller Chile og Argentina. Hvad er forskellen, og hvad skyldes den?',
+    'Find Danmark. Hvilken zone og hvilket plantebælte er Danmark i efter Vahl, og hvilken klimatype efter Köppen? Kontrollér med en hydrotermfigur under landets Klima-fane.',
+    'Find et sted, hvor Vahl og Köppen giver forskellige svar, fx steppen i Kasakhstan eller det sydøstlige USA. Hvilke kriterier giver forskellen?',
+    'Modelkritik: Kortet viser klima, ikke den vegetation der faktisk vokser. Nævn tre grunde til, at de to kan være forskellige.'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  indhold.append(lavInformation({
+    navn: 'Klimazoner', overskrift: 'Om data',
+    introduktion: 'Beck m.fl. (2023), klimanormaler 1991–2020. Vahl-laget er en rekonstruktion med skolekriterierne.',
+    tekst: KLIMAKILDE
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['Beck m.fl. (2023)', 'https://doi.org/10.1038/s41597-023-02549-6'],
+    ['Data (figshare)', 'https://doi.org/10.6084/m9.figshare.21789074'],
+    ['CC BY 4.0', 'https://creativecommons.org/licenses/by/4.0/'],
+    ['Vahls klimainddeling (Geografisk Tidsskrift)', 'https://tidsskrift.dk/geografisktidsskrift/article/view/48397']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+  if (globus && klimaknap.getAttribute('aria-pressed') !== 'true') {
+    const vis = element('button', 'Slå klimazonerne til', 'tilbage');
+    vis.onclick = async () => {
+      senesteFokus = klimaknap;
+      dialog.close();
+      await visKlima(klimasystem);
+    };
+    indhold.append(vis);
+  }
+  indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
+  indhold.append(visModeller(modeller.filter(model => ['Global atmosfære', 'Vejr og klima'].includes(model.emne))));
+}
 
 function visPladeopgave() {
   aabn('Undersøg pladegrænserne');
@@ -688,6 +773,9 @@ function opdaterPladebeskrivelse() {
   canvas.setAttribute('aria-label', landAktivt ? 'Interaktivt Danmarkskort med Jylland, de danske øer inklusive Bornholm og orienteringsbyer. Nord er opad.' : pladeknap.getAttribute('aria-pressed') === 'true'
     ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
     : canvasbeskrivelse);
+  if (!landAktivt && klimaknap.getAttribute('aria-pressed') === 'true') {
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser ${klimasystem === 'vahl' ? 'Vahls klimazoner og plantebælter' : 'Köppen-Geigers klimatyper'} for 1991–2020; aflæsningen under signaturen viser klassen midt på globussen`);
+  }
 }
 
 function placerValgpanel() {
@@ -756,6 +844,80 @@ async function skiftPladelag() {
   }
 }
 pladeknap.onclick = skiftPladelag;
+
+// Klimalag: Vahl eller Köppen. Signaturen bygges ud fra klimalag.js, som først
+// hentes, når laget slås til.
+const klimaknap = document.querySelector('#klimalag');
+const klimasignatur = document.querySelector('#klimasignatur');
+const klimastatus = document.querySelector('#klimastatus');
+let klimasystem = 'vahl';
+function tegnKlimasignatur(modul) {
+  const system = modul.SYSTEMER[klimasystem];
+  document.querySelector('#klimatitel').textContent = klimasystem === 'vahl' ? 'Klimazoner (Vahl)' : 'Klimatyper (Köppen)';
+  document.querySelector('#klimanote').textContent = system.note;
+  const grupper = system.grupper.map(([id, navn, kriterie]) => {
+    const raekke = element('div', '', 'klimagruppe');
+    const titel = element('b', navn);
+    if (kriterie) titel.append(element('small', kriterie));
+    const felter = element('ul', '', 'klimafelter');
+    for (const nr of Object.keys(system.klasser)) {
+      const k = modul.klasse(klimasystem, nr);
+      if (k.gruppe !== id || !modul.findes(klimasystem, nr)) continue;
+      const li = element('li');
+      const felt = element('i'); felt.style.background = k.farve;
+      li.title = modul.beskriv(klimasystem, nr);
+      li.append(felt, k.navn);
+      felter.append(li);
+    }
+    raekke.append(titel, felter);
+    return raekke;
+  });
+  if (klimasystem === 'vahl') {
+    const zone = element('div', '', 'klimagruppe');
+    const felter = element('ul', '', 'klimafelter');
+    const li = element('li');
+    li.innerHTML = '<svg viewBox="0 0 24 10" width="24" height="10" aria-hidden="true"><path d="M1 5h22" stroke="#17211f" stroke-width="1.6" stroke-dasharray="6 3"/></svg> Grænse mellem zoner';
+    felter.append(li);
+    zone.append(element('b', ''), felter);
+    grupper.push(zone);
+  }
+  document.querySelector('#klimaforklaring').replaceChildren(...grupper);
+}
+async function visKlima(system) {
+  const status = document.querySelector('#kortstatus');
+  klimaknap.disabled = true;
+  klimaknap.setAttribute('aria-busy', 'true');
+  klimasignatur.setAttribute('aria-busy', 'true');
+  try {
+    const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
+    const vis = Boolean(system);
+    if (vis) { klimasystem = system; tegnKlimasignatur(modul); }
+    klimaknap.setAttribute('aria-pressed', String(vis));
+    klimasignatur.hidden = !vis;
+    document.body.classList.toggle('klimalag', vis);
+    klimastatus.hidden = true;
+    status.hidden = true;
+  } catch {
+    for (const felt of document.querySelectorAll('[name="klimasystem"]')) felt.checked = felt.value === klimasystem;
+    const tekst = 'Klimazonerne kunne ikke indlæses. Globussen virker stadig. Prøv igen, eller genindlæs siden.';
+    if (klimasignatur.hidden) { status.textContent = tekst; status.hidden = false; }
+    else { klimastatus.textContent = tekst; klimastatus.hidden = false; }
+  } finally {
+    klimaknap.disabled = false;
+    klimaknap.removeAttribute('aria-busy');
+    klimasignatur.removeAttribute('aria-busy');
+    opdaterPladebeskrivelse();
+  }
+}
+klimaknap.onclick = async () => {
+  const havdeFokus = document.activeElement === klimaknap;
+  await visKlima(klimaknap.getAttribute('aria-pressed') === 'true' ? null : klimasystem);
+  if (havdeFokus && document.activeElement === document.body && !dialog.open) klimaknap.focus({ preventScroll: true });
+};
+for (const felt of document.querySelectorAll('[name="klimasystem"]')) {
+  felt.addEventListener('change', () => { if (felt.checked) visKlima(felt.value); });
+}
+document.querySelector('#klimaopgave').onclick = visKlimaopgave;
 document.querySelector('#pladeopgave').onclick = visPladeopgave;
 
 const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zoom-ud, #nulstil')];
@@ -766,6 +928,7 @@ try {
   hentIndeks().then(navne => { globus.landenavne = navne; }).catch(() => {});
   globusknapper.forEach(knap => { knap.disabled = false; });
   pladeknap.disabled = false;
+  klimaknap.disabled = false;
   // Quizmenuen kan allerede være åbnet, mens grundkortet blev hentet.
   const quizstart = document.querySelector('#quiz-start');
   if (quizstart) {

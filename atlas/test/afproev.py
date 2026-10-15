@@ -11,6 +11,7 @@ from verdensdele_quiz import afproev_verdensdele_quiz
 from zoom import afproev_zoom
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
+from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from island3d import afproev_island3d
 from islandsnit import afproev_islandsnit
 from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration, afproev_islandtouch, afproev_islandkort
@@ -30,8 +31,10 @@ def klar(side):
 
 
 with sync_playwright() as p:
+    # Canvas tegnes i software: Chromium flytter ellers et 2D-canvas fra GPU til CPU
+    # efter få getImageData-kald, og samme tegning får så anden kantudglatning.
     browser = p.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/usr/bin/chromium'), headless=True,
-                                args=['--no-sandbox', '--disable-webgl'])
+                                args=['--no-sandbox', '--disable-webgl', '--disable-accelerated-2d-canvas'])
     fejl = []
     for bredde, hoejde in SKAERME:
         side = browser.new_page(viewport={'width': bredde, 'height': hoejde},
@@ -81,6 +84,7 @@ with sync_playwright() as p:
         afproev_piletaster(side)
         afproev_pladelag(side, UD)
         afproev_pladevisning(side, UD)
+        afproev_klimalag(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -172,6 +176,9 @@ with sync_playwright() as p:
         side.close()
     afproev_pladefejl(browser, ADRESSE)
     print('Fallback pladedata/modul, ugyldige koordinater og nyt forsøg : OK')
+    afproev_klimadata()
+    afproev_klimafejl(browser, ADRESSE)
+    print('Klimalag: data, data-/modulfejl og nyt forsøg: OK')
     afproev_pladetilpasning(browser, ADRESSE)
     print('Skærmstørrelsesskift med pladelaget : OK')
     afproev_bevaegelsesfejl(browser, ADRESSE)
