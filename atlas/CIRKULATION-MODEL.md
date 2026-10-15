@@ -1,6 +1,7 @@
 # Global cirkulation – faglig model og visuelt brief (milepæl A)
 
-Status: udkast 15. oktober 2026 til ejerens gennemgang. Indholdsenhed B4 i
+Status: elevtekst og brief godkendt af ejeren 15. oktober 2026; afventer
+ChatGPT's visuelle forslag. Indholdsenhed B4 i
 [INDHOLD.md](INDHOLD.md) (3-cellemodel, Coriolis, ITK og monsun; Eks. 1–2).
 Ingen kode endnu.
 
@@ -293,5 +294,6 @@ Referencerne kontrolleres i originalen, før de citeres i elevmateriale.
 
 1. 15. oktober 2026: Flot og sjovt går forud for fuld virkelighedstro.
    Visualiseringen udvikles sammen med ChatGPT; retningerne i afsnit 0 holdes.
-2. *(Afventer)* Elevteksten i afsnit 2 og opgaven i afsnit 6.
+2. 15. oktober 2026: Elevteksten i afsnit 2 og briefet i afsnit 8 er godkendt;
+   briefet er sendt til ChatGPT. Opgaven i afsnit 6 afventer.
 3. *(Afventer)* Datakilde til milepæl B (NCEP/NCAR og GPCP foreslået).
