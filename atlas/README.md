@@ -3,6 +3,18 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Tættere zoom på globussen (v420)
+
+Globussen kan zoomes fra 0,75× op til 10× (før 3×), både i almindelig visning
+og i quizzen (før 8×). Over 2,5× skifter grundkortet fra Natural Earth
+1:110 mio. til 1:50 mio. (`data/countries-50m.json`, samme world-atlas 2.0.2
+som landekortet), så kyster, øer og landegrænser holder formen. Det hentes
+først første gang, der zoomes så tæt på; indtil da eller ved fejl tegnes
+1:110 mio. videre. Danmarks fremhævning og tryk følger det viste kort. Over
+3× klippes tegningen til figuren, så den store klode ikke tegnes uden for
+skærmen. `test/zoom.py` kontrollerer grænsen, skiftet, Danmark ved 10× og
+at Nulstil vender tilbage.
+
 ## Find landet — fem verdensdele (v419)
 
 **Quiz** åbner et valg mellem fem verdensdele: Europa (47), Afrika (55),
@@ -25,7 +37,7 @@ startudsnittet igen uden at nulstille spørgsmål. Asien og Oceanien kan ikke
 ses på én halvkugle; startudsnittet viser det meste, og Stillehavsøerne nås
 ved at dreje.
 Træk, tofingerzoom, +/− og de eksisterende piletaster bevares; quizzen kan
-zoome op til 8×. Med fokus på canvas finjusterer Shift+pil rotationen, og
+zoome op til 10× ligesom globussen. Med fokus på canvas finjusterer Shift+pil rotationen, og
 Enter vælger landet under sigtekornet. Lande under ca. 7.000 km² (samt den
 smalle Gambia) har diskrete ringe ved deres sigtepunkter: 7 i Europa, 6 i
 Afrika, 8 i Nordamerika og 13 i Asien og Oceanien. Ringene er ikke landenes

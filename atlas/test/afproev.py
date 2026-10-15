@@ -7,6 +7,7 @@ from piletaster import afproev_piletaster
 from landekort import afproev_landekort
 from europa_quiz import afproev_europa_quiz
 from verdensdele_quiz import afproev_verdensdele_quiz
+from zoom import afproev_zoom
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
 from island3d import afproev_island3d
@@ -97,11 +98,12 @@ with sync_playwright() as p:
         assert canvas.screenshot() != foer, 'Træk ændrer ikke globussen'
         side.get_by_role('button', name='Nulstil', exact=True).click()
         # Zoomgrænser og nulstilling.
-        for _ in range(8):
+        for _ in range(16):
             if side.locator('#zoom-ind').is_enabled():
                 side.locator('#zoom-ind').click()
                 side.wait_for_timeout(60)
         expect(side.locator('#zoom-ind')).to_be_disabled()
+        expect(side.locator('#zoomniveau')).to_have_text('10,0×')
         side.get_by_role('button', name='Nulstil', exact=True).click()
         side.get_by_role('button', name='Fokus', exact=True).click()
         side.wait_for_timeout(100)
@@ -192,6 +194,7 @@ with sync_playwright() as p:
     print('Island: touch-strøg drejer blokken vandret og ruller siden lodret: OK')
     afproev_europa_quiz(browser, ADRESSE, UD, SKAERME)
     afproev_verdensdele_quiz(browser, ADRESSE, UD, SKAERME)
+    afproev_zoom(browser, ADRESSE, UD)
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)

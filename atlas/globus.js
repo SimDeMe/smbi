@@ -14,7 +14,24 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   const topologi = await svar.json();
   const lande = topojson.feature(topologi, topologi.objects.countries);
   const graenser = topojson.mesh(topologi, topologi.objects.countries, (a, b) => a !== b);
-  const danmark = lande.features.find(land => land.id === '208');
+  const oversigt = { lande, graenser, danmark: lande.features.find(land => land.id === '208') };
+  // Tæt på skifter kortet til 1:50 mio., så kyster og øer ikke bliver kantede.
+  // Det hentes først ved behov; indtil da (eller ved fejl) bruges 1:110 mio.
+  const MAKS_ZOOM = 10, DETALJE_ZOOM = 2.5;
+  let detalje, henterDetalje = false;
+  async function hentDetalje() {
+    henterDetalje = true;
+    try {
+      const svar = await fetch(new URL('./data/countries-50m.json', import.meta.url), { signal: AbortSignal.timeout(20000) });
+      if (!svar.ok) return;
+      const t = await svar.json();
+      const l = topojson.feature(t, t.objects.countries);
+      detalje = { lande: l, graenser: topojson.mesh(t, t.objects.countries, (a, b) => a !== b),
+        danmark: l.features.find(land => land.id === '208') };
+      opdater();
+    } catch { /* Oversigtskortet bliver stående. */ }
+  }
+  const kort = () => zoom > DETALJE_ZOOM && detalje ? detalje : oversigt;
   let landekort;
   let quiz;
   let foerQuiz;
@@ -72,8 +89,10 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.fillStyle = '#bcdfee'; ctx.fill();
     ctx.save(); ctx.clip();
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
-    ctx.beginPath(); sti(lande); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
-    ctx.beginPath(); sti(graenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
+    const { lande: landflader, graenser: landegraenser, danmark } = kort();
+    if (zoom > DETALJE_ZOOM && !henterDetalje) hentDetalje();
+    ctx.beginPath(); sti(landflader); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
     if (quiz) quiz.tegn(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .02);
     else {
       ctx.beginPath(); sti(danmark); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -97,7 +116,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     }
     ctx.restore();
     ctx.beginPath(); sti({ type: 'Sphere' }); ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2; ctx.stroke();
-    visZoom(zoom, .75, quiz ? 8 : 3);
+    visZoom(zoom, .75, MAKS_ZOOM);
   }
   function visZoom(niveau, min, max) {
     document.querySelector('#zoomniveau').textContent = `${niveau.toFixed(1).replace('.', ',')}×`;
@@ -106,13 +125,13 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   }
   function opdaterProjektion() {
     projektion.translate([bredde / 2, hoejde / 2]).scale(Math.min(bredde, hoejde) * .455 * zoom).rotate([-centrum[0], -centrum[1]])
-      .clipExtent(quiz ? [[0, 0], [bredde, hoejde]] : null);
+      .clipExtent(quiz || zoom > 3 ? [[0, 0], [bredde, hoejde]] : null);
   }
   function opdater() { if (!ramme) ramme = requestAnimationFrame(tegn); }
   function afgraens() {
     centrum[0] = ((centrum[0] + 180) % 360 + 360) % 360 - 180;
     centrum[1] = Math.max(-85, Math.min(85, centrum[1]));
-    zoom = Math.max(.75, Math.min(quiz ? 8 : 3, zoom));
+    zoom = Math.max(.75, Math.min(MAKS_ZOOM, zoom));
     opdater();
   }
   function tilpas() {
@@ -213,7 +232,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const r = canvas.getBoundingClientRect();
     const punkt = [event.clientX - r.left, event.clientY - r.top];
     return !landekort && Math.hypot(punkt[0] - bredde / 2, punkt[1] - hoejde / 2) <= projektion.scale() &&
-      d3.geoContains(danmark, projektion.invert(punkt));
+      d3.geoContains(kort().danmark, projektion.invert(punkt));
   }
   function quizLand(event) {
     opdaterProjektion();
