@@ -1,72 +1,87 @@
-// Nærvisning af Þingvellirs riftdal. Geometrien er en didaktisk illustration;
-// kildegrundlag, forenklinger og forholdet til Hreppar-mikropladen står i Om modellen.
-export const THINGVELLIR = {
-  geo: [-21.125,64.2581],
-  kilde: 'https://www.thingvellir.is/en/education/nature/tectonic-movements/'
-};
+// Regionalt trekantnet i ø-modellens verdenskoordinater (km, meter, km).
+// ETOPO leverer det brede relief. Smalle forkastninger og søbred er
+// didaktisk detaljering; kilder og geometrivalg står i Om modellen.
+import { pakFarve } from './raster.js';
+export const THINGVELLIR={geo:[-21.125,64.2581]};
 
-export function opretThingvellir() {
-  const scene=document.querySelector('#thingvellirscene');
-  /* Basaltfladerne tegnes som sammenhængende blokke. */
-  scene.innerHTML=`<svg id="thingvellirfigur" viewBox="0 0 1000 610" role="img" aria-labelledby="thingtitel thingbeskriv" xmlns="http://www.w3.org/2000/svg">
-    <title id="thingtitel">Þingvellir: pladebevægelsen ses i sprækkerne</title>
-    <desc id="thingbeskriv">Almannagjá ligger ved riftdalens vestlige kant og Hrafnagjá ved den østlige. Jorden i midten synker, mens området strækkes. Pile viser bevægelse mod vest og øst.</desc>
-    <defs>
-      <linearGradient id="thingbag" x2="0" y2="1"><stop stop-color="#edf0e5"/><stop offset="1" stop-color="#d0e2db"/></linearGradient>
-      <linearGradient id="thingklippe" x2="0" y2="1"><stop stop-color="#465751"/><stop offset="1" stop-color="#263f40"/></linearGradient>
-      <linearGradient id="thingslette" x2="0" y2="1"><stop stop-color="#a7b588"/><stop offset="1" stop-color="#7f9e83"/></linearGradient>
-      <linearGradient id="thingsø" x2="0" y2="1"><stop stop-color="#99d0d2"/><stop offset="1" stop-color="#428f9f"/></linearGradient>
-      <pattern id="thinggræs" width="31" height="23" patternUnits="userSpaceOnUse"><path d="M4 8l5 -2m12 12l4 -2" stroke="#4f725b" stroke-width="1.2" opacity=".23"/></pattern>
-      <filter id="thingskygge"><feGaussianBlur stdDeviation="12"/></filter>
-      <marker id="thingpil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1f514f"/></marker>
-    </defs>
-    <rect width="1000" height="610" fill="url(#thingbag)"/>
-    <text x="36" y="43" class="thingoverlinje">ÞINGVELLIR · THINGVALLASLETTEN</text>
-    <text x="36" y="78" class="thingoverskrift">Her åbner landskabet sig.</text>
-    <ellipse cx="500" cy="463" rx="375" ry="38" fill="#37595b" opacity=".19" filter="url(#thingskygge)"/>
-    <path d="M111 261L347 151L876 292L633 444Z" fill="#213b39"/>
-    <g class="thingvest">
-      <path d="M110 243L292 294L292 407L110 353Z" fill="#47605b"/>
-      <path d="M292 294L452 191L452 304L292 407Z" fill="url(#thingklippe)"/>
-      <path d="M110 243L277 137L452 191L292 294Z" fill="#a2ae83"/>
-      <path d="M110 243L277 137L452 191L292 294Z" fill="url(#thinggræs)"/>
-      <path d="M292 294L452 191" fill="none" stroke="#d9d5b2" stroke-width="3"/>
-      <path d="M301 296l-1 91m12 -99l1 90m10 -98v92m11 -99l1 90m10 -99v93m11 -100l2 91m11 -99v91m11 -99l1 91m12 -100l-1 91m12 -98l1 91m11 -99l1 91m11 -99v90" stroke="#1d3839" stroke-width="2" opacity=".65"/>
-    </g>
-    <g class="thingbund">
-      <path d="M316 316L487 208L707 267L529 382Z" fill="url(#thingslette)"/>
-      <path d="M316 316L487 208L707 267L529 382Z" fill="url(#thinggræs)"/>
-      <path d="M316 316L529 382L529 450L316 383Z" fill="#526f68"/>
-      <path d="M529 382L707 267L707 336L529 450Z" fill="#405e5b"/>
-      <path d="M470 333C500 318 526 315 553 318L618 294L658 298L529 373L449 349C461 344 457 341 470 333Z" fill="url(#thingsø)"/>
-      <path d="M482 337q25 -9 52 -8m-24 22q29 -12 49 -9m-8 15l35 -19" fill="none" stroke="#d5eeee" stroke-width="1.8" opacity=".65"/>
-      <path d="M382 293l37 -25m8 42l51 -34m14 49l31 -21" stroke="#547a68" stroke-width="2" opacity=".45"/>
-    </g>
-    <g class="thingøst">
-      <path d="M550 355L735 409L735 471L550 416Z" fill="#536b60"/>
-      <path d="M735 409L890 309L890 370L735 471Z" fill="#38524e"/>
-      <path d="M550 355L715 245L890 309L735 409Z" fill="#b0b68d"/>
-      <path d="M550 355L715 245L890 309L735 409Z" fill="url(#thinggræs)"/>
-      <path d="M550 355L715 245L715 293L550 403Z" fill="url(#thingklippe)"/>
-      <path d="M550 355L715 245" stroke="#dcd9b9" stroke-width="3" fill="none"/>
-      <path d="M559 356v38m13 -47l-1 38m13 -47v38m12 -47v38m13 -47v38m13 -47v38m13 -47v38m13 -47v38m13 -47v38m13 -47v38m13 -47v38m13 -47v38" stroke="#233e3b" stroke-width="2" opacity=".65"/>
-    </g>
-    <g class="thingpile" stroke="#1f514f" fill="none" stroke-width="4" marker-end="url(#thingpil)">
-      <path d="M222 205L145 182"/><path d="M742 310L822 335"/>
-    </g>
-    <g class="thingetiketter">
-      <path d="M314 219L300 165L225 143"/><text x="197" y="122">Almannagjá</text>
-      <path d="M653 294L720 193L791 192"/><text x="735" y="178">Hrafnagjá</text>
-      <text x="493" y="292" text-anchor="middle" class="thingdalnavn">Riftdalen</text>
-      <text x="426" y="426" class="thingsønavn">Þingvallavatn</text>
-    </g>
-    <text x="89" y="495" class="thingpladenavn">← Nordamerikanske plade</text>
-    <text x="910" y="529" text-anchor="end" class="thingpladenavn">Mod den Eurasiske plade →</text>
-  </svg>
-  <div class="thingbetjening"><button id="visrift" aria-pressed="false">Vis pladernes bevægelse</button><button id="nulstilrift">Nulstil</button></div>`;
-  const knap=scene.querySelector('#visrift');
-  const saet=til=>{scene.classList.toggle('udstrakt',til);knap.setAttribute('aria-pressed',String(til));knap.textContent=til?'Saml visningen igen':'Vis pladernes bevægelse';};
-  knap.addEventListener('click',()=>saet(!scene.classList.contains('udstrakt')));
-  scene.querySelector('#nulstilrift').addEventListener('click',()=>saet(false));
-  return {nulstil:()=>saet(false)};
+export function lavThingvellir(terraen) {
+  const [ox,oz]=terraen.fraGeo(THINGVELLIR.geo),a=25*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+  const world=(u,y,v)=>[ox+u*c+v*s,y,oz+u*s-v*c];
+  const so=(u,v)=>((u-2.8)/3.6)**2+((v+6)/5.4)**2<1;
+  const hoejde=(u,v,del)=>{
+    const [x,,z]=world(u,0,v),maal=terraen.hoejdeVed(x,z);
+    const detalje=.9*Math.sin(u*13+v*4)*Math.cos(v*9-u*3)+.6*Math.sin(u*29-v*17);
+    const y=maal+detalje+(del===0?16:del===1?-38:4);
+    return so(u,v)?100:y;
+  };
+  const dele=[[-5,-.035],[.035,4.965],[5.035,10]].map(([u0,u1],del)=>{
+    const nu=42,nv=112,punkter=[],flader=[],vand=[];
+    for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){
+      const u=u0+(u1-u0)*i/nu,v=-11+20*j/nv;
+      // Samme let bugtede forkastningsretning på begge sider af sprækken.
+      punkter.push(world(u+.065*Math.sin(v*.85),hoejde(u,v,del),v));
+    }
+    for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){
+      const k=j*(nu+1)+i;
+      for(const ids of [[k,k+nu+1,k+1],[k+1,k+nu+1,k+nu+2]]){
+        const u=u0+(u1-u0)*(i+.5)/nu,v=-11+20*(j+.5)/nv;
+        flader.push(ids);vand.push(so(u,v));
+      }
+    }
+    const kanter=[Array.from({length:nu+1},(_,i)=>i),Array.from({length:nu+1},(_,i)=>nv*(nu+1)+i),Array.from({length:nv+1},(_,i)=>i*(nu+1)),Array.from({length:nv+1},(_,i)=>i*(nu+1)+nu)];
+    return {punkter,flader,vand,kanter,del};
+  });
+  const ankre=[{navn:'Almannagjá',u:0,v:2,del:0},{navn:'Hrafnagjá',u:5,v:3,del:2},{navn:'Riftdalen',u:2.4,v:5,del:1},{navn:'Þingvallavatn',u:2.8,v:-5,del:1}].map(n=>({...n,punkt:world(n.u,hoejde(n.u,n.v,n.del)+8,n.v)}));
+  return {dele,ankre,world,hoejde,midte:world(2.5,0,-1),punkter:dele.flatMap(d=>d.punkter)};
+}
+
+export function tegnThingvellir({ctx,raster,p,model,farve,faktor,bevaegelse,bredde,hoejde}) {
+  const flyt=(q,del)=>{const a=model.world((del-1)*bevaegelse*.32,del===1?-18*bevaegelse:0,0),o=model.world(0,0,0);return[q[0]+a[0]-o[0],q[1]+a[1],q[2]+a[2]-o[2]];};
+  if(model.faktor!==faktor){
+    for(const d of model.dele)d.farver=d.flader.map(ids=>{const t=ids.map(k=>d.punkter[k]);return farve(t,t.reduce((s,q)=>s+q[1],0)/3,faktor);});
+    model.faktor=faktor;
+  }
+  raster.nulstil();
+  const sokkel=pakFarve('rgb(52,98,106)'),klippe=pakFarve('rgb(55,70,65)'),vand=pakFarve('rgb(53,119,137)');
+  for(const d of model.dele){
+    const ps=d.punkter.map(q=>p(flyt(q,d.del)));
+    for(const kant of d.kanter)for(let i=0;i<kant.length-1;i++){
+      const a=kant[i],b=kant[i+1],qa=flyt(d.punkter[a],d.del),qb=flyt(d.punkter[b],d.del);
+      const A=ps[a],B=ps[b],C=p([qb[0],-90,qb[2]]),D=p([qa[0],-90,qa[2]]);
+      const E=p([qb[0],qb[1]-60,qb[2]]),F=p([qa[0],qa[1]-60,qa[2]]);
+      raster.trekant(A,B,E,klippe);raster.trekant(A,E,F,klippe);
+      raster.trekant(F,E,C,sokkel);raster.trekant(F,C,D,sokkel);
+    }
+    for(let i=0;i<d.flader.length;i++){
+      const ids=d.flader[i];
+      raster.trekant(...ids.map(k=>ps[k]),d.vand[i]?vand:d.farver[i]);
+    }
+
+  }
+  // Søfladen lukker også over sprækkerne; vandet deles ikke i tre blokke.
+  const midte=p(model.world(2.8,102-18*bevaegelse,-6));
+  for(let i=0;i<120;i++){
+    const a=i*Math.PI/60,b=(i+1)*Math.PI/60;
+    raster.trekant(midte,p(model.world(2.8+3.6*Math.cos(a),102-18*bevaegelse,Math.max(-11,-6+5.4*Math.sin(a)))),p(model.world(2.8+3.6*Math.cos(b),102-18*bevaegelse,Math.max(-11,-6+5.4*Math.sin(b)))),vand);
+  }
+  raster.vis(ctx);
+  ctx.font='600 12px Archivo, sans-serif';ctx.textAlign='left';
+  const optaget=[];
+  for(const n of model.ankre){
+    const q=p(flyt(n.punkt,n.del)),w=ctx.measureText(n.navn).width+16;
+    let x=Math.max(10,Math.min(bredde-w-10,q[0]+(n.navn==='Almannagjá'?-w-15:9))),y=Math.max(90,Math.min(hoejde-105,q[1]-(n.navn==='Riftdalen'?57:29)));
+    while(optaget.some(b=>x<b[2]&&x+w>b[0]&&y<b[3]&&y+24>b[1]))y-=27;
+    if(q[0]<0||q[0]>bredde||q[1]<75||q[1]>hoejde-75||y<85)continue;
+    optaget.push([x,y,x+w,y+24]);
+    ctx.strokeStyle='#fff9eebb';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(x+6,y+24);ctx.stroke();
+    ctx.fillStyle='#fffaf0ee';ctx.beginPath();ctx.roundRect(x,y,w,24,4);ctx.fill();ctx.fillStyle='#243e3a';ctx.fillText(n.navn,x+8,y+16);
+  }
+  const A=p(model.world(0,0,0)),B=p(model.world(5,0,0)),laengde=Math.hypot(B[0]-A[0],B[1]-A[1]);
+  ctx.strokeStyle='#31564d';ctx.fillStyle='#31564d';ctx.lineWidth=1.5;ctx.font='500 10px "IBM Plex Mono",monospace';ctx.fillText('ca. 5 km',18,hoejde-111);ctx.beginPath();ctx.moveTo(18,hoejde-105);ctx.lineTo(18+laengde,hoejde-105);ctx.stroke();
+  // Pile i samme 3D-projektion som terrænet.
+  for(const [u,retning,del] of [[-2.6,-1,0],[7.5,1,2]]){
+    const v=1,y=model.hoejde(u,v,del)+35,A=p(flyt(model.world(u,y,v),del)),B=p(flyt(model.world(u+retning*1.7,y,v),del));
+    const a=Math.atan2(B[1]-A[1],B[0]-A[0]);ctx.strokeStyle='#ffe0a0';ctx.fillStyle='#ffe0a0';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(...A.slice(0,2));ctx.lineTo(...B.slice(0,2));ctx.stroke();ctx.beginPath();ctx.moveTo(B[0],B[1]);ctx.lineTo(B[0]-12*Math.cos(a-.45),B[1]-12*Math.sin(a-.45));ctx.lineTo(B[0]-12*Math.cos(a+.45),B[1]-12*Math.sin(a+.45));ctx.closePath();ctx.fill();
+  }
 }

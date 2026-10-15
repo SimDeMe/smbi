@@ -338,13 +338,17 @@ Ingen JavaScript-fejl ved normal brug. Den opdaterede smoke-test til andre
 browsermotorer er bevaret, men ikke kørt for denne udvidelse.
 
 
-## Þingvellir og Om modellen (v421)
+## Þingvellir og Om modellen (v423)
 
 Femte destination i landskabet er Þingvellir, også direkte via
-`model3d.html?sted=thingvellir`. En selvstændig SVG-nærvisning viser Almannagjá,
-Hrafnagjá, riftdalen og Þingvallavatn. Knappen åbner forkastningerne og sænker
-midterblokken; nulstilling samler den igen. Illustrationens geometri er
-pædagogisk og bruger ikke højdegitteret. Kildegrundlaget er nationalparkens
+`model3d.html?sted=thingvellir`. Nærvisningen bruger øens Canvas-lærred,
+projektion, dybdebuffer, højdepalette, lys og kamerabetjening. Det regionale
+trekantnet interpolerer det eksisterende ETOPO-gitter, med illustrerede smalle
+forkastninger, søbred og små overfladedetaljer. Det erstatter SVG-visningen
+fra v421. Almannagjá, Hrafnagjá, riftdalen og Þingvallavatn kan undersøges fra
+forskellige vinkler. Knappen flytter selve terrænfladerne, åbner bruddene og
+sænker midterblokken; nulstilling samler dem igen. Nærvisningen har sin egen
+højdefaktor, fra start ×8. Øens højdefaktor bevares ved destinationsskift. Kildegrundlaget er nationalparkens
 sider om tektoniske bevægelser og Silfra samt Weismüller m.fl. (2019),
 Solid Earth 10, 1757–1784, https://doi.org/10.5194/se-10-1757-2019.
 
@@ -353,3 +357,9 @@ Kildereferencer, usikkerheder, eksempeldybder og formfortolkning er samlet i
 knappen **Om modellen** sammen med Þingvellirs forenklinger og Hreppar-
 mikropladens rolle. Dialogen kan lukkes med Escape og giver fokus tilbage
 til åbningsknappen. Hvert snits detaljer bevares i dokumentationen.
+
+
+`test/island3d.py` efterprøver den synlige Canvas-tegning, fravær af SVG,
+ændrede pixels ved kameradrejning og pladebevægelse samt identiske pixels
+ved nulstilling. Direkte link, retur fra snit, dialogfokus, reduceret bevægelse,
+fem skærmstørrelser og den eksisterende terræn-/rasterprøve indgår også.

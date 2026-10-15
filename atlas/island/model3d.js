@@ -4,13 +4,13 @@ import { lavTerraen } from './terraen.js';
 import { lavRaster, pakFarve } from './raster.js';
 import { lavSnit, tegnSnit } from './snit3d.js';
 import { SNIT, KILDER } from './snitdata.js';
-import { opretThingvellir, THINGVELLIR } from './thingvellir.js';
+import { lavThingvellir, tegnThingvellir, THINGVELLIR } from './thingvellir.js';
 
 const canvas = document.querySelector('#landskab'), figur = canvas.closest('figure');
 const fejltekst = document.querySelector('#hentestatus'), status = document.querySelector('#status');
 const roligt = matchMedia('(prefers-reduced-motion: reduce)');
 const kamera = { drej: -14, vip: 48, zoom: 1, x: 0, z: 0 };
-const tilstand = { sted: 0, havbund: true, geologi: true, faktor: 20, rundtur: false, klar: false, snit: null, dybdefaktor: 1.5 };
+const tilstand = { sted: 0, havbund: true, geologi: true, faktor: 20, rundtur: false, klar: false, snit: null, dybdefaktor: 1.5, thingFaktor:8 };
 const betjening=[...document.querySelectorAll('.vaerktoejer button,.landskabsknapper button,.destinationer button,#overdrivelse')].filter(b=>b.id!=='fokus'&&b.id!=='ommodel');
 betjening.forEach(b=>{b.disabled=true;});
 const steder = [
@@ -26,12 +26,13 @@ const steder = [
   { titel: 'Bjergkæden fortsætter under havet', geo: [-24.3, 63.35], drej: -34, vip: 35, zoom: 2.1,
     tekst: 'Reykjanesryggen er en del af Den Midtatlantiske Ryg. Den hæver sig over den omgivende havbund og fortsætter mod Island. Vandet skjuler normalt dette landskab.',
     se: 'Slå «Vis havbund» fra og til. Følg ryggens retning mod Reykjanes.' },
-  { titel:'Þingvellir: pladernes spor i landskabet',geo:THINGVELLIR.geo,drej:-14,vip:48,zoom:3.5,
+  { titel:'Þingvellir: pladernes spor i landskabet',geo:THINGVELLIR.geo,drej:-50,vip:48,zoom:1,
     tekst:'På Thingvallasletten ses pladebevægelsen i jordoverfladen. Ved Almannagjá brydes klippen op langs riftdalens vestlige kant. Hrafnagjá ligger på den modsatte side af dalen.',
     se:'Tryk på «Vis pladernes bevægelse». Se, hvordan området strækkes, og jorden mellem forkastningerne synker.' }
 ];
 let ctx, terraen, data, flader, graenser = [], vulkanlinjer = [], navne = [], W = 0, H = 0, skala = 1;
-const thingvellir=opretThingvellir();
+let thingvellir,riftmaal=0,rift=0;
+const erThing=()=>tilstand.sted===4&&!tilstand.snit;
 let raster, aktueltSnit=null, gemtKamera=null, snitOffset=null;
 let ramme = 0, flyvning = 0, turTid = 0, revision = 0;
 const rad = Math.PI / 180, klem = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -45,24 +46,20 @@ const farve = (z, lys) => {
   const t = klem((z - a[0]) / (b[0] - a[0]), 0, 1);
   return `rgb(${a[1].map((v, i) => Math.round(klem((v + (b[1][i] - v) * t) * lys, 0, 255))).join(',')})`;
 };
-function beregnFarver() {
-  flader = terraen.flader.map(ids => {
-    const [a,b,c] = ids.map(i => terraen.punkter[i]);
-    const u = [b[0]-a[0], (b[1]-a[1])/1000*tilstand.faktor, b[2]-a[2]], v = [c[0]-a[0], (c[1]-a[1])/1000*tilstand.faktor, c[2]-a[2]];
-    let n = [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
-    if (n[1] < 0) n = n.map(x => -x);
-    const l = Math.hypot(...n), lys = .66 + .38 * Math.max(0, (-.45*n[0]+.82*n[1]-.35*n[2])/l);
-    const z = (a[1]+b[1]+c[1])/3;
-    return { ids, z, farve: pakFarve(farve(z, lys)) };
-  });
+function fladeFarve(t,z,faktor=tilstand.faktor){
+  const [a,b,c]=t,u=[b[0]-a[0],(b[1]-a[1])/1000*faktor,b[2]-a[2]],v=[c[0]-a[0],(c[1]-a[1])/1000*faktor,c[2]-a[2]];
+  let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+  if(n[1]<0)n=n.map(x=>-x);const l=Math.hypot(...n)||1;
+  return pakFarve(farve(z,.66+.38*Math.max(0,(-.45*n[0]+.82*n[1]-.35*n[2])/l)));
 }
+function beregnFarver(){flader=terraen.flader.map(ids=>{const t=ids.map(i=>terraen.punkter[i]),z=t.reduce((s,q)=>s+q[1],0)/3;return{ids,z,farve:fladeFarve(t,z)};});}
 function projektion() {
   const a = kamera.drej * rad, b = kamera.vip * rad;
   const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
   return ([x, y, z], over = true) => {
     x -= kamera.x; z -= kamera.z;
     const h = tilstand.snit ? y/1000*(y>=0?20:tilstand.dybdefaktor)
-      : (over && !tilstand.havbund ? Math.max(0, y) : y) / 1000 * tilstand.faktor;
+      : (over && !tilstand.havbund ? Math.max(0, y) : y) / 1000 * (erThing()?tilstand.thingFaktor:tilstand.faktor);
     const rx = x*ca + z*sa, rz = -x*sa + z*ca;
     return [(snitOffset?.x??W*.5) + rx*skala*kamera.zoom, (snitOffset?.y??H*.52) + (rz*sb-h*cb)*skala*kamera.zoom, rz*cb+h*sb];
   };
@@ -92,6 +89,7 @@ function tegn() {
   const bg = ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,tilstand.snit?'#152d34':'#f0f1e6'); bg.addColorStop(.6,tilstand.snit?'#263e42':'#dde9e3'); bg.addColorStop(1,tilstand.snit?'#10282f':'#c3dad5');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   if(tilstand.snit){
+    delete canvas.dataset.sted;delete canvas.dataset.rift;
     const terrænfarve=(t,z)=>{
       const [a,b,c]=t,hy=q=>q[1]/1000*(q[1]>=0?20:tilstand.dybdefaktor);
       const u=[b[0]-a[0],hy(b)-hy(a),b[2]-a[2]],v=[c[0]-a[0],hy(c)-hy(a),c[2]-a[2]];
@@ -106,6 +104,13 @@ function tegn() {
     return;
   }
   delete canvas.dataset.snit;delete canvas.dataset.kamre;
+  if(erThing()){
+    const forskel=riftmaal-rift;rift=roligt.matches||Math.abs(forskel)<.002?riftmaal:rift+forskel*.13;
+    tegnThingvellir({ctx,raster,p,model:thingvellir,farve:fladeFarve,faktor:tilstand.thingFaktor,bevaegelse:rift,bredde:W,hoejde:H});
+    canvas.dataset.sted='thingvellir';canvas.dataset.rift=rift.toFixed(3);canvas.dataset.revision=++revision;
+    if(rift!==riftmaal)ramme=requestAnimationFrame(tegn);return;
+  }
+  delete canvas.dataset.sted;delete canvas.dataset.rift;
   const [x0,z0,x1,z1] = terraen.graenser;
   const base = -5200, hj = [[x0,base,z0],[x1,base,z0],[x1,base,z1],[x0,base,z1]].map(q=>p(q,false));
   ctx.save();ctx.shadowColor='#16474650';ctx.shadowBlur=30;ctx.shadowOffsetY=20;ctx.fillStyle='#7aaba6';sti(hj,true);ctx.fill();ctx.restore();
@@ -171,14 +176,20 @@ function stopTur() {
 function stopFlyvning(){cancelAnimationFrame(flyvning);flyvning=0;}
 function vaelgSted(i, anim=true) {
   if(!tilstand.klar)return;
-  stopFlyvning();tilstand.sted=i;document.body.classList.toggle('thingaktiv',i===4);document.querySelector('#thingvellirscene').hidden=i!==4;if(i===4)thingvellir.nulstil();const s=steder[i], [x,z]=terraen.fraGeo(s.geo);
-  document.querySelector('#betjening').textContent=i===4?'Åbn sprækkerne med knappen · Nulstil samler landskabet igen':'Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller';
+  stopFlyvning();tilstand.sted=i;document.body.classList.toggle('thingaktiv',i===4);document.querySelector('#thingvellirscene').hidden=i!==4;if(i===4)saetRift(false);const s=steder[i], [x,z]=terraen.fraGeo(s.geo);
+  document.querySelector('#betjening').textContent='Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller';
+  const f=erThing()?tilstand.thingFaktor:tilstand.faktor;document.querySelector('#overdrivelse').value=f;document.querySelector('#faktor').value='×'+f;
+  snitOffset=null;
+  canvas.setAttribute('aria-label',i===4?'Þingvellir i 3D: Almannagjá, Hrafnagjá og riftdalen':'Islands terræn i 3D');
+  document.querySelector('#landskabstekst').textContent=i===4?'Drej og zoom omkring riftdalen. Pile viser pladernes bevægelse væk fra hinanden. Knappen udvider sprækkerne og sænker midterblokken.':'Islands landskab og havbund i 3D. Orange linjer viser aktive vulkansystemer.';
   document.querySelector('#stedsnummer').textContent=`0${i+1} / 05`;
   for(const id of ['stedsnavn','rejsetitel'])document.querySelector('#'+id).textContent=s.titel;
   document.querySelector('#rejsetekst').textContent=s.tekst;document.querySelector('#undersoeg').textContent=s.se;
   document.querySelectorAll('[data-sted]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.sted===i)));
   meddel(s.titel+'. '+s.tekst);
-  const fra={...kamera},til={drej:s.drej,vip:s.vip,zoom:s.zoom,x,z};
+  const fra={...kamera},til={drej:s.drej,vip:s.vip,zoom:s.zoom,x:i===4?thingvellir.midte[0]:x,z:i===4?thingvellir.midte[2]:z};
+  if(i===4){Object.assign(kamera,til);tilpasThing();planlaeg();return;}
+  stoerrelse();
   fra.drej=til.drej+(((fra.drej-til.drej+180)%360+360)%360-180);
   if(!anim||roligt.matches){Object.assign(kamera,til);planlaeg();return;}
   const start=performance.now();
@@ -189,7 +200,7 @@ function manuel(){stopTur();stopFlyvning();}
 document.querySelectorAll('[data-sted]').forEach(b=>b.addEventListener('click',()=>{stopTur();vaelgSted(+b.dataset.sted);}));
 document.querySelector('#havbund').addEventListener('click',e=>{manuel();tilstand.havbund=!tilstand.havbund;e.currentTarget.setAttribute('aria-pressed',String(tilstand.havbund));planlaeg();meddel(tilstand.havbund?'Havbunden er synlig. Havniveauet er uændret.':'Havet dækker havbunden.');});
 document.querySelector('#geologi').addEventListener('click',e=>{manuel();tilstand.geologi=!tilstand.geologi;e.currentTarget.setAttribute('aria-pressed',String(tilstand.geologi));planlaeg();meddel(tilstand.geologi?'Vulkansystemer og pladegrænse vises.':'Vulkansystemer og pladegrænse er skjult.');});
-document.querySelector('#overdrivelse').addEventListener('input',e=>{manuel();if(tilstand.snit){tilstand.dybdefaktor=+e.target.value;document.querySelector('#faktor').value='×'+String(tilstand.dybdefaktor).replace('.',',');tilpasSnit();}else{tilstand.faktor=+e.target.value;document.querySelector('#faktor').value='×'+tilstand.faktor;if(tilstand.klar)beregnFarver();}planlaeg();});
+document.querySelector('#overdrivelse').addEventListener('input',e=>{manuel();if(tilstand.snit){tilstand.dybdefaktor=+e.target.value;document.querySelector('#faktor').value='×'+String(tilstand.dybdefaktor).replace('.',',');tilpasSnit();}else if(erThing()){tilstand.thingFaktor=+e.target.value;document.querySelector('#faktor').value='×'+tilstand.thingFaktor;tilpasThing();}else{tilstand.faktor=+e.target.value;document.querySelector('#faktor').value='×'+tilstand.faktor;if(tilstand.klar)beregnFarver();}planlaeg();});
 document.querySelector('#rundtur').addEventListener('click',()=>{
   if(tilstand.rundtur){stopTur();meddel('Rundturen er sat på pause.');return;}
   if(tilstand.snit){tilstand.rundtur=true;document.querySelector('#rundtur').setAttribute('aria-pressed','true');document.querySelector('#rundtur').textContent='Ⅱ Pause';document.querySelector('.flowstatus').hidden=false;planlaeg();return;}
@@ -200,13 +211,13 @@ const drej=(a,b=0)=>{manuel();kamera.drej=((kamera.drej+a+180)%360+360)%360-180;
 const zoom=d=>{manuel();kamera.zoom=klem(kamera.zoom*d,.65,5);planlaeg();};
 document.querySelectorAll('[data-drej]').forEach(b=>b.addEventListener('click',()=>drej(+b.dataset.drej)));
 document.querySelector('#zoomind').addEventListener('click',()=>zoom(1.2));document.querySelector('#zoomud').addEventListener('click',()=>zoom(1/1.2));
-document.querySelector('#nulstil').addEventListener('click',()=>{manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(0);});
+document.querySelector('#nulstil').addEventListener('click',()=>{manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(erThing()?4:0);});
 canvas.addEventListener('keydown',e=>{
   if(document.querySelector('#ommodellen').open)return;
   if(e.altKey||e.ctrlKey||e.metaKey)return;
   const pile={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,5],ArrowDown:[0,-5]};
   if(pile[e.key]){e.preventDefault();drej(...pile[e.key]);}
-  else if(['+','=','-','Home'].includes(e.key)){e.preventDefault();if(e.key==='Home'){manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(0);}else zoom(e.key==='-'?1/1.2:1.2);}
+  else if(['+','=','-','Home'].includes(e.key)){e.preventDefault();if(e.key==='Home'){manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(erThing()?4:0);}else zoom(e.key==='-'?1/1.2:1.2);}
 });
 let traek=null;
 canvas.addEventListener('pointerdown',e=>{if(e.button>0||!tilstand.klar)return;manuel();traek={x:e.clientX,y:e.clientY,id:e.pointerId,type:e.pointerType,aktiv:false};});
@@ -222,7 +233,27 @@ document.querySelector('#fokus').addEventListener('click',e=>{const til=!documen
 document.addEventListener('keydown',e=>{if(document.querySelector('#ommodellen').open)return;if(e.key==='Escape'){stopTur();stopFlyvning();document.body.classList.remove('fokus');document.querySelector('#fokus').setAttribute('aria-pressed','false');}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stopTur();stopFlyvning();}});
 roligt.addEventListener('change',()=>{stopFlyvning();stopTur();planlaeg();});
-function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();planlaeg();}
+function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();else if(erThing())tilpasThing();planlaeg();}
+function tilpasThing(){
+  if(!thingvellir||!W||!H)return;
+  const a=kamera.drej*rad,b=kamera.vip*rad,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(const q of thingvellir.punkter){
+    const x=q[0]-kamera.x,z=q[2]-kamera.z,rx=x*ca+z*sa,ry=(-x*sa+z*ca)*sb-q[1]/1000*tilstand.thingFaktor*cb;
+    x0=Math.min(x0,rx);x1=Math.max(x1,rx);y0=Math.min(y0,ry);y1=Math.max(y1,ry);
+  }
+  const top=W<500?133:45,bund=W<500?104:55;
+  skala=Math.min((W-32)/(x1-x0),(H-top-bund)/(y1-y0))*.95;
+  snitOffset={x:W/2-(x0+x1)/2*skala,y:top+(H-top-bund)/2-(y0+y1)/2*skala};
+}
+function saetRift(til){
+  riftmaal=til?1:0;if(!til)rift=0;
+  const knap=document.querySelector('#visrift');knap.setAttribute('aria-pressed',String(til));knap.textContent=til?'Saml landskabet igen':'Vis pladernes bevægelse';
+  if(tilstand.klar)meddel(til?'Pladerne bevæger sig fra hinanden, og riftdalen synker.':'Landskabet er samlet igen.');
+  planlaeg();
+}
+document.querySelector('#visrift').addEventListener('click',()=>{manuel();saetRift(!riftmaal);});
+document.querySelector('#nulstilrift').addEventListener('click',()=>{manuel();saetRift(false);});
 // Geografisk gennemskæring: et regionalt udsnit af samme terræn.
 function tilpasSnit(){
   if(!aktueltSnit||!W||!H)return;
@@ -278,7 +309,7 @@ try {
   ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas 2D mangler');
   const [meta,svar,pg]=await Promise.all([fetch('data/islandskort.json'),fetch('data/islandskort-hoejde.bin'),fetch('../data/pladegraenser.json').catch(()=>null)]);
   if(!meta.ok||!svar.ok)throw new Error('Terrændata mangler');
-  data=await meta.json();terraen=lavTerraen(data,await svar.arrayBuffer(),d3);beregnFarver();
+  data=await meta.json();terraen=lavTerraen(data,await svar.arrayBuffer(),d3);thingvellir=lavThingvellir(terraen);beregnFarver();
   const renderPunkt = lonlat => {const [x,z]=terraen.fraGeo(lonlat),y=terraen.modelHoejdeVed(x,z);return y==null?null:[x,y,z];};
   const foelg = l => {
     const ud=[];
@@ -302,7 +333,7 @@ try {
   stopTur();fejltekst.classList.add('fejl');fejltekst.replaceChildren('3D-landskabet kunne ikke vises. ',Object.assign(document.createElement('a'),{href:'kort.html',textContent:'Åbn kortet og forklaringen →'}));
   betjening.forEach(b=>{b.disabled=true;});
 }
-export const proeve={kamera,tilstand,terraen:()=>terraen,projektion:()=>projektion(),snit:()=>aktueltSnit,steder};
+export const proeve={kamera,tilstand,terraen:()=>terraen,projektion:()=>projektion(),snit:()=>aktueltSnit,thingvellir:()=>thingvellir,steder};
 
 // Supplerende dokumentation åbnes efter elevens eget valg.
 const ommodel=document.querySelector('#ommodellen');

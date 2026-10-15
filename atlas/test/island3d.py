@@ -34,14 +34,25 @@ def afproev_island3d(browser, adresse, ud, skaerme):
             expect(side.locator('#stedsnummer')).to_have_text(f'0{i+1} / 05')
         side.locator('[data-sted="4"]').click()
         expect(side.locator('#thingvellirscene')).to_be_visible()
-        expect(side.locator('#landskab')).to_be_hidden()
+        expect(side.locator('canvas[data-sted="thingvellir"]')).to_be_visible()
+        expect(side.locator('#thingvellirscene svg')).to_have_count(0)
         for navn in ['Almannagjá','Hrafnagjá','Riftdalen']:
-            expect(side.locator('#thingvellirfigur')).to_contain_text(navn)
+            expect(side.locator('.thingnavne')).to_contain_text(navn)
+        foer=side.locator('canvas').evaluate('c=>c.toDataURL()')
+        side.locator('canvas').press('ArrowRight')
+        side.wait_for_timeout(80)
+        assert side.locator('canvas').evaluate('c=>c.toDataURL()')!=foer
+        side.locator('canvas').press('Home')
+        side.wait_for_function('document.querySelector("canvas").dataset.rift==="0.000"')
+        foer=side.locator('canvas').evaluate('c=>c.toDataURL()')
         side.locator('#visrift').press('Enter')
         expect(side.locator('#visrift')).to_have_attribute('aria-pressed','true')
-        assert side.locator('.thingvest').evaluate("e=>getComputedStyle(e).transform") != 'none'
+        side.wait_for_function('document.querySelector("canvas").dataset.rift==="1.000"')
+        assert side.locator('canvas').evaluate('c=>c.toDataURL()')!=foer
         side.locator('#nulstilrift').click()
         expect(side.locator('#visrift')).to_have_attribute('aria-pressed','false')
+        side.wait_for_function('document.querySelector("canvas").dataset.rift==="0.000"')
+        assert side.locator('canvas').evaluate('c=>c.toDataURL()')==foer
         side.locator('#ommodel').click()
         expect(side.locator('#ommodellen')).to_be_visible()
         expect(side.locator('#ommodellen')).to_contain_text('Hreppar')

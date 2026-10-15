@@ -82,7 +82,8 @@ De oprindelige procesfigurer og deres adresser findes fortsat.
 Kilde-/fortolkningsmærkater er samlet i **Om modellen** frem for elevens
 arbejdsflade. Samme kildedata, usikkerheder, dybdedatumer og eksemplet ved
 Grímsvötn er bevaret i dialogen; kammerkortene viser navn og dybde.
-Þingvellirs separate nærvisning er en kvalitativ SVG-illustration, ikke et
-nyt målt terrænudsnit. Dokumentationen i dialogen angiver de visuelle valg,
+Siden v423 bruger Þingvellirs nærvisning øens fælles 3D-renderer og et
+regionalt trekantnet over ETOPO. De smalle forkastninger, søbredden og
+overfladedetaljerne er illustrerede tilføjelser, ikke nye målte geodata. Dokumentationen i dialogen angiver de visuelle valg,
 Hreppar-mikropladen og kilder fra Þingvellir Nationalpark samt Weismüller
 m.fl. (2019), DOI 10.5194/se-10-1757-2019.
