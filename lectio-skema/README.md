@@ -6,6 +6,16 @@ Tids kalender. Linket er forudfyldt med skole 141. Perioden er
 
 ## Start
 
+På Simons Mac: dobbeltklik på **Lectio.app** i denne mappe. Træk den gerne
+til Dock fra Finder, så den altid er ét klik væk. Den starter serveren i
+baggrunden, hvis den ikke allerede kører, og åbner programmet i Brave.
+Efter genstart af computeren åbner du blot Lectio.app igen. Der hentes kun
+fra Lectio, når du trykker Opdater eller Opdater alt.
+
+Mac-startfilen kan genskabes med
+`osacompile -o Lectio.app launcher.applescript` fra denne mappe.
+Behold appen her; Dock fungerer som genvej til den.
+
 Kræver Node.js 20 eller nyere. Fra denne mappe:
 
 ```sh
