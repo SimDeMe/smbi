@@ -6,8 +6,21 @@ Hentet 15. oktober 2026 som GeoJSON fra GVP's WFS-tjeneste:
   https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json
 SHA-256: 06b4959df771e7d9b2ff7c3020597d9530ef326f87094cd0f3ff736a9d20fd54
 Tjenestens metadata (GetCapabilities) angiver Fees: NONE og
-AccessConstraints: NONE. GVP beder om kildeangivelse; den står i atlassets
-dialog «Undersøg jordskælv og vulkaner».
+AccessConstraints: NONE.
+
+Vilkår (GVP Terms of Use, https://volcano.si.edu/gvp_termsofuse.cfm, læst
+manuelt 15. oktober 2026, sammen med Smithsonian Terms of Use,
+https://www.si.edu/termsofuse):
+- VOTW-databasen er udarbejdet af ansatte i den amerikanske stat og har
+  derfor «no known copyright restrictions» (punkt 2 i GVP's vilkår).
+- Personlig, uddannelsesmæssig og anden ikke-kommerciel brug er tilladt.
+  smbi.dk er gratis undervisningsmateriale uden reklamer eller salg.
+- Forfatter og kilde skal angives, og der skal så vidt muligt linkes til
+  https://volcano.si.edu/ («Global Volcanism Program, Smithsonian
+  Institution»). Kildeangivelser må ikke fjernes.
+- Kommerciel brug kræver forudgående skriftlig tilladelse fra Smithsonian.
+Kildeangivelsen med link står i atlassets dialog «Undersøg jordskælv og
+vulkaner».
 
 Version: Den gældende version ved hentningen var VOTW 5.4.0 af 7. august
 2026 (kontrolleret manuelt 15. oktober 2026 på

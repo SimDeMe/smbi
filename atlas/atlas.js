@@ -693,7 +693,8 @@ function visSeismikopgave() {
     ['USGS ComCat', 'https://earthquake.usgs.gov/data/comcat/'],
     ['USGS: brug af data', 'https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits'],
     ['Smithsonian GVP', 'https://volcano.si.edu/'],
-    ['VOTW 5.4.0 (DOI)', 'https://doi.org/10.5479/si.GVP.VOTW5-2026.5.4']
+    ['VOTW 5.4.0 (DOI)', 'https://doi.org/10.5479/si.GVP.VOTW5-2026.5.4'],
+    ['GVP: brug af data', 'https://volcano.si.edu/gvp_termsofuse.cfm']
   ]) {
     if (kilder.childElementCount) kilder.append(' · ');
     const link = element('a', navn);
