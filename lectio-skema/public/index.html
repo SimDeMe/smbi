@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lectio-skema · smbi</title><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/range.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main>
+    <header><a href="https://smbi.dk">smbi<span>.dk</span></a><span class="badge">LOKAL PROTOTYPE</span></header>
+    <section class="intro"><p class="eyebrow">LECTIO → DIT EGET VÆRKTØJ</p><h1>Dit skema, samlet.</h1><p>Hent dit lærerskema fra Lectio. Se ugens aktiviteter og tag data med videre til Tid.</p></section>
+    <section class="connection" aria-labelledby="connection-title">
+      <div><h2 id="connection-title">Forbind til Lectio</h2><p>Du logger ind med MitID i et separat Lectio-vindue. Sessionen gemmes på denne computer.</p></div>
+      <form id="setup">
+        <label>Link til dit skema<input id="url" type="url" required placeholder="https://www.lectio.dk/lectio/141/SkemaNy.aspx"></label>
+        <div class="controls"><label>Fra<input id="from" type="date" required value="2026-08-01"></label><label>Til og med<input id="to" type="date" required value="2026-12-31"></label></div>
+        <div class="controls"><label>Uge til login<input id="week" type="week" required min="2000-W01" max="2099-W53"></label><button type="submit" class="secondary">Gem valg</button><button type="button" id="login">Åbn Lectio</button></div>
+      </form>
+      <p id="notice" role="status" aria-live="polite">Forbinder til den lokale hjælper…</p>
+    </section>
+    <section class="connection"><h2>Send skemaet til Tid</h2><p>Gem skema og krediteringer på din Tid-konto, så de også vises i kalenderen på telefonen.</p><button id="send-tid" type="button">Send til Tid</button><p id="tid-status" role="status" aria-live="polite">Du vælger og godkender din Tid-konto i forbindelsesvinduet.</p></section>
+    <section class="schedule" aria-labelledby="schedule-title">
+      <div class="toolbar"><div><p class="eyebrow">UGEOVERSIGT</p><h2 id="schedule-title">Dit lærerskema</h2></div><div class="actions"><a href="/api/skema" id="download" download="lectio-skema.json" hidden>Hent JSON</a><button id="sync">Opdater</button><button id="sync-all" class="secondary">Opdater alt</button></div></div>
+      <label>Vis måned<select id="month"><option value="">Hele perioden</option></select></label>
+      <label class="cancelled-filter"><input id="cancelled-only" type="checkbox">Vis kun aflyste aktiviteter</label>
+      <p id="updated">Ingen data hentet endnu.</p><p>Opdater henter fra i dag og frem. Opdater alt henter hele perioden, også tidligere uger.</p><p id="mismatch" hidden></p><div id="days"><div class="empty"><h3>Skemaet begynder med dit login</h3><p>Åbn Lectio, log ind med MitID og tryk Opdater alt for at hente hele perioden første gang. Der hentes kun fra Lectio, når du trykker på en opdateringsknap.</p></div></div>
+    </section>
+    <footer>MitID-sessionen bliver på computeren. Skemaet sendes til Firebase, når du forbinder til din Tid-konto.</footer>
+  </main>
+</body>
+</html>

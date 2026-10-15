@@ -8,6 +8,7 @@
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { erPause, PAUSE_NAVN } from './pauser.js';
 import { addDays, erIDag, DAGE_KORT } from './periode.js';
+import { lectioNavn } from './lectio-kalender.js';
 
 // ─── Konstanter ───────────────────────────────────────────
 const HOUR_H_DAG = 48;         // px pr. time i dagsvisning
@@ -53,9 +54,9 @@ function dagListe(items) {
     const tid = it.isActive
       ? `${fmtTime(it.realStart)}–`
       : `${it.clipTop ? '…' : fmtTime(it.realStart)}–${it.clipBottom ? '…' : fmtTime(it.realEnd)}`;
-    const dur = it.isActive ? 'i gang' : fmtMins(Math.max(0, Math.round(it.durMin)));
+    const dur = it.isLectio ? (it.cancelled ? 'Aflyst · Lectio' : 'Planlagt · Lectio') : it.isActive ? 'i gang' : fmtMins(Math.max(0, Math.round(it.durMin)));
     const wt  = it.workType ? ` · ${capitalize(it.workType)}` : '';
-    return `<button type="button" class="kal-dl-raekke${it.isPause ? ' kal-dl-pause' : ''}"
+    return `<button type="button" class="kal-dl-raekke${it.isPause ? ' kal-dl-pause' : ''}${it.isLectio ? ' kal-dl-lectio' : ''}"
         data-id="${it.id}" style="--act-color:${it.color}">
       <span class="kal-dl-tid">${tid}</span>
       <span class="kal-dl-navn">${esc(it.name)}<span class="kal-block-wt">${esc(wt)}</span></span>
@@ -88,7 +89,7 @@ export function tegnUge(rod, ctx) {
   const H     = HOUR_H_UGE * ctx.zoom;
 
   const hoved = dage.map((d, i) => {
-    const total = items[i].filter(it => !it.isPause)
+    const total = items[i].filter(it => !it.isPause && !it.isLectio)
                           .reduce((s, it) => s + it.durMin, 0);
     return `<button type="button" class="kal-dag-hoved${erIDag(d) ? ' er-i-dag' : ''}"
         data-dato="${d.getTime()}"
@@ -144,9 +145,11 @@ function tilBlok(e, dagStart, ctx) {
 
   return {
     id:        e.id,
-    name:      isPause ? PAUSE_NAVN : ctx.aktivitetNavn(e.activityId),
+    name:      e.isLectio ? 'Lectio · ' + lectioNavn(e.lectio) : isPause ? PAUSE_NAVN : ctx.aktivitetNavn(e.activityId),
     color:     ctx.aktivitetFarve(e.activityId),
     isPause,
+    isLectio: e.isLectio === true,
+    cancelled: e.lectio?.cancelled === true,
     workType:  e.workType || null,
     isActive,
     clipTop:    raa.start < 0,
@@ -263,7 +266,7 @@ function blokke(items, vin, H, bred) {
     const w = 100 / it.cols;
     // Varigheden er den del, der ligger inden for dagen — en registrering
     // hen over midnat vises derfor med '…' og kun dagens andel.
-    const dur = it.isActive
+    const dur = it.isLectio ? (it.cancelled ? 'aflyst · planlagt' : 'planlagt') : it.isActive
       ? 'i gang'
       : fmtMins(Math.max(0, Math.round(it.durMin)));
     const tid = it.isActive
@@ -273,9 +276,11 @@ function blokke(items, vin, H, bred) {
     const visTid = bred && !(h < 34 && it.cols > 1);
     // Kun hele blokke inden for aksen kan trækkes — en igangværende har
     // ingen slutning, og en klippet viser ikke hele sin tid
-    const kanTraekkes = !it.isActive && !it.clipTop && !it.clipBottom && !it.vinTop && !it.vinBund;
+    const kanTraekkes = !it.isLectio && !it.isActive && !it.clipTop && !it.clipBottom && !it.vinTop && !it.vinBund;
     const wt  = it.workType ? ` · ${capitalize(it.workType)}` : '';
     const cls = [
+      it.isLectio ? 'kal-block-lectio' : '',
+      it.cancelled ? 'kal-lectio-cancelled' : '',
       h < 34 ? 'kal-block-sm' : '',
       bred ? '' : 'kal-block-smal',
       it.isPause ? 'kal-block-pause' : '',

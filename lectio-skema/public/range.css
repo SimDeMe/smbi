@@ -1,0 +1,8 @@
+select{font:inherit;color:#183d35;background:#fcfdf9;border:1px solid #cbd6c9;border-radius:8px;padding:12px;max-width:280px;margin-bottom:6px}
+select:focus-visible{outline:3px solid #dca453;outline-offset:3px}
+.controls label{min-width:0}
+.toolbar{margin-bottom:18px}
+.actions{flex-wrap:wrap}
+.cancelled-filter{flex-direction:row;align-items:center;margin:12px 0;gap:8px;font-weight:400}
+.cancelled-filter input{margin:0;accent-color:#234e40}
+@media(max-width:600px){select{max-width:100%}.controls label{width:auto;flex:1}}

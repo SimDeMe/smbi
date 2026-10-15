@@ -1,0 +1,15 @@
+.lectio-calendar-tools{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0;font-size:13px}
+.lectio-calendar-tools label{display:flex;align-items:center;gap:7px}.lectio-calendar-tools a{color:inherit;text-underline-offset:3px}
+.lectio-toggle{display:flex;align-items:center;gap:4px;font-size:12px;margin-left:auto;padding:0 6px;white-space:nowrap}.lectio-toggle input{margin:0;accent-color:#23877f}
+.kal-block-lectio{--act-color:#23877f!important;background:#e6f5f1!important;border:1.5px dashed #23877f!important;color:#174a45!important}
+.kal-block-lectio.kal-lectio-cancelled{background:#f5f1ee!important;border-color:#a07c70!important;color:#70574f!important}
+.kal-lectio-cancelled .kal-block-title{text-decoration:line-through}.kal-dl-lectio{background:#edf7f4;border-style:dashed}
+.lectio-day-count{display:block;color:#23786f;font-size:10px;font-weight:600;line-height:1.2;margin-top:2px}.lectio-year-count{color:#23786f;font-size:11px;white-space:nowrap}
+.lectio-plan-list{margin-top:20px}.lectio-plan-list h3{font-size:15px;margin-bottom:6px}.lectio-plan-list>.settings-sub{display:block;margin-bottom:10px}
+.lectio-plan-row{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:12px;margin:6px 0;border:1px dashed #23877f;border-radius:8px;background:#edf7f4;color:#174a45;font:inherit;font-size:12px;cursor:pointer}
+.lectio-plan-row strong{font-size:13px}.lectio-plan-row.lectio-cancelled{background:#f5f1ee;border-color:#a07c70}.lectio-cancelled strong{text-decoration:line-through}
+.lectio-import-body{padding:28px 16px;min-height:100vh;overflow:auto}.lectio-import-card{max-width:580px;margin:30px auto;padding:24px;border:2px solid var(--ink,#222);border-radius:12px;background:var(--paper,#fff9ee)}
+.lectio-import-card h1{font-size:28px;margin:12px 0}.lectio-import-card p{line-height:1.6}.lectio-import-card .btn{margin:8px 0}
+.lectio-import-card [hidden]{display:none!important}
+#lectio-sheet{max-height:85dvh}#lectio-sheet .sheet-body{overflow:auto;padding:20px}#lectio-sheet p{line-height:1.6;font-size:14px}
+@media(max-width:600px){.lectio-plan-row{grid-template-columns:1fr;gap:4px}.lectio-import-card{margin:0 auto;padding:18px}.lectio-day-count{font-size:9px}}

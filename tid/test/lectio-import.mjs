@@ -1,0 +1,52 @@
+import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import assert from 'node:assert/strict';
+const here = fileURLToPath(new URL('.', import.meta.url));
+const tid = fileURLToPath(new URL('../', import.meta.url));
+const event = (id, day) => ({ id, activityId: '123', title: 'Geografi', start: day + 'T08:10:00', end: day + 'T09:45:00', timeZone: 'Europe/Copenhagen', group: '2x', room: '43' });
+const incoming = { schemaVersion: 1, source: 'https://www.lectio.dk/lectio/141/SkemaNy.aspx', range: { from: '2026-08-01', to: '2026-12-31' }, lastUpdate: { mode: 'future', from: '2026-10-15', to: '2026-12-31' }, fetchedAt: '2026-10-15T14:00:00Z', events: [event('next', '2026-10-19')] };
+const seed = [['users/u1/lectioSchedules/2026-27', { source: incoming.source, fetchedAt: '2026-10-14T00:00:00Z', events: [event('history', '2026-08-17'), event('removed', '2026-10-20')] }]];
+const browser = await chromium.launch();
+try {
+  const context = await browser.newContext({ serviceWorkers: 'block' });
+  await context.addInitScript(config => { window.__fsCfg = config; }, { seed });
+  for (const [frag, file] of [['firebase-app.js', 'fake-app.js'], ['firebase-auth.js', 'fake-auth.js'], ['firebase-firestore.js', 'fake-fs.js']]) await context.route('**/' + frag, r => r.fulfill({ contentType: 'text/javascript', body: readFileSync(here + file, 'utf8') }));
+  await context.route('https://smbi.dk/tid/**', r => {
+    const file = new URL(r.request().url()).pathname.split('/').at(-1);
+    if (!['lectio-import.html', 'lectio-import.js', 'lectio-data.js', 'lectio-store.js', 'firebase-config.js', 'styles.css', 'lectio-kalender.css'].includes(file)) return r.abort();
+    return r.fulfill({ contentType: file.endsWith('.html') ? 'text/html' : file.endsWith('.css') ? 'text/css' : 'text/javascript', body: readFileSync(tid + file, 'utf8') });
+  });
+  const helper = await context.newPage();
+  await helper.route('**/bridge-fixture', r => r.fulfill({ contentType: 'text/html', body: '<button id="send-tid">Send til Tid</button><p id="tid-status"></p><script type="module">import {initTidBridge} from "/lectio-skema/public/tid-bridge.js"; window.__send = initTidBridge(()=>window.__snapshot);</script>' }));
+  await helper.goto('http://localhost:8777/tid/test/bridge-fixture');
+  await helper.evaluate(snapshot => { window.__snapshot = snapshot; }, incoming);
+  const [popup] = await Promise.all([helper.waitForEvent('popup'), helper.click('#send-tid')]);
+  await popup.waitForFunction(() => document.getElementById('import-summary').textContent.includes('1 aktiviteter'));
+  assert.equal(await popup.locator('#import-save').isEnabled(), true);
+  assert.equal(await popup.evaluate(() => window.__fs.store.get('users/u1/lectioSchedules/2026-27').events.length), 2);
+  await popup.click('#import-save');
+  await helper.waitForFunction(() => document.getElementById('tid-status').textContent.includes('2 aktiviteter gemt i Tid'));
+  assert.deepEqual(await popup.evaluate(() => window.__fs.store.get('users/u1/lectioSchedules/2026-27').events.map(e => e.id)), ['history', 'next']);
+  const forged = await helper.locator('#tid-status').textContent();
+  await popup.evaluate(() => opener.postMessage({ type: 'tid-lectio-saved', nonce: 'wrong', count: 99999 }, 'http://localhost:8777'));
+  assert.equal(await helper.locator('#tid-status').textContent(), forged);
+  await helper.evaluate(snapshot => { window.__snapshot = { ...snapshot, fetchedAt: '2026-10-15T15:00:00Z', events: [{ ...snapshot.events[0], room: '99' }] }; window.__send(); }, incoming);
+  await popup.waitForFunction(() => window.__fs.store.get('users/u1/lectioSchedules/2026-27').events.find(e => e.id === 'next').room === '99');
+  assert.equal(await popup.evaluate(() => [...window.__fs.store.keys()].some(k => k.includes('/entries/'))), false);
+  await popup.click('#import-disconnect');
+  await helper.waitForFunction(() => document.getElementById('tid-status').textContent.includes('afbrudt'));
+
+  const manual = await context.newPage(); await manual.goto('https://smbi.dk/tid/lectio-import.html');
+  await manual.setInputFiles('#import-file', { name: 'lectio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(incoming)) });
+  await manual.click('#import-save');
+  await manual.waitForFunction(() => document.getElementById('import-status').textContent.includes('2 aktiviteter gemt'));
+  await manual.evaluate(() => { window.__fsCfg.failTransaction = true; });
+  const before = await manual.evaluate(() => JSON.stringify([...window.__fs.store]));
+  await manual.setInputFiles('#import-file', { name: 'lectio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ ...incoming, fetchedAt: '2026-10-15T16:00:00Z', events: [] })) });
+  await manual.click('#import-save');
+  await manual.waitForFunction(() => document.getElementById('import-status').textContent.includes('transaction failed'));
+  assert.equal(await manual.evaluate(() => JSON.stringify([...window.__fs.store])), before);
+  console.log('OK   Forbindelse, nonce-kontrol, kontoens import, historik, automatisk overførsel efter manuel opdatering, afbryd, JSON-reservevej og atomisk fejl');
+  await context.close();
+} finally { await browser.close(); }

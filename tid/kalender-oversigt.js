@@ -54,6 +54,7 @@ function dagCelle(d, ctx, maxDag, maaned) {
     return `<div class="kal-md-dag kal-md-dag-uden" aria-hidden="true"></div>`;
 
   const data  = ctx.dag(d);
+  const lectio = ctx.lectioDag?.(d) || 0;
   const fyld  = Math.round(data.total / maxDag * 68);   // loft, så dagtallet stadig kan læses
   const cls   = [
     'kal-md-dag',
@@ -63,9 +64,10 @@ function dagCelle(d, ctx, maxDag, maaned) {
 
   return `<button type="button" class="${cls}" data-dato="${d.getTime()}"
       style="--fyld:${fyld}%"
-      aria-label="${langDato(d)}: ${data.total ? fmtMins(data.total) : 'ingen registreringer'}">
+      aria-label="${langDato(d)}: ${data.total ? fmtMins(data.total) : 'ingen registreringer'}${lectio ? `, ${lectio} Lectio-aftaler` : ''}">
     <span class="kal-md-nr">${d.getDate()}</span>
     <span class="kal-md-tid">${data.total ? kortTimer(data.total) : ''}</span>
+    ${lectio ? `<span class="lectio-day-count">${lectio} Lectio</span>` : ''}
     ${stribe(data, ctx)}
   </button>`;
 }
@@ -105,6 +107,7 @@ export function tegnAar(rod, ctx) {
 
   const raekker = maaneder.map((m, i) => {
     const antal = dageIMaaned(m);
+    const lectio = Array.from({ length: antal }, (_, k) => ctx.lectioDag?.(addDays(m, k)) || 0).reduce((s, n) => s + n, 0);
     const felter = Array.from({ length: 31 }, (_, k) => {
       if (k >= antal) return `<i class="kal-aar-dag kal-aar-dag-uden"></i>`;
       const d = addDays(m, k);
@@ -122,6 +125,7 @@ export function tegnAar(rod, ctx) {
       <span class="kal-aar-navn mono">${navn}</span>
       <span class="kal-aar-heat">${felter}</span>
       <span class="kal-aar-total">
+        ${lectio ? `<span class="lectio-year-count">${lectio} Lectio</span>` : ''}
         <b>${totaler[i] ? kortTimer(totaler[i]) : '–'}</b>
         <span class="kal-aar-total-bar" style="width:${Math.round(totaler[i] / maxMaaned * 100)}%"></span>
       </span>

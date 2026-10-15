@@ -94,6 +94,13 @@ export function writeBatch() {
   const ops = [];
   return { set: (r, d, o) => ops.push(() => setDoc(r, d, o)), update: (r, d) => ops.push(() => updateDoc(r, d)), delete: r => ops.push(() => deleteDoc(r)), commit: async () => { for (const op of ops) await op(); } };
 }
+export async function runTransaction(db, callback) {
+  const ops = [];
+  const result = await callback({ get: async ref => docSnap(ref), set: (ref, data) => ops.push([ref.path, data]) });
+  if (cfg.failTransaction) throw new Error('Test: transaction failed');
+  for (const [path, data] of ops) store.set(path, resolve(data));
+  notify(); return result;
+}
 
 // Testkrog
 window.__fs = { store, Timestamp, notify,

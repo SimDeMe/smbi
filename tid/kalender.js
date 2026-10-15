@@ -16,6 +16,9 @@ import { fmtMins, fmtTime } from './format.js';
 import { erPause } from './pauser.js';
 import { tegnDag, tegnUge } from './kalender-akse.js';
 import { tegnMaaned, tegnAar } from './kalender-oversigt.js';
+import { listenLectio } from './lectio-store.js';
+import { lectioPoster as tilLectioPoster, visLectio, tegnLectioListe } from './lectio-kalender.js';
+import { danishDate } from './lectio-data.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, forskydningFor,
   startOfDay, addDays, datoInput
@@ -47,6 +50,9 @@ let listenerKey  = null;
 let listenersOk  = false;
 let isVisible    = false;
 let tick         = null;
+let lectioEvents = [], lectioPoster = [], lectioFetchedAt = null, unsubLectio = null;
+let lectioDage = new Map();
+let visLectioLag = true;
 
 // Zoom på tidsaksen: hvor mange gange den normale timehøjde. Med musen er
 // der ofte plads til mere, så dér starter den et trin oppe. Valget huskes
@@ -68,8 +74,26 @@ const slut   = () => periodeSlut(aktuel().type, forskyd);
 // ─── Init ─────────────────────────────────────────────────
 export function initKalenderView(uid) {
   if (userId === uid) return;
+  unsubEntries?.(); unsubEntries = null; listenerKey = null;
+  unsubLectio?.(); unsubLectio = null;
+  stopTick(); poster = []; dagsKort = new Map();
+  lectioEvents = []; lectioPoster = []; lectioFetchedAt = null; lectioDage = new Map();
   userId = uid;
   bindListeners();
+  if (!uid) { render(); return; }
+  unsubLectio = listenLectio(db, uid, data => {
+    if (uid !== userId) return;
+    lectioEvents = data.events; lectioFetchedAt = data.fetchedAt;
+    lectioPoster = tilLectioPoster(lectioEvents, Timestamp);
+    lectioDage = new Map();
+    for (const event of lectioEvents) {
+      const end = danishDate(event.end);
+      for (let d = startOfDay(danishDate(event.start)), n = 0; d < end && n < 370; d = addDays(d, 1), n++) {
+        const key = datoInput(d); lectioDage.set(key, (lectioDage.get(key) || 0) + 1);
+      }
+    }
+    render();
+  }, () => { if (uid === userId) { lectioEvents = []; lectioPoster = []; lectioDage = new Map(); render(); showToast('Kunne ikke hente Lectio-skemaet'); } });
 }
 
 // Kaldes når Historik-fanen åbnes. Kalenderen er standard — listen er der,
@@ -223,7 +247,8 @@ function byggKontekst() {
     type:  aktuel().type,
     start: start(),
     slut:  slut(),
-    poster,
+    poster: visLectioLag ? [...poster, ...lectioPoster] : poster,
+    lectioDag: d => visLectioLag ? lectioDage.get(datoInput(d)) || 0 : 0,
     dag: dagData,
     aktivitetNavn: id => {
       if (!id) return 'Ubundet tid';
@@ -250,6 +275,7 @@ function render() {
   renderBar();
   markerZoom();
   v.tegn(rod, byggKontekst());
+  tegnLectioListe(document.getElementById('kal-lectio-list'), lectioEvents, start(), slut(), lectioFetchedAt, visLectioLag);
   markerValgt();
 
   const hint = document.getElementById('kal-hint');
@@ -281,6 +307,8 @@ function markerZoom() {
 let valgtId = null;
 
 function aabnPost(id) {
+  const plan = lectioPoster.find(p => p.id === id);
+  if (plan) { visLectio(plan.lectio); return; }
   valgtId = id;
   markerValgt();
   openEntrySheet(id, null, poster.find(p => p.id === id));
@@ -387,6 +415,7 @@ function tilTid(dagStart, min) {
 function bindListeners() {
   if (listenersOk) return;
   listenersOk = true;
+  document.getElementById('kal-lectio-toggle')?.addEventListener('change', ev => { visLectioLag = ev.target.checked; render(); });
 
   document.querySelectorAll('.hist-mode-tab').forEach(btn =>
     btn.addEventListener('click', () => setMode(btn.dataset.mode)));

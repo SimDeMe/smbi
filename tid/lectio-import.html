@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="da">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="referrer" content="no-referrer"><title>Lectio til Tid</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="lectio-kalender.css"><script type="module" src="lectio-import.js"></script></head>
+<body class="lectio-import-body"><main class="lectio-import-card">
+  <p class="section-label">LECTIO → TID</p><h1>Dit skema i kalenderen</h1>
+  <p>Log ind med samme Google-konto som i Tid. Skema, aflysninger og krediteringer gemmes på din konto i Firebase.</p>
+  <p id="import-account" role="status">Kontrollerer login…</p>
+  <button id="import-login" class="btn btn-primary" hidden>Log ind med Google</button>
+  <label id="import-file-label">Eller vælg JSON-filen fra Lectio-programmet<input id="import-file" type="file" accept=".json,application/json"></label>
+  <p id="import-summary"></p><p id="import-status" role="status" aria-live="polite">Venter på Lectio-programmet…</p>
+  <button id="import-save" class="btn btn-primary" disabled>Forbind og gem skema</button>
+  <p class="settings-sub">Når du forbinder, gemmes efterfølgende opdateringer fra dette Lectio-vindue også på denne konto. Forbindelsen gælder, indtil et af vinduerne lukkes, eller du afbryder den. Aftalerne oprettes som planlagt tid; de tæller ikke som registreret arbejdstid.</p>
+  <button id="import-disconnect" class="btn btn-secondary" hidden>Afbryd forbindelsen</button>
+  <p><a href="./" target="_blank" rel="noopener">Åbn Tids kalender</a></p>
+</main></body></html>

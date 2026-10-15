@@ -20,6 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="lectio-kalender.css">
 
   <!-- Firebase og appens egne moduler opdages ellers først, når app.js er
        hentet og læst — en hel netværkstur brugt på at vente. Her siger vi til
@@ -215,6 +216,7 @@
             <button class="kal-vis-tab" data-vis="uge">Uge</button>
             <button class="kal-vis-tab" data-vis="maaned">Måned</button>
             <button class="kal-vis-tab" data-vis="aar">År</button>
+            <label class="lectio-toggle"><input id="kal-lectio-toggle" type="checkbox" checked>Lectio</label>
           </div>
 
           <div class="kal-bar">
@@ -243,8 +245,10 @@
             </span>
           </div>
 
-          <div id="kal-view" class="kal-view" aria-label="Registreringer i perioden"></div>
+          <div id="kal-view" class="kal-view" aria-label="Registreringer og planlagte aftaler i perioden"></div>
+          <section id="kal-lectio-list" class="lectio-plan-list" aria-label="Planlagt i Lectio"></section>
           <p class="kal-hint" id="kal-hint">Tryk på tidsaksen for at oprette en registrering.</p>
+          <div class="lectio-calendar-tools"><a href="http://127.0.0.1:8787/" target="_blank" rel="noopener">Åbn Lectio-program på computeren</a><span>Stiplede blokke er planlagte aftaler.</span></div>
         </div>
       </div>
 
@@ -436,6 +440,7 @@
         <!-- Data -->
         <div class="settings-section">
           <div class="settings-section-title">Data</div>
+          <div class="settings-row" style="flex-direction:column;gap:8px;align-items:stretch"><a href="lectio-import.html" class="btn btn-secondary btn-full">Importér Lectio-skema</a><span class="settings-sub">Brug Send til Tid i Lectio-programmet på computeren, eller importér dets JSON-fil. Skemaet vises som planlagte aftaler i kalenderen.</span></div>
           <div class="settings-row">
             <button id="btn-export-json" class="btn btn-secondary" style="flex:1">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>

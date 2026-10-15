@@ -1,0 +1,7 @@
+{
+  "name": "smbi-lectio-skema",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node server.mjs", "test": "node --test test/*.test.mjs" },
+  "dependencies": { "playwright": "1.63.0" }
+}

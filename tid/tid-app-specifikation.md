@@ -39,6 +39,23 @@ Brugeren leverer `firebaseConfig` i `firebase-config.js`. Brug Firebase v10+ mod
 
 ## Datamodel i Firestore
 
+Lectio-skemaet gemmes separat i `users/{uid}/lectioSchedules/{skoleår}`
+(fx `2026-27`). Dokumentet indeholder `schemaVersion`, `source`,
+`schoolYear`, `fetchedAt`, `importedAt`, `lastUpdate` og `events`.
+Hver aftale har Lectio-ID, dansk start/sluttid med `timeZone`, hold,
+lærer, lokale, status og separate lærer-/holdkrediteringer ved aflysning.
+En Firestore-transaktion erstatter kun aftaler i den opdaterede periode,
+bevarer øvrig historik og afviser en import, der er ældre end den gemte.
+Skemaet er planlagt tid; det opretter ingen `entries` eller `activities` og
+indgår ikke i beregning af registreret tid, rapporter eller akkorder.
+Kalenderens dag/uge viser stiplede blokke, måned/år viser aftalemarkeringer.
+Heldagsaftaler står i periodens Lectio-liste og bliver ikke til døgnblokke.
+Importen sker via `lectio-import.html`: godkendt forbindelse fra det lokale
+Lectio-program eller JSON-fil. Firebase-login forbliver på smbi.dk.
+Tids hidtidige backupformat omfatter fortsat kun de manuelt vedligeholdte
+aktiviteter, registreringer og indstillinger; Lectio-programmets JSON er
+reservekopi for de importerede skemadata.
+
 Alt under `users/{userId}/`:
 
 **`activities/{activityId}`** — Aktiviteter:
