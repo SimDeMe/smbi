@@ -157,6 +157,106 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
     side.close()
     assert not fejl, fejl
     print('Landemenu: data, fejl og nyt forsøg OK', flush=True)
+    afproev_sammenligning(browser, adresse, ud, skaerme)
+
+
+def aabn_land(side, soegning, navn):
+    side.get_by_role('button', name='Søg', exact=True).click()
+    side.get_by_role('searchbox').fill(soegning)
+    side.locator('.landeknapper').get_by_role('button', name=navn, exact=True).click()
+    expect(side.locator('#dialogtitel')).to_have_text(navn)
+
+
+def sammenlign_med(side, soegning, navn):
+    side.locator('.sammenlignknap').click()
+    felt = side.locator('#sammenlignvalg input')
+    expect(felt).to_be_focused()
+    felt.fill(soegning)
+    side.locator('#sammenlignvalg').get_by_role('button', name=navn, exact=True).click()
+    expect(side.locator('#sammenlignvalg')).to_be_hidden()
+
+
+def afproev_sammenligning(browser, adresse, ud, skaerme=SKAERME):
+    fejl = []
+    for w, h in skaerme:
+        touch = w == 390
+        side = browser.new_page(viewport={'width': w, 'height': h}, has_touch=touch, is_mobile=touch)
+        side.on('pageerror', lambda e: fejl.append(str(e)))
+        side.on('console', lambda e: fejl.append(e.text) if e.type == 'error' else None)
+        klar(side, adresse)
+        aabn_land(side, 'alger', 'Algeriet')
+        expect(side.locator('#pyramidetitel')).to_be_visible()
+        # Uden søgetekst foreslås Danmark; Algeriet selv kan ikke vælges.
+        side.locator('.sammenlignknap').click()
+        expect(side.locator('.sammenlignknap')).to_have_attribute('aria-expanded', 'true')
+        expect(side.locator('#sammenlignvalg button')).to_have_text(['Danmark'])
+        side.locator('#sammenlignvalg input').fill('alg')
+        expect(side.locator('#sammenlignvalg')).to_contain_text('Intet land passer')
+        # Escape lukker kun søgefeltet, ikke dialogen.
+        side.keyboard.press('Escape')
+        expect(side.locator('#sammenlignvalg')).to_be_hidden()
+        expect(side.locator('dialog')).to_be_visible()
+        expect(side.locator('.sammenlignknap')).to_be_focused()
+        sammenlign_med(side, 'danm', 'Danmark')
+        expect(side.locator('#dialogtitel')).to_have_text('Algeriet og Danmark')
+        expect(side.locator('.pyramide')).to_have_count(2)
+        expect(side.locator('.transition')).to_have_count(2)
+        tabel = side.locator('.sammenligningstabel')
+        expect(tabel.locator('tbody tr')).to_have_count(15)
+        expect(tabel.locator('thead')).to_contain_text('Algeriet')
+        expect(tabel.locator('thead')).to_contain_text('Danmark')
+        expect(tabel.locator('tbody tr', has_text='Samlet fertilitet')).to_contain_text('1,51')
+        # HDI-rangen er forskellig for landene og står derfor i cellen.
+        expect(tabel.locator('tbody tr', has_text='HDI').locator('td').nth(1)).to_contain_text('nr. 4')
+        # Fælles skala: pyramidernes x-akser og raternes y-akser har samme tal.
+        akser = side.evaluate('''() => [...document.querySelectorAll('.pyramide, .transition')].map(f =>
+          [...f.querySelectorAll('.aksetal')].map(t => t.textContent).join('|'))''')
+        assert akser[0] == akser[1], akser
+        side.locator('.aarvalg [data-aar="2100"]').click()
+        expect(side.locator('#sammenligningstitel')).to_contain_text('2100 · fremskrivning')
+        if w >= 900:
+            # Pyramiderne står side om side.
+            a, b = [side.locator('.pyramide').nth(i).bounding_box() for i in (0, 1)]
+            assert abs(a['y'] - b['y']) < 2 and b['x'] > a['x'] + a['width'], (a, b)
+        assert side.evaluate('''() => { const d = document.querySelector('dialog');
+          return d.scrollWidth <= d.clientWidth + 1 && document.documentElement.scrollWidth === innerWidth; }''')
+        mindst = side.evaluate('''() => Math.min(...[...document.querySelectorAll('.pyramide text, .transition text')]
+          .map(t => t.getBoundingClientRect().height).filter(Boolean))''')
+        assert mindst >= 9, mindst
+        side.screenshot(path=str(ud / f'sammenligning-demografi-{w}x{h}.png'))
+        side.locator('[data-fane="klima"]').click()
+        expect(side.locator('.sammenligning-kolonne')).to_have_count(2)
+        expect(side.locator('.sammenligning-kolonne').nth(0)).to_contain_text('Algier')
+        expect(side.locator('.sammenligning-kolonne').nth(1)).to_contain_text('Copenhagen')
+        # Alle hydrotermfigurer har samme akser.
+        skalaer = side.evaluate('''() => [...document.querySelectorAll('.hydroterm')].map(f =>
+          [...f.querySelectorAll('.nedboer-tal')].map(t => t.textContent + '@' + t.getAttribute('y')).join('|'))''')
+        assert len(skalaer) >= 3 and len(set(skalaer)) == 1, skalaer
+        side.screenshot(path=str(ud / f'sammenligning-klima-{w}x{h}.png'))
+        # Skift land og fjern sammenligningen igen.
+        sammenlign_med(side, 'monac', 'Monaco')
+        expect(side.locator('#dialogtitel')).to_have_text('Algeriet og Monaco')
+        expect(side.locator('.sammenligning-kolonne').nth(1)).to_contain_text('ingen klimanormal')
+        side.locator('.stopsammenligning').click()
+        expect(side.locator('#dialogtitel')).to_have_text('Algeriet')
+        expect(side.locator('.sammenligning-kolonne')).to_have_count(0)
+        expect(side.locator('.stationskort').first).to_contain_text('Algier')
+        expect(side.locator('.sammenlignknap')).to_be_focused()
+        side.locator('#luk').click()
+        side.close()
+        print('Sammenligning af to lande:', w, h, 'OK', flush=True)
+    # Område uden FN-data ved siden af et land med data.
+    side = browser.new_page()
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    klar(side, adresse)
+    aabn_land(side, 'danm', 'Danmark')
+    sammenlign_med(side, 'antark', 'Antarktis')
+    expect(side.locator('.pyramide')).to_have_count(1)
+    expect(side.locator('.sammenligning-kolonne').nth(1)).to_contain_text('findes ikke')
+    expect(side.locator('.sammenligningstabel tbody tr').first.locator('td').nth(1)).to_have_text('–')
+    side.close()
+    assert not fejl, fejl
+    print('Sammenligning: område uden data OK', flush=True)
 
 
 if __name__ == '__main__':

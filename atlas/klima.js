@@ -33,11 +33,19 @@ const grader = (v, pos, neg) => `${fmt(Math.abs(v), 2)}° ${v < 0 ? neg : pos}`;
 
 // Hydrotermfigur med den gængse skala 10 °C ≙ 20 mm: hvor temperaturkurven
 // ligger over nedbørssøjlen, er måneden tør (fordampningen kan overstige nedbøren).
-export function lavHydrotermfigur(station) {
+// Aksernes yderpunkter for en eller flere stationer (fælles skala ved sammenligning).
+export function hydrotermskala(stationer) {
+  const t = stationer.flatMap(s => s.t), n = stationer.flatMap(s => s.n);
+  return {
+    tMin: Math.min(0, Math.floor(Math.min(...t) / 10) * 10),
+    tMax: Math.max(20, Math.ceil(Math.max(...t) / 10) * 10, Math.ceil(Math.max(...n) / 20) * 10)
+  };
+}
+
+export function lavHydrotermfigur(station, skala = hydrotermskala([station])) {
   const { t, n } = station;
   const B = 340, H = 250, v = 40, h = 38, top = 26, bund = 26;
-  const tMin = Math.min(0, Math.floor(Math.min(...t) / 10) * 10);
-  const tMax = Math.max(20, Math.ceil(Math.max(...t) / 10) * 10, Math.ceil(Math.max(...n) / 20) * 10);
+  const { tMin, tMax } = skala;
   const yT = val => top + (tMax - val) / (tMax - tMin) * (H - top - bund);
   const yN = mm => yT(mm / 2);
   const bredde = (B - v - h) / 12;
@@ -63,15 +71,15 @@ export function lavHydrotermfigur(station) {
   return figur;
 }
 
-function stationskort(station, land) {
+function stationskort(station, land, skala, niveau = 'h3') {
   const kort = element('article', null, 'stationskort');
-  kort.append(element('h3', station.navn, 'figurtitel'));
+  kort.append(element(niveau, station.navn, 'figurtitel'));
   const [lon, lat] = station.punkt;
   const sted = [grader(lat, 'N', 'S'), grader(lon, 'Ø', 'V'), `${station.hoejde.toLocaleString('da-DK')} m o.h.`];
   if (station.omraade && station.omraade !== land) sted.unshift(station.omraade);
   kort.append(element('p', `${sted.join(' · ')} · WMO ${station.wmo}`, 'metadata'));
   if (station.periode !== '1991–2020') kort.append(element('p', `Normalperiode ${station.periode}. Nyere normal findes ikke i datasættet for stationen.`, 'periodeadvarsel'));
-  kort.append(lavHydrotermfigur(station));
+  kort.append(lavHydrotermfigur(station, skala));
   const aarsmiddel = station.t.reduce((s, v) => s + v, 0) / 12;
   const aarsnedboer = station.n.reduce((s, v) => s + v, 0);
   const amplitude = Math.max(...station.t) - Math.min(...station.t);
@@ -127,5 +135,52 @@ export function visKlima(rod, stationer, landenavn) {
     navn: `klimadata for ${landenavn}`, overskrift: 'Om data',
     introduktion: 'Klimanormaler: gennemsnit for 30 år målt på vejrstationen – ikke aktuelt vejr.',
     tekst: 'Månedsmiddeltemperatur og månedsnedbør er WMO-klimanormaler, som landenes vejrtjenester har indberettet (CLIMAT-meldinger og WMO’s normalpublikationer). Data: Deutscher Wetterdienst (DWD), Climate Data Center, CLIMAT multi_annual, CC BY 4.0. Normalperioden er 1991–2020. Hvor en nyere normal mangler for alle landets stationer, vises 1961–1990, og det står ved figuren. Stationerne er valgt automatisk: først den station, der ligger nærmest hovedstaden, og for større lande op til tre ekstra stationer med mest forskelligt klima. Det er altså eksempler, ikke et gennemsnit for hele landet. Figuren bruger den gængse skala 10 °C ≙ 20 mm nedbør. Ligger temperaturkurven over nedbørssøjlen, regnes måneden som tør, fordi fordampningen kan være større end nedbøren. Stationsnavne er gengivet som i kilden.'
+  }));
+}
+
+// To lande side om side. Alle figurer får samme skala, så søjler og kurver kan
+// sammenlignes direkte. lande: [{ navn, stationer }].
+export function visKlimaSammenligning(rod, lande) {
+  rod.replaceChildren();
+  const alle = lande.flatMap(l => l.stationer || []);
+  if (alle.length) {
+    const forklaring = element('div', null, 'klimaforklaring');
+    forklaring.append(
+      element('span', 'Søjler: nedbør (mm, venstre akse)', 'tegn-nedboer'),
+      element('span', 'Kurve: temperatur (°C, højre akse)', 'tegn-temperatur'),
+      element('span', 'Lys baggrund: tør måned', 'tegn-toer'),
+      element('span', 'Samme skala i alle figurer', 'tegn-skala'));
+    rod.append(forklaring);
+  }
+  const skala = alle.length ? hydrotermskala(alle) : null;
+  const par = element('div', null, 'sammenligning-par');
+  lande.forEach((l, i) => {
+    const kolonne = element('section', null, 'sammenligning-kolonne');
+    const overskrift = element('h3', l.navn, 'landenavn'); overskrift.id = `klimaland${i}`;
+    kolonne.setAttribute('aria-labelledby', overskrift.id);
+    kolonne.append(overskrift);
+    if (!l.stationer?.length) kolonne.append(element('p', `Datasættet har ingen klimanormal fra en station i ${l.navn}.`));
+    else {
+      const stak = element('div', null, 'stationsstak');
+      for (const s of l.stationer) stak.append(stationskort(s, l.stationer[0].omraade, skala, 'h4'));
+      kolonne.append(stak);
+    }
+    par.append(kolonne);
+  });
+  rod.append(par);
+  const undersoeg = element('details', null, 'undersoeg');
+  undersoeg.append(element('summary', 'Undersøg'));
+  const liste = element('ol', null, 'opgaveliste');
+  for (const s of [
+    'Sammenlign årsmiddeltemperatur, årsnedbør og temperaturamplitude for de to landes hovedstationer.',
+    'Hvilket land har flest tørre måneder? Hvornår på året falder nedbøren i hvert land?',
+    'Hvilke klimazoner og plantebælter hører stationerne til? Forklar forskellen med breddegrad, højde, afstand til havet eller vindsystemer.',
+    'Hvordan kan forskellene i klima påvirke landbrug og bosætning i de to lande?'
+  ]) liste.append(element('li', s));
+  undersoeg.append(liste);
+  rod.append(undersoeg, lavInformation({
+    navn: `klimadata for ${lande.map(l => l.navn).join(' og ')}`, overskrift: 'Om data',
+    introduktion: 'Klimanormaler: gennemsnit for 30 år målt på vejrstationen – ikke aktuelt vejr.',
+    tekst: 'Samme data som for ét land: WMO-klimanormaler via Deutscher Wetterdienst (DWD), CLIMAT multi_annual, CC BY 4.0, normalperiode 1991–2020 (ellers står perioden ved figuren). Ved sammenligning har alle figurer samme akser, så en høj søjle betyder det samme i begge lande. Figurer for tørre stationer kan derfor blive lave, når den anden station er meget våd. Stationerne er eksempler, ikke gennemsnit for landet.'
   }));
 }

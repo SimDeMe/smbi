@@ -25,6 +25,15 @@ globussens detaljerede 1:50 mio.-kort, så også mange små lande kan vælges.
   WMO-normaler 1991–2020. Hvor nyere normal mangler for hele landet, vises
   1961–1990 med tydelig advarsel. Tabel med tal til hver figur.
 - Begge faner har korte **Undersøg**-spørgsmål og ⓘ med kilder og forbehold.
+- **Sammenlign ⇄** (v424) i fanerækken åbner et søgefelt under fanerne (uden
+  søgetekst foreslås Danmark). Det valgte land vises ved siden af i begge
+  faner, til det fjernes med **× land**; **Andet land** skifter det ud.
+  Demografi: fælles årsvalg, to pyramider og to ratefigurer med samme skala
+  og nøgletallene i én tabel (forklaring ved navnet, når den er ens; ellers i
+  cellen, fx HDI-rang). Klima: landenes stationer i hver sin kolonne, alle
+  hydrotermfigurer med samme akser. Under 700 px står landene under hinanden.
+  Escape i søgefeltet lukker kun feltet. Egne Undersøg-spørgsmål til
+  sammenligning.
 
 Data: `data/demografi.json` (FN WPP 2024, UNDP HDR 2025, Verdensbanken; ca.
 590 kB, 220 kB gzip), `data/klima.json` (DWD/WMO; 72 kB) og
@@ -38,7 +47,9 @@ står i menuen. Quizzen og landekortet er uændrede: i quizzen åbner tryk ingen
 `test/landemenu.py` indgår i den samlede browsertest og kan køres særskilt.
 Den kontrollerer stikprøver i data mod kilderne, menu, tastatur, faner,
 år/fremskrivning, figurtekstens størrelse, søgning, lande uden data, Escape,
-alle fem elevvisninger og datafejl med nyt forsøg.
+alle fem elevvisninger og datafejl med nyt forsøg – og sammenligningen: valg,
+Escape, fælles skala i pyramider, rater og hydrotermfigurer, tabel, side om
+side på laptop, skift/fjern land og område uden data.
 
 ## Tættere zoom på globussen (v420)
 

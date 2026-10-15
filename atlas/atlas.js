@@ -70,30 +70,40 @@ async function vaelgLand(feature, punkt) {
 }
 
 let landevisning = 0;
+// Ét land eller to side om side. Sammenlign åbner et søgefelt under fanerne;
+// det valgte land vises ved siden af i begge faner, indtil det fjernes igen.
 function visLandedata(land, fane, fokusEfter) {
   aabn(land.navn);
   dialog.classList.add('bred');
   if (fokusEfter) senesteFokus = fokusEfter;
-  if (land.note) indhold.append(element('p', land.note, 'metadata'));
+  let andet = null;
+  let aktiv = fane;
+  const noter = element('div', '', 'landenoter');
   const faner = element('div', '', 'valg landefaner');
   faner.setAttribute('role', 'group');
   faner.setAttribute('aria-label', `Vælg emne for ${land.navn}`);
   const rum = element('div', '', 'landedata');
   rum.id = 'landedata';
   const vis = async id => {
+    aktiv = id;
     const nr = ++landevisning;
     for (const knap of faner.querySelectorAll('[data-fane]')) knap.setAttribute('aria-pressed', String(knap.dataset.fane === id));
     rum.replaceChildren(element('p', id === 'demografi' ? 'Henter befolkningsdata …' : 'Henter klimadata …', 'antal'));
     rum.setAttribute('aria-busy', 'true');
+    const par = andet ? [land, andet] : null;
     try {
       if (id === 'demografi') {
         const modul = await import('./demografi.js');
         const data = await modul.hentDemografi();
-        if (nr === landevisning) modul.visDemografi(rum, data.lande[land.id], data);
+        if (nr !== landevisning) return;
+        if (par) modul.visDemografiSammenligning(rum, par.map(l => ({ navn: l.navn, data: data.lande[l.id] })), data);
+        else modul.visDemografi(rum, data.lande[land.id], data);
       } else {
         const modul = await import('./klima.js');
         const data = await modul.hentKlima();
-        if (nr === landevisning) modul.visKlima(rum, data.lande[land.id], land.navn);
+        if (nr !== landevisning) return;
+        if (par) modul.visKlimaSammenligning(rum, par.map(l => ({ navn: l.navn, stationer: data.lande[l.id] })));
+        else modul.visKlima(rum, data.lande[land.id], land.navn);
       }
     } catch {
       if (nr === landevisning) rum.replaceChildren(element('p', 'Data kunne ikke hentes. Vælg fanen igen, eller genindlæs siden. Globussen og simulationerne virker stadig.'));
@@ -107,13 +117,91 @@ function visLandedata(land, fane, fokusEfter) {
     knap.onclick = () => vis(id);
     faner.append(knap);
   }
+  const sammenlign = element('button', 'Sammenlign ⇄', 'sammenlignknap');
+  sammenlign.type = 'button';
+  sammenlign.setAttribute('aria-expanded', 'false');
+  sammenlign.setAttribute('aria-controls', 'sammenlignvalg');
+  const stop = element('button', '', 'stopsammenligning');
+  stop.type = 'button'; stop.hidden = true;
+  faner.append(sammenlign, stop);
   if (land.id === '208') {
     const kort = element('button', 'Landekort →');
     kort.type = 'button'; kort.disabled = !globus;
     kort.onclick = visDanmark;
     faner.append(kort);
   }
-  indhold.append(faner, rum);
+
+  const valgpanel = element('div', '', 'sammenlignvalg');
+  valgpanel.id = 'sammenlignvalg'; valgpanel.hidden = true;
+  const label = element('label', `Sammenlign ${land.navn} med`, 'soegefelt');
+  const felt = element('input');
+  felt.type = 'search'; felt.placeholder = 'Skriv et land, fx Japan';
+  felt.autocomplete = 'off';
+  label.append(felt);
+  const forslag = element('div', '', 'landeknapper');
+  forslag.setAttribute('aria-live', 'polite');
+  valgpanel.append(label, forslag);
+  let navne = {};
+  const visForslag = () => {
+    const lande = felt.value.trim()
+      ? findLande(navne, felt.value).filter(([id]) => id !== land.id)
+      : [['208', navne['208'] || 'Danmark']].filter(([id]) => id !== land.id);
+    forslag.replaceChildren(...lande.map(([id, navn]) => {
+      const knap = element('button', navn);
+      knap.type = 'button';
+      knap.onclick = () => vaelgAndet(landFraKort({ id, properties: { name: navn } }, navne));
+      return knap;
+    }));
+    if (felt.value.trim() && !lande.length) forslag.append(element('p', 'Intet land passer. Prøv det danske navn.', 'antal'));
+  };
+  hentIndeks().then(n => { navne = n; if (felt.isConnected) visForslag(); }).catch(() => {});
+  felt.addEventListener('input', visForslag);
+  const lukValg = () => {
+    valgpanel.hidden = true;
+    sammenlign.setAttribute('aria-expanded', 'false');
+    sammenlign.focus({ preventScroll: true });
+  };
+  // Escape i søgefeltet lukker kun feltet, ikke hele dialogen.
+  valgpanel.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault(); event.stopPropagation();
+    lukValg();
+  });
+  sammenlign.onclick = () => {
+    if (!valgpanel.hidden) return lukValg();
+    valgpanel.hidden = false;
+    sammenlign.setAttribute('aria-expanded', 'true');
+    felt.value = '';
+    visForslag();
+    felt.focus();
+  };
+  const opdaterTop = () => {
+    titel.textContent = andet ? `${land.navn} og ${andet.navn}` : land.navn;
+    sammenlign.textContent = andet ? 'Andet land ⇄' : 'Sammenlign ⇄';
+    sammenlign.setAttribute('aria-label', andet ? `Sammenlign ${land.navn} med et andet land end ${andet.navn}` : `Sammenlign ${land.navn} med et andet land`);
+    stop.hidden = !andet;
+    if (andet) {
+      stop.textContent = `× ${andet.navn}`;
+      stop.setAttribute('aria-label', `Fjern ${andet.navn}, vis kun ${land.navn}`);
+    }
+    noter.replaceChildren(...[land, andet].filter(l => l?.note).map(l => element('p', `${l.navn}: ${l.note}`, 'metadata')));
+  };
+  const vaelgAndet = nyt => {
+    andet = nyt;
+    valgpanel.hidden = true;
+    sammenlign.setAttribute('aria-expanded', 'false');
+    opdaterTop();
+    faner.querySelector(`[data-fane="${aktiv}"]`).focus({ preventScroll: true });
+    vis(aktiv);
+  };
+  stop.onclick = () => {
+    andet = null;
+    opdaterTop();
+    sammenlign.focus({ preventScroll: true });
+    vis(aktiv);
+  };
+  opdaterTop();
+  indhold.append(noter, faner, valgpanel, rum);
   vis(fane);
 }
 
@@ -338,6 +426,16 @@ function normaliser(tekst) {
   return tekst.toLowerCase().replaceAll('æ', 'ae').replaceAll('ø', 'oe').replaceAll('å', 'aa').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+// Landenavne (fra navneindekset), der passer på søgeteksten: højst otte, alfabetisk.
+function findLande(navne, tekst) {
+  const ord = normaliser(tekst).trim().split(/\s+/).filter(Boolean);
+  if (!ord.length) return [];
+  return Object.entries(navne).filter(([, navn]) => {
+    const n = normaliser(navn);
+    return ord.every(del => n.split(/[\s-]+/).some(d => d.startsWith(del)) || n.startsWith(ord.join(' ')));
+  }).sort((a, b) => a[1].localeCompare(b[1], 'da')).slice(0, 8);
+}
+
 function visSoeg() {
   aabn('Søg i atlasset');
   const label = element('label', 'Land, sted, proces eller simulation', 'soegefelt');
@@ -351,16 +449,9 @@ function visSoeg() {
   const landeresultat = element('div', '', 'landeresultat');
   let navne = {};
   hentIndeks().then(n => { navne = n; if (felt.isConnected) soeg(); }).catch(() => {});
-  function soegLande(ord) {
-    if (!ord.length) return [];
-    return Object.entries(navne).filter(([, navn]) => {
-      const n = normaliser(navn);
-      return ord.every(del => n.split(/[\s-]+/).some(d => d.startsWith(del)) || n.startsWith(ord.join(' ')));
-    }).sort((a, b) => a[1].localeCompare(b[1], 'da')).slice(0, 8);
-  }
   function soeg() {
     const ord = normaliser(felt.value).trim().split(/\s+/).filter(Boolean);
-    const lande = soegLande(ord);
+    const lande = findLande(navne, felt.value);
     landeresultat.replaceChildren();
     if (lande.length) {
       landeresultat.append(element('h3', 'Lande · demografi og klima', 'underoverskrift'));
@@ -425,7 +516,7 @@ document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
   indhold.append(element('p', 'Quiz → vælg verdensdel: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Knappen med verdensdelens navn (eller Home) viser hele området igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
-  indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
+  indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
   indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
