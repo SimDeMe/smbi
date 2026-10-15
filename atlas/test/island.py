@@ -2,7 +2,7 @@
 med lag, 2D/3D-blok, drejning og illustrativ animation."""
 import re
 from pathlib import Path
-from playwright.sync_api import expect
+from playwright.sync_api import expect, TimeoutError as PlaywrightTimeoutError
 
 MODEL = Path(__file__).resolve().parents[1] / 'ISLAND-MODEL.md'
 
@@ -482,27 +482,43 @@ def afproev_islandtouch(browser, adresse):
     expect(side.locator('#tvaersnit [data-lag="smelt"]')).to_have_count(1)
     side.get_by_role('button', name='3D', exact=True).tap()
     expect(side.locator('.figur.tre-d')).to_have_count(1)
+    side.evaluate('document.fonts.ready')
     session = side.context.new_cdp_session(side)
-    boks = side.locator('.scene').bounding_box()
-    x, y = boks['x'] + boks['width'] * .3, boks['y'] + boks['height'] * .45
 
     def stroeg(dx, dy):
+        # Startpunktet måles lige før strøget, så et sent layout- eller rulleskift
+        # ikke flytter fingeren uden for figuren.
+        boks = side.locator('.scene').bounding_box()
+        x, y = boks['x'] + boks['width'] * .3, boks['y'] + boks['height'] * .45
+        assert side.evaluate('([x, y]) => !!document.elementFromPoint(x, y)?.closest(".scene")', [x, y])
         session.send('Input.dispatchTouchEvent', {'type': 'touchStart', 'touchPoints': [{'x': x, 'y': y, 'id': 1}]})
         for i in range(1, 9):
             session.send('Input.dispatchTouchEvent', {'type': 'touchMove', 'touchPoints': [{'x': x + dx * i / 8, 'y': y + dy * i / 8, 'id': 1}]})
         session.send('Input.dispatchTouchEvent', {'type': 'touchEnd', 'touchPoints': []})
-        side.wait_for_timeout(150)
+
+    def rolig():
+        # Vent til blok og rulning har stået stille i to billeder (også efter glid).
+        side.wait_for_function('''() => new Promise(ok => {
+          const nu = () => document.querySelector('.blok').style.transform + '|' + scrollY;
+          const a = nu(); requestAnimationFrame(() => requestAnimationFrame(() => ok(nu() === a)));
+        })''', timeout=5000)
+
+    def vent(betingelse, arg, besked):
+        try: side.wait_for_function(betingelse, arg=arg, timeout=3000)
+        except PlaywrightTimeoutError: raise AssertionError(besked) from None
 
     foer = blokmaal(side)['transform']
     stroeg(140, 0)
+    vent('t => document.querySelector(".blok").style.transform !== t', foer, 'Vandret strøg drejer ikke blokken')
+    rolig()
     efter = blokmaal(side)['transform']
-    assert efter != foer, 'Vandret strøg drejer ikke blokken'
     assert inden_for(blokmaal(side))
     # Lodret strøg: siden ruller, blokken drejes ikke (touch-action: pan-y).
     rul = side.evaluate('scrollY')
     stroeg(0, -220)
+    vent('y => scrollY > y', rul, 'Lodret strøg ruller ikke siden')
+    rolig()
     assert blokmaal(side)['transform'] == efter, 'Lodret strøg drejede blokken'
-    assert side.evaluate('scrollY') > rul, 'Lodret strøg ruller ikke siden'
     # Drejeknapperne kan trykkes.
     side.evaluate('scrollTo(0, 0)')
     side.get_by_role('button', name='Drej mod venstre', exact=True).tap()

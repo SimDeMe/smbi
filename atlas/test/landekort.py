@@ -254,7 +254,8 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
 if __name__ == '__main__':
     ud = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-danmark-test')); ud.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
+        # Softwarecanvas som i afproev.py, så billedsammenligningerne er stabile.
         browser = p.chromium.launch(executable_path=os.environ.get('CHROMIUM','/usr/bin/chromium'),
-                                    args=['--no-sandbox','--disable-webgl'])
+                                    args=['--no-sandbox','--disable-webgl','--disable-accelerated-2d-canvas'])
         afproev_landekort(browser, os.environ.get('ATLAS_URL','http://localhost:8777'), ud)
         browser.close()
