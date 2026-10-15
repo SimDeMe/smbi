@@ -277,6 +277,8 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   const fingre = new Map();
   let forrigeAfstand = 0;
   let tryk;
+  // Et gyldigt tryk på et land venter her, til dets click kommer.
+  let landetryk = null;
   function rammerLand(event) {
     if (landekort) return null;
     const r = canvas.getBoundingClientRect();
@@ -308,6 +310,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     canvas.setPointerCapture(event.pointerId);
     canvas.focus({ preventScroll: true });
+    landetryk = null;
     fingre.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (fingre.size === 1) tryk = { x: event.clientX, y: event.clientY, flyttet: false };
     else if (tryk) tryk.flyttet = true;
@@ -352,15 +355,22 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       if (quiz) quiz.svar(quizLand(event));
       else {
         const land = rammerLand(event);
-        // Åbn menuen efter trykket: ellers lukker popoverens »klik udenfor« den straks.
-        const punkt = { x: event.clientX, y: event.clientY };
-        if (land) setTimeout(() => vaelgLand(land, punkt));
+        // Menuen åbnes først på trykkets click. Ved touch kommer browserens
+        // kompatibilitets-mousedown/click efter pointerup; åbnes menuen før dem,
+        // lukker popoverens »klik udenfor« den straks igen.
+        if (land) landetryk = { land, punkt: { x: event.clientX, y: event.clientY } };
       }
     }
     fingre.delete(event.pointerId); forrigeAfstand = 0;
     // En afbrudt berøring eller det sidste løft efter et knib er aldrig et landevalg.
     if (tryk) tryk.flyttet = true;
   };
+  canvas.addEventListener('click', () => {
+    if (!landetryk) return;
+    const { land, punkt } = landetryk;
+    landetryk = null;
+    vaelgLand(land, punkt);
+  });
   canvas.addEventListener('pointerup', slip);
   canvas.addEventListener('pointercancel', slip);
   canvas.addEventListener('lostpointercapture', slip);
@@ -378,10 +388,10 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         foerQuiz = { centrum: [...centrum], zoom };
         centrum = [...ny.udsnit.centrum]; zoom = ny.udsnit.zoom;
       } else if (!ny && quiz) { centrum = foerQuiz.centrum; zoom = foerQuiz.zoom; }
-      quiz = ny; fingre.clear(); tryk = null; canvas.title = ''; canvas.style.cursor = ''; afgraens();
+      quiz = ny; fingre.clear(); tryk = null; landetryk = null; canvas.title = ''; canvas.style.cursor = ''; afgraens();
     },
     quizUdsnit(punkt, niveau) { if (quiz) { centrum = [...punkt]; zoom = niveau; afgraens(); } },
-    visLand(kort) { landekort = kort; fingre.clear(); tryk = null; fremhaevet = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
+    visLand(kort) { landekort = kort; fingre.clear(); tryk = null; landetryk = null; fremhaevet = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
     // Markér landet, hvis menu eller data er åbent; null fjerner markeringen.
     markerLand(land) { valgtLand = typeof land === 'string' ? kort().lande.features.find(l => l.id === land) || null : land || null; opdater(); },
     // Drej landet frem, fx når det er valgt i søgningen.

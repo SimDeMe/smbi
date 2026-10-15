@@ -157,6 +157,7 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
     side.close()
     assert not fejl, fejl
     print('Landemenu: data, fejl og nyt forsøg OK', flush=True)
+    afproev_landetryk(browser, adresse)
     afproev_sammenligning(browser, adresse, ud, skaerme)
 
 
@@ -259,10 +260,79 @@ def afproev_sammenligning(browser, adresse, ud, skaerme=SKAERME):
     print('Sammenligning: område uden data OK', flush=True)
 
 
+TRYKLOG = '''() => { window.__tryk = []; const m = document.querySelector('#landemenu');
+  m.addEventListener('toggle', e => __tryk.push('toggle-' + e.newState));
+  for (const t of ['pointerup', 'mousedown', 'click'])
+    document.addEventListener(t, () => __tryk.push(t), true); }'''
+
+
+def afproev_landetryk(browser, adresse):
+    """Touch-tryk på et land åbner menuen hver gang, og den bliver åben.
+    Menuen må først åbnes på trykkets click: ellers lukker popoverens light
+    dismiss den igen, når browserens kompatibilitets-mousedown/click kommer."""
+    fejl = []
+    side = browser.new_page(viewport={'width': 390, 'height': 750}, has_touch=True, is_mobile=True)
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    klar(side, adresse)
+    canvas = side.locator('#globus')
+    canvas.focus(); side.keyboard.press('ArrowRight'); side.keyboard.press('+'); side.wait_for_timeout(100)
+    punkt = globuspunkt(side, [9.2, 56], centrum=(-10, 42), zoom=1.2)
+    menu = side.locator('#landemenu')
+    cdp = side.context.new_cdp_session(side)
+    for rate in [1, 4]:
+        cdp.send('Emulation.setCPUThrottlingRate', {'rate': rate})
+        for i in range(6):
+            side.evaluate(TRYKLOG)
+            side.touchscreen.tap(**punkt)
+            expect(menu).to_be_visible()
+            expect(menu.locator('h2')).to_have_text('Danmark')
+            side.wait_for_timeout(300)
+            log = side.evaluate('__tryk')
+            assert menu.is_visible() and 'toggle-closed' not in log, (rate, i, log)
+            # Menuen åbner efter browserens efterfølgende mousedown og click.
+            assert log.index('toggle-open') > log.index('click') > log.index('mousedown'), (rate, i, log)
+            side.keyboard.press('Escape')
+            expect(menu).to_be_hidden()
+    cdp.send('Emulation.setCPUThrottlingRate', {'rate': 1})
+
+    def beroering(punkter):
+        for type, fingre in punkter:
+            cdp.send('Input.dispatchTouchEvent', {'type': type, 'touchPoints': [
+                {'x': x, 'y': y, 'id': n} for n, (x, y) in enumerate(fingre)]})
+    x, y = punkt['x'], punkt['y']
+    # Træk og knib vælger aldrig et land, heller ikke når fingeren slipper over det.
+    beroering([('touchStart', [(x, y)]), ('touchMove', [(x + 20, y)]), ('touchMove', [(x, y)]), ('touchEnd', [])])
+    beroering([('touchStart', [(x, y)]), ('touchStart', [(x, y), (x + 40, y)]),
+               ('touchEnd', [(x, y)]), ('touchEnd', [])])
+    side.wait_for_timeout(300)
+    expect(menu).to_be_hidden()
+    side.close()
+
+    # Mus: klik åbner menuen, træk gør ikke.
+    side = browser.new_page(viewport={'width': 1280, 'height': 577})
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    klar(side, adresse)
+    punkt = globuspunkt(side, [2.6, 28])
+    for _ in range(3):
+        side.mouse.click(**punkt)
+        expect(side.locator('#landemenu')).to_be_visible()
+        side.wait_for_timeout(200)
+        expect(side.locator('#landemenu')).to_be_visible()
+        side.keyboard.press('Escape')
+        expect(side.locator('#landemenu')).to_be_hidden()
+    side.mouse.move(punkt['x'] - 30, punkt['y']); side.mouse.down()
+    side.mouse.move(punkt['x'], punkt['y'], steps=4); side.mouse.up()
+    side.wait_for_timeout(300)
+    expect(side.locator('#landemenu')).to_be_hidden()
+    side.close()
+    assert not fejl, fejl
+    print('Landetryk: touch gentaget, træk/knib og mus OK', flush=True)
+
+
 if __name__ == '__main__':
     ud = Path(os.environ.get('ATLAS_TEST_UD', '/tmp/smbi-landemenu-test')); ud.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/usr/bin/chromium'),
-                                    args=['--no-sandbox', '--disable-webgl'])
+                                    args=['--no-sandbox', '--disable-webgl', '--disable-accelerated-2d-canvas'])
         afproev_landemenu(browser, os.environ.get('ATLAS_URL', 'http://localhost:8777'), ud)
         browser.close()

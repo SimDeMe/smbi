@@ -177,7 +177,9 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
     assert side.locator('#landemenu [data-valg="landekort"]').count() == 0
     side.keyboard.press('Escape')
     expect(side.locator('#landemenu')).to_be_hidden()
-    for koord in [[-10,40], [20,20]]:
+    # To havpunkter (vest for Portugal og midt i Atlanten). [20,20] lå før her,
+    # men det er Tchad; det bestod kun, fordi menuen lukkede sig selv efter touch.
+    for koord in [[-10,40], [-30,20]]:
         punkt = globuspunkt(side, koord)
         assert side.evaluate('p=>document.elementFromPoint(p.x,p.y).id', punkt) == 'globus'
         side.touchscreen.tap(**punkt)
