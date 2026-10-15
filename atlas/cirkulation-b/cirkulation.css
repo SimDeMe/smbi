@@ -1,0 +1,93 @@
+/* Global cirkulation, model B. Samme tokens og krom som atlasset. */
+:root{--paper:#fff9ee;--ink:#17211f;--blue:#0e86c8;--lys:#c7e6f6;--slate:#49615b;--sol:#ffb300;--display:'Archivo',system-ui,sans-serif;--body:'Source Serif 4',Georgia,serif;--mono:'IBM Plex Mono',monospace}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 var(--body);display:flex;flex-direction:column}
+[hidden]{display:none!important}
+a{color:inherit}button,input{font:inherit}
+button{min-height:40px;border:2px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink);padding:6px 12px;font:600 14px var(--display);cursor:pointer;box-shadow:2px 2px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+button:hover{background:var(--lys)}
+button:active{transform:translate(2px,2px);box-shadow:none}
+button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+:focus-visible{outline:3px solid #7a4fd6;outline-offset:3px}
+.skjult{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.spring{position:absolute;left:10px;top:-80px;z-index:10;background:white;padding:12px}.spring:focus{top:8px}
+.regnbue{height:6px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
+.site-linje{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 18px;border-bottom:2px solid var(--ink);font:600 13px var(--display)}
+.identitet{display:flex;align-items:center;gap:16px;min-width:0}
+.brand{display:flex;align-items:center;gap:6px;text-decoration:none;font:bold 21px var(--display)}.brand small{font:12px var(--mono);margin-left:-5px}
+.brand span{width:21px;height:21px;border:2px solid var(--ink);border-radius:7px;background:conic-gradient(#e8336d,#ffb300,#5fb030,#0e86c8,#7a4fd6,#e8336d)}
+h1{margin:0;font:800 20px/1.1 var(--display);letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.variant{font:500 11px var(--mono);color:var(--slate);border:1px solid var(--slate);border-radius:4px;padding:1px 5px;margin-left:8px;vertical-align:3px;letter-spacing:0}
+
+.rum{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(320px,30vw,440px);gap:14px;padding:12px 16px 14px}
+.globusfelt{display:flex;flex-direction:column;min-height:0;gap:6px}
+.globusramme{position:relative;flex:1;min-height:240px;border:2px solid var(--ink);border-radius:10px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;
+  background:radial-gradient(ellipse at 50% 45%,#fdf6e3 0,#f6efdb 55%,#efe6cc 100%)}
+#globus{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#globus:active{cursor:grabbing}
+.globusfelt.ballonmode #globus{cursor:crosshair}
+#globus:focus-visible{outline-offset:-5px}
+.modelmaerke{position:absolute;left:10px;top:8px;margin:0;font:600 11px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px;padding:2px 6px}
+.signatur{position:absolute;left:10px;bottom:8px;display:flex;flex-direction:column;gap:2px;font:600 12px var(--display);background:#fff9eee6;border:1px solid var(--ink);border-radius:6px;padding:5px 8px}
+.signatur i{display:inline-block;width:16px;height:4px;border-radius:2px;background:var(--f);margin-right:6px;vertical-align:3px}
+.ballontip{position:absolute;right:10px;top:8px;margin:0;font:700 13px var(--display);background:#e8336d;color:white;border:2px solid var(--ink);border-radius:6px;padding:4px 9px;box-shadow:2px 2px 0 var(--ink)}
+.fejl{position:absolute;inset:auto 20px 50% 20px;text-align:center;font:600 15px var(--display);background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:14px}
+.aflaesning{margin:0;min-height:1.45em;font:500 13px var(--mono);color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aflaesning b{color:var(--ink)}
+
+.betjening{display:flex;flex-direction:column;gap:7px}
+.aarslinje{display:flex;align-items:center;gap:12px}
+.ikon{min-width:118px}
+.maaned{flex:1;display:flex;flex-direction:column;gap:0;min-width:0}
+.maaned input{width:100%;margin:0;accent-color:var(--sol);height:22px}
+.maanedsakse{display:flex;justify-content:space-between;font:500 10px var(--mono);color:var(--slate);padding:0 2px}
+.maanedsakse b{font-weight:500;width:0;display:flex;justify-content:center}
+#maanedsnavn{min-width:88px;font:800 16px var(--display);text-align:right}
+.knapper{display:flex;flex-wrap:wrap;gap:8px}
+
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.kort{border:2px solid var(--ink);border-radius:10px;box-shadow:4px 4px 0 var(--ink);background:#fffdf7;padding:9px 12px}
+.kort h2{margin:0 0 4px;font:800 16px/1.2 var(--display);letter-spacing:-.02em}
+.snitkort{flex:0 0 auto}
+#snit{display:block;width:100%;height:clamp(170px,30vh,250px)}
+.trinkort{flex:1;min-height:0;display:flex;flex-direction:column;overflow:auto}
+.trinhoved{display:flex;justify-content:space-between;align-items:center}
+.overlinje{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:0;color:var(--slate)}
+.prikker{display:flex;gap:5px}
+.prikker button{min-height:0;width:22px;height:22px;padding:0;border-radius:50%;border-width:1.5px;box-shadow:none;font:700 11px var(--display)}
+.prikker button[aria-current="step"]{background:var(--sol)}
+#trin-tekst{margin:0 0 6px;font-size:15px}
+.se{margin:0 0 8px;font-size:14px;background:#fff1c9;border-left:4px solid var(--sol);padding:5px 8px}
+.se b{font-family:var(--display)}
+.trinknapper{margin-top:auto;display:flex;justify-content:space-between;gap:8px}
+
+body.fokus .site-header{display:none}
+
+@media (max-width:900px){
+  body{display:block;height:auto}
+  .rum{display:flex;flex-direction:column;padding:10px 12px 18px}
+  .globusramme{flex:none;height:min(108vw,68svh);min-height:320px}
+  .side{min-height:auto}
+  .globusramme{display:flex;flex-direction:column}
+  #globus{flex:1;min-height:0}
+  .signatur{position:static;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:4px 12px;border:0;border-top:1px solid var(--ink);border-radius:0;background:var(--paper);padding:5px 8px}
+  .trinkort{overflow:visible}
+  h1 .variant{display:none}
+  .site-linje{padding:5px 12px}
+}
+@media (max-width:480px){
+  h1{font-size:16px}
+  .ikon span{display:none}.ikon{min-width:48px}
+  .maanedsakse b{font-size:0}.maanedsakse b::after{content:attr(data-k);font-size:10px}
+  .knapper button{flex:1 1 auto;padding:6px 8px;font-size:13px}
+  .signatur{font-size:11px}
+}
+@media (max-height:640px) and (min-width:901px){
+  .site-linje{padding:3px 18px}
+  .rum{padding-top:8px;padding-bottom:8px;gap:12px}
+  #snit{height:clamp(150px,30vh,200px)}
+  button{min-height:36px;padding:4px 10px}
+  #trin-tekst{font-size:14px;line-height:1.38}
+}
+@media (prefers-reduced-motion:reduce){button{transition:none}}
