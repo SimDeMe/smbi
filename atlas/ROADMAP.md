@@ -114,8 +114,9 @@ deres implementation automatisk.
   koblet til atlassets steder, undersøgelser og søgning.
 - **#48 er leveret:** pladegrænser (PB2002), jordskælv (USGS) og vulkaner
   (Smithsonian GVP) som valgfrie lag med kilder og undersøgelsesopgave.
-- **#49 Island:** milepæl A–E er færdige. Milepæl F (elevafprøvning) er
-  under forberedelse: elevopgave, observationsark og tjekliste til fysisk test.
+- **#49 Island:** milepæl A–E er færdige. Milepæl F: materialet er klar
+  ([elevopgave](island/opgave.html), [lærerudgave og observationsark](island/laerer.html),
+  [tjekliste til fysisk test](ENHEDSTEST.md)); afprøvningen afventer ejeren.
 - **#47:** test på fysisk telefon/iPad, Safari og skærmlæser mangler stadig
   og kræver ejeren.
 

@@ -1,6 +1,6 @@
 # Island – faglig og teknisk demonstrationsspecifikation
 
-**Status: milepæl A–E er færdige; F (elevafprøvning) mangler.** Tværsnittet ligger i
+**Status: milepæl A–E er færdige. F: materialet til elevafprøvning er klar ([«Milepæl F»](#milepæl-f--elevafprøvning) nederst); selve afprøvningen i klassen og på fysiske enheder afventer ejeren.** Tværsnittet ligger i
 [`island/`](island/), se «Milepæl B» og «Milepæl C» nederst. Udkast til milepæl A – den faglige
 modelbeskrivelse – er godkendt i [ISLAND-MODEL.md](ISLAND-MODEL.md). Trin 2
 (zoom til terræn) er bygget som `island/kort.html`, se «Trin 2 – kortet» nederst. Pladegrænselaget fra #48 er på plads. Første fulde eksempel på atlasvisionen: geografisk sted → rumlig proces → forklaring → undersøgelse → anvendelse. Byg i små leverancer på `main` efter `CLAUDE.md` og `design_rules.md`.
@@ -374,3 +374,50 @@ fylder ned under søbunden gennem hele bevægelsen, også over de åbne brud.
 Bund og vanddybde er illustrative og dokumenteret under Om modellen.
 Regressionsprøven kontrollerer lukket mesh, faldende vandstand og kontakt
 med søbunden ved start, midtvejs og slut.
+
+
+## Milepæl F – elevafprøvning
+
+**Status 15. oktober 2026: materialet er klar; afprøvningen afventer ejeren.**
+Intet er endnu afprøvet med elever eller på fysiske enheder.
+
+- **Elevopgave:** [`island/opgave.html`](island/opgave.html)
+  (`smbi.dk/atlas/island/opgave.html`), 10–15 min. Fire korte dele går hele
+  kæden: globussen med Pladegrænser, Jordskælv og Vulkaner → kortet →
+  procesfiguren under overfladen (trin 1–6, Ryg/Island, 3D) → anvendelse ved
+  Þingvellir, og til sidst opgaven fra ISLAND-MODEL.md afsnit 7 («Hvorfor er
+  der så mange vulkaner …»). Støttespørgsmålene derfra er fordelt på delene.
+  Knapperne åbner atlasset i en ny fane, så opgaven kan stå ved siden af.
+  Ingen facit; siden kan printes med svarlinjer.
+- **Lærerudgave og observationsark:** [`island/laerer.html`](island/laerer.html)
+  – forventede hovedpointer pr. spørgsmål, kendetegn ved et godt svar, de
+  typiske misforståelser fra afsnit 7, en kort afprøvningsvejledning og et
+  printbart ark (tid pr. del, hvor eleven går i stå, hjælp givet, kan eleven
+  forklare sammenhængen, misforståelser, tekniske problemer). Siden er
+  `noindex`, ikke linket fra elevopgaven og står ikke i sitemap.
+- **Fysisk enhedstest:** [`ENHEDSTEST.md`](ENHEDSTEST.md) – tjekliste til
+  iPhone, iPad, Safari på macOS og VoiceOver med trin og forventet resultat
+  for globus, lagknapper, landemenu, quiz, fokus, Island-kort, tværsnit,
+  3D-drejning, 3D-landskab, touch/knib og elevopgaven. Dækker også det, der
+  står som «Ikke afprøvet» under milepæl E, og opfølgningen i #47.
+- **Placering:** i atlasset, ikke som Quarto-vejledning under
+  `Øvelser/Geografi/`. Vejledningerne der er laboratorie- og feltøvelser
+  bygget på originaler fra SM-DRIVE; denne opgave har ingen original, er
+  bundet til atlassets knapnavne og skal kunne rettes i samme commit som
+  atlasset efter afprøvningen. Viser afprøvningen, at den virker, kan den
+  senere flyttes til en vejledning med kort på `geografi.html`.
+- **Faglig kontrol:** spørgsmål og svar bruger kun påstande fra
+  ISLAND-MODEL.md, kortets og 3D-landskabets tekster og «Om modellen».
+  Þingvellir-opgaven regner kun med den samlede spredning (2 cm/år ×
+  1000 år = 20 m) og spørger, om hele udvidelsen sker der – svaret er nej,
+  fordi de aktive zoner deler sig i Sydisland. Der er ikke indført nye tal.
+- **Afprøvet her:** alle links i elevopgaven og lærerudgaven svarer HTTP 200
+  over `python3 -m http.server`, og siderne de åbner, er set i browseren.
+  Layout ved 1280×577, 1366×625, 390×750 og 375×812 er set uden vandret
+  rulning. Udskriften er ikke set på papir. Elevopgaven står i sitemap
+  (Atlas v434).
+
+**Når afprøvningen er lavet**, noteres her: antal elever og enheder,
+tidsforbrug pr. del, hvor eleverne gik i stå, om de kunne forklare
+sammenhængen (læringsmål 1–4), observerede misforståelser og de rettelser,
+der følger. Først derefter er definition of done for #49 opfyldt.

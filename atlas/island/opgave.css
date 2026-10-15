@@ -1,0 +1,63 @@
+/* Elevopgave og lærerudgave til Island-forløbet. Bygger på island.css (krom og tokens). */
+
+.opgaveside main{max-width:860px}
+.opgaveside .intro{align-items:flex-end;flex-wrap:wrap}
+.opgaveside .intro>.varighed{display:block;margin:0;font:500 13px var(--mono);color:var(--slate)}
+.opgavetekst{font-size:17px;line-height:1.5}
+.opgavetekst p{margin:0 0 10px}
+.opgavetekst>h2{font:800 24px/1.2 var(--display);letter-spacing:-.02em;margin:24px 0 10px}
+.ramme{border:2px solid var(--ink);border-radius:10px;box-shadow:3px 4px 0 var(--ink);background:#fffdf7;padding:14px 18px;margin:0 0 18px}
+.ramme h2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 6px;font:800 21px/1.2 var(--display);letter-spacing:-.02em}
+.ramme h2 .tid{font:500 12px var(--mono);color:var(--slate);letter-spacing:.04em}
+.ramme h2 .nr{font:500 12px var(--mono);color:var(--slate)}
+.ramme.afslut{background:#e7f4fb}
+.gaa{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 10px}
+.gaa a{display:inline-flex;align-items:center;min-height:44px;padding:7px 13px;border:2px solid var(--ink);border-radius:6px;text-decoration:none;font:600 15px var(--display);background:var(--ink);color:var(--paper)}
+.gaa a:hover{background:#2c3a36}
+.gaa span{font-size:15px;color:var(--slate)}
+.ramme ol{margin:6px 0 4px;padding-left:26px}
+.ramme ol li{margin:0 0 9px;padding-left:2px}
+.ramme ol li::marker{font:700 15px var(--display)}
+.goer{font-size:15.5px;color:var(--slate);margin:0 0 6px}
+.knapnavn{font:600 .92em var(--display);white-space:nowrap}
+.valgfri{margin:8px 0 0;padding:8px 12px;border-left:4px solid var(--blue);background:#f1f8fc;font-size:15.5px}
+.valgfri p{margin:0}
+.forbehold{font-size:14.5px;color:var(--slate)}
+.svarlinjer{display:none}
+
+/* Lærerudgaven */
+.svar{margin:4px 0 0;padding:6px 10px;border-left:4px solid #5fb030;background:#f2f9ec;font-size:15.5px}
+.svar p{margin:0 0 4px}.svar p:last-child{margin:0}
+.svar .obs{color:#7d1d0a}
+table.ark{width:100%;border-collapse:collapse;font-size:14.5px;margin:6px 0 4px}
+table.ark th,table.ark td{border:1px solid var(--ink);padding:5px 7px;text-align:left;vertical-align:top}
+table.ark th{font:600 13.5px var(--display);background:#f3efe4}
+table.ark td.felt{height:46px}
+table.ark td.lavt{height:30px}
+.afkryds{list-style:none;padding-left:0!important}
+.laerer p,.afkryds li{overflow-wrap:anywhere}
+.afkryds li::before{content:"☐ ";font-family:var(--mono)}
+.indhold-links{font-size:15px}
+.sideskift{break-before:page}
+.opgavetekst code{font:500 .85em var(--mono);overflow-wrap:anywhere}
+
+@media(max-width:500px){
+  .ramme{padding:12px 13px}
+  .ramme ol{padding-left:22px}
+  table.ark{font-size:13px}
+}
+
+/* Udskrift: sort på hvidt, ingen krom, plads til svar. */
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;font-size:11.5pt}
+  .site-header,.spring,.forloeb,.kunskaerm{display:none!important}
+  main{padding:0;max-width:none}
+  .ramme{box-shadow:none;border-width:1px;break-inside:avoid;padding:8px 12px;margin:0 0 10px}
+  .ramme.afslut{background:#fff}
+  .gaa a{background:#fff;color:#000;border-width:1px;min-height:0;padding:2px 6px}
+  .gaa a::after{content:" – smbi.dk" attr(data-sti);font:400 9pt var(--mono)}
+  .svarlinjer{display:block;height:7.5em;background:repeating-linear-gradient(#fff 0 1.45em,#999 1.45em calc(1.45em + 1px))}
+  .elev .ramme ol li{margin-bottom:4px}
+  table.ark td.felt{height:60px}
+}
