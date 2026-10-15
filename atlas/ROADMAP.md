@@ -106,7 +106,7 @@ deres implementation automatisk.
 
 ## Næste handling
 
-*Opdateret 15. oktober 2026 (Atlas v433).*
+*Opdateret 15. oktober 2026 (Atlas v435).*
 
 - **#46 er afsluttet.** Sammenligningen med de lokale materialer står i
   [INDHOLD.md](INDHOLD.md) sammen med ejerens afgørelser. De 11 afprøvede
@@ -120,7 +120,13 @@ deres implementation automatisk.
 - **#47:** test på fysisk telefon/iPad, Safari og skærmlæser mangler stadig
   og kræver ejeren.
 
-Derefter følger rækkefølgen i INDHOLD.md: 3-cellemodel med ITK/monsun,
-model for seismiske bølger og lokalisering, Danmarkskort i højere opløsning
+- **Global cirkulation (B4), i gang:** milepæl A er skrevet i
+  [CIRKULATION-MODEL.md](CIRKULATION-MODEL.md) (v435) med elevtekst, modellens
+  tal, steder og et visuelt brief. Ejeren vil have den flot og sjov frem for
+  100 % virkelighedstro, og det visuelle laves sammen med ChatGPT. Næste:
+  ejerens gennemgang, derefter prototype i `atlas/cirkulation/` (C), målte
+  vinde/tryk som lag (B) og stederne Mumbai, Sahel og Østafrika (D).
+
+Derefter følger rækkefølgen i INDHOLD.md: model for seismiske bølger og lokalisering, Danmarkskort i højere opløsning
 (istid, grundvand, oplande), samfundsdatalag (GHI, HDI, energi, vandstress)
 og Vestnorge som sted for stigningsregn.
