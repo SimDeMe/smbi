@@ -233,7 +233,16 @@ document.querySelector('#fokus').addEventListener('click',e=>{const til=!documen
 document.addEventListener('keydown',e=>{if(document.querySelector('#ommodellen').open)return;if(e.key==='Escape'){stopTur();stopFlyvning();document.body.classList.remove('fokus');document.querySelector('#fokus').setAttribute('aria-pressed','false');}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stopTur();stopFlyvning();}});
 roligt.addEventListener('change',()=>{stopFlyvning();stopTur();planlaeg();});
-function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();else if(erThing())tilpasThing();planlaeg();}
+// At sætte canvas.width tømmer canvas, selv med samme værdi. Derfor nulstilles
+// kun ved en reel ændring, og så tegnes straks, så en tom figur aldrig står med
+// en gammel revision (ResizeObserver kalder også én gang lige efter start).
+function stoerrelse(){
+  const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);
+  const ny=canvas.width!==Math.round(W*d)||canvas.height!==Math.round(H*d)||!raster;
+  if(ny){canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);}
+  const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();else if(erThing())tilpasThing();
+  if(ny&&tilstand.klar){if(ramme)cancelAnimationFrame(ramme);tegn();}else planlaeg();
+}
 function tilpasThing(){
   if(!thingvellir||!W||!H)return;
   const a=kamera.drej*rad,b=kamera.vip*rad,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
