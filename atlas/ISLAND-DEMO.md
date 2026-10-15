@@ -237,3 +237,62 @@ både «Se kortet →» og «Se under overfladen →».
   træk, tastatur, fokus, kilder, links fra atlasset og fejlbesked uden data.
 
 Se `atlas/ROADMAP.md` og `atlas/KERNESTOF.md`.
+
+## 3D-landskab med de samme topografidata — 15. oktober 2026 (v417)
+
+`/atlas/island/model3d.html` er et frit valg fra kortet og tværsnittet.
+Terrænet bruger **samme uændrede ETOPO-gitter**, NÍ-vulkansystemer og
+GVP-navne som kortet. Kilder, licenser og oprindelig bearbejdning står i
+`island/data/islandskort.LICENSE`. Der er ingen nye kildefiler eller
+opfundne terrænhøjder. De ekstra filer med « 2» i navnet er ikke brugt.
+
+- Drej, vip og zoom terrænet med mus, touch, tastatur eller synlige knapper.
+- Vælg hele Island, Reykjanes, Vatnajökull eller Reykjanesryggen.
+  Stedvalg flyver kameraet mellem udsigter; reduced motion skifter straks.
+- En eksplicit startet rundtur skifter udsigt hver 8,5 sekund. Pause, manuel
+  betjening, Escape, skjult browserfane og ændret reduced motion stopper den.
+  Ingen automatisk rotation eller rundtur ved indlæsning.
+- «Vis havbund» skjuler/viser det dækkende hav; målte dybder ændres ikke.
+  Det er terrænet ved et konstant havniveau, ikke en simulering af dræning.
+- Højder og dybder overdrives **lodret ×20** fra start. Skyderen giver ×1–×30;
+  faktoren står synligt. Den vandrette skala er omtrentligt angivet for
+  terrænplanet; projektionen er den samme vinkeltro projektion som kortets.
+- Vulkansystemer og pladegrænse kan skjules. Linjerne projiceres fra de
+  eksisterende geografiske data, fortættet til højst ca. 2 km mellem punkter,
+  og følger højden på de tegnede trekanter. Dybdebufferen skjuler dele bag
+  bjergene. Pladegrænsens grove knæk er kildegeometri, ikke nye riftmålinger.
+
+### Faglige og grafiske begrænsninger
+
+3D-meshet er grovere end højdegitteret: 146 celler på tværs af udsnittet
+(ca. 4–5 km). Kildens projektionspixelcentre og højdegitterets udtagnings-
+forskydning respekteres, og højder interpoleres bilineært. Små kratere,
+sprækker og lokale terrænmål kan ikke aflæses. Kortet er fortsat indgangen
+til højder og koordinater. Lyse toppe er højdefarver, **ikke isdata**.
+ETOPO's surface-udgave viser jøklernes overflade, ikke underlaget under isen.
+De flade sideflader er en grafisk sokkel, ikke målte geologiske lag.
+Den skematiske procesmodel under Island ligger fortsat på sin egen URL.
+
+### Teknik og afprøvning
+
+`terraen.js` læser eksplicit little-endian int16 og kontrollerer gitteret;
+`raster.js` tegner trekanter med dybdebuffer; `model3d.js` styrer kamera,
+projektion, overlays og betjening. Canvas 2D og eksisterende lokal D3 er nok;
+ingen nye biblioteker, WebGL eller build. Der tegnes kun ved betjening,
+størrelsesændring og en startet kameraflyvning. Terræn tegnes i CSS-pixels,
+labels og linjer i op til dobbelt pixeltæthed. Derved undgås titusinder af
+Canvas-paths pr. billede. En lokal headless Chromium-måling på 1366×768 gav
+ca. 23–37 ms pr. kameratrin inklusive to tegningsrammer efter optimeringen,
+mod ca. 120–270 ms med individuelle Canvas-paths. Det er ikke elevhardware.
+
+`test/island3d.py` indgår i `test/afproev.py` og er også kørt særskilt med
+WebGL slået fra: alle fem elevskærme, pixels der faktisk ændres, stedvalg,
+drejning/vip/zoomgrænser, havbund til/fra, uændrede målte dybder,
+reduced motion, pause, fokus og touch (vandret drejning/lodret siderulning).
+Fem geografiske kontrolpunkter sammenlignes med en uafhængig projektions-
+formel og byteaflæsning af NOAA-gitteret. Krydsende trekanter skal have samme
+pixels i begge tegningsrækkefølger og vise den forreste flade. Manglende eller
+ugyldige terrændata, forkert binærlængde, manglende D3 og Canvas bevarer
+forklaring og almindelige links. Ingen JavaScript-/konsolfejl i normal brug.
+Skærmbilleder er visuelt gennemgået. Fysisk telefon, skærmlæser og andre
+browsermotorer er ikke efterprøvet for den nye terrænvisning.

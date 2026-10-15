@@ -1,0 +1,35 @@
+.landskabsvalg{display:flex;gap:6px}
+.landskabside main{max-width:1800px}
+.landskabside h1{font-size:clamp(21px,2.3vw,32px)}
+.til-snit{font:600 13px var(--display);text-decoration:none;border-bottom:1px solid var(--ink);white-space:nowrap}
+.ekspedition{background:#fffdf7}
+.ekspeditionsrum{display:grid;grid-template-columns:minmax(0,1fr) 292px;height:calc(100svh - 232px);min-height:340px}
+.landskabsfigur{position:relative;margin:0;min-width:0;overflow:hidden;background:#e5ede8;border-right:1px solid var(--ink)}
+#landskab{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+#landskab.traekker{cursor:grabbing}#landskab:focus-visible{outline-offset:-5px}
+.landskabsstempel{position:absolute;left:20px;top:17px;pointer-events:none;display:flex;align-items:center;gap:7px;color:#31564d;font:500 10px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.punkt{width:6px;height:6px;background:#367d70;border-radius:50%}
+.stedsnavn{position:absolute;left:20px;bottom:19px;display:flex;flex-direction:column;pointer-events:none;max-width:calc(100% - 160px);color:#244b44;text-shadow:0 1px 10px #e9f0e8}
+#stedsnummer{font:500 10px var(--mono);letter-spacing:.12em;margin-bottom:4px}
+#stedsnavn{font:700 clamp(15px,1.7vw,23px)/1.12 var(--display);max-width:24ch;letter-spacing:-.025em}
+.landskabsknapper{position:absolute;left:20px;top:44px;display:flex;gap:4px}
+.landskabsknapper button{padding:3px;min-width:36px;min-height:36px;border-width:1px;background:#fffdf7db;font-size:19px}
+.hoejdevalg{position:absolute;right:16px;bottom:16px;width:126px;background:#fffdf7e8;padding:8px 10px;border:1px solid #7a9187;border-radius:6px;font:500 11px var(--display);box-shadow:0 2px 8px #17211f0a}
+.hoejdevalg label{display:flex;justify-content:space-between;align-items:center;font-weight:600}.hoejdevalg output{font:500 12px var(--mono);color:#08678b}
+.hoejdevalg input{width:100%;margin:5px 0;accent-color:#08678b;min-height:25px}.hoejdevalg>span{font-size:10px;color:var(--slate)}
+#hentestatus{position:absolute;left:15px;right:15px;top:45%;text-align:center;font:600 15px var(--display);background:#fff9eeed;padding:12px;border-radius:6px}
+#hentestatus.fejl{top:100px;border:1px solid var(--ink);line-height:1.6}
+.rejsepanel{display:flex;flex-direction:column;padding:17px 16px 12px;min-height:0;background:linear-gradient(135deg,#fffdf7,#f5f0e4)}
+.destinationer{display:grid;gap:5px;margin:7px 0 16px}.destinationer button{display:flex;align-items:center;text-align:left;gap:9px;min-height:40px;padding:7px 10px;border:1px solid #49615b40;background:transparent;border-radius:5px;font-size:13px}
+.destinationer button>span:first-child{font:500 10px var(--mono);opacity:.65}.destinationer button>span:last-child{margin-left:auto}
+.destinationer button[aria-pressed=true]{background:#1e4844;color:#fff9ee;border-color:#1e4844}
+.rejsetekst{overflow:auto;min-height:0;flex:1}.rejsetekst h2{font:700 22px/1.1 var(--display);letter-spacing:-.025em;margin:0 0 10px}
+.rejsetekst p{font:16px/1.45 var(--body);margin:0 0 12px}.rejsetekst .undersoeg{font:500 13px/1.45 var(--display);border-left:3px solid #258891;padding-left:10px;color:#315b58}
+.signatur3d{display:grid;gap:4px;padding:8px 0 10px;font:11px var(--display);color:var(--slate)}.signatur3d span{display:flex;align-items:center;gap:7px}.signatur3d i{display:block;width:18px;border-top:2px solid #f19449}.signatur3d .pladelinje{border-color:#c62e38;border-top-style:dashed}.signatur3d .kystlinje{border-color:#6ba4aa}
+.videre{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #49615b50;padding:12px 0 0;font:600 13px/1.3 var(--display);text-decoration:none}
+.videre:hover{color:#0e86c8}.videre span{font-size:22px}
+.landskabsfod{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-top:1px solid var(--ink);font:11px/1.4 var(--display);color:var(--slate)}.landskabsfod p{margin:0}.landskabsfod a{white-space:nowrap}
+body.fokus .ekspeditionsrum{height:calc(100svh - 112px)}
+@media(min-width:900px) and (max-height:650px){.ekspeditionsrum{height:calc(100svh - 210px)}.rejsepanel{padding:10px 13px}.destinationer{margin:5px 0 10px;gap:3px}.destinationer button{min-height:35px}.rejsetekst h2{font-size:20px}.rejsetekst p{font-size:15px}.signatur3d{font-size:10px;padding:5px 0}}
+@media(max-width:899px){.ekspeditionsrum{height:auto;grid-template-columns:1fr}.landskabsfigur{height:clamp(380px,65svh,600px);border-right:0;border-bottom:1px solid var(--ink)}.rejsepanel{padding:15px}.destinationer{grid-template-columns:1fr 1fr}.rejsetekst{overflow:visible}.rejsetekst p{max-width:60ch}.signatur3d{grid-template-columns:1fr 1fr}.til-snit{display:none}.landskabsfod{flex-wrap:wrap}body.fokus .ekspeditionsrum{height:auto}body.fokus .landskabsfigur{height:calc(100svh - 130px)}}
+@media(max-width:500px){.landskabsvalg button{font-size:12px;padding:6px 8px}.landskabside .ekstra{width:auto;gap:4px}.landskabside .ekstra button{padding:6px 8px;font-size:12px}.landskabside .vaerktoejer{flex-wrap:nowrap;gap:5px}.landskabsstempel{left:12px;top:12px;font-size:9px}.landskabsstempel>span:last-child{display:none}.landskabsknapper{left:12px;top:35px}.stedsnavn{left:12px;bottom:18px}.hoejdevalg{right:10px;bottom:12px}.landskabside h1{font-size:22px}.landskabsfigur{height:420px}.destinationer button{min-height:44px}.signatur3d{grid-template-columns:1fr}}

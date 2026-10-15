@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Island i 3D — fra havbund til højland — smbi.dk</title>
+  <meta name="description" content="Drej Islands virkelige terræn i 3D. Undersøg vulkansystemer, jøklernes overflade og ryggen under havet med NOAA ETOPO 2022.">
+  <link rel="canonical" href="https://smbi.dk/atlas/island/model3d.html">
+  <meta name="theme-color" content="#FFF9EE"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css"><link rel="stylesheet" href="island.css"><link rel="stylesheet" href="model3d.css">
+  <script defer src="../vendor/d3-array.min.js"></script><script defer src="../vendor/d3-geo.min.js"></script>
+  <script type="module" src="model3d.js"></script>
+</head>
+<body class="landskabside">
+  <a class="spring" href="#landskab">Spring til landskabet</a>
+  <header class="site-header"><div class="regnbue"></div><div class="site-linje">
+    <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+    <a href="/atlas/island/kort.html">← Island på kortet</a>
+  </div></header>
+  <main>
+    <div class="intro"><div><p class="overlinje">Naturgeografi · et landskab i bevægelse</p><h1>Island<span>.</span> Fra havbund til højland</h1></div><a class="til-snit" href="/atlas/island/#island">Se under overfladen →</a></div>
+    <section class="snit ekspedition" aria-label="Undersøg Island i 3D">
+      <div class="vaerktoejer">
+        <div class="landskabsvalg" role="group" aria-label="Landskabsvisning">
+          <button id="havbund" aria-pressed="true">Vis havbund</button>
+          <button id="geologi" aria-pressed="true">Vulkansystemer</button>
+        </div>
+        <div class="ekstra"><button id="rundtur" aria-pressed="false">▷ Rundtur</button><button id="fokus" aria-pressed="false">Fokus</button></div>
+      </div>
+      <div class="ekspeditionsrum">
+        <figure class="landskabsfigur">
+          <canvas id="landskab" tabindex="0" role="img" aria-label="Islands terræn i 3D, bygget af NOAA ETOPO-højder" aria-describedby="landskabstekst betjening"></canvas>
+          <div class="landskabsstempel"><span class="punkt"></span> ETOPO 2022 <span>· terræn og havbund</span></div>
+          <div class="stedsnavn" aria-hidden="true"><span id="stedsnummer">01 / 04</span><span id="stedsnavn">En ø på en undersøisk ryg</span></div>
+          <div class="landskabsknapper" role="group" aria-label="Drej og zoom landskabet">
+            <button data-drej="-15" aria-label="Drej mod venstre">↶</button><button data-drej="15" aria-label="Drej mod højre">↷</button>
+            <button id="zoomind" aria-label="Zoom ind">+</button><button id="zoomud" aria-label="Zoom ud">−</button><button id="nulstil" aria-label="Nulstil visningen">⌂</button>
+          </div>
+          <div class="hoejdevalg"><label for="overdrivelse">Højder <output id="faktor" for="overdrivelse">×20</output></label><input id="overdrivelse" type="range" min="1" max="30" value="20" aria-label="Lodret overdrivelse"><span>Lodret overdrivelse</span></div>
+          <p id="hentestatus" role="status">Henter Islands landskab …</p>
+          <figcaption id="landskabstekst" class="skjult">Målte højder vises med lodret overdrivelse. Kysten følger højdegitterets havniveau. Orange linjer er kortlagte aktive vulkansystemer; den røde linje er en grov model af pladegrænsen. De lyse højder er højdefarver, ikke et kort over isdække. Brug kortet til at aflæse højder og koordinater.</figcaption>
+        </figure>
+        <aside class="rejsepanel" aria-labelledby="rejsetitel">
+          <p class="overlinje">Vælg din udsigt</p>
+          <nav class="destinationer" aria-label="Steder på Island">
+            <button data-sted="0" aria-pressed="true"><span>01</span> Hele Island <span aria-hidden="true">→</span></button>
+            <button data-sted="1" aria-pressed="false"><span>02</span> Reykjanes <span aria-hidden="true">→</span></button>
+            <button data-sted="2" aria-pressed="false"><span>03</span> Vatnajökull <span aria-hidden="true">→</span></button>
+            <button data-sted="3" aria-pressed="false"><span>04</span> Ryggen under havet <span aria-hidden="true">→</span></button>
+          </nav>
+          <div class="rejsetekst"><h2 id="rejsetitel">En ø på en undersøisk ryg</h2><p id="rejsetekst">Island er den del af Den Midtatlantiske Ryg, der når over havet. Drej øen og følg landskabet videre ned på havbunden.</p><p id="undersoeg" class="undersoeg">Slå havbunden fra og til. Hvor meget af landskabet skjuler havet?</p></div>
+          <div class="signatur3d"><span><i class="vulkanlinje"></i>Aktive vulkansystemer</span><span><i class="pladelinje"></i>Pladegrænse (model)</span><span><i class="kystlinje"></i>Havniveau / kyst</span></div>
+          <a class="videre" href="/atlas/island/#island">Hvad sker der nedenunder? <span aria-hidden="true">→</span></a>
+        </aside>
+      </div>
+      <div class="landskabsfod"><p id="betjening">Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller</p><a href="/atlas/island/kort.html">Aflæs højder på kortet →</a></div>
+    </section>
+    <div class="eftertekst"><details><summary>Data, målestok og begrænsninger</summary><p>Terræn og havbund: NOAA NCEI, <a href="https://doi.org/10.25921/fd45-gt74">ETOPO 2022</a>, surface-udgaven med jøklernes overflade. Samme højdegitter som på <a href="/atlas/island/kort.html#kilder">Island-kortet, hvor alle kilder og licenser står</a>. 3D-visningen er en grovere, bilineært interpoleret tegning af dette gitter; små kratere og sprækker kan ikke aflæses. Lyse toppe følger højden og angiver ikke, hvor der er is.</p><p>Højder og dybder overdrives lodret fra ×1 til ×30 (fra start ×20), så relieffet kan undersøges. Vandrette mål ændres ikke med skyderen. «Vis havbund» fjerner det dækkende hav i tegningen; det ændrer ikke havniveauet. Vulkansystemernes omrids kommer fra Náttúrufræðistofnun (CC BY 4.0), pladegrænsen fra Bird (2003). Sidefladerne er en grafisk sokkel, ikke målte geologiske lag. Der vises ingen aktuelle udbrud og ingen målt geologi under terrænoverfladen.</p></details></div>
+    <p id="status" class="skjult" role="status" aria-live="polite"></p>
+    <noscript><p class="uden-script">3D-landskabet kræver JavaScript. <a href="/atlas/island/kort.html">Se kortet og forklaringen</a> eller <a href="/atlas/island/#island">undersøg tværsnittet</a>.</p></noscript>
+  </main>
+</body>
+</html>

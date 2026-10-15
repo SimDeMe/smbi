@@ -141,3 +141,5 @@ body.fokus .arbejdsflade{height:calc(100svh - 82px)}
 .oest .plade-flade,.vest .plade-flade{fill:#a99476}
 .oest .kappe-flade,.vest .kappe-flade{fill:#dfc69f}
 .overside .hav-flade,.oest .hav-flade,.vest .hav-flade{fill:#b4dce8}
+
+.landskabslink{display:inline-flex;align-items:center;min-height:44px;padding:6px 10px;border:1px solid #315b58;border-radius:6px;color:#315b58;font:600 13px var(--display);text-decoration:none}.landskabslink:hover{background:#dcece3}

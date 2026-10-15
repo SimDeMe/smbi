@@ -8,6 +8,7 @@ from landekort import afproev_landekort
 from europa_quiz import afproev_europa_quiz
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
+from island3d import afproev_island3d
 from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration, afproev_islandtouch, afproev_islandkort
 from pladevisning import afproev_pladevisning, afproev_bevaegelsesfejl, afproev_bevaegelsestilpasning, afproev_graensefejl
 
@@ -182,6 +183,7 @@ with sync_playwright() as p:
     print('Island i atlasset: markør → tværsnit → tilbage til globussen: OK')
     afproev_islandkort(browser, ADRESSE, UD, SKAERME)
     print('Island-kortet: skærme, lag, projektion, højder, zoom, tastatur, kilder og fejl: OK')
+    afproev_island3d(browser, ADRESSE, UD, SKAERME)
     afproev_landekort(browser, ADRESSE, UD, SKAERME)
     afproev_islandtouch(browser, ADRESSE)
     print('Island: touch-strøg drejer blokken vandret og ruller siden lodret: OK')
