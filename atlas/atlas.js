@@ -325,7 +325,7 @@ function visModeller(liste) {
     const kort = element('article', '', 'modelkort');
     kort.append(element('p', `${model.emne} · ${model.niveau}`, 'metadata'));
     kort.append(element('h3', model.titel), element('p', model.beskrivelse));
-    if (!model.steder.length) kort.append(element('p', 'Global, idealiseret model · gælder hele Jorden', 'metadata'));
+    if (!model.steder.length) kort.append(element('p', model.modelnote || 'Global, idealiseret model · gælder hele Jorden', 'metadata'));
     const link = element('a', 'Åbn simulation →');
     link.href = model.sti;
     link.setAttribute('aria-label', `Åbn simulation: ${model.titel}`);
@@ -752,6 +752,7 @@ function visSeismikopgave() {
     };
     indhold.append(find);
   }
+  indhold.append(visModeller(modeller.filter(model => model.emne === 'Seismiske bølger')));
   indhold.append(visOevelser(oevelserTil('opgaver', 'seismik')));
 }
 

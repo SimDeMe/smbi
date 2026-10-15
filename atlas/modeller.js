@@ -25,6 +25,10 @@ export const steder = [
 ];
 
 export const modeller = [
+  { id: 'jordskaelvsboelger-a', titel: 'Jordskælvsbølger model A', emne: 'Seismiske bølger', niveau: 'Naturgeografi C / B', steder: [],
+    beskrivelse: 'Se hvordan P- og S-bølger bevæger sig. Aflæs tre seismogrammer, justér afstandscirklerne, og find et skjult epicenter.',
+    modelnote: 'Idealiseret lokalt område · syntetiske seismogrammer',
+    sti: '/atlas/jordskaelvsboelger-a/', soegeord: 'jordskælv seismik lokalisering epicenter hypocenter fokus p-bølger s-bølger trilateration bølgefart' },
   { id: 'pladegraenser', titel: 'Pladegrænser', emne: 'Pladetektonik', niveau: 'Naturgeografi C / B', steder: ['island'],
     beskrivelse: 'Undersøg spredning, subduktion og bevaring ved forskellige pladegrænser.',
     sti: '/geografi/pladegraenser.html', soegeord: 'tektonik kontinenter jordskælv ryg' },
