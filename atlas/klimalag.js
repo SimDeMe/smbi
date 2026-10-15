@@ -32,9 +32,9 @@ export const SYSTEMER = {
       9: ['subtropisk', 'Ørken', '#f5dfb2', 'ingen fugtige måneder'],
       10: ['tempereret', 'Løvskov', '#7cbf63', '10–12 fugtige måneder, lang vækstsæson'],
       11: ['tempereret', 'Nåleskov', '#2e6a5d', '10–12 fugtige måneder, kort vækstsæson'],
-      12: ['tempereret', 'Steppe', '#e3df96', '3–9 fugtige måneder'],
-      13: ['tempereret', 'Busksteppe', '#ead49c', '1–2 fugtige måneder'],
-      14: ['tempereret', 'Ørken', '#f2e4c6', 'ingen fugtige måneder'],
+      12: ['tempereret', 'Steppe', '#e3df96', 'tør måned i vækstsæsonen, 3+ fugtige'],
+      13: ['tempereret', 'Busksteppe', '#ead49c', '1–2 fugtige måneder i vækstsæsonen'],
+      14: ['tempereret', 'Ørken', '#f2e4c6', 'ingen fugtige måneder i vækstsæsonen'],
       15: ['polar', 'Tundra', '#b3aed0', 'varmeste måned 0–10 °C'],
       16: ['polar', 'Is', '#f3f7fb', 'varmeste måned < 0 °C']
     }

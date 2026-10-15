@@ -33,7 +33,13 @@ koldeste måneds middeltemperatur; en måned er fugtig, når nedbør (mm) >
   subtropisk v > 20 °C og k > 5 °C · ellers tempereret.
   Fugtige måneder: 10–12 skov, 3–9 savanne/græssteppe/steppe, 1–2 busksteppe,
   0 ørken. Subtropisk med 3–9 fugtige måneder og tre tørre varmeste måneder:
-  maki. Tempereret skov: nåleskov hvis v < 16,2 − 0,3·k (Vahl), ellers løvskov.
+  maki. Tempereret zone: kun vækstsæsonen (måneder over 5 °C) tæller, fordi
+  frostmåneder altid er fugtige efter N > 2T. Skov: 10–12 fugtige måneder og
+  ingen tør måned over 5 °C (eller årsnedbør ≥ 700 mm); ellers 3+ fugtige
+  måneder over 5 °C steppe, 1–2 busksteppe, 0 ørken. Vahl lagde selv grænsen
+  skov/græssteppe efter regnen i månederne over 5 °C (Reumert 1947,
+  «Vahls Klimainddeling. En Redegørelse», Geografisk Tidsskrift 48).
+  Tempereret skov: nåleskov hvis v < 16,2 − 0,3·k (Vahl), ellers løvskov.
 Vahls egne grænser (Vahl 1911 og senere; se Geografisk Tidsskrift,
 «Vahls Klimainddeling. En Redegørelse») bygger også på regnsandsynlighed og
 skrå grænselinjer, som ikke kan beregnes fra månedsnormaler. Kortet er derfor
@@ -44,3 +50,9 @@ så laget kan klippes med atlassets kystlinje; flertalsfilter 5×5 (Köppen) og
 3×3 (Vahl) fjerner enkeltceller; cellerne samles til polygoner pr. klasse og
 forenkles med fælles kanter (TopoJSON, tolerance 0,12° og 0,2°, kvantisering
 1e5). Der er ikke tilføjet klimadata.
+
+Landeandele (klimaandele.json): hvert lands andel af hver klasse i de færdige
+gitre (samme som kortene), vægtet med cellernes areal (cos breddegrad), inden
+for landegrænserne i countries-50m.json (Natural Earth via world-atlas).
+Klasser under 3 % er udeladt. Lande uden en cellemidte tæller de celler, de
+berører. Somaliland, Kosovo, Nordcypern m.fl. uden landekode er ikke med.

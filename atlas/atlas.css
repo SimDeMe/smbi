@@ -130,6 +130,14 @@ dialog.bred{width:min(1080px,calc(100% - 28px))}
 .klimaforklaring{display:flex;flex-wrap:wrap;gap:6px 18px;font:500 13px var(--display);margin:0 0 12px}
 .klimaforklaring span{display:inline-flex;align-items:center;gap:6px}.klimaforklaring span::before{content:"";display:inline-block;width:16px;height:12px}
 .tegn-nedboer::before{background:#0e86c8}.tegn-temperatur::before{height:3px!important;background:#c0182c}.tegn-toer::before{background:#ffe7a8;border:1px solid #d9b85f}
+.klimaandele{margin-top:16px;border-top:1px solid #d8d2c4;padding-top:12px}
+.klimaandele-par{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px 24px}
+.klimaandele-titel{font:600 13px var(--display);margin:0 0 4px}
+.klimaandele-liste{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:14px}
+.klimaandele-liste li{display:grid;grid-template-columns:14px minmax(0,1fr) auto;column-gap:8px;align-items:center}
+.klimaandele-farve{width:14px;height:14px;border:1px solid rgba(0,0,0,.35);border-radius:2px}
+.klimaandele-tal{font-variant-numeric:tabular-nums;font-weight:600}
+.klimaandele-soejle{grid-column:2 / 4;height:4px;background:linear-gradient(90deg,var(--ink) var(--andel),transparent var(--andel));opacity:.35;border-radius:2px}
 .stationsgitter{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
 .stationskort{border:2px solid var(--ink);border-radius:6px;padding:12px;background:#fffdf7}.stationskort .figurtitel{margin-bottom:2px}.stationskort .metadata{margin-bottom:6px}
 .hydroterm .nedboer{fill:#0e86c8}.hydroterm .toer{fill:#ffe7a8}.hydroterm .temperatur{fill:none;stroke:#c0182c;stroke-width:2.6;stroke-linejoin:round}.hydroterm .temperaturpunkt{fill:#c0182c}

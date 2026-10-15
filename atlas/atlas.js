@@ -100,10 +100,11 @@ function visLandedata(land, fane, fokusEfter) {
         else modul.visDemografi(rum, data.lande[land.id], data);
       } else {
         const modul = await import('./klima.js');
-        const data = await modul.hentKlima();
+        const [data, andele] = await Promise.all([modul.hentKlima(), modul.hentKlimaandele().catch(() => null)]);
         if (nr !== landevisning) return;
-        if (par) modul.visKlimaSammenligning(rum, par.map(l => ({ navn: l.navn, stationer: data.lande[l.id] })));
-        else modul.visKlima(rum, data.lande[land.id], land.navn);
+        const zoner = id => andele && { vahl: andele.vahl[id], koppen: andele.koppen[id] };
+        if (par) modul.visKlimaSammenligning(rum, par.map(l => ({ navn: l.navn, stationer: data.lande[l.id], andele: zoner(l.id) })));
+        else modul.visKlima(rum, data.lande[land.id], land.navn, zoner(land.id));
       }
     } catch {
       if (nr === landevisning) rum.replaceChildren(element('p', 'Data kunne ikke hentes. Vælg fanen igen, eller genindlæs siden. Globussen og simulationerne virker stadig.'));
@@ -558,11 +559,12 @@ function visKlimaopgave() {
     'Tempereret zone: resten, dvs. v ≥ 10 °C.',
     'En måned er fugtig, når nedbøren i mm er større end 2 × temperaturen i °C – som når nedbørssøjlen rager op over temperaturkurven i en hydrotermfigur.',
     'Plantebælte efter antal fugtige måneder: 10–12 skov (tropisk regnskov, subtropisk skov, løvskov/nåleskov), 3–9 savanne eller steppe, 1–2 busksteppe, 0 ørken.',
+    'Tempereret zone: Her tæller vækstsæsonen – månederne over 5 °C – fordi en frostmåned altid er «fugtig» efter reglen ovenfor. Vahl lagde selv grænsen mellem skov og græssteppe efter regnen i månederne over 5 °C. Skov kræver 10–12 fugtige måneder og ingen tør måned i vækstsæsonen (undtagen ved mindst 700 mm årsnedbør, hvor jorden kan dække en kort sommertørke). Ellers: 3 eller flere fugtige måneder i vækstsæsonen steppe, 1–2 busksteppe, 0 ørken.',
     'Maki: subtropisk med 3–9 fugtige måneder, hvor de tre varmeste måneder alle er tørre (vinterregn).',
     'Nåleskov eller løvskov: Vahls grænse v = 16,2 − 0,3 · k. Er sommeren koldere end det, bliver det nåleskov.'
   ]) regler.append(element('li', tekst));
   vahl.append(regler);
-  vahl.append(element('p', 'Grænserne mellem zonerne er ikke skarpe i naturen, og lærebøgerne bruger lidt forskellige tal (fx 14–16 °C for den tropiske grænse). Kriteriet for fugtig måned er lempeligt i kolde egne: Prærien i USA og steppen i Kasakhstan får fx 10–12 fugtige måneder og bliver skov på kortet, selv om den naturlige vegetation er græs. Med k > 15 °C bliver det midterste Florida tropisk.', 'antal'));
+  vahl.append(element('p', 'Grænserne mellem zonerne er ikke skarpe i naturen, og lærebøgerne bruger lidt forskellige tal (fx 14–16 °C for den tropiske grænse). Steppen i Kasakhstan og Mongoliet og de kolde ørkener i Centralasien kommer med, fordi kun vækstsæsonen tælles i den tempererede zone. Prærien i Nordamerika bliver stadig skov: Sommerregnen er stor nok efter N > 2T, og græsset skyldes også tørkeår, præriebrande og græsning, som klimanormaler ikke viser. Med k > 15 °C bliver det midterste Florida tropisk.', 'antal'));
   const koppen = element('details', '', 'klimakriterier');
   koppen.append(element('summary', 'Köppen-Geiger kort fortalt'));
   const koppenregler = element('ul');

@@ -17,6 +17,19 @@ def afproev_klimadata():
         assert all(1 <= i <= antal for i in ider), (system, ider)
         assert all(abs(a - b) < 1e-6 for a, b in zip(topo['bbox'], [-180, -90, 180, 90])), topo['bbox']
         assert (DATA / f'{system}.json').stat().st_size < 400_000, system
+    # Arealandele pr. land til landemenuens klimafane.
+    andele = json.loads((DATA / 'klimaandele.json').read_text())
+    for system in ('vahl', 'koppen'):
+        assert len(andele[system]) > 200, system
+        for id_, klasser in andele[system].items():
+            assert klasser and sum(a for _, a in klasser) <= 1.02, (system, id_)
+            assert [a for _, a in klasser] == sorted((a for _, a in klasser), reverse=True), (system, id_)
+    assert andele['vahl']['208'][0][0] == 10 and andele['koppen']['208'][0][0] == 15  # Danmark: løvskov, Cfb
+    assert andele['koppen']['818'][0][0] == 4  # Egypten: BWh
+    # Vækstsæsonkriteriet (v429): Kasakhstan og Mongoliet er overvejende steppe,
+    # busksteppe eller ørken – ikke skov.
+    for id_ in ('398', '496'):
+        assert andele['vahl'][id_][0][0] in (12, 13, 14), andele['vahl'][id_]
 
 
 def punkt_paa_skaerm(side, lonlat):

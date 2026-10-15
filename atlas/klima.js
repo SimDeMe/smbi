@@ -2,6 +2,7 @@
 // Data: WMO-klimanormaler via Deutscher Wetterdienst (CLIMAT multi_annual).
 // Dannes af data/lande.mjs; hentes først, når fanen åbnes.
 import { lavInformation } from './information.js';
+import { klasse } from './klimalag.js';
 
 let data;
 export async function hentKlima() {
@@ -11,6 +12,18 @@ export async function hentKlima() {
       .catch(fejl => { data = null; throw fejl; });
   }
   return data;
+}
+
+// Klimaklassernes arealandel pr. land (Vahl og Köppen), fra klimalagets gitre.
+// Dannes af data/klimazoner.py. Fejler hentningen, vises fanen uden.
+let andele;
+export async function hentKlimaandele() {
+  if (!andele) {
+    andele = fetch(new URL('./data/klimaandele.json', import.meta.url), { signal: AbortSignal.timeout(15000) })
+      .then(svar => { if (!svar.ok) throw new Error('Klimaandele kunne ikke hentes'); return svar.json(); })
+      .catch(fejl => { andele = null; throw fejl; });
+  }
+  return andele;
 }
 
 const SVG = 'http://www.w3.org/2000/svg';
@@ -106,7 +119,42 @@ function stationskort(station, land, skala, niveau = 'h3') {
   return kort;
 }
 
-export function visKlima(rod, stationer, landenavn) {
+// Hvor stor en del af landets areal hver klimaklasse dækker, med klimalagets
+// farver. land: { vahl: [[nr, andel], …], koppen: […] } eller undefined.
+export function lavKlimaandele(land, landenavn, niveau = 'h3') {
+  if (!land?.vahl?.length && !land?.koppen?.length) return null;
+  const boks = element('section', null, 'klimaandele');
+  const overskrift = element(niveau, `Klimazoner i ${landenavn}`, 'figurtitel');
+  boks.append(overskrift, element('p', 'Andel af landets areal i klimazonelaget (normaler 1991–2020). Klasser under 3 % er udeladt.', 'metadata'));
+  const par = element('div', null, 'klimaandele-par');
+  for (const [system, titel] of [['vahl', 'Vahl: zone og plantebælte'], ['koppen', 'Köppen-Geiger']]) {
+    if (!land[system]?.length) continue;
+    const kolonne = element('div');
+    kolonne.append(element('p', titel, 'klimaandele-titel'));
+    const liste = element('ul', null, 'klimaandele-liste');
+    for (const [nr, andel] of land[system]) {
+      const k = klasse(system, nr);
+      if (!k) continue;
+      const pct = Math.round(andel * 100);
+      const li = element('li');
+      const farve = element('span', null, 'klimaandele-farve');
+      farve.style.background = k.farve;
+      farve.setAttribute('aria-hidden', 'true');
+      const navn = system === 'vahl' ? `${k.zone.replace(' zone', '')}: ${k.navn.toLowerCase()}` : `${k.navn} – ${k.forklaring}`;
+      const soejle = element('span', null, 'klimaandele-soejle');
+      soejle.style.setProperty('--andel', `${pct}%`);
+      soejle.setAttribute('aria-hidden', 'true');
+      li.append(farve, element('span', navn, 'klimaandele-navn'), element('span', `${pct} %`, 'klimaandele-tal'), soejle);
+      liste.append(li);
+    }
+    kolonne.append(liste);
+    par.append(kolonne);
+  }
+  boks.append(par);
+  return boks;
+}
+
+export function visKlima(rod, stationer, landenavn, andele) {
   rod.replaceChildren();
   if (!stationer?.length) {
     rod.append(element('p', `Datasættet har ingen klimanormal fra en station i ${landenavn}. Det gælder især små ø- og bystater. Prøv et naboland.`));
@@ -121,6 +169,8 @@ export function visKlima(rod, stationer, landenavn) {
     for (const s of stationer) gitter.append(stationskort(s, stationer[0].omraade));
     rod.append(gitter);
   }
+  const zoner = lavKlimaandele(andele, landenavn);
+  if (zoner) rod.append(zoner);
   const undersoeg = element('details', null, 'undersoeg');
   undersoeg.append(element('summary', 'Undersøg'));
   const liste = element('ol', null, 'opgaveliste');
@@ -128,7 +178,8 @@ export function visKlima(rod, stationer, landenavn) {
     'Aflæs årets varmeste og koldeste måned og den samlede nedbør. Hvor stor er temperaturamplituden?',
     'Hvilke måneder er tørre? Hvad betyder det for plantevækst og landbrug?',
     'Hvilken klimazone og hvilket plantebælte hører stationen til? Begrund med temperatur og nedbør.',
-    'Har landet flere stationer: Forklar forskellene med breddegrad, højde over havet, afstand til havet eller vindsystemer.'
+    'Har landet flere stationer: Forklar forskellene med breddegrad, højde over havet, afstand til havet eller vindsystemer.',
+    'Sammenlign dit svar med Klimazoner i landet. Ligger stationen i det plantebælte, der fylder mest? Hvorfor kan én station ikke vise hele landets klima?'
   ]) liste.append(element('li', s));
   undersoeg.append(liste);
   rod.append(undersoeg, lavInformation({
@@ -139,7 +190,7 @@ export function visKlima(rod, stationer, landenavn) {
 }
 
 // To lande side om side. Alle figurer får samme skala, så søjler og kurver kan
-// sammenlignes direkte. lande: [{ navn, stationer }].
+// sammenlignes direkte. lande: [{ navn, stationer, andele }].
 export function visKlimaSammenligning(rod, lande) {
   rod.replaceChildren();
   const alle = lande.flatMap(l => l.stationer || []);
@@ -165,6 +216,8 @@ export function visKlimaSammenligning(rod, lande) {
       for (const s of l.stationer) stak.append(stationskort(s, l.stationer[0].omraade, skala, 'h4'));
       kolonne.append(stak);
     }
+    const zoner = lavKlimaandele(l.andele, l.navn, 'h4');
+    if (zoner) kolonne.append(zoner);
     par.append(kolonne);
   });
   rod.append(par);

@@ -83,6 +83,12 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
         assert side.locator('.stationskort').count() >= 2
         expect(side.locator('.stationskort').first).to_contain_text('Algier')
         assert side.locator('.hydroterm .nedboer').count() == 12 * side.locator('.stationskort').count()
+        # Landets klimazoner fra klimalaget (arealandele).
+        zoner = side.locator('.klimaandele')
+        expect(zoner).to_contain_text('Klimazoner i Algeriet')
+        expect(zoner).to_contain_text('ørken')
+        expect(zoner).to_contain_text('BWh')
+        assert zoner.locator('.klimaandele-liste li').count() >= 3
         side.screenshot(path=str(ud / f'klima-{w}x{h}.png'))
         side.locator('[data-fane="demografi"]').click()
         expect(side.locator('#pyramidetitel')).to_have_text('Befolkningspyramide 2023')

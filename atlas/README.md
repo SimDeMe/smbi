@@ -17,11 +17,21 @@ Knappen **Klimazoner** ved siden af Pladegrænser slår et andet globalt lag til
   Fugtig måned: N (mm) > 2·T (°C) som i hydrotermfiguren. Plantebælte efter
   antal fugtige måneder (10–12 skov, 3–9 savanne/steppe, 1–2 busksteppe,
   0 ørken), maki ved tør sommer i subtropisk zone, nåleskov/løvskov efter Vahls
-  v = 16,2 − 0,3·k og is ved v < 0 °C. Vahls egne grænser brugte også
+  v = 16,2 − 0,3·k og is ved v < 0 °C. **Tempereret zone (v429):** kun
+  vækstsæsonen (måneder over 5 °C) tæller, fordi frostmåneder altid er
+  «fugtige» efter N > 2T. Skov kræver 10–12 fugtige måneder og ingen tør måned
+  over 5 °C (undtagen ved årsnedbør ≥ 700 mm, fx Seattle); ellers 3+ fugtige
+  måneder over 5 °C steppe, 1–2 busksteppe, 0 ørken. Vahl satte selv grænsen
+  skov/græssteppe efter regnen i månederne over 5 °C (Reumert 1947). Vahls egne grænser brugte også
   regnsandsynlighed, som ikke findes i normalerne.
-- Kendte svagheder, der står i dialogen: prærien og den kasakhiske steppe bliver
-  skov (kriteriet for fugtig måned er lempeligt i kolde egne), det midterste
-  Florida bliver tropisk, og 0,5°-cellerne ses som trapper ved stor zoom.
+- Kendte svagheder, der står i dialogen: den nordamerikanske prærie bliver
+  stadig skov (sommerregnen er over 2T; græsset skyldes også tørkeår, brand og
+  græsning), det midterste Florida bliver tropisk, og 0,5°-cellerne ses som
+  trapper ved stor zoom. Vækstsæsonkriteriet (v429) ændrede ca. 6 % af
+  landarealet: skov → steppe fx ved Astana, Ulaanbaatar og Denver, steppe →
+  busksteppe/ørken i Gobi, Kyzylkum og Great Basin (Köppens BWk er nu 92 %
+  busksteppe/ørken mod 6 % før). Seattle, København, Moskva, Kyiv og Jakutsk er
+  fortsat skov.
 - Havceller har fået nærmeste landklasse, og laget klippes med atlassets egen
   kystlinje, så kyster ikke flytter sig. Aflæsningen tjekker landfladen først og
   viser «hav» over havet.
@@ -61,6 +71,11 @@ globussens detaljerede 1:50 mio.-kort, så også mange små lande kan vælges.
   temperaturkurven ligger over søjlen) for 1–4 stationer pr. land med
   WMO-normaler 1991–2020. Hvor nyere normal mangler for hele landet, vises
   1961–1990 med tydelig advarsel. Tabel med tal til hver figur.
+  **Klimazoner i landet** (v429) under figurerne: Vahl- og Köppen-klassernes
+  andel af landets areal i klimazonelaget, med lagets farver (klasser under
+  3 % udeladt; `data/klimaandele.json`, 13 kB, dannes af
+  `data/klimazoner.py`). Også i sammenligningen. Fejler filen, vises fanen
+  uden.
 - Begge faner har korte **Undersøg**-spørgsmål og ⓘ med kilder og forbehold.
 - **Sammenlign ⇄** (v424) i fanerækken åbner et søgefelt under fanerne (uden
   søgetekst foreslås Danmark). Det valgte land vises ved siden af i begge
