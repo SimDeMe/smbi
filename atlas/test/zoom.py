@@ -28,7 +28,7 @@ def afproev_zoom(browser, adresse, ud):
     billede(side)
     side.screenshot(path=str(ud/'zoom-10x.png'))
     # Drej mod Danmark (3×12° øst, 12° nord → centrum 14°Ø, 54°N) og tryk på
-    # Midtjylland ved 10×: det detaljerede Danmark åbner landekortet.
+    # Midtjylland ved 10×: det detaljerede Danmark åbner landemenuen med landekort.
     side.locator('#nulstil').click()
     canvas.focus()
     for k in ['ArrowRight']*3+['ArrowUp']: side.keyboard.press(k)
@@ -40,6 +40,8 @@ def afproev_zoom(browser, adresse, ud):
       const xy=proj([9.4,56.2]);return {x:c.x+xy[0],y:c.y+xy[1]};}''')
     side.screenshot(path=str(ud/'zoom-danmark-10x.png'))
     side.mouse.click(**p)
+    expect(side.locator('#landemenu h2')).to_have_text('Danmark')
+    side.locator('#landemenu [data-valg="landekort"]').click()
     expect(side.locator('#landetop')).to_be_visible()
     side.locator('#til-globus').click()
     expect(side.locator('#zoomniveau')).to_have_text('10,0×')

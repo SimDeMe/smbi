@@ -5,6 +5,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
 from landekort import afproev_landekort
+from landemenu import afproev_landemenu
 from europa_quiz import afproev_europa_quiz
 from verdensdele_quiz import afproev_verdensdele_quiz
 from zoom import afproev_zoom
@@ -190,6 +191,7 @@ with sync_playwright() as p:
     afproev_island3d(browser, ADRESSE, UD, SKAERME)
     afproev_islandsnit(browser, ADRESSE, UD, SKAERME)
     afproev_landekort(browser, ADRESSE, UD, SKAERME)
+    afproev_landemenu(browser, ADRESSE, UD, SKAERME)
     afproev_islandtouch(browser, ADRESSE)
     print('Island: touch-strøg drejer blokken vandret og ruller siden lodret: OK')
     afproev_europa_quiz(browser, ADRESSE, UD, SKAERME)

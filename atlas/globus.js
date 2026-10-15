@@ -32,6 +32,22 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     } catch { /* Oversigtskortet bliver stående. */ }
   }
   const kort = () => zoom > DETALJE_ZOOM && detalje ? detalje : oversigt;
+  // Grove grænser gør hover-opslaget billigt; geoContains afgør til sidst.
+  // Beregnes én gang pr. kort (oversigt og detalje).
+  const bokse = new WeakMap();
+  const landebokse = k => {
+    if (!bokse.has(k)) bokse.set(k, k.lande.features.map(land => [land, d3.geoBounds(land)]));
+    return bokse.get(k);
+  };
+  // Samme land i det kort, der vises nu (id, ellers navn for områder uden kode).
+  // Flere objekter kan dele kode (fx Australien og Ashmoreøerne); vælg det største.
+  const iKort = land => {
+    const fund = kort().lande.features.filter(l => land.id ? l.id === land.id : l.properties.name === land.properties.name);
+    return fund.includes(land) || !fund.length ? land : fund.reduce((a, b) => d3.geoArea(a) >= d3.geoArea(b) ? a : b);
+  };
+  let fremhaevet = null;
+  let valgtLand = null;
+  let landenavne = null;
   let landekort;
   let quiz;
   let foerQuiz;
@@ -89,13 +105,14 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.fillStyle = '#bcdfee'; ctx.fill();
     ctx.save(); ctx.clip();
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
-    const { lande: landflader, graenser: landegraenser, danmark } = kort();
+    const { lande: landflader, graenser: landegraenser } = kort();
     if (zoom > DETALJE_ZOOM && !henterDetalje) hentDetalje();
     ctx.beginPath(); sti(landflader); ctx.fillStyle = '#d9e2bb'; ctx.fill(); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke();
     ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
     if (quiz) quiz.tegn(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .02);
     else {
-      ctx.beginPath(); sti(danmark); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke();
+      if (fremhaevet && fremhaevet.id !== valgtLand?.id) { ctx.beginPath(); sti(fremhaevet); ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
+      if (valgtLand) { ctx.beginPath(); sti(iKort(valgtLand)); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke(); }
       if (pladelag) plademodul.tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
     }
     // En diskret rand giver rumlighed, men angiver ingen faglige måledata.
@@ -228,12 +245,19 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   const fingre = new Map();
   let forrigeAfstand = 0;
   let tryk;
-  function rammerDanmark(event) {
+  function rammerLand(event) {
+    if (landekort) return null;
     const r = canvas.getBoundingClientRect();
     const punkt = [event.clientX - r.left, event.clientY - r.top];
-    return !landekort && Math.hypot(punkt[0] - bredde / 2, punkt[1] - hoejde / 2) <= projektion.scale() &&
-      d3.geoContains(kort().danmark, projektion.invert(punkt));
+    if (Math.hypot(punkt[0] - bredde / 2, punkt[1] - hoejde / 2) > projektion.scale()) return null;
+    const [lon, lat] = projektion.invert(punkt);
+    for (const [land, [[v, s], [o, n]]] of landebokse(kort())) {
+      const iLaengde = v <= o ? lon >= v && lon <= o : lon >= v || lon <= o;
+      if (lat >= s && lat <= n && iLaengde && d3.geoContains(land, [lon, lat])) return land;
+    }
+    return null;
   }
+  const landenavn = land => landenavne?.[land.id] || land.properties.name;
   function quizLand(event) {
     opdaterProjektion();
     const r = canvas.getBoundingClientRect();
@@ -259,9 +283,11 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const forrige = fingre.get(event.pointerId);
     if (!forrige) {
       if (event.pointerType === 'mouse') {
-        const land = quiz ? quizLand(event) : rammerDanmark(event);
+        const land = quiz ? quizLand(event) : rammerLand(event);
         canvas.style.cursor = land ? 'pointer' : '';
-        canvas.title = !quiz && land ? 'Danmark — klik for landekort' : '';
+        canvas.title = !quiz && land ? `${landenavn(land)} — klik for landemenu` : '';
+        const ny = !quiz && land || null;
+        if (ny !== fremhaevet) { fremhaevet = ny; opdater(); }
       }
       return;
     }
@@ -284,7 +310,12 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     if (event.type === 'pointerup' && fingre.size === 1 && tryk && !tryk.flyttet && !landekort &&
         Math.hypot(event.clientX - tryk.x, event.clientY - tryk.y) <= 6) {
       if (quiz) quiz.svar(quizLand(event));
-      else if (rammerDanmark(event)) vaelgLand();
+      else {
+        const land = rammerLand(event);
+        // Åbn menuen efter trykket: ellers lukker popoverens »klik udenfor« den straks.
+        const punkt = { x: event.clientX, y: event.clientY };
+        if (land) setTimeout(() => vaelgLand(land, punkt));
+      }
     }
     fingre.delete(event.pointerId); forrigeAfstand = 0;
     // En afbrudt berøring eller det sidste løft efter et knib er aldrig et landevalg.
@@ -293,7 +324,10 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   canvas.addEventListener('pointerup', slip);
   canvas.addEventListener('pointercancel', slip);
   canvas.addEventListener('lostpointercapture', slip);
-  canvas.addEventListener('pointerleave', () => { canvas.style.cursor = ''; canvas.title = ''; });
+  canvas.addEventListener('pointerleave', () => {
+    canvas.style.cursor = ''; canvas.title = '';
+    if (fremhaevet) { fremhaevet = null; opdater(); }
+  });
   new ResizeObserver(tilpas).observe(rum);
   tilpas();
   return {
@@ -306,7 +340,13 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       quiz = ny; fingre.clear(); tryk = null; canvas.title = ''; canvas.style.cursor = ''; afgraens();
     },
     quizUdsnit(punkt, niveau) { if (quiz) { centrum = [...punkt]; zoom = niveau; afgraens(); } },
-    visLand(kort) { landekort = kort; fingre.clear(); tryk = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
+    visLand(kort) { landekort = kort; fingre.clear(); tryk = null; fremhaevet = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
+    // Markér landet, hvis menu eller data er åbent; null fjerner markeringen.
+    markerLand(land) { valgtLand = typeof land === 'string' ? kort().lande.features.find(l => l.id === land) || null : land || null; opdater(); },
+    // Drej landet frem, fx når det er valgt i søgningen.
+    visPunkt(punkt) { centrum = [...punkt]; zoom = Math.max(zoom, 1.2); afgraens(); },
+    landecentrum(id) { const land = lande.features.find(l => l.id === id); return land ? d3.geoCentroid(land) : null; },
+    set landenavne(navne) { landenavne = navne; },
     visSted(sted) { centrum = [...sted.koordinater]; zoom = 1.4; afgraens(); },
     // Data hentes først, når laget slås til; fejl lader globussen være uændret.
     async visPladegraenser(vis) {

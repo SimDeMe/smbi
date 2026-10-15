@@ -1,6 +1,7 @@
 import { steder, modeller } from './modeller.js';
 import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
+import { hentIndeks, landFraKort, visLandemenu, lukLandemenu } from './landemenu.js';
 
 const dialog = document.querySelector('#udforsker');
 const indhold = document.querySelector('#dialogindhold');
@@ -44,6 +45,78 @@ async function visDanmark() {
   }
 }
 
+const BETJENING = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi og klima.';
+
+// Tryk på et land på globussen: lille menu ved trykket. Danmark har også landekort.
+async function vaelgLand(feature, punkt) {
+  if (!globus || henterLand || henterQuiz || quiz) return;
+  let navne;
+  try { navne = await hentIndeks(); } catch { /* Kortets engelske navn bruges så. */ }
+  const land = landFraKort(feature, navne);
+  globus.markerLand(feature);
+  const valg = [
+    { id: 'demografi', titel: 'Demografi', tekst: 'Befolkningspyramide og nøgletal' },
+    { id: 'klima', titel: 'Klima', tekst: 'Hydrotermfigurer fra vejrstationer' }
+  ];
+  if (land.id === '208') valg.push({ id: 'landekort', titel: 'Landekort', tekst: 'Jylland, øerne og Bornholm' });
+  visLandemenu({
+    land, punkt, valg,
+    vaelg: id => {
+      if (id === 'landekort') { globus.markerLand(null); visDanmark(); }
+      else visLandedata(land, id, canvas);
+    },
+    lukket: () => { globus.markerLand(null); canvas.focus({ preventScroll: true }); }
+  });
+}
+
+let landevisning = 0;
+function visLandedata(land, fane, fokusEfter) {
+  aabn(land.navn);
+  dialog.classList.add('bred');
+  if (fokusEfter) senesteFokus = fokusEfter;
+  if (land.note) indhold.append(element('p', land.note, 'metadata'));
+  const faner = element('div', '', 'valg landefaner');
+  faner.setAttribute('role', 'group');
+  faner.setAttribute('aria-label', `Vælg emne for ${land.navn}`);
+  const rum = element('div', '', 'landedata');
+  rum.id = 'landedata';
+  const vis = async id => {
+    const nr = ++landevisning;
+    for (const knap of faner.querySelectorAll('[data-fane]')) knap.setAttribute('aria-pressed', String(knap.dataset.fane === id));
+    rum.replaceChildren(element('p', id === 'demografi' ? 'Henter befolkningsdata …' : 'Henter klimadata …', 'antal'));
+    rum.setAttribute('aria-busy', 'true');
+    try {
+      if (id === 'demografi') {
+        const modul = await import('./demografi.js');
+        const data = await modul.hentDemografi();
+        if (nr === landevisning) modul.visDemografi(rum, data.lande[land.id], data);
+      } else {
+        const modul = await import('./klima.js');
+        const data = await modul.hentKlima();
+        if (nr === landevisning) modul.visKlima(rum, data.lande[land.id], land.navn);
+      }
+    } catch {
+      if (nr === landevisning) rum.replaceChildren(element('p', 'Data kunne ikke hentes. Vælg fanen igen, eller genindlæs siden. Globussen og simulationerne virker stadig.'));
+    } finally {
+      if (nr === landevisning) rum.removeAttribute('aria-busy');
+    }
+  };
+  for (const [id, tekst] of [['demografi', 'Demografi'], ['klima', 'Klima']]) {
+    const knap = element('button', tekst);
+    knap.type = 'button'; knap.dataset.fane = id;
+    knap.onclick = () => vis(id);
+    faner.append(knap);
+  }
+  if (land.id === '208') {
+    const kort = element('button', 'Landekort →');
+    kort.type = 'button'; kort.disabled = !globus;
+    kort.onclick = visDanmark;
+    faner.append(kort);
+  }
+  indhold.append(faner, rum);
+  vis(fane);
+}
+
 function skiftLand(aktiv) {
   landAktivt = aktiv;
   document.querySelector('.atlas').classList.toggle('landekort', aktiv);
@@ -58,7 +131,7 @@ function skiftLand(aktiv) {
   }
   document.querySelector('#betjening').textContent = aktiv
     ? 'Danmark: Jylland og øerne inkl. Bornholm · Træk eller brug piletaster · Zoom med to fingre eller +/−.'
-    : 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på Danmark for landekort.';
+    : BETJENING;
   document.querySelector('#visningsstatus').textContent = aktiv ? 'Danmarkskort åbnet. Tilbage til globussen med knappen Globus eller Escape.' : 'Tilbage på globussen.';
   opdaterPladebeskrivelse();
 }
@@ -120,7 +193,7 @@ document.querySelector('#quiz').onclick = () => {
         document.querySelector('#kortstatus').hidden = true;
       }, () => {
         quiz = null; opdaterPladebeskrivelse();
-        document.querySelector('#betjening').textContent = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på Danmark for landekort.';
+        document.querySelector('#betjening').textContent = BETJENING;
         document.querySelector('#quiz').focus({ preventScroll: true });
       });
     } catch {
@@ -143,6 +216,8 @@ function element(type, tekst, klasse) {
 
 function aabn(overskrift) {
   lukInformation();
+  lukLandemenu();
+  dialog.classList.remove('bred');
   titel.textContent = overskrift;
   indhold.replaceChildren();
   if (!dialog.open) {
@@ -265,26 +340,54 @@ function normaliser(tekst) {
 
 function visSoeg() {
   aabn('Søg i atlasset');
-  const label = element('label', 'Sted, proces eller simulation', 'soegefelt');
+  const label = element('label', 'Land, sted, proces eller simulation', 'soegefelt');
   const felt = element('input');
   felt.type = 'search';
-  felt.placeholder = 'Fx Island, regn eller drivhuseffekt';
+  felt.placeholder = 'Fx Kenya, Island, regn eller drivhuseffekt';
   label.append(felt);
   const antal = element('p', '', 'antal');
   antal.setAttribute('role', 'status');
   const resultat = element('div');
+  const landeresultat = element('div', '', 'landeresultat');
+  let navne = {};
+  hentIndeks().then(n => { navne = n; if (felt.isConnected) soeg(); }).catch(() => {});
+  function soegLande(ord) {
+    if (!ord.length) return [];
+    return Object.entries(navne).filter(([, navn]) => {
+      const n = normaliser(navn);
+      return ord.every(del => n.split(/[\s-]+/).some(d => d.startsWith(del)) || n.startsWith(ord.join(' ')));
+    }).sort((a, b) => a[1].localeCompare(b[1], 'da')).slice(0, 8);
+  }
   function soeg() {
     const ord = normaliser(felt.value).trim().split(/\s+/).filter(Boolean);
+    const lande = soegLande(ord);
+    landeresultat.replaceChildren();
+    if (lande.length) {
+      landeresultat.append(element('h3', 'Lande · demografi og klima', 'underoverskrift'));
+      const liste = element('div', '', 'landeknapper');
+      for (const [id, navn] of lande) {
+        const knap = element('button', navn);
+        knap.type = 'button';
+        knap.onclick = () => {
+          const centrum = globus?.landecentrum(id);
+          if (centrum) globus.visPunkt(centrum);
+          globus?.markerLand(id);
+          visLandedata(landFraKort({ id, properties: { name: navn } }, navne), 'demografi');
+        };
+        liste.append(knap);
+      }
+      landeresultat.append(liste);
+    }
     const fund = modeller.filter(model => {
       const stedtekst = steder.filter(sted => model.steder.includes(sted.id)).map(sted => `${sted.navn} ${sted.forklaring}`).join(' ');
       const tekst = normaliser(`${model.titel} ${model.emne} ${model.niveau} ${model.beskrivelse} ${model.soegeord || ''} ${stedtekst}`);
       return ord.every(del => tekst.includes(del));
     });
-    antal.textContent = `${fund.length} af ${modeller.length} simulationer`;
-    resultat.replaceChildren(fund.length ? visModeller(fund) : element('p', 'Ingen resultater. Prøv et andet sted eller en proces, fx klima eller vulkan.'));
+    antal.textContent = `${fund.length} af ${modeller.length} simulationer${lande.length ? ` · ${lande.length} ${lande.length === 1 ? 'land' : 'lande'}` : ''}`;
+    resultat.replaceChildren(fund.length || lande.length ? visModeller(fund) : element('p', 'Ingen resultater. Prøv et land, et sted eller en proces, fx Kenya, klima eller vulkan.'));
   }
   felt.addEventListener('input', soeg);
-  indhold.append(label, antal, resultat);
+  indhold.append(label, antal, landeresultat, resultat);
   soeg();
   felt.focus();
 }
@@ -295,6 +398,7 @@ for (const knap of document.querySelectorAll('[data-indgang]')) {
 document.querySelector('#luk').onclick = () => dialog.close();
 dialog.addEventListener('close', () => {
   lukInformation();
+  if (dialog.classList.contains('bred')) globus?.markerLand(null);
   senesteFokus?.focus({ preventScroll: true });
 });
 document.querySelector('#fokus').onclick = event => {
@@ -304,6 +408,8 @@ document.querySelector('#fokus').onclick = event => {
 };
 document.addEventListener('keydown', event => {
   if (event.key !== 'Escape') return;
+  // Landemenuen er en popover og lukker selv ved Escape.
+  if (document.querySelector('#landemenu:popover-open')) return;
   const panel = document.querySelector('#pladevalg:popover-open');
   if (panel) {
     event.preventDefault();
@@ -319,7 +425,8 @@ document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
   indhold.append(element('p', 'Quiz → vælg verdensdel: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Knappen med verdensdelens navn (eller Home) viser hele området igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
-  indhold.append(element('p', 'Tryk på selve Danmark på globussen for at åbne landekortet. Zoom ind, hvis landet er for lille at ramme. Danmark kan også vælges med tastatur under Steder. Det er det første land med eget kort. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
+  indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
+  indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
   indhold.append(lavInformation({
@@ -564,7 +671,8 @@ const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zo
 globusknapper.forEach(knap => { knap.disabled = true; });
 try {
   const { startGlobus } = await import('./globus.js');
-  globus = await startGlobus(steder, visSted, visDanmark);
+  globus = await startGlobus(steder, visSted, vaelgLand);
+  hentIndeks().then(navne => { globus.landenavne = navne; }).catch(() => {});
   globusknapper.forEach(knap => { knap.disabled = false; });
   pladeknap.disabled = false;
   // Quizmenuen kan allerede være åbnet, mens grundkortet blev hentet.

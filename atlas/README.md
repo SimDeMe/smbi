@@ -3,6 +3,43 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Landemenu: demografi og klima (v422)
+
+Tryk på et land på globussen. En lille menu ved trykket giver **Demografi** og
+**Klima** (Danmark også **Landekort**). Valget åbner en bred dialog med faner,
+så eleven kan skifte emne uden at vende tilbage til globussen. Landet markeres
+blåt, mens menu eller dialog er åben; musen fremhæver landet under markøren og
+viser navnet. Lande kan også findes i **Søg** – den tastaturtilgængelige vej og
+for meget små lande det nemmeste. Tæt på (over 2,5×) rammer trykket landene i
+globussens detaljerede 1:50 mio.-kort, så også mange små lande kan vælges.
+
+- **Demografi:** befolkningspyramide i procent af hele befolkningen for 1950,
+  1980, 2000, 2023, 2050* og 2100* (* = FN's mellemvariant, tydeligt markeret
+  som fremskrivning) med fast skala pr. land, andel 0–14/15–64/65+ og tabel;
+  15 nøgletal for 2023 (befolkning, tilvækst, fødsels- og dødsrate, fertilitet,
+  spædbørns- og børnedødelighed, middellevetid, medianalder, migration, tæthed,
+  byandel, HDI med rang, BNI pr. indbygger i PPP og skolegang); fødsels- og
+  dødsrate 1950–2100 med naturlig tilvækst som flade mellem kurverne.
+- **Klima:** hydrotermfigurer (10 °C ≙ 20 mm; tørre måneder markeret, når
+  temperaturkurven ligger over søjlen) for 1–4 stationer pr. land med
+  WMO-normaler 1991–2020. Hvor nyere normal mangler for hele landet, vises
+  1961–1990 med tydelig advarsel. Tabel med tal til hver figur.
+- Begge faner har korte **Undersøg**-spørgsmål og ⓘ med kilder og forbehold.
+
+Data: `data/demografi.json` (FN WPP 2024, UNDP HDR 2025, Verdensbanken; ca.
+590 kB, 220 kB gzip), `data/klima.json` (DWD/WMO; 72 kB) og
+`data/landeindeks.json` (danske navne; 5 kB). Kun indekset hentes ved start;
+de to datafiler først, når fanen vælges. Kilder, licenser og stationsvalg står i
+`data/lande.LICENSE`; filerne dannes af `data/lande.mjs`. 237 lande/områder har
+demografi, 188 har mindst én klimastation. Lande uden data får en forklaring.
+Nordcypern og Somaliland vises med FN's tal for hele Cypern/Somalia, og det
+står i menuen. Quizzen og landekortet er uændrede: i quizzen åbner tryk ingen menu.
+
+`test/landemenu.py` indgår i den samlede browsertest og kan køres særskilt.
+Den kontrollerer stikprøver i data mod kilderne, menu, tastatur, faner,
+år/fremskrivning, figurtekstens størrelse, søgning, lande uden data, Escape,
+alle fem elevvisninger og datafejl med nyt forsøg.
+
 ## Tættere zoom på globussen (v420)
 
 Globussen kan zoomes fra 0,75× op til 10× (før 3×), både i almindelig visning
@@ -91,8 +128,8 @@ Afprøvet i Chromium uden WebGL; Safari og fysiske telefoner er ikke testet.
 
 ## Første landekort: Danmark (v410)
 
-Danmark er fremhævet på globussen. Tryk på selve landets geometri for at åbne
-landekortet; zoom ind ved behov. Ingen landeknap ligger oven på globussen.
+Tryk på selve landets geometri og vælg **Landekort** i landemenuen (fra v422;
+før åbnede trykket kortet direkte); zoom ind ved behov. Ingen landeknap ligger oven på globussen.
 **Steder → Danmark** er det
 tastaturtilgængelige alternativ, også når landet vender væk. Der er endnu ikke
 landekort for andre lande. De tre faglige markører har deres hidtidige funktion.
@@ -154,6 +191,9 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
 - `globus.js`: D3's ortografiske projektion tegnet med Canvas 2D. Den håndterer
   horisontklipning, landegrænser, bredde-/længdegrader og projektion af markører.
   Canvas bruger højst dobbelt pixeltæthed; kun ændringer udløser tegning.
+- `landemenu.js`: menu ved tryk på et land og navneindeks.
+- `demografi.js` / `klima.js`: befolkningspyramide, nøgletal og hydrotermfigurer
+  (SVG), hentes først ved valg.
 - `landekort.js`: separat Mercatorvisning af Danmark i samme store kortområde.
   Hentes først ved landevalg; globussens vinkel, zoom og pladelag bevares.
 - `pladelag.js`: valgfrit pladegrænselag (#48). Henter først data, når laget

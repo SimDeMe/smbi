@@ -1,0 +1,47 @@
+demografi.json, klima.json og landeindeks.json
+================================================
+
+Dannet med `node atlas/data/lande.mjs <mappe med rådata>` (15. oktober 2026).
+Rådata ligger ikke i repoet; de hentes fra adresserne nedenfor.
+
+Demografi (demografi.json)
+--------------------------
+United Nations, Department of Economic and Social Affairs, Population Division (2024).
+World Population Prospects 2024. Mellemvarianten (Medium).
+  https://population.un.org/wpp/
+  WPP2024_PopulationByAge5GroupSex_Medium.csv.gz
+  WPP2024_Demographic_Indicators_Medium.csv.gz
+Licens: Creative Commons Attribution 3.0 IGO (CC BY 3.0 IGO).
+Estimater til og med 2023; senere år er fremskrivninger.
+
+UNDP (2025). Human Development Report 2025, Composite indices complete time series.
+  https://hdr.undp.org/data-center/documentation-and-downloads
+  HDR25_Composite_indices_complete_time_series.csv (HDI, rang, BNI pr. indbygger
+  i 2021-PPP-$ og gennemsnitlig skolegang for 2023)
+Licens: Creative Commons Attribution 3.0 IGO (CC BY 3.0 IGO).
+
+Verdensbanken, World Development Indicators: Urban population (% of total
+population), SP.URB.TOTL.IN.ZS, år 2023, hentet via api.worldbank.org 15.10.2026.
+Hovedstædernes koordinater fra samme API (country-endpoint).
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+
+Danske landenavne: ICU/CLDR via Intl.DisplayNames('da') i Node.js 24,
+suppleret med danske navne for otte områder uden FN-kode.
+
+Klima (klima.json)
+------------------
+Deutscher Wetterdienst (DWD), Climate Data Center (CDC):
+CLIMAT multi_annual, air_temperature_mean og precipitation_total,
+normalperioderne 1991_2020 og 1961_1990, samt stationslisten
+help/stations_list_CLIMAT_data.txt.
+  https://opendata.dwd.de/climate_environment/CDC/observations_global/CLIMAT/multi_annual/
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0), jf.
+https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+Normalerne er indberettet af landenes vejrtjenester til WMO.
+
+Stationerne er tildelt land ved punkt-i-polygon i Natural Earth 1:50 mio.
+(countries-50m.json). Pr. land vælges stationen nærmest hovedstaden og, for
+lande over 150.000 km², op til tre ekstra stationer med mest forskelligt klima
+(middeltemperatur, årsnedbør, amplitude og afstand). Ekstra stationer skal ligge
+på en landdel over 5000 km² og, i lande under 1,2 mio. km², under 1000 m o.h.
+1961–1990 bruges kun, hvor ingen station i landet har en 1991–2020-normal.

@@ -27,6 +27,14 @@ def land_aabent(side):
     }'''), 'Danmarks landareal mangler på canvas'
 
 
+def vaelg_landekort(side):
+    # Et tryk på Danmark åbner landemenuen; landekortet er et af valgene.
+    menu = side.locator('#landemenu')
+    expect(menu).to_be_visible()
+    expect(menu.locator('h2')).to_have_text('Danmark')
+    menu.locator('[data-valg="landekort"]').click()
+
+
 def globuspunkt(side, koordinater, centrum=(-22, 42), zoom=1):
     # Uafhængig projektion af kendte koordinater ved den oprindelige globusvisning.
     return side.evaluate('''({punkt, centrum, zoom}) => {
@@ -60,6 +68,7 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         punkt = globuspunkt(side, [9.2,56], centrum=(-10,42), zoom=1.2)
         assert side.evaluate('p=>document.elementFromPoint(p.x,p.y).id', punkt) == 'globus'
         side.touchscreen.tap(**punkt) if w == 390 else side.mouse.click(**punkt)
+        vaelg_landekort(side)
         land_aabent(side)
         if w == 1280:
             # Polen må ikke blive til hav i et bredt kort; kendt punkt på land.
@@ -159,13 +168,20 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
     # Tryk på den faktiske landgeometri; ingen knap ligger oven på globussen.
     punkt = globuspunkt(side, [9.2,56])
     assert side.evaluate('p=>document.elementFromPoint(p.x,p.y).id', punkt) == 'globus'
-    side.touchscreen.tap(**punkt); land_aabent(side)
+    side.touchscreen.tap(**punkt); vaelg_landekort(side); land_aabent(side)
     side.locator('#til-globus').tap()
-    # Norge, hav og uden for kuglen åbner ikke Danmark.
-    for koord in [[25.8,70.9], [-10,40], [20,20]]:
+    # Norge giver Norges menu uden landekort; hav og uden for kuglen åbner intet.
+    punkt = globuspunkt(side, [25.8,70.9])
+    side.touchscreen.tap(**punkt)
+    expect(side.locator('#landemenu h2')).to_have_text('Norge')
+    assert side.locator('#landemenu [data-valg="landekort"]').count() == 0
+    side.keyboard.press('Escape')
+    expect(side.locator('#landemenu')).to_be_hidden()
+    for koord in [[-10,40], [20,20]]:
         punkt = globuspunkt(side, koord)
         assert side.evaluate('p=>document.elementFromPoint(p.x,p.y).id', punkt) == 'globus'
         side.touchscreen.tap(**punkt)
+        expect(side.locator('#landemenu')).to_be_hidden()
         expect(side.locator('#landetop')).to_be_hidden()
     side.touchscreen.tap(25, 260)
     expect(side.locator('#landetop')).to_be_hidden()
@@ -176,15 +192,17 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         session.send('Input.dispatchTouchEvent', {'type':type,'touchPoints':points})
     touch('touchStart',[{'x':x,'y':y,'id':1}])
     touch('touchCancel',[])
+    expect(side.locator('#landemenu')).to_be_hidden()
     expect(side.locator('#landetop')).to_be_hidden()
     # Træk væk og tilbage til Danmark skal stadig være et træk.
     touch('touchStart',[{'x':x,'y':y,'id':1}])
     touch('touchMove',[{'x':x-40,'y':y+10,'id':1}])
     touch('touchMove',[{'x':x,'y':y,'id':1}])
     touch('touchEnd',[])
+    expect(side.locator('#landemenu')).to_be_hidden()
     expect(side.locator('#landetop')).to_be_hidden()
     side.locator('#nulstil').click(); side.wait_for_timeout(100)
-    side.touchscreen.tap(**globuspunkt(side, [9.2,56])); land_aabent(side)
+    side.touchscreen.tap(**globuspunkt(side, [9.2,56])); vaelg_landekort(side); land_aabent(side)
     foer = side.locator('#globus').evaluate('el => el.toDataURL()')
     touch('touchStart',[{'x':150,'y':440,'id':1}])
     touch('touchMove',[{'x':175,'y':470,'id':1}]); touch('touchEnd',[])
@@ -211,6 +229,7 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         elif fejltype == 'data': side.route('**/danmark-10m.json', lambda r:r.abort())
         else: side.route('**/danmark-10m.json', lambda r:r.fulfill(json={'type':'FeatureCollection','features':[]}))
         side.mouse.click(**globuspunkt(side, [9.2,56]))
+        vaelg_landekort(side)
         expect(side.locator('#kortstatus')).to_contain_text('Danmarkskortet kunne ikke hentes')
         expect(side.locator('#landetop')).to_be_hidden()
         side.get_by_role('button', name='Steder', exact=True).click()
@@ -224,10 +243,10 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         side.keyboard.press('Escape')
         if fejltype != 'modul':
             side.unroute('**/countries-50m.json' if fejltype == 'baggrund' else '**/danmark-10m.json')
-            side.mouse.click(**globuspunkt(side, [9.2,56])); land_aabent(side)
+            side.mouse.click(**globuspunkt(side, [9.2,56])); vaelg_landekort(side); land_aabent(side)
         side.close()
     assert not fejl, fejl
-    print('Danmark: geografi, direkte landetryk, træk, tofingerzoom og fallback OK', flush=True)
+    print('Danmark: geografi, landetryk via menu, træk, tofingerzoom og fallback OK', flush=True)
 
 
 if __name__ == '__main__':
