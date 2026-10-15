@@ -5,6 +5,6 @@ export const initializeAuth = (app, deps) => { log.init = { persistence: (deps?.
 export const indexedDBLocalPersistence = {}, browserLocalPersistence = {}, browserSessionPersistence = {};
 export const browserPopupRedirectResolver = { navn: 'popup' };
 export class GoogleAuthProvider {}
-export const signInWithPopup = async (auth, provider, resolver) => { log.popup.push(!!resolver); };
+export const signInWithPopup = async (auth, provider, resolver) => { log.popup.push(!!resolver); if (window.__fsCfg?.authError) throw Object.assign(new Error('Test login error'), { code: window.__fsCfg.authError }); if (window.__fsCfg?.authPending) await new Promise(() => {}); };
 export const signOut = async () => {};
 export function onAuthStateChanged(auth, cb) { setTimeout(() => cb(window.__fsCfg?.udlogget ? null : { uid: 'u1' }), 0); }

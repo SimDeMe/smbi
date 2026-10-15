@@ -52,6 +52,10 @@ automatisk fra Lectio. Lukker du et vindue, skal forbindelsen åbnes igen.
 Forbindelsen gemmer ingen Firebase-tokens på den lokale server og sender
 ingen Lectio-cookies eller MitID-oplysninger til smbi.dk.
 
+Brug programmet i en almindelig browser, fx Brave, Chrome eller Safari.
+Indbyggede browsere kan skjule eller blokere Google-login. Importens
+login-knap viser fremdrift og en vej videre, hvis login ikke bliver gennemført.
+
 Hvis browseren blokerer forbindelsen, kan du bruge **Hent JSON** og åbne
 **Indstillinger → Importér Lectio-skema** i Tid. Vælg filen og gem den på
 din konto. Det er samme import og samme krediteringsdata.

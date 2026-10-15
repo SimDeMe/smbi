@@ -13,6 +13,7 @@ const app = initializeApp(firebaseConfig);
 const auth = initializeAuth(app, { persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence] });
 const db = initializeFirestore(app, {});
 let user = null, approvedUid = null, pending = null, saving = false, disconnected = false, manual = false;
+let loginAttempt = 0;
 const send = data => { if (permitted && !disconnected) window.opener.postMessage({ ...data, nonce }, helperOrigin); };
 const status = message => { $('import-status').textContent = message; };
 function controls() { $('import-save').disabled = (!permitted && !manual) || !user || !pending || saving || disconnected; }
@@ -21,11 +22,30 @@ onAuthStateChanged(auth, current => {
   user = current;
   $('import-account').textContent = user ? `Tid-konto: ${user.email || user.displayName || 'Logget ind'}` : 'Du er ikke logget ind i Tid.';
   $('import-login').hidden = Boolean(user);
+  if (user) $('import-login-help').hidden = true;
   controls();
 });
 $('import-login').addEventListener('click', async () => {
+  const attempt = ++loginAttempt;
+  const button = $('import-login');
+  button.disabled = true; button.textContent = 'Åbner Google-login…';
+  status('Åbner Google-login i et separat vindue…');
+  const timer = setTimeout(() => {
+    if (attempt !== loginAttempt || user) return;
+    status('Login er ikke gennemført. Hvis vinduet ikke kom frem, så fortsæt i din almindelige browser.');
+    $('import-login-help').hidden = false;
+    button.disabled = false; button.textContent = 'Prøv Google-login igen';
+  }, 15000);
   try { await signInWithPopup(auth, new GoogleAuthProvider(), browserPopupRedirectResolver); }
-  catch (error) { status(error.code === 'auth/popup-blocked' ? 'Tryk på Log ind igen for at åbne login-vinduet.' : 'Login mislykkedes. Prøv igen.'); }
+  catch (error) {
+    if (attempt !== loginAttempt) return;
+    const messages = { 'auth/popup-blocked': 'Browseren blokerede login-vinduet. Tillad popup-vinduer eller fortsæt i din almindelige browser.', 'auth/popup-closed-by-user': 'Login-vinduet blev lukket. Prøv igen.', 'auth/cancelled-popup-request': 'Et andet loginforsøg overtog vinduet. Prøv igen.', 'auth/unauthorized-domain': 'Google-login er ikke tilladt på dette domæne. Åbn importen på smbi.dk.' };
+    status(messages[error.code] || `Google-login kunne ikke gennemføres${error.code ? ' (' + error.code + ')' : ''}. Prøv i din almindelige browser.`);
+    $('import-login-help').hidden = false;
+  } finally {
+    clearTimeout(timer);
+    if (attempt === loginAttempt) { button.disabled = false; button.textContent = 'Log ind med Google'; }
+  }
 });
 async function save() {
   if (!user || !pending || saving || approvedUid !== user.uid || disconnected) return;

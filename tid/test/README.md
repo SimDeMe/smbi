@@ -57,6 +57,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `lectio.mjs` | Lectio-fanen: uger nyeste først, fra + registreret tid = til, huller og overlap med småt, sekunder giver ikke et falsk hul |
 | `lectio-data.test.mjs` | importvalidering, periodevis erstatning, bevaret historik, afvisning af gamle importer, separate krediteringer og dansk sommertid |
 | `lectio-import.mjs` | forbindelse med nonce, kontogodkendelse, automatisk overførsel efter manuel hentning, afbryd, JSON-reservevej og atomisk fejl uden delvise ændringer |
+| `lectio-login.mjs` | fremdrift under Google-login, blokerede popups og synlig vej videre, når login-vinduet ikke vises |
 | `lectio-kalender.mjs` | planlagte blokke i dag/uge, markeringer i måned/år, krediteringsdetaljer, filter og nul påvirkning af registreret tid |
 | `kalender-og-import.mjs` | poster over midnat i ugevisningen, tryk-mål i måned/år, import med optjening |
 | `aarsnorm.mjs` | årsnorm 1690 t, gammel standard 1650 læses som 1690, advarsel om porteføljens sum, portefølje mod merarbejdsgrænsen |
