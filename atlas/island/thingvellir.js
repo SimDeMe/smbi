@@ -12,10 +12,10 @@ export function lavThingvellir(terraen) {
     const [x,,z]=world(u,0,v),maal=terraen.hoejdeVed(x,z);
     const detalje=.9*Math.sin(u*13+v*4)*Math.cos(v*9-u*3)+.6*Math.sin(u*29-v*17);
     const y=maal+detalje+(del===0?16:del===1?-38:4);
-    return so(u,v)?100:y;
+    return so(u,v)?40:y;
   };
   const dele=[[-5,-.035],[.035,4.965],[5.035,10]].map(([u0,u1],del)=>{
-    const nu=42,nv=112,punkter=[],flader=[],vand=[];
+    const nu=42,nv=112,punkter=[],flader=[];
     for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){
       const u=u0+(u1-u0)*i/nu,v=-11+20*j/nv;
       // Samme let bugtede forkastningsretning på begge sider af sprækken.
@@ -24,15 +24,29 @@ export function lavThingvellir(terraen) {
     for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){
       const k=j*(nu+1)+i;
       for(const ids of [[k,k+nu+1,k+1],[k+1,k+nu+1,k+nu+2]]){
-        const u=u0+(u1-u0)*(i+.5)/nu,v=-11+20*(j+.5)/nv;
-        flader.push(ids);vand.push(so(u,v));
+        flader.push(ids);
       }
     }
     const kanter=[Array.from({length:nu+1},(_,i)=>i),Array.from({length:nu+1},(_,i)=>nv*(nu+1)+i),Array.from({length:nv+1},(_,i)=>i*(nu+1)),Array.from({length:nv+1},(_,i)=>i*(nu+1)+nu)];
-    return {punkter,flader,vand,kanter,del};
+    return {punkter,flader,kanter,del};
   });
-  const ankre=[{navn:'Almannagjá',u:0,v:2,del:0},{navn:'Hrafnagjá',u:5,v:3,del:2},{navn:'Riftdalen',u:2.4,v:5,del:1},{navn:'Þingvallavatn',u:2.8,v:-5,del:1}].map(n=>({...n,punkt:world(n.u,hoejde(n.u,n.v,n.del)+8,n.v)}));
-  return {dele,ankre,world,hoejde,midte:world(2.5,0,-1),punkter:dele.flatMap(d=>d.punkter)};
+  const ankre=[{navn:'Almannagjá',u:0,v:2,del:0},{navn:'Hrafnagjá',u:5,v:3,del:2},{navn:'Riftdalen',u:2.4,v:5,del:1},{navn:'Þingvallavatn',u:2.8,v:-5,del:1}].map(n=>({...n,punkt:world(n.u,(n.navn==='Þingvallavatn'?100:hoejde(n.u,n.v,n.del))+8,n.v)}));
+  // Ét lukket vandvolumen: søbundens terræn tegnes aldrig som en ekstra
+  // vandflade. Volumenet går ned under søbunden i alle tre terrændele.
+  const soeflader=[],antal=120;
+  for(let i=0;i<antal;i++){
+    const a=2+2*i,b=2+2*((i+1)%antal);
+    soeflader.push([0,a,b],[1,b+1,a+1],[a,a+1,b+1],[a,b+1,b]);
+  }
+  const soepunkter=bevaegelse=>{
+    const overflade=100-18*bevaegelse,punkter=[world(2.8,overflade,-6),world(2.8,20,-6)];
+    for(let i=0;i<antal;i++){
+      const a=i*Math.PI*2/antal,u=2.8+3.6*Math.cos(a),v=Math.max(-11,-6+5.4*Math.sin(a));
+      punkter.push(world(u,overflade,v),world(u,20,v));
+    }
+    return punkter;
+  };
+  return {dele,ankre,world,hoejde,soeflader,soepunkter,midte:world(2.5,0,-1),punkter:dele.flatMap(d=>d.punkter)};
 }
 
 export function tegnThingvellir({ctx,raster,p,model,farve,faktor,bevaegelse,bredde,hoejde}) {
@@ -54,16 +68,14 @@ export function tegnThingvellir({ctx,raster,p,model,farve,faktor,bevaegelse,bred
     }
     for(let i=0;i<d.flader.length;i++){
       const ids=d.flader[i];
-      raster.trekant(...ids.map(k=>ps[k]),d.vand[i]?vand:d.farver[i]);
+      raster.trekant(...ids.map(k=>ps[k]),d.farver[i]);
     }
 
   }
-  // Søfladen lukker også over sprækkerne; vandet deles ikke i tre blokke.
-  const midte=p(model.world(2.8,102-18*bevaegelse,-6));
-  for(let i=0;i<120;i++){
-    const a=i*Math.PI/60,b=(i+1)*Math.PI/60;
-    raster.trekant(midte,p(model.world(2.8+3.6*Math.cos(a),102-18*bevaegelse,Math.max(-11,-6+5.4*Math.sin(a)))),p(model.world(2.8+3.6*Math.cos(b),102-18*bevaegelse,Math.max(-11,-6+5.4*Math.sin(b)))),vand);
-  }
+  // Samme vandstand på tværs af alle brud; lukkede sider fylder ned til
+  // søbunden, også når terrænet trækkes fra hinanden og sænkes.
+  const soe=model.soepunkter(bevaegelse).map(punkt=>p(punkt));
+  for(const ids of model.soeflader)raster.trekant(...ids.map(i=>soe[i]),vand);
   raster.vis(ctx);
   ctx.font='600 12px Archivo, sans-serif';ctx.textAlign='left';
   const optaget=[];

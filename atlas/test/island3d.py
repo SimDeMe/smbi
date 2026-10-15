@@ -85,6 +85,23 @@ def afproev_island3d(browser, adresse, ud, skaerme):
     side.keyboard.press('Escape')
     side.goto(adresse + '/atlas/island/model3d.html')
     expect(side.locator('.landskabsfigur.klar')).to_have_count(1)
+    # Vandet er ét lukket volumen, også gennem de åbne brud. Alle kanter
+    # tilhører to flader; vandoverfladen sænkes og ligger over søbunden.
+    soe=side.evaluate('''async()=>{
+      const {proeve}=await import('./model3d.js'),m=proeve.thingvellir(),kanter=new Map();
+      for(const f of m.soeflader)for(let i=0;i<3;i++){
+        const k=[f[i],f[(i+1)%3]].sort((a,b)=>a-b).join(',');kanter.set(k,(kanter.get(k)||0)+1);
+      }
+      return {kanter:[...kanter.values()],stadier:[0,.5,1].map(t=>{
+        const p=m.soepunkter(t),over=p.filter((_,i)=>i===0||(i>=2&&i%2===0)).map(q=>q[1]);
+        return {top:[Math.min(...over),Math.max(...over)],bund:p[1][1],soebunde:[0,1,2].map(d=>m.hoejde(2.8,-6,d)-(d===1?18*t:0))};
+      })};
+    }''')
+    assert set(soe['kanter'])=={2},soe
+    for t,s in zip([0,.5,1],soe['stadier']):
+        assert s['top']==[100-18*t]*2,s
+        assert s['bund']<=min(s['soebunde'])<=max(s['soebunde'])<s['top'][0],s
+
     # Uafhængig projektion og byteaflæsning af de eksisterende NOAA-data.
     punkter = [(-19.666,63.983),(-16.65,64.02),(-20.1,64.62),(-20,63.15),(-21.14,64.18)]
     meta = json.loads((Path(__file__).parents[1] / 'island/data/islandskort.json').read_text())

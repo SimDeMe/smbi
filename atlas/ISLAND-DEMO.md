@@ -363,3 +363,14 @@ til åbningsknappen. Hvert snits detaljer bevares i dokumentationen.
 ændrede pixels ved kameradrejning og pladebevægelse samt identiske pixels
 ved nulstilling. Direkte link, retur fra snit, dialogfokus, reduceret bevægelse,
 fem skærmstørrelser og den eksisterende terræn-/rasterprøve indgår også.
+
+
+### Søens vandvolumen (v425)
+
+Fjern de ekstra vandfarvede terrænflader, som kunne blive stående i den gamle
+højde ved pladebevægelse. Søbunden ligger nu under ét lukket vandnet med fælles
+vandstand. Vandoverfladen følger dalens nedsynkning, mens volumenets sider
+fylder ned under søbunden gennem hele bevægelsen, også over de åbne brud.
+Bund og vanddybde er illustrative og dokumenteret under Om modellen.
+Regressionsprøven kontrollerer lukket mesh, faldende vandstand og kontakt
+med søbunden ved start, midtvejs og slut.
