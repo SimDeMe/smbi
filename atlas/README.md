@@ -565,3 +565,18 @@ Flere redaktionelt kvalitetssikrede steder og modeller; delbare atlasvalg via
 URL; egentlige elevopgaver; stedbundet data med kilde og usikkerhed;
 bedre markørgruppering ved et større katalog. Zoom ind i et rumligt tværsnit
 kan tilføjes som et separat modul uden at ændre simulationernes URL'er.
+
+## Geografiske tværsnit under Island (v418)
+
+Fra Island-markøren og Island-kortet fører «Se under overfladen» nu til
+3D-landskabets geografiske gennemskæring. Vatnajökull, Reykjanes og Hekla har
+hver deres kildeankrede magmasystemer og samme ETOPO-overkant som landskabet.
+Form, størrelse og gange er en tydeligt mærket kunstnerisk fortolkning.
+Der kan drejes, skiftes snit og startes/pauses en illustrativ magmastrøm.
+Lukning vender tilbage til landskabet. Den oprindelige generelle procesfigur
+om plader og smeltning bevares og kan åbnes fra den nye side.
+
+Faglige valg, kilder og datumer: [`island/SNIT-KILDER.md`](island/SNIT-KILDER.md).
+Teknik, skalaer og afprøvning: [`ISLAND-DEMO.md`](ISLAND-DEMO.md).
+`test/islandsnit.py` indgår i den samlede browsertest og dækker tre snit,
+fem skærme, terrænsammenhæng, dybder, bagsidens skjulning, pause og kameraretur.

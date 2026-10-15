@@ -33,3 +33,25 @@ body.fokus .ekspeditionsrum{height:calc(100svh - 112px)}
 @media(min-width:900px) and (max-height:650px){.ekspeditionsrum{height:calc(100svh - 210px)}.rejsepanel{padding:10px 13px}.destinationer{margin:5px 0 10px;gap:3px}.destinationer button{min-height:35px}.rejsetekst h2{font-size:20px}.rejsetekst p{font-size:15px}.signatur3d{font-size:10px;padding:5px 0}}
 @media(max-width:899px){.ekspeditionsrum{height:auto;grid-template-columns:1fr}.landskabsfigur{height:clamp(380px,65svh,600px);border-right:0;border-bottom:1px solid var(--ink)}.rejsepanel{padding:15px}.destinationer{grid-template-columns:1fr 1fr}.rejsetekst{overflow:visible}.rejsetekst p{max-width:60ch}.signatur3d{grid-template-columns:1fr 1fr}.til-snit{display:none}.landskabsfod{flex-wrap:wrap}body.fokus .ekspeditionsrum{height:auto}body.fokus .landskabsfigur{height:calc(100svh - 130px)}}
 @media(max-width:500px){.landskabsvalg button{font-size:12px;padding:6px 8px}.landskabside .ekstra{width:auto;gap:4px}.landskabside .ekstra button{padding:6px 8px;font-size:12px}.landskabside .vaerktoejer{flex-wrap:nowrap;gap:5px}.landskabsstempel{left:12px;top:12px;font-size:9px}.landskabsstempel>span:last-child{display:none}.landskabsknapper{left:12px;top:35px}.stedsnavn{left:12px;bottom:18px}.hoejdevalg{right:10px;bottom:12px}.landskabside h1{font-size:22px}.landskabsfigur{height:420px}.destinationer button{min-height:44px}.signatur3d{grid-template-columns:1fr}}
+
+/* Samme terræn, åbnet som en geografisk blok. */
+.snitaktiv .landskabsfigur{background:#122a30}
+.snitaktiv .landskabsstempel,.snitaktiv .stedsnavn{color:#e4dfca;text-shadow:none}
+.snitaktiv .stedsnavn{max-width:calc(100% - 155px)}
+.snitmaerke{position:absolute;left:20px;top:77px;margin:0;font:500 10px var(--mono);color:#dbb980;pointer-events:none}
+.flowstatus{position:absolute;left:20px;bottom:75px;margin:0;color:#ffd696;font:500 10px/1.4 var(--mono);pointer-events:none}
+.snitaktiv #havbund,.snitaktiv #geologi,.snitaktiv .signatur3d,.snitaktiv .destinationer:not(.snitdestinationer){display:none}
+.snitaktiv .snitdestinationer{display:grid}
+.snitdestinationer button[aria-pressed=true]{background:#69462f;border-color:#69462f}
+.snitaktiv #snitknap{background:#75482d;color:#fff5dd}
+.snitaktiv .rejsetekst h2{font-size:21px}.snitaktiv .rejsetekst>p{font-size:14px}
+#kammerliste{display:grid;gap:6px;margin:12px 0}
+.kammerkort{padding:8px 9px;border:1px solid #aa8c6340;border-left:3px solid #db823d;border-radius:3px;background:#fffaf1}
+.kammerkort strong{display:block;font:600 13px var(--display)}.kammerkort span{display:block;font:500 11px/1.5 var(--mono);color:#8c532d}.kammerkort small{display:block;font:11px var(--display);color:var(--slate)}
+#snitkilder{font:12px/1.5 var(--display);color:var(--slate)}#snitkilder a{display:block;margin:4px 0}
+.proceslink{display:block;margin-top:8px;font:11px/1.35 var(--display);color:var(--slate);text-decoration:none}
+.snitaktiv .videre{padding:10px 0 0;font-size:13px}
+.snitartikler{max-width:80ch;font-size:14px;line-height:1.5;padding-left:20px}.snitartikler li{margin:4px 0}
+@media(max-width:500px){.landskabside .vaerktoejer{flex-wrap:wrap}.snitaktiv .vaerktoejer{flex-wrap:nowrap}.snitmaerke{left:12px;top:73px;font-size:9px}.flowstatus{left:12px;bottom:78px;font-size:9px;max-width:55%}.snitaktiv .hoejdevalg{width:126px}.snitaktiv .stedsnavn{max-width:calc(100% - 145px)}.snitdestinationer.destinationer{grid-template-columns:1fr 1fr 1fr}.snitdestinationer button{padding:6px;gap:5px;font-size:12px}.snitdestinationer button>span:last-child{display:none}}
+
+.landskabsstempel #datastempel{display:inline!important}.terraenretur{display:flex;gap:14px;align-items:center}.terraenretur a{text-decoration:none}

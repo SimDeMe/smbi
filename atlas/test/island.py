@@ -430,7 +430,7 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
         side.locator('[data-sted="island"]').click()
         kort = side.locator('#dialogindhold .fordybelse')
         expect(kort).to_have_count(1)
-        expect(kort).to_contain_text('Kort med data og skematisk tværsnit')
+        expect(kort).to_contain_text('Målt terræn og fortolket undergrund')
         # Kortet står før de generelle simulationer, og de to simulationer er der stadig.
         assert side.locator('#dialogindhold .modelkort').first.get_attribute('class') == 'modelkort fordybelse'
         assert sorted(side.locator('#dialogindhold .modelkort:not(.fordybelse) a').evaluate_all('l => l.map(a => a.getAttribute("href"))')) == \
@@ -448,8 +448,8 @@ def afproev_islandintegration(browser, adresse, ud, skaerme):
             side.keyboard.press('Enter')
         else:
             kort.get_by_role('link', name='Se under overfladen: Under Island').click()
-        side.wait_for_url('**/atlas/island/#island')
-        expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
+        side.wait_for_url('**/atlas/island/model3d.html?snit=vatnajokull')
+        expect(side.locator('canvas[data-snit="vatnajokull"]')).to_have_count(1)
         # Retur fra modulet: globussen centreres om Island.
         side.get_by_role('link', name='← Island på globussen').click()
         side.wait_for_url('**/atlas/#island')
@@ -657,9 +657,9 @@ def afproev_islandkort(browser, adresse, ud, skaerme):
 
     # Videre til tværsnittet.
     side.get_by_role('link', name='Se under overfladen →').click()
-    side.wait_for_url('**/atlas/island/#island')
-    expect(side.get_by_role('button', name='Island', exact=True)).to_have_attribute('aria-pressed', 'true')
-    side.locator('.forloeb').get_by_role('link', name='Kort').click()
+    side.wait_for_url('**/atlas/island/model3d.html?snit=vatnajokull')
+    expect(side.locator('canvas[data-snit="vatnajokull"]')).to_have_count(1)
+    side.get_by_role('link', name='← Island på kortet',exact=True).click()
     side.wait_for_url('**/atlas/island/kort.html')
     side.close()
 

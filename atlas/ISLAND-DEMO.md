@@ -296,3 +296,43 @@ ugyldige terrændata, forkert binærlængde, manglende D3 og Canvas bevarer
 forklaring og almindelige links. Ingen JavaScript-/konsolfejl i normal brug.
 Skærmbilleder er visuelt gennemgået. Fysisk telefon, skærmlæser og andre
 browsermotorer er ikke efterprøvet for den nye terrænvisning.
+
+## Gennemskæring af det målte 3D-landskab — 15. oktober 2026 (v418)
+
+«Tværsnit» i 3D-landskabet åbner nu en regional blok af **det samme terræn**
+med et fortolket indre. Tre delbare udsigter: Vatnajökull (Bárðarbunga og
+Grímsvötn), Reykjanes (Svartsengi og Fagradalsfjall) og Hekla. Valgte
+magmadomæner, datumer, kilder og kunstneriske valg er dokumenteret i
+[`island/SNIT-KILDER.md`](island/SNIT-KILDER.md). De er også tilgængelige
+fra hvert snit og sidens kildepanel. Ingen nye terrænfiler.
+
+Atlasmarkørens «Se under overfladen» og kortets tilsvarende link åbner
+`/atlas/island/model3d.html?snit=vatnajokull`. Den tidligere generelle
+procesfigur findes fortsat på `/atlas/island/#island` og åbnes med
+«Forklaringen på plader og smeltning». Det er en fri navigation mellem
+geografisk illustration og procesforklaring.
+
+Blokken kan drejes i 3D; dybdebufferen skjuler kamrene fra bagsiden.
+Magmaområderne har glødende konturer, krystaller og illustrerede tilførsels-
+veje. «Følg magma» viser lyspunkter med pause, ikke en tidsberegning eller
+et aktuelt udbrud. Kamrenes former er bevidst forstørrede. En lille oversigt
+på Island viser, hvor snittet er lagt. Terrænet over havet er forstørret
+×20, mens den særskilt mærkede dybdeskala fra start er ×1,5. Den indtegnede
+kilometerakse bruger havniveau som nul. Lukning gendanner landskabets
+kameravinkel og højdefaktor.
+
+`test/islandsnit.py` er føjet til `test/afproev.py`: alle tre snit på fem
+skærme, kamrenes tilstedeværelse, ingen vandret rulning, overkant mod det
+fælles højdefelt, uændrede dybder under skalering, forskellige dybdedatumer,
+skjulning fra bagsiden, eksplicit start/pause af strømning, URL og retur til
+det tidligere kamera. Den selvstændige prøve og den eksisterende
+`test/island3d.py` består i Chromium uden WebGL. Skærmbilleder af de fem
+størrelser er gennemgået. Små labels kan vige i mobilfiguren; alle kamre,
+dybder og kilder står også i HTML-panelet. Fysiske telefoner, skærmlæsere og
+andre browsermotorer er ikke efterprøvet for denne udvidelse.
+
+Den samlede `python3 atlas/test/afproev.py` består også efter integrationen:
+globus, lag, fallback, Island-kort og tidligere procesfigur, 3D-landskab,
+nye geografiske snit, Danmark og Europa-quiz på alle fem skærmstørrelser.
+Ingen JavaScript-fejl ved normal brug. Den opdaterede smoke-test til andre
+browsermotorer er bevaret, men ikke kørt for denne udvidelse.

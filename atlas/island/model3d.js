@@ -2,12 +2,14 @@
 // projicerede trekanter med dybdebuffer; intet WebGL eller nyt bibliotek.
 import { lavTerraen } from './terraen.js';
 import { lavRaster, pakFarve } from './raster.js';
+import { lavSnit, tegnSnit } from './snit3d.js';
+import { SNIT, KILDER } from './snitdata.js';
 
 const canvas = document.querySelector('#landskab'), figur = canvas.closest('figure');
 const fejltekst = document.querySelector('#hentestatus'), status = document.querySelector('#status');
 const roligt = matchMedia('(prefers-reduced-motion: reduce)');
 const kamera = { drej: -14, vip: 48, zoom: 1, x: 0, z: 0 };
-const tilstand = { sted: 0, havbund: true, geologi: true, faktor: 20, rundtur: false, klar: false };
+const tilstand = { sted: 0, havbund: true, geologi: true, faktor: 20, rundtur: false, klar: false, snit: null, dybdefaktor: 1.5 };
 const betjening=[...document.querySelectorAll('.vaerktoejer button,.landskabsknapper button,.destinationer button,#overdrivelse')].filter(b=>b.id!=='fokus');
 betjening.forEach(b=>{b.disabled=true;});
 const steder = [
@@ -25,7 +27,7 @@ const steder = [
     se: 'Slå «Vis havbund» fra og til. Følg ryggens retning mod Reykjanes.' }
 ];
 let ctx, terraen, data, flader, graenser = [], vulkanlinjer = [], navne = [], W = 0, H = 0, skala = 1;
-let raster;
+let raster, aktueltSnit=null, gemtKamera=null, snitOffset=null;
 let ramme = 0, flyvning = 0, turTid = 0, revision = 0;
 const rad = Math.PI / 180, klem = (v, a, b) => Math.max(a, Math.min(b, v));
 const meddel = s => { status.textContent = s; };
@@ -54,9 +56,10 @@ function projektion() {
   const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
   return ([x, y, z], over = true) => {
     x -= kamera.x; z -= kamera.z;
-    const h = (over && !tilstand.havbund ? Math.max(0, y) : y) / 1000 * tilstand.faktor;
+    const h = tilstand.snit ? y/1000*(y>=0?20:tilstand.dybdefaktor)
+      : (over && !tilstand.havbund ? Math.max(0, y) : y) / 1000 * tilstand.faktor;
     const rx = x*ca + z*sa, rz = -x*sa + z*ca;
-    return [W*.5 + rx*skala*kamera.zoom, H*.52 + (rz*sb-h*cb)*skala*kamera.zoom, rz*cb+h*sb];
+    return [(snitOffset?.x??W*.5) + rx*skala*kamera.zoom, (snitOffset?.y??H*.52) + (rz*sb-h*cb)*skala*kamera.zoom, rz*cb+h*sb];
   };
 }
 function sti(punkter, luk = false) {
@@ -81,8 +84,23 @@ function tegn() {
   if (!tilstand.klar || !W || !H) return;
   const p = projektion();
   ctx.clearRect(0,0,W,H);
-  const bg = ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#f0f1e6'); bg.addColorStop(.6,'#dde9e3'); bg.addColorStop(1,'#c3dad5');
+  const bg = ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,tilstand.snit?'#152d34':'#f0f1e6'); bg.addColorStop(.6,tilstand.snit?'#263e42':'#dde9e3'); bg.addColorStop(1,tilstand.snit?'#10282f':'#c3dad5');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  if(tilstand.snit){
+    const terrænfarve=(t,z)=>{
+      const [a,b,c]=t,hy=q=>q[1]/1000*(q[1]>=0?20:tilstand.dybdefaktor);
+      const u=[b[0]-a[0],hy(b)-hy(a),b[2]-a[2]],v=[c[0]-a[0],hy(c)-hy(a),c[2]-a[2]];
+      let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+      if(n[1]<0)n=n.map(v=>-v);const l=Math.hypot(...n)||1;
+      return pakFarve(farve(z,.68+.35*Math.max(0,(-.45*n[0]+.82*n[1]-.35*n[2])/l)));
+    };
+    const resultat=tegnSnit({ctx,raster,p,snit:aktueltSnit,terrænfarve,bredde:W,hoejde:H,terraen,farvenøgle:tilstand.dybdefaktor,tid:performance.now()/1000,spiller:tilstand.rundtur});
+    canvas.dataset.snit=tilstand.snit;canvas.dataset.kamre=resultat.synligeKamre.join(',');
+    canvas.dataset.revision=++revision;
+    if(tilstand.rundtur)ramme=requestAnimationFrame(tegn);
+    return;
+  }
+  delete canvas.dataset.snit;delete canvas.dataset.kamre;
   const [x0,z0,x1,z1] = terraen.graenser;
   const base = -5200, hj = [[x0,base,z0],[x1,base,z0],[x1,base,z1],[x0,base,z1]].map(q=>p(q,false));
   ctx.save();ctx.shadowColor='#16474650';ctx.shadowBlur=30;ctx.shadowOffsetY=20;ctx.fillStyle='#7aaba6';sti(hj,true);ctx.fill();ctx.restore();
@@ -142,7 +160,8 @@ function tegn() {
 }
 const planlaeg = () => { if (!ramme) ramme=requestAnimationFrame(tegn); };
 function stopTur() {
-  clearTimeout(turTid);tilstand.rundtur=false;document.querySelector('#rundtur').setAttribute('aria-pressed','false');document.querySelector('#rundtur').textContent='▷ Rundtur';stopFlyvning();
+  if(ramme){cancelAnimationFrame(ramme);ramme=0;}
+  clearTimeout(turTid);tilstand.rundtur=false;document.querySelector('#rundtur').setAttribute('aria-pressed','false');document.querySelector('#rundtur').textContent=tilstand.snit?'▷ Følg magma':'▷ Rundtur';document.querySelector('.flowstatus').hidden=true;stopFlyvning();
 }
 function stopFlyvning(){cancelAnimationFrame(flyvning);flyvning=0;}
 function vaelgSted(i, anim=true) {
@@ -164,9 +183,10 @@ function manuel(){stopTur();stopFlyvning();}
 document.querySelectorAll('[data-sted]').forEach(b=>b.addEventListener('click',()=>{stopTur();vaelgSted(+b.dataset.sted);}));
 document.querySelector('#havbund').addEventListener('click',e=>{manuel();tilstand.havbund=!tilstand.havbund;e.currentTarget.setAttribute('aria-pressed',String(tilstand.havbund));planlaeg();meddel(tilstand.havbund?'Havbunden er synlig. Havniveauet er uændret.':'Havet dækker havbunden.');});
 document.querySelector('#geologi').addEventListener('click',e=>{manuel();tilstand.geologi=!tilstand.geologi;e.currentTarget.setAttribute('aria-pressed',String(tilstand.geologi));planlaeg();meddel(tilstand.geologi?'Vulkansystemer og pladegrænse vises.':'Vulkansystemer og pladegrænse er skjult.');});
-document.querySelector('#overdrivelse').addEventListener('input',e=>{manuel();tilstand.faktor=+e.target.value;document.querySelector('#faktor').value='×'+tilstand.faktor;if(tilstand.klar)beregnFarver();planlaeg();});
+document.querySelector('#overdrivelse').addEventListener('input',e=>{manuel();if(tilstand.snit){tilstand.dybdefaktor=+e.target.value;document.querySelector('#faktor').value='×'+String(tilstand.dybdefaktor).replace('.',',');tilpasSnit();}else{tilstand.faktor=+e.target.value;document.querySelector('#faktor').value='×'+tilstand.faktor;if(tilstand.klar)beregnFarver();}planlaeg();});
 document.querySelector('#rundtur').addEventListener('click',()=>{
   if(tilstand.rundtur){stopTur();meddel('Rundturen er sat på pause.');return;}
+  if(tilstand.snit){tilstand.rundtur=true;document.querySelector('#rundtur').setAttribute('aria-pressed','true');document.querySelector('#rundtur').textContent='Ⅱ Pause';document.querySelector('.flowstatus').hidden=false;planlaeg();return;}
   tilstand.rundtur=true;document.querySelector('#rundtur').setAttribute('aria-pressed','true');document.querySelector('#rundtur').textContent='Ⅱ Pause';
   const naeste=()=>{if(!tilstand.rundtur)return;vaelgSted((tilstand.sted+1)%steder.length);turTid=setTimeout(naeste,8500);};naeste();
 });
@@ -174,12 +194,12 @@ const drej=(a,b=0)=>{manuel();kamera.drej=((kamera.drej+a+180)%360+360)%360-180;
 const zoom=d=>{manuel();kamera.zoom=klem(kamera.zoom*d,.65,5);planlaeg();};
 document.querySelectorAll('[data-drej]').forEach(b=>b.addEventListener('click',()=>drej(+b.dataset.drej)));
 document.querySelector('#zoomind').addEventListener('click',()=>zoom(1.2));document.querySelector('#zoomud').addEventListener('click',()=>zoom(1/1.2));
-document.querySelector('#nulstil').addEventListener('click',()=>{manuel();vaelgSted(0);});
+document.querySelector('#nulstil').addEventListener('click',()=>{manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(0);});
 canvas.addEventListener('keydown',e=>{
   if(e.altKey||e.ctrlKey||e.metaKey)return;
   const pile={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,5],ArrowDown:[0,-5]};
   if(pile[e.key]){e.preventDefault();drej(...pile[e.key]);}
-  else if(['+','=','-','Home'].includes(e.key)){e.preventDefault();if(e.key==='Home'){manuel();vaelgSted(0);}else zoom(e.key==='-'?1/1.2:1.2);}
+  else if(['+','=','-','Home'].includes(e.key)){e.preventDefault();if(e.key==='Home'){manuel();if(tilstand.snit)visSnit(tilstand.snit);else vaelgSted(0);}else zoom(e.key==='-'?1/1.2:1.2);}
 });
 let traek=null;
 canvas.addEventListener('pointerdown',e=>{if(e.button>0||!tilstand.klar)return;manuel();traek={x:e.clientX,y:e.clientY,id:e.pointerId,type:e.pointerType,aktiv:false};});
@@ -195,7 +215,54 @@ document.querySelector('#fokus').addEventListener('click',e=>{const til=!documen
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){stopTur();stopFlyvning();document.body.classList.remove('fokus');document.querySelector('#fokus').setAttribute('aria-pressed','false');}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stopTur();stopFlyvning();}});
 roligt.addEventListener('change',()=>{stopFlyvning();stopTur();planlaeg();});
-function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;planlaeg();}
+function stoerrelse(){const b=figur.getBoundingClientRect();W=Math.round(b.width);H=Math.round(b.height);const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*d);canvas.height=Math.round(H*d);raster=lavRaster(W,H);ctx.setTransform(d,0,0,d,0,0);const [x0,z0,x1,z1]=terraen.graenser;skala=Math.min(W/((x1-x0)*1.15),H/((z1-z0)*.85+120))*.88;if(tilstand.snit)tilpasSnit();planlaeg();}
+// Geografisk gennemskæring: et regionalt udsnit af samme terræn.
+function tilpasSnit(){
+  if(!aktueltSnit||!W||!H)return;
+  const a=kamera.drej*rad,b=kamera.vip*rad,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+  const s=aktueltSnit,ramme=s.punkter.concat([-1,1].flatMap(k=>[s.world(k*s.valg.halv,s.bund,0),s.world(k*s.valg.halv,s.bund,-s.valg.bag)]));
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(const q of ramme){const x=q[0]-kamera.x,z=q[2]-kamera.z,h=q[1]/1000*(q[1]>=0?20:tilstand.dybdefaktor),rx=x*ca+z*sa,ry=(-x*sa+z*ca)*sb-h*cb;x0=Math.min(x0,rx);x1=Math.max(x1,rx);y0=Math.min(y0,ry);y1=Math.max(y1,ry);}
+  skala=Math.min((W-40)/(x1-x0),(H-185)/(y1-y0))*.96;
+  snitOffset={x:W/2-(x0+x1)/2*skala,y:92+(H-185)/2-(y0+y1)/2*skala};
+}
+function snitAdresse(id){const url=new URL(location.href);if(id)url.searchParams.set('snit',id);else url.searchParams.delete('snit');history.replaceState(null,'',url.pathname+url.search+url.hash);}
+function visSnit(id){
+  if(!tilstand.klar)return;
+  manuel();if(!tilstand.snit)gemtKamera={...kamera};
+  aktueltSnit=lavSnit(terraen,id);tilstand.snit=aktueltSnit.valg.id;
+  document.body.classList.add('snitaktiv');document.querySelector('#snitknap').setAttribute('aria-pressed','true');document.querySelector('#snitknap').textContent='Luk tværsnit';
+  document.querySelector('.snitdestinationer').hidden=false;
+  document.querySelectorAll('button[data-snit]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.snit===tilstand.snit)));
+  document.querySelector('#valgoverskrift').textContent='Vælg et geologisk snit';document.querySelector('.til-snit').textContent='Se hele landskabet →';
+  document.querySelector('#stedsnummer').textContent='SNIT 0'+(SNIT.indexOf(aktueltSnit.valg)+1)+' / 03';
+  for(const id of ['stedsnavn','rejsetitel'])document.querySelector('#'+id).textContent=aktueltSnit.valg.titel;
+  document.querySelector('#rejsetekst').textContent=aktueltSnit.valg.tekst;document.querySelector('#undersoeg').textContent=aktueltSnit.valg.se;
+  document.querySelector('#datastempel').textContent='ETOPO + geologisk fortolkning';document.querySelector('.snitmaerke').hidden=false;
+  document.querySelector('#rundtur').textContent='▷ Følg magma';document.querySelector('.videre').textContent='Tilbage til landskabet →';
+  const liste=document.querySelector('#kammerliste');liste.hidden=false;liste.replaceChildren(...aktueltSnit.kamre.map(k=>{
+    const el=document.createElement('div');el.className='kammerkort';el.append(Object.assign(document.createElement('strong'),{textContent:k.navn}),Object.assign(document.createElement('span'),{textContent:k.label}),Object.assign(document.createElement('small'),{textContent:k.sikker}));el.title=k.tekst;return el;
+  }));
+  const kilde=document.querySelector('#snitkilder');kilde.hidden=false;kilde.replaceChildren('Dybder fra: ',...aktueltSnit.valg.kilder.map(k=>Object.assign(document.createElement('a'),{href:KILDER[k].url,textContent:KILDER[k].titel})),Object.assign(document.createElement('a'),{href:'#snitkildepanel',textContent:'Om det, vi har fortolket →'}));
+  const skyder=document.querySelector('#overdrivelse');skyder.min=.5;skyder.max=6;skyder.step=.25;skyder.value=tilstand.dybdefaktor;skyder.setAttribute('aria-label','Dybdernes lodrette overdrivelse');
+  document.querySelector('#faktor').value='×'+String(tilstand.dybdefaktor).replace('.',',');document.querySelector('#faktornavn').textContent='Dybder';document.querySelector('#faktorbeskrivelse').textContent='Terræn over havet ×20';
+  const beskrivelse=document.querySelector('#landskabstekst');beskrivelse.textContent='Geografisk tværsnit gennem '+aktueltSnit.valg.navn+'. Overfladen følger det målte ETOPO-terræn. Undergrunden er en kildebaseret fortolkning. Dybdeaksen regnes fra havniveau. '+aktueltSnit.kamre.map(k=>k.navn+': '+k.label+'. '+k.sikker+'.').join(' ');
+  Object.assign(kamera,{drej:aktueltSnit.retning,vip:30,zoom:1,x:aktueltSnit.midte[0],z:aktueltSnit.midte[1]});
+  tilpasSnit();snitAdresse(tilstand.snit);planlaeg();meddel(beskrivelse.textContent);
+}
+function lukSnit(){
+  manuel();tilstand.snit=null;aktueltSnit=null;snitOffset=null;document.body.classList.remove('snitaktiv');
+  document.querySelector('#snitknap').setAttribute('aria-pressed','false');document.querySelector('#snitknap').textContent='Tværsnit';document.querySelector('.snitdestinationer').hidden=true;
+  document.querySelector('#valgoverskrift').textContent='Vælg din udsigt';document.querySelector('.til-snit').textContent='Skær landskabet op →';document.querySelector('#kammerliste').hidden=true;document.querySelector('#snitkilder').hidden=true;document.querySelector('.snitmaerke').hidden=true;
+  document.querySelector('#datastempel').textContent='ETOPO 2022 · terræn og havbund';document.querySelector('#rundtur').textContent='▷ Rundtur';document.querySelector('.videre').textContent='Se inde i landskabet →';
+  const skyder=document.querySelector('#overdrivelse');skyder.min=1;skyder.max=30;skyder.step=1;skyder.value=tilstand.faktor;skyder.setAttribute('aria-label','Lodret overdrivelse');document.querySelector('#faktor').value='×'+tilstand.faktor;document.querySelector('#faktornavn').textContent='Højder';document.querySelector('#faktorbeskrivelse').textContent='Lodret overdrivelse';
+  document.querySelector('#landskabstekst').textContent='Islands målte terræn og havbund i 3D med lodret overdrivelse. Orange linjer viser kortlagte aktive vulkansystemer. Lyse toppe er højdefarver, ikke isdata.';
+  const før=gemtKamera;vaelgSted(tilstand.sted,false);if(før)Object.assign(kamera,før);stoerrelse();snitAdresse(null);meddel('Viser det målte landskab igen.');
+}
+function skiftSnit(){if(tilstand.snit)lukSnit();else visSnit(tilstand.sted===1?'reykjanes':'vatnajokull');}
+document.querySelector('#snitknap').addEventListener('click',skiftSnit);
+document.querySelectorAll('button[data-snit]').forEach(b=>b.addEventListener('click',()=>visSnit(b.dataset.snit)));
+for(const a of document.querySelectorAll('.til-snit,.videre'))a.addEventListener('click',e=>{if(!tilstand.klar)return;e.preventDefault();skiftSnit();});
 try {
   // D3 er et lokalt defer-script; ES-moduler kører efter parseren i samme dokument.
   if(!globalThis.d3)throw new Error('Kortbiblioteket mangler');
@@ -221,8 +288,9 @@ try {
   navne=data.navne.map(n=>({...n,punkt:renderPunkt([n.lon,n.lat])})).filter(n=>n.punkt);
   tilstand.klar=true;betjening.forEach(b=>{b.disabled=false;});figur.classList.add('klar');fejltekst.hidden=true;
   new ResizeObserver(stoerrelse).observe(figur);stoerrelse();vaelgSted(0,false);
+  const startSnit=new URLSearchParams(location.search).get('snit');if(startSnit)visSnit(startSnit);
 } catch(fejl) {
   stopTur();fejltekst.classList.add('fejl');fejltekst.replaceChildren('3D-landskabet kunne ikke vises. ',Object.assign(document.createElement('a'),{href:'kort.html',textContent:'Åbn kortet og forklaringen →'}));
   betjening.forEach(b=>{b.disabled=true;});
 }
-export const proeve={kamera,tilstand,terraen:()=>terraen,projektion:()=>projektion(),steder};
+export const proeve={kamera,tilstand,terraen:()=>terraen,projektion:()=>projektion(),snit:()=>aktueltSnit,steder};

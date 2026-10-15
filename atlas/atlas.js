@@ -174,7 +174,7 @@ function visSted(sted) {
 
 function visFordybelse({ titel, beskrivelse, sti, kort: kortsti }) {
   const kort = element('article', '', 'modelkort fordybelse');
-  kort.append(element('p', kortsti ? 'Kort med data og skematisk tværsnit · hører til dette sted' : 'Skematisk tværsnit · hører til dette sted', 'metadata'));
+  kort.append(element('p', kortsti ? 'Målt terræn og fortolket undergrund · hører til dette sted' : 'Skematisk tværsnit · hører til dette sted', 'metadata'));
   kort.append(element('h3', titel), element('p', beskrivelse));
   const links = element('div', '', 'fordybelseslinks');
   if (kortsti) {

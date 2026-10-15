@@ -14,13 +14,14 @@
   <a class="spring" href="#landskab">Spring til landskabet</a>
   <header class="site-header"><div class="regnbue"></div><div class="site-linje">
     <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-    <a href="/atlas/island/kort.html">← Island på kortet</a>
+    <nav class="terraenretur" aria-label="Tilbage til atlas"><a href="/atlas/#island" aria-label="← Island på globussen">← Globus</a><a href="/atlas/island/kort.html" aria-label="← Island på kortet">Kort</a></nav>
   </div></header>
   <main>
-    <div class="intro"><div><p class="overlinje">Naturgeografi · et landskab i bevægelse</p><h1>Island<span>.</span> Fra havbund til højland</h1></div><a class="til-snit" href="/atlas/island/#island">Se under overfladen →</a></div>
+    <div class="intro"><div><p class="overlinje">Naturgeografi · et landskab i bevægelse</p><h1>Island<span>.</span> Fra havbund til højland</h1></div><a class="til-snit" href="?snit=vatnajokull">Skær landskabet op →</a></div>
     <section class="snit ekspedition" aria-label="Undersøg Island i 3D">
       <div class="vaerktoejer">
         <div class="landskabsvalg" role="group" aria-label="Landskabsvisning">
+          <button id="snitknap" aria-pressed="false">Tværsnit</button>
           <button id="havbund" aria-pressed="true">Vis havbund</button>
           <button id="geologi" aria-pressed="true">Vulkansystemer</button>
         </div>
@@ -29,32 +30,53 @@
       <div class="ekspeditionsrum">
         <figure class="landskabsfigur">
           <canvas id="landskab" tabindex="0" role="img" aria-label="Islands terræn i 3D, bygget af NOAA ETOPO-højder" aria-describedby="landskabstekst betjening"></canvas>
-          <div class="landskabsstempel"><span class="punkt"></span> ETOPO 2022 <span>· terræn og havbund</span></div>
+          <div class="landskabsstempel"><span class="punkt"></span><span id="datastempel">ETOPO 2022 · terræn og havbund</span></div>
+          <p class="snitmaerke" hidden>Terræn målt · kammerformer fortolket<br>Akse: km under havniveau</p>
+          <p class="flowstatus" hidden>Illustrativ magmastrøm · ikke et aktuelt udbrud</p>
           <div class="stedsnavn" aria-hidden="true"><span id="stedsnummer">01 / 04</span><span id="stedsnavn">En ø på en undersøisk ryg</span></div>
           <div class="landskabsknapper" role="group" aria-label="Drej og zoom landskabet">
             <button data-drej="-15" aria-label="Drej mod venstre">↶</button><button data-drej="15" aria-label="Drej mod højre">↷</button>
             <button id="zoomind" aria-label="Zoom ind">+</button><button id="zoomud" aria-label="Zoom ud">−</button><button id="nulstil" aria-label="Nulstil visningen">⌂</button>
           </div>
-          <div class="hoejdevalg"><label for="overdrivelse">Højder <output id="faktor" for="overdrivelse">×20</output></label><input id="overdrivelse" type="range" min="1" max="30" value="20" aria-label="Lodret overdrivelse"><span>Lodret overdrivelse</span></div>
+          <div class="hoejdevalg"><label for="overdrivelse"><span id="faktornavn">Højder</span> <output id="faktor" for="overdrivelse">×20</output></label><input id="overdrivelse" type="range" min="1" max="30" value="20" aria-label="Lodret overdrivelse"><span id="faktorbeskrivelse">Lodret overdrivelse</span></div>
           <p id="hentestatus" role="status">Henter Islands landskab …</p>
           <figcaption id="landskabstekst" class="skjult">Målte højder vises med lodret overdrivelse. Kysten følger højdegitterets havniveau. Orange linjer er kortlagte aktive vulkansystemer; den røde linje er en grov model af pladegrænsen. De lyse højder er højdefarver, ikke et kort over isdække. Brug kortet til at aflæse højder og koordinater.</figcaption>
         </figure>
         <aside class="rejsepanel" aria-labelledby="rejsetitel">
-          <p class="overlinje">Vælg din udsigt</p>
+          <p id="valgoverskrift" class="overlinje">Vælg din udsigt</p>
           <nav class="destinationer" aria-label="Steder på Island">
             <button data-sted="0" aria-pressed="true"><span>01</span> Hele Island <span aria-hidden="true">→</span></button>
             <button data-sted="1" aria-pressed="false"><span>02</span> Reykjanes <span aria-hidden="true">→</span></button>
             <button data-sted="2" aria-pressed="false"><span>03</span> Vatnajökull <span aria-hidden="true">→</span></button>
             <button data-sted="3" aria-pressed="false"><span>04</span> Ryggen under havet <span aria-hidden="true">→</span></button>
           </nav>
-          <div class="rejsetekst"><h2 id="rejsetitel">En ø på en undersøisk ryg</h2><p id="rejsetekst">Island er den del af Den Midtatlantiske Ryg, der når over havet. Drej øen og følg landskabet videre ned på havbunden.</p><p id="undersoeg" class="undersoeg">Slå havbunden fra og til. Hvor meget af landskabet skjuler havet?</p></div>
+          <nav class="snitdestinationer destinationer" aria-label="Geologiske tværsnit" hidden>
+            <button data-snit="vatnajokull" aria-pressed="false"><span>01</span> Vatnajökull <span aria-hidden="true">→</span></button>
+            <button data-snit="reykjanes" aria-pressed="false"><span>02</span> Reykjanes <span aria-hidden="true">→</span></button>
+            <button data-snit="hekla" aria-pressed="false"><span>03</span> Hekla <span aria-hidden="true">→</span></button>
+          </nav>
+          <div class="rejsetekst"><h2 id="rejsetitel">En ø på en undersøisk ryg</h2><p id="rejsetekst">Island er den del af Den Midtatlantiske Ryg, der når over havet. Drej øen og følg landskabet videre ned på havbunden.</p><p id="undersoeg" class="undersoeg">Slå havbunden fra og til. Hvor meget af landskabet skjuler havet?</p><div id="kammerliste" hidden></div><p id="snitkilder" hidden></p></div>
           <div class="signatur3d"><span><i class="vulkanlinje"></i>Aktive vulkansystemer</span><span><i class="pladelinje"></i>Pladegrænse (model)</span><span><i class="kystlinje"></i>Havniveau / kyst</span></div>
-          <a class="videre" href="/atlas/island/#island">Hvad sker der nedenunder? <span aria-hidden="true">→</span></a>
+          <a class="videre" href="?snit=vatnajokull">Se inde i landskabet <span aria-hidden="true">→</span></a>
+          <a class="proceslink" href="/atlas/island/#island">Forklaringen på plader og smeltning →</a>
         </aside>
       </div>
       <div class="landskabsfod"><p id="betjening">Træk vandret for at dreje · pile drejer og vipper · +/− zoomer · Home nulstiller</p><a href="/atlas/island/kort.html">Aflæs højder på kortet →</a></div>
     </section>
-    <div class="eftertekst"><details><summary>Data, målestok og begrænsninger</summary><p>Terræn og havbund: NOAA NCEI, <a href="https://doi.org/10.25921/fd45-gt74">ETOPO 2022</a>, surface-udgaven med jøklernes overflade. Samme højdegitter som på <a href="/atlas/island/kort.html#kilder">Island-kortet, hvor alle kilder og licenser står</a>. 3D-visningen er en grovere, bilineært interpoleret tegning af dette gitter; små kratere og sprækker kan ikke aflæses. Lyse toppe følger højden og angiver ikke, hvor der er is.</p><p>Højder og dybder overdrives lodret fra ×1 til ×30 (fra start ×20), så relieffet kan undersøges. Vandrette mål ændres ikke med skyderen. «Vis havbund» fjerner det dækkende hav i tegningen; det ændrer ikke havniveauet. Vulkansystemernes omrids kommer fra Náttúrufræðistofnun (CC BY 4.0), pladegrænsen fra Bird (2003). Sidefladerne er en grafisk sokkel, ikke målte geologiske lag. Der vises ingen aktuelle udbrud og ingen målt geologi under terrænoverfladen.</p></details></div>
+    <div class="eftertekst">
+      <details id="snitkildepanel"><summary>Magmakamrene: hvad ved vi, og hvad er tegnet frit?</summary>
+        <p>Snittene skærer gennem det samme ETOPO-terræn som landskabet. Kamrene er placeret ved de navngivne vulkansystemer. De angivne dybder er afrundede resultater eller eksempler fra artiklernes modeller; de er ikke målte, skarpe kammergrænser.</p>
+        <p>Kamrenes former, deres bredde og de smalle tilførselsveje er en illustrativ fortolkning. Kammerformerne er forstørret for at kunne ses. Varme farver viser magmaområder med både smelte og krystaller. Farvebåndene i klippen er grafiske; de er ikke kortlagte lag. De tre snit sammenstiller undersøgelser fra forskellige år og er ikke en visning af Islands aktuelle tilstand.</p>
+        <p>Dybdeaksen i snitfladen regnes fra havniveau. Svartsengi, Fagradalsfjall og Hekla vises med afrundede dybder under den lokale terrænoverflade, mens Bárðarbunga og Grímsvötns lave område er forankret til havniveau. Det dybe Grímsvötn-kammer ved 10 km er et valgt regneeksempel. Terrænet over havet er forstørret ×20; dybderne har deres egen synlige overdrivelse. Kamrenes bredde og form er ikke en volumenberegning.</p>
+        <ul class="snitartikler">
+          <li><a href="https://en.vedur.is/volcanoes/fagradalsfjall-eruption">Islands Meteorologiske Institut: Svartsengi omkring 4–5 km dybde</a>.</li>
+          <li><a href="https://doi.org/10.1038/s41586-022-04981-x">Halldórsson m.fl. (2022), Nature: Fagradalsfjalls dybe magmakilde</a>.</li>
+          <li><a href="https://doi.org/10.1002/2017GL074749">Hudson m.fl. (2017), GRL: magmatilførsel under Bárðarbunga</a>.</li>
+          <li><a href="https://doi.org/10.1002/2013JB010569">Reverso m.fl. (2014), JGR: en model med to kamre under Grímsvötn</a>.</li>
+          <li><a href="https://doi.org/10.1029/2010JB007576">Ófeigsson m.fl. (2011), JGR: dyb magmalagring under Hekla</a>.</li>
+        </ul>
+      </details>
+      <details><summary>Data, målestok og begrænsninger</summary><p>Terræn og havbund: NOAA NCEI, <a href="https://doi.org/10.25921/fd45-gt74">ETOPO 2022</a>, surface-udgaven med jøklernes overflade. Samme højdegitter som på <a href="/atlas/island/kort.html#kilder">Island-kortet, hvor alle kilder og licenser står</a>. 3D-visningen er en grovere, bilineært interpoleret tegning af dette gitter; små kratere og sprækker kan ikke aflæses. Lyse toppe følger højden og angiver ikke, hvor der er is.</p><p>Højder og dybder overdrives lodret fra ×1 til ×30 (fra start ×20), så relieffet kan undersøges. Vandrette mål ændres ikke med skyderen. «Vis havbund» fjerner det dækkende hav i tegningen; det ændrer ikke havniveauet. Vulkansystemernes omrids kommer fra Náttúrufræðistofnun (CC BY 4.0), pladegrænsen fra Bird (2003). Sidefladerne er en grafisk sokkel, ikke målte geologiske lag. Der vises ingen aktuelle udbrud. Slå «Tværsnit» til for at se en kildebaseret, kunstnerisk fortolkning af geologien under overfladen.</p></details></div>
     <p id="status" class="skjult" role="status" aria-live="polite"></p>
     <noscript><p class="uden-script">3D-landskabet kræver JavaScript. <a href="/atlas/island/kort.html">Se kortet og forklaringen</a> eller <a href="/atlas/island/#island">undersøg tværsnittet</a>.</p></noscript>
   </main>

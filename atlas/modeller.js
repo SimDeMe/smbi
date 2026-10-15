@@ -6,9 +6,9 @@ export const steder = [
     forklaring: 'Island ligger på den Midtatlantiske Ryg, hvor pladerne bevæger sig fra hinanden. Et hotspot bidrager også til vulkanismen.',
     modelnote: 'Generelle modeller – ikke en gengivelse af en bestemt islandsk vulkan.',
     forbehold: 'Et fagligt eksempel på pladetektonik og vulkanisme. Modellerne er generelle og gengiver ikke en bestemt islandsk vulkan.',
-    // Stedets egen fordybelse: et skematisk tværsnit, der hører til netop dette sted.
-    fordybelse: { titel: 'Under Island', sti: '/atlas/island/#island', kort: '/atlas/island/kort.html',
-      beskrivelse: 'Hvor ligger vulkanerne? Kort med terræn, havbund og vulkansystemer fra målte data. Se derefter under overfladen: hvorfor smelter kappen, og hvorfor ligger Island over havet?' }
+    // Stedets egen fordybelse: målt terræn med en fortolket geologisk gennemskæring.
+    fordybelse: { titel: 'Under Island', sti: '/atlas/island/model3d.html?snit=vatnajokull', kort: '/atlas/island/kort.html',
+      beskrivelse: 'Hvor ligger vulkanerne? Kort med terræn, havbund og vulkansystemer fra målte data. Skær det samme 3D-landskab op og undersøg kildebaserede magmasystemer ved Vatnajökull, Reykjanes og Hekla.' }
   },
   {
     id: 'nordatlanten', navn: 'Grønland / Nordatlanten', kortnavn: 'Nordatlanten', koordinater: [-37, 58],
