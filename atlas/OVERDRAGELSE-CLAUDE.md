@@ -1,5 +1,10 @@
 # Overdragelse til Claude – lokal sammenligning i #46
 
+> **Afsluttet 15. oktober 2026.** Sammenligningen er udført i
+> [INDHOLD.md](INDHOLD.md), de 11 afprøvede øvelser er flyttet til
+> `Øvelser/Geografi/` og koblet til atlasset, og ejerens afgørelser står i
+> INDHOLD.md. Dokumentet bevares som historik.
+
 **Næste opgave efter repositorygennemgangen, 14. oktober 2026.** Brugeren har
 bedt om, at Claude overtager og sammenligner med de lokale materialer.
 Dette dokument er overdragelsen; Claude er ikke kørt i denne session, og

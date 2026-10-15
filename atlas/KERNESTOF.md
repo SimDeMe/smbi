@@ -3,9 +3,11 @@
 **Status 14. oktober 2026: repository- og læreplansgennemgang udført til
 [#46](https://github.com/SimDeMe/smbi/issues/46).** Alle 12 kernestofpunkter,
 10 faglige mål og de eksisterende naturgeografiske ressourcer er kortlagt.
-Næste trin er **Claudes sammenligning med ejerens lokale materialer og faglig
-gennemgang med ejeren**. Den del er endnu ikke udført; #46 bør forblive åben
-indtil den er behandlet. Dette er ikke en attest på fuld læreplansdækning.
+Sammenligningen med ejerens lokale materialer er derefter udført i
+[INDHOLD.md](INDHOLD.md), de 11 afprøvede øvelser er flyttet til
+`Øvelser/Geografi/`, og ejeren har taget stilling til prioriteringen
+(15. oktober 2026). #46 er dermed afsluttet. Dette er ikke en attest på fuld
+læreplansdækning; den videre prioritering står i INDHOLD.md.
 
 Biblioteket rummer mange brugbare procesmodeller og forsøg, især om tektonik,
 vejr, jordvand og klima. De største sammenhængende huller i det gennemgåede
@@ -68,7 +70,7 @@ forkortelser; den officielle formulering findes i PDF'en på den angivne side.
 
 | Id / punkt | Eksisterende bidrag og belæg | Status, afgrænsning og næste elevundersøgelse |
 | --- | --- | --- |
-| K1 Jordens udvikling, pladetektonik, jordskælv og vulkaner | Pladegrænser: fem typer med tid/snit og skælvsfordeling; Vulkanudbrud: tre typer og dannelsesforløb. Ø2, Ø10 og Ø16 giver densitet, viskositet og tsunamiundersøgelse. Magnetisk nord kan perspektivere paleomagnetisme. | **E/D.** Stærke procesdele; Jordens samlede udvikling og empirisk global fordeling er ikke samlet belyst. Modelskælv er ikke et katalog. Lad eleven sammenholde pladegrænse med virkelige skælv/vulkaner, tid og databegrænsninger. #48 har nu et kildebelagt pladegrænselag; faktiske skælv/vulkaner er senere leverancer. Lokale Google Earth-opgaver kan genbruges. |
+| K1 Jordens udvikling, pladetektonik, jordskælv og vulkaner | Pladegrænser: fem typer med tid/snit og skælvsfordeling; Vulkanudbrud: tre typer og dannelsesforløb. Ø2, Ø10 og Ø16 giver densitet, viskositet og tsunamiundersøgelse. Magnetisk nord kan perspektivere paleomagnetisme. | **E/D.** Stærke procesdele; Jordens samlede udvikling og empirisk global fordeling er ikke samlet belyst. Modelskælv er ikke et katalog. Lad eleven sammenholde pladegrænse med virkelige skælv/vulkaner, tid og databegrænsninger. #48 har nu kildebelagte lag for pladegrænser, jordskælv (USGS) og vulkaner (GVP), og øvelserne om lokalisering af jordskælv og P-/S-bølger er koblet til atlasset. Lokale Google Earth-opgaver kan genbruges. |
 | K2 Geologiske processer/kredsløb og menneskers ressourcebrug | Stensamlingens 49 poster, Pladegrænser, Vulkanudbrud, Råstoffer; Ø2/Ø10/Ø11/Ø15. Olieøvelsen behandler dannelse/migration; kobberøvelsen forbinder geologisk ressource og økonomisk reserve. | **E/D.** Mange dele, men ikke en samlet undersøgelse af bjergartskredsløb over geologisk tid og menneskelig udnyttelse. Sammenbind fysiske prøver, procesforklaring og ressourcevalg. Undersøg lokal bjergartskredsløbsøvelse først. |
 | K3 Globalt kulstofkredsløb i geofaglige sammenhænge | Drivhusmodellernes CO₂-input og Ø11's fossile dannelse er relevante brudstykker. Stensamlingen beskriver bl.a. kul og karbonatbjergarter. Progressionsplan 2, B7, og plan 3, Bro, skitserer lager-/strømmodel og Keeling-opgave. | **E/M.** Ingen færdig samlet elevressource med globale lagre, strømme og kobling mellem hurtige og geologiske kredsløb fundet. En CO₂-skyder forklarer ikke, hvor atmosfærens kulstof kommer fra. Prioritér efter lokal kontrol en kildebelagt lager-/strømfigur med budget og ændret menneskelig flux; behøver ikke begynde som stor simulation. |
 | K4 Natur-/menneskeskabte landskaber, dannelse/udvikling og produktion/samfund | Bølger, Tidevand og Pladegrænser; Ø3's historiske kystkort, erosionsrate og kystsikring/arealbrug; Ø12's feltprofil af menneskeskabt høj; O2's vandskel. | **E/D.** Empirisk kyst og feltarbejde findes allerede. Samlet glacial landskabsdannelse og forbindelse til jord/landbrug er ikke udarbejdet i elevbiblioteket. Genbrug lokal istidskortøvelse; sammenhold terræn, jord og faktisk arealbrug før en ny 3D-landskabsmodel. |
@@ -155,7 +157,7 @@ mulig leverance; tekst, datasæt, feltvejledning og kortopgave kan være bedre.
 
 | Prioritet | Konkrete næste leverancer | Hvorfor / beslutning før nyudvikling |
 | --- | --- | --- |
-| 0 | Claude sammenligner lokale originaler og retter mapping med fil-/sidebelæg; ejerens faglige review | Kataloget viser vind, vandbalance, energi, verdensmål og bjergartskredsløb. En repository-mangel bestiller ikke automatisk genskabelse. Se [overdragelsen](OVERDRAGELSE-CLAUDE.md). |
+| 0 ✓ | **Udført 14.–15. oktober 2026:** se INDHOLD.md. Claude sammenligner lokale originaler og retter mapping med fil-/sidebelæg; ejerens faglige review | Kataloget viser vind, vandbalance, energi, verdensmål og bjergartskredsløb. En repository-mangel bestiller ikke automatisk genskabelse. Se [overdragelsen](OVERDRAGELSE-CLAUDE.md). |
 | 1 | Sammenhængende kulstofressource med lagre/strømme, enheder/tidsskalaer, menneskelig ændring og CO₂-kobling | K3 har tydelig systemmangel; genbrug i K2/K8/K11 og modelkritik. Begynd med kildebelagt figur og budgetopgave, hvis lokal ressource ikke løser behovet. |
 | 1 | Energi-/produktionscase med teknologi, forbrug, løsninger og konkrete SDG-indikatorer | K7/K9–K12 er kun delvist samlet. Genbrug Ø15/Ø14 og lokale vind-/sol-/by-/fødevarematerialer; dataopgave før bred energisimulator. |
 | 2 | Global cirkulation → klima/vegetation med klimadiagrammer og kort | K5 har procesdele og Ø9's spørgsmål, men mangler samlet geografisk anvendelse. Genbrug lokale globalvind-opgaver først. |

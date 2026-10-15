@@ -202,3 +202,7 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
    over figuren kun på meget brede skærme; ellers under atlasset. */
 @media(min-width:900px) and (max-width:1699px){.eftertekst{grid-row:3;height:auto;margin:8px 0 0;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;text-align:left}}
 @media(min-width:1700px){.eftertekst{margin-right:600px}}
+/* Forsøgsvejledninger under steder og undersøgelser: sammenfoldet, under modelkortene. */
+.oevelser{margin-top:16px;border-top:2px solid var(--ink);padding-top:4px}.oevelser summary{cursor:pointer;min-height:44px;padding:8px 0;font:700 17px/1.5 var(--display)}
+.oevelsesliste{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:12px}.oevelsesliste li{font:15px/1.5 var(--body)}.oevelsesliste li>a:first-child{font:700 16px var(--display)}
+.oevelsesliste .pdf{font:500 12px var(--mono);padding:2px 6px;border:1px solid var(--ink);border-radius:4px;text-decoration:none;white-space:nowrap}.oevelsesliste .metadata,.oevelsesliste span:last-child{display:block}.oevelsesliste .metadata{margin:2px 0}

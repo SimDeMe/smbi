@@ -3,6 +3,18 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Forsøgsvejledninger i atlasset (v433)
+
+22 af vejledningerne under `Øvelser/Geografi/` er skrevet ind i `oevelser` i
+`modeller.js` med samme titel og tekst som kortet på `geografi.html`. De vises
+som en sammenfoldet liste under modelkortene: under hvert sted (`steder`;
+`danmark` vises under Steder ved landekortet), under de tre undersøgelser i
+Processer (`opgaver`: `plade`, `seismik`, `klima`), samlet nederst i Processer
+og i søgningen, hvor listen foldes ud ved et fund. Stien er altid
+`/Øvelser/Geografi/<id>/<id>.html` med `.pdf` ved siden af. Niveau angives kun,
+hvor kortet på `geografi.html` har et. `test/oevelser.py` kontrollerer, at alle
+filer findes, og at listerne vises de rigtige steder.
+
 ## Jordskælv og vulkaner som lag (v430, #48)
 
 To nye knapper, **Jordskælv** og **Vulkaner**, viser observerede kataloger

@@ -1,6 +1,7 @@
 # Fagets indhold og atlasdækning – Naturgeografi C
 
-**Udkast 14. oktober 2026 til #46.** Formålet er en samlet oversigt over,
+**Udkast 14. oktober 2026 til #46; status og ejerens afgørelser opdateret
+15. oktober 2026 (se nedenfor).** Formålet er en samlet oversigt over,
 hvad faget indeholder i praksis, og hvad atlasset og simulationerne derfor skal
 dække. Oversigten er grundlag for et færdigt roadmap; den bestiller ikke selv
 udvikling. Den supplerer [KERNESTOF.md](KERNESTOF.md), som mapper læreplanens
@@ -27,6 +28,16 @@ trusler mod drikkevandet · 4 Istider og det danske landskab · 5 Vulkaner ·
 **Atlasdækning i dag:** seks modelkort, tre steder (Island, Nordatlanten,
 Alperne) og et valgfrit pladegrænselag (PB2002). Biblioteket `geografi/`
 har 16 elevressourcer (se [SIMULATIONSOVERSIGT.md](SIMULATIONSOVERSIGT.md)).
+
+**Siden udkastet (status 15. oktober 2026, Atlas v433):** klimazoner som
+globalt lag (Köppen–Geiger og Vahl) og en landemenu med demografi og
+hydrotermfigurer (B5), jordskælvslag fra USGS og vulkanlag fra Smithsonian
+GVP (A5, A6), et Danmarkskort og Island som 3D-model. De 11 afprøvede
+øvelser nedenfor er flyttet til `Øvelser/Geografi/`, og 22
+forsøgsvejledninger er koblet til atlassets steder, undersøgelser og søgning
+(`oevelser` i `modeller.js`). Statuskolonnerne i tabellerne er fra udkastet;
+A5, A6 og B5 er nu mindst delvist dækket i atlasset, men modellerne for
+seismiske bølger og lokalisering mangler stadig.
 
 **Statusord i tabellerne**
 
@@ -106,7 +117,7 @@ globus?). Store modeller kræver faglig modelbeskrivelse før kode, som #49.
 | --- | --- | --- | --- |
 | **1** | Klimazoner med klik → hydrotermfigur, plantebælte og jordbund | B5, A11, (C1-data) | Eks. 1; to moduler; intet i smbi; selve kernen i et geografisk atlas. Datagrundlaget genbruges i C1 og E2 |
 | **1** | 3-cellemodel på globussen med Coriolis og ITK/monsun januar ↔ juli | B4 (+ B3-link) | Eks. 1–2; tre-fire moduler; ingen model. Bygger direkte på globussen |
-| **2** | Jordskælvs- og vulkanlag (#48 fortsat) + model for seismiske bølger og lokalisering | A5, A6 | Eks. 5–6. Allerede planlagt i #48; modellen mangler helt |
+| **2** | Jordskælvs- og vulkanlag (#48 fortsat; **lagene er leveret i v430**) + model for seismiske bølger og lokalisering | A5, A6 | Eks. 5–6. Allerede planlagt i #48; modellen mangler helt |
 | **2** | Istidslandskab: model + Danmarkslag | A9, C3 | Eks. 4; intet i smbi. Danmarkslaget bærer også C2 og C3 |
 | **2** | Grundvandstværsnit | C2 | Eks. 3; intet ud over porøsitetsmodellen |
 | **3** | Kulstofkredsløbet med lagre og strømme | E4, B7 | K3 er et selvstændigt kernestofpunkt uden ressource; ligger under Eks. 7 |
@@ -118,10 +129,10 @@ globus?). Store modeller kræver faglig modelbeskrivelse før kode, som #49.
 Allerede dækket og kun med behov for atlaslink/sted: B1, B3, A4, A10
 (Årstider, drivhusmodellerne, Termiske tryksystemer, Pladegrænser, Bølger, Tidevand).
 
-## Afprøvede øvelser, der skal på smbi.dk
+## Afprøvede øvelser flyttet til smbi.dk
 
-Bruges i undervisningen, men findes ikke under `Øvelser/Geografi/`. De kan
-kobles til atlassets modeller, når de er flyttet:
+Alle 11 er flyttet til `Øvelser/Geografi/` (oktober 2026) og vises nu i
+atlasset under de relevante steder, undersøgelser og i søgningen:
 
 | Øvelse | Enhed | Original |
 | --- | --- | --- |
@@ -137,12 +148,13 @@ kobles til atlassets modeller, når de er flyttet:
 | Vandbalancen | C1 | 2018/19 (ophav "FG" uafklaret) |
 | Vindmøller og solceller / Planlægning af vindmølleparker | E2 | NF-øvelse 2017; Geolink NG 2022 |
 
-## Åbne spørgsmål til ejeren
+## Ejerens afgørelser (15. oktober 2026)
 
-1. Er rangeringen rigtig – især at klimazoner og global cirkulation går forud
-   for jordskælv/vulkaner, som #48 allerede er i gang med?
-2. Skal datalag (GHI, HDI, energi, vandstress) med i atlasset, eller hører
-   samfundsdata hjemme i opgaver uden for atlasset?
-3. Skal atlasset have et Danmarkskort i højere opløsning (istid, grundvand,
-   oplande), eller holdes det globalt med Danmark som sted?
-4. Er sted Vestnorge for stigningsregn ønsket ud over Alperne?
+1. **Rangeringen er godkendt.** Jordskælvs- og vulkanlagene er allerede
+   leveret (v430); det, der står tilbage af trin 2 for A5/A6, er modellen
+   for seismiske bølger og lokalisering.
+2. **Ja, datalag med samfundsdata (GHI, HDI, energi, vandstress) skal med i
+   atlasset**, med kilde og årstal synligt, ligesom de naturgeografiske lag.
+3. **Ja, atlasset skal have et Danmarkskort i højere opløsning** til istid,
+   grundvand og oplande (A9, C2, C3), og ikke kun Danmark som sted.
+4. **Ja, Vestnorge skal være sted for stigningsregn** ud over Alperne (B2).

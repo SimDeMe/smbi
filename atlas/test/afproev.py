@@ -10,6 +10,7 @@ from europa_quiz import afproev_europa_quiz
 from verdensdele_quiz import afproev_verdensdele_quiz
 from zoom import afproev_zoom
 from information import afproev_stedinformation, afproev_kortinformation
+from oevelser import afproev_oevelser
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
 from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
@@ -75,6 +76,7 @@ with sync_playwright() as p:
             assert side.locator('.modelkort').count() == antal, (ord, antal)
         side.keyboard.press('Escape')
         expect(side.get_by_role('button', name='Søg', exact=True)).to_be_focused()
+        afproev_oevelser(side)
         # Alle seks links peger på eksisterende simulationer med korrekt store/små bogstaver.
         side.get_by_role('button', name='Processer', exact=True).first.click()
         for link in side.locator('.modelkort a').all():

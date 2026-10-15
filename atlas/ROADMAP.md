@@ -106,27 +106,20 @@ deres implementation automatisk.
 
 ## Næste handling
 
-**#46's repositorygennemgang er udført 14. oktober 2026** i
-[KERNESTOF.md](KERNESTOF.md), med komplet
-[ressourceinventar](SIMULATIONSOVERSIGT.md) og afprøvningsbelæg. Næste del er
-[Claudes sammenligning med ejerens lokale materialer](OVERDRAGELSE-CLAUDE.md)
-og den faglige gennemgang med ejeren; #46 er derfor fortsat åben. Prioritér
-genbrug før større nye modeller. #47 kan fortsætte sideløbende, især på
-faktiske elevlaptops og telefoner.
+*Opdateret 15. oktober 2026 (Atlas v433).*
 
-**#48's første leverance er lavet 14. oktober 2026:** et valgfrit,
-klassificeret pladegrænselag fra Birds PB2002 med signatur, kilde, licens,
-forbehold, undersøgelsesopgave og browsertest (se [README](README.md)).
-Den supplerende gennemgang har efterkontrolleret alle originalsegmenter,
-rettet indlæsning ved lagfejl og tilføjet tekstalternativ via Processer.
-Alle fem elevvisninger og udvidede fejltilstande består i Chromium.
-Fysisk telefon og Safari mangler som i #47.
+- **#46 er afsluttet.** Sammenligningen med de lokale materialer står i
+  [INDHOLD.md](INDHOLD.md) sammen med ejerens afgørelser. De 11 afprøvede
+  øvelser er flyttet til `Øvelser/Geografi/`, og 22 forsøgsvejledninger er
+  koblet til atlassets steder, undersøgelser og søgning.
+- **#48 er leveret:** pladegrænser (PB2002), jordskælv (USGS) og vulkaner
+  (Smithsonian GVP) som valgfrie lag med kilder og undersøgelsesopgave.
+- **#49 Island:** milepæl A–E er færdige. Milepæl F (elevafprøvning) er
+  under forberedelse: elevopgave, observationsark og tjekliste til fysisk test.
+- **#47:** test på fysisk telefon/iPad, Safari og skærmlæser mangler stadig
+  og kræver ejeren.
 
-**#48's anden leverance er lavet 15. oktober 2026 (v430):** jordskælv fra
-USGS (M ≥ 5, 1976–2025, farvet efter dybde) og holocæne vulkaner fra
-Smithsonian GVP som valgfrie lag med signatur, aflæsning, kilder,
-undersøgelsesopgave og browsertest. Den fælles lagbetjening er samlet i
-`lagknap.js`. Dermed er den datadrevne sammenligning af alle tre fænomener
-leveret. Næste trin er #49's milepæl A:
-den faglige modelbeskrivelse for Island, som skal kvalitetssikres af ejeren,
-før tværsnit og animation bygges.
+Derefter følger rækkefølgen i INDHOLD.md: 3-cellemodel med ITK/monsun,
+model for seismiske bølger og lokalisering, Danmarkskort i højere opløsning
+(istid, grundvand, oplande), samfundsdatalag (GHI, HDI, energi, vandstress)
+og Vestnorge som sted for stigningsregn.

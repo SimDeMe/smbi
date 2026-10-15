@@ -1,4 +1,4 @@
-import { steder, modeller } from './modeller.js';
+import { steder, modeller, oevelser } from './modeller.js';
 import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
 import { hentIndeks, landFraKort, visLandemenu, lukLandemenu } from './landemenu.js';
@@ -335,6 +335,28 @@ function visModeller(liste) {
   return kortliste;
 }
 
+// Forsøgsvejledninger som sammenfoldet liste, så modellerne står først.
+function visOevelser(liste, titel = 'Forsøgsvejledninger') {
+  const boks = element('details', '', 'oevelser');
+  boks.append(element('summary', `${titel} (${liste.length})`));
+  const ul = element('ul', '', 'oevelsesliste');
+  for (const oevelse of liste) {
+    const sti = `/Øvelser/Geografi/${oevelse.id}/${oevelse.id}`;
+    const li = element('li');
+    const link = element('a', oevelse.titel);
+    link.href = `${sti}.html`;
+    const pdf = element('a', 'PDF', 'pdf');
+    pdf.href = `${sti}.pdf`;
+    pdf.setAttribute('aria-label', `${oevelse.titel} som PDF`);
+    li.append(link, ' ', pdf, element('span', [oevelse.emne, oevelse.niveau].filter(Boolean).join(' · '), 'metadata'), element('span', oevelse.beskrivelse));
+    ul.append(li);
+  }
+  boks.append(ul);
+  return boks;
+}
+
+const oevelserTil = (felt, id) => oevelser.filter(oevelse => oevelse[felt].includes(id));
+
 function visSted(sted) {
   aabn(sted.navn);
   const tilbage = element('button', '← Alle steder', 'tilbage');
@@ -356,6 +378,8 @@ function visSted(sted) {
   }
   if (sted.fordybelse) indhold.append(visFordybelse(sted.fordybelse));
   indhold.append(visModeller(modeller.filter(model => model.steder.includes(sted.id))));
+  const egne = oevelserTil('steder', sted.id);
+  if (egne.length) indhold.append(visOevelser(egne));
 }
 
 function visFordybelse({ titel, beskrivelse, sti, kort: kortsti }) {
@@ -392,7 +416,7 @@ function visSteder() {
     knap.onclick = () => visSted(sted);
     liste.append(knap);
   }
-  indhold.append(liste);
+  indhold.append(liste, visOevelser(oevelserTil('steder', 'danmark'), 'Øvelser i Danmark'));
 }
 
 function visProcesser() {
@@ -424,7 +448,7 @@ function visProcesser() {
   }
   antal.textContent = `${modeller.length} simulationer`;
   resultater.append(visModeller(modeller));
-  indhold.append(valg, antal, resultater);
+  indhold.append(valg, antal, resultater, visOevelser(oevelser));
 }
 
 // Tillad både grønland/groenland og føhn/foehn i søgningen.
@@ -444,7 +468,7 @@ function findLande(navne, tekst) {
 
 function visSoeg() {
   aabn('Søg i atlasset');
-  const label = element('label', 'Land, sted, proces eller simulation', 'soegefelt');
+  const label = element('label', 'Land, sted, proces, simulation eller øvelse', 'soegefelt');
   const felt = element('input');
   felt.type = 'search';
   felt.placeholder = 'Fx Kenya, Island, regn eller drivhuseffekt';
@@ -480,8 +504,21 @@ function visSoeg() {
       const tekst = normaliser(`${model.titel} ${model.emne} ${model.niveau} ${model.beskrivelse} ${model.soegeord || ''} ${stedtekst}`);
       return ord.every(del => tekst.includes(del));
     });
-    antal.textContent = `${fund.length} af ${modeller.length} simulationer${lande.length ? ` · ${lande.length} ${lande.length === 1 ? 'land' : 'lande'}` : ''}`;
-    resultat.replaceChildren(fund.length || lande.length ? visModeller(fund) : element('p', 'Ingen resultater. Prøv et land, et sted eller en proces, fx Kenya, klima eller vulkan.'));
+    const oevelsesfund = oevelser.filter(oevelse => {
+      const tekst = normaliser(`${oevelse.titel} ${oevelse.emne} ${oevelse.beskrivelse}`);
+      return ord.every(del => tekst.includes(del));
+    });
+    antal.textContent = `${fund.length} af ${modeller.length} simulationer${oevelsesfund.length ? ` · ${oevelsesfund.length} ${oevelsesfund.length === 1 ? 'øvelse' : 'øvelser'}` : ''}${lande.length ? ` · ${lande.length} ${lande.length === 1 ? 'land' : 'lande'}` : ''}`;
+    if (!fund.length && !lande.length && !oevelsesfund.length) {
+      resultat.replaceChildren(element('p', 'Ingen resultater. Prøv et land, et sted eller en proces, fx Kenya, klima eller vulkan.'));
+    } else {
+      resultat.replaceChildren(visModeller(fund));
+      if (oevelsesfund.length) {
+        const boks = visOevelser(oevelsesfund);
+        boks.open = ord.length > 0;
+        resultat.append(boks);
+      }
+    }
   }
   felt.addEventListener('input', soeg);
   indhold.append(label, antal, landeresultat, resultat);
@@ -620,6 +657,7 @@ function visKlimaopgave() {
   }
   indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
   indhold.append(visModeller(modeller.filter(model => ['Global atmosfære', 'Vejr og klima'].includes(model.emne))));
+  indhold.append(visOevelser(oevelserTil('opgaver', 'klima')));
 }
 
 const SKAELVKILDE = 'Jordskælv: U.S. Geological Survey, Earthquake Hazards Program, ANSS Comprehensive Earthquake Catalog (ComCat), hentet 15. oktober 2026 via earthquake.usgs.gov/fdsnws. USGS-data er offentligt domæne (public domain). ' +
@@ -714,6 +752,7 @@ function visSeismikopgave() {
     };
     indhold.append(find);
   }
+  indhold.append(visOevelser(oevelserTil('opgaver', 'seismik')));
 }
 
 function visPladeopgave() {
@@ -806,6 +845,7 @@ function visPladeopgave() {
   }
   indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
   indhold.append(visModeller(modeller.filter(model => model.steder.includes('island'))));
+  indhold.append(visOevelser(oevelserTil('opgaver', 'plade')));
 }
 
 function lavGraenseoversigt() {

@@ -44,3 +44,54 @@ export const modeller = [
     beskrivelse: 'Undersøg energibalancen med tal, albedo og tilbagekoblinger i en idealiseret global model.',
     sti: '/geografi/drivhuseffekten.html', soegeord: 'global klima co2 kuldioxid albedo feedback stråling energi' }
 ];
+
+// Forsøgsvejledninger fra Øvelser/Geografi/ (samme titler og tekster som kortene på
+// geografi.html). Stien er /Øvelser/Geografi/<id>/<id>.html, med .pdf ved siden af.
+// `steder` kobler til stedmarkørerne (og 'danmark' til landekortet), `opgaver` til
+// undersøgelserne under Processer: 'plade', 'seismik' og 'klima'.
+export const oevelser = [
+  { id: 'albedo-og-overfladetemperatur', titel: 'Albedo og overfladetemperatur', emne: 'Klima · Vejr', niveau: 'NV / C', steder: [], opgaver: ['klima'],
+    beskrivelse: 'Mål temperaturen på gråtoner under en lampe og på overflader omkring skolen, og forklar is-albedo-tilbagekoblingen.' },
+  { id: 'bjergarters-densitet', titel: 'Bjergarternes densitet', emne: 'Geologi', steder: ['island'], opgaver: ['plade'],
+    beskrivelse: 'Vej granit, basalt, peridotit og eklogit i luft og i vand, og brug densiteten til at forklare, hvorfor oceanbunden synker.' },
+  { id: 'bjergarternes-kredsloeb', titel: 'Bjergarternes kredsløb', emne: 'Geologi', niveau: 'NV / C', steder: ['danmark'], opgaver: ['plade'],
+    beskrivelse: 'Sortér bjergartsprøver efter, hvor i kredsløbet de er dannet, og undersøg en stor sten i jeres nærområde.' },
+  { id: 'digital-kystopmaaling-rojle', titel: 'Digital opmåling af kystlinjen ved Røjle Klint', emne: 'Kyst', steder: ['danmark'], opgaver: [],
+    beskrivelse: 'Optegn kystlinjen på historiske kort og luftfotos i MiljøGIS, og se hvor der er eroderet og aflejret.' },
+  { id: 'drivhuseffekt-i-miniature', titel: 'Drivhuseffekt i miniature', emne: 'Klima · Vejr', niveau: 'NV / C', steder: [], opgaver: ['klima'],
+    beskrivelse: 'Lampe, termometer og et, to, tre og fire lag viskestykke: hvor meget varmere bliver det for hvert lag?' },
+  { id: 'groenlandspumpen-model', titel: 'Grønlandspumpen', emne: 'Klima · Hav', steder: ['nordatlanten'], opgaver: [],
+    beskrivelse: 'Modelforsøg med hele cirkulationen i ét kar: is i den ene ende, varme i den anden.' },
+  { id: 'groenlandspumpen-nv', titel: 'Grønlandspumpen — NV-udgave', emne: 'Klima · Hav', niveau: 'NV / C', steder: ['nordatlanten'], opgaver: [],
+    beskrivelse: 'Koldt mod varmt og salt mod fersk med skilleplade, og derefter hele pumpen i ét kar.' },
+  { id: 'havniveau-og-isafsmeltning', titel: 'Havniveau og isafsmeltning', emne: 'Klima · Hav · Kyst', niveau: 'NV / C', steder: ['nordatlanten'], opgaver: ['klima'],
+    beskrivelse: 'To kar under en lampe: is på land og is i havet — hvilken hæver vandstanden, når den smelter?' },
+  { id: 'hawaii-og-stillehavspladens-hastighed', titel: 'Hawaii og Stillehavspladens hastighed', emne: 'Geologi', niveau: 'C', steder: [], opgaver: ['plade', 'seismik'],
+    beskrivelse: 'Undersøg Hawaii–Emperor-kæden i Google Earth, og beregn ud fra vulkanernes alder, hvor hurtigt Stillehavspladen har flyttet sig.' },
+  { id: 'konvektionskammer-med-opgaver', titel: 'Konvektionskammer — med journalopgaver', emne: 'Vejr', steder: [], opgaver: ['klima'],
+    beskrivelse: 'Konvektionsforsøget med journaldel: fotodokumentation med H og L markeret og spørgsmål om det termiske lavtryk.' },
+  { id: 'kortoevelse-istidslandskaber', titel: 'Kortøvelse til istidslandskaber', emne: 'Geologi · Landskab', niveau: 'NF / C', steder: ['danmark'], opgaver: [],
+    beskrivelse: 'Find hovedopholdslinjen i GEUS\' geologiportal, og sammenlign terræn og jordarter vest og øst for den og nord for Limfjorden.' },
+  { id: 'lavas-viskositet', titel: 'Lavas viskositet', emne: 'Geologi · Landskab', steder: ['island'], opgaver: ['seismik'],
+    beskrivelse: 'Lad fire væsker løbe ned ad et skråt bræt, og forklar ud fra farten, hvorfor nogle vulkaner er høje og andre brede.' },
+  { id: 'ledeblokke', titel: 'Ledeblokke', emne: 'Geologi · Landskab', niveau: 'NF / C', steder: ['danmark'], opgaver: [],
+    beskrivelse: 'Bestem ledeblokke, find deres oprindelsessted i Norge, Sverige og Østersøen, og afgør, hvilket isfremstød der har bragt dem.' },
+  { id: 'lokalisering-af-jordskaelv', titel: 'Lokalisering af jordskælv', emne: 'Geologi', niveau: 'C', steder: [], opgaver: ['seismik'],
+    beskrivelse: 'Aflæs P- og S-bølger på rigtige seismogrammer fra et canadisk jordskælv, og find epicentret med cirkler i Google Earth.' },
+  { id: 'maaling-af-luftfugtighed', titel: 'Måling af luftfugtighed', emne: 'Vejr · Vand', niveau: 'NF / C', steder: ['alperne'], opgaver: ['klima'],
+    beskrivelse: 'Mål luftfugtigheden inde og ude med et psykrometer, find dugpunktet, og beregn, hvor mange gram vanddamp der er i klasselokalet.' },
+  { id: 'opmaaling-af-terraenprofil', titel: 'Opmåling af terrænprofil', emne: 'Geologi · Landskab', steder: ['danmark'], opgaver: [],
+    beskrivelse: 'Opmål et terrænprofil i felten, og tegn landskabets form ud fra jeres egne målepunkter.' },
+  { id: 'p-og-s-boelger-i-slinky', titel: 'P- og S-bølger i en slinky', emne: 'Geologi', niveau: 'C', steder: [], opgaver: ['seismik'],
+    beskrivelse: 'Design selv et forsøg, der måler P- og S-bølgernes fart i en slinky-fjeder, og film bølgerne.' },
+  { id: 'soe-og-landbrise', titel: 'Sø- og landbrise', emne: 'Vejr · Klima', niveau: 'NF / C', steder: [], opgaver: ['klima'],
+    beskrivelse: 'Varm en skål sand og en skål vand under en lampe, og lad dem køle af igen: hvorfor vender vinden ved kysten om aftenen?' },
+  { id: 'tsunamiboelgers-hastighed', titel: 'Tsunamibølgers hastighed', emne: 'Geologi', steder: [], opgaver: ['seismik'],
+    beskrivelse: 'Mål bølgers fart i et vandkar ved tre dybder, sammenlign med v = √(g·d), og regn på en tsunami over oceanet.' },
+  { id: 'vandbalancen', titel: 'Vandbalancen', emne: 'Vand · Grundvand · Klima', niveau: 'C', steder: ['danmark'], opgaver: ['klima'],
+    beskrivelse: 'Følg nedbør og fordampning måned for måned med DMI\'s tal, og find ud af, hvornår der dannes grundvand — i et gennemsnitsår og i tørkeåret 2018.' },
+  { id: 'vands-temperatur-salinitet-og-densitet', titel: 'Vands temperatur, salinitet og densitet', emne: 'Hav', steder: ['nordatlanten'], opgaver: [],
+    beskrivelse: 'To skillepladeforsøg: hvad temperaturforskel og saltforskel hver for sig gør ved to vandmasser.' },
+  { id: 'vindmoeller-og-solceller', titel: 'Vindmøller og solceller', emne: 'Energi · Ressourcer', niveau: 'NF / C', steder: ['danmark'], opgaver: [],
+    beskrivelse: 'Mål vind og sol med en modelvindmølle og et solcellepanel, aflæs elsystemet lige nu, og find den bedste placering til en vindmøllepark på Fyn.' }
+];
