@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jordskælvsbølger model B — smbi.dk</title>
+  <meta name="description" content="Se P-, S- og overfladebølger ryste klippen, find et skjult jordskælv med S−P-metoden, og følg bølgerne gennem Jordens kappe og kerne.">
+  <link rel="canonical" href="https://smbi.dk/atlas/jordskaelvsboelger-b/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/atlas/jordskaelvsboelger-b/">
+  <meta property="og:title" content="Jordskælvsbølger model B — smbi.dk">
+  <meta property="og:description" content="Find et skjult jordskælv med seismogrammer og cirkler, og se hvordan bølgerne afslører Jordens kerne.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="jordskaelvsboelger.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="spring" href="#lab">Spring til modellen</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+      <nav aria-label="Sitet"><a href="/atlas/">← Atlas</a><a href="/geografi.html">Alle geografisimulationer</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <div>
+        <p class="overlinje">Atlas · Pladetektonik · Model B</p>
+        <h1>Jordskælvsbølger<span>.</span> <em>Lyt til Jorden.</em></h1>
+      </div>
+      <p class="intro-tekst">Tre slags bølger, ét skjult skælv – og en kerne, ingen har set.</p>
+      <div class="intro-knapper">
+        <button id="om-knap" class="lille" aria-haspopup="dialog">Hvorfor er modellen sådan?</button>
+        <button id="fokus" class="lille" aria-pressed="false" title="Skjul overskrift og sidehoved">Fokus</button>
+      </div>
+    </div>
+
+    <section id="lab" class="lab" aria-label="Jordskælvsbølger – interaktiv model">
+      <div class="faner" role="tablist" aria-label="Vælg del af modellen">
+        <button role="tab" id="fane-1" aria-controls="del-1" aria-selected="true" data-fane="1"><b>1</b><span>Bølgerne<small>Hvad ryster?</small></span></button>
+        <button role="tab" id="fane-2" aria-controls="del-2" aria-selected="false" tabindex="-1" data-fane="2"><b>2</b><span>Find skælvet<small>S−P og cirkler</small></span></button>
+        <button role="tab" id="fane-3" aria-controls="del-3" aria-selected="false" tabindex="-1" data-fane="3"><b>3</b><span>Gennem Jorden<small>Kerne og skyggezone</small></span></button>
+      </div>
+
+      <!-- 1 · Bølgetyperne -->
+      <div class="del" id="del-1" role="tabpanel" aria-labelledby="fane-1">
+        <div class="figur">
+          <canvas id="blok" role="img" aria-label="Snit gennem jordskorpen som et gitter af små klippestykker. Bølgen bevæger sig fra venstre mod højre."></canvas>
+          <div class="maerke">Model · bevægelsen er overdrevet</div>
+          <p id="blok-tid" class="figurtekst" aria-hidden="true"></p>
+        </div>
+        <aside class="panel">
+          <div class="vaelger" role="radiogroup" aria-label="Bølgetype">
+            <button role="radio" aria-checked="true" data-boelge="P"><i class="prik p"></i>P-bølge</button>
+            <button role="radio" aria-checked="false" data-boelge="S"><i class="prik s"></i>S-bølge</button>
+            <button role="radio" aria-checked="false" data-boelge="R"><i class="prik r"></i>Overflade</button>
+            <button role="radio" aria-checked="false" data-boelge="kaploeb"><i class="prik alle"></i>Kapløbet</button>
+          </div>
+          <div class="knaprad">
+            <button id="blok-pause">Ⅱ Pause</button>
+            <button id="blok-spor" aria-pressed="true">Partikelspor</button>
+            <button id="blok-igen" hidden>↻ Nyt skælv</button>
+          </div>
+          <div id="boelgekort" class="kort" aria-live="polite"></div>
+          <details class="hvorfor">
+            <summary>Hvorfor ser modellen sådan ud?</summary>
+            <p>Hvert kryds i gitteret er et lille stykke klippe. Klippen bliver, hvor den er – det er kun <b>bevægelsen</b>, der løber videre. Udslaget er overdrevet mange tusind gange: Et kraftigt skælv flytter jorden centimeter til meter, ikke en tredjedel af en bølgelængde.</p>
+            <p>Farterne står i det rigtige forhold til hinanden (P ≈ 6,0, S ≈ 3,4 og overfladebølger ≈ 3,1 km/s i skorpen), men tiden er sat ned, så øjet kan følge med. Bølgerne er tegnet som <i>plane</i> bølger, der løber én vej; fra et rigtigt skælv breder de sig i alle retninger og svækkes med afstanden.</p>
+            <p>S-bølgen er tegnet op-ned. I virkeligheden kan den lige så godt ryste til siden, ud af skærmen. Det gør den anden type overfladebølge, Love-bølgen, også – den kan ikke ses fra siden og er derfor udeladt.</p>
+          </details>
+        </aside>
+      </div>
+
+      <!-- 2 · Lokalisering -->
+      <div class="del" id="del-2" role="tabpanel" aria-labelledby="fane-2" hidden>
+        <div class="figur lokal">
+          <div class="kortrum">
+            <canvas id="kort" tabindex="0" role="application" aria-label="Kort over modelområdet med seismografstationer. Klik eller tryk Enter for at sætte dit bud på epicentret; piletasterne flytter buddet."></canvas>
+            <div class="maerke">Modelområde · intet rigtigt sted</div>
+          </div>
+          <div class="seismogrammer">
+            <div class="seismo-top"><span>Seismogrammer</span><button id="start-mobil" class="lille kun-smal" aria-label="Start skælvet (samme som knappen i trin 1)">▶ Start</button><span id="seismo-ur">Sekunder efter kl. 08.00.00</span></div>
+            <div id="spor"></div>
+            <p class="seismo-hjaelp" id="seismo-hjaelp">Klik på kurven: 1. klik = P, 2. klik = S. Træk for at justere. Med tastatur: P/S vælger mærke, ← → flytter (Skift = 1 s).</p>
+          </div>
+        </div>
+        <aside class="panel">
+          <div id="resultat" class="resultat" role="status" aria-live="polite" hidden></div>
+          <ol class="trin" id="trin">
+            <li data-trin="1"><b>Lad Jorden ryste.</b> <button id="start" class="hoved">▶ Start skælvet</button></li>
+            <li data-trin="2"><b>Aflæs P og S</b> på hvert seismogram. Hvor lang tid går der fra P til S?</li>
+            <li data-trin="3"><b>Regn afstanden ud.</b> <span class="formel">d = 8,0 km/s · (t<sub>S</sub> − t<sub>P</sub>)</span> Cirklen tegnes om stationen.</li>
+            <li data-trin="4"><b>Find epicentret.</b> Klik på kortet, hvor cirklerne mødes. <button id="afsloer" disabled>Afslør skælvet</button></li>
+          </ol>
+          <div class="indstillinger">
+            <div class="felt"><span>Stationer</span><div class="vaelger lille-vaelger" role="radiogroup" aria-label="Antal stationer">
+              <button role="radio" aria-checked="false" data-antal="2">2</button><button role="radio" aria-checked="true" data-antal="3">3</button><button role="radio" aria-checked="false" data-antal="4">4</button></div></div>
+            <div class="felt"><span>Baggrundsstøj</span><div class="vaelger lille-vaelger" role="radiogroup" aria-label="Baggrundsstøj">
+              <button role="radio" aria-checked="false" data-stoej="0.04">Lav</button><button role="radio" aria-checked="true" data-stoej="0.14">Middel</button><button role="radio" aria-checked="false" data-stoej="0.4">Høj</button></div></div>
+            <div class="knaprad">
+              <button id="nyt">↻ Nyt skælv</button>
+              <button id="fronter" aria-pressed="false" title="Viser bølgefronterne under afspilningen">Vis bølgefronter</button>
+            </div>
+            <p class="smaa">Før start kan du trække stationerne rundt på kortet. Prøv at sætte dem på en lige linje!</p>
+          </div>
+          <details class="hvorfor" id="bonus">
+            <summary>Bonus: Hvor kraftigt var skælvet?</summary>
+            <p>Richter-magnituden bruger det <b>største udslag</b> A (i mm, fra nul-linjen) og afstanden d i km. Aflæs A på ét seismogram – skalaen står i venstre side.</p>
+            <p class="formel stor">M<sub>L</sub> = log<sub>10</sub>(A) + 1,11·log<sub>10</sub>(d) + 0,00189·d + 0,59</p>
+            <p class="smaa">Afstandsleddene gør op for, at bølgerne svækkes på vejen. Formlen er den internationale standard (IASPEI) for lokal magnitude, skrevet til udslaget på en Wood-Anderson-seismograf som Richters egen.</p>
+            <div class="magnitude">
+              <label>Station <select id="mag-station"></select></label>
+              <label>A (mm) <input id="mag-a" type="number" min="0.01" step="0.1" inputmode="decimal"></label>
+            </div>
+            <p id="mag-ud" class="smaa" aria-live="polite">Sæt først P og S på stationen.</p>
+            <p class="smaa">Hver gang magnituden stiger med 1, bliver udslaget 10 gange større, og skælvet frigør ca. 32 gange så meget energi.</p>
+          </details>
+          <details class="hvorfor">
+            <summary>Hvorfor ser modellen sådan ud?</summary>
+            <p><b>Hvorfor 8 km pr. sekund?</b> P og S starter samtidig. P bruger t<sub>P</sub> = d/v<sub>P</sub>, S bruger t<sub>S</sub> = d/v<sub>S</sub>. Forskellen vokser med afstanden:</p>
+            <p class="formel stor">Δt = d/v<sub>S</sub> − d/v<sub>P</sub> &nbsp;⇒&nbsp; d = Δt · v<sub>P</sub>·v<sub>S</sub> / (v<sub>P</sub> − v<sub>S</sub>)</p>
+            <p>Med v<sub>P</sub> = 6,0 km/s og v<sub>S</sub> = 3,43 km/s bliver brøken 8,0 km/s. Man behøver altså ikke vide, <i>hvornår</i> skælvet skete – kun forskellen mellem P og S.</p>
+            <p><b>Hvorfor tre stationer?</b> Én station siger kun «så langt væk» – en cirkel. To cirkler skærer hinanden i to punkter. Den tredje afgør, hvilket af dem det er.</p>
+            <p><b>Forenklinger:</b> Skorpen har samme fart overalt, Jorden er flad (fint op til nogle hundrede km), og skælvet ligger så tæt på overfladen (ca. 10 km), at afstanden måles langs jorden. Seismogrammerne er <i>beregnede</i>: Ankomsttider og største udslag følger modellen præcist, men bølgeformen er skematisk.</p>
+            <p><b>I virkeligheden</b> bruger man mange stationer og en computer, der også finder dybden og tidspunktet. Fart og aflæsning er aldrig helt præcise, så cirklerne mødes sjældent i ét punkt, men i en lille trekant. Dér ligger skælvet sandsynligvis.</p>
+          </details>
+        </aside>
+      </div>
+
+      <!-- 3 · Gennem Jorden -->
+      <div class="del" id="del-3" role="tabpanel" aria-labelledby="fane-3" hidden>
+        <div class="figur jord">
+          <canvas id="jord" role="img" aria-label="Snit gennem Jorden med skorpe, kappe, flydende ydre kerne og fast indre kerne. Stråler fra et skælv øverst."></canvas>
+          <div class="maerke">Beregnet · farter fra ak135</div>
+          <p id="jord-ur" class="ur" aria-live="off"></p>
+          <div class="tegnforklaring" aria-hidden="true"><span><i class="streg p"></i>P</span><span><i class="streg s"></i>S</span><span><i class="skravering"></i>Skyggezone</span></div>
+        </div>
+        <aside class="panel">
+          <div class="tidslinje">
+            <button id="jord-afspil" aria-pressed="false" aria-label="Afspil bølgerne">▶</button>
+            <label for="jord-tid" class="kun-oplaesning">Tid efter skælvet</label>
+            <input id="jord-tid" type="range" min="0" max="1560" step="5" value="420">
+          </div>
+          <div class="knaprad">
+            <button id="jord-p" aria-pressed="true"><i class="prik p"></i>P-bølger</button>
+            <button id="jord-s" aria-pressed="true"><i class="prik s"></i>S-bølger</button>
+            <button id="jord-kerne" aria-pressed="true">Indre kerne</button>
+            <button id="jord-straaler" aria-pressed="true">Stråler</button>
+          </div>
+          <div class="station3">
+            <label for="jord-afstand">Seismograf <output id="jord-afstand-ud">60°</output> fra skælvet</label>
+            <input id="jord-afstand" type="range" min="2" max="180" step="1" value="60">
+            <canvas id="jord-seismo" role="img" aria-label="Seismogram ved den valgte afstand"></canvas>
+            <p id="jord-aflaes" class="smaa" aria-live="polite"></p>
+          </div>
+          <div id="jord-tekst" class="kort"></div>
+          <details class="hvorfor">
+            <summary>Gangtidskurven</summary>
+            <canvas id="gangtid" role="img" aria-label="Gangtidskurve: ankomsttid i minutter mod afstand i grader for P- og S-bølger."></canvas>
+            <p class="smaa">Sådan finder man fjerne skælv: Tidsforskellen S − P aflæses på kurven, ikke med 8 km/s. Kurverne bøjer, fordi bølgerne går hurtigere dybt nede. 1° langs overfladen er 111 km.</p>
+          </details>
+          <details class="hvorfor">
+            <summary>Hvorfor ser modellen sådan ud?</summary>
+            <p>Farten er sat lagvis efter referencemodellen <b>ak135</b> (Kennett, Engdahl &amp; Buland 1995), afrundet. Strålerne følges trin for trin: Inde i et lag bøjer de, fordi farten stiger med dybden, og ved hver lagflade brydes de efter <b>Snells lov</b>, sin i<sub>1</sub>/v<sub>1</sub> = sin i<sub>2</sub>/v<sub>2</sub>. Skyggezonen er ikke tegnet ind – den opstår af beregningen.</p>
+            <p>Gangtiderne passer med få procent med de tabeller, seismologer bruger (fx P ved 60°: ca. 10 min). Jorden er her helt kugleformet og ens i alle retninger.</p>
+            <p><b>Udeladt:</b> Refleksioner fra overfladen og kernen (fx PP og PcP), S-bølger der omdannes til P-bølger i kernen (SKS), og den lille smule energi, der bøjer rundt om kernen (diffraktion). Den sidste er grunden til, at lærebøger ofte skriver 103°–142° for P-skyggezonen, mens strålerne her stopper ved ca. 99°.</p>
+            <p>Styrken på seismogrammet er skematisk: Den afhænger kun af, hvor tæt strålerne lander.</p>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <p class="fodnote">Model B til atlasset på smbi.dk. Øvelser: <a href="/Øvelser/Geografi/lokalisering-af-jordskaelv/lokalisering-af-jordskaelv.html">Lokalisering af jordskælv</a> (rigtige seismogrammer) · <a href="/Øvelser/Geografi/p-og-s-boelger-i-slinky/p-og-s-boelger-i-slinky.html">P- og S-bølger i en slinky</a>. Se også de målte skælv på <a href="/atlas/">globussen i atlasset</a>.</p>
+  </main>
+
+  <dialog id="om" aria-labelledby="om-titel">
+    <div class="dialog-top"><p class="overlinje">Om modellen</p><button id="om-luk" class="lille" aria-label="Luk">Luk ×</button></div>
+    <h2 id="om-titel">Hvorfor er modellen, som den er?</h2>
+    <p>Jordskælvsbølger er det vigtigste redskab, vi har til at se ind i Jorden. Modellen er bygget op i tre trin, som følger hinanden:</p>
+    <ol>
+      <li><b>Bølgerne.</b> P- og S-bølger rejser gennem klippen med hver sin fart og bevægelse. P er hurtigst, S kan ikke gå gennem væske. Det er de to egenskaber, resten af modellen bygger på.</li>
+      <li><b>Find skælvet.</b> Fordi P er hurtigere end S, vokser afstanden mellem dem på seismogrammet med afstanden til skælvet. Det giver en cirkel pr. station – og tre cirkler giver ét punkt. Her er skorpen gjort ens og Jorden flad, så regnestykket bliver d = 8,0 km/s · Δt.</li>
+      <li><b>Gennem Jorden.</b> Over store afstande gælder de enkle tal ikke længere. Farten vokser med dybden, så bølgerne bøjer. Når farten pludselig falder ved kernen, og S-bølgerne forsvinder, kan vi se, at den ydre kerne er flydende. Her er farterne fra en rigtig referencemodel, og strålerne beregnes med Snells lov.</li>
+    </ol>
+    <p><b>Model, ikke måling.</b> Del 1 er en tegning med overdrevet bevægelse. Del 2 bruger realistiske farter, men beregnede seismogrammer fra et opdigtet modelområde – brug øvelsen med rigtige seismogrammer for at prøve med data. Del 3 er en beregning med farter, der er målt indirekte ud fra tusindvis af skælv.</p>
+    <p><b>Historien.</b> R.D. Oldham fandt kernen i 1906. Beno Gutenberg bestemte i 1914 dens dybde til ca. 2900 km. Harold Jeffreys viste i 1926, at den må være flydende. Den danske seismolog Inge Lehmann opdagede i 1936 den faste indre kerne ud fra svage P-bølger i skyggezonen.</p>
+    <p class="smaa">Kilder: B.L.N. Kennett, E.R. Engdahl &amp; R. Buland (1995): Constraints on seismic velocities in the Earth from traveltimes, <i>Geophys. J. Int.</i> 122 (ak135). C.F. Richter (1935): An instrumental earthquake magnitude scale, <i>Bull. Seism. Soc. Am.</i> 25. L.K. Hutton &amp; D.M. Boore (1987): The M<sub>L</sub> scale in southern California, <i>Bull. Seism. Soc. Am.</i> 77 (IASPEI-standarden for M<sub>L</sub>). I. Lehmann (1936): P′, <i>Publ. Bur. Centr. Séism. Internat.</i> A14.</p>
+  </dialog>
+
+  <noscript><p class="noscript">Modellen kræver JavaScript. Kort fortalt: P-bølger er hurtigst og presser klippen sammen; S-bølger ryster på tværs og kan ikke gå gennem væske. Afstanden til et skælv er ca. 8 km gange tiden mellem P og S, og tre stationer giver epicentret.</p></noscript>
+</body>
+</html>

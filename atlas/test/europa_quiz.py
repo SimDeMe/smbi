@@ -138,7 +138,7 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
         assert not side.locator('body').evaluate("el=>el.classList.contains('quiz')")
         side.keyboard.press('Escape');assert billede(side)==foer
         side.get_by_role('button',name='Processer',exact=True).first.click()
-        assert side.locator('.modelkort').count()==6
+        assert side.locator('.modelkort').count()==8
         side.keyboard.press('Escape');side.unroute(moenster)
         if type in ['modul','bibliotek']:klar(side,adresse)
         start(side);side.locator('#quiz-stop').click();side.close()
