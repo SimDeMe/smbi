@@ -3,6 +3,48 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Jordskælv og vulkaner som lag (v430, #48)
+
+To nye knapper, **Jordskælv** og **Vulkaner**, viser observerede kataloger
+oven på globussen. Sammen med pladegrænserne giver de det klassiske mønster:
+lavtliggende skælv ved spredningsrygge og bevarende grænser, skælv der bliver
+dybere ind over den overliggende plade ved subduktion, og vulkanbuer.
+
+- **Jordskælv** (`jordskaelv.js`): USGS ComCat, M ≥ 5, 1976–2025, 83 469
+  skælv, public domain. Farve = dybde i tre klasser (0–70, 70–300, over 300 km)
+  med monoton lyshed (orange → magenta → mørkeblå), størrelse = magnitude.
+  Farve er ikke eneste signal: hver dybdeklasse kan slås fra i signaturen, og
+  magnitudegrænsen kan sættes til 6 eller 7. Projektionen regnes direkte i
+  modulet (samme formel som D3's ortografiske) for at holde de 83 000 punkter
+  under ca. 11 ms pr. billede; testen kontrollerer, at den rammer D3's punkt.
+- **Vulkaner** (`vulkaner.js`): Smithsonian GVP, holocæne vulkaner (1 214).
+  Sorte trekanter, så de ikke forveksles med skælvfarverne: fyldt = udbrud
+  siden 1900, åben = tidligere eller udateret. Aflæsningen giver navn, land,
+  type, tektonisk placering (GVP) og sidste udbrud.
+- **Aflæsning** som i klimalaget: skælvet/vulkanen ved musen eller midt på
+  globussen (sigtekornet), så den virker med piletaster og touch.
+- **Undersøg og kilde** (også under Processer) har mønstret i tekst, seks
+  opgaver, tal fra datasættene, ⓘ Om data og en knap, der viser Island med
+  alle tre lag.
+- **Fælles lagbetjening** (`lagknap.js`): knap, `aria-pressed`, signatur,
+  body-klasse, indlæsning, fejltekst (i signaturen, hvis den er åben, ellers i
+  kortstatus) og fokusretur er nu én funktion, som alle fire lag bruger.
+  Globussen har `visTemalag(navn, modul)` til punktlag: et modul eksporterer
+  `hent`, `tegn`, `aflaes`, `ORDEN` og `AFLAESNING`.
+- **Layout:** signaturerne står i to kolonner over figuren på brede skærme
+  (pladegrænser til venstre; skælv, vulkaner og klima til højre). Kolonnerne
+  ruller selv, hvis alle lag er åbne på en lav skærm. Med fire lagknapper er
+  der ikke plads til betjeningsteksten i værktøjslinjen under 1700 px; den
+  står derfor under atlasset.
+- Data: `data/jordskaelv.json` (1,4 MB, 0,45 MB gzip) og `data/vulkaner.json`
+  (93 kB), hentes først ved tilvalg. Dannes af `data/jordskaelv.py` og
+  `data/vulkaner.py`; kilde, kontrolsummer og bearbejdning i de tilhørende
+  `.LICENSE`-filer. GVP's version/DOI-side kunne ikke åbnes automatisk og bør
+  efterses.
+- Test: `test/seismik.py` (data, kendte skælv og vulkaner, signatur, filtre,
+  aflæsning, overlap, dialog, HTTP- og datafejl, nyt forsøg) indgår i
+  `test/afproev.py`.
+
 ## Klimazoner som globalt lag: Vahl og Köppen (v426)
 
 Knappen **Klimazoner** ved siden af Pladegrænser slår et andet globalt lag til

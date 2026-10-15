@@ -69,9 +69,15 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   // musen, ellers midt i globussen (sigtekorset), så den også virker med taster.
   let klimalag = null;
   let klimamodul;
-  let klimapunkt = null;
-  let aflaest;
+  // Punktlag (jordskælv, vulkaner): navn → modul med hent, tegn og aflaes.
+  const temalag = new Map();
+  // Skærmpunkt under musen; null = midt på globussen (sigtekornet).
+  let pegepunkt = null;
+  const aflaest = new Map();
   const aflaesning = document.querySelector('#klimaaflaesning');
+  function vis(element, tekst) {
+    if (aflaest.get(element) !== tekst) { aflaest.set(element, tekst); element.textContent = tekst; }
+  }
   // Opslaget er for tungt til hver frame; det venter, til kloden står stille.
   let aflaesningstimer;
   function opdaterAflaesning() {
@@ -79,12 +85,18 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     aflaesningstimer = setTimeout(aflaesNu, 90);
   }
   function aflaesNu() {
-    if (!klimalag || landekort || quiz) return;
-    const punkt = klimapunkt || centrum;
-    // Havcellerne er udfyldt til klipning; over havet aflæses ingen klasse.
-    const nr = landVed(punkt) ? klimamodul.klasseI(klimalag, punkt) : null;
-    const tekst = `${klimapunkt ? 'Ved markøren' : 'Midt på globussen'}: ${nr ? klimamodul.beskriv(klimalag, nr) : 'hav'}`;
-    if (tekst !== aflaest) { aflaest = tekst; aflaesning.textContent = tekst; }
+    if (landekort || quiz) return;
+    const foran = pegepunkt ? 'Ved markøren' : 'Midt på globussen';
+    if (klimalag) {
+      opdaterProjektion();
+      const punkt = pegepunkt ? projektion.invert(pegepunkt) : centrum;
+      // Havcellerne er udfyldt til klipning; over havet aflæses ingen klasse.
+      const nr = landVed(punkt) ? klimamodul.klasseI(klimalag, punkt) : null;
+      vis(aflaesning, `${foran}: ${nr ? klimamodul.beskriv(klimalag, nr) : 'hav'}`);
+    }
+    for (const modul of temalag.values()) {
+      vis(document.querySelector(modul.AFLAESNING), `${foran}: ${modul.aflaes(pegepunkt || [bredde / 2, hoejde / 2])}`);
+    }
   }
   const markoerlag = document.querySelector('#markoerer');
   const markoerer = steder.map(sted => {
@@ -145,6 +157,8 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       if (fremhaevet && fremhaevet.id !== valgtLand?.id) { ctx.beginPath(); sti(fremhaevet); ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
       if (valgtLand) { ctx.beginPath(); sti(iKort(valgtLand)); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke(); }
       if (pladelag) plademodul.tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
+      const omgivelser = { projektion, centrum, skala: projektion.scale(), bredde, hoejde };
+      for (const modul of [...temalag.values()].sort((a, b) => a.ORDEN - b.ORDEN)) modul.tegn(ctx, omgivelser);
     }
     // En diskret rand giver rumlighed, men angiver ingen faglige måledata.
     const radius = projektion.scale();
@@ -153,7 +167,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.fillStyle = skygge; ctx.fillRect(0, 0, bredde, hoejde);
     if (!quiz && pladelag && (pladevisning.navne || pladevisning.bevaegelse)) {
       const c = canvas.getBoundingClientRect();
-      const undgaa = [...document.querySelectorAll('.markoer:not([hidden]) .prik, .markoer:not([hidden]) .etiket:not([hidden]), #signatur, #pladevalg:popover-open, .betjeningslinje button')]
+      const undgaa = [...document.querySelectorAll('.markoer:not([hidden]) .prik, .markoer:not([hidden]) .etiket:not([hidden]), .signatur:not([hidden]), #pladevalg:popover-open, .betjeningslinje button')]
         .filter(el => el.getClientRects().length).map(el => {
           const r = el.getBoundingClientRect();
           return { x: r.left - c.left - 4, y: r.top - c.top - 4, w: r.width + 8, h: r.height + 8 };
@@ -325,10 +339,10 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         canvas.title = !quiz && land ? `${landenavn(land)} — klik for landemenu` : '';
         const ny = !quiz && land || null;
         if (ny !== fremhaevet) { fremhaevet = ny; opdater(); }
-        if (klimalag && !quiz) {
+        if ((klimalag || temalag.size) && !quiz) {
           const r = canvas.getBoundingClientRect();
           const xy = [event.clientX - r.left, event.clientY - r.top];
-          klimapunkt = Math.hypot(xy[0] - bredde / 2, xy[1] - hoejde / 2) <= projektion.scale() ? projektion.invert(xy) : null;
+          pegepunkt = Math.hypot(xy[0] - bredde / 2, xy[1] - hoejde / 2) <= projektion.scale() ? xy : null;
           opdaterAflaesning();
         }
       }
@@ -377,7 +391,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   canvas.addEventListener('pointerleave', () => {
     canvas.style.cursor = ''; canvas.title = '';
     if (fremhaevet) { fremhaevet = null; opdater(); }
-    if (klimapunkt) { klimapunkt = null; opdaterAflaesning(); }
+    if (pegepunkt) { pegepunkt = null; opdaterAflaesning(); }
   });
   new ResizeObserver(tilpas).observe(rum);
   tilpas();
@@ -414,7 +428,16 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         klimamodul = await import('./klimalag.js');
         await klimamodul.hentKlimalag(system);
       }
-      klimalag = system; aflaest = null; klimapunkt = null;
+      klimalag = system; aflaest.clear(); pegepunkt = null;
+      opdater();
+    },
+    // Punktlag: modulet hentes og kontrolleres, før det vises; null slår det fra.
+    async visTemalag(navn, modul) {
+      if (modul) {
+        await modul.hent();
+        temalag.set(navn, modul);
+      } else temalag.delete(navn);
+      aflaest.clear();
       opdater();
     },
     async visPladeoplysninger(valg) {

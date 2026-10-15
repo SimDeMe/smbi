@@ -1,0 +1,30 @@
+Jordskælv: jordskaelv.json er bearbejdet fra USGS' ComCat-katalog.
+
+Kilde: U.S. Geological Survey, Earthquake Hazards Program, ANSS Comprehensive
+Earthquake Catalog (ComCat), https://earthquake.usgs.gov/data/comcat/
+Licens: USGS-data er offentligt domæne (public domain) i USA; kilden angives
+som god skik: https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+
+Hentet 15. oktober 2026 via FDSN-tjenesten i ti femårsbidder:
+  https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&orderby=time-asc&eventtype=earthquake&minmagnitude=5&starttime=ÅÅÅÅ-01-01&endtime=ÅÅÅÅ-01-01
+Udtræk: eventtype = earthquake, M ≥ 5,0, 1976-01-01 til 2026-01-01 (UTC):
+83 469 hændelser. ComCat revideres løbende, så et nyt udtræk kan afvige lidt.
+
+SHA-256 af de hentede CSV-filer:
+  usgs-1976-1981.csv 9929c273de4cff02fb5e4a96c5dabf11fe28fa082da19d1769c03bf80ec7f8af
+  usgs-1981-1986.csv cc78c9e4d1a6ac02c34a136402cd12e6ca0fa38c68df901dcbb2e34836681b6a
+  usgs-1986-1991.csv 557d91eaea6e3b6b7cc15b1cedda2705c0791b5177cda107039ddfbc9eb9e550
+  usgs-1991-1996.csv 74231b175a89fef4a1f810779486b1d8c14ebd40da49ff715a5357790bbefb6f
+  usgs-1996-2001.csv b5c908ca94bb9acae8469fd95d07d8a1a6db7f1bfa746a659fb594362af503cf
+  usgs-2001-2006.csv db2ba48dc16fbd071ae607afc08b385fc420c615aafd760c180f77fcf9fc53c2
+  usgs-2006-2011.csv a26131abdb6c2ee35d77292d55e398bcd14740094fdd3a090ca8db2a462a1bf5
+  usgs-2011-2016.csv 212fa48856cc3caa04d2fdd962a956db68473b3b5c3668147c201bc84da9f554
+  usgs-2016-2021.csv 69ffc49a4c46892b1beedc143f62546bac137d9703c9cd4e91fb17b119c75198
+  usgs-2021-2026.csv c0b6fab0b42e6d8952f2977db3cf128b3217f557c488ce5b7a8242dca5ac70ab
+
+Bearbejdning (data/jordskaelv.py): position afrundet til 0,1° (ca. 10 km),
+dybde til hele km (negative dybder sat til 0), magnitude til 0,1 (katalogets
+foretrukne magnitude, oftest Mw). Sorteret efter magnitude. Ingen hændelser
+er tilføjet eller flyttet. Mange lavtliggende skælv har katalogets faste
+standarddybde (10 eller 33 km). Dybdeklasser i atlasset: 0–70 km
+lavtliggende, 70–300 km mellemdybe, over 300 km dybe.

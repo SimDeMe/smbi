@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v429</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v430</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -55,8 +55,10 @@
           <div class="quiz-handlinger"><button id="quiz-vis">Vis landet</button><button id="quiz-naeste" hidden>Næste land →</button><button id="quiz-igen" hidden>Prøv igen</button><button id="quiz-stop">Afslut quiz</button></div>
         </div>
         <div class="lagvalg">
-          <button id="pladelag" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
-          <button id="klimalag" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
+          <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
+          <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
+          <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span class="ikon" aria-hidden="true">≈</span> <span class="lang">Jordskælv</span><span class="kort" aria-hidden="true">Skælv</span></button>
+          <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span class="ikon" aria-hidden="true">▲</span> <span class="lang">Vulkaner</span><span class="kort" aria-hidden="true">Vulkan</span></button>
           <button id="fokus" aria-pressed="false">Fokus</button>
         </div>
       </nav>
@@ -85,6 +87,7 @@
         </div>
         <button id="hjaelp" aria-haspopup="dialog">Hjælp</button>
       </div>
+      <div class="signaturer">
       <section id="signatur" class="signatur" aria-labelledby="signaturtitel" hidden>
         <h2 id="signaturtitel">Pladegrænser</h2>
         <ul>
@@ -98,6 +101,39 @@
         <button id="pladeopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
         <button id="pladevisning" popovertarget="pladevalg" aria-controls="pladevalg" aria-expanded="false">Visning</button>
       </section>
+      </div>
+      <div class="signaturer hoejre">
+      <section id="skaelvsignatur" class="signatur skaelvsignatur" aria-labelledby="skaelvtitel" hidden>
+        <div class="klimatop">
+          <h2 id="skaelvtitel">Jordskælv</h2>
+          <div class="systemvalg" role="radiogroup" aria-label="Mindste magnitude">
+            <label><input type="radio" name="skaelvmin" value="5" checked> M ≥ 5</label>
+            <label><input type="radio" name="skaelvmin" value="6"> 6</label>
+            <label><input type="radio" name="skaelvmin" value="7"> 7</label>
+          </div>
+        </div>
+        <fieldset class="dybdevalg">
+          <legend>Dybde (fravælg for at sammenligne)</legend>
+          <label><input type="checkbox" name="skaelvdybde" value="lav" checked><i style="background:#f26b38"></i><span><b>0–70 km</b> lavtliggende</span></label>
+          <label><input type="checkbox" name="skaelvdybde" value="mellem" checked><i style="background:#b5307e"></i><span><b>70–300 km</b> mellemdybe</span></label>
+          <label><input type="checkbox" name="skaelvdybde" value="dyb" checked><i style="background:#2a2f8f"></i><span><b>over 300 km</b> dybe</span></label>
+        </fieldset>
+        <p class="signaturnote">Større prik = større magnitude. USGS, 1976–2025.</p>
+        <p id="skaelvaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="skaelvopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+      </section>
+      <section id="vulkansignatur" class="signatur" aria-labelledby="vulkantitel" hidden>
+        <h2 id="vulkantitel">Vulkaner</h2>
+        <ul>
+          <li><svg viewBox="0 0 36 12" aria-hidden="true"><path d="M18 0.5l6 10.5h-12z" fill="#17211f" stroke="#17211f" stroke-width="1.2" stroke-linejoin="round"/></svg><span><b>Udbrud siden 1900</b></span></li>
+          <li><svg viewBox="0 0 36 12" aria-hidden="true"><path d="M18 0.5l6 10.5h-12z" fill="#fff9ee" stroke="#17211f" stroke-width="1.2" stroke-linejoin="round"/></svg><span><b>Tidligere</b> eller udateret udbrud</span></li>
+        </ul>
+        <p class="signaturnote">Vulkaner med udbrud inden for ca. 11 700 år (holocæn). Smithsonian GVP.</p>
+        <p id="vulkanaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="vulkanopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+      </section>
       <section id="klimasignatur" class="signatur klimasignatur" aria-labelledby="klimatitel" hidden>
         <div class="klimatop">
           <h2 id="klimatitel">Klimazoner</h2>
@@ -109,9 +145,10 @@
         <div id="klimaforklaring" class="klimaforklaring"></div>
         <p id="klimaaflaesning" class="klimaaflaesning"></p>
         <p id="klimanote" class="signaturnote"></p>
-        <p id="klimastatus" class="signaturnote" role="status" hidden></p>
+        <p id="klimastatus" class="signaturnote lagstatus" role="status" hidden></p>
         <button id="klimaopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
       </section>
+      </div>
     </section>
     <div class="eftertekst">
       <p id="betjening">Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi og klima.</p>

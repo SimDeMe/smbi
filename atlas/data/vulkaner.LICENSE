@@ -1,0 +1,18 @@
+Vulkaner: vulkaner.json er bearbejdet fra Smithsonians vulkankatalog.
+
+Kilde: Global Volcanism Program, Smithsonian Institution, Volcanoes of the
+World (VOTW), laget Smithsonian_VOTW_Holocene_Volcanoes, https://volcano.si.edu/
+Hentet 15. oktober 2026 som GeoJSON fra GVP's WFS-tjeneste:
+  https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json
+SHA-256: 06b4959df771e7d9b2ff7c3020597d9530ef326f87094cd0f3ff736a9d20fd54
+Tjenestens metadata (GetCapabilities) angiver Fees: NONE og
+AccessConstraints: NONE. GVP beder om kildeangivelse; den står i atlassets
+dialog «Undersøg jordskælv og vulkaner». GVP's egne sider om version og
+vilkår (volcano.si.edu) kunne ikke åbnes automatisk ved hentningen, så den
+præcise databaseversion og DOI er ikke kontrolleret.
+
+Bearbejdning (data/vulkaner.py): 1 214 vulkaner; koordinater afrundet til
+0,01°; GVP's primære vulkantyper samlet i ni danske typer; den tektoniske
+placering samlet i subduktion, rift og intraplade (seks uden placering:
+ukendt). Sidste udbrud er GVP's år (negativt = f.Kr., null = intet dateret
+udbrud). Ingen vulkaner er tilføjet eller flyttet.

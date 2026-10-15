@@ -2,6 +2,7 @@ import { steder, modeller } from './modeller.js';
 import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
 import { hentIndeks, landFraKort, visLandemenu, lukLandemenu } from './landemenu.js';
+import { lavLag } from './lagknap.js';
 
 const dialog = document.querySelector('#udforsker');
 const indhold = document.querySelector('#dialogindhold');
@@ -210,8 +211,7 @@ function skiftLand(aktiv) {
   landAktivt = aktiv;
   document.querySelector('.atlas').classList.toggle('landekort', aktiv);
   document.querySelector('#landetop').hidden = !aktiv;
-  document.querySelector('#pladelag').hidden = aktiv;
-  klimaknap.hidden = aktiv;
+  for (const knap of document.querySelectorAll('.lagknap')) knap.hidden = aktiv;
   if (valgpanel.matches(':popover-open')) valgpanel.hidePopover();
   globus.visLand(aktiv ? danmarkskort : null);
   document.querySelector('.rotation').setAttribute('aria-label', aktiv ? 'Flyt landekortet' : 'Drej globussen');
@@ -402,7 +402,9 @@ function visProcesser() {
   pladeopgave.onclick = visPladeopgave;
   const klimaopgave = element('button', 'Undersøg klimazonerne', 'tilbage');
   klimaopgave.onclick = visKlimaopgave;
-  indhold.append(pladeopgave, ' ', klimaopgave);
+  const seismikopgave = element('button', 'Undersøg jordskælv og vulkaner', 'tilbage');
+  seismikopgave.onclick = visSeismikopgave;
+  indhold.append(pladeopgave, ' ', klimaopgave, ' ', seismikopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -522,20 +524,21 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
   indhold.append(element('p', 'Klimazoner farver landene efter Vahls klimazoner og plantebælter eller efter Köppen – vælg i signaturen. Feltet under farverne viser klassen ved musen, eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Laget kan vises sammen med pladegrænserne.'));
+  indhold.append(element('p', 'Jordskælv viser skælv med magnitude 5 eller mere siden 1976, farvet efter dybde; Vulkaner viser vulkaner med udbrud inden for de seneste ca. 11 700 år. Vis dem sammen med pladegrænserne, og brug aflæsningen i signaturen til at se det enkelte skælv eller den enkelte vulkan.'));
   indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
   indhold.append(element('p', 'Alle modeller kan findes under Steder, Processer og Søg, også når en markør er på bagsiden af Jorden, eller kortet ikke kan vises. Escape lukker et kort og afslutter fokustilstand.'));
   indhold.append(lavInformation({
     navn: 'Globussen', overskrift: 'Om kortet',
     introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænse- og klimalagene er modeller.',
-    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde.'
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde. Jordskælv er fra USGS og vulkaner fra Smithsonian GVP; se Jordskælv → Undersøg og kilde.'
   }));
 };
 
 const PLADEKILDE = 'Pladegrænser: Peter Bird (2003), An updated digital model of plate boundaries, Geochemistry Geophysics Geosystems 4(3), 1027, doi:10.1029/2001GC000252. Data er hentet fra Birds egen side (peterbird.name/oldFTP/PB2002) og er identiske med kopien i github.com/fraxen/tectonicplates, som udgives under Open Data Commons Attribution 1.0. ' +
   'Bird inddeler hvert ca. 45 km langt stykke af grænserne i syv klasser ud fra pladernes beregnede relative bevægelse. Her er de samlet i tre: konstruktiv = pladerne glider fra hinanden, i havet (spredningsryg) eller på land (riftzone); destruktiv = pladerne bevæger sig mod hinanden, enten så den ene glider ned under den anden (subduktion) eller så de presses sammen til bjerge (kollision, fx Himalaya); bevarende = pladerne glider forbi hinanden (transformforkastning). Derfor kan typen skifte flere gange langs den samme grænse. ' +
   'Tænderne viser, hvilken plade der ligger øverst ved subduktion, som Bird har angivet ud fra jordskælvszoner og vulkanbuer. De skraverede områder er brede zoner med fordelt deformation, fx Alperne og Tibet. Der findes ingen enkelt skarp grænse, og linjernes placering er mindre sikker. ' +
-  'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Pladenavne og grænsehastigheder kan vælges under Visning. Ved grænserne vises PB2002-modellens lokale relative hastigheder: Fra og Mod er den samlede åbning eller lukning på tværs af grænsen, ikke halvspredning eller hastigheden af én plade. Langs er forskydningen langs transformforkastninger. Ved skrå bevægelse findes begge komponenter i teksttabellen. Tallene er modelværdier, ikke aktuelle GPS-målinger, og kan variere langs samme grænse. Pilene viser kun retning og har ingen hastighedsskala. I diffuse zoner mærkes tal med ≈, fordi grænse og pladebevægelse er mere usikre. Langs den hypotetiske Shetlandplade vises ingen hastighed. Laget viser ikke jordskælvs- eller vulkankataloger.';
+  'Grænserne er en geologisk model, ikke skarpe målte linjer, og bevægelserne er beregnet med en ældre pladebevægelsesmodel. Koordinaterne er afrundet til ca. 1 km. Pladenavne og grænsehastigheder kan vælges under Visning. Ved grænserne vises PB2002-modellens lokale relative hastigheder: Fra og Mod er den samlede åbning eller lukning på tværs af grænsen, ikke halvspredning eller hastigheden af én plade. Langs er forskydningen langs transformforkastninger. Ved skrå bevægelse findes begge komponenter i teksttabellen. Tallene er modelværdier, ikke aktuelle GPS-målinger, og kan variere langs samme grænse. Pilene viser kun retning og har ingen hastighedsskala. I diffuse zoner mærkes tal med ≈, fordi grænse og pladebevægelse er mere usikre. Langs den hypotetiske Shetlandplade vises ingen hastighed. Jordskælv og vulkaner er særskilte lag med observerede data.';
 
 const KLIMAKILDE = 'Data: Beck, H. E., McVicar, T. R., Vergopolan, N. m.fl. (2023), High-resolution (1 km) Köppen-Geiger maps for 1901–2099 based on constrained CMIP6 projections, Scientific Data 10, 724, doi:10.1038/s41597-023-02549-6. Datasættet (figshare 21789074) udgives under CC BY 4.0. ' +
   'Köppen-laget er Becks egne klasser for perioden 1991–2020 i 0,1° opløsning (ca. 10 km). Vahl-laget er beregnet til atlasset ud fra samme kildes månedsnormaler for temperatur og nedbør 1991–2020 i 0,5° opløsning (ca. 50 km) med skolekriterierne ovenfor. Det er altså en rekonstruktion: Vahl selv (1911 og senere) afgrænsede plantebælterne bl.a. med regnsandsynlighed og skrå grænselinjer, som ikke kan beregnes ud fra månedsnormaler. ' +
@@ -611,12 +614,104 @@ function visKlimaopgave() {
     vis.onclick = async () => {
       senesteFokus = klimaknap;
       dialog.close();
-      await visKlima(klimasystem);
+      await klimalaget.slaaTil();
     };
     indhold.append(vis);
   }
   indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
   indhold.append(visModeller(modeller.filter(model => ['Global atmosfære', 'Vejr og klima'].includes(model.emne))));
+}
+
+const SKAELVKILDE = 'Jordskælv: U.S. Geological Survey, Earthquake Hazards Program, ANSS Comprehensive Earthquake Catalog (ComCat), hentet 15. oktober 2026 via earthquake.usgs.gov/fdsnws. USGS-data er offentligt domæne (public domain). ' +
+  'Udtrækket er alle hændelser af typen jordskælv med magnitude 5,0 eller mere fra 1976 til og med 2025 – i alt 83 469. 1976 er valgt, fordi det globale CMT-katalog begynder da, så store skælv er mere ensartet registreret. Mindre skælv er udeladt; de findes overalt og ville skjule mønsteret. ' +
+  'Bearbejdning: Positionen er afrundet til 0,1° (ca. 10 km), dybden til hele km og magnituden til 0,1. Magnituden er katalogets foretrukne, oftest momentmagnitude (Mw). Mange lavtliggende skælv har en fastsat standarddybde på 10 eller 33 km, fordi dybden ikke kunne bestemmes præcist; dybdegrænserne 70 og 300 km er den gængse inddeling i lavtliggende, mellemdybe og dybe skælv.';
+
+const VULKANKILDE = 'Vulkaner: Global Volcanism Program, Smithsonian Institution, Volcanoes of the World (VOTW), laget Holocene Volcanoes, hentet 15. oktober 2026 fra GVP\'s WFS-tjeneste (webservices.volcano.si.edu). Kilden skal angives ved brug. ' +
+  'Listen rummer 1 214 vulkaner med udbrud eller anden sikker aktivitet i holocæn, dvs. inden for ca. 11 700 år. Vulkantypen er GVP\'s primære type, samlet i ni danske typer. Tektonisk placering er GVP\'s egen: subduktionszone, riftzone eller intraplade (inde på en plade, fx over en hotspot). ' +
+  'En fyldt trekant betyder, at GVP har registreret et udbrud i 1900 eller senere. Vulkanfelter og sprækkesystemer er vist som ét punkt, selv om de dækker et område. Vulkaner under havet er kun med, hvis der kendes holocæn aktivitet; langt de fleste udbrud langs spredningsryggene sker på dybt vand og er ikke registreret.';
+
+function visSeismikopgave() {
+  aabn('Undersøg jordskælv og vulkaner');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå lagene Jordskælv, Vulkaner og Pladegrænser til samtidig. Aflæsningen i signaturen viser det skælv eller den vulkan, der ligger ved musen – eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Med dybdefelterne kan du skjule en dybde ad gangen.'));
+  const tekst = element('details', '', 'pladeoversigt');
+  tekst.open = !globus;
+  tekst.append(element('summary', 'Mønstret i tekst'));
+  const punkter = element('ul');
+  for (const linje of [
+    'Langt de fleste store skælv og vulkaner ligger i smalle bælter langs pladegrænserne – især rundt om Stillehavet («ildringen»).',
+    'Ved spredningsrygge og riftzoner, fx den Midtatlantiske Ryg og Island, er skælvene lavtliggende (under 70 km), og der er vulkaner, hvor ryggen når op over havet.',
+    'Ved subduktionszoner, fx Japan, Tonga og Andesbjergene, bliver skælvene dybere, jo længere man går ind over den overliggende plade. De dybeste ligger ned til ca. 700 km. Vulkanerne står i en bue på den overliggende plade.',
+    'Ved bevarende grænser, fx San Andreas, er der lavtliggende skælv, men næsten ingen vulkaner. Ved kontinentkollision, fx Himalaya, er skælvene spredt over et bredt område og der er næsten ingen vulkaner.',
+    'Enkelte vulkaner ligger langt fra pladegrænserne, fx på Hawaii. De forklares med hotspots.'
+  ]) punkter.append(element('li', linje));
+  tekst.append(punkter);
+  indhold.append(tekst, element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Beskriv, hvor jordskælvene ligger på kloden. Sammenlign med pladegrænserne: Hvilke grænsetyper har flest skælv?',
+    'Find Island. Hvor dybe er skælvene her, og hvilken type pladegrænse passer det med? Hvorfor ligger der så mange vulkaner netop på Island?',
+    'Find Japan eller Sydamerikas vestkyst. Skjul de lavtliggende skælv. Hvilken vej bliver skælvene dybere – og hvad fortæller det om den plade, der subducerer?',
+    'Hvor ligger vulkanerne i forhold til de destruktive grænser? Hvorfor ligger de ikke lige på grænsen, men et stykke inde over den overliggende plade?',
+    'Find en vulkan langt fra en pladegrænse, fx på Hawaii. Hvordan kan den forklares?',
+    'Modelkritik: Hvorfor er der langs spredningsryggene i havet mange skælv men få vulkaner på kortet? Og hvorfor kan et kort over 50 år ikke vise alle steder, hvor der kan komme store skælv?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  const tal = element('details', '', 'pladeoversigt');
+  tal.append(element('summary', 'Tal fra datasættene'));
+  const talindhold = element('div');
+  tal.append(talindhold);
+  tal.addEventListener('toggle', async () => {
+    if (!tal.open || talindhold.childElementCount) return;
+    talindhold.textContent = 'Henter data …';
+    try {
+      const [skaelv, vulkaner] = await Promise.all([import('./jordskaelv.js'), import('./vulkaner.js')]);
+      await Promise.all([skaelv.hent(), vulkaner.hent()]);
+      const ul = element('ul');
+      const ialt = skaelv.optaelling().reduce((sum, d) => sum + d.antal, 0);
+      for (const d of skaelv.optaelling()) {
+        ul.append(element('li', `${d.navn} skælv (${d.interval}): ${d.antal.toLocaleString('da')} – ${Math.round(d.antal / ialt * 100)} %`));
+      }
+      const v = vulkaner.optaelling();
+      ul.append(element('li', `Vulkaner: ${v.i_alt.toLocaleString('da')}, heraf ${v.nylige} med udbrud siden 1900. Ved subduktionszoner: ${v.subduktion}, i riftzoner: ${v.rift}, inde på en plade: ${v.intraplade}.`));
+      talindhold.replaceChildren(element('p', `Jordskælv med M ≥ 5, 1976–2025: ${ialt.toLocaleString('da')}.`), ul);
+    } catch {
+      talindhold.textContent = 'Data kunne ikke hentes. Forklaringen og opgaverne kan stadig bruges. Luk og åbn igen for at prøve igen.';
+    }
+  });
+  indhold.append(tal);
+  indhold.append(lavInformation({
+    navn: 'Jordskælv og vulkaner', overskrift: 'Om data',
+    introduktion: 'Observerede kataloger: USGS (jordskælv) og Smithsonian GVP (vulkaner). Punkterne er målte eller registrerede hændelser, ikke en model.',
+    tekst: `${SKAELVKILDE} ${VULKANKILDE}`
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['USGS ComCat', 'https://earthquake.usgs.gov/data/comcat/'],
+    ['USGS: brug af data', 'https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits'],
+    ['Smithsonian GVP', 'https://volcano.si.edu/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+  if (globus) {
+    const find = element('button', 'Vis Island med skælv, vulkaner og pladegrænser', 'tilbage');
+    find.onclick = async () => {
+      tilbageTilGlobus(false);
+      senesteFokus = document.querySelector('#globus');
+      dialog.close();
+      await Promise.all([pladelaget.slaaTil(), skaelvlaget.slaaTil(), vulkanlaget.slaaTil()]);
+      globus.visSted(steder.find(sted => sted.id === 'island'));
+      document.querySelector('#globus').focus({ preventScroll: true });
+    };
+    indhold.append(find);
+  }
 }
 
 function visPladeopgave() {
@@ -701,7 +796,7 @@ function visPladeopgave() {
       tilbageTilGlobus(false);
       senesteFokus = document.querySelector('#globus');
       dialog.close();
-      if (pladeknap.getAttribute('aria-pressed') !== 'true') await skiftPladelag();
+      await pladelaget.slaaTil();
       globus.visSted(island);
       document.querySelector('#globus').focus({ preventScroll: true });
     };
@@ -778,6 +873,14 @@ function opdaterPladebeskrivelse() {
   if (!landAktivt && klimaknap.getAttribute('aria-pressed') === 'true') {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser ${klimasystem === 'vahl' ? 'Vahls klimazoner og plantebælter' : 'Köppen-Geigers klimatyper'} for 1991–2020; aflæsningen under signaturen viser klassen midt på globussen`);
   }
+  if (!landAktivt && skaelvknap.getAttribute('aria-pressed') === 'true') {
+    const dybder = [...document.querySelectorAll('[name="skaelvdybde"]:checked')].map(f => f.parentElement.textContent.trim());
+    const min = document.querySelector('[name="skaelvmin"]:checked').value;
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser jordskælv med magnitude ${min} eller mere fra 1976–2025 efter USGS, farvet efter dybde: ${dybder.join(', ') || 'ingen dybder valgt'}`);
+  }
+  if (!landAktivt && vulkanknap.getAttribute('aria-pressed') === 'true') {
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser holocæne vulkaner efter Smithsonian GVP; fyldte trekanter har haft udbrud siden 1900`);
+  }
 }
 
 function placerValgpanel() {
@@ -819,39 +922,20 @@ async function skiftPladeoplysninger() {
   }
 }
 for (const felt of [navnefelt, pilefelt]) felt.addEventListener('change', skiftPladeoplysninger);
-async function skiftPladelag() {
-  const vis = pladeknap.getAttribute('aria-pressed') !== 'true';
-  const havdeFokus = document.activeElement === pladeknap;
-  const status = document.querySelector('#kortstatus');
-  status.classList.remove('landestatus');
-  pladeknap.disabled = true;
-  pladeknap.setAttribute('aria-busy', 'true');
-  try {
-    await globus.visPladegraenser(vis);
-    pladeknap.setAttribute('aria-pressed', String(vis));
-    signatur.hidden = !vis;
-    document.body.classList.toggle('pladelag', vis);
-    if (!vis && valgpanel.matches(':popover-open')) valgpanel.hidePopover();
+const pladelaget = lavLag({
+  knap: pladeknap, signatur, klasse: 'pladelag',
+  fejltekst: 'Pladegrænserne kunne ikke indlæses. Globussen virker stadig. Find tekst, opgave og kilder under Processer → Undersøg pladegrænserne. Prøv igen, eller genindlæs siden, hvis problemet fortsætter.',
+  vis: vis => globus.visPladegraenser(Boolean(vis)),
+  efter() {
+    if (!pladelaget.aktiv && valgpanel.matches(':popover-open')) valgpanel.hidePopover();
     opdaterPladebeskrivelse();
-    status.hidden = true;
-  } catch {
-    status.textContent = 'Pladegrænserne kunne ikke indlæses. Globussen virker stadig. Find tekst, opgave og kilder under Processer → Undersøg pladegrænserne. Prøv igen, eller genindlæs siden, hvis problemet fortsætter.';
-    status.hidden = false;
-  } finally {
-    pladeknap.disabled = false;
-    pladeknap.removeAttribute('aria-busy');
-    // Native disabled kan fjerne fokus. Giv det tilbage efter indlæsning,
-    // hvis eleven ikke i mellemtiden har valgt en anden kontrol eller dialog.
-    if (havdeFokus && document.activeElement === document.body && !dialog.open) pladeknap.focus({ preventScroll: true });
   }
-}
-pladeknap.onclick = skiftPladelag;
+});
 
 // Klimalag: Vahl eller Köppen. Signaturen bygges ud fra klimalag.js, som først
 // hentes, når laget slås til.
 const klimaknap = document.querySelector('#klimalag');
 const klimasignatur = document.querySelector('#klimasignatur');
-const klimastatus = document.querySelector('#klimastatus');
 let klimasystem = 'vahl';
 function tegnKlimasignatur(modul) {
   const system = modul.SYSTEMER[klimasystem];
@@ -885,40 +969,54 @@ function tegnKlimasignatur(modul) {
   }
   document.querySelector('#klimaforklaring').replaceChildren(...grupper);
 }
-async function visKlima(system) {
-  const status = document.querySelector('#kortstatus');
-  klimaknap.disabled = true;
-  klimaknap.setAttribute('aria-busy', 'true');
-  klimasignatur.setAttribute('aria-busy', 'true');
-  try {
+const klimalaget = lavLag({
+  knap: klimaknap, signatur: klimasignatur, klasse: 'klimalag', standard: 'vahl',
+  fejltekst: 'Klimazonerne kunne ikke indlæses. Globussen virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(system) {
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
-    const vis = Boolean(system);
-    if (vis) { klimasystem = system; tegnKlimasignatur(modul); }
-    klimaknap.setAttribute('aria-pressed', String(vis));
-    klimasignatur.hidden = !vis;
-    document.body.classList.toggle('klimalag', vis);
-    klimastatus.hidden = true;
-    status.hidden = true;
-  } catch {
-    for (const felt of document.querySelectorAll('[name="klimasystem"]')) felt.checked = felt.value === klimasystem;
-    const tekst = 'Klimazonerne kunne ikke indlæses. Globussen virker stadig. Prøv igen, eller genindlæs siden.';
-    if (klimasignatur.hidden) { status.textContent = tekst; status.hidden = false; }
-    else { klimastatus.textContent = tekst; klimastatus.hidden = false; }
-  } finally {
-    klimaknap.disabled = false;
-    klimaknap.removeAttribute('aria-busy');
-    klimasignatur.removeAttribute('aria-busy');
-    opdaterPladebeskrivelse();
-  }
-}
-klimaknap.onclick = async () => {
-  const havdeFokus = document.activeElement === klimaknap;
-  await visKlima(klimaknap.getAttribute('aria-pressed') === 'true' ? null : klimasystem);
-  if (havdeFokus && document.activeElement === document.body && !dialog.open) klimaknap.focus({ preventScroll: true });
-};
+    if (system) { klimasystem = system; tegnKlimasignatur(modul); }
+  },
+  fejl() { for (const felt of document.querySelectorAll('[name="klimasystem"]')) felt.checked = felt.value === klimasystem; },
+  efter: opdaterPladebeskrivelse
+});
 for (const felt of document.querySelectorAll('[name="klimasystem"]')) {
-  felt.addEventListener('change', () => { if (felt.checked) visKlima(felt.value); });
+  felt.addEventListener('change', () => { if (felt.checked) klimalaget.skift(felt.value); });
 }
+
+// Jordskælv og vulkaner: punktlag, som først hentes, når de slås til.
+const skaelvknap = document.querySelector('#skaelvlag');
+const vulkanknap = document.querySelector('#vulkanlag');
+let skaelvmodul;
+const skaelvlaget = lavLag({
+  knap: skaelvknap, signatur: document.querySelector('#skaelvsignatur'), klasse: 'skaelvlag',
+  fejltekst: 'Jordskælvene kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    skaelvmodul ??= await import('./jordskaelv.js');
+    await globus.visTemalag('jordskaelv', vis ? skaelvmodul : null);
+  },
+  efter: opdaterPladebeskrivelse
+});
+const vulkanlaget = lavLag({
+  knap: vulkanknap, signatur: document.querySelector('#vulkansignatur'), klasse: 'vulkanlag',
+  fejltekst: 'Vulkanerne kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    const modul = await import('./vulkaner.js');
+    await globus.visTemalag('vulkaner', vis ? modul : null);
+  },
+  efter: opdaterPladebeskrivelse
+});
+// Signaturens valg ændrer kun tegningen; data er allerede hentet.
+for (const felt of document.querySelectorAll('[name="skaelvmin"], [name="skaelvdybde"]')) {
+  felt.addEventListener('change', () => {
+    if (!skaelvmodul) return;
+    skaelvmodul.valg.minM = Number(document.querySelector('[name="skaelvmin"]:checked').value);
+    skaelvmodul.valg.dybder = new Set([...document.querySelectorAll('[name="skaelvdybde"]:checked')].map(f => f.value));
+    globus.gentegn();
+    opdaterPladebeskrivelse();
+  });
+}
+document.querySelector('#skaelvopgave').onclick = visSeismikopgave;
+document.querySelector('#vulkanopgave').onclick = visSeismikopgave;
 document.querySelector('#klimaopgave').onclick = visKlimaopgave;
 document.querySelector('#pladeopgave').onclick = visPladeopgave;
 
@@ -929,8 +1027,7 @@ try {
   globus = await startGlobus(steder, visSted, vaelgLand);
   hentIndeks().then(navne => { globus.landenavne = navne; }).catch(() => {});
   globusknapper.forEach(knap => { knap.disabled = false; });
-  pladeknap.disabled = false;
-  klimaknap.disabled = false;
+  for (const knap of document.querySelectorAll('.lagknap')) knap.disabled = false;
   // Quizmenuen kan allerede være åbnet, mens grundkortet blev hentet.
   const quizstart = document.querySelector('#quiz-start');
   if (quizstart) {

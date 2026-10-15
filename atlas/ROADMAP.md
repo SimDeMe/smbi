@@ -120,7 +120,13 @@ forbehold, undersøgelsesopgave og browsertest (se [README](README.md)).
 Den supplerende gennemgang har efterkontrolleret alle originalsegmenter,
 rettet indlæsning ved lagfejl og tilføjet tekstalternativ via Processer.
 Alle fem elevvisninger og udvidede fejltilstande består i Chromium.
-Fysisk telefon og Safari mangler som i #47. Jordskælvs- og vulkanlag er
-senere, særskilt afgrænsede leverancer. Næste trin er #49's milepæl A:
+Fysisk telefon og Safari mangler som i #47.
+
+**#48's anden leverance er lavet 15. oktober 2026 (v430):** jordskælv fra
+USGS (M ≥ 5, 1976–2025, farvet efter dybde) og holocæne vulkaner fra
+Smithsonian GVP som valgfrie lag med signatur, aflæsning, kilder,
+undersøgelsesopgave og browsertest. Den fælles lagbetjening er samlet i
+`lagknap.js`. Dermed er den datadrevne sammenligning af alle tre fænomener
+leveret. Næste trin er #49's milepæl A:
 den faglige modelbeskrivelse for Island, som skal kvalitetssikres af ejeren,
 før tværsnit og animation bygges.
