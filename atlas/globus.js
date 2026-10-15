@@ -142,7 +142,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   }
   function nulstil() {
     if (landekort) { landekort.nulstil(); opdater(); }
-    else { centrum = quiz ? [15, 54] : [...start]; zoom = quiz ? 1.8 : 1; afgraens(); }
+    else { centrum = quiz ? [...quiz.udsnit.centrum] : [...start]; zoom = quiz ? quiz.udsnit.zoom : 1; afgraens(); }
   }
   for (const knap of document.querySelectorAll('[data-drej]')) knap.onclick = () => drej(knap.dataset.drej);
   document.querySelector('#zoom-ind').onclick = () => zoomMed(1.2);
@@ -282,7 +282,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     visQuiz(ny) {
       if (ny && !quiz) {
         foerQuiz = { centrum: [...centrum], zoom };
-        centrum = [15, 54]; zoom = 1.8;
+        centrum = [...ny.udsnit.centrum]; zoom = ny.udsnit.zoom;
       } else if (!ny && quiz) { centrum = foerQuiz.centrum; zoom = foerQuiz.zoom; }
       quiz = ny; fingre.clear(); tryk = null; canvas.title = ''; canvas.style.cursor = ''; afgraens();
     },

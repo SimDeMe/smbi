@@ -19,3 +19,23 @@ assert.equal(q.vis(),false);assert.equal(q.naeste(),false);assert.equal(q.svar('
 const a=lavQuiz(()=>0), b=lavQuiz(()=>.99999);assert.notEqual(a.land.id,b.land.id);
 assert.deepEqual(b.resultat,{antal:47,fundet:0,fejl:0,viste:0,foerste:0});
 console.log('Quizmodel: 47 unikke spørgsmål, blanding, fejl, hjælp, dobbelttryk og afslutning OK');
+import { verdensdele } from '../quizmodel.js';
+// Alle verdensdele: unikke lande, gyldige sigtepunkter og et fuldt forløb.
+assert.deepEqual(verdensdele.map(d => [d.id, d.lande.length]),
+  [['europa',47],['afrika',55],['nordamerika',23],['sydamerika',12],['asien',63]]);
+assert.equal(verdensdele[0].lande, europa);
+for (const del of verdensdele) {
+  assert.equal(new Set(del.lande.map(l => l.id)).size, del.lande.length, del.id);
+  assert.equal(new Set(del.lande.map(l => l.navn)).size, del.lande.length, del.id);
+  for (const l of del.lande) assert(Math.abs(l.punkt[0]) <= 180 && Math.abs(l.punkt[1]) <= 90, l.navn);
+  for (const k of ['navn','knap','quiznavn','kort','data','afgraensning']) assert(del[k], del.id + k);
+  const q = lavQuiz(Math.random, del.lande), set = new Set();
+  while (!q.faerdig) { set.add(q.land.id); assert.equal(q.svar(q.land.id), true); q.naeste(); }
+  assert.equal(set.size, del.lande.length);
+  assert.deepEqual(q.resultat, { antal: del.lande.length, fundet: del.lande.length, fejl: 0, viste: 0, foerste: del.lande.length });
+}
+// Rusland og Tyrkiet er med i både Europa og Asien; Cypern kun i Europa.
+const asien = verdensdele.find(d => d.id === 'asien').lande;
+for (const id of ['643','792','275','158','036','554','798']) assert(asien.some(l => l.id === id), id);
+assert(!asien.some(l => l.id === '196'));
+console.log('Quizmodel: alle verdensdele med unikke lande og fulde forløb OK');

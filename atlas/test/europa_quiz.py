@@ -129,7 +129,7 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
     # Fejl må hverken starte en halv quiz eller slå atlasnavigationen ud.
     for type in ['data','modul','bibliotek','ugyldig']:
         side=browser.new_page();side.on('pageerror',lambda e:fejl.append(str(e)));klar(side,adresse)
-        moenster='**/europa-quiz.js' if type=='modul' else '**/vendor/topojson-simplify.min.js' if type=='bibliotek' else '**/europa-10m.json'
+        moenster='**/landequiz.js' if type=='modul' else '**/vendor/topojson-simplify.min.js' if type=='bibliotek' else '**/europa-10m.json'
         if type=='ugyldig':side.route(moenster,lambda r:r.fulfill(json={'type':'Topology','objects':{},'arcs':[]}))
         else:side.route(moenster,lambda r:r.abort())
         foer=billede(side)

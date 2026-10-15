@@ -91,3 +91,10 @@ body.quiz #globus:focus-visible~.quizsigte{display:block}
 #quiz-besked{min-height:2.5em}
 @media(max-width:500px){body.quiz .globusrum{height:calc(100svh - 320px)}.quiz-spoergsmaal{min-height:90px}body.quiz.fokus .globusrum{height:calc(100svh - 280px)}}
 @media(min-width:501px) and (max-width:800px){.vaerktoejer .ikon{display:none}}
+/* Valg af verdensdel i quizdialogen. */
+.verdensvalg{border:0;padding:0;margin:0 0 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.verdensvalg legend{font:700 17px var(--display);padding:0;margin-bottom:8px}
+.verdensvalg label{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;border:2px solid var(--ink);border-radius:6px;background:#fffdf7;cursor:pointer;font:600 15px/1.2 var(--display)}
+.verdensvalg label:has(input:checked){background:var(--lys);box-shadow:3px 3px 0 var(--ink)}
+.verdensvalg input{flex:none;width:20px;height:20px;margin:0;accent-color:var(--blue)}
+.verdensvalg small{margin-left:auto;white-space:nowrap;font:12px var(--mono);color:var(--slate)}

@@ -1,0 +1,24 @@
+Quizkort for Afrika, Nordamerika, Sydamerika samt Asien og Oceanien
+(afrika-10m.json, nordamerika-10m.json, sydamerika-10m.json,
+asien-oceanien-10m.json): Natural Earth, public domain, via world-atlas 2.0.2 (ISC).
+Se world-atlas.LICENSE og https://www.naturalearthdata.com/about/terms-of-use/
+Kilde: npm-pakken world-atlas@2.0.2, countries-10m.json
+(samme fil som https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-10m.json)
+Kildens SHA-256: 3bc6f1d367a9bcec479841bae0e76092f512838411d0cef124e92eec4db45f79
+
+Lavet med quizlande.mjs ud fra landelisterne i quizmodel.js (samme metode som
+europa-10m.json, som scriptet gendanner uændret): ét objekt pr. quizland med
+dansk navn, ubrugte buer fjernet, bevarede buer omnummereret uden ændring af
+koordinater eller transform.
+Samlet: Somaliland → Somalia, Baikonur → Kasakhstan, Hongkong og Macao → Kina,
+Guantánamo-basen → Cuba. Udeladt: Ashmore- og Cartierøerne (australsk
+territorium med Australiens id).
+Fjernet: tre af Maldivernes 176 ø-polygoner, som kildens kvantisering har gjort
+arealløse, og som D3 derfor ville tolke som hele kloden.
+Kortgrænser er orientering, ikke en stillingtagen til omstridte områder
+(fx Vestsahara, Kashmir, Palæstina, Taiwan). Generaliserede kyster, 1:10 mio.
+Små landes ringe er orienteringsmærker ved sigtepunkter, ikke deres areal.
+Udvalget: FN M49's medlemsstater i de enkelte verdensdele + Vestsahara,
+Palæstina og Taiwan som quizområder; Rusland og Tyrkiet både i Europa og Asien.
+Selvstyrende områder (Grønland, Færøerne) og afhængige territorier indgår ikke
+som spørgsmål. https://unstats.un.org/unsd/methodology/m49/

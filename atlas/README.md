@@ -3,37 +3,58 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
-## Find landet — Europa (v414)
+## Find landet — fem verdensdele (v419)
 
-**Quiz → Start Europa-quiz** giver ét landenavn ad gangen i en blandet
+**Quiz** åbner et valg mellem fem verdensdele: Europa (47), Afrika (55),
+Nordamerika med Mellemamerika og Caribien (23), Sydamerika (12) samt Asien
+og Oceanien slået sammen (63). Valget huskes, til siden genindlæses, og
+**Prøv igen** starter samme verdensdel forfra. Spillet er det samme i alle:
+**Start …-quiz** giver ét landenavn ad gangen i en blandet
 rækkefølge uden gentagelser. Klik/tryk på landet på den eksisterende globus.
 Rigtigt svar farver landet grønt og giver automatisk næste spørgsmål efter
 ét sekund. Forkert quizland giver feedback og et nyt forsøg på samme land.
 Tryk uden for quizlandene ændrer ikke scoren. Gentagne klik i feedbackpausen
-tæller ikke som nye svar. Efter alle 47 vises antal rigtige i første forsøg,
+tæller ikke som nye svar. Til sidst vises antal rigtige i første forsøg,
 forkerte svar og lande, som blev vist med hjælp. Der er ingen tidspres eller
 login. Nyt spil nulstiller forløbet.
 
 **Vis landet** centrerer landet og tæller som hjælp; eleven vælger selv
-**Næste land**. **Europa/Home** viser Europa igen uden at nulstille spørgsmål.
+**Næste land**. Meget store lande (Rusland, Canada, USA, Kina …) vises i et
+bredere udsnit. Knappen med verdensdelens navn (eller Home) viser
+startudsnittet igen uden at nulstille spørgsmål. Asien og Oceanien kan ikke
+ses på én halvkugle; startudsnittet viser det meste, og Stillehavsøerne nås
+ved at dreje.
 Træk, tofingerzoom, +/− og de eksisterende piletaster bevares; quizzen kan
 zoome op til 8×. Med fokus på canvas finjusterer Shift+pil rotationen, og
-Enter vælger landet under sigtekornet. Syv små lande har diskrete ringe ved
-deres geografiske sigtepunkter. Ringene er ikke deres areal; zoom ind for at
-skelne tætte placeringer. Der vises ingen landenavne ved hover i quizzen.
+Enter vælger landet under sigtekornet. Lande under ca. 7.000 km² (samt den
+smalle Gambia) har diskrete ringe ved deres sigtepunkter: 7 i Europa, 6 i
+Afrika, 8 i Nordamerika og 13 i Asien og Oceanien. Ringene er ikke landenes
+areal; zoom ind for at skelne tætte placeringer (fx De Små Antiller). Der
+vises ingen landenavne ved hover i quizzen.
 
-Quizzen bruger FN M49's 44 europæiske stater samt Cypern, Tyrkiet og Kosovo
-som selvstændigt quizområde: 47 i alt. Rusland og Tyrkiets fulde territorier
-kan udpeges. Cypern samler kildens tre administrative områder til ét
-quizområde. Selvstyrende og afhængige territorier er ikke egne spørgsmål.
-Dette er en oplyst skoleinddeling; Europabegrebet er ikke entydigt.
-Danske navne, sigtepunkter og den fulde liste står i `quizmodel.js`.
+**Afgrænsning.** Europa: FN M49's 44 europæiske stater samt Cypern, Tyrkiet
+og Kosovo som selvstændigt quizområde. Øvrige verdensdele: FN M49's
+medlemsstater, plus Vestsahara (omstridt område), Palæstina og Taiwan som
+quizområder. Rusland og Tyrkiet er med i både Europa og Asien; Cypern kun i
+Europa. Somaliland regnes til Somalia, Hongkong og Macao til Kina.
+Selvstyrende og afhængige territorier (Grønland, Færøerne, Puerto Rico,
+Fransk Guyana …) er ikke egne spørgsmål. Dette er en oplyst skoleinddeling;
+verdensdelsbegreberne er ikke entydige. Danske navne, sigtepunkter og
+afgrænsningsteksterne står i `quizmodel.js` (`verdensdele`). Sigtepunkterne
+for de nye verdensdele er beregnet som et indre punkt langt fra kysten i
+landets største polygon (små lande: centrum; Kiribati: Tarawa).
 
-`europa-quiz.js` hentes først ved start; det samme gælder det lokale,
-versionsbundne `europa-10m.json` (ca. 824 kB) og topojson-simplify (5,7 kB).
-Natural Earth 1:10 mio. har generaliserede kyster. Vatikanets polygon
-kollapser ved kildens kvantisering og repræsenteres derfor af sin ring.
-Kilde, kontrolsum, bearbejdning og licens står i `data/europa-10m.LICENSE`.
+`landequiz.js` hentes først ved start; det samme gælder det valgte, lokale
+kortudtræk og topojson-simplify (5,7 kB): `europa-10m.json` (824 kB),
+`afrika-10m.json` (286 kB), `nordamerika-10m.json` (909 kB),
+`sydamerika-10m.json` (299 kB) og `asien-oceanien-10m.json` (1,2 MB).
+Udtrækkene laves med `node atlas/data/quizlande.mjs <countries-10m.json>`
+fra world-atlas 2.0.2 (npm-pakken); scriptet gendanner Europa-udtrækket
+uændret. Natural Earth 1:10 mio. har generaliserede kyster. Vatikanets polygon
+kollapser ved kildens kvantisering og repræsenteres derfor af sin ring; tre
+arealløse ø-polygoner på Maldiverne, som D3 ville tolke som hele kloden, er
+fjernet. Kilde, kontrolsum, bearbejdning og licens står i
+`data/europa-10m.LICENSE` og `data/verdensdele-10m.LICENSE`.
 Tegningen bruger topologisk fælles forenklede buer efter zoomniveau; hit-test
 bruger altid de oprindelige polygoner og de synlige smålandes ringe.
 
@@ -46,11 +67,14 @@ atlasnavigationen; en lukket startdialog må ikke starte spillet senere.
 Åbnes quizmenuen før grundkortet er klart, aktiveres startknappen automatisk,
 når globussen er indlæst.
 
-`node atlas/test/quizmodel.mjs` kontrollerer rækkefølge, 47 unikke spørgsmål,
-fejl, hjælp, gentagne svar, afslutning og nyt spil. `test/europa_quiz.py`
-indgår i den samlede browsertest: et fuldt forløb med korrekte landetryk på
-alle 47, fem elevskærme, touch, tastatur, finjustering, hjælp, scorenulstilling,
-tilbage-navigation med pladetilvalg, indlæsningsfejl og afbrudt start.
+`node atlas/test/quizmodel.mjs` kontrollerer rækkefølge, unikke spørgsmål,
+fejl, hjælp, gentagne svar, afslutning og nyt spil for alle verdensdele.
+`test/europa_quiz.py` og `test/verdensdele_quiz.py` indgår i den samlede
+browsertest: hit-test i sigtepunktet for alle 200 lande ved største zoom,
+fulde forløb med korrekte landetryk i alle fem verdensdele (lande, der ikke
+kan rammes sikkert i startudsnittet, via Vis landet), fem elevskærme, touch,
+tastatur, finjustering, hjælp, scorenulstilling, tilbage-navigation med
+pladetilvalg, indlæsningsfejl og afbrudt start.
 Afprøvet i Chromium uden WebGL; Safari og fysiske telefoner er ikke testet.
 
 ## Første landekort: Danmark (v410)
@@ -314,6 +338,7 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | topojson-client | 3.1.0 | [TopoJSON](https://github.com/topojson/topojson-client), ISC; `vendor/topojson-client.LICENSE` |
 | topojson-simplify | 3.0.3 | [TopoJSON](https://github.com/topojson/topojson-simplify), ISC; `vendor/topojson-simplify.LICENSE`; hentes kun til quiz |
 | europa-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/europa-10m.LICENSE` |
+| afrika-, nordamerika-, sydamerika-, asien-oceanien-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/verdensdele-10m.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
 | countries-50m.json | world-atlas 2.0.2, 1:50 mio. | Uændret baggrundskort, samme world-atlas/Natural Earth-licens; kontrolsum i `data/danmark-10m.LICENSE` |
 | danmark-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; kildens SHA-256 og bearbejdning i `data/danmark-10m.LICENSE` |

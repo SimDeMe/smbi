@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright, expect
 from piletaster import afproev_piletaster
 from landekort import afproev_landekort
 from europa_quiz import afproev_europa_quiz
+from verdensdele_quiz import afproev_verdensdele_quiz
 from information import afproev_stedinformation, afproev_kortinformation
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
 from island3d import afproev_island3d
@@ -190,6 +191,7 @@ with sync_playwright() as p:
     afproev_islandtouch(browser, ADRESSE)
     print('Island: touch-strøg drejer blokken vandret og ruller siden lodret: OK')
     afproev_europa_quiz(browser, ADRESSE, UD, SKAERME)
+    afproev_verdensdele_quiz(browser, ADRESSE, UD, SKAERME)
     assert not fejl, fejl
     browser.close()
     print('Ingen JavaScript-fejl. Skærmbilleder:', UD)
