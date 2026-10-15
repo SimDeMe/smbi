@@ -626,7 +626,7 @@ const SKAELVKILDE = 'Jordskælv: U.S. Geological Survey, Earthquake Hazards Prog
   'Udtrækket er alle hændelser af typen jordskælv med magnitude 5,0 eller mere fra 1976 til og med 2025 – i alt 83 469. 1976 er valgt, fordi det globale CMT-katalog begynder da, så store skælv er mere ensartet registreret. Mindre skælv er udeladt; de findes overalt og ville skjule mønsteret. ' +
   'Bearbejdning: Positionen er afrundet til 0,1° (ca. 10 km), dybden til hele km og magnituden til 0,1. Magnituden er katalogets foretrukne, oftest momentmagnitude (Mw). Mange lavtliggende skælv har en fastsat standarddybde på 10 eller 33 km, fordi dybden ikke kunne bestemmes præcist; dybdegrænserne 70 og 300 km er den gængse inddeling i lavtliggende, mellemdybe og dybe skælv.';
 
-const VULKANKILDE = 'Vulkaner: Global Volcanism Program, Smithsonian Institution, Volcanoes of the World (VOTW), laget Holocene Volcanoes, hentet 15. oktober 2026 fra GVP\'s WFS-tjeneste (webservices.volcano.si.edu). Kilden skal angives ved brug. ' +
+const VULKANKILDE = 'Vulkaner: Global Volcanism Program, Smithsonian Institution, Volcanoes of the World (VOTW) version 5.4.0 af 7. august 2026, kompileret af E. Venzke, doi:10.5479/si.GVP.VOTW5-2026.5.4; laget Holocene Volcanoes, hentet 15. oktober 2026 fra GVP\'s WFS-tjeneste (webservices.volcano.si.edu). Kilden skal angives ved brug. ' +
   'Listen rummer 1 214 vulkaner med udbrud eller anden sikker aktivitet i holocæn, dvs. inden for ca. 11 700 år. Vulkantypen er GVP\'s primære type, samlet i ni danske typer. Tektonisk placering er GVP\'s egen: subduktionszone, riftzone eller intraplade (inde på en plade, fx over en hotspot). ' +
   'En fyldt trekant betyder, at GVP har registreret et udbrud i 1900 eller senere. Vulkanfelter og sprækkesystemer er vist som ét punkt, selv om de dækker et område. Vulkaner under havet er kun med, hvis der kendes holocæn aktivitet; langt de fleste udbrud langs spredningsryggene sker på dybt vand og er ikke registreret.';
 
@@ -692,7 +692,8 @@ function visSeismikopgave() {
   for (const [navn, url] of [
     ['USGS ComCat', 'https://earthquake.usgs.gov/data/comcat/'],
     ['USGS: brug af data', 'https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits'],
-    ['Smithsonian GVP', 'https://volcano.si.edu/']
+    ['Smithsonian GVP', 'https://volcano.si.edu/'],
+    ['VOTW 5.4.0 (DOI)', 'https://doi.org/10.5479/si.GVP.VOTW5-2026.5.4']
   ]) {
     if (kilder.childElementCount) kilder.append(' · ');
     const link = element('a', navn);

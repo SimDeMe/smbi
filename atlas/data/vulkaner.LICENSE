@@ -7,9 +7,16 @@ Hentet 15. oktober 2026 som GeoJSON fra GVP's WFS-tjeneste:
 SHA-256: 06b4959df771e7d9b2ff7c3020597d9530ef326f87094cd0f3ff736a9d20fd54
 Tjenestens metadata (GetCapabilities) angiver Fees: NONE og
 AccessConstraints: NONE. GVP beder om kildeangivelse; den står i atlassets
-dialog «Undersøg jordskælv og vulkaner». GVP's egne sider om version og
-vilkår (volcano.si.edu) kunne ikke åbnes automatisk ved hentningen, så den
-præcise databaseversion og DOI er ikke kontrolleret.
+dialog «Undersøg jordskælv og vulkaner».
+
+Version: Den gældende version ved hentningen var VOTW 5.4.0 af 7. august
+2026 (kontrolleret manuelt 15. oktober 2026 på
+https://volcano.si.edu/volcanolist_holocene.cfm). WFS-svaret bærer ikke
+selv et versionsnummer. GVP ønsker denne kildeangivelse:
+
+  Global Volcanism Program, 2026. [Database] Volcanoes of the World
+  (v. 5.4.0; 7 Aug 2026). Distributed by Smithsonian Institution, compiled
+  by Venzke, E. https://doi.org/10.5479/si.GVP.VOTW5-2026.5.4
 
 Bearbejdning (data/vulkaner.py): 1 214 vulkaner; koordinater afrundet til
 0,01°; GVP's primære vulkantyper samlet i ni danske typer; den tektoniske
