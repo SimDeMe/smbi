@@ -106,7 +106,7 @@ deres implementation automatisk.
 
 ## Næste handling
 
-*Opdateret 15. oktober 2026 (Atlas v435).*
+*Opdateret 16. oktober 2026 (Atlas v442).*
 
 - **#46 er afsluttet.** Sammenligningen med de lokale materialer står i
   [INDHOLD.md](INDHOLD.md) sammen med ejerens afgørelser. De 11 afprøvede
@@ -119,14 +119,17 @@ deres implementation automatisk.
   [tjekliste til fysisk test](ENHEDSTEST.md)); afprøvningen afventer ejeren.
 - **#47:** test på fysisk telefon/iPad, Safari og skærmlæser mangler stadig
   og kræver ejeren.
+- **Leveret siden v435:** cirkulationsmodel B (v438), Jordskælvsbølger model
+  A og B (v439), Temakort med HDI, BNI og demografi (v440), laget
+  **Havbundens alder** med profilmåling (v441, A3) og modellen
+  **Bjergarternes kredsløb** (v442, A7). Af INDHOLD.md's roadmap er trin 1
+  leveret, og af trin 2–3 seismikken, havbundens alder og kredsløbet;
+  istidslandskab, grundvand og kulstofkredsløb mangler.
+- **Åbent for ejeren:** licensteksten for EarthBytes aldersgitter 2020 skal
+  læses i README.txt på earthbyte.org (kunne ikke nås herfra); se
+  `data/havbundsalder.LICENSE`.
 
-- **Global cirkulation (B4), i gang:** milepæl A er skrevet i
-  [CIRKULATION-MODEL.md](CIRKULATION-MODEL.md) (v435) med elevtekst, modellens
-  tal, steder og et visuelt brief. Ejeren vil have den flot og sjov frem for
-  100 % virkelighedstro, og det visuelle laves sammen med ChatGPT. Næste:
-  ejerens gennemgang, derefter prototype i `atlas/cirkulation/` (C), målte
-  vinde/tryk som lag (B) og stederne Mumbai, Sahel og Østafrika (D).
-
-Derefter følger rækkefølgen i INDHOLD.md: model for seismiske bølger og lokalisering, Danmarkskort i højere opløsning
-(istid, grundvand, oplande), samfundsdatalag (GHI, HDI, energi, vandstress)
-og Vestnorge som sted for stigningsregn.
+Derefter følger rækkefølgen i INDHOLD.md: istidslandskab og Danmarkskort i
+højere opløsning (A9, C3), grundvandstværsnit (C2), kulstofkredsløbet (E4),
+samfundsdatalag (energi, GHI, vandstress) og vandbalance/sol- og vindpotentiale
+for et sted (C1, E2).

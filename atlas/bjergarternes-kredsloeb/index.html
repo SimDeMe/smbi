@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bjergarternes kredsløb — smbi.dk</title>
+  <meta name="description" content="Følg en sten rundt i bjergarternes kredsløb, find ud af hvor ved pladegrænserne skolens sten er dannet, og se hvorfor langsom afkøling giver store korn.">
+  <link rel="canonical" href="https://smbi.dk/atlas/bjergarternes-kredsloeb/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/atlas/bjergarternes-kredsloeb/">
+  <meta property="og:title" content="Bjergarternes kredsløb — smbi.dk">
+  <meta property="og:description" content="Følg en sten fra magma til sand, sandsten og kvartsit – og find ud af, hvor ved pladegrænserne skolens sten er dannet.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="kredsloeb.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="spring" href="#lab">Spring til modellen</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+      <nav aria-label="Sitet"><a href="/atlas/">← Atlas</a><a href="/geografi/stensamling.html">Stensamlingen</a><a href="/geografi.html">Alle geografisimulationer</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <div>
+        <p class="overlinje">Atlas · Geologi</p>
+        <h1>Bjergarternes kredsløb<span>.</span> <em>Ingen sten varer evigt.</em></h1>
+      </div>
+      <p class="intro-tekst">Hvor bliver en granit af – og hvor kom den fra?</p>
+      <div class="intro-knapper">
+        <button id="om-knap" class="lille" aria-haspopup="dialog">Hvorfor er modellen sådan?</button>
+        <button id="fokus" class="lille" aria-pressed="false" title="Skjul overskrift og sidehoved">Fokus</button>
+      </div>
+    </div>
+
+    <section id="lab" class="lab" aria-label="Bjergarternes kredsløb – interaktiv model">
+      <div class="faner" role="tablist" aria-label="Vælg del af modellen">
+        <button role="tab" id="fane-1" aria-controls="del-1" aria-selected="true" data-fane="1"><b>1</b><span>Stenens rejse<small>Kredsløbet</small></span></button>
+        <button role="tab" id="fane-2" aria-controls="del-2" aria-selected="false" tabindex="-1" data-fane="2"><b>2</b><span>Hvor dannes stenene?<small>Pladegrænserne</small></span></button>
+        <button role="tab" id="fane-3" aria-controls="del-3" aria-selected="false" tabindex="-1" data-fane="3"><b>3</b><span>Afkøling og korn<small>Store eller små krystaller</small></span></button>
+      </div>
+
+      <!-- 1 · Stenens rejse -->
+      <div class="del" id="del-1" role="tabpanel" aria-labelledby="fane-1">
+        <div class="figur diagramfigur">
+          <svg id="diagram" viewBox="0 0 640 540" role="img" aria-labelledby="diagram-titel"><title id="diagram-titel">Bjergarternes kredsløb med fem grupper og processerne mellem dem</title></svg>
+          <div class="maerke">Model · tider er typiske størrelsesordener</div>
+        </div>
+        <aside class="panel">
+          <label class="felt valgfelt"><span>Start med</span><select id="start"></select></label>
+          <div id="stenkort" class="stenkort"></div>
+          <div class="muligheder-top"><h2 id="muligheder-titel">Hvad kan der ske nu?</h2></div>
+          <div id="muligheder" class="muligheder" role="group" aria-labelledby="muligheder-titel"></div>
+          <div id="forklaring" class="kort forklaring" aria-live="polite"></div>
+          <div class="rejse">
+            <div class="rejse-top"><h2>Rejsen</h2><span id="rejsetid" class="rejsetid"></span></div>
+            <ol id="rejse"></ol>
+            <div class="knaprad"><button id="fortryd" class="lille">↶ Fortryd</button><button id="forfra" class="lille">↻ Start forfra</button></div>
+          </div>
+          <details class="hvorfor" id="udfordringer" open>
+            <summary>Udfordringer</summary>
+            <ul id="maal" class="maalliste"></ul>
+          </details>
+          <details class="hvorfor">
+            <summary>Hvorfor ser modellen sådan ud?</summary>
+            <p>Kredsløbet har ingen fast rækkefølge. En sten kan springe trin over – en granit kan omdannes til gnejs uden først at blive til sand – og nogle sten tager den samme runde mange gange: Kvartskorn kan blive til sand, sandsten og sand igen gennem hundreder af millioner af år.</p>
+            <p><b>Tiderne</b> er typiske størrelsesordener. En lava størkner på timer til år, et magmakammer på titusinder til hundredtusinder af år. Det tager millioner af år at begrave og kitte et sediment, og titals millioner af år at hæve og erodere en bjergkæde, så dens rod kommer frem.</p>
+            <p><b>Kvarts og kalk smelter sjældent.</b> Ren kvarts smelter først ved ca. 1700 °C, og kalk afgiver CO₂ i stedet for at smelte. Kvartsit og marmor kan derfor ikke blive til magma her; de bliver til sand og opløst kalk igen.</p>
+            <p>Billederne og tegningerne er fra skolens <a href="/geografi/stensamling.html">stensamling</a>. Løst sediment og magma har ingen sten i samlingen.</p>
+          </details>
+        </aside>
+      </div>
+
+      <!-- 2 · Pladegrænserne -->
+      <div class="del" id="del-2" role="tabpanel" aria-labelledby="fane-2" hidden>
+        <div class="figur snitfigur">
+          <div class="snitrum">
+            <svg id="snit" viewBox="0 0 1000 520" role="img" aria-labelledby="snit-titel"><title id="snit-titel">Skematisk snit gennem Jordens yderste del fra en hotspot over en spredningsryg og en subduktionszone til en bjergkæde</title></svg>
+            <div id="stedknapper" class="stedknapper" role="group" aria-label="Steder i snittet"></div>
+          </div>
+          <div class="maerke">Skematisk snit · ikke målfast</div>
+        </div>
+        <aside class="panel">
+          <div class="vaelger" role="radiogroup" aria-label="Hvad vil du?">
+            <button role="radio" aria-checked="true" data-tilstand="udforsk">Udforsk stederne</button>
+            <button role="radio" aria-checked="false" data-tilstand="quiz">Hvor er stenen dannet?</button>
+          </div>
+          <div id="stedkort" class="kort stedkort" aria-live="polite"></div>
+          <div id="quiz" class="quiz" hidden>
+            <div id="quizsten" class="stenkort"></div>
+            <p id="quizspoergsmaal" class="quizspoergsmaal">Tryk på det sted i snittet, hvor stenen er dannet.</p>
+            <div id="quizsvar" class="kort quizsvar" role="status" aria-live="polite" hidden></div>
+            <div class="knaprad"><button id="quiznaeste" class="hoved" hidden>Næste sten →</button><span id="quizpoint" class="quizpoint"></span></div>
+          </div>
+          <div class="knaprad">
+            <button id="temperatur" aria-pressed="false">Vis temperatur</button>
+            <button id="bevaegelse" aria-pressed="true">Pladernes bevægelse</button>
+          </div>
+          <details class="hvorfor">
+            <summary>Hvorfor ser snittet sådan ud?</summary>
+            <p>Snittet samler de vigtigste steder ved pladegrænserne i ét billede. Det findes ikke sådan ét sted på Jorden, og højden er overdrevet mange gange: Havet er 3–6 km dybt, skorpen under kontinenterne 30–70 km tyk.</p>
+            <p><b>Temperaturen</b> stiger med dybden – i gennemsnit 25–30 °C pr. km i den øverste skorpe. Under ryggen og vulkanerne ligger varmen højt; den kolde plade i subduktionszonen trækker kulden med ned. Derfor dannes eklogit ved højt tryk men lav temperatur, mens gnejs og migmatit dannes ved høj temperatur i bjergkædens rod.</p>
+            <p>Hvert sted viser de sten, der typisk dannes der. Mange sten kan dannes flere steder; i «Hvor er stenen dannet?» tæller alle de steder, hvor den typisk dannes.</p>
+          </details>
+        </aside>
+      </div>
+
+      <!-- 3 · Afkøling og korn -->
+      <div class="del" id="del-3" role="tabpanel" aria-labelledby="fane-3" hidden>
+        <div class="figur afkoelingsfigur">
+          <div class="skorpe">
+            <svg id="skorpe" viewBox="0 0 400 420" role="img" aria-labelledby="skorpe-titel"><title id="skorpe-titel">Snit gennem skorpen: hvor magmaen størkner</title></svg>
+          </div>
+          <div class="lupe">
+            <canvas id="lupe" role="img" aria-label="Magmaen under luppen: krystaller vokser, mens den afkøles"></canvas>
+            <p id="lupe-tekst" class="lupe-tekst" aria-hidden="true"></p>
+            <p id="lupe-ur" class="lupe-ur" aria-hidden="true"></p>
+          </div>
+          <div class="maerke">Model · kornstørrelse efter tommelfingerregel</div>
+        </div>
+        <aside class="panel">
+          <div class="felt"><span>Magma</span><div class="vaelger lille-vaelger" role="radiogroup" aria-label="Magma">
+            <button role="radio" aria-checked="true" data-magma="basaltisk">Basaltisk</button><button role="radio" aria-checked="false" data-magma="granitisk">Granitisk</button></div></div>
+          <div class="vaelger krop-vaelger" role="radiogroup" aria-label="Hvor størkner magmaen?">
+            <button role="radio" aria-checked="true" data-krop="lava">Lava på overfladen</button>
+            <button role="radio" aria-checked="false" data-krop="gang">Gang i en sprække</button>
+            <button role="radio" aria-checked="false" data-krop="pluton">Pluton dybt nede</button>
+          </div>
+          <div class="skyder">
+            <label for="tykkelse">Tykkelse <output id="tykkelse-ud">5 m</output></label>
+            <input id="tykkelse" type="range" min="0" max="1000" step="1" value="500">
+          </div>
+          <button id="stoerkn" class="hoved">▶ Lad magmaen størkne</button>
+          <div id="resultat" class="kort resultat" aria-live="polite"></div>
+          <details class="hvorfor">
+            <summary>Mål kornene som i øvelsen</summary>
+            <p>Luppen viser et felt på 10 × 10 mm med en målestok. Mål nogle korn, og regn gennemsnittet ud – som med den store sten i øvelsen <a href="/Øvelser/Geografi/bjergarternes-kredsloeb/bjergarternes-kredsloeb.html">Bjergarternes kredsløb</a>.</p>
+          </details>
+          <details class="hvorfor">
+            <summary>Hvorfor ser modellen sådan ud?</summary>
+            <p><b>Afkølingen</b> styres af, hvor hurtigt varmen kan lede ud gennem stenen omkring. For en plade med tykkelsen h tager det ca.</p>
+            <p class="formel stor">t ≈ (h/2)² / κ &nbsp;&nbsp; κ ≈ 1·10<sup>−6</sup> m²/s</p>
+            <p>Dobbelt så tyk betyder fire gange så lang tid. En 1 m tyk lavastrøm størkner på dage, en 20 m tyk gang på år, en pluton på 3 km på ca. 70 000 år. Krystallisationsvarme, form og vand, der cirkulerer, ændrer tiderne et par gange – størrelsesordenen holder.</p>
+            <p><b>Kornstørrelsen</b> er en tommelfingerregel tilpasset kendte bjergarter: ca. 0,3 mm i en 5 m tyk lavastrøm, 0,5–1 mm i en gang og 3–10 mm i en pluton. Jo længere tid, jo færre krystaller når at begynde, og jo større vokser de. Køles smelten meget hurtigt, bliver den til glas.</p>
+            <p><b>Ikke med:</b> Porfyrer, hvor nogle krystaller voksede i magmakammeret, før lavaen kom op. Pegmatit, hvor en vandrig restsmelte giver kæmpekorn. Og obsidian: En sej, kiselrig smelte kan blive til glas, selv i en tyk lavastrøm, fordi krystallerne har svært ved at vokse – ikke kun fordi den køles hurtigt.</p>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <p class="fodnote">Model til atlasset på smbi.dk. Øvelse: <a href="/Øvelser/Geografi/bjergarternes-kredsloeb/bjergarternes-kredsloeb.html">Bjergarternes kredsløb</a> (sortér prøver og undersøg en stor sten) · <a href="/Øvelser/Geografi/bjergarters-densitet/bjergarters-densitet.html">Bjergarternes densitet</a>. Stenene kan bestemmes i <a href="/geografi/stensamling.html?noegle=1">stensamlingen</a>. Se havbundens alder og pladegrænserne på <a href="/atlas/">globussen i atlasset</a>.</p>
+  </main>
+
+  <dialog id="om" aria-labelledby="om-titel">
+    <div class="dialog-top"><p class="overlinje">Om modellen</p><button id="om-luk" class="lille" aria-label="Luk">Luk ×</button></div>
+    <h2 id="om-titel">Hvorfor er modellen, som den er?</h2>
+    <p>Alle bjergarter kan blive til andre bjergarter. Modellen viser det fra tre sider:</p>
+    <ol>
+      <li><b>Stenens rejse.</b> Du følger én sten gennem kredsløbet og vælger selv, hvad der sker. Det viser, at kredsløbet ikke har en fast rækkefølge, og hvor lang tid trinene tager.</li>
+      <li><b>Hvor dannes stenene?</b> Kredsløbet drives af pladetektonikken: Magma dannes ved ryggene, over hotspots og over subduktionszonerne; bjergarter omdannes, hvor plader støder sammen; erosionen tager fat, hvor skorpen hæves. Her kobles skolens stensamling til stederne.</li>
+      <li><b>Afkøling og korn.</b> Kornstørrelsen i en magmatisk bjergart fortæller, hvor hurtigt den er størknet – og dermed om den er størknet dybt nede eller på overfladen.</li>
+    </ol>
+    <p><b>Model, ikke måling.</b> Tiderne i del 1 er typiske størrelsesordener. Snittet i del 2 er skematisk og samler steder, der ligger tusinder af km fra hinanden. Afkølingstiden i del 3 er en fysisk overslagsberegning, mens kornstørrelsen er en tommelfingerregel, der er tilpasset kendte bjergarter.</p>
+    <p><b>Danmark.</b> Danmarks undergrund er næsten kun sedimentære bjergarter: kridt, kalk, ler og sand. Granit, gnejs og porfyrer på markerne og strandene er ledeblokke, som isen har ført hertil fra Norge, Sverige og Østersøen – rødderne af bjergkæder, der for længst er eroderet ned.</p>
+    <p class="smaa">Kilder: D.L. Turcotte &amp; G. Schubert (2014): <i>Geodynamics</i>, 3. udg., Cambridge University Press (afkøling af intrusioner, kap. 4). J.D. Winter (2014): <i>Principles of Igneous and Metamorphic Petrology</i>, 2. udg., Pearson (magmaer, metamorfosegrad og facies). K.V. Cashman (1990): Textural constraints on the kinetics of crystallization of igneous rocks, <i>Reviews in Mineralogy</i> 24 (krystalstørrelse og afkøling). Stenenes beskrivelser og billeder: smbi.dk's stensamling.</p>
+  </dialog>
+
+  <noscript><p class="noscript">Modellen kræver JavaScript. Kort fortalt: Magma størkner til magmatiske bjergarter. De forvitrer og eroderes til sediment, som aflejres og kittes til sedimentære bjergarter. Tryk og varme omdanner dem til metamorfe bjergarter, og bliver det varmt nok, smelter de til magma igen. Se også <a href="/geografi/stensamling.html">stensamlingen</a>.</p></noscript>
+</body>
+</html>

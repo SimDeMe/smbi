@@ -839,7 +839,7 @@ function visHavbundsopgave() {
   }
   indhold.append(kilder);
   indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
-  indhold.append(visModeller(modeller.filter(model => ['pladegraenser', 'vulkanudbrud'].includes(model.id))));
+  indhold.append(visModeller(modeller.filter(model => ['pladegraenser', 'vulkanudbrud', 'bjergarternes-kredsloeb'].includes(model.id))));
   indhold.append(visOevelser(oevelserTil('opgaver', 'plade')));
 }
 

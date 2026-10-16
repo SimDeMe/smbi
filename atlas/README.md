@@ -3,6 +3,17 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Bjergarternes kredsløb (v442)
+
+Ny model på `/atlas/bjergarternes-kredsloeb/` (A7) med modelkort under emnet
+«Bjergarter», under «Undersøg havbundens alder» og som link fra øvelseskortet
+på `geografi.html`. Tre dele: *Stenens rejse* (en sten gennem kredsløbet med
+tider, steder og udfordringer), *Hvor dannes stenene?* (skematisk snit over
+pladegrænserne med quiz på skolens stensamling) og *Afkøling og korn*
+(afkølingstid t ≈ (h/2)²/κ og krystaller under en lup). Stensamlingens data,
+fotos og tegninger genbruges direkte. Se `bjergarternes-kredsloeb/README.md`
+for model, tal, kilder og test. Atlastestenes antal modelkort er rettet til 9.
+
 ## Havbundens alder (v441)
 
 Knappen **Havbund** farver havbunden efter alder (A3 i INDHOLD.md). Data er

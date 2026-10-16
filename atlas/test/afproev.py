@@ -73,7 +73,7 @@ with sync_playwright() as p:
         side.keyboard.press('Escape')
         side.get_by_role('button', name='Søg', exact=True).click()
         felt = side.get_by_role('searchbox')
-        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 8)]:
+        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 9)]:
             felt.fill(ord)
             assert side.locator('.modelkort').count() == antal, (ord, antal)
         side.keyboard.press('Escape')
