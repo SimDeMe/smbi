@@ -1,0 +1,45 @@
+Havbundens alder: havbundsalder.bin er bearbejdet fra EarthBytes aldersgitter.
+
+Kilde: Seton, M., Müller, R. D., Zahirovic, S., Williams, S., Wright, N. M.,
+Cannon, J., Whittaker, J. M., Matthews, K. J. & McGirr, R. (2020), A global
+dataset of present-day oceanic crustal age and seafloor spreading parameters,
+Geochemistry, Geophysics, Geosystems 21(10), e2020GC009214,
+https://doi.org/10.1029/2020GC009214
+Gitteret er age.2020.1.GeeK2007.6m.nc (0,1°, gitterpunkter på hele 0,1°,
+alder i mio. år efter tidsskalaen GTS2012), som EarthByte-gruppen ved
+University of Sydney udgiver på
+  https://www.earthbyte.org/webdav/ftp/earthbyte/agegrid/2020/Grids/
+
+Hentning (16. oktober 2026): earthbyte.org kunne ikke nås fra arbejdsmiljøet
+(netværkspolitik). Den samme fil ligger uændret i Python-pakken pyBacktrack
+1.5.0 (EarthByte, GPL-2.0 for koden) som
+pybacktrack/bundle_data/age/agegrid_6m.nc; pakkens Readme.txt ved siden af
+angiver kilden ovenfor og den direkte EarthByte-adresse til filen
+age.2020.1.GeeK2007.6m.nc. Hentet fra PyPI:
+  https://files.pythonhosted.org/packages/py3/p/pybacktrack/pybacktrack-1.5.0-py3-none-any.whl
+SHA-256 (hjulet):       978d0f11b0fa12bdcffef43e66487c5caf28a0f84a8eccbf5c9b253e5d389193
+SHA-256 (agegrid_6m.nc): 47a500088bafeaae6a29411121d7dc574b556de328512b64bf2546f7b1a0c638
+SHA-256 (havbundsalder.bin, resultatet): 21b8249d8f05cc8aa6507a7b6adab65333a8988e3c44651a09302936a0799eab
+
+Vilkår: Artiklen er open access (CC BY 4.0), og gitrene er ifølge artiklen
+frit tilgængelige i EarthBytes arkiv og på GPlates' dataportal. Kilden skal
+angives (artiklen ovenfor). En egentlig licenstekst for 2020-gitrene kunne
+IKKE læses herfra: EarthBytes README.txt i mappen ovenfor bør kontrolleres
+manuelt. EarthBytes beslægtede pladerekonstruktioner udgives under CC BY-SA
+4.0 (fx Müller m.fl. 2019 i gplately-depotet); vi behandler derfor atlassets
+afledte fil på samme vilkår: kildeangivelse og del-på-samme-vilkår. smbi.dk
+er gratis undervisningsmateriale uden reklamer eller salg. Kildeangivelsen
+med link står i atlassets dialog «Undersøg havbundens alder».
+
+Bearbejdning (data/havbundsalder.py, kan gentages og giver samme fil):
+- 2 × 2 gitterpunkter samlet til celler på 0,2° (middel af de gyldige; en
+  celle er gyldig, hvis mindst to af de fire har en alder): 1800 × 900 celler.
+- Alder afrundet til 0,2 mio. år, lagret som k = 5·alder + 1 (0 = ingen
+  alder), som forskelle række for række (int16) og gzippet.
+- Intet er tilføjet eller flyttet. 49,3 % af cellerne har en alder.
+
+Kontroltal fra den bearbejdede fil (arealvægtet): middelalder 62,9 mio. år
+(Seton m.fl. angiver 64,2 for deres eget gitter; forskellen skyldes den
+grovere opløsning og maskeringen ved kysterne), median 52,4, ældste 338,6
+mio. år (Østmiddelhavet). 20 % af havbunden er yngre end 20 mio. år, 58 %
+yngre end 66 mio. år og 94 % yngre end 145 mio. år.

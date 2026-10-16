@@ -75,6 +75,8 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   const temalag = new Map();
   // Skærmpunkt under musen; null = midt på globussen (sigtekornet).
   let pegepunkt = null;
+  // Når et lag beder om punkter (fx en profil), giver et tryk et punkt i stedet for landemenuen.
+  let punktvalg = null;
   const aflaest = new Map();
   const aflaesning = document.querySelector('#klimaaflaesning');
   function vis(element, tekst) {
@@ -144,6 +146,12 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.beginPath(); sti({ type: 'Sphere' });
     ctx.fillStyle = '#bcdfee'; ctx.fill();
     ctx.save(); ctx.clip();
+    // Lag, der farver havbunden, ligger under gradnet og lande.
+    if (!quiz) {
+      for (const modul of temalag.values()) {
+        modul.tegnUnder?.(ctx, { projektion, centrum, skala: projektion.scale(), bredde, hoejde, gentegn: opdater });
+      }
+    }
     ctx.beginPath(); sti(net); ctx.strokeStyle = '#76aab8'; ctx.lineWidth = 0.55; ctx.stroke();
     const { lande: landflader, graenser: landegraenser } = kort();
     if (zoom > DETALJE_ZOOM && !henterDetalje) hentDetalje();
@@ -286,6 +294,9 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   // Zoom og Home beholder deres lokale fokuskrav. Pile håndteres kun ovenfor,
   // så et tastetryk på canvas ikke også giver endnu en rotation via bubbling.
   canvas.addEventListener('keydown', event => {
+    if (punktvalg && !quiz && !landekort && event.key === 'Enter' && !event.defaultPrevented) {
+      punktvalg([...centrum]); event.preventDefault(); return;
+    }
     if (quiz && !event.defaultPrevented && !event.isComposing && !event.altKey && !event.ctrlKey && !event.metaKey) {
       if (event.key === 'Enter') {
         opdaterProjektion();
@@ -362,8 +373,8 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const forrige = fingre.get(event.pointerId);
     if (!forrige) {
       if (event.pointerType === 'mouse') {
-        const land = quiz ? quizLand(event) : rammerLand(event);
-        canvas.style.cursor = land ? 'pointer' : '';
+        const land = quiz ? quizLand(event) : punktvalg ? null : rammerLand(event);
+        canvas.style.cursor = punktvalg && !quiz ? 'crosshair' : land ? 'pointer' : '';
         canvas.title = !quiz && land ? `${landenavn(land)} — klik for landemenu` : '';
         const ny = !quiz && land || null;
         if (ny !== fremhaevet) { fremhaevet = ny; opdater(); }
@@ -395,7 +406,12 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     if (event.type === 'pointerup' && fingre.size === 1 && tryk && !tryk.flyttet && !landekort &&
         Math.hypot(event.clientX - tryk.x, event.clientY - tryk.y) <= 6) {
       if (quiz) quiz.svar(quizLand(event));
-      else {
+      else if (punktvalg) {
+        opdaterProjektion();
+        const r = canvas.getBoundingClientRect();
+        const xy = [event.clientX - r.left, event.clientY - r.top];
+        if (Math.hypot(xy[0] - bredde / 2, xy[1] - hoejde / 2) <= projektion.scale()) punktvalg(projektion.invert(xy));
+      } else {
         const land = rammerLand(event);
         // Menuen åbnes først på trykkets click. Ved touch kommer browserens
         // kompatibilitets-mousedown/click efter pointerup; åbnes menuen før dem,
@@ -441,6 +457,10 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     landecentrum(id) { const land = lande.features.find(l => l.id === id); return land ? d3.geoCentroid(land) : null; },
     set landenavne(navne) { landenavne = navne; },
     visSted(sted) { centrum = [...sted.koordinater]; zoom = 1.4; afgraens(); },
+    visUdsnit(punkt, niveau) { centrum = [...punkt]; zoom = niveau; afgraens(); },
+    get centrum() { return [...centrum]; },
+    // fn([lon, lat]) kaldes ved hvert tryk på kloden (og Enter ved sigtekornet); null slår det fra.
+    vaelgPunkt(fn) { punktvalg = fn || null; fremhaevet = null; canvas.style.cursor = ''; canvas.title = ''; opdater(); },
     // Data hentes først, når laget slås til; fejl lader globussen være uændret.
     async visPladegraenser(vis) {
       if (vis) {

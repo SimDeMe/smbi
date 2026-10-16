@@ -198,10 +198,10 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 }
 /* Lave elevskærme: gentagne kildenoter står også under Undersøg og kilde. */
 @media(min-width:900px) and (max-height:760px){.skaelvsignatur .signaturnote:not(.lagstatus),#vulkansignatur .signaturnote:not(.lagstatus){display:none}.signaturer .opgaveknap{min-height:34px}}
-/* Fire lagknapper fylder værktøjslinjen: betjeningsteksten står i linjen
+/* Seks lagknapper fylder værktøjslinjen: betjeningsteksten står i linjen
    over figuren kun på meget brede skærme; ellers under atlasset. */
-@media(min-width:900px) and (max-width:1699px){.eftertekst{grid-row:3;height:auto;margin:8px 0 0;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;text-align:left}}
-@media(min-width:1700px){.eftertekst{margin-right:600px}}
+@media(min-width:900px) and (max-width:1999px){.eftertekst{grid-row:3;height:auto;margin:8px 0 0;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;text-align:left}}
+@media(min-width:2000px){.eftertekst{margin-right:760px}}
 /* Forsøgsvejledninger under steder og undersøgelser: sammenfoldet, under modelkortene. */
 .oevelser{margin-top:16px;border-top:2px solid var(--ink);padding-top:4px}.oevelser summary{cursor:pointer;min-height:44px;padding:8px 0;font:700 17px/1.5 var(--display)}
 .oevelsesliste{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:12px}.oevelsesliste li{font:15px/1.5 var(--body)}.oevelsesliste li>a:first-child{font:700 16px var(--display)}
@@ -231,3 +231,25 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 /* Seks knapper i lagrækken (med Temakort): smallere polstring på mobil, så
    Fokus ikke får sin egen række og skubber globussen ned. */
 @media(max-width:500px){.lagvalg{gap:4px}.lagvalg button{padding:7px 5px}}
+/* Havbundens alder: farveskala, aflæsning og profilgraf (skyder). */
+.alderskala{margin:2px 0 0}
+.alderfelter{display:grid;grid-template-columns:repeat(11,1fr);height:12px;border:1px solid #17211f99;border-radius:2px;overflow:hidden}
+.alderfelter i+i{border-left:1px solid #17211f55}
+.alderskalatal{position:relative;height:13px;margin-top:1px;font:500 10.5px var(--mono);color:var(--slate)}
+.alderskalatal span{position:absolute;top:0;transform:translateX(-50%)}.alderskalatal span:first-child{transform:none}
+.alderenhed{display:flex;justify-content:space-between;gap:8px;margin:2px 0 4px}
+.alderenhed i{display:inline-block;width:12px;height:10px;margin-right:4px;vertical-align:-1px;background:#cdd5d3;border:1px solid #17211f80;border-radius:2px}
+.havbundnote{margin:2px 0}
+.profilvalg{margin:6px 0 0}
+.profilrum{margin-top:6px}
+.profilgraf{display:block;width:100%;height:126px;border:1px solid var(--ink);border-radius:4px;touch-action:none;cursor:ew-resize}
+.profilgraf:focus{outline:none}.profilgraf:focus-visible{outline:3px solid var(--accent,#0b6fa4);outline-offset:1px}
+.profilmaaling{margin:5px 0 0;font-size:12.5px;line-height:1.35}
+#profilpunkter{margin-top:6px}
+#profilhjaelp{margin:0 0 4px;color:var(--ink);background:#7a4fd614;padding:4px 6px;border-radius:4px}
+body.havbundlag .globusnote{display:none}
+body.havbundlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
+@media(min-width:900px) and (max-height:700px){.havbundnote{display:none}.profilgraf{height:104px}}
+/* Seks lag på mobil: Fokus rykker op på rækken med Steder, Processer, Søg og Quiz,
+   så lagknapperne står på én række og ikke skubber globussen ned. */
+@media(max-width:500px){.lagvalg{display:contents}.indgange,.quizlinje{order:0}#fokus{order:1}.lagknap{order:2;font-size:13px}}

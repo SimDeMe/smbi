@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v440</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v441</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -56,6 +56,7 @@
         </div>
         <div class="lagvalg">
           <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
+          <button id="havbundlag" class="lagknap" aria-label="Havbundens alder" aria-pressed="false" aria-controls="havbundsignatur" disabled><span class="ikon" aria-hidden="true">▥</span> <span class="lang">Havbund</span><span class="kort" aria-hidden="true">Havbund</span></button>
           <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
           <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span class="ikon" aria-hidden="true">≈</span> <span class="lang">Jordskælv</span><span class="kort" aria-hidden="true">Skælv</span></button>
           <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span class="ikon" aria-hidden="true">▲</span> <span class="lang">Vulkaner</span><span class="kort" aria-hidden="true">Vulkan</span></button>
@@ -101,6 +102,22 @@
         <p id="bevaegelsesnote" class="signaturnote" hidden></p>
         <button id="pladeopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
         <button id="pladevisning" popovertarget="pladevalg" aria-controls="pladevalg" aria-expanded="false">Visning</button>
+      </section>
+      <section id="havbundsignatur" class="signatur havbundsignatur" aria-labelledby="havbundtitel" hidden>
+        <h2 id="havbundtitel">Havbundens alder</h2>
+        <div id="alderskala" class="alderskala" aria-hidden="true"></div>
+        <p class="signaturnote alderenhed"><span>mio. år</span><span><i></i>ingen havbundsalder</span></p>
+        <p class="signaturnote havbundnote">Rekonstruktion ud fra magnetiske striber (Seton m.fl. 2020).</p>
+        <p id="havbundaflaesning" class="klimaaflaesning"></p>
+        <button id="havbundopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+        <label class="temavalg profilvalg"><span>Profil</span><select id="havbundprofil"><option value="">Ingen</option><option value="egen">Egen profil …</option></select></label>
+        <div id="profilrum" class="profilrum" hidden>
+          <p id="profilhjaelp" class="signaturnote" role="status" hidden></p>
+          <canvas id="profilgraf" class="profilgraf" tabindex="0" role="slider" aria-orientation="horizontal"></canvas>
+          <p id="profilmaaling" class="profilmaaling" aria-live="polite"></p>
+          <button id="profilpunkter" class="opgaveknap" hidden>Vælg nye punkter A og B</button>
+        </div>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
       </section>
       </div>
       <div class="signaturer hoejre">

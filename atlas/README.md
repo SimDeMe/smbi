@@ -3,6 +3,43 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Havbundens alder (v441)
+
+Knappen **Havbund** farver havbunden efter alder (A3 i INDHOLD.md). Data er
+Seton m.fl. (2020), EarthBytes aldersgitter age.2020.1.GeeK2007 (6′), hentet
+uændret via pyBacktrack 1.5.0 på PyPI, fordi earthbyte.org ikke kunne nås
+herfra. Se `data/havbundsalder.LICENSE` – **licensteksten for 2020-gitrene er
+ikke bekræftet** og bør læses i EarthBytes README.txt.
+
+- **Data:** `data/havbundsalder.py` samler gitteret til 0,2° og 0,2 mio. år,
+  gemmer rækkerne som forskelle og gzipper: 347 kB, hentes først ved tilvalg
+  og pakkes ud med `DecompressionStream` (fejltekst i ældre browsere).
+- **Tegning:** et raster *under* landfladerne (`tegnUnder` i et temalag; nyt i
+  `globus.js`). Hver skærmpixel regnes baglæns gennem den ortografiske
+  projektion og slås op med bilineær interpolation; testen kontrollerer, at
+  formlerne rammer D3's `geoOrthographic().invert`. Under drejning tegnes groft
+  (0,4 px pr. px) og skarpt, når kloden står stille; uændret projektion genbruges.
+- **Klasser:** 11 × 20 mio. år, ColorBrewer Spectral (rød = ung). Klassegrænserne
+  tegnes som tynde, mørke linjer (isokroner). Grå = ingen havbundsalder
+  (kontinental skorpe, fx Nordsøen, eller ingen data). Farve er ikke eneste
+  signal: aflæsningen giver alder og geologisk tid (GTS2012, som gitteret).
+- **Profil:** fem faste profiler på tværs af ryggene (Sydatlanten, Nordatlanten,
+  Reykjanesryggen, Østpacifiske Ryg, Australien–Antarktis) eller egen profil
+  med to tryk på kloden (tastatur: Enter i sigtekornet). Grafen er en skyder
+  (`role=slider`, piletaster, Shift ×10, Home/End): afstand fra ryggen, alder
+  og gennemsnitlig halv spredningshastighed = afstand/alder (1 km/mio. år =
+  0,1 cm/år). Ryggen er profilens yngste punkt under 5 mio. år. Kontrol i
+  node: Atlanten 1,2–2,5, Reykjanes 1,0–1,6, Østpacifik 5–11 (tydeligt
+  asymmetrisk) og Australien–Antarktis 2,8–4 cm/år.
+- **Undersøg og kilde** (også under Processer): mønstret i tekst, sådan måles
+  hastigheden, otte spørgsmål (symmetri, hastigheder, PB2002-sammenligning,
+  subduktion og den manglende gamle havbund, Island, egen profil, modelkritik
+  om magnetiske striber og kridttidens stille zone) og kilder.
+- **Mobil:** seks lag – Fokus rykker op på første række under 500 px.
+- Test: `node atlas/test/havbundsalder.mjs` (gitter, kendte steder, profiler,
+  projektion) og `test/havbund.py` (fem skærme, mus/touch/tastatur, egen
+  profil, dialog, fejl og nyt forsøg) i `test/afproev.py`.
+
 ## Temakort: landene farvet efter nøgletal (v440)
 
 Knappen **Temakort** farver hvert land efter et nøgletal (koropletkort). Tallene

@@ -428,9 +428,11 @@ function visProcesser() {
   klimaopgave.onclick = visKlimaopgave;
   const seismikopgave = element('button', 'Undersøg jordskælv og vulkaner', 'tilbage');
   seismikopgave.onclick = visSeismikopgave;
+  const havbundsopgave = element('button', 'Undersøg havbundens alder', 'tilbage');
+  havbundsopgave.onclick = visHavbundsopgave;
   const temaopgave = element('button', 'Undersøg landene på temakort', 'tilbage');
   temaopgave.onclick = visTemaopgave;
-  indhold.append(pladeopgave, ' ', klimaopgave, ' ', seismikopgave, ' ', temaopgave);
+  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', seismikopgave, ' ', temaopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -563,6 +565,7 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
   indhold.append(element('p', 'Klimazoner farver landene efter Vahls klimazoner og plantebælter eller efter Köppen – vælg i signaturen. Feltet under farverne viser klassen ved musen, eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Laget kan vises sammen med pladegrænserne.'));
+  indhold.append(element('p', 'Havbund farver havbunden efter alder: rød er dannet ved spredningsryggene inden for de seneste 20 mio. år, violet er ældst. Vælg en profil i signaturen – eller tegn din egen med to tryk på kloden – og flyt markøren på grafen for at måle, hvor hurtigt havbunden har bevæget sig væk fra ryggen.'));
   indhold.append(element('p', 'Jordskælv viser skælv med magnitude 5 eller mere siden 1976, farvet efter dybde; Vulkaner viser vulkaner med udbrud inden for de seneste ca. 11 700 år. Vis dem sammen med pladegrænserne, og brug aflæsningen i signaturen til at se det enkelte skælv eller den enkelte vulkan.'));
   indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
   indhold.append(element('p', 'Med tastatur: Piletaster drejer globussen, også efter klik andre steder på siden. I søgefelter, dialoger og komponenter med egen piletastbetjening beholder tasterne deres normale funktion. Med fokus på globussen kan du bruge +/− til zoom og Home til at nulstille. Du kan også bruge knapperne under globussen.'));
@@ -570,7 +573,7 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(lavInformation({
     navn: 'Globussen', overskrift: 'Om kortet',
     introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænse- og klimalagene er modeller.',
-    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde. Jordskælv er fra USGS og vulkaner fra Smithsonian GVP; se Jordskælv → Undersøg og kilde.'
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde. Jordskælv er fra USGS og vulkaner fra Smithsonian GVP; se Jordskælv → Undersøg og kilde. Havbundens alder er en rekonstruktion efter Seton m.fl. (2020); se Havbund → Undersøg og kilde.'
   }));
 };
 
@@ -758,6 +761,88 @@ function visSeismikopgave() {
   indhold.append(visOevelser(oevelserTil('opgaver', 'seismik')));
 }
 
+const HAVBUNDKILDE = 'Havbundens alder: Seton, M., Müller, R. D., Zahirovic, S., Williams, S., Wright, N. M., Cannon, J., Whittaker, J. M., Matthews, K. J. & McGirr, R. (2020), A global dataset of present-day oceanic crustal age and seafloor spreading parameters, Geochemistry, Geophysics, Geosystems 21, e2020GC009214, doi:10.1029/2020GC009214. Gitteret (age.2020.1.GeeK2007, 6 bueminutter) udgives frit af EarthByte-gruppen ved University of Sydney med krav om kildeangivelse. Atlassets kopi er taget fra pyBacktrack 1.5.0, som indeholder den samme fil uændret. ' +
+  'Sådan er alderen fundet: Når lava størkner ved en spredningsryg, låses jordmagnetfeltets retning fast i mineralet magnetit. Feltet vender med ujævne mellemrum, så havbunden får magnetiske striber parallelt med ryggen. Striberne er målt fra skibe og fly, genkendt og dateret efter den geomagnetiske tidsskala (GTS2012), som bygger på boringer i havbunden og radiometrisk datering. Mellem striberne er alderen interpoleret, og hvor striberne mangler, bruges en pladerekonstruktion. Alderen er altså en rekonstruktion – ikke en måling i hvert punkt. ' +
+  'Usikkerheden er størst i kridttidens «stille zone» (ca. 121–84 mio. år siden, hvor feltet ikke vendte, så der ingen striber er), hvor få skibe har sejlet, og i små, gamle bassiner som Østmiddelhavet. ' +
+  'Bearbejdning til atlasset: 2 × 2 celler er samlet til 0,2° (ca. 22 km), og alderen er afrundet til 0,2 mio. år. Aflæsning og profil interpolerer mellem cellerne. Farverne er 11 klasser på 20 mio. år (ColorBrewer Spectral); grå havbund har ingen havbundsalder – den er kontinental skorpe (fx Nordsøen) eller mangler data. Landfladerne dækker gitteret. ' +
+  'Profilerne følger en storcirkel mellem A og B. Ryggen er profilens yngste punkt, hvis det er under 5 mio. år. Hastigheden er afstanden fra ryggen divideret med alderen, altså gennemsnittet siden havbunden blev dannet – og kun den del af bevægelsen, der går langs profilen. Går profilen skråt over ryggen, bliver afstanden og dermed hastigheden for stor.';
+
+function visHavbundsopgave() {
+  aabn('Undersøg havbundens alder');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå laget Havbund til – gerne sammen med Pladegrænser. Aflæsningen i signaturen viser alderen ved musen eller midt på globussen ved sigtekornet. Vælg en profil, og flyt markøren på grafen med mus, finger eller piletaster.'));
+  const tekst = element('details', '', 'pladeoversigt');
+  tekst.open = !globus;
+  tekst.append(element('summary', 'Mønstret i tekst'));
+  const punkter = element('ul');
+  for (const linje of [
+    'Den yngste havbund (rød, under 20 mio. år) ligger i smalle bånd langs spredningsryggene: midt i Atlanterhavet, i Det Indiske Ocean og i det østlige Stillehav.',
+    'Alderen stiger til begge sider af ryggen, næsten symmetrisk. I Atlanterhavet ligger den ældste havbund ved kontinenterne – ca. 180–190 mio. år (jura) ud for USA’s østkyst og Vestafrika.',
+    'I det østlige Stillehav er båndene mange gange bredere end i Atlanterhavet: Østpacifiske Ryg spreder hurtigere.',
+    'Den ældste havbund i oceanerne er ca. 190 mio. år og ligger i det vestlige Stillehav øst for Marianergraven. Kun i Østmiddelhavet findes rester, der kan være op til ca. 340 mio. år gamle.',
+    'Der findes ingen havbund, der er meget ældre end 200 mio. år, selv om de ældste bjergarter på kontinenterne er ca. 4 mia. år.',
+    'Grå havbund har ingen havbundsalder: Det er kontinental skorpe under havet, fx Nordsøen og sokkelen rundt om kontinenterne.'
+  ]) punkter.append(element('li', linje));
+  tekst.append(punkter);
+  const maal = element('details', '', 'pladeoversigt');
+  maal.append(element('summary', 'Sådan måler du spredningshastigheden'));
+  for (const linje of [
+    'Flyt markøren på profilgrafen ud til et punkt på den ene side af ryggen. Aflæs afstanden fra ryggen (km) og havbundens alder (mio. år).',
+    'Hastigheden er afstand / tid. 1 km pr. mio. år er 1 000 000 mm / 1 000 000 år = 1 mm/år = 0,1 cm/år. Fx 1 000 km / 50 mio. år = 20 km pr. mio. år = 2 cm/år.',
+    'Det er den halve spredningshastighed: så hurtigt har den ene side bevæget sig væk fra ryggen i gennemsnit. Den samlede spredning – hvor hurtigt de to plader bevæger sig fra hinanden – er summen af de to sider, ca. det dobbelte.',
+    'Grafens rette, violette linje går fra ryggen til markøren. Jo fladere den er, jo hurtigere spredning.'
+  ]) maal.append(element('p', linje));
+  indhold.append(tekst, maal, element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Beskriv mønstret: Hvor er havbunden yngst, og hvor er den ældst? Slå Pladegrænser til. Hvilken type pladegrænse ligger ved den yngste havbund?',
+    'Vælg profilen Sydatlanten. Beskriv aldersprofilen på hver side af ryggen. Hvad fortæller symmetrien om, hvordan havbunden dannes?',
+    'Mål den halve spredningshastighed i Sydatlanten og ved Østpacifiske Ryg. Hvor mange gange hurtigere går det i Stillehavet? Hvordan kan man se forskellen på kortet uden at måle?',
+    'Slå Pladegrænser → Visning → bevægelse til. PB2002 viser den samlede åbning ved ryggen nu. Passer den med cirka to gange din halve hastighed? Hvorfor behøver tallene ikke passe helt?',
+    'Profilen ved Østpacifiske Ryg slutter ud for Peru, hvor havbunden er ca. 45–50 mio. år. Hvad sker der med den? Slå Jordskælv til, og forklar, hvorfor der ikke findes havbund, der er meget ældre end 200 mio. år.',
+    'Vælg Reykjanesryggen syd for Island. Hvor langt er der fra ryggen til havbund, der er 50 mio. år gammel – og hvornår begyndte Nordatlanten altså at åbne sig her? Hvorfor har Island selv ingen havbundsalder på kortet?',
+    'Tegn din egen profil på tværs af en ryg, du selv vælger. Sammenlign hastigheden på de to sider. Er spredningen symmetrisk?',
+    'Modelkritik: Alderen er ikke målt i hvert punkt. Hvordan er den fundet, og hvor er den mest usikker? Hvad sker der med den målte hastighed, hvis profilen går skråt over ryggen?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus) {
+    const find = element('button', 'Vis Sydatlanten med profil og pladegrænser', 'tilbage');
+    find.onclick = async () => {
+      tilbageTilGlobus(false);
+      senesteFokus = document.querySelector('#profilgraf');
+      dialog.close();
+      await Promise.all([pladelaget.slaaTil(), havbundlaget.slaaTil()]);
+      havbundsprofil?.vaelg('sydatlanten');
+      document.querySelector('#profilgraf').focus({ preventScroll: true });
+    };
+    indhold.append(find);
+  }
+  indhold.append(lavInformation({
+    navn: 'Havbundens alder', overskrift: 'Om data',
+    introduktion: 'Seton m.fl. (2020). Alderen er rekonstrueret ud fra magnetiske striber og pladerekonstruktion – ikke dateret punkt for punkt.',
+    tekst: HAVBUNDKILDE
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['Seton m.fl. (2020)', 'https://doi.org/10.1029/2020GC009214'],
+    ['EarthByte: aldersgitre', 'https://www.earthbyte.org/webdav/ftp/earthbyte/agegrid/2020/'],
+    ['pyBacktrack 1.5.0', 'https://pypi.org/project/pybacktrack/1.5.0/'],
+    ['ColorBrewer', 'https://colorbrewer2.org/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+  indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
+  indhold.append(visModeller(modeller.filter(model => ['pladegraenser', 'vulkanudbrud'].includes(model.id))));
+  indhold.append(visOevelser(oevelserTil('opgaver', 'plade')));
+}
+
 function visPladeopgave() {
   aabn('Undersøg pladegrænserne');
   const tilbage = element('button', '← Processer', 'tilbage');
@@ -926,6 +1011,9 @@ function opdaterPladebeskrivelse() {
   if (!landAktivt && vulkanknap.getAttribute('aria-pressed') === 'true') {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser holocæne vulkaner efter Smithsonian GVP; fyldte trekanter har haft udbrud siden 1900`);
   }
+  if (!landAktivt && document.querySelector('#havbundlag').getAttribute('aria-pressed') === 'true') {
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser havbundens alder efter Seton m.fl. 2020 i klasser på 20 mio. år; aflæsningen under signaturen viser alderen midt på globussen. ${havbundsprofil?.beskrivelse() || ''}`);
+  }
   // Knappen er først trykket, når temakort.js er hentet.
   if (!landAktivt && document.querySelector('#temalag').getAttribute('aria-pressed') === 'true') {
     const ind = temamodul.indikator();
@@ -1054,6 +1142,23 @@ const vulkanlaget = lavLag({
   async vis(vis) {
     const modul = await import('./vulkaner.js');
     await globus.visTemalag('vulkaner', vis ? modul : null);
+  },
+  efter: opdaterPladebeskrivelse
+});
+// Havbundens alder: raster under landene og en profil, eleven kan måle på.
+const havbundknap = document.querySelector('#havbundlag');
+let havbundmodul, havbundsprofil;
+const havbundlaget = lavLag({
+  knap: havbundknap, signatur: document.querySelector('#havbundsignatur'), klasse: 'havbundlag',
+  fejltekst: 'Havbundens alder kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    havbundmodul ??= await import('./havbundsalder.js');
+    if (!vis) havbundsprofil?.sluk();
+    await globus.visTemalag('havbund', vis ? havbundmodul : null);
+    if (vis && !havbundsprofil) {
+      const { startProfil } = await import('./havbundsprofil.js');
+      havbundsprofil = startProfil({ globus, modul: havbundmodul, opdateret: opdaterPladebeskrivelse });
+    }
   },
   efter: opdaterPladebeskrivelse
 });
@@ -1226,6 +1331,7 @@ document.querySelector('#skaelvopgave').onclick = visSeismikopgave;
 document.querySelector('#vulkanopgave').onclick = visSeismikopgave;
 document.querySelector('#klimaopgave').onclick = visKlimaopgave;
 document.querySelector('#pladeopgave').onclick = visPladeopgave;
+document.querySelector('#havbundopgave').onclick = visHavbundsopgave;
 
 const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zoom-ud, #nulstil')];
 globusknapper.forEach(knap => { knap.disabled = true; });
