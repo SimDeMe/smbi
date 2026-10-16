@@ -3,6 +3,48 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Temakort: landene farvet efter nøgletal (v440)
+
+Knappen **Temakort** farver hvert land efter et nøgletal (koropletkort). Tallene
+er de samme som i landemenuens Demografi-fane (`data/demografi.json`), så der
+er ingen nye data; filen hentes først ved tilvalg og deles med fanen.
+
+- **17 nøgletal** i tre grupper i en rullemenu: *Befolkning* (tæthed, tilvækst,
+  naturlig tilvækst, nettomigration, byandel, medianalder, andel 0–14 og 65+ år),
+  *Fødsel og død* (fødsels- og dødsrate, samlet fertilitet, spædbørns- og
+  børnedødelighed, middellevetid) og *Udvikling* (HDI, BNI pr. indbygger i PPP,
+  skolegang). Befolkningstal (antal) er udeladt med vilje: et koropletkort over
+  antal får store lande til at fylde; det er et af Undersøg-spørgsmålene.
+- **Årvalg** for tal med tidsserie (fødsels- og dødsrate, naturlig tilvækst,
+  andel 0–14/65+): 1950, 1980, 2000, 2023, 2050*, 2100* som pyramiderne;
+  * = FN's mellemvariant, markeret som fremskrivning i signaturen.
+  Andre tal er for 2023.
+- **Faste, runde klassegrænser** frem for kvantiler, med faglige grænser hvor
+  de findes: fertilitet 2,1 (erstatningsniveau), UNDP's fire HDI-grupper og 0
+  ved tilvækst og migration (divergerende lilla/orange skala; migration har en
+  neutral klasse −1 til 1 ‰). Ellers sekventiel YlOrRd. Farver: ColorBrewer.
+  Lande uden data er grå; Antarktis tegnes ikke.
+- **Signatur** med klassernes intervaller, en lille søjle og antal lande i hver
+  klasse (summen er alle 237 områder med data). Enhed og år står altid; den
+  længere forklaring skjules på skærme under 640 px i højden.
+- **Aflæsning** som i de andre lag: landet ved musen eller midt på globussen
+  (sigtekornet). Musen fremhæver kun landets kant, så farven kan ses.
+  Nordcypern og Somaliland viser FN's tal for hele landet og siger det.
+- **Klimazoner og temakort udelukker hinanden**, da begge farver landfladerne.
+  Valg af nøgletal og år huskes, når laget slås til igen.
+- **Mobil:** lagknapperne har smallere polstring under 500 px, så de fem lag
+  og Fokus står på én række ved 390 px og ikke skubber globussen ned.
+- **Undersøg, rangliste og kilde** (også under Processer): syv spørgsmål
+  (mønstre, sammenhænge, transitionsmodellen, fremskrivning, HDI/BNI,
+  migration og kortkritik), rangliste for det valgte nøgletal med højeste og
+  laveste 10 og alle lande (et tryk på landet åbner Demografi) samt ⓘ Om data.
+  Ranglisten er også tekstalternativet til kortet.
+- Kode: `temakort.js` (nøgletal, klasser, farver, aflæsning); globussen har
+  `visTemakort(modul)` og fylder landene med én sti pr. farve.
+- Test: `test/temakort.py` (farver for kendte lande, aflæsning, skift af
+  nøgletal og år, optælling, klimalag, rangliste, fejl og nyt forsøg) indgår i
+  `test/afproev.py`.
+
 ## Forsøgsvejledninger i atlasset (v433)
 
 22 af vejledningerne under `Øvelser/Geografi/` er skrevet ind i `oevelser` i
@@ -317,6 +359,8 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
   slås til, og tegner signaturen i samme Canvas som globussen.
 - `klimalag.js`: valgfrit klimalag (Vahl/Köppen). Henter data og
   `topojson-simplify` først ved tilvalg og klipper med kystlinjen.
+- `temakort.js`: valgfrit temakort (koropletkort) over landenes nøgletal fra
+  `demografi.json`: indikatorer, klassegrænser, farver, rangliste og aflæsning.
 - `pladebevaegelse.js`: valgfrie navne for PB2002's 52 plader. Eulerberegningen
   er bevaret til uafhængig kontrol af modellens relative hastigheder.
 - `graensehastigheder.js`: valgfrie hastigheder og pile ved grænserne, fra

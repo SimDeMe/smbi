@@ -69,6 +69,8 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   // musen, ellers midt i globussen (sigtekorset), så den også virker med taster.
   let klimalag = null;
   let klimamodul;
+  // Temakort: modul (temakort.js), der farver landene efter et nøgletal; null = slukket.
+  let temakort = null;
   // Punktlag (jordskælv, vulkaner): navn → modul med hent, tegn og aflaes.
   const temalag = new Map();
   // Skærmpunkt under musen; null = midt på globussen (sigtekornet).
@@ -93,6 +95,11 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       // Havcellerne er udfyldt til klipning; over havet aflæses ingen klasse.
       const nr = landVed(punkt) ? klimamodul.klasseI(klimalag, punkt) : null;
       vis(aflaesning, `${foran}: ${nr ? klimamodul.beskriv(klimalag, nr) : 'hav'}`);
+    }
+    if (temakort) {
+      opdaterProjektion();
+      const punkt = pegepunkt ? projektion.invert(pegepunkt) : centrum;
+      vis(document.querySelector('#temaaflaesning'), `${foran}: ${temakort.aflaes(landVed(punkt), landenavne)}`);
     }
     for (const modul of temalag.values()) {
       vis(document.querySelector(modul.AFLAESNING), `${foran}: ${modul.aflaes(pegepunkt || [bredde / 2, hoejde / 2])}`);
@@ -144,6 +151,22 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const landsti = new Path2D();
     d3.geoPath(projektion, landsti)(landflader);
     ctx.fillStyle = '#d9e2bb'; ctx.fill(landsti); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
+    const tema = temakort && !quiz;
+    if (tema) {
+      // Ét fyld pr. farve; lande uden farve (Antarktis) beholder grundfarven.
+      const farver = new Map();
+      for (const land of landflader.features) {
+        const farve = temakort.farve(land);
+        if (!farve) continue;
+        if (!farver.has(farve)) farver.set(farve, []);
+        farver.get(farve).push(land);
+      }
+      for (const [farve, liste] of farver) {
+        ctx.beginPath(); sti({ type: 'FeatureCollection', features: liste });
+        ctx.fillStyle = farve; ctx.fill();
+      }
+      ctx.strokeStyle = '#3d4a44'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
+    }
     if (klimalag && !quiz) {
       // Synsfeltet: halvkuglen, eller kun vinduets udsnit, når kortet er zoomet ind.
       const r = projektion.scale();
@@ -151,10 +174,15 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       klimamodul.tegnKlimalag(ctx, sti, klimalag, landsti, centrum, synsvinkel, r);
       ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
     }
-    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = klimalag && !quiz ? '#17211f66' : '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
+    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = tema ? '#3d4a44' : klimalag && !quiz ? '#17211f66' : '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
     if (quiz) quiz.tegn(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .02);
     else {
-      if (fremhaevet && fremhaevet.id !== valgtLand?.id) { ctx.beginPath(); sti(fremhaevet); ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
+      // På temakortet skal landets farve kunne ses: kun en kraftig kant.
+      if (fremhaevet && fremhaevet.id !== valgtLand?.id) {
+        ctx.beginPath(); sti(fremhaevet);
+        if (tema) { ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2.2; ctx.stroke(); }
+        else { ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
+      }
       if (valgtLand) { ctx.beginPath(); sti(iKort(valgtLand)); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke(); }
       if (pladelag) plademodul.tegnPladegraenser(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2, projektion.scale());
       const omgivelser = { projektion, centrum, skala: projektion.scale(), bredde, hoejde };
@@ -339,7 +367,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         canvas.title = !quiz && land ? `${landenavn(land)} — klik for landemenu` : '';
         const ny = !quiz && land || null;
         if (ny !== fremhaevet) { fremhaevet = ny; opdater(); }
-        if ((klimalag || temalag.size) && !quiz) {
+        if ((klimalag || temakort || temalag.size) && !quiz) {
           const r = canvas.getBoundingClientRect();
           const xy = [event.clientX - r.left, event.clientY - r.top];
           pegepunkt = Math.hypot(xy[0] - bredde / 2, xy[1] - hoejde / 2) <= projektion.scale() ? xy : null;
@@ -429,6 +457,12 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
         await klimamodul.hentKlimalag(system);
       }
       klimalag = system; aflaest.clear(); pegepunkt = null;
+      opdater();
+    },
+    // Temakort: modulet henter selv data; farverne følger modulets valg.
+    async visTemakort(modul) {
+      if (modul) await modul.hent();
+      temakort = modul || null; aflaest.clear(); pegepunkt = null;
       opdater();
     },
     // Punktlag: modulet hentes og kontrolleres, før det vises; null slår det fra.

@@ -206,3 +206,28 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 .oevelser{margin-top:16px;border-top:2px solid var(--ink);padding-top:4px}.oevelser summary{cursor:pointer;min-height:44px;padding:8px 0;font:700 17px/1.5 var(--display)}
 .oevelsesliste{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:12px}.oevelsesliste li{font:15px/1.5 var(--body)}.oevelsesliste li>a:first-child{font:700 16px var(--display)}
 .oevelsesliste .pdf{font:500 12px var(--mono);padding:2px 6px;border:1px solid var(--ink);border-radius:4px;text-decoration:none;white-space:nowrap}.oevelsesliste .metadata,.oevelsesliste span:last-child{display:block}.oevelsesliste .metadata{margin:2px 0}
+/* Temakort: valg af nøgletal og år, farveklasser med antal lande og rangliste. */
+.temasignatur h2{margin-bottom:4px}
+.temavalg{display:flex;align-items:center;gap:8px;margin-bottom:6px;font:600 12px var(--display)}
+.temavalg select{flex:1;min-width:0;min-height:32px;padding:3px 6px;border:1px solid var(--ink);border-radius:5px;background:white;font:500 13px var(--display);color:var(--ink)}
+.temavalg select:focus-visible{outline:3px solid var(--accent,#0b6fa4);outline-offset:1px}
+.aarvalgtema{margin-bottom:4px;width:max-content;max-width:100%}.aarvalgtema label{padding:3px 6px;font:500 12px var(--mono)}
+.temasignatur .signaturnote{margin:4px 0}
+.signatur .temaklasser{display:grid;grid-template-columns:1fr;gap:1px;margin:0;padding:0;list-style:none}
+.temaklasser li{display:grid;grid-template-columns:15px 1fr 42px 24px;align-items:center;gap:6px;font-size:12px}
+.temaklasser i{width:15px;height:11px;border:1px solid #17211f80;border-radius:2px}
+.temaklasser .temasoejle{height:6px;background:#17211f40;border-radius:1px;justify-self:start}
+.temaklasser small{text-align:right;font:500 11px var(--mono);color:var(--slate)}
+.temaklasser .ingen{color:var(--slate)}
+.rangpar{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 24px}
+.rangpar h4{margin:4px 0;font:700 15px var(--display)}
+.rangtabel{border-collapse:collapse;width:100%;font-size:14px;margin-bottom:10px}
+.rangtabel th,.rangtabel td{text-align:left;padding:3px 6px;border-bottom:1px solid #17211f26}
+.rangtabel td:first-child,.rangtabel th:first-child{width:3em;font-family:var(--mono);font-size:12px}
+.rangtabel td:last-child,.rangtabel th:last-child{text-align:right;white-space:nowrap}
+.rangtabel .tekstknap{text-align:left}
+#temaforklaring b{font-family:var(--display);color:var(--ink)}
+@media(min-width:900px) and (max-height:640px){#temaforklaring .temalang{display:none}}
+/* Seks knapper i lagrækken (med Temakort): smallere polstring på mobil, så
+   Fokus ikke får sin egen række og skubber globussen ned. */
+@media(max-width:500px){.lagvalg{gap:4px}.lagvalg button{padding:7px 5px}}

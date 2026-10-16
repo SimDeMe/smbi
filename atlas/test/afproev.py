@@ -14,6 +14,7 @@ from oevelser import afproev_oevelser
 from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasning
 from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
+from temakort import afproev_temakort, afproev_temafejl
 from island3d import afproev_island3d
 from islandsnit import afproev_islandsnit
 from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration, afproev_islandtouch, afproev_islandkort
@@ -89,6 +90,7 @@ with sync_playwright() as p:
         afproev_pladevisning(side, UD)
         afproev_klimalag(side, UD)
         afproev_seismik(side, UD)
+        afproev_temakort(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -184,6 +186,7 @@ with sync_playwright() as p:
     afproev_klimafejl(browser, ADRESSE)
     afproev_seismikdata()
     afproev_seismikfejl(browser, ADRESSE)
+    afproev_temafejl(browser, ADRESSE)
     print('Klimalag: data, data-/modulfejl og nyt forsøg: OK')
     afproev_pladetilpasning(browser, ADRESSE)
     print('Skærmstørrelsesskift med pladelaget : OK')

@@ -428,7 +428,9 @@ function visProcesser() {
   klimaopgave.onclick = visKlimaopgave;
   const seismikopgave = element('button', 'Undersøg jordskælv og vulkaner', 'tilbage');
   seismikopgave.onclick = visSeismikopgave;
-  indhold.append(pladeopgave, ' ', klimaopgave, ' ', seismikopgave);
+  const temaopgave = element('button', 'Undersøg landene på temakort', 'tilbage');
+  temaopgave.onclick = visTemaopgave;
+  indhold.append(pladeopgave, ' ', klimaopgave, ' ', seismikopgave, ' ', temaopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -924,6 +926,11 @@ function opdaterPladebeskrivelse() {
   if (!landAktivt && vulkanknap.getAttribute('aria-pressed') === 'true') {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser holocæne vulkaner efter Smithsonian GVP; fyldte trekanter har haft udbrud siden 1900`);
   }
+  // Knappen er først trykket, når temakort.js er hentet.
+  if (!landAktivt && document.querySelector('#temalag').getAttribute('aria-pressed') === 'true') {
+    const ind = temamodul.indikator();
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Temakort: landene er farvet efter nøgletallet ${ind.navn} ${temamodul.aarFor(ind)}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
+  }
 }
 
 function placerValgpanel() {
@@ -1016,6 +1023,8 @@ const klimalaget = lavLag({
   knap: klimaknap, signatur: klimasignatur, klasse: 'klimalag', standard: 'vahl',
   fejltekst: 'Klimazonerne kunne ikke indlæses. Globussen virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(system) {
+    // Klimazoner og temakort farver begge landfladerne; kun ét ad gangen.
+    if (system && temalaget.aktiv) await temalaget.skift(null);
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
     if (system) { klimasystem = system; tegnKlimasignatur(modul); }
   },
@@ -1058,6 +1067,161 @@ for (const felt of document.querySelectorAll('[name="skaelvmin"], [name="skaelvd
     opdaterPladebeskrivelse();
   });
 }
+// Temakort: landene farvet efter et nøgletal (temakort.js, samme data som Demografi).
+const temaknap = document.querySelector('#temalag');
+const temasignatur = document.querySelector('#temasignatur');
+const temavalg = document.querySelector('#temaindikator');
+let temamodul;
+function tegnTemasignatur() {
+  const m = temamodul;
+  if (!temavalg.options.length) {
+    for (const [emne, liste] of m.EMNER) {
+      const gruppe = document.createElement('optgroup');
+      gruppe.label = emne;
+      for (const ind of liste) gruppe.append(new Option(ind.navn, ind.id));
+      temavalg.append(gruppe);
+    }
+  }
+  temavalg.value = m.valg.id;
+  const ind = m.indikator();
+  const aar = m.aarFor(ind);
+  const aarvalg = document.querySelector('#temaaar');
+  aarvalg.hidden = !ind.aar;
+  if (ind.aar && !aarvalg.childElementCount) {
+    for (const a of ind.aar) {
+      const label = element('label');
+      const felt = document.createElement('input');
+      felt.type = 'radio'; felt.name = 'temaaar'; felt.value = a;
+      felt.onchange = () => { m.valg.aar = a; tegnTemasignatur(); globus.gentegn(); opdaterPladebeskrivelse(); };
+      label.append(felt, a > 2023 ? `${a}*` : String(a));
+      if (a > 2023) label.title = 'Fremskrivning (FN’s mellemvariant)';
+      aarvalg.append(label);
+    }
+  }
+  for (const felt of aarvalg.querySelectorAll('input')) felt.checked = Number(felt.value) === m.valg.aar;
+  // Året og enheden står altid; forklaringen skjules på lave skærme.
+  const kort = element('b', `${aar}${m.fremskrivning(ind) ? '* fremskrivning' : ''}${ind.enhed ? ` · ${ind.enhed}` : ''}`);
+  const lang = element('span', ` – ${ind.forklaring}.`, 'temalang');
+  document.querySelector('#temaforklaring').replaceChildren(kort, lang);
+  const antal = m.optaelling(ind);
+  const maks = Math.max(...antal, 1);
+  const raekker = m.klasser(ind).map(({ farve, tekst }, i) => {
+    const li = element('li');
+    const felt = element('i'); felt.style.background = farve;
+    const soejle = element('span', '', 'temasoejle'); soejle.style.width = `${Math.round(40 * antal[i] / maks)}px`;
+    li.append(felt, element('span', tekst, 'temaklasse'), soejle, element('small', `${antal[i]}`));
+    li.setAttribute('aria-label', `${tekst}: ${antal[i]} lande`);
+    return li;
+  });
+  const ingen = element('li', '', 'ingen');
+  const felt = element('i'); felt.style.background = m.INGEN_DATA;
+  ingen.append(felt, element('span', 'ingen data', 'temaklasse'));
+  document.querySelector('#temaklasser').replaceChildren(...raekker, ingen);
+}
+const temalaget = lavLag({
+  knap: temaknap, signatur: temasignatur, klasse: 'temalag',
+  fejltekst: 'Landedata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    if (vis && klimalaget.aktiv) await klimalaget.skift(null);
+    temamodul ??= await import('./temakort.js');
+    await globus.visTemakort(vis ? temamodul : null);
+    if (vis) tegnTemasignatur();
+  },
+  efter: opdaterPladebeskrivelse
+});
+temavalg.addEventListener('change', () => {
+  temamodul.valg.id = temavalg.value;
+  tegnTemasignatur();
+  globus.gentegn();
+  opdaterPladebeskrivelse();
+});
+
+const TEMAKILDE = 'Alle tal er de samme som i landemenuens Demografi-fane. Befolkningstæthed, tilvækst, fødsels- og dødsrate, fertilitet, spædbørns- og børnedødelighed, middellevetid, medianalder, migration og aldersfordeling: United Nations, Department of Economic and Social Affairs, Population Division (2024), World Population Prospects 2024, mellemvarianten, CC BY 3.0 IGO. Tal til og med 2023 er estimater; 2050 og 2100 er fremskrivninger, som bygger på antagelser om fertilitet, dødelighed og migration. Fødsels- og dødsrate for 1950, 1980, 2000, 2050 og 2100 er FN’s femårsgennemsnit omkring året. Naturlig tilvækst er fødselsrate minus dødsrate. Andel 0–14 og 65+ år er regnet ud fra befolkningen fordelt på alder. ' +
+  'HDI, BNI pr. indbygger (købekraftskorrigeret i 2021-dollar) og gennemsnitlig skolegang: UNDP, Human Development Report 2025 (data for 2023). HDI-grupperne er UNDP’s egne. Byandel: Verdensbanken, World Development Indicators (SP.URB.TOTL.IN.ZS, 2023); landenes definition af »by« er forskellig. ' +
+  'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med FN’s tal for hele Cypern og Somalia. Grænser og navne er ikke en stillingtagen til omstridte områder. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er valgt som runde tal og, hvor det giver mening, faglige grænser (fertilitet 2,1, UNDP’s HDI-grupper, 0).';
+
+async function visTemaopgave() {
+  aabn('Undersøg landene på temakort');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå laget Temakort til, og vælg et nøgletal i signaturen. Hvert land får én farve efter sin værdi; tallene ved farverne er antal lande i klassen. Aflæsningen viser landet ved musen eller midt på globussen. Tryk på et land for hele demografien.'));
+  indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Vælg Samlet fertilitet. Beskriv det globale mønster: Hvor får kvinder i gennemsnit over fire børn, og hvor ligger fertiliteten under erstatningsniveauet 2,1?',
+    'Sammenlign kortene for fertilitet, spædbørnsdødelighed og andel 0–14 år. Hvilke ligner hinanden – og hvorfor hænger de sammen?',
+    'Vælg Fødselsrate og derefter Dødsrate, og skift mellem 1950, 1980, 2000 og 2023. Hvordan flytter mønstret sig? Placér nogle lande i den demografiske transitionsmodel.',
+    'Vælg Naturlig tilvækst og Andel 65+ år for 2100*. Hvor forventer FN, at der dør flere, end der fødes? Hvad bygger en fremskrivning på, og hvor sikker er den?',
+    'Sammenlign HDI, BNI pr. indbygger og Skolegang. Find et land, der ligger højere på det ene kort end på det andet. Hvad kan forklare forskellen?',
+    'Vælg Nettomigration og Befolkningstilvækst. Find lande, hvor befolkningen vokser, selvom den naturlige tilvækst er lav – eller omvendt.',
+    'Kortkritik: Hvert land har kun én farve, selvom forskellene inde i landet kan være store. Hvordan påvirker klassegrænserne og landenes areal dit indtryk? Hvorfor er der ikke et kort over befolkningstal (antal indbyggere)?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus && !temalaget.aktiv) {
+    const vis = element('button', 'Slå temakortet til', 'tilbage');
+    vis.onclick = async () => { senesteFokus = temaknap; dialog.close(); await temalaget.slaaTil(); };
+    indhold.append(vis);
+  }
+  const rang = element('div');
+  indhold.append(element('h3', 'Rangliste', 'underoverskrift'), rang);
+  rang.append(element('p', 'Henter data …', 'antal'));
+  try {
+    temamodul ??= await import('./temakort.js');
+    await temamodul.hent();
+    const m = temamodul;
+    const ind = m.indikator();
+    const aar = m.aarFor(ind);
+    const raekker = m.rangering(ind);
+    const tabel = (fra, til) => {
+      const t = element('table', '', 'rangtabel');
+      t.innerHTML = '<thead><tr><th scope="col">Nr.</th><th scope="col">Land</th><th scope="col"></th></tr></thead>';
+      t.querySelector('th:last-child').textContent = ind.enhed ? ind.enhed : 'Værdi';
+      const krop = element('tbody');
+      for (const [i, r] of raekker.slice(fra, til).entries()) {
+        const tr = element('tr');
+        const land = element('button', r.navn, 'tekstknap');
+        land.onclick = () => visLandedata({ id: r.id, navn: r.navn }, 'demografi');
+        const celle = element('td'); celle.append(land);
+        tr.append(element('td', String(fra + i + 1)), celle, element('td', m.vaerditekst({ ...ind, enhed: '' }, r.v)));
+        krop.append(tr);
+      }
+      t.append(krop);
+      return t;
+    };
+    rang.replaceChildren(element('p', `${ind.navn} ${aar}${m.fremskrivning(ind) ? '* (fremskrivning)' : ''} – ${ind.forklaring}. ${raekker.length} lande og områder med data. Skift nøgletal eller år i signaturen, og åbn ranglisten igen.`));
+    const par = element('div', '', 'rangpar');
+    const top = element('div'); top.append(element('h4', 'Højeste 10'), tabel(0, 10));
+    const bund = element('div'); bund.append(element('h4', 'Laveste 10'), tabel(Math.max(0, raekker.length - 10), raekker.length));
+    par.append(top, bund);
+    const alle = element('details', '', 'pladeoversigt');
+    alle.append(element('summary', `Alle ${raekker.length}`), tabel(0, raekker.length));
+    rang.append(par, alle);
+  } catch {
+    rang.replaceChildren(element('p', 'Landedata kunne ikke hentes. Spørgsmålene kan stadig bruges. Prøv igen senere.'));
+  }
+  indhold.append(lavInformation({
+    navn: 'Temakort', overskrift: 'Om data',
+    introduktion: 'FN’s befolkningsestimater og -fremskrivninger (WPP 2024), UNDP (HDR 2025) og Verdensbanken. Nøgletal for 2023.',
+    tekst: TEMAKILDE
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['FN, World Population Prospects 2024', 'https://population.un.org/wpp/'],
+    ['UNDP, Human Development Report', 'https://hdr.undp.org/data-center/documentation-and-downloads'],
+    ['Verdensbanken, byandel', 'https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS'],
+    ['ColorBrewer', 'https://colorbrewer2.org/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+}
+document.querySelector('#temaopgave').onclick = visTemaopgave;
+
 document.querySelector('#skaelvopgave').onclick = visSeismikopgave;
 document.querySelector('#vulkanopgave').onclick = visSeismikopgave;
 document.querySelector('#klimaopgave').onclick = visKlimaopgave;

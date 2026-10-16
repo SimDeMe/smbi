@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v439</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v440</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -59,6 +59,7 @@
           <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
           <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span class="ikon" aria-hidden="true">≈</span> <span class="lang">Jordskælv</span><span class="kort" aria-hidden="true">Skælv</span></button>
           <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span class="ikon" aria-hidden="true">▲</span> <span class="lang">Vulkaner</span><span class="kort" aria-hidden="true">Vulkan</span></button>
+          <button id="temalag" class="lagknap" aria-label="Temakort over lande" aria-pressed="false" aria-controls="temasignatur" disabled><span class="ikon" aria-hidden="true">▦</span> <span class="lang">Temakort</span><span class="kort" aria-hidden="true">Tema</span></button>
           <button id="fokus" aria-pressed="false">Fokus</button>
         </div>
       </nav>
@@ -133,6 +134,16 @@
         <p id="vulkanaflaesning" class="klimaaflaesning"></p>
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="vulkanopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+      </section>
+      <section id="temasignatur" class="signatur temasignatur" aria-labelledby="tematitel" hidden>
+        <h2 id="tematitel">Temakort</h2>
+        <label class="temavalg"><span>Nøgletal</span><select id="temaindikator"></select></label>
+        <div id="temaaar" class="systemvalg aarvalgtema" role="radiogroup" aria-label="År" hidden></div>
+        <p id="temaforklaring" class="signaturnote"></p>
+        <ul id="temaklasser" class="temaklasser" aria-label="Farveforklaring med antal lande i hver klasse"></ul>
+        <p id="temaaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="temaopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
       </section>
       <section id="klimasignatur" class="signatur klimasignatur" aria-labelledby="klimatitel" hidden>
         <div class="klimatop">
