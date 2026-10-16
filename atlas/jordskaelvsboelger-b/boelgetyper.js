@@ -47,6 +47,9 @@ export function start(rod) {
 
   function visKort() {
     const b = BOELGER[type];
+    canvas.setAttribute('aria-label', type === 'kaploeb'
+      ? 'P-, S- og overfladebølger starter samtidig og løber mod en seismograf 300 km væk.'
+      : `${b.navn} i jordskorpen. ${b.bevaegelse}. En gul prik viser ét klippestykke, og en hul ring viser dets hvileposition.`);
     kort.replaceChildren();
     const h = el('h2');
     const bog = el('span', b.bogstav, 'bogstav'); bog.style.background = b.farve;
@@ -129,16 +132,17 @@ export function start(rod) {
     const { ctx, w, h } = tilpas(canvas);
     const kaploeb = type === 'kaploeb';
     const seismoH = kaploeb ? Math.max(70, h * 0.2) : 0;
-    const himmel = Math.max(54, h * 0.17);
+    const himmel = Math.max(114, h * 0.25);
     const bund = h - seismoH;
     const gs = Math.max(14, Math.min(24, w / 36));
     const a = gs * 0.45;
+    const farve = kaploeb ? FARVE.ink : BOELGER[type].farve;
     // Himmel og jord
     const g = ctx.createLinearGradient(0, 0, 0, himmel);
-    g.addColorStop(0, '#dcecf3'); g.addColorStop(1, '#f6f2e6');
+    g.addColorStop(0, '#e2eeea'); g.addColorStop(1, '#f6f4e8');
     ctx.fillStyle = g; ctx.fillRect(0, 0, w, himmel);
     const jord = ctx.createLinearGradient(0, himmel, 0, bund);
-    jord.addColorStop(0, '#e6d3ae'); jord.addColorStop(0.25, '#dcc9a6'); jord.addColorStop(1, '#c9b79a');
+    jord.addColorStop(0, '#e7e5d1'); jord.addColorStop(0.35, '#dce0cc'); jord.addColorStop(1, '#c4cfbd');
     ctx.fillStyle = jord; ctx.fillRect(0, himmel, w, bund - himmel);
 
     const kol = Math.ceil(w / gs) + 2, raek = Math.floor((bund - himmel) / gs);
@@ -157,24 +161,23 @@ export function start(rod) {
         const bredde = net[0][i + 1][0] - net[0][i][0];
         const tryk = (gs - bredde) / gs;
         if (Math.abs(tryk) < 0.04) continue;
-        ctx.fillStyle = tryk > 0 ? `rgba(14,134,200,${Math.min(0.45, tryk * 1.1)})` : `rgba(255,255,255,${Math.min(0.4, -tryk)})`;
+        ctx.fillStyle = tryk > 0 ? `rgba(14,134,200,${Math.min(0.28, tryk * 0.8)})` : `rgba(255,255,255,${Math.min(0.4, -tryk)})`;
         ctx.fillRect(net[0][i][0], himmel, bredde, bund - himmel);
       }
     }
     // Gitterlinjer
-    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(23,33,31,.32)';
+    ctx.lineWidth = 0.8; ctx.strokeStyle = 'rgba(23,45,57,.18)';
     ctx.beginPath();
     for (const r of net) { ctx.moveTo(...r[0]); for (const p of r) ctx.lineTo(...p); }
     for (let i = 0; i < kol; i++) { ctx.moveTo(...net[0][i]); for (const r of net) ctx.lineTo(...r[i]); }
     ctx.stroke();
     // Overfladen
-    ctx.lineWidth = 3; ctx.strokeStyle = '#5c7d3a';
+    ctx.lineWidth = 2.5; ctx.strokeStyle = '#6b8061';
     ctx.beginPath(); ctx.moveTo(...net[0][0]); for (const p of net[0]) ctx.lineTo(...p); ctx.stroke();
     // Klippestykkerne
-    ctx.fillStyle = FARVE.ink;
-    for (const r of net) for (const [x, y] of r) { ctx.beginPath(); ctx.arc(x, y, 1.7, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#4e685e';
+    for (const r of net) for (const [x, y] of r) { ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill(); }
 
-    const farve = kaploeb ? FARVE.ink : BOELGER[type].farve;
     // Hus på overfladen: det rystes med jorden.
     const husI = Math.round((kaploeb ? STATION / L * w : w * 0.78) / gs) + 1;
     tegnHus(ctx, net[0][husI], gs, kaploeb);
@@ -183,26 +186,44 @@ export function start(rod) {
       // Et fremhævet stykke klippe med spor.
       const fi = Math.round(w * 0.5 / gs) + 1, fj = type === 'R' ? 0 : Math.min(3, raek);
       const [px, py] = net[fj][fi];
+      const rx = (fi - 1) * gs + gs * 0.5, ry = himmel + fj * gs;
+      // Som i model A: en hul ring viser hvilepositionen, gul viser selve klippen.
+      ctx.strokeStyle = '#172d3980'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(rx, ry, 10, 0, 7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(rx - 14, ry); ctx.lineTo(rx + 14, ry); ctx.moveTo(rx, ry - 14); ctx.lineTo(rx, ry + 14); ctx.stroke();
       if (spor && !pause) { spoerpunkter.push([px, py]); if (spoerpunkter.length > 90) spoerpunkter.shift(); }
       if (spor && spoerpunkter.length > 1) {
         ctx.strokeStyle = farve; ctx.lineWidth = 2; ctx.globalAlpha = 0.7;
         ctx.beginPath(); ctx.moveTo(...spoerpunkter[0]); for (const p of spoerpunkter) ctx.lineTo(...p); ctx.stroke();
         ctx.globalAlpha = 1;
       }
-      ctx.fillStyle = farve; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(px, py, 6, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#f2bd51'; ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(px, py, 7, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#fff9ee'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(px, py, 9, 0, 7); ctx.stroke();
+      // Forbind mærket med en kort forklaring; farve er ikke det eneste signal.
+      ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px + 8, py - 6); ctx.lineTo(px + 22, py - 24); ctx.lineTo(px + 36, py - 24); ctx.stroke();
+      ctx.font = '500 10px "IBM Plex Mono", monospace';
+      const label = 'Ét klippestykke', lw = ctx.measureText(label).width;
+      ctx.fillStyle = '#fff9eef2'; ctx.fillRect(px + 32, py - 35, lw + 12, 20);
+      ctx.fillStyle = FARVE.ink; ctx.fillText(label, px + 38, py - 21);
       // Pil for bølgens retning
       const lP = w * 0.42, v = { P: 1, S: VS / VP, R: VR / VP }[type];
       const front = Math.min(w - 20, lP * v * 0.55 * t);
-      const py0 = himmel - 16;
+      const py0 = himmel - 21;
       pil(ctx, 16, py0, Math.max(90, Math.min(w * 0.45, front)), py0, farve);
       ctx.fillStyle = FARVE.ink; ctx.font = '600 13px Archivo, sans-serif';
-      ctx.fillText(`Bølgen løber  ${tal(type === 'P' ? VP : type === 'S' ? VS : VR)} km/s`, 16, py0 - 9);
-      const hjaelp = 'Følg det farvede stykke klippe: Det svinger, men bliver på sin plads.';
-      ctx.font = '500 11.5px "IBM Plex Mono", monospace';
+      ctx.fillText(`Bølgen løber →  ${tal(type === 'P' ? VP : type === 'S' ? VS : VR)} km/s`, 16, py0 - 12);
+      const hjaelp = w < 600 ? 'Gul prik: klippe · ring: hvileposition' : 'Gul prik: ét klippestykke · hul ring: dets hvileposition';
+      ctx.font = '500 11px "IBM Plex Mono", monospace';
       const tb = ctx.measureText(hjaelp).width;
       ctx.fillStyle = '#fff9eeee'; ctx.fillRect(10, bund - 26, tb + 12, 19);
       ctx.fillStyle = FARVE.ink; ctx.fillText(hjaelp, 16, bund - 12);
+      // Retningen for partikelbevægelsen kan også læses i et stillbillede.
+      const bevaegelse = type === 'P' ? '↔  Partikelbevægelse' : type === 'S' ? '↕  Partikelbevægelse' : '↺  Partikler i ellipser';
+      ctx.font = '600 12px Archivo, sans-serif';
+      ctx.fillStyle = farve; ctx.fillText(bevaegelse, 16, himmel + gs * (Math.min(raek, 7)) + 12);
       urtekst.textContent = '';
     } else {
       tegnKaploeb(ctx, w, himmel, bund, seismoH, gs);
@@ -218,9 +239,9 @@ export function start(rod) {
       const x = v * t / L * w;
       if (x < 4 || x > w + 10) continue;
       ctx.fillStyle = farve;
-      ctx.beginPath(); ctx.arc(x, himmel * 0.45 + (bog === 'P' ? 0 : bog === 'S' ? 6 : 12), 11, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, (himmel - 34) * 0.45 + 34 + (bog === 'P' ? 0 : bog === 'S' ? 6 : 12), 11, 0, 7); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.font = '700 12px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(bog, x, himmel * 0.45 + (bog === 'P' ? 0 : bog === 'S' ? 6 : 12));
+      ctx.fillText(bog, x, (himmel - 34) * 0.45 + 34 + (bog === 'P' ? 0 : bog === 'S' ? 6 : 12));
     }
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     // km-skala
@@ -266,7 +287,7 @@ export function start(rod) {
     }
     if (t >= STATION / VR + 3) {
       const sp = STATION / VS - STATION / VP;
-      tekst = `P efter ${tal(STATION / VP, 0)} s · S efter ${tal(STATION / VS, 0)} s · S − P = ${tal(sp)} s → ${tal(K, 1)} km/s · ${tal(sp)} s = ${STATION} km`;
+      tekst = w < 650 ? `P: ${tal(STATION / VP, 0)} s · S: ${tal(STATION / VS, 0)} s · S − P: ${tal(sp)} s` : `P efter ${tal(STATION / VP, 0)} s · S efter ${tal(STATION / VS, 0)} s · S − P = ${tal(sp)} s → ${tal(K, 1)} km/s · ${tal(sp)} s = ${STATION} km`;
     }
     urtekst.textContent = tekst;
   }

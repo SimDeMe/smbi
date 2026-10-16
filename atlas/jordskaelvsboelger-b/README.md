@@ -71,3 +71,19 @@ seismogrammet (ingen NaN, stille før P, største udslag), cirklerne,
 gangtiderne mod referencetabellerne og skyggezonerne. Browsertesten spiller
 hele forløbet igennem ved 1280×577, 1366×625, 1536×730, 390×750 og 640×625 med
 mus, touch og tastatur (`?test` i adressen giver testen adgang til facit).
+
+
+## Visuelt løft (Atlas v443)
+
+Model B bevarer sine tre dele, bølgefarter, S−P-formel og ak135-beregninger.
+Fra model A er hentet serifoverskrifter, marineblåt blæk og det afdæmpede
+feltlaboratoriepræg, gul partikel med hul ring om hvilepositionen og sigtekorn
+til elevens bud. De eksisterende højdekurver har fået en svag terræntonering
+fra samme opdigtede højdefunktion; den giver ingen oplysninger om epicentret.
+Jordsnittet har fået en diskret gradinddelt yderring, roligere stråler og
+lysere bølgefronter. Ingen nye biblioteker, billeder eller netkald.
+
+Efter ændringen består modeltesten og hele den eksisterende Chromium-prøve
+på 1280×577, 1366×625, 1536×730, 390×750 og 640×625, inklusive touch,
+tastatur og reduceret bevægelse. Grafik i de tre dele er gennemgået på
+skærmbilleder. Fysisk mobil, skærmlæser og Safari er ikke særskilt afprøvet.

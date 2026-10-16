@@ -222,11 +222,27 @@ export function start(rod) {
           if (kant.length === 4) linjer.push([kant[2], kant[3], niveau]);
         }
       }
-      kurvecache = { noegle, linjer };
+      // Svagt tonet terræn fra samme opdigtede højdefunktion som kurverne.
+      // Tegnes én gang pr. størrelse, aldrig ud fra skælvets skjulte position.
+      const relief = document.createElement('canvas');
+      relief.width = 250; relief.height = 180;
+      const rc = relief.getContext('2d'), billede = rc.createImageData(250, 180);
+      for (let y = 0; y < 180; y++) for (let x = 0; x < 250; x++) {
+        const z = hoejde(x * 2, y * 2);
+        const lys = (hoejde(x * 2 - 3, y * 2 - 3) - z) * 14;
+        const u = Math.max(0, Math.min(1, (z + 2) / 4));
+        const lav = [216, 228, 215], hoej = [242, 237, 214], k = (y * 250 + x) * 4;
+        for (let i = 0; i < 3; i++) billede.data[k + i] = lav[i] + u * (hoej[i] - lav[i]) + lys;
+        billede.data[k + 3] = 255;
+      }
+      rc.putImageData(billede, 0, 0);
+      kurvecache = { noegle, linjer, relief };
     }
+    const [x0, y0] = tilKort(0, 0), [x1, y1] = tilKort(OMRAADE.w, OMRAADE.h);
+    ctx.drawImage(kurvecache.relief, x0, y0, x1 - x0, y1 - y0);
     ctx.lineWidth = 0.8;
     for (const [a, b, niveau] of kurvecache.linjer) {
-      ctx.strokeStyle = niveau >= 0 ? 'rgba(120,98,60,.28)' : 'rgba(80,120,90,.22)';
+      ctx.strokeStyle = niveau >= 0 ? 'rgba(120,98,60,.24)' : 'rgba(80,120,90,.24)';
       ctx.beginPath(); ctx.moveTo(...tilKort(...a)); ctx.lineTo(...tilKort(...b)); ctx.stroke();
     }
   }
@@ -235,9 +251,9 @@ export function start(rod) {
     const { ctx, w, h } = tilpas(kortlaerred);
     if (w < 80 || h < 80) return;
     const m = 26;
-    const s = Math.min((w - 2 * m) / OMRAADE.w, (h - 2 * m - 18) / OMRAADE.h);
-    kortgeo = { s, ox: (w - OMRAADE.w * s) / 2, oy: (h - 18 - OMRAADE.h * s) / 2 + 10 };
-    ctx.fillStyle = '#eef1e4'; ctx.fillRect(0, 0, w, h);
+    const s = Math.min((w - 2 * m) / OMRAADE.w, (h - 2 * m - 42) / OMRAADE.h);
+    kortgeo = { s, ox: (w - OMRAADE.w * s) / 2, oy: Math.max(48, (h - 18 - OMRAADE.h * s) / 2 + 10) };
+    ctx.fillStyle = '#e9eee5'; ctx.fillRect(0, 0, w, h);
     const [x0, y0] = tilKort(0, 0), [x1, y1] = tilKort(OMRAADE.w, OMRAADE.h);
     ctx.fillStyle = '#f5f3e6'; ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
     ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, x1 - x0, y1 - y0); ctx.clip();
@@ -296,7 +312,8 @@ export function start(rod) {
           }
         }
       }
-      ctx.beginPath(); ctx.moveTo(px, py + 9); ctx.lineTo(px - 10, py - 8); ctx.lineTo(px + 10, py - 8); ctx.closePath();
+      ctx.fillStyle = '#fff9eecc'; ctx.beginPath(); ctx.arc(px, py, 15, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(px, py - 10); ctx.lineTo(px - 9, py + 7); ctx.lineTo(px + 9, py + 7); ctx.closePath();
       ctx.fillStyle = st.farve; ctx.fill(); ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 2; ctx.stroke();
       etiket(ctx, st.navn, px + 12, py - 12, st.farve);
       if (st.p !== null && st.s !== null) {
@@ -307,9 +324,13 @@ export function start(rod) {
     // Buddet
     if (bud) {
       const [bx, by] = tilKort(bud.x, bud.y);
-      ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 3.5;
-      ctx.beginPath(); ctx.moveTo(bx - 9, by - 9); ctx.lineTo(bx + 9, by + 9); ctx.moveTo(bx + 9, by - 9); ctx.lineTo(bx - 9, by + 9); ctx.stroke();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.strokeStyle = '#fff9ee'; ctx.lineWidth = 4;
+      const sigte = () => {
+        ctx.beginPath(); ctx.arc(bx, by, 9, 0, 7);
+        ctx.moveTo(bx - 15, by); ctx.lineTo(bx + 15, by); ctx.moveTo(bx, by - 15); ctx.lineTo(bx, by + 15);
+      };
+      sigte(); ctx.stroke();
+      ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 1.5; sigte(); ctx.stroke();
       const naer = tilstand === 'afsloeret' && Math.hypot(bud.x - skaelv.x, bud.y - skaelv.y) * kortgeo.s < 40;
       if (!naer) { ctx.font = '600 12px Archivo, sans-serif'; ctx.fillStyle = FARVE.ink; ctx.fillText('Dit bud', bx + 12, by + 4); }
     }
@@ -330,13 +351,13 @@ export function start(rod) {
     const [mx, my] = [x0, y1 + 14];
     ctx.fillStyle = FARVE.ink; ctx.fillRect(mx, my, 100 * s, 3); ctx.fillRect(mx, my - 4, 2, 9); ctx.fillRect(mx + 100 * s - 2, my - 4, 2, 9);
     ctx.font = '500 11px "IBM Plex Mono", monospace'; ctx.fillText('100 km', mx + 100 * s + 6, my + 5);
-    ctx.textAlign = 'right'; ctx.fillText('Net: 50 km', x1, my + 5); ctx.textAlign = 'left';
+    ctx.textAlign = 'right'; if (x1 - x0 > 250) ctx.fillText('Net: 50 km', x1, my + 5); ctx.textAlign = 'left';
     const nx = x1 - 14, ny = y0 + 14;
     ctx.beginPath(); ctx.moveTo(nx, ny - 10); ctx.lineTo(nx + 6, ny + 7); ctx.lineTo(nx, ny + 3); ctx.lineTo(nx - 6, ny + 7); ctx.closePath(); ctx.fill();
     ctx.font = '700 10px Archivo, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('N', nx, ny + 18); ctx.textAlign = 'left';
     if (tilstand === 'klar') {
       ctx.font = '600 13px Archivo, sans-serif';
-      const tekst = 'Træk stationerne, hvis du vil – og start skælvet';
+      const tekst = w < 450 ? 'Placér stationer → start skælvet' : 'Træk stationerne → start skælvet';
       const tb = ctx.measureText(tekst).width + 20;
       ctx.fillStyle = '#fffdf7e8'; ctx.fillRect((w - tb) / 2, h / 2 - 16, tb, 30);
       ctx.strokeStyle = FARVE.ink; ctx.lineWidth = 1.5; ctx.strokeRect((w - tb) / 2, h / 2 - 16, tb, 30);

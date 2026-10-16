@@ -1,7 +1,7 @@
 // Fælles hjælp til de tre lærreder: skarp tegning på retina, farver og danske tal.
 
 export const FARVE = {
-  p: '#0e86c8', s: '#d62a63', r: '#e3721d', ink: '#17211f', papir: '#fff9ee', slate: '#49615b',
+  p: '#0e86c8', s: '#d62a63', r: '#e3721d', ink: '#172d39', papir: '#fff9ee', slate: '#49615b',
   station: ['#0f8f7f', '#7a4fd6', '#a8740a', '#3e5a8a']
 };
 

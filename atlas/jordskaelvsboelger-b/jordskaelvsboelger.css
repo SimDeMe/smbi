@@ -2,7 +2,7 @@
    overfladebølger = orange. Farve er aldrig eneste signal: P/S står også som bogstaver,
    og S tegnes stiplet. */
 :root{
-  --paper:#fff9ee;--papir2:#fffdf7;--ink:#17211f;--slate:#49615b;--blue:#0e86c8;--lys:#c7e6f6;
+  --paper:#fff9ee;--papir2:#fffdf7;--ink:#172d39;--slate:#4c6268;--kant:#c8cec6;--teal:#006e78;--blue:#0e86c8;--lys:#c7e6f6;
   --p:#0e86c8;--s:#d62a63;--r:#e3721d;--fokus:#7a4fd6;
   --display:'Archivo',system-ui,sans-serif;--body:'Source Serif 4',Georgia,serif;--mono:'IBM Plex Mono',monospace;
   --top:0px;
@@ -13,8 +13,10 @@ body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 var(--body
 [hidden]{display:none!important}
 a{color:inherit}
 button,input,select{font:inherit;color:inherit}
-button{cursor:pointer;min-height:40px;border:2px solid var(--ink);border-radius:6px;background:var(--paper);padding:6px 12px;font:600 14px var(--display);-webkit-tap-highlight-color:transparent}
-button:hover{background:var(--lys)}
+button{cursor:pointer;min-height:40px;border:1.5px solid var(--ink);border-radius:4px;background:var(--paper);padding:6px 12px;font:600 14px var(--display);-webkit-tap-highlight-color:transparent}
+button:hover{background:#e6eeea}
+button{transition:background .15s,box-shadow .15s}
+button:active:not(:disabled){box-shadow:none}
 button:disabled{opacity:.4;cursor:default;background:var(--paper)}
 button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
 button.lille{min-height:34px;padding:4px 10px;font-size:13px;border-width:1.5px}
@@ -24,43 +26,46 @@ button.lille{min-height:34px;padding:4px 10px;font-size:13px;border-width:1.5px}
 
 /* Sidehoved som atlasset */
 .regnbue{height:6px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
-.site-linje{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 24px;border-bottom:2px solid var(--ink);font:600 13px var(--display)}
+.site-linje{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 24px;border-bottom:1px solid var(--kant);font:600 13px var(--display)}
 .site-linje nav{display:flex;gap:18px}.site-linje nav a{text-decoration:none}.site-linje nav a:hover{text-decoration:underline}
 .brand{display:flex;align-items:center;gap:6px;text-decoration:none;font:bold 22px var(--display)}.brand small{font:12px var(--mono);margin-left:-5px}
 .brand span{width:22px;height:22px;border:2px solid var(--ink);border-radius:7px;background:conic-gradient(#e8336d,#ffb300,#5fb030,#0e86c8,#7a4fd6,#e8336d)}
 
 main{padding:0 24px 14px;max-width:1800px;margin:auto}
-.intro{display:flex;align-items:center;gap:18px;padding:10px 0}
-.overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 3px;color:var(--slate)}
-h1{font:800 clamp(22px,2.4vw,34px)/1.1 var(--display);letter-spacing:-.035em;margin:0}
-h1 span{color:var(--blue)}h1 em{font:italic 400 .8em var(--body);letter-spacing:0;color:var(--s)}
+.intro{display:flex;align-items:center;gap:18px;padding:14px 0}
+.overlinje{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 3px;color:var(--teal)}
+h1{font:600 clamp(24px,2.6vw,40px)/1.1 var(--body);letter-spacing:-.035em;margin:0}
+h1 span{color:var(--blue)}h1 em{font:italic 400 .8em var(--body);letter-spacing:0;color:var(--teal)}
 .intro-tekst{margin:0 0 0 auto;font-size:15px;color:var(--slate);max-width:28em;text-align:right}
 .intro-knapper{display:flex;gap:8px;flex:none}
 
 /* Laboratoriet */
-.lab{border:2px solid var(--ink);border-radius:9px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;background:var(--papir2)}
-.faner{display:flex;border-bottom:2px solid var(--ink);background:var(--paper)}
-.faner button{flex:1;display:flex;align-items:center;gap:10px;border:0;border-right:1.5px solid var(--ink);border-radius:0;min-height:50px;padding:6px 16px;text-align:left;background:transparent}
+.lab{border:1.5px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 #d5dcd5;overflow:hidden;background:var(--papir2)}
+.faner{display:flex;border-bottom:1.5px solid var(--ink);background:#f3f3e9}
+.faner button{flex:1;display:flex;align-items:center;gap:10px;border:0;border-right:1px solid var(--kant);border-radius:0;min-height:50px;padding:6px 16px;text-align:left;background:transparent}
 .faner button:last-child{border-right:0}
-.faner b{display:grid;place-items:center;flex:none;width:28px;height:28px;border:2px solid currentColor;border-radius:50%;font:700 14px var(--mono)}
+.faner b{display:grid;place-items:center;flex:none;width:30px;height:28px;border:0;border-radius:3px;background:#172d390c;font:500 12px var(--mono)}
 .faner span{display:flex;flex-direction:column;font:700 16px/1.1 var(--display)}
 .faner small{font:500 11px var(--mono);color:var(--slate);margin-top:2px}
 .faner button[aria-selected=true]{background:var(--ink);color:var(--paper)}
 .faner button[aria-selected=true] small{color:#c9d6d1}
+.faner button[aria-selected=true] b{background:#ffffff18;color:#a7dbd3}
+.faner button:focus-visible{outline-offset:-4px}
 .faner button:not([aria-selected=true]):hover{background:var(--lys)}
 
-.del{display:grid;grid-template-columns:minmax(0,1fr) 340px;height:calc(100svh - var(--top));min-height:400px;max-height:760px}
-.figur{position:relative;min-width:0;min-height:0;background:#f4ead6;overflow:hidden}
+.del{display:grid;grid-template-columns:minmax(0,1fr) 340px;height:calc(100svh - var(--top));min-height:360px;max-height:760px}
+.figur{position:relative;min-width:0;min-height:0;background:#e9eee5;overflow:hidden}
 .figur>canvas,.kortrum>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
-.maerke{position:absolute;top:10px;left:12px;font:500 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--paper);border:1px solid var(--ink);border-radius:4px;padding:3px 7px;pointer-events:none}
-.figurtekst{position:absolute;right:12px;top:8px;margin:0;font:500 12px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px;padding:3px 7px;pointer-events:none}
+.maerke{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px;font:500 9px var(--mono);letter-spacing:.02em;background:#f5f4e9f5;border-bottom:1px solid var(--kant);padding:8px 12px;pointer-events:none}
+.maerke>span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.figurtekst{position:absolute;left:12px;right:auto;top:42px;margin:0;font:500 12px var(--mono);background:var(--paper);border:1px solid var(--ink);border-radius:4px;padding:3px 7px;pointer-events:none}
 .figurtekst:empty{display:none}
-.panel{border-left:2px solid var(--ink);padding:14px 16px;overflow:auto;background:var(--papir2);display:flex;flex-direction:column;gap:12px}
+.panel{border-left:1.5px solid var(--ink);padding:14px 16px;overflow:auto;background:var(--papir2);display:flex;flex-direction:column;gap:12px}
 .panel>*{margin:0}
 
 .vaelger{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .vaelger button{display:flex;align-items:center;gap:8px;justify-content:flex-start}
-.vaelger button[aria-checked=true]{background:var(--ink);color:var(--paper);box-shadow:2px 2px 0 var(--slate)}
+.vaelger button[aria-checked=true]{background:var(--ink);color:var(--paper);box-shadow:2px 2px 0 #d5dcd5}
 .lille-vaelger{display:flex;gap:4px}.lille-vaelger button{min-height:34px;padding:3px 10px;justify-content:center;font-size:13px;border-width:1.5px}
 .prik{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--paper);box-shadow:0 0 0 1.5px var(--ink);flex:none}
 .prik.p{background:var(--p)}.prik.s{background:var(--s)}.prik.r{background:var(--r)}
@@ -68,14 +73,14 @@ h1 span{color:var(--blue)}h1 em{font:italic 400 .8em var(--body);letter-spacing:
 .knaprad{display:flex;flex-wrap:wrap;gap:6px}
 .knaprad button{min-height:36px;font-size:13px;display:flex;align-items:center;gap:6px}
 
-.kort{border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);padding:10px 12px;font-size:15px}
-.kort h2{font:800 19px/1.15 var(--display);margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.kort{border:1px solid var(--kant);border-top:3px solid var(--teal);border-radius:3px;background:var(--paper);padding:12px;font-size:15px}
+.kort h2{font:600 23px/1.15 var(--body);margin:0 0 4px;display:flex;align-items:center;gap:8px}
 .kort h2 .bogstav{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#fff;font:700 14px var(--mono)}
 .kort p{margin:4px 0}
 .kort dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0 0;font-size:14px}
 .kort dt{font:600 12px var(--display);color:var(--slate);padding-top:2px}.kort dd{margin:0}
 
-.hvorfor{border-top:1.5px solid var(--ink);padding-top:8px;font-size:14.5px}
+.hvorfor{border-top:1px solid var(--kant);padding-top:10px;font-size:14.5px}
 .hvorfor summary{cursor:pointer;font:700 14px var(--display);list-style:none;display:flex;justify-content:space-between;gap:8px}
 .hvorfor summary::-webkit-details-marker{display:none}
 .hvorfor summary::after{content:'+';font:700 16px var(--mono)}
@@ -86,28 +91,31 @@ h1 span{color:var(--blue)}h1 em{font:italic 400 .8em var(--body);letter-spacing:
 .smaa{font-size:13.5px;color:var(--slate);line-height:1.4}
 
 /* Lokalisering */
-.lokal{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);background:var(--papir2)}
-.kortrum{position:relative;overflow:hidden;border-right:1.5px solid var(--ink);background:#eef1e4;min-height:0}
+.lokal{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);background:var(--papir2)}
+.kortrum{position:relative;overflow:hidden;border-right:1.5px solid var(--ink);background:#e9eee5;min-height:0}
 #kort{cursor:crosshair;touch-action:none}
 .seismogrammer{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fffdf5}
-.seismo-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px 6px;font:500 10.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--slate);border-bottom:1px solid #17211f30}
+.seismo-top>span:first-child{display:flex;align-items:center;gap:7px;flex:none;color:var(--teal)}
+.signal{display:inline-block;width:22px;height:13px;background:var(--teal);clip-path:polygon(0 46%,20% 46%,29% 8%,42% 92%,56% 20%,66% 46%,100% 46%,100% 57%,72% 57%,57% 46%,40% 100%,29% 40%,26% 57%,0 57%)}
+.seismo-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px 6px;font:500 10px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--slate);border-bottom:1px solid #17211f30}
 #spor{flex:1;display:flex;flex-direction:column;min-height:0}
 .sporrad{flex:1 1 0;display:grid;grid-template-columns:44px minmax(0,1fr);min-height:0;border-bottom:1px solid #17211f20}
 .sporflade{position:relative;min-width:0;min-height:0}
-.sporrad .navn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:1px solid #17211f20;font:800 18px var(--display)}
-.sporrad .navn i{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--ink)}
+.sporrad .navn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#f0f2e9;border-right:1px solid #17211f20;font:800 18px var(--display)}
+.sporrad .navn i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink)}
 .sporrad .navn small{font:500 9px var(--mono);color:var(--slate)}
 .sporflade canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:ew-resize}
 .seismo-hjaelp{margin:0;padding:6px 12px;font:500 11px/1.35 var(--mono);color:var(--slate)}
-.trin{list-style:none;padding:0;counter-reset:trin;display:flex;flex-direction:column;gap:8px;font-size:15px}
-.trin li{counter-increment:trin;position:relative;padding:6px 8px 6px 38px;border-radius:6px;border:1.5px solid transparent}
-.trin li::before{content:counter(trin);position:absolute;left:6px;top:6px;display:grid;place-items:center;width:23px;height:23px;border-radius:50%;border:2px solid var(--ink);font:700 12px var(--mono)}
-.trin li.aktiv{border-color:var(--ink);background:var(--paper);box-shadow:2px 2px 0 var(--ink)}
+.panel-overlinje{font:500 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.trin{list-style:none;padding:0;counter-reset:trin;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.trin li{counter-increment:trin;position:relative;padding:6px 8px 6px 38px;border-radius:3px;border:1px solid transparent}
+.trin li::before{content:counter(trin);position:absolute;left:6px;top:6px;display:grid;place-items:center;width:23px;height:23px;border-radius:50%;border:1px solid var(--ink);font:500 11px var(--mono)}
+.trin li.aktiv{border-color:var(--kant);background:#e7efea;box-shadow:none}
 .trin li.faerdig::before{content:'✓';background:var(--ink);color:var(--paper)}
 .trin li.faerdig{color:var(--slate)}
 .trin button{display:block;margin-top:6px}
-button.hoved{background:var(--s);color:#fff;border-color:var(--ink);box-shadow:2px 2px 0 var(--ink);font-size:15px}
-button.hoved:hover{background:#b81f52}
+button.hoved{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:2px 2px 0 #b9cec6;font-size:14px}
+button.hoved:hover{background:var(--teal)}
 .trin .formel{margin:4px 0}
 .resultat{border:2px solid var(--ink);border-radius:8px;padding:10px 12px;background:#fff;box-shadow:3px 3px 0 var(--ink);font-size:15px}
 .resultat strong{font:800 22px/1.1 var(--display);display:block;margin-bottom:2px}
@@ -121,9 +129,10 @@ button.hoved:hover{background:#b81f52}
 .magnitude select,.magnitude input{min-height:36px;border:1.5px solid var(--ink);border-radius:4px;background:#fff;padding:4px 6px;width:110px}
 
 /* Gennem Jorden */
-.jord{background:radial-gradient(circle at 50% 45%,#22343a 0,#111b1d 70%)}
-.jord .maerke{background:#111b1dcc;color:#e7efe9;border-color:#e7efe980}
-.ur{position:absolute;right:14px;top:8px;margin:0;font:600 22px var(--mono);color:#fff;text-shadow:0 1px 0 #000}
+.jord{background:radial-gradient(ellipse at 50% 45%,#243e49 0,#101f29 75%)}
+.jord .maerke{background:#101f29cc;color:#b1c5ca;border-color:#b1c5ca30;padding-right:100px}
+.jord .maerke>span{color:#a7dbd3}
+.ur{position:absolute;right:14px;top:4px;margin:0;font:500 20px var(--mono);color:#fff;text-shadow:0 1px 0 #000}
 .tegnforklaring{position:absolute;left:12px;bottom:10px;display:flex;gap:14px;font:500 11px var(--mono);color:#e7efe9}
 .tegnforklaring span{display:flex;align-items:center;gap:6px}
 .streg{display:inline-block;width:20px;height:0;border-top:3px solid var(--p)}.streg.s{border-top:3px dashed #ff6f9c}
@@ -131,7 +140,7 @@ button.hoved:hover{background:#b81f52}
 .tidslinje{display:flex;align-items:center;gap:10px}
 .tidslinje button{width:44px;flex:none;font-size:16px;padding:0}
 .tidslinje input,.station3 input{flex:1;width:100%;accent-color:var(--ink);min-height:30px}
-.station3{display:flex;flex-direction:column;gap:4px;font:600 13px var(--display)}
+.station3{display:flex;flex-direction:column;gap:6px;font:600 13px var(--display);padding:10px;background:#edf1eb;border:1px solid var(--kant);border-radius:4px}
 .station3 output{font:600 13px var(--mono);background:var(--ink);color:var(--paper);padding:1px 6px;border-radius:4px}
 #jord-seismo{width:100%;height:84px;border:1.5px solid var(--ink);border-radius:6px;background:#fffdf5}
 #gangtid{width:100%;height:190px;margin-top:6px;border:1.5px solid var(--ink);border-radius:6px;background:#fffdf5}
@@ -154,7 +163,7 @@ body.fokus .lab::before{content:none}
 /* Mellemstore skærme: smallere panel */
 @media(max-width:1180px){.del{grid-template-columns:minmax(0,1fr) 300px}.panel{padding:12px}.intro-tekst{display:none}}
 /* Lave laptopvinduer: kompakt intro */
-@media(min-width:861px) and (max-height:700px){.intro{padding:5px 0}h1{font-size:24px}.overlinje{display:none}.faner button{min-height:42px}.faner small{display:none}.site-linje{padding:3px 24px}}
+@media(min-width:861px) and (max-height:700px){.intro{padding:8px 0}h1{font-size:28px}.overlinje{display:none}.faner button{min-height:42px}.faner small{display:none}.site-linje{padding:3px 24px}}
 
 /* Smal visning og mobil: alt under hinanden, siden må rulle lodret. */
 @media(max-width:860px){
@@ -168,8 +177,11 @@ body.fokus .lab::before{content:none}
   .seismogrammer{height:auto}#spor .sporrad{height:92px;flex:none}
   .figur.jord{height:min(100vw,560px)}
   .panel{border-left:0;border-top:2px solid var(--ink);overflow:visible}
-  .faner button{padding:6px 8px;gap:6px;min-height:46px}.faner span{font-size:14px}.faner small{display:none}
-  .faner b{width:24px;height:24px;font-size:12px}
+  .faner button{padding:6px 8px;gap:6px;min-height:46px}.faner span{font-size:13px}.faner small{display:none}
+  .faner b{width:24px;height:24px;font-size:11px}
+  .maerke{padding:8px;font-size:8px}.maerke>span{font-size:9px;letter-spacing:.04em}
+  .seismo-top{flex-wrap:wrap;letter-spacing:0}.seismo-top>span:last-child{font-size:9px}
+  .jord .maerke{justify-content:flex-start}.jord .maerke>span{display:none}
 }
 @media(max-width:420px){h1 em{display:block;font-size:.7em}.vaelger button{font-size:13px;padding:6px 8px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}

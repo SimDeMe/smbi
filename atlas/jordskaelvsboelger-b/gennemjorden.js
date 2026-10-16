@@ -54,13 +54,24 @@ export function start(rod) {
     const P = x => [cx + x[0] * s, cy - x[1] * s];
     const vedVinkel = (grader, r) => [cx + r * Math.sin(grader * Math.PI / 180), cy - r * Math.cos(grader * Math.PI / 180)];
 
+    // Roligt koordinatnet og en ydre målring giver snittet samme feltpræg som kortet.
+    ctx.strokeStyle = '#b5d5df0b'; ctx.lineWidth = 1; ctx.beginPath();
+    for (let x = cx % 40; x < w; x += 40) { ctx.moveTo(x, 34); ctx.lineTo(x, h); }
+    for (let y = cy % 40 + 40; y < h; y += 40) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+    ctx.stroke();
+    ctx.strokeStyle = '#b5d5df20'; ctx.beginPath(); ctx.arc(cx, cy, rpx + 27, 0, 7); ctx.stroke();
+    for (let g = 0; g < 360; g += 5) {
+      const [x1, y1] = vedVinkel(g, rpx + 25), [x2, y2] = vedVinkel(g, rpx + (g % 30 === 0 ? 31 : 28));
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+
     // Lagene
     const kappe = ctx.createRadialGradient(cx, cy, (R - GRAENSER.cmb) * s, cx, cy, rpx);
-    kappe.addColorStop(0, '#6e3b2a'); kappe.addColorStop(1, '#9a5a3c');
+    kappe.addColorStop(0, '#684434'); kappe.addColorStop(0.65, '#9b6850'); kappe.addColorStop(1, '#b58c68');
     ctx.fillStyle = kappe; ctx.beginPath(); ctx.arc(cx, cy, rpx, 0, 7); ctx.fill();
     const rc = (R - GRAENSER.cmb) * s, ri = (R - GRAENSER.icb) * s;
     const kerne = ctx.createRadialGradient(cx, cy, ri, cx, cy, rc);
-    kerne.addColorStop(0, '#d98a2b'); kerne.addColorStop(1, '#b8641f');
+    kerne.addColorStop(0, '#e9b653'); kerne.addColorStop(1, '#b97530');
     ctx.fillStyle = kerne; ctx.beginPath(); ctx.arc(cx, cy, rc, 0, 7); ctx.fill();
     // Flydende: bløde strømhvirvler i den ydre kerne
     ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, rc, 0, 7); ctx.arc(cx, cy, vis.kerne ? ri : 0, 0, 7, true); ctx.clip();
@@ -153,7 +164,7 @@ export function start(rod) {
     if (vis.s) grupper.push([synlige.S, LYS_S, true]);
     if (vis.straaler) {
       for (const [straaler, farve, stiplet] of grupper) {
-        ctx.strokeStyle = farve; ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.setLineDash(stiplet ? [4, 3] : []);
+        ctx.strokeStyle = farve; ctx.globalAlpha = 0.18; ctx.lineWidth = 1; ctx.setLineDash(stiplet ? [4, 3] : []);
         for (const st of straaler) for (const side of [1, -1]) {
           ctx.beginPath();
           const pkt = st.punkter;
@@ -172,8 +183,9 @@ export function start(rod) {
           if (pos.aktiv) {
             const [x, y] = P([side * pos.x, pos.y]);
             if (forrige && forrige.navn === st.navn && Math.hypot(forrige.x - x, forrige.y - y) < rpx * 0.18) {
-              ctx.strokeStyle = farve; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
-              ctx.beginPath(); ctx.moveTo(forrige.x, forrige.y); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1;
+              ctx.strokeStyle = farve; ctx.lineWidth = 8; ctx.globalAlpha = 0.12;
+              ctx.beginPath(); ctx.moveTo(forrige.x, forrige.y); ctx.lineTo(x, y); ctx.stroke();
+              ctx.lineWidth = 2.5; ctx.globalAlpha = 0.95; ctx.stroke(); ctx.globalAlpha = 1;
             }
             ctx.fillStyle = farve; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
             forrige = { x, y, navn: st.navn };

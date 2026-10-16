@@ -32,7 +32,7 @@
   <main>
     <div class="intro">
       <div>
-        <p class="overlinje">Atlas · Pladetektonik · Model B</p>
+        <p class="overlinje">Atlas / Jordens signaler / Model B</p>
         <h1>Jordskælvsbølger<span>.</span> <em>Lyt til Jorden.</em></h1>
       </div>
       <p class="intro-tekst">Tre slags bølger, ét skjult skælv – og en kerne, ingen har set.</p>
@@ -44,16 +44,16 @@
 
     <section id="lab" class="lab" aria-label="Jordskælvsbølger – interaktiv model">
       <div class="faner" role="tablist" aria-label="Vælg del af modellen">
-        <button role="tab" id="fane-1" aria-controls="del-1" aria-selected="true" data-fane="1"><b>1</b><span>Bølgerne<small>Hvad ryster?</small></span></button>
-        <button role="tab" id="fane-2" aria-controls="del-2" aria-selected="false" tabindex="-1" data-fane="2"><b>2</b><span>Find skælvet<small>S−P og cirkler</small></span></button>
-        <button role="tab" id="fane-3" aria-controls="del-3" aria-selected="false" tabindex="-1" data-fane="3"><b>3</b><span>Gennem Jorden<small>Kerne og skyggezone</small></span></button>
+        <button role="tab" id="fane-1" aria-controls="del-1" aria-selected="true" data-fane="1"><b>01</b><span>Bølgerne<small>Hvad ryster?</small></span></button>
+        <button role="tab" id="fane-2" aria-controls="del-2" aria-selected="false" tabindex="-1" data-fane="2"><b>02</b><span>Find skælvet<small>S−P og cirkler</small></span></button>
+        <button role="tab" id="fane-3" aria-controls="del-3" aria-selected="false" tabindex="-1" data-fane="3"><b>03</b><span>Gennem Jorden<small>Kerne og skyggezone</small></span></button>
       </div>
 
       <!-- 1 · Bølgetyperne -->
       <div class="del" id="del-1" role="tabpanel" aria-labelledby="fane-1">
         <div class="figur">
           <canvas id="blok" role="img" aria-label="Snit gennem jordskorpen som et gitter af små klippestykker. Bølgen bevæger sig fra venstre mod højre."></canvas>
-          <div class="maerke">Model · bevægelsen er overdrevet</div>
+          <div class="maerke"><span>Partikellaboratoriet</span> Model · bevægelsen er overdrevet</div>
           <p id="blok-tid" class="figurtekst" aria-hidden="true"></p>
         </div>
         <aside class="panel">
@@ -83,15 +83,16 @@
         <div class="figur lokal">
           <div class="kortrum">
             <canvas id="kort" tabindex="0" role="application" aria-label="Kort over modelområdet med seismografstationer. Klik eller tryk Enter for at sætte dit bud på epicentret; piletasterne flytter buddet."></canvas>
-            <div class="maerke">Modelområde · intet rigtigt sted</div>
+            <div class="maerke"><span>Feltstationen</span> Modelområde · intet rigtigt sted</div>
           </div>
           <div class="seismogrammer">
-            <div class="seismo-top"><span>Seismogrammer</span><button id="start-mobil" class="lille kun-smal" aria-label="Start skælvet (samme som knappen i trin 1)">▶ Start</button><span id="seismo-ur">Sekunder efter kl. 08.00.00</span></div>
+            <div class="seismo-top"><span><i class="signal" aria-hidden="true"></i>Seismogrammer</span><button id="start-mobil" class="lille kun-smal" aria-label="Start skælvet (samme som knappen i trin 1)">▶ Start</button><span id="seismo-ur">Sekunder efter kl. 08.00.00</span></div>
             <div id="spor"></div>
             <p class="seismo-hjaelp" id="seismo-hjaelp">Klik på kurven: 1. klik = P, 2. klik = S. Træk for at justere. Med tastatur: P/S vælger mærke, ← → flytter (Skift = 1 s).</p>
           </div>
         </div>
         <aside class="panel">
+          <p class="panel-overlinje">Din mission / Find epicentret</p>
           <div id="resultat" class="resultat" role="status" aria-live="polite" hidden></div>
           <ol class="trin" id="trin">
             <li data-trin="1"><b>Lad Jorden ryste.</b> <button id="start" class="hoved">▶ Start skælvet</button></li>
@@ -138,7 +139,7 @@
       <div class="del" id="del-3" role="tabpanel" aria-labelledby="fane-3" hidden>
         <div class="figur jord">
           <canvas id="jord" role="img" aria-label="Snit gennem Jorden med skorpe, kappe, flydende ydre kerne og fast indre kerne. Stråler fra et skælv øverst."></canvas>
-          <div class="maerke">Beregnet · farter fra ak135</div>
+          <div class="maerke"><span>Jordens indre</span> Beregnet · farter fra ak135</div>
           <p id="jord-ur" class="ur" aria-live="off"></p>
           <div class="tegnforklaring" aria-hidden="true"><span><i class="streg p"></i>P</span><span><i class="streg s"></i>S</span><span><i class="skravering"></i>Skyggezone</span></div>
         </div>
