@@ -35,6 +35,8 @@ def afproev_island3d(browser, adresse, ud, skaerme):
         side.locator('[data-sted="4"]').click()
         expect(side.locator('#thingvellirscene')).to_be_visible()
         expect(side.locator('canvas[data-sted="thingvellir"]')).to_be_visible()
+        # Þingvellir ligger på øens eget terræn: kameraet er zoomet ind på stedet.
+        assert side.evaluate("async()=>(await import('./model3d.js')).proeve.kamera.zoom") > 8
         expect(side.locator('#thingvellirscene svg')).to_have_count(0)
         for navn in ['Almannagjá','Hrafnagjá','Riftdalen']:
             expect(side.locator('.thingnavne')).to_contain_text(navn)
@@ -85,22 +87,28 @@ def afproev_island3d(browser, adresse, ud, skaerme):
     side.keyboard.press('Escape')
     side.goto(adresse + '/atlas/island/model3d.html')
     expect(side.locator('.landskabsfigur.klar')).to_have_count(1)
-    # Vandet er ét lukket volumen, også gennem de åbne brud. Alle kanter
-    # tilhører to flader; vandoverfladen sænkes og ligger over søbunden.
-    soe=side.evaluate('''async()=>{
-      const {proeve}=await import('./model3d.js'),m=proeve.thingvellir(),kanter=new Map();
-      for(const f of m.soeflader)for(let i=0;i<3;i++){
-        const k=[f[i],f[(i+1)%3]].sort((a,b)=>a-b).join(',');kanter.set(k,(kanter.get(k)||0)+1);
-      }
-      return {kanter:[...kanter.values()],stadier:[0,.5,1].map(t=>{
-        const p=m.soepunkter(t),over=p.filter((_,i)=>i===0||(i>=2&&i%2===0)).map(q=>q[1]);
-        return {top:[Math.min(...over),Math.max(...over)],bund:p[1][1],soebunde:[0,1,2].map(d=>m.hoejde(2.8,-6,d)-(d===1?18*t:0))};
-      })};
+    # Þingvellir er syet ind i øens net: de fjernede grove trekanter dækkes af
+    # det fine udsnit og randzonen, og randen ligger stille under bevægelsen.
+    thing=side.evaluate('''async()=>{
+      const {proeve}=await import('./model3d.js'),m=proeve.thingvellir(),t=proeve.terraen();
+      const areal=q=>Math.abs((q[1][0]-q[0][0])*(q[2][2]-q[0][2])-(q[2][0]-q[0][0])*(q[1][2]-q[0][2]))/2;
+      const hul=[...m.fjernet].reduce((s,k)=>s+areal(t.flader[k].map(i=>t.punkter[i])),0);
+      const fin=m.dele.reduce((s,d)=>s+d.flader.reduce((a,ids)=>a+areal(ids.map(i=>d.punkter[i])),0),0);
+      const rand=m.rand.reduce((s,q)=>s+areal(q),0);
+      const randstille=m.dele.every(d=>d.uv.every(([u,v],k)=>{
+        const i=k%(d.nu+1),j=(k-i)/(d.nu+1),nv=d.uv.length/(d.nu+1)-1;
+        if(!(j===0||j===nv||(d.del===0&&i===0)||(d.del===2&&i===d.nu)))return true;
+        const a=m.plads(u,v,d.del,0),b=m.plads(u,v,d.del,1);return Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])<1e-6;}));
+      const ved=g=>{const [x,z]=t.fraGeo(g);return m.iSoe(x,z);};
+      // Klippekanten ved Almannagjá: høj midt på, væk ved forkastningens ende.
+      const trin=(v,b)=>m.hoejde(0,v,0,b)-m.hoejde(0,v,1,b),dal=[trin(3,0),trin(3,1),trin(9.5,0)];
+      return {hul,fin,rand,randstille,soe:ved([-21.14,64.18]),hvalfjord:ved([-21.45,64.38]),sog:ved([-21.0,64.07]),dal};
     }''')
-    assert set(soe['kanter'])=={2},soe
-    for t,s in zip([0,.5,1],soe['stadier']):
-        assert s['top']==[100-18*t]*2,s
-        assert s['bund']<=min(s['soebunde'])<=max(s['soebunde'])<s['top'][0],s
+    # Tolerance: randens svage bugtning; én manglende grov trekant er ca. 10 km².
+    assert abs(thing['fin']+thing['rand']-thing['hul']) < 1e-3*thing['hul'], thing
+    assert thing['randstille'] and thing['soe'] and not thing['hvalfjord'] and not thing['sog'], thing
+    # Vestsiden står over dalbunden, mere under bevægelsen, og trinnet dør ud.
+    d=thing['dal']; assert 40 < d[0] < d[1] and abs(d[2]) < .01, thing
 
     # Uafhængig projektion og byteaflæsning af de eksisterende NOAA-data.
     punkter = [(-19.666,63.983),(-16.65,64.02),(-20.1,64.62),(-20,63.15),(-21.14,64.18)]
