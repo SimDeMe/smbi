@@ -35,6 +35,11 @@ require('node:fs').mkdirSync(ud, { recursive: true });
     assert.notDeepEqual(før, await billede(globus), 'navne slås synligt fra');
     await side.locator('#etiketter').click();
     før = await billede(globus);
+    assert.equal(await side.locator('#celler').getAttribute('aria-pressed'), 'true', 'celler vises fra start');
+    await side.locator('#celler').click();
+    assert.notDeepEqual(før, await billede(globus), 'cellebælterne slås synligt fra');
+    await side.locator('#celler').click();
+    før = await billede(globus);
     await side.locator('#maaned').fill('7');
     assert.equal(await side.locator('#maanedsnavn').textContent(), 'juli');
     assert.notDeepEqual(før, await billede(globus), 'måneden flytter ITK');
@@ -44,8 +49,10 @@ require('node:fs').mkdirSync(ud, { recursive: true });
     await side.waitForTimeout(100);
     assert.notDeepEqual(før, await billede(snit), 'stop Jorden giver én celle');
     await side.locator('#rotation').click();
+    assert.equal(await side.locator('#kontinenter').getAttribute('aria-pressed'), 'true', 'kontinenter er slået til fra start');
     await side.locator('#kontinenter').click();
-    assert.equal(await side.locator('#kontinenter').getAttribute('aria-pressed'), 'true');
+    assert.equal(await side.locator('#kontinenter').getAttribute('aria-pressed'), 'false');
+    await side.locator('#kontinenter').click();
 
     // Tastatur drejer, Enter slipper ballon.
     await globus.focus();

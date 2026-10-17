@@ -34,6 +34,7 @@ export function lavSnit(canvas, tilstand) {
   }
 
   function tegn(s) {
+    if (B < 80 || H < 80) return; // Skjult eller endnu ikke målt.
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, B, H);
     const venstre = 34, hoejre = B - 14, jord = H - 34, top = 30, span = hoejre - venstre;
@@ -74,6 +75,7 @@ export function lavSnit(canvas, tilstand) {
     for (let i = 0; i < graenser.length - 1; i++) {
       const a = x(graenser[i]), b = x(graenser[i + 1]);
       const cx = (a + b) / 2, rx = (b - a) * 0.43, ry = (jord - top - 18) * hoejder[i] / 2, cy = jord - ry - 7;
+      if (rx <= 0 || ry <= 0) continue;
       const navn = navne[i], farve = CELLEFARVE[navn];
       // Ved jorden løber Hadley- og polarcellen mod ækvator, Ferrel mod polen.
       const halvkugle = cx > x(itk) ? 1 : -1;

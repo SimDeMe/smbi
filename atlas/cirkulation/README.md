@@ -17,7 +17,9 @@ videre hertil.
   ved højtrykkene. Solen står ved sin bredde med en stråle ind mod kloden.
 - Snit fra Sydpol til Nordpol: seks celler (to uden rotation) som ellipser
   med løbende prikker, L ↑ / H ↓ ved jorden og tordensky ved ITK.
-- Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» og
+- Cellerne på globussen: gennemsigtige bælter (Hadley, Ferrel, polar) og
+  luftringe på klodens kant med prikker, der løber rundt – som lærebogsfiguren.
+- Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler» og
   «Navne», «Slip en ballon», pause og fokus.
 - Fem korte trin; hvert trin drejer globussen og fremhæver det, der skal ses.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster.

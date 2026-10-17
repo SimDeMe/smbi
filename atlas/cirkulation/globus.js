@@ -9,6 +9,20 @@ export const FARVER = {
   passat: '#7ce1c1', vest: '#f0b97a', polar: '#a9bdeb', monsun: '#f497c4', ingen: '#d7e8cc',
 };
 export const ITK_FARVE = '#f6d977';
+export const CELLEFARVE = { Hadley: '#5fd0b0', Ferrel: '#f0a860', Polar: '#9fb4ee', 'Én celle': '#5fd0b0' };
+
+// Cellernes grænser som funktioner af længden (samme regel som modelbredde).
+function celleBaelter(s, b, itk) {
+  if (s.rotation < 0.5) {
+    return [{ navn: 'Én celle', syd: itk, nord: () => 89 }, { navn: 'Én celle', syd: () => -89, nord: itk }];
+  }
+  const nH = l => Math.max(b.nordHoej, itk(l) + 6), sH = l => Math.min(b.sydHoej, itk(l) - 6);
+  return [
+    { navn: 'Hadley', syd: itk, nord: nH }, { navn: 'Hadley', syd: sH, nord: itk },
+    { navn: 'Ferrel', syd: nH, nord: () => b.nordFront }, { navn: 'Ferrel', syd: () => b.sydFront, nord: sH },
+    { navn: 'Polar', syd: () => b.nordFront, nord: () => 89 }, { navn: 'Polar', syd: () => -89, nord: () => b.sydFront },
+  ];
+}
 export function farvenoegle(navn) {
   if (/monsun/i.test(navn)) return 'monsun';
   if (/passat/i.test(navn)) return 'passat';
@@ -147,6 +161,7 @@ export function lavGlobus(canvas, land, tilstand) {
   }
 
   function tegn(s, t) {
+    if (!bredde || !hoejde) return; // Skjult eller endnu ikke målt.
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, bredde, hoejde);
     const [cx, cy] = proj.translate(), r = proj.scale();
@@ -176,6 +191,12 @@ export function lavGlobus(canvas, land, tilstand) {
       ctx.globalAlpha = 1; ctx.restore();
     }
     ctx.beginPath(); sti(land); ctx.strokeStyle = '#bcc5a05c'; ctx.lineWidth = 0.55; ctx.stroke();
+
+    // Cellerne som gennemsigtige bælter, som i lærebogsfiguren.
+    if (s.celler) for (const c of celleBaelter(s, b, itk)) {
+      ctx.beginPath(); sti(baand(c.syd, c.nord));
+      ctx.fillStyle = CELLEFARVE[c.navn]; ctx.globalAlpha = 0.17; ctx.fill(); ctx.globalAlpha = 1;
+    }
 
     // Gradnet og bredder ved 0°, ±30° og ±60°.
     ctx.beginPath(); sti(gradnet); ctx.strokeStyle = '#d5e4cc16'; ctx.lineWidth = 0.6; ctx.stroke();
@@ -220,6 +241,8 @@ export function lavGlobus(canvas, land, tilstand) {
     ctx.restore();
 
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.strokeStyle = '#b5dac060'; ctx.lineWidth = 1; ctx.stroke();
+
+    if (s.celler) luftringe(s, b, itk, t);
 
     // Solen: lodret over sin bredde, med en stiplet stråle ind mod kloden.
     const sol = solbredde(s.maaned);
@@ -270,6 +293,37 @@ export function lavGlobus(canvas, land, tilstand) {
       ctx.beginPath(); ctx.moveTo(...b);
       ctx.lineTo(b[0] - 4 * Math.cos(vinkel - 0.55), b[1] - 4 * Math.sin(vinkel - 0.55));
       ctx.lineTo(b[0] - 4 * Math.cos(vinkel + 0.55), b[1] - 4 * Math.sin(vinkel + 0.55)); ctx.fill();
+    }
+  }
+
+  // Luftringene på klodens højre kant: hver celle som en løkke ud i
+  // atmosfæren (meget overdrevet) med prikker, der løber rundt. Ved jorden går
+  // Hadley- og polarcellen mod ækvator, Ferrelcellen mod polen.
+  function luftringe(s, b, itk, t) {
+    const [cx, cy] = proj.translate(), r = proj.scale();
+    const l0 = centrum[0], h0 = Math.min(r * 0.14, 40);
+    const punkt = (bred, rho) => {
+      const th = (bred - centrum[1]) * RAD;
+      return [cx + rho * Math.cos(th), cy - rho * Math.sin(th)];
+    };
+    for (const c of celleBaelter(s, b, itk)) {
+      const a = c.syd(l0), e = c.nord(l0);
+      if (e - a < 4) continue;
+      const nord = (a + e) / 2 > itk(l0);
+      const h = h0 * ({ Hadley: 1, Ferrel: 0.72, Polar: 0.5, 'Én celle': 1 })[c.navn];
+      const midt = (a + e) / 2, halv = (e - a) / 2 * 0.86, rm = r + 3 + h / 2;
+      const p = v => punkt(midt + halv * Math.cos(v), rm + h / 2 * Math.sin(v));
+      const farve = CELLEFARVE[c.navn];
+      ctx.beginPath();
+      for (let i = 0; i <= 48; i++) { const [x, y] = p(i / 48 * 2 * Math.PI); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.strokeStyle = farve + '99'; ctx.lineWidth = 1.3; ctx.stroke();
+      // Retning: v aftager → ved jorden mod ækvator på nordlig halvkugle.
+      const retning = (nord ? -1 : 1) * (c.navn === 'Ferrel' ? -1 : 1);
+      ctx.fillStyle = farve;
+      for (let j = 0; j < 5; j++) {
+        const [x, y] = p(t * 0.65 * retning + j * 2 * Math.PI / 5);
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill();
+      }
     }
   }
 

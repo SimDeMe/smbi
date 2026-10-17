@@ -39,6 +39,8 @@ h1{margin:0;font:800 20px/1.1 var(--display);letter-spacing:-.03em;white-space:n
 .signatur{position:absolute;left:16px;right:16px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 16px;font:500 11px var(--mono);color:#cedbd2;pointer-events:none}
 .signatur span{display:flex;align-items:center;gap:6px}
 .signatur i{display:inline-block;width:16px;height:2px;background:var(--f)}
+.signatur .celle i{height:9px;width:12px;opacity:.55;border-radius:2px}
+.signatur.uden-celler .celle{display:none}
 .ballontip{position:absolute;right:16px;top:38px;margin:0;font:600 12px var(--display);background:#ff9274;color:var(--ink);border-radius:4px;padding:3px 8px}
 .fejl{position:absolute;inset:auto 20px 45% 20px;text-align:center;font:600 14px var(--display);color:#edf2e7}
 
@@ -112,7 +114,8 @@ body.fokus .site-header{display:none}
   h1{font-size:16px}
   .afspil span{display:none}
   .maanedsakse b{font-size:0}.maanedsakse b::after{content:attr(data-k);font-size:10px}
-  .kontakter{flex-basis:100%;justify-content:space-between;gap:8px}
+  .kontakter{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .kontakt{font-size:12.5px;gap:5px}
   .handlinger{width:100%;margin:0}.handlinger .ballon{flex:1}
   .signatur{font-size:10px;gap:3px 10px}
   .overskrift{font-size:10px}

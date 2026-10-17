@@ -9,9 +9,9 @@ const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Tilstanden; rotation og kontinenter glider mod deres mål.
 const tilstand = {
-  maaned: 1, rotation: 1, kontinenter: 0, etiketter: true, pause: roligt,
+  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, pause: roligt,
   fremhaev: null, afspil: false, ballon: false,
-  maal: { rotation: 1, kontinenter: 0 },
+  maal: { rotation: 1, kontinenter: 1 },
 };
 const hent = () => tilstand;
 
@@ -105,6 +105,11 @@ function betjening(globus) {
   saetPause(tilstand.pause);
   pause.addEventListener('click', () => saetPause(!tilstand.pause));
 
+  $('#celler').addEventListener('click', e => {
+    tilstand.celler = !tilstand.celler; e.currentTarget.setAttribute('aria-pressed', String(tilstand.celler));
+    document.querySelector('.signatur').classList.toggle('uden-celler', !tilstand.celler);
+    meddel(tilstand.celler ? 'Cellerne vises som bælter og luftringe på globussen.' : 'Cellerne er skjult på globussen.');
+  });
   $('#etiketter').addEventListener('click', e => {
     tilstand.etiketter = !tilstand.etiketter; e.currentTarget.setAttribute('aria-pressed', String(tilstand.etiketter));
   });
