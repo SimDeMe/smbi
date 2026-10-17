@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v451</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v452</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -181,7 +181,8 @@
         <div id="udledningmaal" class="systemvalg maalvalg" role="radiogroup" aria-label="Mål">
           <label><input type="radio" name="udledningmaal" value="pr" checked> Pr. indbygger</label>
           <label><input type="radio" name="udledningmaal" value="alt"> I alt</label>
-          <label data-kun-forbrug title="Forbrugsbaseret minus national i procent af national"><input type="radio" name="udledningmaal" value="handel" aria-label="Forskel fra national i procent"> Forskel</label>
+          <label data-kun="forbrug" title="Forbrugsbaseret minus national i procent af national"><input type="radio" name="udledningmaal" value="handel" aria-label="Forskel fra national i procent"> Forskel</label>
+          <label data-kun="ghg" title="Skovrydning og anden arealanvendelse i procent af alle drivhusgasser"><input type="radio" name="udledningmaal" value="areal" aria-label="Andel fra arealanvendelse i procent"> Arealanvendelse</label>
         </div>
         <div id="udledningaar" class="systemvalg aarvalgtema" role="radiogroup" aria-label="År"></div>
         <p id="udledningforklaring" class="signaturnote"></p>
@@ -238,11 +239,12 @@
       </div>
     </details>
     <details id="lag-klimaforandringer" class="laggruppe">
-      <summary><span class="laggruppe-ikon" aria-hidden="true">⇡</span><span><b>Klimaforandringer</b><small>Landenes udledning af CO₂</small></span><span class="gruppe-antal" hidden></span></summary>
+      <summary><span class="laggruppe-ikon" aria-hidden="true">⇡</span><span><b>Klimaforandringer</b><small>Landenes udledning af CO₂ og andre drivhusgasser</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
         <button id="nationallag" class="lagknap" aria-label="Nationale udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Nationale udledninger</b><small>CO₂ udledt inden for landets grænser</small></span></button>
         <button id="forbrugslag" class="lagknap" aria-label="Forbrugsbaserede udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Forbrugsbaserede udledninger</b><small>CO₂ fra det, landets indbyggere forbruger</small></span></button>
-        <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. Vises ét ad gangen og ikke sammen med andre farvede landkort.</p>
+        <button id="drivhusgaslag" class="lagknap" aria-label="Alle drivhusgasser" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Alle drivhusgasser</b><small>CO₂, metan og lattergas – også fra skovrydning</small></span></button>
+        <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. Lagene farver landene og vises ét ad gangen – ikke sammen med nøgletal, klimazoner eller nedbør.</p>
       </div>
     </details>
     <details id="lag-demografi" class="laggruppe">

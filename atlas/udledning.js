@@ -1,13 +1,16 @@
-// Klimaforandringer: landenes CO₂-udledning som temakort, opgjort på to måder.
+// Klimaforandringer: landenes udledninger som temakort, opgjort på tre måder.
 // National (territorial) opgørelse: det, der udledes inden for landets grænser;
 // det er den, landene rapporterer til FN's klimakonvention.
 // Forbrugsbaseret opgørelse: udledningen fra produktionen af det, landets
 // indbyggere forbruger, uanset hvor varerne er lavet. Import lægges til,
 // eksport trækkes fra.
-// Data: Global Carbon Budget 2025 via Our World in Data (data/udledning.json,
-// dannet af data/udledning.py). Kun CO₂ fra fossile brændsler og industri.
+// Alle drivhusgasser: national opgørelse af CO₂, metan og lattergas i
+// CO₂-ækvivalenter (GWP100), inklusive arealanvendelse som skovrydning.
+// Data: Global Carbon Budget 2025 og Jones m.fl. 2025 via Our World in Data
+// (data/udledning.json, dannet af data/udledning.py). De to første
+// opgørelser er kun CO₂ fra fossile brændsler og industri.
 //
-// Samme farver, klasser og signatur som temakortet (temakort.js). De to
+// Samme farver, klasser og signatur som temakortet (temakort.js). Alle
 // opgørelser har samme klassegrænser, så kortene kan sammenlignes direkte.
 
 import { farver, klasser, klasseFor, fmt, INGEN_DATA } from './temakort.js';
@@ -20,7 +23,9 @@ export const OPGOERELSER = {
   national: { navn: 'Nationale CO₂-udledninger', kort: 'national', i_alt: 'n', pr: 'nc',
     forklaring: 'udledt inden for landets grænser' },
   forbrug: { navn: 'Forbrugsbaserede CO₂-udledninger', kort: 'forbrug', i_alt: 'f', pr: 'fc',
-    forklaring: 'udledt ved at producere det, landets indbyggere forbruger – også i andre lande' }
+    forklaring: 'udledt ved at producere det, landets indbyggere forbruger – også i andre lande' },
+  ghg: { navn: 'Alle drivhusgasser', kort: 'drivhusgasser', i_alt: 'g', pr: 'gc', ae: true,
+    forklaring: 'CO₂, metan og lattergas udledt inden for landets grænser, inkl. skovrydning og anden arealanvendelse, omregnet til CO₂-ækvivalenter' }
 };
 
 export const MAAL = {
@@ -29,9 +34,13 @@ export const MAAL = {
   alt: { navn: 'I alt', enhed: 'mio. t CO₂', decimaler: 1,
     graenser: [1, 10, 50, 100, 500, 1000] },
   // Kun på det forbrugsbaserede lag: hvor meget større forbruget er end den nationale udledning.
-  handel: { navn: 'Forskel fra national', enhed: '% af national', decimaler: 0, kunForbrug: true,
+  handel: { navn: 'Forskel fra national', enhed: '% af national', decimaler: 0, kun: 'forbrug',
     graenser: [-25, -10, 10, 25, 50], nul: 2, neutral: true,
-    forklaring: 'forbrugsbaseret minus national i procent af national. Over 0: landet importerer mere CO₂ i varer, end det eksporterer' }
+    forklaring: 'forbrugsbaseret minus national i procent af national. Over 0: landet importerer mere CO₂ i varer, end det eksporterer' },
+  // Kun på drivhusgaslaget: hvor stor en del arealanvendelse (fx skovrydning) udgør.
+  areal: { navn: 'Andel fra arealanvendelse', enhed: '% af alle', decimaler: 0, kun: 'ghg',
+    graenser: [0, 10, 25, 50], nul: 1,
+    forklaring: 'skovrydning, dræning og anden arealanvendelse i procent af landets samlede drivhusgasser. Under 0: skove og jord optager mere, end der udledes ved arealanvendelse' }
 };
 for (const maal of Object.values(MAAL)) maal.farver = farver(maal);
 
@@ -48,13 +57,18 @@ export async function hent() {
   return data;
 }
 
+// Målene, der kan vælges for en opgørelse (de særlige mål hører kun til ét lag).
+export const maalFor = opgoerelse => Object.keys(MAAL).filter(id => !MAAL[id].kun || MAAL[id].kun === opgoerelse);
+
 // Den aktuelle kombination af opgørelse, mål og år som »indikator« i temakortets form.
 export function indikator() {
   const opg = OPGOERELSER[valg.opgoerelse];
-  const maal = MAAL[valg.maal]?.kunForbrug && valg.opgoerelse !== 'forbrug' ? MAAL.pr : MAAL[valg.maal];
-  const id = maal === MAAL.pr ? 'pr' : maal === MAAL.alt ? 'alt' : 'handel';
-  return { ...maal, id, opgoerelse: valg.opgoerelse,
-    navn: id === 'handel' ? 'Forbrugsbaseret i forhold til national' : `${opg.navn} ${maal.navn.toLowerCase()}`,
+  const id = maalFor(valg.opgoerelse).includes(valg.maal) ? valg.maal : 'pr';
+  const maal = MAAL[id];
+  // Drivhusgasser måles i CO₂-ækvivalenter.
+  const enhed = opg.ae ? maal.enhed.replace('CO₂', 'CO₂e') : maal.enhed;
+  return { ...maal, id, enhed, opgoerelse: valg.opgoerelse,
+    navn: id === 'handel' ? 'Forbrugsbaseret i forhold til national' : maal.kun ? `${opg.navn}: ${maal.navn.toLowerCase()}` : `${opg.navn} ${maal.navn.toLowerCase()}`,
     forklaring: maal.forklaring || opg.forklaring };
 }
 
@@ -64,6 +78,10 @@ function vaerdiFor(ind, land, aar = valg.aar) {
   if (ind.id === 'handel') {
     const f = land.f[i], n = land.n[i];
     return f == null || !n ? null : 100 * (f - n) / n;
+  }
+  if (ind.id === 'areal') {
+    const g = land.g[i], u = land.gu[i];
+    return g == null || u == null || g <= 0 ? null : 100 * (g - u) / g;
   }
   const opg = OPGOERELSER[ind.opgoerelse];
   return land[ind.id === 'pr' ? opg.pr : opg.i_alt][i];
@@ -110,9 +128,15 @@ function sammenligning(ind, land) {
     const i = data.aar.indexOf(valg.aar);
     return land.f[i] == null ? '' : ` (forbrug ${fmt(land.f[i], 0)}, nationalt ${fmt(land.n[i], 0)} mio. t)`;
   }
-  const anden = { ...ind, opgoerelse: ind.opgoerelse === 'national' ? 'forbrug' : 'national' };
+  if (ind.id === 'areal') {
+    const i = data.aar.indexOf(valg.aar);
+    return ` (${fmt(land.g[i] - land.gu[i], 0)} af ${fmt(land.g[i], 0)} mio. t CO₂e)`;
+  }
+  // Drivhusgasser sammenlignes med den nationale CO₂ alene.
+  const anden = { ...ind, opgoerelse: ind.opgoerelse === 'forbrug' ? 'national' : ind.opgoerelse === 'national' ? 'forbrug' : 'national' };
   const v = vaerdiFor(anden, land);
-  return v == null ? '' : ` (${anden.opgoerelse === 'national' ? 'nationalt' : 'forbrug'} ${fmt(v, ind.decimaler)})`;
+  const navn = ind.opgoerelse === 'ghg' ? 'kun fossil CO₂' : anden.opgoerelse === 'national' ? 'nationalt' : 'forbrug';
+  return v == null ? '' : ` (${navn} ${fmt(v, ind.decimaler)})`;
 }
 
 // »Danmark: 8,3 t CO₂ pr. indbygger (nationalt 4,8)«.

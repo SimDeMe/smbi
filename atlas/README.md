@@ -12,7 +12,7 @@ sammenfoldelige underpunkter:
 - **Klima:** klimazoner med valg af Vahl eller Köppen-Geiger og nedbør måned for måned.
 - **Demografi og levevilkår:** landenes 17 nøgletal, samlet i Befolkning,
   Fødsel og død samt Udvikling.
-- **Klimaforandringer** (v449): nationale og forbrugsbaserede CO₂-udledninger.
+- **Klimaforandringer** (v449–): nationale og forbrugsbaserede CO₂-udledninger og alle drivhusgasser.
 
 Menuen viser samlet antal aktive lag, antal i hvert underpunkt og navnene på
 de aktive lag. Nøgletal og klimasystem kan vælges direkte i menuen og følger
@@ -147,8 +147,13 @@ Forbrugsbaserede tal findes for ca. 120 lande fra 1990 til 2023; årene er
   har samme faste klassegrænser. Kun på forbrugslaget: **Forskel** =
   forbrugsbaseret minus national i % af national (divergerende skala; orange =
   landet importerer udledninger, lilla = eksporterer).
-- **Aflæsning** viser også den anden opgørelse i parentes.
-- De to lag, temakortet, klimazoner og nedbør udelukker hinanden.
+- **Alle drivhusgasser** (v452): national opgørelse af CO₂, metan og
+  lattergas i CO₂-ækvivalenter (GWP100) inkl. arealanvendelse (Jones m.fl.
+  2025). Eget mål **Arealanvendelse**: andel af alle drivhusgasser fra
+  skovrydning m.m. (under 0 = nettooptag).
+- **Aflæsning** viser også den anden opgørelse i parentes (for drivhusgasser:
+  den fossile CO₂ alene).
+- De tre lag, temakortet, klimazoner og nedbør udelukker hinanden.
 - **Undersøg, rangliste og kilde** (også under Processer): syv spørgsmål,
   rangliste for det valgte mål og år samt ⓘ Om data.
 - Kode: `udledning.js` (bruger `temakort.js`' klasser og farver); globussens

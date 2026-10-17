@@ -33,7 +33,7 @@ def afproev_udledning(side, ud):
     expect(side.locator('#udledningtitel')).to_have_text('Nationale CO₂-udledninger')
     expect(side.locator('#udledningforklaring')).to_contain_text('2023 · t CO₂ pr. indbygger')
     # Forskellen fra national findes kun på det forbrugsbaserede lag.
-    expect(side.locator('[data-kun-forbrug]')).to_be_hidden()
+    expect(side.locator('[data-kun="forbrug"]')).to_be_hidden()
     expect(raekker).to_have_count(7)
     antal = [int(t) for t in raekker.locator('small').all_inner_texts()]
     assert sum(antal) == sum(l['nc'][3] is not None for l in data['lande'].values()), antal
@@ -95,8 +95,30 @@ def afproev_udledning(side, ud):
     # Tilbage til nationalt: »Forskel fra national« findes ikke dér og falder tilbage til pr. indbygger.
     aabn_lag(side, national).click()
     luk_lag(side)
-    expect(side.locator('[data-kun-forbrug]')).to_be_hidden()
+    expect(side.locator('[data-kun="forbrug"]')).to_be_hidden()
     expect(side.locator('[name="udledningmaal"][value="pr"]')).to_be_checked()
+
+    # Alle drivhusgasser: CO₂e, eget mål for arealanvendelse, Brasilien har en stor andel.
+    ghg = side.locator('#drivhusgaslag')
+    aabn_lag(side, ghg).click()
+    luk_lag(side)
+    expect(ghg).to_have_attribute('aria-pressed', 'true')
+    expect(national).to_have_attribute('aria-pressed', 'false')
+    expect(side.locator('#udledningtitel')).to_have_text('Alle drivhusgasser')
+    expect(side.locator('#udledningforklaring')).to_contain_text('t CO₂e pr. indbygger')
+    expect(side.locator('[data-kun="forbrug"]')).to_be_hidden()
+    side.locator('#udledningmaal label', has_text='Arealanvendelse').click()
+    expect(raekker).to_have_count(5)
+    expect(side.locator('#udledningforklaring')).to_contain_text('% af alle')
+    if side.viewport_size['width'] >= 900:
+        br = data['lande']['076']
+        andel = round(100 * (br['g'][3] - br['gu'][3]) / br['g'][3])
+        side.mouse.move(*punkt_paa_skaerm(side, [-49, -12]))
+        expect(aflaesning).to_contain_text(f'Brasilien: {andel} % af alle')
+        side.mouse.move(*punkt_paa_skaerm(side, [-30, 40]))
+    aabn_lag(side, national).click()
+    luk_lag(side)
+    expect(side.locator('[data-kun="ghg"]')).to_be_hidden()
 
     # Temakortet og udledningerne farver begge landene: kun ét ad gangen.
     tema = side.locator('#temalag')

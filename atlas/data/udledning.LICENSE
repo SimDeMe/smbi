@@ -12,12 +12,23 @@ multiregional input-output-model ud fra handelsdata (metode: Peters, G. P.,
 Minx, J. C., Weber, C. L. & Edenhofer, O. (2011), Growth in emission
 transfers via international trade from 1990 to 2008, PNAS 108(21), 8903–8908).
 
+Alle drivhusgasser (total_ghg, ghg_per_capita, total_ghg_excluding_lucf):
+Jones, M. W. m.fl. (2025), National contributions to climate change due to
+historical emissions of carbon dioxide, methane and nitrous oxide,
+https://zenodo.org/records/7636699 (CC BY 4.0). Første udgave i Scientific
+Data 10, 155 (2023). CO₂-ækvivalenter med GWP100.
+
+Samlet udledning siden 1850 (»kumuleret«) er summeret i udledning.py af de
+årlige tal co2 og co2_including_luc fra og med 1850.
+Landepunkter til cirklerne: landepunkter.json, dannet af landepunkter.mjs
+ud fra Natural Earth 1:50m (world-atlas, se world-atlas.LICENSE).
+
 Bearbejdet og samlet af Our World in Data: owid-co2-data.csv,
   https://github.com/owid/co2-data (hentet 17. oktober 2026)
 Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
 Pr. indbygger er OWID's egen beregning med deres befolkningstal.
 
-Kun CO₂ fra fossile brændsler og industri (cement, gasafbrænding m.m.).
-Arealanvendelse (fx skovrydning), metan og lattergas er ikke med.
+Nationale og forbrugsbaserede tal: kun CO₂ fra fossile brændsler og industri
+(cement, gasafbrænding m.m.); arealanvendelse, metan og lattergas er ikke med.
 International luft- og skibsfart er ikke fordelt på lande.
 Danske landenavne fra demografi.json.

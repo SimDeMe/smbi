@@ -1108,7 +1108,7 @@ function opdaterPladebeskrivelse() {
     const ind = temamodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Temakort: landene er farvet efter nøgletallet ${ind.navn} ${temamodul.aarFor(ind)}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
-  if (!landAktivt && udledningsmodul && (nationallaget.aktiv || forbrugslaget.aktiv)) {
+  if (!landAktivt && udledningsmodul && udledningslagene.some(lag => lag.aktiv)) {
     const ind = udledningsmodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Landene er farvet efter ${ind.navn[0].toLowerCase()}${ind.navn.slice(1)} ${udledningsmodul.valg.aar} i ${ind.enhed}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
@@ -1270,7 +1270,7 @@ const nedboerlaget = lavLag({
     nedboermodul ??= await import('./nedboer.js');
     if (vis) {
       await nedboermodul.hent();
-      for (const lag of [havbundlaget, klimalaget, temalaget, nationallaget, forbrugslaget]) if (lag.aktiv) await lag.skift(null);
+      for (const lag of [havbundlaget, klimalaget, temalaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
     } else nedboerstyring?.stop();
     await globus.visTemalag('nedboer', vis ? nedboermodul : null);
     if (vis && !nedboerstyring) {
@@ -1365,15 +1365,15 @@ temavalg.addEventListener('change', () => {
 // To lag med én fælles signatur; de farver landene og vises derfor ét ad gangen.
 const nationalknap = document.querySelector('#nationallag');
 const forbrugsknap = document.querySelector('#forbrugslag');
+const drivhusgasknap = document.querySelector('#drivhusgaslag');
 const udledningsignatur = document.querySelector('#udledningsignatur');
 let udledningsmodul;
 function tegnUdledningssignatur() {
   const m = udledningsmodul;
-  const forbrug = m.valg.opgoerelse === 'forbrug';
-  if (!forbrug && m.valg.maal === 'handel') m.valg.maal = 'pr';
+  if (!m.maalFor(m.valg.opgoerelse).includes(m.valg.maal)) m.valg.maal = 'pr';
   const ind = m.indikator();
   document.querySelector('#udledningtitel').textContent = m.OPGOERELSER[m.valg.opgoerelse].navn;
-  document.querySelector('[data-kun-forbrug]').hidden = !forbrug;
+  for (const felt of document.querySelectorAll('#udledningmaal [data-kun]')) felt.hidden = felt.dataset.kun !== m.valg.opgoerelse;
   for (const felt of document.querySelectorAll('[name="udledningmaal"]')) felt.checked = felt.value === m.valg.maal;
   const aarvalg = document.querySelector('#udledningaar');
   if (!aarvalg.childElementCount) {
@@ -1388,7 +1388,7 @@ function tegnUdledningssignatur() {
   }
   for (const felt of aarvalg.querySelectorAll('input')) felt.checked = Number(felt.value) === m.valg.aar;
   const kort = element('b', `${m.valg.aar} · ${ind.enhed}`);
-  const lang = element('span', ` – ${ind.forklaring}. Kun CO₂ fra fossile brændsler og industri.`, 'temalang');
+  const lang = element('span', ` – ${ind.forklaring}.${m.valg.opgoerelse === 'ghg' ? '' : ' Kun CO₂ fra fossile brændsler og industri.'}`, 'temalang');
   document.querySelector('#udledningforklaring').replaceChildren(kort, lang);
   const antal = m.optaelling(ind);
   const maks = Math.max(...antal, 1);
@@ -1406,15 +1406,15 @@ function tegnUdledningssignatur() {
   document.querySelector('#udledningklasser').replaceChildren(...raekker, ingen);
 }
 function lavUdledningslag(opgoerelse, knap) {
-  return lavLag({
+  const lag = lavLag({
     knap, signatur: udledningsignatur, klasse: 'udledningslag',
     fejltekst: 'Udledningsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
     async vis(vis) {
       udledningsmodul ??= await import('./udledning.js');
       if (vis) {
         await udledningsmodul.hent();
-        const anden = opgoerelse === 'national' ? forbrugslaget : nationallaget;
-        for (const lag of [klimalaget, nedboerlaget, temalaget, anden]) if (lag.aktiv) await lag.skift(null);
+        const andre = udledningslagene.filter(lag => lag.opgoerelse !== opgoerelse);
+        for (const lag of [klimalaget, nedboerlaget, temalaget, ...andre]) if (lag.aktiv) await lag.skift(null);
         udledningsmodul.valg.opgoerelse = opgoerelse;
       }
       await globus.visTemakort(vis ? udledningsmodul : null);
@@ -1422,11 +1422,15 @@ function lavUdledningslag(opgoerelse, knap) {
     },
     efter: opdaterPladebeskrivelse
   });
+  lag.opgoerelse = opgoerelse;
+  return lag;
 }
 const nationallaget = lavUdledningslag('national', nationalknap);
 const forbrugslaget = lavUdledningslag('forbrug', forbrugsknap);
+const drivhusgaslaget = lavUdledningslag('ghg', drivhusgasknap);
+const udledningslagene = [nationallaget, forbrugslaget, drivhusgaslaget];
 async function slukUdledning() {
-  for (const lag of [nationallaget, forbrugslaget]) if (lag.aktiv) await lag.skift(null);
+  for (const lag of udledningslagene) if (lag.aktiv) await lag.skift(null);
 }
 for (const felt of document.querySelectorAll('[name="udledningmaal"]')) {
   felt.addEventListener('change', () => {
@@ -1438,7 +1442,8 @@ for (const felt of document.querySelectorAll('[name="udledningmaal"]')) {
   });
 }
 
-const UDLEDNINGSKILDE = 'Global Carbon Budget 2025 (Global Carbon Project; Friedlingstein m.fl. 2025), samlet af Our World in Data, CC BY 4.0. Tallene er CO₂ fra fossile brændsler og industri (kul, olie, gas, cement og afbrænding af overskudsgas). Skovrydning og anden arealanvendelse, metan, lattergas og international luft- og skibsfart er ikke med. ' +
+const UDLEDNINGSKILDE = 'Nationale og forbrugsbaserede udledninger: Global Carbon Budget 2025 (Global Carbon Project; Friedlingstein m.fl. 2025), samlet af Our World in Data, CC BY 4.0. Tallene er CO₂ fra fossile brændsler og industri (kul, olie, gas, cement og afbrænding af overskudsgas). Skovrydning og anden arealanvendelse, metan, lattergas og international luft- og skibsfart er ikke med. ' +
+  'Alle drivhusgasser: Jones m.fl. (2025), National contributions to climate change, via Our World in Data. CO₂, metan og lattergas omregnet til CO₂-ækvivalenter med deres opvarmningsevne over 100 år (GWP100), inklusive arealanvendelse (skovrydning, dræning af jord m.m.; bygger på Global Carbon Budget og FAO/PRIMAP). »Andel fra arealanvendelse« er alle drivhusgasser minus dem uden arealanvendelse i procent af alle. Arealanvendelse er den mest usikre del, og et land kan have negativ arealudledning, når skove vokser til. ' +
   'Nationale (territoriale) udledninger er det, der udledes inden for landets grænser; det er den opgørelse, landene rapporterer til FN’s klimakonvention, og som Parisaftalens mål tælles i. Forbrugsbaserede udledninger er beregnet af Global Carbon Project med en input-output-model over verdenshandlen (metode: Peters m.fl. 2011): udledningen ved at producere landets eksport trækkes fra, og udledningen ved at producere landets import lægges til. De findes kun for omkring 120 lande, fra 1990 og senest for 2023; derfor er 2023 også valgt for de nationale tal. Forbrugsbaserede tal er mere usikre end nationale. ' +
   'Pr. indbygger er Our World in Data’s beregning med deres befolkningstal. »Forskel fra national« er forbrugsbaseret minus national i procent af national. Danmarks officielle opgørelse fra Energistyrelsen er anderledes, fordi den omfatter alle drivhusgasser. ' +
   'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med tallene for hele Cypern og Somalia. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er runde tal og er de samme for begge opgørelser, så kortene kan sammenlignes.';
@@ -1448,7 +1453,7 @@ async function visUdledningsopgave() {
   const tilbage = element('button', '← Processer', 'tilbage');
   tilbage.onclick = visProcesser;
   indhold.append(tilbage);
-  indhold.append(element('p', 'Åbn Lag → Klimaforandringer, og vælg nationale eller forbrugsbaserede udledninger. I signaturen kan du vælge pr. indbygger eller i alt og skifte mellem årene. Aflæsningen viser landet ved musen eller midt på globussen – med den anden opgørelse i parentes.'));
+  indhold.append(element('p', 'Åbn Lag → Klimaforandringer, og vælg nationale udledninger, forbrugsbaserede udledninger eller alle drivhusgasser. I signaturen kan du vælge pr. indbygger eller i alt og skifte mellem årene. Aflæsningen viser landet ved musen eller midt på globussen – med den anden opgørelse i parentes.'));
   indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
   const liste = element('ol', '', 'opgaveliste');
   for (const spoergsmaal of [
@@ -1457,11 +1462,12 @@ async function visUdledningsopgave() {
     'Skift mellem 1990, 2000, 2010 og 2023. Hvor er udledningen steget mest, og hvor er den faldet? Forklar med fx industrialisering, befolkningsvækst og omstilling til vedvarende energi.',
     'Find Danmark på begge kort. Hvorfor er Danmarks forbrugsbaserede udledning over halvanden gang så stor som den nationale? Hvad betyder det for, hvor meget Danmark reelt har reduceret siden 1990?',
     'Vælg Forbrugsbaserede udledninger → Forskel fra national. Hvilke lande »eksporterer« udledninger (lilla), og hvilke »importerer« dem (orange)? Hvad fortæller det om, hvor verdens varer produceres?',
+    'Vælg Alle drivhusgasser → Arealanvendelse. I hvilke lande kommer en stor del af udledningen fra skovrydning og anden arealanvendelse? Sammenlign Brasilien og Indonesien med CO₂-kortene. Hvor fylder metan fra landbrug og husdyr mon meget?',
     'Klimaaftalerne tæller de nationale udledninger. Giv argumenter for og imod at bruge den forbrugsbaserede opgørelse i stedet. Hvem ville vinde og tabe på det?',
-    'Kortkritik: Kun CO₂ fra fossile brændsler og industri er med. Hvordan kunne kortet se ud for fx Brasilien eller Indonesien, hvis skovrydning talte med? Hvorfor er så mange lande grå på det forbrugsbaserede kort?'
+    'Kortkritik: Hvorfor er så mange lande grå på det forbrugsbaserede kort? Hvorfor er arealanvendelse den mest usikre del af opgørelsen? Og hvad betyder det, at metan omregnes til CO₂-ækvivalenter over 100 år, når metan kun bliver i atmosfæren i ca. 12 år?'
   ]) liste.append(element('li', spoergsmaal));
   indhold.append(liste);
-  if (globus && !nationallaget.aktiv && !forbrugslaget.aktiv) {
+  if (globus && !udledningslagene.some(lag => lag.aktiv)) {
     const vis = element('button', 'Slå nationale udledninger til', 'tilbage');
     vis.onclick = async () => { senesteFokus = nationalknap; dialog.close(); await nationallaget.slaaTil(); };
     indhold.append(vis);
@@ -1504,7 +1510,7 @@ async function visUdledningsopgave() {
   }
   indhold.append(lavInformation({
     navn: 'CO₂-udledninger', overskrift: 'Om data',
-    introduktion: 'Global Carbon Budget 2025 via Our World in Data. CO₂ fra fossile brændsler og industri, 1990–2023.',
+    introduktion: 'Global Carbon Budget 2025 og Jones m.fl. 2025 via Our World in Data. 1990–2023.',
     tekst: UDLEDNINGSKILDE
   }));
   const kilder = element('p', '', 'metadata');
@@ -1513,6 +1519,7 @@ async function visUdledningsopgave() {
     ['Global Carbon Budget', 'https://globalcarbonbudget.org/'],
     ['Our World in Data, CO₂-data', 'https://github.com/owid/co2-data'],
     ['Peters m.fl. 2011 (PNAS)', 'https://doi.org/10.1073/pnas.1006388108'],
+    ['Jones m.fl., National contributions to climate change', 'https://zenodo.org/records/7636699'],
     ['ColorBrewer', 'https://colorbrewer2.org/']
   ]) {
     if (kilder.childElementCount) kilder.append(' · ');
