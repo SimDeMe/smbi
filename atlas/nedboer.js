@@ -93,11 +93,17 @@ export function aaretI(lon, lat, d = gitter) {
 
 // ---------- Tilstand: måned og overgang ----------
 
-// Under et skift glider farverne fra én måned til den næste (t fra 0 til 1);
-// de viste tal er altid månedens egne.
-export const tilstand = { maaned: 0, fra: 0, t: 1, zenit: true };
+// Under afspilning glider farverne jævnt fra én måneds middel (fra) mod den
+// næstes (maaned), t fra 0 til 1. vist er den nærmeste hele måned: den står i
+// signaturen, og aflæsningens tal er altid dens egne.
+export const tilstand = { maaned: 0, fra: 0, t: 1, vist: 0, zenit: true, spiller: false };
 export function saetMaaned(maaned, fra = maaned, t = 1) {
-  Object.assign(tilstand, { maaned, fra, t });
+  Object.assign(tilstand, { maaned, fra, t, vist: t < .5 ? fra : maaned });
+}
+// Zenitbredden følger med under glidningen.
+export function zenitNu({ maaned, fra, t } = tilstand) {
+  const a = zenitbredde(fra), b = zenitbredde(maaned);
+  return a + (b - a) * t;
 }
 
 // ---------- Tegning på globussen ----------
@@ -186,11 +192,13 @@ export function tegnFlade(ctx, { projektion, centrum, skala, bredde, hoejde, gen
   const groft = flyttet ? nu - sidstFlyttet < 150 : cache.groft;
   if (flyttet) sidstFlyttet = nu;
   const taethed = Math.min(1.25, ctx.getTransform().a || 1);
-  const faktor = groft ? .4 : taethed;
+  // Under afspilning farves hver frame om; gitteret er 2,5°, så en lidt lavere
+  // opløsning ses ikke, men gør animationen glat.
+  const faktor = groft ? .4 : tilstand.spiller ? Math.min(taethed, .75) : taethed;
   const w = Math.max(1, Math.ceil(bredde * faktor)), h = Math.max(1, Math.ceil(hoejde * faktor));
-  if (flyttet || cache.groft !== groft) {
+  if (flyttet || cache.faktor !== faktor) {
     const laerred = cache?.laerred.width === w && cache.laerred.height === h ? cache.laerred : Object.assign(document.createElement('canvas'), { width: w, height: h });
-    cache = { noegle, groft, laerred, geo: geometri(w, h, { centrum, skala: skala * faktor, cx: bredde / 2 * faktor, cy: hoejde / 2 * faktor }), vist: null };
+    cache = { noegle, groft, faktor, laerred, geo: geometri(w, h, { centrum, skala: skala * faktor, cx: bredde / 2 * faktor, cy: hoejde / 2 * faktor }), vist: null };
   }
   const vist = `${tilstand.maaned},${tilstand.fra},${tilstand.t}`;
   if (cache.vist !== vist) {
@@ -219,7 +227,7 @@ export function tegn(ctx, { projektion }) {
   ctx.setLineDash([2, 4]);
   ctx.beginPath(); sti(kreds(23.44)); sti(kreds(-23.44)); ctx.strokeStyle = '#17211f99'; ctx.lineWidth = 1; ctx.stroke();
   if (tilstand.zenit) {
-    const b = zenitbredde(tilstand.maaned);
+    const b = zenitNu();
     ctx.setLineDash([9, 5]); ctx.lineCap = 'round';
     ctx.beginPath(); sti(kreds(b)); ctx.strokeStyle = '#fff9ee'; ctx.lineWidth = 4.5; ctx.stroke();
     ctx.beginPath(); sti(kreds(b)); ctx.strokeStyle = '#d9480f'; ctx.lineWidth = 2.2; ctx.stroke();
@@ -240,6 +248,6 @@ export function beskriv(aaret, maaned) {
 export function aflaes(xy) {
   const p = sidsteProjektion?.invert(xy);
   const aaret = p && Number.isFinite(p[0]) ? aaretI(p[0], p[1]) : null;
-  lyt?.(aaret, tilstand.maaned);
-  return beskriv(aaret, tilstand.maaned);
+  lyt?.(aaret, tilstand.vist);
+  return beskriv(aaret, tilstand.vist);
 }

@@ -17,9 +17,13 @@ nedbør i hver måned. Månedsskyder og **Afspil** viser, hvordan regnbæltet ve
 - **Tegning:** raster *over* landfladerne (`tegnFlade`, nyt i `globus.js`);
   kystlinjen tegnes igen ovenpå, og musen fremhæver kun landets kant. Hver
   pixels celle og vægte gemmes for den aktuelle projektion, så et
-  månedsskift kun farver om. Under et skift glider farverne 0,5 s (blandet i
-  gitteret); med `prefers-reduced-motion` skiftes der med det samme. Groft
-  under drejning, skarpt når kloden står stille.
+  månedsskift kun farver om. Groft under drejning, skarpt når kloden står stille.
+- **Afspilning (v446):** tiden løber jævnt, 2,5 s pr. måned (et år på 30 s),
+  uden pauser: farverne (blandet i gitteret) og zenitlinjen glider hele tiden
+  fra én måneds middel mod den næstes, og navnet, skyderen og aflæsningen
+  skifter halvvejs. Under afspilning farves der i 0,75 px pr. px, så hver
+  frame når at blive tegnet; Pause lander på den viste måned. Med
+  `prefers-reduced-motion` springes der fra måned til måned i samme tempo.
 - **Klasser:** 10 klasser i mm pr. måned (0, 10, 25, 50, 75, 100, 150, 200,
   300, 400), sand → grøn → blå → violet. Klassegrænserne tegnes som svage
   linjer (isohyeter). Ækvator (hel) og vendekredsene (prikker) står ovenpå,

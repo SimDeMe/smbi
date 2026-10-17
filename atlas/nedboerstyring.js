@@ -2,8 +2,7 @@
 // søjlediagram over året i det aflæste punkt. Selve data og tegning ligger i
 // nedboer.js; her styres kun, hvad eleven ser og betjener.
 
-const SKIFT = 500;        // ms, farverne glider til næste måned
-const PR_MAANED = 1400;   // ms pr. måned under afspilning
+const PR_MAANED = 2500;   // ms pr. måned under afspilning: et år på 30 s
 
 export function startNedboer({ globus, modul, opdateret = () => {} }) {
   const skyder = document.querySelector('#nedboerskyder');
@@ -12,7 +11,6 @@ export function startNedboer({ globus, modul, opdateret = () => {} }) {
   const zenit = document.querySelector('#nedboerzenit');
   const diagram = document.querySelector('#nedboerdiagram');
   const roligt = matchMedia('(prefers-reduced-motion: reduce)');
-  let overgang = 0, naeste = 0;
 
   // Farveskala: én boks pr. klasse og tallene ved grænserne.
   const skala = document.querySelector('#nedboerskala');
@@ -37,49 +35,57 @@ export function startNedboer({ globus, modul, opdateret = () => {} }) {
     skala.append(felter, tal);
   }
 
-  function visMaaned(maaned, glid = false) {
-    const fra = modul.tilstand.maaned;
-    cancelAnimationFrame(overgang);
+  // Teksten, skyderen og aflæsningen følger den nærmeste hele måned.
+  function visNavn(maaned) {
     skyder.value = maaned;
     skyder.setAttribute('aria-valuetext', modul.MAANEDER[maaned]);
     navn.textContent = modul.MAANEDER[maaned];
-    if (!glid || roligt.matches || fra === maaned) {
-      modul.saetMaaned(maaned);
-      globus.gentegn(); opdateret();
-      return;
-    }
-    const start = performance.now();
-    const trin = nu => {
-      const t = Math.min(1, (nu - start) / SKIFT);
-      modul.saetMaaned(maaned, fra, t);
-      globus.gentegn();
-      if (t < 1) overgang = requestAnimationFrame(trin);
-    };
-    overgang = requestAnimationFrame(trin);
-    opdateret();
+  }
+  function visMaaned(maaned) {
+    stop();
+    visNavn(maaned);
+    modul.saetMaaned(maaned);
+    globus.gentegn(); opdateret();
   }
 
+  // Afspilning: tiden løber jævnt gennem året uden pauser. Farverne og
+  // zenitlinjen glider hele tiden fra én måneds middel mod den næstes;
+  // månedens navn skifter halvvejs. Med prefers-reduced-motion springes der
+  // i stedet fra måned til måned i samme tempo.
+  let loebende = 0, start = 0, fraStart = 0;
+  function trin(nu) {
+    const p = (fraStart + (nu - start) / PR_MAANED) % 12;
+    const fra = Math.floor(p), til = (fra + 1) % 12;
+    const t = roligt.matches ? 0 : p - fra;
+    const { vist: foerVist, fra: foerFra, t: foerT } = modul.tilstand;
+    modul.saetMaaned(til, fra, t);
+    const { vist } = modul.tilstand;
+    if (vist !== foerVist) { visNavn(vist); globus.aflaes(); opdateret(); }
+    if (fra !== foerFra || t !== foerT) globus.gentegn();
+    loebende = requestAnimationFrame(trin);
+  }
   function stop() {
-    clearTimeout(naeste);
-    naeste = 0;
+    if (!loebende) return;
+    cancelAnimationFrame(loebende);
+    loebende = 0;
+    modul.tilstand.spiller = false;
     spil.setAttribute('aria-pressed', 'false');
     spil.innerHTML = '<span aria-hidden="true">▶</span> Afspil';
-  }
-  function fortsaet() {
-    naeste = setTimeout(() => {
-      visMaaned((modul.tilstand.maaned + 1) % 12, true);
-      fortsaet();
-    }, PR_MAANED);
+    // Kloden lander på den måned, der står i signaturen, så tallene passer.
+    modul.saetMaaned(modul.tilstand.vist);
+    globus.gentegn(); opdateret();
   }
   spil.onclick = () => {
-    if (naeste) { stop(); return; }
+    if (loebende) { stop(); return; }
     spil.setAttribute('aria-pressed', 'true');
     spil.innerHTML = '<span aria-hidden="true">❚❚</span> Pause';
-    visMaaned((modul.tilstand.maaned + 1) % 12, true);
-    fortsaet();
+    modul.tilstand.spiller = true;
+    start = performance.now();
+    fraStart = modul.tilstand.vist;
+    loebende = requestAnimationFrame(trin);
   };
   // Skyderen styres af eleven: afspilningen stopper, og skiftet sker med det samme.
-  skyder.addEventListener('input', () => { stop(); visMaaned(Number(skyder.value)); });
+  skyder.addEventListener('input', () => visMaaned(Number(skyder.value)));
   zenit.addEventListener('change', () => { modul.tilstand.zenit = zenit.checked; globus.gentegn(); opdateret(); });
 
   // Søjlediagram over punktets år, den viste måned fremhævet.
@@ -107,12 +113,12 @@ export function startNedboer({ globus, modul, opdateret = () => {} }) {
     diagram.replaceChildren(...dele);
   });
 
-  visMaaned(modul.tilstand.maaned);
+  visMaaned(modul.tilstand.vist);
   return {
     visMaaned,
     stop,
     beskrivelse() {
-      const m = modul.tilstand.maaned;
+      const m = modul.tilstand.vist;
       return `Nedbør i ${modul.MAANEDER[m]}, middel 1991–2020 efter GPCP, i mm pr. måned${modul.tilstand.zenit ? `; den orange linje viser, hvor solen står i zenit midt i måneden (${Math.abs(modul.zenitbredde(m)).toFixed(0)}° ${modul.zenitbredde(m) >= 0 ? 'nord' : 'syd'})` : ''}`;
     }
   };

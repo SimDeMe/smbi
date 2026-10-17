@@ -451,6 +451,9 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
   tilpas();
   return {
     gentegn: opdater,
+    // Aflæs med det samme, fx når et lag skifter måned under en animation, hvor
+    // kloden tegnes hver frame, og den forsinkede aflæsning aldrig når frem.
+    aflaes() { clearTimeout(aflaesningstimer); aflaesNu(); },
     visQuiz(ny) {
       if (ny && !quiz) {
         foerQuiz = { centrum: [...centrum], zoom };

@@ -177,3 +177,38 @@ def afproev_nedboerfejl(browser, adresse):
         expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'false')
         assert not fejl, fejl
         side.close()
+
+
+def afproev_nedboerglat(browser, adresse):
+    """Afspilningen glider jævnt gennem året: tiden står aldrig stille mellem månederne."""
+    side = browser.new_page(viewport={'width': 1366, 'height': 625})
+    fejl = []
+    side.on('pageerror', lambda e: fejl.append(str(e)))
+    side.goto(adresse + '/atlas/')
+    side.wait_for_function("document.querySelector('#kortstatus').hidden")
+    side.get_by_role('button', name='Nedbør måned for måned', exact=True).click()
+    expect(side.locator('#nedboersignatur')).to_be_visible()
+    side.locator('#nedboerspil').click()
+    # Tilstanden (måned + andel) aflæses i 90 frames, ca. 1,5 s: den skal vokse i
+    # hver frame (ingen pause) og aldrig springe mere end en lille brøkdel.
+    forloeb = side.evaluate('''async () => {
+      const m = await import('./nedboer.js'), ud = [];
+      for (let i = 0; i < 90; i++) {
+        await new Promise(r => requestAnimationFrame(r));
+        ud.push(m.tilstand.fra + m.tilstand.t);
+      }
+      return ud;
+    }''')
+    skridt = [b - a for a, b in zip(forloeb, forloeb[1:])]
+    assert all(s >= 0 for s in skridt), skridt
+    assert sum(1 for s in skridt if s == 0) < 10, f'Animationen holder pause: {skridt}'
+    assert max(skridt) < .1, f'Animationen springer: {max(skridt)}'
+    assert forloeb[-1] - forloeb[0] > .3, 'Animationen kommer ikke videre'
+    expect(side.locator('#nedboermaaned')).to_have_text('februar', timeout=3000)
+    expect(side.locator('#nedboeraflaesning')).to_contain_text('i februar')
+    side.locator('#nedboerspil').click()
+    tilstand = side.evaluate("import('./nedboer.js').then(m => ({...m.tilstand}))")
+    assert tilstand['t'] == 1 and tilstand['spiller'] is False, tilstand
+    assert side.locator('#nedboermaaned').inner_text() == ['januar', 'februar', 'marts'][tilstand['vist']], tilstand
+    assert not fejl, fejl
+    side.close()
