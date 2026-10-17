@@ -296,4 +296,8 @@ Referencerne kontrolleres i originalen, før de citeres i elevmateriale.
    Visualiseringen udvikles sammen med ChatGPT; retningerne i afsnit 0 holdes.
 2. 15. oktober 2026: Elevteksten i afsnit 2 og briefet i afsnit 8 er godkendt;
    briefet er sendt til ChatGPT. Opgaven i afsnit 6 afventer.
-3. *(Afventer)* Datakilde til milepæl B (NCEP/NCAR og GPCP foreslået).
+3. 17. oktober 2026: Model A (ChatGPT) og B (Claude) lægges sammen på
+   `/atlas/cirkulation/`: B's funktioner og model, A's grafik. Trinene i
+   afsnit 2 forkortes til fem korte trin i `cirkulation/tekst.js` – ejeren
+   fandt de syv for lange; trin 6 og 7 er slået sammen.
+4. *(Afventer)* Datakilde til milepæl B (NCEP/NCAR og GPCP foreslået).

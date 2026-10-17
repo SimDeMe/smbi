@@ -119,7 +119,8 @@ deres implementation automatisk.
   [tjekliste til fysisk test](ENHEDSTEST.md)); afprøvningen afventer ejeren.
 - **#47:** test på fysisk telefon/iPad, Safari og skærmlæser mangler stadig
   og kræver ejeren.
-- **Leveret siden v435:** cirkulationsmodel B (v438), Jordskælvsbølger model
+- **Leveret siden v435:** **Global cirkulation** (B's funktioner med A's
+  grafik, fem korte trin, linket i atlasset, v448), Jordskælvsbølger model
   A og B (v439), Temakort med HDI, BNI og demografi (v440), laget
   **Havbundens alder** med profilmåling (v441, A3) og modellen
   **Bjergarternes kredsløb** (v442, A7). Af INDHOLD.md's roadmap er trin 1

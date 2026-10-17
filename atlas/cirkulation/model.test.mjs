@@ -1,21 +1,44 @@
+// Modelprøve: retningerne i CIRKULATION-MODEL.md, afsnit 0. Kør: node atlas/cirkulation/model.test.mjs
 import assert from 'node:assert/strict';
-import {itk,wind,advance} from './model.js';
-const state={month:7.5,rotation:1,continents:false};
-// Directional checks use the ideal equinox ITK at 0°, independent of the renderer.
-const equinox={...state,month:7.5-12/(2*Math.PI)*Math.acos(-2/3)};
-for(const [lat,u,v] of [[15,-1,-1],[-15,-1,1],[45,1,1],[-45,1,-1],[75,-1,-1],[-75,-1,1]]){
- const flow=wind(0,lat,equinox);assert.equal(Math.sign(flow.u),u,`east/west at ${lat}`);assert.equal(Math.sign(flow.v),v,`north/south at ${lat}`);
+import { vind, vindbaelte, fraRetning, retningsnavn, itkBredde, itkMiddel, stroemfunktion } from './model.js';
+
+// Jævndøgn-agtig måned, hvor ITK ligger tæt på ækvator.
+const maaned = [...Array(120)].map((_, i) => 1 + i / 10).reduce((a, m) => Math.abs(itkMiddel(m)) < Math.abs(itkMiddel(a)) ? m : a, 1);
+const fra = (lat, lon = -30, m = maaned, valg = { rotation: 1, kontinenter: 0 }) => retningsnavn(fraRetning(vind(lat, lon, m, valg)));
+
+assert.equal(fra(15), 'nordøst');
+assert.equal(fra(-15), 'sydøst', 'sydøstpassat ved 15° S');
+assert.equal(fra(45), 'sydvest', 'vestenvind fra sydvest ved 45° N');
+assert.equal(fra(-45), 'nordvest', 'vestenvind fra nordvest ved 45° S');
+assert.match(fra(75), /øst/, 'polar østenvind ved 75° N');
+assert.match(fra(-75), /øst/, 'polar østenvind ved 75° S');
+assert.equal(vindbaelte(15, -30, maaned), 'Nordøstpassat');
+assert.equal(vindbaelte(-45, -30, maaned), 'Vestenvind');
+
+// Corioliseffekten er nul ved ækvator.
+assert.equal(Math.abs(vind(0, -30, maaned).u), 0);
+
+// Uden rotation: ingen østlig/vestlig vind, luften går mod ITK.
+for (const lat of [-60, -20, 30, 70]) {
+  const w = vind(lat, -30, maaned, { rotation: 0 });
+  assert.equal(Math.abs(w.u), 0);
+  assert.equal(Math.sign(w.v), lat > itkMiddel(maaned) ? -1 : 1, `mod ITK ved ${lat}°`);
 }
-assert.equal(wind(0,0,state).u,0,'zero Coriolis at equator');
-assert.ok(Math.abs(itk(0,7.5,false)-10)<1e-9);
-assert.ok(Math.abs(itk(0,1.5,false)+2)<1e-9);
-assert.ok(itk(80,7,true)>20&&itk(80,7,true)<26,'summer ITK over India');
-assert.ok(itk(80,1,true)<-5&&itk(80,1,true)>-11,'winter ITK in Indian Ocean');
-assert.ok(itk(135,1,true)<-10,'southern summer Australia');
-assert.ok(itk(22,1,true)<-10,'southern summer Africa');
-assert.ok(Math.abs(itk(-130,7,true)-itk(-130,1,true))<13,'ocean excursion smaller');
-const monsoon=wind(73,19,{...state,month:7,continents:true});assert.ok(monsoon.u>0&&monsoon.v>0,'SW monsoon towards NE');
-const winter=wind(73,19,{...state,month:1,continents:true});assert.ok(winter.u<0&&winter.v<0,'NE winter monsoon towards SW');
-for(const lat of [-75,-45,-15,15,45,75]){const w=wind(0,lat,{...equinox,rotation:0});assert.equal(w.u,0);assert.equal(Math.sign(w.v),-Math.sign(lat),'nonrotating air flows equatorward');}
-const wrapped=advance([179,45],equinox,10);assert.ok(wrapped[0]>=-180&&wrapped[0]<=180);
-console.log('Model: wind directions, Coriolis, six belts, ITK seasons, monsoon and nonrotating Earth passed.');
+
+// ITK følger sommerhalvkuglen og flytter sig mest over land.
+assert.ok(itkMiddel(8) > 8 && itkMiddel(2) < 0, 'ITK ca. 10° N i august, syd for ækvator i februar');
+assert.ok(itkBredde(7, 82, 1) > 20, 'ITK over Nordindien i juli');
+const udsving = l => itkBredde(7.5, l, 1) - itkBredde(1.5, l, 1);
+assert.ok(udsving(82) > 2 * udsving(-150), 'større udsving over Indien end over Stillehavet');
+
+// Monsun over Mumbai (19° N, 73° Ø): fra sydvest i juli, fra nordøst i januar.
+const k = { rotation: 1, kontinenter: 1 };
+assert.equal(vindbaelte(16, 75, 7, k), 'Sydvestmonsun');
+assert.match(fra(19, 73, 7, k), /sydvest|vest|syd/, 'pålandsvind i juli');
+assert.match(fra(19, 73, 1, k), /nordøst|nord|øst/, 'fralandsvind i januar');
+assert.equal(vindbaelte(19, 73, 1, k), 'Nordøstmonsun');
+
+// Snittet: Hadleycellen og Ferrelcellen drejer modsat.
+assert.ok(Math.sign(stroemfunktion(15, 0.5, maaned)) !== Math.sign(stroemfunktion(45, 0.5, maaned)));
+
+console.log('Modellen: passat, vestenvind, polar østenvind, Coriolis, stop Jorden, ITK og monsun består.');

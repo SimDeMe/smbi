@@ -1,37 +1,97 @@
 <!doctype html>
 <html lang="da">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Global cirkulation · smbi.dk</title>
-<meta name="description" content="Sæt luften i bevægelse. Udforsk passat, Coriolis, ITK og monsun i en interaktiv model af Jordens atmosfære.">
-<meta name="theme-color" content="#fff9ee"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="canonical" href="https://smbi.dk/atlas/cirkulation/">
-<link rel="stylesheet" href="../vendor/fonts/fonts.css"><link rel="stylesheet" href="cirkulation.css">
-<script defer src="../vendor/d3-array.min.js"></script><script defer src="../vendor/d3-geo.min.js"></script><script defer src="../vendor/topojson-client.min.js"></script>
-<script type="module" src="app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Global cirkulation — smbi.dk</title>
+  <meta name="description" content="Interaktiv 3-cellemodel: passat, vestenvind, ITK, Corioliseffekten og monsun på en globus, der kan drejes, med et snit fra pol til pol.">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="canonical" href="https://smbi.dk/atlas/cirkulation/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="cirkulation.css">
+  <script defer src="../vendor/d3-array.min.js"></script>
+  <script defer src="../vendor/d3-geo.min.js"></script>
+  <script defer src="../vendor/topojson-client.min.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
-<a class="skip" href="#globus">Spring til modellen</a>
-<header><a class="brand" href="/">smbi<span>.dk</span></a><a href="/atlas/">← Tilbage til atlasset</a><span class="header-note">ET ATLAS I BEVÆGELSE</span></header>
-<main>
-<div class="intro"><div><p class="eyebrow">NATURGEOGRAFI / ATMOSFÆREN</p><h1>Hele verden. <em>Samme luft.</em></h1></div><p class="intro-text">Følg vinden fra ækvator til polerne.<br>Skift årstid, stop Jorden – og se, hvad der sker.</p><button id="help" class="help">Sådan virker det ↗</button></div>
-<section class="laboratory" aria-label="Global cirkulation – interaktiv model">
-<div class="views">
-<div class="earth-view"><div class="view-heading"><span><i class="live-dot"></i> GLOBAL CIRKULATION</span><span class="model-badge">MODEL · IKKE MÅLFAST</span></div>
-<canvas id="globus" tabindex="0" role="img" aria-label="Drejelig globus med vindpile, vindpartikler og ITK. Træk eller brug piletaster til at dreje. Tryk Enter for at slippe en ballon midt på globussen."></canvas>
-<p id="load-status" role="status">Henter verdenskort …</p>
-<div class="globe-tools"><button id="reset" title="Vis Afrika og Indien igen" aria-label="Nulstil globussens retning">↺</button><span id="globe-hint">Træk for at dreje · piletaster virker også</span></div>
-<div class="legend"><span><i class="line trade"></i> Passat</span><span><i class="line west"></i> Vestenvind</span><span><i class="line polar"></i> Polar østenvind</span><span><i class="line itk"></i> ITK / regnbælte</span></div>
-</div>
-<div class="section-view"><div class="view-heading"><span>LUFTENS KREDSLØB</span><span class="cut-badge">SYD → NORD · 32° Ø</span></div><canvas id="snit" role="img" aria-label="Atmosfæresnit: luft stiger ved ITK og 60 grader og synker ved 30 grader og polerne. Tre celler på hver halvkugle; Ferrelcellen løber modsat Hadley- og polarcellen."></canvas>
-<div class="story"><div class="story-head"><span id="step-number">01 / 07</span><div><button id="previous" aria-label="Forrige forklaring">←</button><button id="next" aria-label="Næste forklaring">→</button></div></div><h2 id="story-title"></h2><p id="story-text"></p></div></div>
-</div>
-<div class="controls"><div class="season"><div class="season-heading"><label for="month">Årstid</label><output id="month-name" for="month">Juli</output><span class="sun" aria-hidden="true">☀</span></div><input id="month" type="range" min="1" max="12" step="0.1" value="7" aria-label="Årstid, måned"><div class="months"><button data-month="1">Jan</button><span>Apr</span><button data-month="7">Jul</button><span>Okt</span><span>Dec</span></div></div>
-<div class="switches"><button id="rotation" aria-pressed="true"><span class="toggle" aria-hidden="true"></span><span id="rotation-label">Jorden drejer</span></button><button id="continents" aria-pressed="true"><span class="toggle" aria-hidden="true"></span>Kontinenter</button><button id="labels" aria-pressed="true"><span class="toggle" aria-hidden="true"></span>Etiketter</button></div>
-<div class="actions"><button id="balloon" aria-pressed="false">♧ Slip en ballon</button><button id="pause" aria-pressed="false" aria-label="Sæt animationen på pause">Ⅱ <span>Pause</span></button></div></div>
-</section>
-<div class="under"><span id="notice" role="status">Prøv juli og januar: regnbæltet flytter sig mest over land.</span><button id="mumbai">Undersøg Mumbai ↗</button></div>
-</main>
-<dialog id="guide"><div class="dialog-top"><p class="eyebrow">EN VERDEN AF VIND</p><button id="close-guide" aria-label="Luk vejledning">✕</button></div><h2>Sæt luften i bevægelse.</h2><p>Den her model er en idealiseret tegning af atmosfæren. Strømme, højder og hastigheder er overdrevet, så du kan se mønstret.</p><ol><li><strong>Skift årstid.</strong> Træk skyderen fra januar til juli. Det gule regnbælte er ITK, hvor varm, fugtig luft stiger.</li><li><strong>Stop Jorden.</strong> Slå «Jorden drejer» fra. Uden rotation går vinden lige mod lavtrykket, med én stor celle på hver halvkugle.</li><li><strong>Slip en ballon.</strong> Vælg værktøjet, og klik på kloden. Eller fokusér kloden og tryk Enter. Sporet følger modellens vind ved jorden.</li><li><strong>Læs snittet.</strong> L = lavtryk og stigende luft. H = højtryk og synkende luft. Pilene viser retningen – også når animationen er på pause.</li></ol><p>Coriolis afbøjer til højre nord for ækvator og til venstre syd for. Effekten er nul ved ækvator og vokser mod polerne. Cellerne og vindbælterne er skematiske; modellen viser ikke dagens vejr.</p><p class="dialog-note">Betjening: træk / piletaster drejer globussen. Tab flytter fokus. Enter og mellemrum aktiverer knapper. Din indstilling for reduceret bevægelse starter modellen på pause.</p></dialog>
-<noscript><p>Modellen kræver JavaScript. Solvarme får luften til at stige ved ITK og synke ved 30°. Jordens rotation afbøjer vindene, så der opstår passat, vestenvind og polar østenvind.</p></noscript>
-</body></html>
+  <a class="spring" href="#globus">Spring til globussen</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <div class="identitet">
+        <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+        <h1>Global cirkulation</h1>
+      </div>
+      <a href="/atlas/">← Atlas</a>
+    </div>
+  </header>
+
+  <main class="lab">
+    <div class="visninger">
+      <section class="globusfelt" aria-label="Globus med vind ved jorden">
+        <div class="overskrift">
+          <p class="aflaesning" id="aflaesning"><span id="globushjaelp">Peg på globussen for at aflæse vinden · træk for at dreje</span></p>
+          <span class="maerkat">Model · ikke målfast</span>
+        </div>
+        <canvas id="globus" tabindex="0" aria-describedby="globushjaelp"
+          aria-label="Globus med vindpartikler. Træk eller brug piletasterne for at dreje. Enter slipper en ballon midt på globussen, når ballonen er valgt."></canvas>
+        <div class="signatur" aria-label="Signatur">
+          <span><i style="--f:#7ce1c1"></i>Passat</span>
+          <span><i style="--f:#f0b97a"></i>Vestenvind</span>
+          <span><i style="--f:#a9bdeb"></i>Polar østenvind</span>
+          <span><i style="--f:#f497c4"></i>Monsun</span>
+          <span><i style="--f:#f6d977"></i>ITK / regnbælte</span>
+        </div>
+        <p class="ballontip" id="ballontip" hidden>Klik på globussen for at slippe en ballon</p>
+        <p class="fejl" id="fejl" role="status" hidden></p>
+      </section>
+
+      <aside class="side">
+        <section class="snitfelt" aria-labelledby="snit-titel">
+          <div class="overskrift lys"><h2 id="snit-titel">Luftens kredsløb</h2><span>Syd → nord</span></div>
+          <canvas id="snit" role="img" aria-label="Snit gennem atmosfæren fra Sydpol til Nordpol. Luften stiger ved ITK og ved 60° og synker ved 30° og ved polerne: Hadley-, Ferrel- og polarcellen på hver halvkugle."></canvas>
+        </section>
+        <section class="historie" aria-labelledby="trin-titel" aria-live="polite">
+          <div class="trinhoved">
+            <span id="trin-nr">1 / 5</span>
+            <div class="prikker" id="prikker"></div>
+            <div class="pile">
+              <button id="forrige" aria-label="Forrige trin">←</button>
+              <button id="naeste" aria-label="Næste trin">→</button>
+            </div>
+          </div>
+          <h2 id="trin-titel"></h2>
+          <p id="trin-tekst"></p>
+          <p class="proev"><b>Prøv:</b> <span id="trin-proev"></span></p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="betjening">
+      <div class="aarslinje">
+        <button id="afspil" class="afspil" aria-pressed="false">▶ <span>Afspil år</span></button>
+        <label class="maaned">
+          <span class="skjult">Måned</span>
+          <input id="maaned" type="range" min="1" max="12.9" step="0.1" value="1" aria-valuetext="januar">
+          <span class="maanedsakse" aria-hidden="true"><b data-k="J">jan</b><b data-k="F">feb</b><b data-k="M">mar</b><b data-k="A">apr</b><b data-k="M">maj</b><b data-k="J">jun</b><b data-k="J">jul</b><b data-k="A">aug</b><b data-k="S">sep</b><b data-k="O">okt</b><b data-k="N">nov</b><b data-k="D">dec</b></span>
+        </label>
+        <output id="maanedsnavn" for="maaned">januar</output>
+      </div>
+      <div class="kontakter">
+        <button id="rotation" class="kontakt" aria-pressed="true"><span class="vippe" aria-hidden="true"></span>Jorden drejer</button>
+        <button id="kontinenter" class="kontakt" aria-pressed="false"><span class="vippe" aria-hidden="true"></span>Kontinenter</button>
+        <button id="etiketter" class="kontakt" aria-pressed="true"><span class="vippe" aria-hidden="true"></span>Navne</button>
+      </div>
+      <div class="handlinger">
+        <button id="ballon" class="ballon" aria-pressed="false">Slip en ballon</button>
+        <button id="pause" aria-pressed="false">❚❚ <span>Pause</span></button>
+        <button id="fokus" aria-pressed="false" title="Skjul sidehovedet" aria-label="Fokus: skjul sidehovedet">⤢</button>
+      </div>
+    </div>
+  </main>
+  <p class="skjult" id="meddelelse" aria-live="polite"></p>
+  <noscript><p>Modellen kræver JavaScript. Solvarme får luften til at stige ved ITK og synke ved 30°. Jordens rotation afbøjer vindene, så der opstår passat, vestenvind og polar østenvind.</p></noscript>
+</body>
+</html>

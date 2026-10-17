@@ -1,55 +1,122 @@
-// Run with Playwright on NODE_PATH, and a local HTTP server already running.
-const {chromium}=require('playwright');
-const assert=require('node:assert/strict');
-const base=process.env.ATLAS_URL||'http://127.0.0.1:8777';
-const output=process.env.ATLAS_TEST_UD||'/tmp/smbi-cirkulation-test';
-require('node:fs').mkdirSync(output,{recursive:true});
-(async()=>{
- const browser=await chromium.launch({headless:true});
- const errors=[];
- for(const [width,height] of [[1280,577],[1366,625],[1536,730],[390,750],[640,625]]){
-  const context=await browser.newContext({viewport:{width,height},hasTouch:width===390,isMobile:width===390,reducedMotion:'reduce'});
-  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(base+'/atlas/cirkulation/');
-  await page.waitForFunction(()=>document.querySelector('#load-status').hidden);
-  await page.evaluate(()=>document.fonts.ready);
-  assert.equal(await page.locator('#pause').getAttribute('aria-pressed'),'true','reduced motion starts paused');
-  const layout=await page.evaluate(()=>({width:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight}));
-  assert.ok(layout.width<=width,`no horizontal overflow at ${width}`);
-  if(width>=900){assert.ok(layout.height<=height,`no desktop scroll at ${width}`);assert.ok(await page.evaluate(()=>document.querySelector('.earth-view').getBoundingClientRect().bottom<=document.querySelector('.controls').getBoundingClientRect().top),'figure does not overlap controls');}
-  const before=await page.locator('#globus').screenshot();
-  await page.locator('#labels').click();const without=await page.locator('#globus').screenshot();assert.notDeepEqual(before,without,'labels visibly toggle');
-  await page.locator('#labels').click();
-  await page.locator('[data-month="1"]').click();assert.equal(await page.locator('#month-name').textContent(),'Januar');
-  const jan=await page.locator('#globus').screenshot();await page.locator('[data-month="7"]').click();assert.notDeepEqual(jan,await page.locator('#globus').screenshot(),'seasons visibly change ITK');
-  const six=await page.locator('#snit').screenshot();await page.locator('#rotation').click();assert.equal(await page.locator('#rotation').getAttribute('aria-pressed'),'false');assert.notDeepEqual(six,await page.locator('#snit').screenshot(),'stopped Earth shows different cells');await page.locator('#rotation').click();
-  await page.locator('#continents').click();assert.equal(await page.locator('#continents').getAttribute('aria-pressed'),'false');await page.locator('#continents').click();
-  await page.locator('#globus').focus();const turned=await page.locator('#globus').screenshot();await page.keyboard.press('ArrowRight');assert.notDeepEqual(turned,await page.locator('#globus').screenshot(),'keyboard turns globe');
-  await page.keyboard.press('Enter');assert.match(await page.locator('#notice').textContent(),/Ballonen er sluppet/);
-  await page.locator('#reset').click();
-  await page.locator('#balloon').click();assert.equal(await page.locator('#balloon').getAttribute('aria-pressed'),'true');
-  await page.locator('#globus').scrollIntoViewIfNeeded();
-  const rect=await page.locator('#globus').boundingBox();
-  if(width===390)await page.touchscreen.tap(rect.x+rect.width/2,rect.y+rect.height/2);else await page.mouse.click(rect.x+rect.width/2,rect.y+rect.height/2);
-  assert.match(await page.locator('#notice').textContent(),/Ballonen er sluppet/);
-  // Pointer dragging, including touch, rotates the actual rendered geography.
-  const dragBefore=await page.locator('#globus').screenshot();
-  if(width===390){const cdp=await context.newCDPSession(page);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:rect.x+rect.width/2,y:rect.y+rect.height/2}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:rect.x+rect.width/2+50,y:rect.y+rect.height/2}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
-  else{await page.mouse.move(rect.x+rect.width/2,rect.y+rect.height/2);await page.mouse.down();await page.mouse.move(rect.x+rect.width/2+50,rect.y+rect.height/2,{steps:5});await page.mouse.up();}
-  assert.notDeepEqual(dragBefore,await page.locator('#globus').screenshot(),'pointer drag rotates globe');
-  await page.locator('#help').click();assert.ok(await page.locator('#guide').isVisible());await page.keyboard.press('Escape');assert.ok(!await page.locator('#guide').isVisible());assert.ok(await page.locator('#help').evaluate(el=>el===document.activeElement),'dialog returns focus');
-  await page.locator('#mumbai').click();assert.match(await page.locator('#story-title').textContent(),/Monsun/);assert.match(await page.locator('#notice').textContent(),/sydvestmonsun/);
-  await page.locator('[data-month="1"]').click();await page.locator('#mumbai').click();assert.match(await page.locator('#notice').textContent(),/nordøstmonsun/);
-  await page.locator('#pause').click();assert.equal(await page.locator('#pause').getAttribute('aria-pressed'),'false');await page.waitForTimeout(150);const moving=await page.locator('#globus').screenshot();await page.waitForTimeout(150);assert.notDeepEqual(moving,await page.locator('#globus').screenshot(),'play moves particles');
-  await page.locator('#pause').click();const still=await page.locator('#globus').screenshot();await page.waitForTimeout(120);assert.deepEqual(still,await page.locator('#globus').screenshot(),'pause freezes particles');
-  await page.locator('#reset').click();await page.locator('[data-month="7"]').click();await page.locator('#balloon').click();
-  await page.evaluate(()=>scrollTo(0,0));await page.mouse.move(0,0);
-  await page.screenshot({path:`${output}/${width}.png`,fullPage:true});
-  console.log(`${width}×${height}: layout, controls, rotation, seasons, keyboard, balloon, touch/pointer, dialog, monsoon, motion passed`);
-  await context.close();
- }
- // Missing basemap must preserve the wind model and guidance.
- const page=await browser.newPage();await page.route('**/countries-110m.json',route=>route.abort());await page.goto(base+'/atlas/cirkulation/');await page.waitForFunction(()=>document.querySelector('#load-status').textContent.includes('Landekortet mangler'));await page.locator('#help').click();assert.ok(await page.locator('#guide').isVisible());await page.close();
- assert.deepEqual(errors,[],'no JavaScript errors');
- await browser.close();console.log('All circulation browser checks passed.');
-})().catch(error=>{console.error(error);process.exit(1);});
+// Browserprøve for /atlas/cirkulation/. Kræver Playwright på NODE_PATH og en
+// lokal server: NODE_PATH=værktøj/node_modules node atlas/test/cirkulation.cjs
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+const base = process.env.ATLAS_URL || 'http://127.0.0.1:8777';
+const ud = process.env.ATLAS_TEST_UD || '/tmp/smbi-cirkulation-test';
+require('node:fs').mkdirSync(ud, { recursive: true });
+
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const fejl = [];
+  for (const [bredde, hoejde] of [[1280, 577], [1366, 625], [1536, 730], [390, 750], [640, 625]]) {
+    const mobil = bredde === 390;
+    const ctx = await browser.newContext({ viewport: { width: bredde, height: hoejde }, hasTouch: mobil, isMobile: mobil, reducedMotion: 'reduce' });
+    const side = await ctx.newPage();
+    side.on('pageerror', e => fejl.push(e.message));
+    await side.goto(base + '/atlas/cirkulation/');
+    await side.waitForFunction(() => document.querySelector('#trin-titel').textContent.length > 0);
+    await side.evaluate(() => document.fonts.ready);
+    await side.waitForTimeout(300);
+    const globus = side.locator('#globus'), snit = side.locator('#snit');
+    const billede = l => l.screenshot();
+
+    assert.equal(await side.locator('#pause').getAttribute('aria-pressed'), 'true', 'reduceret bevægelse starter på pause');
+    const mål = await side.evaluate(() => ({ b: document.documentElement.scrollWidth, h: document.documentElement.scrollHeight }));
+    assert.ok(mål.b <= bredde, `ingen vandret rulning ved ${bredde}`);
+    if (bredde > 900) {
+      assert.ok(mål.h <= hoejde, `ingen lodret rulning ved ${bredde}×${hoejde}`);
+      assert.ok(await side.evaluate(() => document.querySelector('.globusfelt').getBoundingClientRect().bottom <= document.querySelector('.betjening').getBoundingClientRect().top + 1), 'figuren overlapper ikke betjeningen');
+    }
+
+    // Navne, måned, rotation og kontinenter ændrer figurerne synligt.
+    let før = await billede(globus);
+    await side.locator('#etiketter').click();
+    assert.notDeepEqual(før, await billede(globus), 'navne slås synligt fra');
+    await side.locator('#etiketter').click();
+    før = await billede(globus);
+    await side.locator('#maaned').fill('7');
+    assert.equal(await side.locator('#maanedsnavn').textContent(), 'juli');
+    assert.notDeepEqual(før, await billede(globus), 'måneden flytter ITK');
+    før = await billede(snit);
+    await side.locator('#rotation').click();
+    assert.equal(await side.locator('#rotation').getAttribute('aria-pressed'), 'false');
+    await side.waitForTimeout(100);
+    assert.notDeepEqual(før, await billede(snit), 'stop Jorden giver én celle');
+    await side.locator('#rotation').click();
+    await side.locator('#kontinenter').click();
+    assert.equal(await side.locator('#kontinenter').getAttribute('aria-pressed'), 'true');
+
+    // Tastatur drejer, Enter slipper ballon.
+    await globus.focus();
+    før = await billede(globus);
+    await side.keyboard.press('ArrowRight');
+    assert.notDeepEqual(før, await billede(globus), 'piletast drejer globussen');
+    assert.match(await side.locator('#aflaesning').textContent(), /Midt på/);
+    await side.locator('#ballon').click();
+    assert.equal(await side.locator('#ballon').getAttribute('aria-pressed'), 'true');
+    await globus.focus();
+    await side.keyboard.press('Enter');
+    assert.match(await side.locator('#meddelelse').textContent(), /Ballon sluppet/);
+
+    // Klik/tryk slipper ballon; træk drejer.
+    await globus.scrollIntoViewIfNeeded();
+    const r = await globus.boundingBox(), cx = r.x + r.width / 2, cy = r.y + r.height / 2;
+    await side.locator('#meddelelse').evaluate(e => { e.textContent = ''; });
+    if (mobil) await side.touchscreen.tap(cx, cy); else await side.mouse.click(cx, cy);
+    assert.match(await side.locator('#meddelelse').textContent(), /Ballon sluppet/);
+    før = await billede(globus);
+    if (mobil) {
+      const cdp = await ctx.newCDPSession(side);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: cx, y: cy }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: cx + 60, y: cy }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    } else { await side.mouse.move(cx, cy); await side.mouse.down(); await side.mouse.move(cx + 60, cy, { steps: 5 }); await side.mouse.up(); }
+    await side.waitForTimeout(50);
+    assert.notDeepEqual(før, await billede(globus), 'træk drejer globussen');
+    await side.locator('#ballon').click();
+
+    // Trinene: fem, og monsuntrinnet sætter juli og kontinenter.
+    assert.equal(await side.locator('#prikker button').count(), 5);
+    await side.locator('#rotation').click();
+    await side.locator('#prikker button').nth(4).click();
+    assert.match(await side.locator('#trin-titel').textContent(), /monsun/);
+    assert.equal(await side.locator('#maanedsnavn').textContent(), 'juli');
+    assert.equal(await side.locator('#rotation').getAttribute('aria-pressed'), 'true');
+    assert.ok(await side.locator('#naeste').isDisabled());
+    for (let i = 0; i < 4; i++) await side.locator('#forrige').click();
+    assert.ok(await side.locator('#forrige').isDisabled());
+
+    // Afspil/pause.
+    await side.locator('#pause').click();
+    assert.equal(await side.locator('#pause').getAttribute('aria-pressed'), 'false');
+    await side.waitForTimeout(150); før = await billede(globus); await side.waitForTimeout(150);
+    assert.notDeepEqual(før, await billede(globus), 'animationen kører');
+    await side.locator('#pause').click();
+    await side.waitForTimeout(50); før = await billede(globus); await side.waitForTimeout(120);
+    assert.deepEqual(før, await billede(globus), 'pause fryser figuren');
+
+    await side.locator('#fokus').click();
+    assert.ok(!(await side.locator('.site-header').isVisible()), 'fokus skjuler sidehovedet');
+    await side.locator('#fokus').click();
+
+    await side.evaluate(() => scrollTo(0, 0)); await side.mouse.move(0, 0);
+    await side.screenshot({ path: `${ud}/${bredde}.png`, fullPage: true });
+    console.log(`${bredde}×${hoejde}: layout, kontakter, måned, tastatur, ballon, træk, trin, pause og fokus består`);
+    await ctx.close();
+  }
+
+  // Manglende landekort: fejlbesked, men trinene virker.
+  const side = await browser.newPage();
+  await side.route('**/countries-110m.json', r => r.abort());
+  await side.goto(base + '/atlas/cirkulation/');
+  await side.waitForFunction(() => !document.querySelector('#fejl').hidden);
+  assert.match(await side.locator('#trin-titel').textContent(), /Solen/);
+  await side.locator('#naeste').click();
+  assert.match(await side.locator('#trin-titel').textContent(), /30°/);
+  await side.close();
+
+  assert.deepEqual(fejl, [], 'ingen JavaScriptfejl');
+  await browser.close();
+  console.log('Alle browserprøver for cirkulationsmodellen består.');
+})().catch(e => { console.error(e); process.exit(1); });

@@ -2,89 +2,12 @@
 <html lang="da">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Global cirkulation (model B) — smbi.dk</title>
-  <meta name="description" content="Interaktiv 3-cellemodel: passat, vestenvind, ITK, Corioliseffekten og monsun på en globus, der kan drejes, med et snit fra pol til pol.">
-  <meta name="theme-color" content="#FFF9EE">
+  <title>Global cirkulation — smbi.dk</title>
   <meta name="robots" content="noindex">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
-  <link rel="stylesheet" href="cirkulation.css">
-  <script defer src="../vendor/d3-array.min.js"></script>
-  <script defer src="../vendor/d3-geo.min.js"></script>
-  <script defer src="../vendor/topojson-client.min.js"></script>
-  <script type="module" src="app.js"></script>
+  <link rel="canonical" href="https://smbi.dk/atlas/cirkulation/">
+  <meta http-equiv="refresh" content="0; url=/atlas/cirkulation/">
 </head>
 <body>
-  <a class="spring" href="#globus">Spring til globussen</a>
-  <header class="site-header">
-    <div class="regnbue"></div>
-    <div class="site-linje">
-      <div class="identitet">
-        <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <h1>Global cirkulation<span class="variant">model B</span></h1>
-      </div>
-      <a href="/atlas/">← Atlas</a>
-    </div>
-  </header>
-
-  <main class="rum">
-    <section class="globusfelt" aria-label="Globus med vind ved jorden">
-      <div class="globusramme">
-        <canvas id="globus" tabindex="0" aria-describedby="globushjaelp"
-          aria-label="Globus med vindpartikler. Træk eller brug piletasterne for at dreje. Enter slipper en ballon midt på globussen, når ballonen er valgt."></canvas>
-        <p class="modelmaerke">Model – ikke målfast</p>
-        <div class="signatur" aria-label="Signatur">
-          <span><i style="--f:#ff6a3d"></i>Passat</span>
-          <span><i style="--f:#0e86c8"></i>Vestenvind</span>
-          <span><i style="--f:#7a4fd6"></i>Polar østenvind</span>
-          <span><i style="--f:#0fa593"></i>Monsun</span>
-        </div>
-        <p class="ballontip" id="ballontip" hidden>Klik på globussen for at slippe en ballon</p>
-        <p class="fejl" id="fejl" hidden></p>
-      </div>
-      <p class="aflaesning" id="aflaesning"><span id="globushjaelp">Peg på globussen for at aflæse vinden. Træk for at dreje.</span></p>
-      <div class="betjening">
-        <div class="aarslinje">
-          <button id="afspil" class="ikon" aria-pressed="false" title="Afspil året">▶ <span>Afspil år</span></button>
-          <label class="maaned">
-            <span class="skjult">Måned</span>
-            <input id="maaned" type="range" min="1" max="12.9" step="0.1" value="1" aria-valuetext="januar">
-            <span class="maanedsakse" aria-hidden="true"><b data-k="J">jan</b><b data-k="F">feb</b><b data-k="M">mar</b><b data-k="A">apr</b><b data-k="M">maj</b><b data-k="J">jun</b><b data-k="J">jul</b><b data-k="A">aug</b><b data-k="S">sep</b><b data-k="O">okt</b><b data-k="N">nov</b><b data-k="D">dec</b></span>
-          </label>
-          <output id="maanedsnavn" for="maaned">januar</output>
-        </div>
-        <div class="knapper">
-          <button id="rotation" aria-pressed="false">Stop Jorden</button>
-          <button id="kontinenter" aria-pressed="false">Kontinenter</button>
-          <button id="ballon" aria-pressed="false">Slip en ballon</button>
-          <button id="etiketter" aria-pressed="true">Navne</button>
-          <button id="pause" aria-pressed="false">Pause</button>
-          <button id="fokus" aria-pressed="false" title="Skjul sidehovedet">Fokus</button>
-        </div>
-      </div>
-    </section>
-
-    <aside class="side">
-      <section class="kort snitkort" aria-labelledby="snit-titel">
-        <h2 id="snit-titel">Snit fra pol til pol</h2>
-        <canvas id="snit" role="img" aria-label="Snit gennem atmosfæren fra Sydpol til Nordpol med luftringene, ITK's tordensky og tryk ved jorden."></canvas>
-      </section>
-      <section class="kort trinkort" aria-labelledby="trin-titel" aria-live="polite">
-        <div class="trinhoved">
-          <p class="overlinje" id="trin-nr">Trin 1 af 7</p>
-          <div class="prikker" id="prikker"></div>
-        </div>
-        <h2 id="trin-titel"></h2>
-        <p id="trin-tekst"></p>
-        <p class="se"><b>Se efter:</b> <span id="trin-se"></span></p>
-        <div class="trinknapper">
-          <button id="forrige">← Forrige</button>
-          <button id="naeste">Næste →</button>
-        </div>
-      </section>
-    </aside>
-  </main>
-  <p class="skjult" id="meddelelse" aria-live="polite"></p>
+  <p>Model B er lagt sammen med model A. <a href="/atlas/cirkulation/">Gå til Global cirkulation</a>.</p>
 </body>
 </html>
