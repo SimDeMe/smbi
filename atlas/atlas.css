@@ -227,7 +227,7 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 .rangtabel td:last-child,.rangtabel th:last-child{text-align:right;white-space:nowrap}
 .rangtabel .tekstknap{text-align:left}
 #temaforklaring b{font-family:var(--display);color:var(--ink)}
-@media(min-width:900px) and (max-height:640px){:is(#temaforklaring,#udledningforklaring) .temalang{display:none}}
+@media(min-width:900px) and (max-height:640px){:is(#temaforklaring,#udledningforklaring,#cirkelforklaring) .temalang{display:none}}
 .maalvalg{margin-bottom:4px;width:max-content;max-width:100%}.maalvalg label{padding:3px 8px}
 /* Seks knapper i lagrækken (med Temakort): smallere polstring på mobil, så
    Fokus ikke får sin egen række og skubber globussen ned. */
@@ -291,3 +291,8 @@ body.havbundlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 body.nedboerlag .globusnote{display:none}
 body.nedboerlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 @media(min-width:900px) and (max-height:700px){.nedboernote{display:none}}
+/* Samlet udledning: referencecirkler i signaturen følger globussens zoom. */
+.signatur .cirkelskala{display:block;width:auto;height:auto;max-width:100%;margin:2px 0;overflow:visible}
+.cirkelskala circle{fill:#9e1b3233;stroke:#9e1b32;stroke-width:1}
+.cirkelskala text{font:500 11px var(--mono);fill:var(--ink)}
+.cirkelskala line{stroke:#17211f80;stroke-dasharray:2 2}

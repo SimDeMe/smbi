@@ -17,7 +17,7 @@ from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasnin
 from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
 from temakort import afproev_temakort, afproev_temafejl
-from udledning import afproev_udledning, afproev_udledningsfejl
+from udledning import afproev_udledning, afproev_udledningsfejl, afproev_cirkler
 from havbund import afproev_havbund, afproev_havbundfejl, afproev_havbunddata
 from nedboer import afproev_nedboer, afproev_nedboerfejl, afproev_nedboerdata, afproev_nedboerglat
 from island3d import afproev_island3d
@@ -100,6 +100,7 @@ with sync_playwright() as p:
         afproev_nedboer(side, UD)
         afproev_temakort(side, UD)
         afproev_udledning(side, UD)
+        afproev_cirkler(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')

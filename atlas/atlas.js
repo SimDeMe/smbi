@@ -1108,6 +1108,9 @@ function opdaterPladebeskrivelse() {
     const ind = temamodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Temakort: landene er farvet efter nøgletallet ${ind.navn} ${temamodul.aarFor(ind)}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
+  if (!landAktivt && cirkelmodul && cirkellaget.aktiv) {
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Cirkler viser landenes samlede CO₂-udledning 1850–${cirkelmodul.valg.aar}; cirklens areal svarer til udledningen, og ranglisten findes under Undersøg`);
+  }
   if (!landAktivt && udledningsmodul && udledningslagene.some(lag => lag.aktiv)) {
     const ind = udledningsmodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Landene er farvet efter ${ind.navn[0].toLowerCase()}${ind.navn.slice(1)} ${udledningsmodul.valg.aar} i ${ind.enhed}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
@@ -1442,10 +1445,82 @@ for (const felt of document.querySelectorAll('[name="udledningmaal"]')) {
   });
 }
 
+// Samlet udledning siden 1850 som cirkler (udledningscirkler.js): et punktlag,
+// der kan ligge oven på de farvede kort.
+const cirkelknap = document.querySelector('#cirkellag');
+let cirkelmodul;
+const SVGNS = 'http://www.w3.org/2000/svg';
+function tegnCirkelskala(skala) {
+  const m = cirkelmodul, figur = document.querySelector('#cirkelskala');
+  // Referencecirklerne står side om side med samme bundlinje som på et kort.
+  const vaerdier = [10000, 100000, 400000];
+  const radier = vaerdier.map(v => Math.max(1.6, m.radius(v, skala)));
+  const h = Math.min(80, 2 * radier[2] + 18);
+  const k = Math.min(1, (h - 18) / (2 * radier[2]));
+  let x = 6;
+  figur.replaceChildren();
+  for (const [i, v] of vaerdier.entries()) {
+    const r = radier[i] * k;
+    const c = document.createElementNS(SVGNS, 'circle');
+    c.setAttribute('cx', x + r); c.setAttribute('cy', h - 16 - r); c.setAttribute('r', r);
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('x', x + r); t.setAttribute('y', h - 3); t.setAttribute('text-anchor', 'middle');
+    t.textContent = `${v / 1000}`;
+    figur.append(c, t);
+    x += 2 * r + Math.max(22, 14);
+  }
+  const enhed = document.createElementNS(SVGNS, 'text');
+  enhed.setAttribute('x', x); enhed.setAttribute('y', h - 3);
+  enhed.textContent = k < 1 ? 'mia. t (formindsket)' : 'mia. t CO₂';
+  figur.append(enhed);
+  // Samme pixelstørrelse som på globussen: ingen skalering af figuren.
+  const b = x + (k < 1 ? 125 : 80);
+  figur.setAttribute('viewBox', `0 0 ${b} ${h}`);
+  figur.setAttribute('width', b); figur.setAttribute('height', h);
+}
+function tegnCirkelsignatur() {
+  const m = cirkelmodul;
+  const aarvalg = document.querySelector('#cirkelaar');
+  if (!aarvalg.childElementCount) {
+    for (const a of m.aarliste()) {
+      const label = element('label');
+      const felt = document.createElement('input');
+      felt.type = 'radio'; felt.name = 'cirkelaar'; felt.value = a;
+      felt.onchange = () => { m.valg.aar = a; tegnCirkelsignatur(); globus.gentegn(); opdaterPladebeskrivelse(); };
+      label.append(felt, String(a));
+      aarvalg.append(label);
+    }
+  }
+  for (const felt of aarvalg.querySelectorAll('input')) felt.checked = Number(felt.value) === m.valg.aar;
+  for (const felt of document.querySelectorAll('[name="cirkelfelt"]')) felt.checked = felt.value === m.valg.felt;
+  const top = m.rangering().slice(0, 3).map(r => `${r.navn} ${m.andel(r.v)}`).join(', ');
+  const kort = element('b', `1850–${m.valg.aar} · verden ${m.gt(m.verden())}`);
+  const lang = element('span', ` – ${m.FELTER[m.valg.felt]}. Cirklens areal svarer til udledningen. Størst: ${top}.`, 'temalang');
+  document.querySelector('#cirkelforklaring').replaceChildren(kort, lang);
+}
+const cirkellaget = lavLag({
+  knap: cirkelknap, signatur: document.querySelector('#cirkelsignatur'), klasse: 'cirkellag',
+  fejltekst: 'Udledningsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    cirkelmodul ??= await import('./udledningscirkler.js');
+    await globus.visTemalag('cirkler', vis ? cirkelmodul : null);
+    if (vis) { cirkelmodul.lytTilSkala(tegnCirkelskala); tegnCirkelsignatur(); }
+  },
+  efter: opdaterPladebeskrivelse
+});
+for (const felt of document.querySelectorAll('[name="cirkelfelt"]')) {
+  felt.addEventListener('change', () => {
+    if (!felt.checked || !cirkelmodul) return;
+    cirkelmodul.valg.felt = felt.value;
+    tegnCirkelsignatur(); globus.gentegn(); opdaterPladebeskrivelse();
+  });
+}
+document.querySelector('#cirkelopgave').onclick = visUdledningsopgave;
+
 const UDLEDNINGSKILDE = 'Nationale og forbrugsbaserede udledninger: Global Carbon Budget 2025 (Global Carbon Project; Friedlingstein m.fl. 2025), samlet af Our World in Data, CC BY 4.0. Tallene er CO₂ fra fossile brændsler og industri (kul, olie, gas, cement og afbrænding af overskudsgas). Skovrydning og anden arealanvendelse, metan, lattergas og international luft- og skibsfart er ikke med. ' +
   'Alle drivhusgasser: Jones m.fl. (2025), National contributions to climate change, via Our World in Data. CO₂, metan og lattergas omregnet til CO₂-ækvivalenter med deres opvarmningsevne over 100 år (GWP100), inklusive arealanvendelse (skovrydning, dræning af jord m.m.; bygger på Global Carbon Budget og FAO/PRIMAP). »Andel fra arealanvendelse« er alle drivhusgasser minus dem uden arealanvendelse i procent af alle. Arealanvendelse er den mest usikre del, og et land kan have negativ arealudledning, når skove vokser til. ' +
   'Nationale (territoriale) udledninger er det, der udledes inden for landets grænser; det er den opgørelse, landene rapporterer til FN’s klimakonvention, og som Parisaftalens mål tælles i. Forbrugsbaserede udledninger er beregnet af Global Carbon Project med en input-output-model over verdenshandlen (metode: Peters m.fl. 2011): udledningen ved at producere landets eksport trækkes fra, og udledningen ved at producere landets import lægges til. De findes kun for omkring 120 lande, fra 1990 og senest for 2023; derfor er 2023 også valgt for de nationale tal. Forbrugsbaserede tal er mere usikre end nationale. ' +
-  'Pr. indbygger er Our World in Data’s beregning med deres befolkningstal. »Forskel fra national« er forbrugsbaseret minus national i procent af national. Danmarks officielle opgørelse fra Energistyrelsen er anderledes, fordi den omfatter alle drivhusgasser. ' +
+  'Pr. indbygger er Our World in Data’s beregning med deres befolkningstal. »Forskel fra national« er forbrugsbaseret minus national i procent af national. Samlet udledning siden 1850 er summen af de årlige tal fra og med 1850; manglende år tæller som 0. Cirklen står midt i landets største landområde. Danmarks officielle opgørelse fra Energistyrelsen er anderledes, fordi den omfatter alle drivhusgasser. ' +
   'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med tallene for hele Cypern og Somalia. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er runde tal og er de samme for begge opgørelser, så kortene kan sammenlignes.';
 
 async function visUdledningsopgave() {
@@ -1463,6 +1538,8 @@ async function visUdledningsopgave() {
     'Find Danmark på begge kort. Hvorfor er Danmarks forbrugsbaserede udledning over halvanden gang så stor som den nationale? Hvad betyder det for, hvor meget Danmark reelt har reduceret siden 1990?',
     'Vælg Forbrugsbaserede udledninger → Forskel fra national. Hvilke lande »eksporterer« udledninger (lilla), og hvilke »importerer« dem (orange)? Hvad fortæller det om, hvor verdens varer produceres?',
     'Vælg Alle drivhusgasser → Arealanvendelse. I hvilke lande kommer en stor del af udledningen fra skovrydning og anden arealanvendelse? Sammenlign Brasilien og Indonesien med CO₂-kortene. Hvor fylder metan fra landbrug og husdyr mon meget?',
+    'Slå Samlet udledning siden 1850 til. Hvilke lande har udledt mest i alt? Sammenlign med kortet over udledningen pr. indbygger i dag. Hvad betyder det for diskussionen om, hvem der har ansvaret for klimaforandringerne – og hvem der skal betale?',
+    'Skift cirklerne mellem 1900, 1950, 1990 og 2023, og mellem Fossil og industri og Med skovrydning. Hvordan har fordelingen ændret sig? Hvilke lande bliver større, når skovrydning tæller med?',
     'Klimaaftalerne tæller de nationale udledninger. Giv argumenter for og imod at bruge den forbrugsbaserede opgørelse i stedet. Hvem ville vinde og tabe på det?',
     'Kortkritik: Hvorfor er så mange lande grå på det forbrugsbaserede kort? Hvorfor er arealanvendelse den mest usikre del af opgørelsen? Og hvad betyder det, at metan omregnes til CO₂-ækvivalenter over 100 år, når metan kun bliver i atmosfæren i ca. 12 år?'
   ]) liste.append(element('li', spoergsmaal));
@@ -1508,6 +1585,23 @@ async function visUdledningsopgave() {
   } catch {
     rang.replaceChildren(element('p', 'Udledningsdata kunne ikke hentes. Spørgsmålene kan stadig bruges. Prøv igen senere.'));
   }
+  // Rangliste for den samlede udledning siden 1850 (cirkellaget).
+  try {
+    cirkelmodul ??= await import('./udledningscirkler.js');
+    await cirkelmodul.hent();
+    const m = cirkelmodul, raekker = m.rangering();
+    const t = element('table', '', 'rangtabel');
+    t.innerHTML = '<thead><tr><th scope="col">Nr.</th><th scope="col">Land</th><th scope="col">mia. t CO₂</th><th scope="col">Andel</th></tr></thead>';
+    const krop = element('tbody');
+    for (const [i, r] of raekker.slice(0, 15).entries()) {
+      const tr = element('tr');
+      tr.append(element('td', String(i + 1)), element('td', r.navn), element('td', m.gt(r.v).replace(' mia. t', '')), element('td', m.andel(r.v)));
+      krop.append(tr);
+    }
+    t.append(krop);
+    indhold.append(element('h3', `Samlet udledning 1850–${m.valg.aar}`, 'underoverskrift'),
+      element('p', `${m.FELTER[m.valg.felt]}. De 15 største af ${raekker.length} lande. Andelen er af verdens samlede udledning, inkl. international luft- og skibsfart, så landene tilsammen giver under 100 %.`), t);
+  } catch {}
   indhold.append(lavInformation({
     navn: 'CO₂-udledninger', overskrift: 'Om data',
     introduktion: 'Global Carbon Budget 2025 og Jones m.fl. 2025 via Our World in Data. 1990–2023.',

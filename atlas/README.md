@@ -151,6 +151,13 @@ Forbrugsbaserede tal findes for ca. 120 lande fra 1990 til 2023; årene er
   lattergas i CO₂-ækvivalenter (GWP100) inkl. arealanvendelse (Jones m.fl.
   2025). Eget mål **Arealanvendelse**: andel af alle drivhusgasser fra
   skovrydning m.m. (under 0 = nettooptag).
+- **Samlet udledning siden 1850** (v453): cirkler med areal ∝ landets
+  samlede CO₂ 1850–1900/1950/1990/2023, fossil eller inkl. skovrydning
+  (summeret i `data/udledning.py`). Cirklen står midt i landets største
+  landområde (`data/landepunkter.mjs` → `landepunkter.json`, en enkel
+  polylabel på Natural Earth 1:50m). Punktlag (`udledningscirkler.js`), der kan
+  ligge oven på de farvede kort; signaturens referencecirkler følger zoom.
+  Dialogen har rangliste med andel af verdens udledning.
 - **Aflæsning** viser også den anden opgørelse i parentes (for drivhusgasser:
   den fossile CO₂ alene).
 - De tre lag, temakortet, klimazoner og nedbør udelukker hinanden.

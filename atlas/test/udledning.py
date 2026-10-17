@@ -167,3 +167,56 @@ def afproev_udledningsfejl(browser, adresse):
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(side.locator('#udledningsignatur')).to_be_visible()
     side.close()
+
+
+def afproev_cirkler(side, ud):
+    """Samlet udledning siden 1850 som cirkler: aflæsning, valg og samspil med de farvede lag."""
+    luk_lag(side)
+    data = json.loads((DATA / 'udledning.json').read_text())
+    punkter = json.loads((DATA / 'landepunkter.json').read_text())
+    kum = data['kumuleret']
+    knap, signatur = side.locator('#cirkellag'), side.locator('#cirkelsignatur')
+    aflaesning = side.locator('#cirkelaflaesning')
+    side.get_by_role('button', name='Nulstil', exact=True).click()
+    foer = billede(side)
+    aabn_lag(side, knap).click()
+    luk_lag(side)
+    expect(knap).to_have_attribute('aria-pressed', 'true')
+    expect(signatur).to_be_visible()
+    assert billede(side) != foer, 'Cirklerne tegnes ikke'
+    expect(side.locator('#cirkelforklaring')).to_contain_text('1850–2023')
+    expect(side.locator('#cirkelskala circle')).to_have_count(3)
+    expect(aflaesning).to_have_text('Midt på globussen: ingen cirkel lige her')
+    # Brasilien: ingen stedmarkør dækker landet i startvisningen.
+    br = kum['lande']['076']
+    gt = lambda v: tal(v / 1000, 0 if v >= 10000 else 1)
+    if side.viewport_size['width'] >= 900:
+        side.mouse.move(*punkt_paa_skaerm(side, punkter['076']))
+        andel = tal(100 * br['k'][3] / kum['verden']['k'][3], 0)
+        expect(aflaesning).to_have_text(f"Ved markøren: Brasilien: {gt(br['k'][3])} mia. t CO₂ 1850–2023 · {andel} % af verdens")
+        # Med skovrydning og et tidligere år.
+        side.locator('#cirkelsignatur label', has_text='Med skovrydning').click()
+        side.locator('#cirkelaar label', has_text='1950').click()
+        side.mouse.move(*punkt_paa_skaerm(side, punkter['076']))
+        expect(aflaesning).to_contain_text(f"Ved markøren: Brasilien: {gt(br['kl'][1])} mia. t CO₂ 1850–1950")
+        side.mouse.move(*punkt_paa_skaerm(side, [-30, 40]))
+        side.locator('#cirkelsignatur label', has_text='Fossil og industri').click()
+        side.locator('#cirkelaar label', has_text='2023').click()
+    # Cirklerne kan ligge oven på et farvet lag.
+    national = side.locator('#nationallag')
+    aabn_lag(side, national).click()
+    luk_lag(side)
+    expect(knap).to_have_attribute('aria-pressed', 'true')
+    expect(national).to_have_attribute('aria-pressed', 'true')
+    side.screenshot(path=str(ud / f"cirkler-{side.viewport_size['width']}x{side.viewport_size['height']}.png"))
+    # Rangliste i dialogen.
+    side.locator('#cirkelopgave').click()
+    dialog = side.locator('#udforsker')
+    expect(dialog.get_by_role('heading', name='Samlet udledning 1850–2023')).to_be_visible()
+    expect(dialog.locator('table').last.locator('tbody tr').first).to_contain_text('USA')
+    side.keyboard.press('Escape')
+    for lag in (national, knap):
+        aabn_lag(side, lag).click()
+        luk_lag(side)
+        expect(lag).to_have_attribute('aria-pressed', 'false')
+    expect(signatur).to_be_hidden()

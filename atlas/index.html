@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v452</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v453</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -191,6 +191,19 @@
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="udledningopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
       </section>
+      <section id="cirkelsignatur" class="signatur cirkelsignatur" aria-labelledby="cirkeltitel" hidden>
+        <h2 id="cirkeltitel">Samlet CO₂ siden 1850</h2>
+        <div class="systemvalg maalvalg" role="radiogroup" aria-label="Kilder">
+          <label><input type="radio" name="cirkelfelt" value="k" checked> Fossil og industri</label>
+          <label><input type="radio" name="cirkelfelt" value="kl"> Med skovrydning</label>
+        </div>
+        <div id="cirkelaar" class="systemvalg aarvalgtema" role="radiogroup" aria-label="Til og med år"></div>
+        <svg id="cirkelskala" class="cirkelskala" aria-hidden="true"></svg>
+        <p id="cirkelforklaring" class="signaturnote"></p>
+        <p id="cirkelaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="cirkelopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
+      </section>
       <section id="klimasignatur" class="signatur klimasignatur" aria-labelledby="klimatitel" hidden>
         <div class="klimatop">
           <h2 id="klimatitel">Klimazoner</h2>
@@ -244,7 +257,8 @@
         <button id="nationallag" class="lagknap" aria-label="Nationale udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Nationale udledninger</b><small>CO₂ udledt inden for landets grænser</small></span></button>
         <button id="forbrugslag" class="lagknap" aria-label="Forbrugsbaserede udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Forbrugsbaserede udledninger</b><small>CO₂ fra det, landets indbyggere forbruger</small></span></button>
         <button id="drivhusgaslag" class="lagknap" aria-label="Alle drivhusgasser" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Alle drivhusgasser</b><small>CO₂, metan og lattergas – også fra skovrydning</small></span></button>
-        <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. Lagene farver landene og vises ét ad gangen – ikke sammen med nøgletal, klimazoner eller nedbør.</p>
+        <button id="cirkellag" class="lagknap" aria-label="Samlet udledning siden 1850" aria-pressed="false" aria-controls="cirkelsignatur" disabled><span><b>Samlet udledning siden 1850</b><small>Cirkler: hvem har udledt mest i alt?</small></span></button>
+        <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. De farvede lag vises ét ad gangen – ikke sammen med nøgletal, klimazoner eller nedbør. Cirklerne kan lægges oven på.</p>
       </div>
     </details>
     <details id="lag-demografi" class="laggruppe">
