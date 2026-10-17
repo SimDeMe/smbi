@@ -98,28 +98,6 @@
         <button id="pladeopgave" aria-haspopup="dialog">Undersøg og kilde →</button>
         <button id="pladevisning" popovertarget="pladevalg" aria-controls="pladevalg" aria-expanded="false">Visning</button>
       </section>
-      <section id="reliefsignatur" class="signatur" aria-labelledby="relieftitel" hidden>
-        <h2 id="relieftitel">Højde og dybde · relief</h2>
-        <p class="signaturnote">Bjergkæder, oceanrygge og dybhavsgrave. Natural Earth.</p>
-        <ul class="naturklasser">
-          <li><i style="background:#183c70"></i><span>Mørkt hav: dybere havbund</span></li>
-          <li><i style="background:#a5d4df"></i><span>Lyst hav: lavere vand og sokkel</span></li>
-          <li><i style="background:linear-gradient(90deg,#9fa97d,#cfb89b,#f4eee3)"></i><span>Land: højdefarver og terrænskygger</span></li>
-        </ul>
-        <p class="signaturnote">Landfarver varierer mellem regioner. Ingen fælles meterskala.</p>
-        <p id="reliefaflaesning" class="klimaaflaesning"></p>
-        <p class="signaturnote lagstatus" role="status" hidden></p>
-        <button id="reliefopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
-      </section>
-      <section id="vegetationsignatur" class="signatur" aria-labelledby="vegetationtitel" hidden>
-        <h2 id="vegetationtitel">Arealanvendelse og vegetation</h2>
-        <p class="signaturnote">Satellitklassificeret arealdække · MODIS 2023</p>
-        <details class="naturforklaring"><summary>Farveforklaring · skov, landbrug og ørken</summary><ul id="vegetationklasser" class="naturklasser"></ul></details>
-        <p id="vegetationaflaesning" class="klimaaflaesning"></p>
-        <p class="signaturnote">Bar jord omfatter bl.a. ørken. Kortet viser ikke skovrydning siden 2000.</p>
-        <p class="signaturnote lagstatus" role="status" hidden></p>
-        <button id="vegetationopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
-      </section>
       <section id="havbundsignatur" class="signatur havbundsignatur" aria-labelledby="havbundtitel" hidden>
         <h2 id="havbundtitel">Havbundens alder</h2>
         <div id="alderskala" class="alderskala" aria-hidden="true"></div>
@@ -136,35 +114,7 @@
         </div>
         <p class="signaturnote lagstatus" role="status" hidden></p>
       </section>
-
-<section id="middelsignatur" class="signatur nedboersignatur" aria-labelledby="middeltitel" hidden>
- <h2 id="middeltitel">Middeltemperatur i <span id="middelmaaned">januar</span></h2>
- <div class="tidsstyring"><button id="middelspil" class="spilknap" aria-pressed="false">▶ Afspil</button><input id="middelskyder" aria-label="Temperaturmåned" type="range" min="0" max="11" value="0"></div>
- <div id="middelskala" class="klimafarver"></div>
- <p class="signaturnote">Lufttemperatur i 2 m · 1991–2020 · NCEP/NCAR-reanalyse (model og observationer).</p>
- <p id="middelaflaesning" class="klimaaflaesning"></p>
- <svg id="middeldiagram" viewBox="0 0 264 65" role="img" aria-label="Årets temperaturkurve i grader Celsius"></svg>
- <p class="signaturnote lagstatus" role="status" hidden></p>
- <button id="middelopgave" class="opgaveknap" aria-haspopup="dialog">Klimadata, undersøg og kilde →</button>
-</section>
-<section id="vindsignatur" class="signatur" aria-labelledby="vindtitel" hidden>
- <h2 id="vindtitel">Vind og lufttryk</h2>
- <label>Måned <select id="vindmaaned"><option value="0">Januar</option><option value="6">Juli</option></select></label>
- <p class="signaturnote">H: højtryk · L: lavtryk<br>Pile: vindretning · lilla stiplet linje: ITK.<br>Skematisk overfladecirkulation, ikke et vejrkort.</p>
- <p class="signaturnote lagstatus" role="status" hidden></p>
- <p id="vindaflaesning" class="signaturnote"></p>
- <button id="vindopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
-</section>
-<section id="havstroemsignatur" class="signatur" aria-labelledby="havstroemtitel" hidden>
- <h2 id="havstroemtitel">Havstrømme</h2>
- <p class="signaturnote"><span style="color:#b83c28">━▶ Varm</span> · <span style="color:#236ea5">┄▶ Kold</span><br>Relativt til omgivelserne; pile viser retning.</p>
- <label><input id="havstroemnavne" type="checkbox" checked> Navne</label>
- <p class="signaturnote">Skematiske overfladestrømme. Dyb returstrøm er ikke vist.</p>
- <p class="signaturnote lagstatus" role="status" hidden></p>
- <p id="havstroemaflaesning" class="signaturnote"></p>
- <button id="havstroemopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
-</section>
-<section id="nedboersignatur" class="signatur nedboersignatur" aria-labelledby="nedboertitel" hidden>
+      <section id="nedboersignatur" class="signatur nedboersignatur" aria-labelledby="nedboertitel" hidden>
         <h2 id="nedboertitel">Nedbør i <span id="nedboermaaned">januar</span></h2>
         <div class="maanedsvalg">
           <button id="nedboerspil" class="spilknap" aria-pressed="false"><span aria-hidden="true">▶</span> Afspil</button>
@@ -215,16 +165,6 @@
         <p id="vulkanaflaesning" class="klimaaflaesning"></p>
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="vulkanopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
-      </section>
-      <section id="ressourcesignatur" class="signatur temasignatur" aria-labelledby="ressourcetitel" hidden>
-        <h2 id="ressourcetitel">Ressourcer og samfund</h2>
-        <div id="ressourcevalg"></div>
-        <p id="ressourceforklaring" class="signaturnote"></p>
-        <ul id="ressourceklasser" class="ressourceklasser" aria-label="Farveforklaring"></ul>
-        <p id="samfundaflaesning" class="klimaaflaesning"></p>
-        <p id="potentialeaflaesning" class="klimaaflaesning" hidden></p>
-        <p class="signaturnote lagstatus" role="status" hidden></p>
-        <button id="ressourceopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, data og kilder →</button>
       </section>
       <section id="temasignatur" class="signatur temasignatur" aria-labelledby="tematitel" hidden>
         <h2 id="tematitel">Temakort</h2>
@@ -343,22 +283,18 @@
       <summary><span class="laggruppe-ikon" aria-hidden="true">◬</span><span><b>Geologi</b><small>Plader, havbund, jordskælv og vulkaner</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
         <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span><b>Pladegrænser</b><small>Grænser, pladenavne og bevægelse</small></span></button>
-        <button id="relieflag" class="lagknap" aria-label="Højde og dybde (relief)" aria-pressed="false" aria-controls="reliefsignatur" disabled><span><b>Højde og dybde (relief)</b><small>Bjerge, dybhavsgrave og midtoceaniske rygge</small></span></button>
         <button id="havbundlag" class="lagknap" aria-label="Havbundens alder" aria-pressed="false" aria-controls="havbundsignatur" disabled><span><b>Havbundens alder</b><small>Se havbundens dannelse og spredning</small></span></button>
         <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span><b>Jordskælv</b><small>Målte skælv, magnitude og dybde</small></span></button>
         <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span><b>Vulkaner</b><small>Placering og kendte udbrud</small></span></button>
       </div>
     </details>
     <details id="lag-klima" class="laggruppe">
-      <summary><span class="laggruppe-ikon" aria-hidden="true">☼</span><span><b>Klima og vejr</b><small>Temperatur, nedbør, vind og havstrømme</small></span><span class="gruppe-antal" hidden></span></summary>
+      <summary><span class="laggruppe-ikon" aria-hidden="true">☼</span><span><b>Klima</b><small>Klimazoner, plantebælter og nedbør</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
         <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span><b>Klimazoner</b><small>Vahl eller Köppen-Geiger</small></span></button>
         <label class="lagmenu-valg">Klimasystem<select id="lag-klimasystem"><option value="vahl">Vahl · zoner og plantebælter</option><option value="koppen">Köppen-Geiger · klimatyper</option></select></label>
         <button id="nedboerlag" class="lagknap" aria-label="Nedbør måned for måned" aria-pressed="false" aria-controls="nedboersignatur" disabled><span><b>Nedbør måned for måned</b><small>Se regnbælter og monsun gennem året</small></span></button>
-        <button id="middellag" class="lagknap" aria-label="Middeltemperatur måned for måned" aria-pressed="false" aria-controls="middelsignatur" disabled><span><b>Middeltemperatur måned for måned</b><small>Temperatur og klimadiagrammets data · 1991–2020</small></span></button>
-<button id="vindlag" class="lagknap" aria-label="Vind og lufttryk" aria-pressed="false" aria-controls="vindsignatur" disabled><span><b>Vind og lufttryk</b><small>Januar og juli · passat, ITK og monsun</small></span></button>
-<button id="havstroemlag" class="lagknap" aria-label="Havstrømme" aria-pressed="false" aria-controls="havstroemsignatur" disabled><span><b>Havstrømme</b><small>Varme og kolde overfladestrømme</small></span></button>
-<p class="lagmenu-note">Vælg ét farvelag. Vind og havstrømme kan lægges ovenpå.</p>
+        <p class="lagmenu-note">Klimazoner og nedbør vises ét ad gangen.</p>
       </div>
     </details>
     <details id="lag-klimaforandringer" class="laggruppe">
@@ -372,22 +308,6 @@
         <button id="drivhusgaslag" class="lagknap" aria-label="Alle drivhusgasser" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Alle drivhusgasser</b><small>CO₂, metan og lattergas – også fra skovrydning</small></span></button>
         <button id="cirkellag" class="lagknap" aria-label="Samlet udledning siden 1850" aria-pressed="false" aria-controls="cirkelsignatur" disabled><span><b>Samlet udledning siden 1850</b><small>Cirkler: hvem har udledt mest i alt?</small></span></button>
         <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. De farvede lag vises ét ad gangen – ikke sammen med nøgletal, klimazoner eller nedbør. Cirklerne kan lægges oven på.</p>
-      </div>
-    </details>
-    <details id="lag-natur" class="laggruppe">
-      <summary><span class="laggruppe-ikon" aria-hidden="true">♧</span><span><b>Arealanvendelse og vegetation</b><small>Skov, landbrug, savanne og ørken</small></span><span class="gruppe-antal" hidden></span></summary>
-      <div class="laggruppe-indhold">
-        <button id="vegetationlag" class="lagknap" aria-label="Arealanvendelse og vegetation" aria-pressed="false" aria-controls="vegetationsignatur" disabled><span><b>Arealanvendelse og vegetation</b><small>Observeret arealdække fra MODIS · 2023</small></span></button>
-        <p class="lagmenu-note">Farvede fladelag vises ét ad gangen. Kombinér med pladegrænser, jordskælv og vulkaner.</p>
-      </div>
-    </details>
-    <details id="lag-ressourcer" class="laggruppe">
-      <summary><span class="laggruppe-ikon" aria-hidden="true">☀</span><span><b>Ressourcer og samfund</b><small>Energi, sol, vind og vandstress</small></span><span class="gruppe-antal" hidden></span></summary>
-      <div class="laggruppe-indhold">
-        <button id="energilag" class="lagknap" aria-label="Energimiks pr. land" aria-pressed="false" aria-controls="ressourcesignatur" disabled><span><b>Energimiks pr. land</b><small>Vedvarende energi, kul, olie, gas og atomkraft · 2023</small></span></button>
-        <button id="potentialelag" class="lagknap" aria-label="Solindstråling og vindpotentiale" aria-pressed="false" aria-controls="ressourcesignatur" disabled><span><b>Solindstråling og vindpotentiale</b><small>Hvor er naturgrundlaget for sol og vind bedst?</small></span></button>
-        <button id="vandstresslag" class="lagknap" aria-label="Vandstress" aria-pressed="false" aria-controls="ressourcesignatur" disabled><span><b>Vandstress</b><small>Vandindvinding i forhold til vandressourcer · 2022</small></span></button>
-        <p class="lagmenu-note">Vælg ét farvelag ad gangen. Skift energikilde, el/primærenergi eller sol/vind i signaturen på kortet.</p>
       </div>
     </details>
     <details id="lag-demografi" class="laggruppe">
