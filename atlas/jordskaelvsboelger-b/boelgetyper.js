@@ -100,15 +100,16 @@ export function start(rod) {
     tegn();
   }
 
+  function puls(km, v, bredde, tt) {
+    const xi = (km - v * tt) / bredde;
+    return -xi * Math.exp(-xi * xi / 2) * 1.65;
+  }
+
   // Forskydning (px) af gitterpunktet i (x, z) ved tiden t. z er dybde i px under overfladen.
   function forskydning(x, z, w, a, tt = t) {
     if (type === 'kaploeb') {
       const km = x / w * L, dyb = z / w * L;
-      const puls = (v, bredde) => {
-        const xi = (km - v * tt) / bredde;
-        return -xi * Math.exp(-xi * xi / 2) * 1.65;
-      };
-      const pP = puls(VP, 8), pS = puls(VS, 8);
+      const pP = puls(km, VP, 8, tt), pS = puls(km, VS, 8, tt);
       const xiR = (km - VR * tt) / 13, henfald = Math.exp(-dyb / 25);
       const rx = Math.exp(-xiR * xiR / 2) * Math.sin(xiR * 2.2) * henfald;
       const rz = Math.exp(-xiR * xiR / 2) * Math.cos(xiR * 2.2) * henfald * 1.4;
@@ -156,7 +157,21 @@ export function start(rod) {
     for (let j = 0; j <= raek; j++) { const r = []; for (let i = 0; i < kol; i++) r.push(punkt(i, j)); net.push(r); }
 
     // P: farv sammentrykte felter, så tætheden kan ses.
-    if (type === 'P' || kaploeb) {
+    if (kaploeb) {
+      // Tæt prøveafstand i farvelægningen også. Brug kun P-forskydningen,
+      // så Rayleigh-bølgens overfladebevægelse ikke bliver til blå søjler i hele dybden.
+      const farve = ctx.createLinearGradient(0, 0, w, 0);
+      const n = Math.ceil(Math.max(w / 2, L));
+      const dxP = x => a * 0.6 * puls(x / w * L, VP, 8, t);
+      for (let k = 0; k <= n; k++) {
+        const x = k * w / n;
+        const tryk = -(dxP(x + 0.5) - dxP(x - 0.5));
+        farve.addColorStop(k / n, tryk > 0
+          ? `rgba(14,134,200,${Math.min(0.28, tryk * 0.8)})`
+          : `rgba(255,255,255,${Math.min(0.4, -tryk)})`);
+      }
+      ctx.fillStyle = farve; ctx.fillRect(0, himmel, w, bund - himmel);
+    } else if (type === 'P') {
       for (let i = 0; i < kol - 1; i++) {
         const bredde = net[0][i + 1][0] - net[0][i][0];
         const tryk = (gs - bredde) / gs;
@@ -165,15 +180,27 @@ export function start(rod) {
         ctx.fillRect(net[0][i][0], himmel, bredde, bund - himmel);
       }
     }
+    // Klippestykkerne er et pædagogisk gitter, ikke tegningens opløsning.
+    // Kapløbets smalle pulser kræver højst 2 px / 1 km mellem beregnede punkter.
+    // Beregn direkte på bølgefunktionen: spline mellem de grove punkter kan
+    // hverken genskabe en overset bølgetop eller garantere de rigtige udsving.
+    const delinger = kaploeb ? Math.ceil(gs / Math.min(2, w / L)) : 1;
+    function tegnLinje(i, j, di, dj, antal) {
+      ctx.moveTo(...punkt(i, j));
+      for (let k = 1; k <= antal * delinger; k++) {
+        const u = k / delinger;
+        ctx.lineTo(...punkt(i + di * u, j + dj * u));
+      }
+    }
     // Gitterlinjer
     ctx.lineWidth = 0.8; ctx.strokeStyle = 'rgba(23,45,57,.18)';
     ctx.beginPath();
-    for (const r of net) { ctx.moveTo(...r[0]); for (const p of r) ctx.lineTo(...p); }
-    for (let i = 0; i < kol; i++) { ctx.moveTo(...net[0][i]); for (const r of net) ctx.lineTo(...r[i]); }
+    for (let j = 0; j <= raek; j++) tegnLinje(0, j, 1, 0, kol - 1);
+    for (let i = 0; i < kol; i++) tegnLinje(i, 0, 0, 1, raek);
     ctx.stroke();
     // Overfladen
     ctx.lineWidth = 2.5; ctx.strokeStyle = '#6b8061';
-    ctx.beginPath(); ctx.moveTo(...net[0][0]); for (const p of net[0]) ctx.lineTo(...p); ctx.stroke();
+    ctx.beginPath(); tegnLinje(0, 0, 1, 0, kol - 1); ctx.stroke();
     // Klippestykkerne
     ctx.fillStyle = '#4e685e';
     for (const r of net) for (const [x, y] of r) { ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill(); }

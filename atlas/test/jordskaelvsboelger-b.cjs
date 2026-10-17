@@ -14,6 +14,22 @@ fs.mkdirSync(ud, { recursive: true });
   for (const [w, h] of [[1280, 577], [1366, 625], [1536, 730], [390, 750], [640, 625]]) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce', hasTouch: w === 390, isMobile: w === 390 });
     const side = await ctx.newPage();
+    // Mål den faktisk tegnede overflade, så de smalle kapløbsbølger ikke igen
+    // reduceres til rette streger mellem de langt mere spredte klippestykker.
+    await side.addInitScript(() => {
+      const stier = new WeakMap(), proto = CanvasRenderingContext2D.prototype;
+      for (const navn of ['beginPath', 'moveTo', 'lineTo', 'stroke']) {
+        const oprindelig = proto[navn];
+        proto[navn] = function (...args) {
+          if (this.canvas.id === 'blok') {
+            if (navn === 'beginPath') stier.set(this, []);
+            else if (navn === 'moveTo' || navn === 'lineTo') stier.get(this)?.push(args);
+            else if (this.strokeStyle === '#6b8061') window.__overflade = stier.get(this)?.slice();
+          }
+          return oprindelig.apply(this, args);
+        };
+      }
+    });
     side.on('pageerror', e => fejl.push(`${w}: ${e.message}`));
     side.on('console', m => { if (m.type() === 'error') fejl.push(`${w}: ${m.text()}`); });
     await side.goto(base + '/atlas/jordskaelvsboelger-b/?test');
@@ -28,6 +44,13 @@ fs.mkdirSync(ud, { recursive: true });
       await side.click(`[data-boelge=${type}]`);
       assert.match(await side.locator('#boelgekort h2').textContent(), new RegExp(navn));
       assert.equal(await side.locator(`[data-boelge=${type}]`).getAttribute('aria-checked'), 'true');
+      if (type === 'kaploeb') {
+        const punkter = await side.evaluate(() => window.__overflade);
+        assert.ok(punkter?.length > 100, 'kapløbets overflade er opløst mellem klippestykkerne');
+        const laengste = Math.max(...punkter.slice(1).map((p, i) => Math.hypot(p[0] - punkter[i][0], p[1] - punkter[i][1])));
+        assert.ok(laengste < 4, `ingen grove linjestykker i kapløbet: ${laengste.toFixed(2)} px ved ${w} px`);
+        await side.locator('#blok').screenshot({ path: `${ud}/kaploeb-${w}.png` });
+      }
     }
     // Reduceret bevægelse: modellen starter på pause og står stille.
     const foer = await side.locator('#blok').screenshot();

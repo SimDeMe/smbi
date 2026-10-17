@@ -87,3 +87,18 @@ Efter ændringen består modeltesten og hele den eksisterende Chromium-prøve
 på 1280×577, 1366×625, 1536×730, 390×750 og 640×625, inklusive touch,
 tastatur og reduceret bevægelse. Grafik i de tre dele er gennemgået på
 skærmbilleder. Fysisk mobil, skærmlæser og Safari er ikke særskilt afprøvet.
+
+## Glatte bølgepulser i kapløbet (Atlas v444)
+
+Kapløbets P-/S-pulser (breddeparameter 8 km) og Rayleigh-puls blev før tegnet med rette
+linjer mellem klippestykkerne (ca. 8–13 km mellem punkterne). Især på mobil
+forsvandt bølgetoppe mellem punkterne, og kurverne fik synlige knæk. Gitter
+og overflade beregnes nu direkte fra samme bølgefunktion med højst 2 px og
+1 km mellem prøverne. De synlige partikler, udsving, fart og ankomsttider er
+bevaret. Kompressionsfarven beregnes tæt og kun ud fra P-bølgen, så
+Rayleigh-bevægelsen ikke farver hele dybden som blå søjler.
+
+Browsertesten måler den faktisk tegnede overflade på alle fem skærmstørrelser
+og gemmer et skærmbillede af kapløbet. Regressionen er reproduceret med den
+gamle tegnekode; modeltesten og hele browserforløbet består efter rettelsen
+på de fem skærmstørrelser ovenfor.
