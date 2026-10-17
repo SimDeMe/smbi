@@ -312,3 +312,36 @@ body.temperaturlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.7
 @media(min-width:900px) and (max-height:640px){.signatur .havisgraf{display:none}}
 #havisaar label{padding:3px 4px}
 .havisdrej{display:flex;gap:6px;margin:2px 0 4px}.havisdrej button{min-height:30px;padding:3px 9px;font-size:12.5px}
+/* Havniveau: punktsignatur og en lille graf for den aflæste station. */
+.havniveausignatur .temaklasser i{border-radius:50%;width:11px;height:11px;border-color:#17211f}
+.havniveausignatur .klimaaflaesning p{margin:0}
+.signatur .havniveaugraf{display:block;width:100%;height:auto;max-height:64px;margin-top:3px;font:500 9.5px var(--mono);overflow:visible}
+.havniveaugraf:empty{display:none}
+.havniveaugraf text{fill:var(--slate)}
+@media(min-width:900px) and (max-height:640px){#havniveauforklaring .temalang{display:none}}
+
+/* Physical landscape and categorical land-cover legends. */
+.naturklasser{list-style:none;margin:8px 0;padding:0;font-size:12px}
+.signatur .naturklasser li{display:flex;align-items:center;gap:8px;margin:5px 0}
+.naturklasser i{display:inline-block;flex:0 0 22px;height:12px;border:1px solid #17211f40;border-radius:2px}
+.naturforklaring summary{cursor:pointer;font-size:12px;line-height:1.5;padding:6px 0}
+body.relieflag .globusnote,body.vegetationlag .globusnote{display:none}
+body.relieflag:not(.quiz) .quizsigte,body.vegetationlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
+
+/* Klima og vejr: genbrug signaturernes responsive placering. */
+.klimafarver { display:flex; flex-wrap:wrap; gap:3px 9px; font-size:10px; margin:8px 0; }
+.klimafarver span { display:inline-flex; align-items:center; gap:3px; }
+.klimafarver i { width:12px; height:10px; border:1px solid #17211f33; }
+#middeldiagram { display:block; width:100%; height:65px; max-width:280px; font-size:9px; }
+#middelsignatur .tidsstyring { display:flex; align-items:center; gap:8px; }
+#middelskyder { min-width:0; width:100%; }
+.klimadatatabel { width:100%; border-collapse:collapse; margin:14px 0; }
+.klimadatatabel th,.klimadatatabel td { padding:4px 10px; text-align:right; border-bottom:1px solid #17211f22; }
+.klimadatatabel th:first-child { text-align:left; }
+
+/* Ressourcer: del den eksisterende signaturkolonne og bevar globussens højde. */
+body.ressourcelag .globusnote{display:none}
+body.ressourcelag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
+.signatur .ressourceklasser{display:grid;grid-template-columns:1fr;gap:3px}
+.ressourceklasser li{display:flex;align-items:center;gap:7px;font-size:12px}
+.ressourceklasser i{width:15px;height:11px;border:1px solid #17211f80;border-radius:2px;flex:none}

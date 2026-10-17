@@ -20,6 +20,7 @@ from temakort import afproev_temakort, afproev_temafejl
 from udledning import afproev_udledning, afproev_udledningsfejl, afproev_cirkler
 from temperatur import afproev_temperatur, afproev_temperaturfejl
 from havis import afproev_havis
+from havniveau import afproev_havniveau
 from havbund import afproev_havbund, afproev_havbundfejl, afproev_havbunddata
 from nedboer import afproev_nedboer, afproev_nedboerfejl, afproev_nedboerdata, afproev_nedboerglat
 from island3d import afproev_island3d
@@ -105,6 +106,7 @@ with sync_playwright() as p:
         afproev_cirkler(side, UD)
         afproev_temperatur(side, UD)
         afproev_havis(side, UD)
+        afproev_havniveau(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')

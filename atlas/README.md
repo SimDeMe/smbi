@@ -3,6 +3,31 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Ressourcer og samfund
+
+Tre nye lag: **Energimiks pr. land** (2023, OWID: elproduktion eller
+primærenergi og ti energikilder), **Solindstråling og vindpotentiale**
+(NASA POWER, årsnormal 2001–2020, 1° celler, sol i kWh/m²/døgn og vind i
+50 m højde i m/s) og **Vandstress** (FAO/Verdensbanken, 2022, SDG 6.4.2).
+
+Landene/punkterne aflæses med mus eller sigtekorn. Faste klassegrænser,
+årstal, enheder og grå manglende data fremgår af signaturen. Undersøg har
+seks elevspørgsmål, landenes tal som tabel og link til forsøgsvejledningen
+Vindmøller og solceller. Sol og vind er naturgrundlag, ikke beregnet
+anlægsproduktion; primærenergi og elproduktion holdes adskilt.
+
+`samfund.js` og `potentiale.js` hentes ved tilvalg; `ressourcestyring.js`
+deler signaturen og den eksisterende lagbetjening. Farvelag udelukker
+hinanden. Punktlag kan ligge ovenpå. `data/ressourcer.py` danner de to
+lokale datafiler (55 kB JSON og 116 kB gzip). Kilder, licenser, årgang,
+opløsning, omregninger og begrænsninger står i `data/ressourcer.LICENSE`;
+råfilernes URL og SHA-256 i `data/ressourcer-kilder.json`.
+
+Test: `node atlas/test/ressourcer.cjs` (med Playwright og lokal server):
+datakontrol, fem elevskærme, mus/touch og tastatur, valg og fokus,
+lagudelukkelse, datatabel samt fejl og nyt forsøg. Skærmbilleder er
+gennemgået i Chromium; fysisk mobil og Safari er ikke afprøvet.
+
 ## Samlet lagmenu (v447)
 
 Globussens syv lagknapper er samlet under én **Lag**-knap med tre
@@ -124,6 +149,22 @@ ikke bekræftet** og bør læses i EarthBytes README.txt.
 - Test: `node atlas/test/havbundsalder.mjs` (gitter, kendte steder, profiler,
   projektion) og `test/havbund.py` (fem skærme, mus/touch/tastatur, egen
   profil, dialog, fejl og nyt forsøg) i `test/afproev.py`.
+
+## Klimaforandringer: havniveau ved kysten (v457)
+
+Laget **Havniveau ved kysten** viser 362 vandstandsmålere fra PSMSL (Revised
+Local Reference, årsmidler) som punkter farvet efter tendensen 1960–2024 i
+mm/år (lineær regression). Kun stationer med mindst 40 års data, start senest
+1975 og slut tidligst 2010 (`data/havniveau.py` → `havniveau.json`). Tallene
+er relative til land: lilla, hvor landet hæver sig efter istiden (Botniske
+Bugt, Nordjylland), orange, hvor havet stiger (Vadehavet, Mexicanske Golf).
+
+- Signaturen har klasser med antal stationer, medianen (+2,0 mm/år) og en
+  lille graf med den aflæste stations årsmidler og tendenslinje.
+- Punktlag; kan ligge oven på fx Temperaturstigning.
+- **Undersøg og kilde**: syv spørgsmål (Danmark og landhævning, Stockholm,
+  synkende deltaer, stationer mod satellitter, årsager, stormfloder,
+  datakritik). Test: `test/havniveau.py`.
 
 ## Klimaforandringer: havisens udbredelse (v456)
 
@@ -1024,3 +1065,54 @@ Faglige valg, kilder og datumer: [`island/SNIT-KILDER.md`](island/SNIT-KILDER.md
 Teknik, skalaer og afprøvning: [`ISLAND-DEMO.md`](ISLAND-DEMO.md).
 `test/islandsnit.py` indgår i den samlede browsertest og dækker tre snit,
 fem skærme, terrænsammenhæng, dybder, bagsidens skjulning, pause og kameraretur.
+
+## Relief og arealanvendelse / vegetation
+
+To nye, lokalt lagrede oversigtskort, som hentes ved tilvalg:
+
+- **Geologi → Højde og dybde (relief):** Natural Earth v3.2.0 med bjerge,
+  oceanrygge, kontinentalsokler og dybhavsgrave. 5400 × 2700, 2,5 MB JPEG.
+  Farver og terrænskygger er et billedkort, ikke et højdegitter; signaturen
+  siger udtrykkeligt, at man ikke kan aflæse meter, og landfarverne varierer
+  mellem regioner.
+- **Arealanvendelse og vegetation:** NASA GIBS MODIS IGBP 2023, 18 klasser,
+  3600 × 1800, 601 kB PNG. Farveforklaring kan foldes ud; aflæsningen viser
+  den præcise klasse ved musen eller sigtekornet. Bar jord omfatter bl.a.
+  ørken. Skovrydning siden 2000 er ikke implementeret; kortet er ét år,
+  og der udledes ingen ændringer eller arealtal af oversigtsbilledet.
+
+Begge har Undersøg og kilde samt genveje fra Processer. De udelukker de
+øvrige farvede fladelag i begge retninger; punktlag og pladegrænser bevares.
+`naturraster.js` deler projektion, indlæsning, cache og aflæsning; der tegnes
+med lavere opløsning under drejning. MODIS-klasser interpoleres ikke.
+Kilde, vilkår og genopbygning: `data/naturraster.LICENSE` og `data/naturraster.py`.
+
+## Klima og vejr: temperatur, vind og havstrømme (18. oktober 2026)
+
+- **Middeltemperatur måned for måned:** NCEP/NCAR Reanalysis 1, luft i 2 m,
+  normal 1991–2020 over land og hav. Samme rasterprincip som nedbør; skyder,
+  afspilning, punktvis temperaturkurve og en tilgængelig tabel med alle 12
+  temperaturer og GPCP-nedbørsværdier for samme koordinat. Tabellen åbnes fra
+  »Klimadata, undersøg og kilde«. Gitterdata er ikke stationsnormaler.
+- **Vind og lufttryk:** januar/juli med idealiserede trykbælter, passat,
+  vestenvinde, ITK og sydasiatisk monsun; link til cirkulationsmodellen.
+- **Havstrømme:** varme hele røde og kolde stiplede blå pile, navne kan
+  skjules. Generaliserede overfladestrømme; AMOC's dybe returgren er ikke
+  tegnet. Opgaven forklarer forbindelsen til Grønlandspumpen.
+
+Vind og havstrømme er skematiske og kan kombineres med et farvelag.
+Temperaturfarven udelukker de øvrige fladedækkende lag. Datakonvertering og
+proveniens findes i `data/middeltemperatur.py`, `data/middeltemperatur.LICENSE`
+og `data/klimavejr-kilder.md`. Beregningstesten køres med
+`node atlas/test/klimavejr.mjs`.
+
+Kontrolleret i browser ved 1280 px og 390 px: relief og vegetation tegnes,
+pladegrænser bevares, vegetation slukker relief, nedbør slukker vegetation,
+og kildedialogen åbner. Alle uigennemsigtige MODIS-pixels matcher NASAs
+farveskala; stikprøver i Sahara, Amazonas, Indien og Atlanten er kontrolleret.
+JavaScript-syntaks kontrolleret med Node. Den fulde atlas-testsuite er ikke kørt.
+
+Afprøvning: `test/klimavejr.mjs` kontrollerer temperaturdata, modsatte
+årstider, datolinjen og rasteret. `test/klimavejr.cjs` (Playwright) afprøver
+fem skærmstørrelser, månedsskift, afspilning, de 12 datarækker, samspil med
+nedbør, samtidige vind-/havstrømslag samt hentefejl og nyt forsøg.

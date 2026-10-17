@@ -1,0 +1,19 @@
+havniveau.json
+==============
+
+Dannet med `python -I atlas/data/havniveau.py` (17. oktober 2026) fra
+rlr_annual.zip, hentet samme dag fra
+  https://psmsl.org/data/obtaining/rlr.annual.data/rlr_annual.zip
+
+Permanent Service for Mean Sea Level (PSMSL) (2026), "Tide Gauge Data",
+hentet 17. oktober 2026 fra http://www.psmsl.org/data/obtaining/.
+Holgate, S. J., Matthews, A., Woodworth, P. L., Rickards, L. J., Tamisiea,
+M. E., Bradshaw, E., Foden, P. R., Gordon, K. M., Jevrejeva, S. & Pugh, J.
+(2013), New data systems and products at the Permanent Service for Mean Sea
+Level, Journal of Coastal Research 29(3), 493–504.
+https://doi.org/10.2112/JCOASTRES-D-12-00175.1
+
+PSMSL's data må frit bruges med kildeangivelse som ovenfor.
+
+Bearbejdning: se havniveau.py (lineær tendens 1960–2024 for stationer med
+mindst 40 års data, start senest 1975 og slut tidligst 2010).
