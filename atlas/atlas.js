@@ -3,11 +3,13 @@ import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
 import { hentIndeks, landFraKort, visLandemenu, lukLandemenu } from './landemenu.js';
 import { lavLag } from './lagknap.js';
+import { startLagmenu } from './lagmenu.js';
 
 const dialog = document.querySelector('#udforsker');
 const indhold = document.querySelector('#dialogindhold');
 const titel = document.querySelector('#dialogtitel');
 let globus;
+let lagmenu;
 let senesteFokus;
 let danmarkskort;
 let landAktivt = false;
@@ -211,7 +213,8 @@ function skiftLand(aktiv) {
   landAktivt = aktiv;
   document.querySelector('.atlas').classList.toggle('landekort', aktiv);
   document.querySelector('#landetop').hidden = !aktiv;
-  for (const knap of document.querySelectorAll('.lagknap')) knap.hidden = aktiv;
+  document.querySelector('#lag-aabn').hidden = aktiv;
+  lagmenu?.skjul();
   if (valgpanel.matches(':popover-open')) valgpanel.hidePopover();
   globus.visLand(aktiv ? danmarkskort : null);
   document.querySelector('.rotation').setAttribute('aria-label', aktiv ? 'Flyt landekortet' : 'Drej globussen');
@@ -539,7 +542,8 @@ document.querySelector('#luk').onclick = () => dialog.close();
 dialog.addEventListener('close', () => {
   lukInformation();
   if (dialog.classList.contains('bred')) globus?.markerLand(null);
-  senesteFokus?.focus({ preventScroll: true });
+  const retur = senesteFokus?.getClientRects().length ? senesteFokus : document.querySelector('#lag-aabn');
+  retur?.focus({ preventScroll: true });
 });
 document.querySelector('#fokus').onclick = event => {
   const aktiv = document.body.classList.toggle('fokus');
@@ -549,7 +553,7 @@ document.querySelector('#fokus').onclick = event => {
 document.addEventListener('keydown', event => {
   if (event.key !== 'Escape') return;
   // Landemenuen er en popover og lukker selv ved Escape.
-  if (document.querySelector('#landemenu:popover-open')) return;
+  if (document.querySelector('#landemenu:popover-open, #lagmenu:popover-open')) return;
   const panel = document.querySelector('#pladevalg:popover-open');
   if (panel) {
     event.preventDefault();
@@ -566,6 +570,7 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Quiz → vælg verdensdel: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Knappen med verdensdelens navn (eller Home) viser hele området igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
+  indhold.append(element('p', 'Åbn Lag og vælg Geologi, Klima eller Demografi og levevilkår. Lag kan kombineres; klimazoner og landenes nøgletal farver begge landene og vises derfor ét ad gangen. Under hvert aktivt lag står signatur, indstillinger og kilder.'));
   indhold.append(element('p', 'Klimazoner farver landene efter Vahls klimazoner og plantebælter eller efter Köppen – vælg i signaturen. Feltet under farverne viser klassen ved musen, eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Laget kan vises sammen med pladegrænserne.'));
   indhold.append(element('p', 'Nedbør farver hele kloden – hav og land – efter den gennemsnitlige nedbør i hver måned (1991–2020). Flyt skyderen, eller tryk Afspil for at se mønstret flytte sig gennem året. Den orange linje viser, hvor solen står i zenit. Søjlerne i signaturen viser året ved musen eller midt på globussen.'));
   indhold.append(element('p', 'Havbund farver havbunden efter alder: rød er dannet ved spredningsryggene inden for de seneste 20 mio. år, violet er ældst. Vælg en profil i signaturen – eller tegn din egen med to tryk på kloden – og flyt markøren på grafen for at måle, hvor hurtigt havbunden har bevæget sig væk fra ryggen.'));
@@ -1072,6 +1077,7 @@ const bevaegelsesnote = document.querySelector('#bevaegelsesnote');
 const valgstatus = document.querySelector('#pladevalgstatus');
 
 function opdaterPladebeskrivelse() {
+  lagmenu?.opdater();
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
   bevaegelsesnote.textContent = 'cm/år mellem pladerne: samlet åbning/lukning på tværs; forskydning langs transformforkastninger. ≈: diffus zone.';
   document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
@@ -1157,6 +1163,7 @@ const klimaknap = document.querySelector('#klimalag');
 const klimasignatur = document.querySelector('#klimasignatur');
 let klimasystem = 'vahl';
 function tegnKlimasignatur(modul) {
+  for (const felt of document.querySelectorAll('[name="klimasystem"]')) felt.checked = felt.value === klimasystem;
   const system = modul.SYSTEMER[klimasystem];
   document.querySelector('#klimatitel').textContent = klimasystem === 'vahl' ? 'Klimazoner (Vahl)' : 'Klimatyper (Köppen)';
   document.querySelector('#klimanote').textContent = system.note;
@@ -1346,6 +1353,20 @@ temavalg.addEventListener('change', () => {
   opdaterPladebeskrivelse();
 });
 
+lagmenu = startLagmenu({
+  async hentTema() { temamodul ??= await import('./temakort.js'); return temamodul.EMNER; },
+  temaId: () => temamodul?.valg.id,
+  temaNavn: () => temamodul?.indikator().navn || 'Landenes nøgletal',
+  klimasystem: () => klimasystem,
+  async skiftTema(id) {
+    if (!globus || temaknap.disabled) return;
+    temamodul.valg.id = id;
+    if (!temalaget.aktiv) await temalaget.skift(true);
+    else { tegnTemasignatur(); globus.gentegn(); opdaterPladebeskrivelse(); }
+  },
+  async skiftKlima(system) { if (globus && !klimaknap.disabled) await klimalaget.skift(system); }
+});
+
 const TEMAKILDE = 'Alle tal er de samme som i landemenuens Demografi-fane. Befolkningstæthed, tilvækst, fødsels- og dødsrate, fertilitet, spædbørns- og børnedødelighed, middellevetid, medianalder, migration og aldersfordeling: United Nations, Department of Economic and Social Affairs, Population Division (2024), World Population Prospects 2024, mellemvarianten, CC BY 3.0 IGO. Tal til og med 2023 er estimater; 2050 og 2100 er fremskrivninger, som bygger på antagelser om fertilitet, dødelighed og migration. Fødsels- og dødsrate for 1950, 1980, 2000, 2050 og 2100 er FN’s femårsgennemsnit omkring året. Naturlig tilvækst er fødselsrate minus dødsrate. Andel 0–14 og 65+ år er regnet ud fra befolkningen fordelt på alder. ' +
   'HDI, BNI pr. indbygger (købekraftskorrigeret i 2021-dollar) og gennemsnitlig skolegang: UNDP, Human Development Report 2025 (data for 2023). HDI-grupperne er UNDP’s egne. Byandel: Verdensbanken, World Development Indicators (SP.URB.TOTL.IN.ZS, 2023); landenes definition af »by« er forskellig. ' +
   'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med FN’s tal for hele Cypern og Somalia. Grænser og navne er ikke en stillingtagen til omstridte områder. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er valgt som runde tal og, hvor det giver mening, faglige grænser (fertilitet 2,1, UNDP’s HDI-grupper, 0).';
@@ -1355,7 +1376,7 @@ async function visTemaopgave() {
   const tilbage = element('button', '← Processer', 'tilbage');
   tilbage.onclick = visProcesser;
   indhold.append(tilbage);
-  indhold.append(element('p', 'Slå laget Temakort til, og vælg et nøgletal i signaturen. Hvert land får én farve efter sin værdi; tallene ved farverne er antal lande i klassen. Aflæsningen viser landet ved musen eller midt på globussen. Tryk på et land for hele demografien.'));
+  indhold.append(element('p', 'Åbn Lag → Demografi og levevilkår, og vælg et nøgletal. Hvert land får én farve efter sin værdi; tallene ved farverne er antal lande i klassen. Aflæsningen viser landet ved musen eller midt på globussen. Tryk på et land for hele demografien.'));
   indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
   const liste = element('ol', '', 'opgaveliste');
   for (const spoergsmaal of [

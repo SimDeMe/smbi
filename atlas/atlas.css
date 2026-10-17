@@ -37,7 +37,7 @@ dialog{width:min(720px,calc(100% - 28px));max-height:calc(100svh - 32px);padding
 .metadata{font:500 12px/1.5 var(--mono);color:var(--slate);margin:0 0 7px}.modelkort h3{font:700 20px/1.2 var(--display);margin:0 0 8px}.modelkort p{margin:0 0 12px}.fordybelse{box-shadow:4px 4px 0 var(--blue);margin-bottom:14px}.fordybelseslinks{display:flex;flex-wrap:wrap;gap:8px}.modelkort a{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;background:var(--lys);border:2px solid var(--ink);border-radius:5px;font:700 14px var(--display);text-decoration:none}
 .oplysning{margin:0 0 18px}.oplysning-raekke{display:flex;align-items:flex-start;gap:12px}.oplysning-raekke>p{flex:1;min-width:0;margin:0}.oplysning-knap{flex:none;width:44px;min-height:44px;border:1px solid var(--ink);border-radius:50%;padding:4px;font:24px/1 var(--display);background:transparent}.oplysning-note{font-size:14px;color:var(--slate);margin:8px 0 0}.oplysning-panel{border:1px solid var(--ink);border-radius:6px;background:#fff3dc;padding:12px;margin-top:12px;scroll-margin-block:90px 18px}.oplysning-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.oplysning-top h3{font:700 17px/1.2 var(--display);margin:0}.oplysning-luk{min-height:44px;font-size:12px;padding:6px 10px}.oplysning-panel>p{font-size:15px;line-height:1.5;margin:8px 0 0}
 .soegefelt{display:block;font:600 16px var(--display)}.soegefelt input{display:block;width:100%;min-height:48px;padding:10px;border:2px solid var(--ink);border-radius:5px;background:white;margin:8px 0}.antal{font-size:14px;color:var(--slate)}.tilbage{margin-bottom:16px}.uden-script{padding:20px;border:2px solid var(--ink)}
-.lagvalg{display:flex;flex-wrap:wrap;gap:8px}.lagknap .kort{display:none}.lagknap[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.lagvalg{display:flex;flex-wrap:wrap;gap:8px}
 .signatur{border-top:1px solid var(--ink);padding:8px 12px;background:var(--paper);font-size:13px;line-height:1.3}
 .signatur h2{font:700 14px var(--display);margin:0 0 6px}.signatur ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:4px 12px}
 .signatur li{display:flex;align-items:center;gap:8px}.signatur svg{flex:none;width:36px;height:12px;overflow:visible}.signatur b{font-family:var(--display)}
@@ -52,7 +52,7 @@ body.pladelag .globusnote{display:none}
 .pladevalg p{margin:8px 0 0;font-size:13px}.pladevalg-note{color:var(--slate)}#pladevalgstatus{padding:8px;border:1px solid var(--ink);background:#fff3dc}
 .pladetabel{width:100%;border-collapse:collapse;font-size:14px}.pladetabel th,.pladetabel td{border-bottom:1px solid var(--slate);padding:8px;text-align:left}.pladetabel caption{text-align:left;margin:10px 0}.pladetabel small{display:block;color:var(--slate)}
 @media(max-width:800px){.globusnote{display:none}.intro>p{display:none}.eftertekst{font-size:12px}.markoer .etiket{font-size:11px}.globusrum{height:calc(100svh - 255px)}}
-@media(max-width:500px){.lagknap .lang,.vaerktoejer .ikon{display:none}.lagknap .kort{display:inline}.lagvalg{gap:5px}main{padding:0 10px 14px}.site-linje{padding:8px 12px}.site-linje>a:last-child{max-width:190px;text-align:right;font-size:12px}.intro{padding:14px 0}.overlinje{font-size:10px}h1{font-size:25px;max-width:310px}.vaerktoejer{padding:7px;gap:5px}.indgange{gap:5px}.vaerktoejer button{padding:7px 10px}.globusrum{height:max(340px,calc(100svh - 340px))}.betjeningslinje{gap:6px;padding:7px 4px}.betjeningslinje button{font-size:12px}.rotation button{width:44px}.betjeningslinje>div{gap:3px}.betjeningslinje>button{min-height:44px}.betjeningslinje output{min-width:34px}.kompas{right:12px;top:12px}.markoer .etiket{left:31px}.markoer[data-sted="nordatlanten"] .etiket{right:31px}.dialogtop{padding:12px}.dialogtop h2{font-size:21px}#dialogindhold{padding:14px}body.fokus .globusrum{height:calc(100svh - 185px)}}
+@media(max-width:500px){.vaerktoejer .ikon{display:none}.lagvalg{gap:5px}main{padding:0 10px 14px}.site-linje{padding:8px 12px}.site-linje>a:last-child{max-width:190px;text-align:right;font-size:12px}.intro{padding:14px 0}.overlinje{font-size:10px}h1{font-size:25px;max-width:310px}.vaerktoejer{padding:7px;gap:5px}.indgange{gap:5px}.vaerktoejer button{padding:7px 10px}.globusrum{height:max(340px,calc(100svh - 340px))}.betjeningslinje{gap:6px;padding:7px 4px}.betjeningslinje button{font-size:12px}.rotation button{width:44px}.betjeningslinje>div{gap:3px}.betjeningslinje>button{min-height:44px}.betjeningslinje output{min-width:34px}.kompas{right:12px;top:12px}.markoer .etiket{left:31px}.markoer[data-sted="nordatlanten"] .etiket{right:31px}.dialogtop{padding:12px}.dialogtop h2{font-size:21px}#dialogindhold{padding:14px}body.fokus .globusrum{height:calc(100svh - 185px)}}
 /* På brede elevskærme kan betjeningen ligge i hjørnerne og give kloden
    hele figurhøjden. Smalle vinduer beholder betjeningen under figuren. */
 @media(min-width:900px){.atlas{position:relative}.globusrum{height:calc(100svh - 214px)}.betjeningslinje{position:absolute;bottom:10px;left:12px;right:12px;border:0;padding:0;display:grid;grid-template-columns:1fr auto auto;pointer-events:none}.betjeningslinje>*{pointer-events:auto}.betjeningslinje output{background:var(--paper);border-radius:4px}body.fokus .globusrum{height:calc(100svh - 86px)}}
@@ -81,7 +81,7 @@ body.pladelag .globusnote{display:none}
 .quizlinje{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .quiz-spoergsmaal{flex:1;min-width:190px;font:500 17px/1.25 var(--display)}#quiz-land{font-size:22px}#quiz-fremskridt{font:12px var(--mono);white-space:nowrap;margin-left:8px}
 #quiz-besked{display:block;margin-top:4px;font:14px/1.25 var(--body)}.quiz-handlinger{display:flex;gap:6px;flex-wrap:wrap}
-body.quiz .intro,body.quiz .eftertekst,body.quiz .indgange,body.quiz .lagknap,body.quiz .signatur,body.quiz #markoerer,body.quiz .globusnote{display:none}
+body.quiz .intro,body.quiz .eftertekst,body.quiz .indgange,body.quiz #lag-aabn,body.quiz .signatur,body.quiz #markoerer,body.quiz .globusnote{display:none}
 body.quiz .globusrum{height:calc(100svh - 290px);min-height:340px}
 .quizsigte{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:32px/1 monospace;color:var(--ink);text-shadow:0 0 3px white,0 0 3px white;pointer-events:none}
 body.quiz #globus:focus-visible~.quizsigte{display:block}
@@ -198,8 +198,8 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 }
 /* Lave elevskærme: gentagne kildenoter står også under Undersøg og kilde. */
 @media(min-width:900px) and (max-height:760px){.skaelvsignatur .signaturnote:not(.lagstatus),#vulkansignatur .signaturnote:not(.lagstatus){display:none}.signaturer .opgaveknap{min-height:34px}}
-/* Seks lagknapper fylder værktøjslinjen: betjeningsteksten står i linjen
-   over figuren kun på meget brede skærme; ellers under atlasset. */
+/* Betjeningsteksten står under atlasset på almindelige elevskærme,
+   så den aldrig overlapper navigationen. */
 @media(min-width:900px) and (max-width:1999px){.eftertekst{grid-row:3;height:auto;margin:8px 0 0;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;text-align:left}}
 @media(min-width:2000px){.eftertekst{margin-right:760px}}
 /* Forsøgsvejledninger under steder og undersøgelser: sammenfoldet, under modelkortene. */
@@ -250,9 +250,26 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 body.havbundlag .globusnote{display:none}
 body.havbundlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 @media(min-width:900px) and (max-height:700px){.havbundnote{display:none}.profilgraf{height:104px}}
-/* Seks lag på mobil: Fokus rykker op på rækken med Steder, Processer, Søg og Quiz,
-   så lagknapperne står på én række og ikke skubber globussen ned. */
-@media(max-width:500px){.lagvalg{display:contents}.indgange,.quizlinje{order:0}#fokus{order:1}.lagknap{order:2;font-size:13px}}
+
+
+/* Emneopdelt lagmenu i top-laget: åbningen ændrer ikke klodens størrelse. */
+#lag-aabn{display:flex;align-items:center;gap:7px}#lag-aabn[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
+.lag-antal{display:grid;place-items:center;min-width:20px;height:20px;border-radius:50%;padding:0 4px;background:var(--blue);color:white;font:600 11px var(--mono)}
+.lagmenu{position:fixed;inset:auto;margin:0;width:380px;max-width:calc(100vw - 24px);max-height:calc(100svh - 24px);overflow:auto;padding:12px;border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.lagmenu-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.lagmenu h2{font:700 23px var(--display);margin:0}.lagmenu-top .overlinje{font-size:10px}.lagmenu-top button{font-size:12px;padding:5px 9px}
+.lagmenu-intro,.lagmenu-note{font-size:13px;line-height:1.35;color:var(--slate);margin:8px 0 10px}
+.laggruppe{border-top:1px solid #17211f35}.laggruppe summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 0;font:600 15px var(--display)}
+.laggruppe summary::-webkit-details-marker{display:none}.laggruppe summary::after{content:'+';margin-left:auto;font:20px var(--mono)}.laggruppe[open] summary::after{content:'−'}
+.laggruppe summary b,.laggruppe summary small{display:block}.laggruppe summary small{font:12px/1.4 var(--body);color:var(--slate);margin-top:4px}.laggruppe-ikon{font:24px var(--body);width:24px;color:var(--blue);text-align:center;flex:none}
+.gruppe-antal{font:10px var(--mono);white-space:nowrap;color:var(--blue)}.laggruppe-indhold{display:grid;gap:6px;padding:0 0 12px}
+.lagmenu .lagknap{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;text-align:left;border:1px solid #17211f45;border-radius:4px;padding:6px 10px;background:#fffdf7;color:var(--ink);font-size:14px}
+.lagmenu .lagknap::before{content:'';display:grid;place-items:center;flex:none;width:20px;height:20px;border:1.5px solid var(--ink);border-radius:3px;background:var(--paper)}
+.lagmenu .lagknap[aria-pressed="true"]{border-color:var(--blue);background:#e7f1ef}.lagmenu .lagknap[aria-pressed="true"]::before{content:'✓';background:var(--ink);color:var(--paper)}.lagmenu .lagknap:hover{background:var(--lys)}
+.lagmenu .lagknap b,.lagmenu .lagknap small{display:block}.lagmenu .lagknap small{font:12px/1.35 var(--body);color:var(--slate);margin-top:3px}
+.lagmenu-valg{display:block;font:600 12px var(--display);margin-top:5px}.lagmenu-valg select{display:block;width:100%;min-height:44px;margin-top:5px;border:1px solid var(--ink);border-radius:4px;background:var(--paper);color:var(--ink);padding:6px;font:14px var(--display)}
+.lagmenu-note{margin:4px 0 0;font-size:12px}.lagmenu-status{border-top:1px solid #17211f35;padding-top:12px;margin:0;font:12px/1.5 var(--mono);color:var(--slate)}
+@media(max-width:500px){.lagvalg{display:flex;gap:5px}.lagvalg button{padding:7px 10px}.lagmenu{padding:12px}}
+
 /* Nedbør måned for måned: månedsskyder med afspilning, farveskala og et lille
    søjlediagram over året i det aflæste punkt. */
 .nedboersignatur h2{display:flex;align-items:baseline;gap:5px}
@@ -273,9 +290,3 @@ body.havbundlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 body.nedboerlag .globusnote{display:none}
 body.nedboerlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 @media(min-width:900px) and (max-height:700px){.nedboernote{display:none}}
-/* Syv lag på mobil: lagknapperne fylder to rækker (4 + 3) i stedet for en
-   tredje række med en enkelt knap. */
-@media(max-width:500px){.lagknap{flex:1 1 calc(25% - 4px);padding:7px 2px}}
-/* Syv lag: på skolelaptops (op til ca. 1400 px) bruges de korte navne, så
-   lagrækken bliver på én linje ved siden af Steder, Processer, Søg og Quiz. */
-@media(min-width:801px) and (max-width:1400px){.lagknap .lang{display:none}.lagknap .kort{display:inline}}

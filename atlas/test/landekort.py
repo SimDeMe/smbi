@@ -1,4 +1,5 @@
 """Danmark: geografi, tryk, tastatur, tilstand, skærme og fejl uden WebGL."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 import os
 from pathlib import Path
@@ -54,7 +55,8 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         canvas = side.locator('#globus')
         # Landekort hentes ikke før valg; alle eksisterende lag skal bevares.
         assert not any('danmark-10m' in r['name'] for r in side.evaluate('performance.getEntriesByType("resource").map(r=>({name:r.name}))'))
-        side.locator('#pladelag').click()
+        aabn_lag(side, side.locator('#pladelag')).click()
+        luk_lag(side)
         side.locator('#pladevisning').click()
         side.locator('#pladenavne').check()
         expect(side.locator('#pladenavne')).to_be_enabled()
@@ -88,6 +90,7 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         assert side.evaluate('document.documentElement.scrollWidth === innerWidth')
         if w >= 900:
             assert side.locator('.atlas').bounding_box()['y'] + side.locator('.atlas').bounding_box()['height'] <= h
+        luk_lag(side)
         side.screenshot(path=str(ud / f'danmark-{w}x{h}.png'))
         kort = canvas.evaluate('el => el.toDataURL()')
         canvas.focus(); side.keyboard.press('+'); side.keyboard.press('ArrowRight')
@@ -203,7 +206,9 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
     touch('touchEnd',[])
     expect(side.locator('#landemenu')).to_be_hidden()
     expect(side.locator('#landetop')).to_be_hidden()
-    side.locator('#nulstil').click(); side.wait_for_timeout(100)
+    # Hold touchforløbet adskilt fra den rå trækgestus og brug touch hele vejen.
+    side.locator('#nulstil').tap(); side.wait_for_timeout(400)
+    side.evaluate('scrollTo(0, 0)')
     side.touchscreen.tap(**globuspunkt(side, [9.2,56])); vaelg_landekort(side); land_aabent(side)
     foer = side.locator('#globus').evaluate('el => el.toDataURL()')
     touch('touchStart',[{'x':150,'y':440,'id':1}])

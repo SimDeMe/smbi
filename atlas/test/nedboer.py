@@ -1,4 +1,5 @@
 """Afprøv laget Nedbør: data, tegning over hav og land, måneder, afspilning, aflæsning, dialog og fejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import re
 import subprocess
 from pathlib import Path
@@ -18,19 +19,24 @@ def afproev_nedboerdata():
 
 
 def afproev_nedboer(side, ud):
-    knap = side.get_by_role('button', name='Nedbør måned for måned', exact=True)
+    knap = side.get_by_role('button', name='Nedbør måned for måned', exact=True, include_hidden=True)
     bredde, hoejde = side.viewport_size['width'], side.viewport_size['height']
     side.get_by_role('button', name='Nulstil', exact=True).click()
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => /nedboer\\.bin$/.test(r.name))"), \
         'Nedbørsdata hentes uden tilvalg'
     foer = billede(side)
     # Havbunden slås fra, når nedbøren slås til (begge farver havet).
-    side.locator('#havbundlag').click()
+    aabn_lag(side, side.locator('#havbundlag')).click()
+    luk_lag(side)
     expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'true')
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Enter')
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_be_focused()
+    expect(side.locator('#lag-antal')).to_have_text('1')
+    expect(side.locator('#lag-klima .gruppe-antal')).to_have_text('1 valgt')
+    expect(side.locator('#lagmenu-status')).to_contain_text('Nedbør måned for måned')
+    luk_lag(side)
     expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'false')
     expect(side.locator('#havbundsignatur')).to_be_hidden()
     expect(side.locator('#nedboersignatur')).to_be_visible()
@@ -63,7 +69,11 @@ def afproev_nedboer(side, ud):
         side.keyboard.press('ArrowRight')
     expect(side.locator('#nedboermaaned')).to_have_text('juli')
     expect(skyder).to_have_attribute('aria-valuetext', 'juli')
-    expect(side.locator('#nedboeraflaesning')).to_have_text(re.compile(r'Ved markøren: [6-9]\d mm i juli · [89]\d\d mm på et år'))
+    # På smalle skærme ruller fokus til skyderen og flytter markøren væk fra globussen.
+    if bredde >= 900:
+        expect(side.locator('#nedboeraflaesning')).to_have_text(re.compile(r'Ved markøren: [6-9]\d mm i juli · [89]\d\d mm på et år'))
+    else:
+        expect(side.locator('#nedboeraflaesning')).to_have_text(re.compile(r'Midt på globussen: \d+ mm i juli · \d+ mm på et år'))
     assert side.locator('#nedboerdiagram rect').nth(6).get_attribute('fill') == '#17211f'
     juli = billede(side)
     assert juli != januar, 'Kloden skifter ikke med måneden'
@@ -111,24 +121,26 @@ def afproev_nedboer(side, ud):
       const kontroller = [...document.querySelectorAll('.betjeningslinje button, .vaerktoejer button')].map(k => k.getBoundingClientRect());
       const sig = [...document.querySelectorAll('.signatur:not([hidden])')].map(s => s.closest('.signaturer').getBoundingClientRect());
       const overlap = sig.some(r => kontroller.some(k => !(k.right <= r.left || k.left >= r.right || k.bottom <= r.top || k.top >= r.bottom)));
-      const lag = [...document.querySelectorAll('.lagknap')].map(k => k.getBoundingClientRect().top);
-      return {overlap, vandret: document.documentElement.scrollWidth - innerWidth, lagraekker: new Set(lag.map(Math.round)).size};
+      return {overlap, vandret: document.documentElement.scrollWidth - innerWidth};
     }''')
     assert not maal['overlap'] and maal['vandret'] == 0, maal
-    if bredde >= 900 or bredde <= 500:
-        assert maal['lagraekker'] == (1 if bredde >= 900 else 2), maal
+    expect(side.locator('.vaerktoejer .lagknap')).to_have_count(0)
 
     # Klimazoner og nedbør udelukker hinanden; pladegrænser kan ligge ovenpå.
-    side.locator('#klimalag').click()
+    aabn_lag(side, side.locator('#klimalag')).click()
+    luk_lag(side)
     expect(side.locator('#klimalag')).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_have_attribute('aria-pressed', 'false')
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(side.locator('#klimalag')).to_have_attribute('aria-pressed', 'false')
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     expect(side.locator('#pladelag')).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_have_attribute('aria-pressed', 'true')
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
 
     # Dialogen: tekstalternativ, opgaver, kilder og genvej.
     side.locator('#nedboeropgave').click()
@@ -142,7 +154,8 @@ def afproev_nedboer(side, ud):
     expect(spil).to_be_focused()
 
     # Slå fra igen: signaturen forsvinder, og kloden er som før.
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(side.locator('#nedboersignatur')).to_be_hidden()
     side.get_by_role('button', name='Nulstil', exact=True).click()
@@ -162,16 +175,19 @@ def afproev_nedboerfejl(browser, adresse):
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
         # Et lag, der allerede er tændt, bliver stående, når nedbøren fejler.
-        side.locator('#havbundlag').click()
+        aabn_lag(side, side.locator('#havbundlag')).click()
+        luk_lag(side)
         expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'true')
-        knap = side.get_by_role('button', name='Nedbør måned for måned', exact=True)
-        knap.click()
+        knap = side.get_by_role('button', name='Nedbør måned for måned', exact=True, include_hidden=True)
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(side.locator('#kortstatus')).to_contain_text('Nedbørsdata kunne ikke indlæses')
         expect(knap).to_have_attribute('aria-pressed', 'false')
         expect(side.locator('#nedboersignatur')).to_be_hidden()
         expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'true')
         side.unroute('**/nedboer.bin')
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(knap).to_have_attribute('aria-pressed', 'true')
         expect(side.locator('#kortstatus')).to_be_hidden()
         expect(side.locator('#havbundlag')).to_have_attribute('aria-pressed', 'false')
@@ -186,7 +202,8 @@ def afproev_nedboerglat(browser, adresse):
     side.on('pageerror', lambda e: fejl.append(str(e)))
     side.goto(adresse + '/atlas/')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
-    side.get_by_role('button', name='Nedbør måned for måned', exact=True).click()
+    aabn_lag(side, side.locator('#nedboerlag')).click()
+    luk_lag(side)
     expect(side.locator('#nedboersignatur')).to_be_visible()
     side.locator('#nedboerspil').click()
     # Tilstanden (måned + andel) aflæses i 90 frames, ca. 1,5 s: den skal vokse i

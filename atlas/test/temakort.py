@@ -1,4 +1,5 @@
 """Afprøv temakortet: farver efter nøgletal, år, signatur, aflæsning, rangliste, klimalag og fejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 from pathlib import Path
 from playwright.sync_api import expect
@@ -20,6 +21,7 @@ def farve_ved(side, lonlat):
 
 
 def afproev_temakort(side, ud):
+    luk_lag(side)
     knap = side.locator('#temalag')
     signatur = side.locator('#temasignatur')
     aflaesning = side.locator('#temaaflaesning')
@@ -27,10 +29,11 @@ def afproev_temakort(side, ud):
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(signatur).to_be_hidden()
     foer = billede(side)
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Enter')
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_be_focused()
+    luk_lag(side)
     expect(signatur).to_be_visible()
     expect(side.locator('#temaindikator')).to_have_value('tfr')
     expect(side.locator('#temaforklaring')).to_contain_text('2023 · børn pr. kvinde')
@@ -84,15 +87,18 @@ def afproev_temakort(side, ud):
     assert not maal['overlap'] and maal['vandret'] == 0, maal
     if bredde >= 900:
         assert maal['knapbund'] <= hoejde, maal
+    luk_lag(side)
     side.screenshot(path=str(ud / f'temakort-{bredde}x{hoejde}.png'))
 
     # Klimazoner og temakort farver begge landene: kun ét ad gangen.
-    klima = side.get_by_role('button', name='Klimazoner', exact=True)
-    klima.click()
+    klima = side.get_by_role('button', name='Klimazoner', exact=True, include_hidden=True)
+    aabn_lag(side, klima).click()
+    luk_lag(side)
     expect(klima).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(signatur).to_be_hidden()
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(klima).to_have_attribute('aria-pressed', 'false')
     # Valget huskes, når laget slås til igen.
@@ -112,7 +118,8 @@ def afproev_temakort(side, ud):
     expect(dialog.locator('#dialogtitel')).to_have_text(hoejest['navn'])
     side.keyboard.press('Escape')
     expect(dialog).to_be_hidden()
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(signatur).to_be_hidden()
 
@@ -125,11 +132,13 @@ def afproev_temafejl(browser, adresse):
     side.goto(adresse + '/atlas/')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
     knap = side.locator('#temalag')
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(side.locator('#kortstatus')).to_contain_text('Landedata kunne ikke indlæses')
     fejl['aktiv'] = False
-    knap.click()
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(side.locator('#temasignatur')).to_be_visible()
     side.close()

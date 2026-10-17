@@ -1,4 +1,6 @@
 """Browsertest uden build. Kræver Python Playwright og en lokal HTTP-server."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
+from lagmenu import afproev_lagmenu
 import json
 import os
 from pathlib import Path
@@ -57,6 +59,7 @@ with sync_playwright() as p:
         if bredde >= 900:
             assert maal['kontrolbund'] <= hoejde and maal['bund'] <= hoejde, maal
             assert maal['figur'][1] >= 350, maal
+        luk_lag(side)
         side.screenshot(path=str(UD / f'{bredde}x{hoejde}.png'))
         # Klik alle geografiske markører direkte, også på touch-skærmen.
         for sted, navn in [('island', 'Island'), ('nordatlanten', 'Grønland / Nordatlanten'), ('alperne', 'Alperne')]:
@@ -123,11 +126,14 @@ with sync_playwright() as p:
         side.get_by_role('button', name='Fokus', exact=True).click()
         side.wait_for_timeout(100)
         assert side.locator('.site-header').is_hidden()
+        luk_lag(side)
         side.screenshot(path=str(UD / f'{bredde}x{hoejde}-fokus.png'))
         side.keyboard.press('Escape')
         expect(side.locator('.site-header')).to_be_visible()
         print(json.dumps({'skaerm': [bredde, hoejde], 'maal': maal, 'resultat': 'OK'}, ensure_ascii=False))
         side.close()
+
+    afproev_lagmenu(browser, ADRESSE, UD)
 
     # Touch-rotation og ægte tofingerzoom gennem Chromiums inputprotokol.
     side = browser.new_page(viewport={'width':390, 'height':750}, has_touch=True, is_mobile=True)
@@ -135,7 +141,8 @@ with sync_playwright() as p:
     klar(side)
     session = side.context.new_cdp_session(side)
     canvas = side.locator('#globus')
-    side.locator('#pladelag').tap()
+    aabn_lag(side, side.locator('#pladelag')).tap()
+    luk_lag(side)
     expect(side.locator('#pladelag')).to_have_attribute('aria-pressed', 'true')
     side.locator('#pladevisning').tap()
     side.locator('#pladenavne').tap()
@@ -154,10 +161,13 @@ with sync_playwright() as p:
     side.wait_for_timeout(100)
     assert canvas.screenshot() != foer
     side.get_by_role('button', name='Nulstil', exact=True).click()
-    # Nulstil ligger under folden og ruller siden; regn punkterne igen.
-    top = canvas.bounding_box()['y'] + 200
-    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':130,'y':top,'id':1},{'x':240,'y':top,'id':2}]})
-    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':90,'y':top,'id':1},{'x':280,'y':top,'id':2}]})
+    # Nulstil kan rulle mobilens betjeningslinje frem. Brug punkter i den
+    # aktuelle figur, så prøven ikke afhænger af værktøjslinjens gamle højde.
+    side.evaluate('scrollTo(0, 0)')
+    boks = canvas.bounding_box()
+    x, y, w = boks['x'], boks['y'] + boks['height'] * .72, boks['width']
+    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':x+w*.32,'y':y,'id':1},{'x':x+w*.68,'y':y,'id':2}]})
+    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':x+w*.18,'y':y,'id':1},{'x':x+w*.82,'y':y,'id':2}]})
     session.send('Input.dispatchTouchEvent', {'type':'touchEnd','touchPoints':[]})
     side.wait_for_timeout(100)
     assert side.locator('#zoomniveau').inner_text() != '1,0×'
@@ -186,6 +196,7 @@ with sync_playwright() as p:
         expect(side.locator('#pladenavnetabel tbody tr')).to_have_count(52)
         side.locator('.graenseoversigt summary').click()
         expect(side.locator('#graensehastighedstabel [data-trin="4200"]')).to_contain_text('Fra 1,8 cm/år')
+        luk_lag(side)
         side.screenshot(path=str(UD / f'fallback-{fejltype}.png'))
         print('Fallback', fejltype, ': OK')
         side.close()

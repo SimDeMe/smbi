@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v446</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v447</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -55,13 +55,7 @@
           <div class="quiz-handlinger"><button id="quiz-vis">Vis landet</button><button id="quiz-naeste" hidden>Næste land →</button><button id="quiz-igen" hidden>Prøv igen</button><button id="quiz-stop">Afslut quiz</button></div>
         </div>
         <div class="lagvalg">
-          <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
-          <button id="havbundlag" class="lagknap" aria-label="Havbundens alder" aria-pressed="false" aria-controls="havbundsignatur" disabled><span class="ikon" aria-hidden="true">▥</span> <span class="lang">Havbund</span><span class="kort" aria-hidden="true">Havbund</span></button>
-          <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
-          <button id="nedboerlag" class="lagknap" aria-label="Nedbør måned for måned" aria-pressed="false" aria-controls="nedboersignatur" disabled><span class="ikon" aria-hidden="true">☂</span> <span class="lang">Nedbør</span><span class="kort" aria-hidden="true">Nedbør</span></button>
-          <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span class="ikon" aria-hidden="true">≈</span> <span class="lang">Jordskælv</span><span class="kort" aria-hidden="true">Skælv</span></button>
-          <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span class="ikon" aria-hidden="true">▲</span> <span class="lang">Vulkaner</span><span class="kort" aria-hidden="true">Vulkan</span></button>
-          <button id="temalag" class="lagknap" aria-label="Temakort over lande" aria-pressed="false" aria-controls="temasignatur" disabled><span class="ikon" aria-hidden="true">▦</span> <span class="lang">Temakort</span><span class="kort" aria-hidden="true">Tema</span></button>
+          <button id="lag-aabn" popovertarget="lagmenu" aria-controls="lagmenu" aria-expanded="false"><span aria-hidden="true">▱</span> Lag <span id="lag-antal" class="lag-antal" hidden>0</span><span aria-hidden="true">⌄</span></button>
           <button id="fokus" aria-pressed="false">Fokus</button>
         </div>
       </nav>
@@ -208,6 +202,38 @@
     <div class="dialogtop"><h2 id="dialogtitel">Udforsk atlasset</h2><button id="luk" aria-label="Luk og vend tilbage til globussen">Luk ×</button></div>
     <div id="dialogindhold"></div>
   </dialog>
+  <section id="lagmenu" class="lagmenu" popover="auto" aria-labelledby="lagmenu-titel">
+    <div class="lagmenu-top"><div><p class="overlinje">På globussen</p><h2 id="lagmenu-titel">Vælg lag</h2></div><button id="lag-luk" aria-label="Luk lagmenu">Luk ×</button></div>
+    <p class="lagmenu-intro">Åbn et emne, og vælg det, du vil undersøge. Flere lag kan vises sammen.</p>
+    <details id="lag-geologi" class="laggruppe">
+      <summary><span class="laggruppe-ikon" aria-hidden="true">◬</span><span><b>Geologi</b><small>Plader, havbund, jordskælv og vulkaner</small></span><span class="gruppe-antal" hidden></span></summary>
+      <div class="laggruppe-indhold">
+        <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span><b>Pladegrænser</b><small>Grænser, pladenavne og bevægelse</small></span></button>
+        <button id="havbundlag" class="lagknap" aria-label="Havbundens alder" aria-pressed="false" aria-controls="havbundsignatur" disabled><span><b>Havbundens alder</b><small>Se havbundens dannelse og spredning</small></span></button>
+        <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span><b>Jordskælv</b><small>Målte skælv, magnitude og dybde</small></span></button>
+        <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span><b>Vulkaner</b><small>Placering og kendte udbrud</small></span></button>
+      </div>
+    </details>
+    <details id="lag-klima" class="laggruppe">
+      <summary><span class="laggruppe-ikon" aria-hidden="true">☼</span><span><b>Klima</b><small>Klimazoner, plantebælter og nedbør</small></span><span class="gruppe-antal" hidden></span></summary>
+      <div class="laggruppe-indhold">
+        <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span><b>Klimazoner</b><small>Vahl eller Köppen-Geiger</small></span></button>
+        <label class="lagmenu-valg">Klimasystem<select id="lag-klimasystem"><option value="vahl">Vahl · zoner og plantebælter</option><option value="koppen">Köppen-Geiger · klimatyper</option></select></label>
+        <button id="nedboerlag" class="lagknap" aria-label="Nedbør måned for måned" aria-pressed="false" aria-controls="nedboersignatur" disabled><span><b>Nedbør måned for måned</b><small>Se regnbælter og monsun gennem året</small></span></button>
+        <p class="lagmenu-note">Klimazoner og nedbør vises ét ad gangen.</p>
+      </div>
+    </details>
+    <details id="lag-demografi" class="laggruppe">
+      <summary><span class="laggruppe-ikon" aria-hidden="true">▦</span><span><b>Demografi og levevilkår</b><small>Befolkning, sundhed og udvikling</small></span><span class="gruppe-antal" hidden></span></summary>
+      <div class="laggruppe-indhold">
+        <button id="temalag" class="lagknap" aria-label="Temakort over lande" aria-pressed="false" aria-controls="temasignatur" disabled><span><b>Landenes nøgletal</b><small>Farv landene efter det valgte nøgletal</small></span></button>
+        <label class="lagmenu-valg">Nøgletal<select id="lag-indikator" disabled><option>Henter valgmuligheder …</option></select></label>
+        <p class="lagmenu-note">Vælg fx fertilitet, befolkningstæthed eller HDI. Landenes nøgletal kan ikke vises samtidig med klimazoner eller nedbør.</p>
+      </div>
+    </details>
+    <p id="lagmenu-status" class="lagmenu-status" role="status">Ingen lag valgt</p>
+    <p id="lagmenu-fejl" class="lagmenu-note" role="alert" hidden></p>
+  </section>
   <section id="pladevalg" class="pladevalg" popover="auto" aria-labelledby="pladevalgtitel">
     <div class="pladevalg-top"><h2 id="pladevalgtitel">Plader på globussen</h2><button popovertarget="pladevalg" popovertargetaction="hide" aria-label="Luk pladevisning">Luk ×</button></div>
     <label class="pladevalg-felt"><input id="pladenavne" type="checkbox"> Pladenavne</label>

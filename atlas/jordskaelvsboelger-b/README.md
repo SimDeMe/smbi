@@ -102,3 +102,16 @@ Browsertesten måler den faktisk tegnede overflade på alle fem skærmstørrelse
 og gemmer et skærmbillede af kapløbet. Regressionen er reproduceret med den
 gamle tegnekode; modeltesten og hele browserforløbet består efter rettelsen
 på de fem skærmstørrelser ovenfor.
+
+
+## Afspilning med kun S-bølger (Atlas v447)
+
+Aflæsningen i Gennem Jorden forsøgte at beregne S−P fra en tom P-liste,
+når P var slået fra. TypeError afbrød opdateringen og animationsløkken.
+S-ankomsten vises nu selvstændigt; S−P vises kun med både P og S valgt.
+Bølgefarter, stråler og ankomsttider er uændrede.
+
+`CHROMIUM=/usr/bin/chromium node atlas/test/gennemjorden.cjs` kontrollerer
+alle fire P/S-kombinationer, afspilning, pause, genstart fra slutningen og
+S-skyggezonen på laptop og mobil, med og uden reduceret bevægelse.
+Testen reproducerer fejlen med den gamle kode.

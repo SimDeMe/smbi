@@ -1,4 +1,5 @@
 """Afprøv klimalaget: Vahl og Köppen, signatur, aflæsning, dialog, data og fejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 from pathlib import Path
 from playwright.sync_api import expect
@@ -44,7 +45,8 @@ def punkt_paa_skaerm(side, lonlat):
 
 
 def afproev_klimalag(side, ud):
-    knap = side.get_by_role('button', name='Klimazoner', exact=True)
+    luk_lag(side)
+    knap = side.get_by_role('button', name='Klimazoner', exact=True, include_hidden=True)
     signatur = side.locator('#klimasignatur')
     aflaesning = side.locator('#klimaaflaesning')
     side.get_by_role('button', name='Nulstil', exact=True).click()
@@ -53,10 +55,11 @@ def afproev_klimalag(side, ud):
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => /\\/(vahl|koppen)\\.json$/.test(r.name))"), \
         'Klimadata hentes uden tilvalg'
     foer = billede(side)
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Enter')
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_be_focused()
+    luk_lag(side)
     expect(signatur).to_be_visible()
     for tekst in ['Tropisk', 'Subtropisk', 'Tempereret', 'Polar', 'Maki', 'Nåleskov', 'Tundra']:
         expect(signatur).to_contain_text(tekst)
@@ -81,6 +84,7 @@ def afproev_klimalag(side, ud):
     if bredde >= 900:
         # Hele signaturen inkl. knappen kan ses uden at rulle i kortet.
         assert maal['bund'] <= hoejde and maal['rul'] <= 1 and maal['knapbund'] <= maal['bund'], maal
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{bredde}x{hoejde}-klima-vahl.png'))
 
     if bredde >= 900:
@@ -108,6 +112,7 @@ def afproev_klimalag(side, ud):
         side.mouse.move(*punkt_paa_skaerm(side, [12.5, 55.7]))
         expect(aflaesning).to_contain_text('Cfb')
         side.mouse.move(2, 2)
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{bredde}x{hoejde}-klima-koppen.png'))
 
     # Piletasten drejer stadig globussen, når fokus er på globussen.
@@ -137,7 +142,7 @@ def afproev_klimalag(side, ud):
     side.get_by_role('button', name='Nulstil', exact=True).click()
     side.locator('input[value="vahl"]').check(force=True)
     expect(side.locator('#klimatitel')).to_have_text('Klimazoner (Vahl)')
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Space')
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(signatur).to_be_hidden()
@@ -161,9 +166,10 @@ def afproev_klimafejl(browser, adresse):
             side.route(moenster, lambda r: r.fulfill(json=forkert))
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        knap = side.get_by_role('button', name='Klimazoner', exact=True)
+        knap = side.get_by_role('button', name='Klimazoner', exact=True, include_hidden=True)
         foer = billede(side)
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(side.locator('#kortstatus')).to_contain_text('Klimazonerne kunne ikke indlæses')
         expect(knap).to_have_attribute('aria-pressed', 'false')
         expect(knap).to_be_enabled()
@@ -176,7 +182,8 @@ def afproev_klimafejl(browser, adresse):
             # En fejlet ES-import caches af browseren indtil genindlæsning.
             side.reload()
             side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(knap).to_have_attribute('aria-pressed', 'true')
         expect(side.locator('#kortstatus')).to_be_hidden()
         assert not jsfejl, (fejltype, jsfejl)
@@ -186,7 +193,8 @@ def afproev_klimafejl(browser, adresse):
     side.goto(adresse + '/atlas/')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
     side.route('**/koppen.json', lambda r: r.abort())
-    side.locator('#klimalag').click()
+    aabn_lag(side, side.locator('#klimalag')).click()
+    luk_lag(side)
     expect(side.locator('#klimasignatur')).to_be_visible()
     side.locator('input[value="koppen"]').check(force=True)
     expect(side.locator('#klimastatus')).to_contain_text('kunne ikke indlæses')

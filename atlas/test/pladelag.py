@@ -1,4 +1,5 @@
 """Afprøv #48: valgfrit pladegrænselag, signatur, opgave og datafejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 from playwright.sync_api import expect
 from piletaster import billede
 import json
@@ -6,16 +7,18 @@ from pathlib import Path
 
 
 def afproev_pladelag(side, ud):
-    knap = side.get_by_role('button', name='Pladegrænser', exact=True)
+    luk_lag(side)
+    knap = side.get_by_role('button', name='Pladegrænser', exact=True, include_hidden=True)
     signatur = side.locator('#signatur')
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(signatur).to_be_hidden()
     foer = billede(side)
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => r.name.endsWith('/pladegraenser.json'))"), 'Laget hentes uden tilvalg'
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Enter')
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_be_focused()
+    luk_lag(side)
     expect(signatur).to_be_visible()
     for tekst in ['Konstruktiv', 'Destruktiv', 'Bevarende', 'diffus zone', 'Bird 2003']:
         expect(signatur).to_contain_text(tekst)
@@ -32,6 +35,7 @@ def afproev_pladelag(side, ud):
     assert not maal['overlap'] and maal['vandret'] == 0, maal
     if bredde >= 900:
         assert maal['bund'] <= hoejde, maal
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{bredde}x{hoejde}-plader.png'))
 
     side.get_by_role('button', name='Undersøg og kilde →', exact=True).click()
@@ -59,10 +63,11 @@ def afproev_pladelag(side, ud):
 
     # Laget slås fra igen, og globussen tegnes som før.
     side.get_by_role('button', name='Nulstil', exact=True).click()
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Space')
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(knap).to_be_focused()
+    luk_lag(side)
     expect(signatur).to_be_hidden()
     assert billede(side) == foer, 'Globussen er ikke som før laget'
 
@@ -92,9 +97,10 @@ def afproev_pladefejl(browser, adresse):
         side.goto(adresse + '/atlas/')
         # Også et manglende lagmodul må lade selve globussen starte.
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        knap = side.get_by_role('button', name='Pladegrænser', exact=True)
+        knap = side.get_by_role('button', name='Pladegrænser', exact=True, include_hidden=True)
         foer = billede(side)
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(side.locator('#kortstatus')).to_contain_text('Pladegrænserne kunne ikke indlæses')
         expect(knap).to_have_attribute('aria-pressed', 'false')
         expect(knap).to_be_enabled()
@@ -112,7 +118,8 @@ def afproev_pladefejl(browser, adresse):
         side.locator('#luk').click()
         if fejltype != 'modul':
             side.unroute(moenster)
-            knap.click()
+            aabn_lag(side, knap).click()
+            luk_lag(side)
             expect(knap).to_have_attribute('aria-pressed', 'true')
             expect(side.locator('#kortstatus')).to_be_hidden()
         else:
@@ -120,7 +127,8 @@ def afproev_pladefejl(browser, adresse):
             side.unroute(moenster)
             side.reload()
             side.wait_for_function("document.querySelector('#kortstatus').hidden")
-            knap.click()
+            aabn_lag(side, knap).click()
+            luk_lag(side)
             expect(knap).to_have_attribute('aria-pressed', 'true')
         assert not jsfejl, (fejltype, jsfejl)
         side.close()
@@ -130,7 +138,8 @@ def afproev_pladetilpasning(browser, adresse):
     side = browser.new_page(viewport={'width': 640, 'height': 625})
     side.goto(adresse + '/atlas/')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     for bredde, hoejde in [(1280, 577), (390, 750), (1536, 730), (640, 625)]:
         side.set_viewport_size({'width': bredde, 'height': hoejde})
         expect(side.locator('#signatur')).to_be_visible()

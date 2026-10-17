@@ -1,4 +1,5 @@
 """Afprøv jordskælvs- og vulkanlaget: data, signatur, filtre, aflæsning, dialog og fejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 from pathlib import Path
 from playwright.sync_api import expect
@@ -32,16 +33,18 @@ def afproev_seismikdata():
 
 
 def afproev_seismik(side, ud):
-    skaelvknap = side.get_by_role('button', name='Jordskælv', exact=True)
-    vulkanknap = side.get_by_role('button', name='Vulkaner', exact=True)
+    luk_lag(side)
+    skaelvknap = side.get_by_role('button', name='Jordskælv', exact=True, include_hidden=True)
+    vulkanknap = side.get_by_role('button', name='Vulkaner', exact=True, include_hidden=True)
     side.get_by_role('button', name='Nulstil', exact=True).click()
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => /\\/(jordskaelv|vulkaner)\\.json$/.test(r.name))"), \
         'Skælv- eller vulkandata hentes uden tilvalg'
     foer = billede(side)
-    skaelvknap.focus()
+    aabn_lag(side, skaelvknap).focus()
     side.keyboard.press('Enter')
     expect(skaelvknap).to_have_attribute('aria-pressed', 'true')
     expect(skaelvknap).to_be_focused()
+    luk_lag(side)
     expect(side.locator('#skaelvsignatur')).to_be_visible()
     med_skaelv = billede(side)
     assert med_skaelv != foer, 'Jordskælv tegnes ikke'
@@ -61,7 +64,8 @@ def afproev_seismik(side, ud):
     side.get_by_role('radio', name='M ≥ 5').check()
     assert billede(side) == med_skaelv
 
-    vulkanknap.click()
+    aabn_lag(side, vulkanknap).click()
+    luk_lag(side)
     expect(vulkanknap).to_have_attribute('aria-pressed', 'true')
     expect(side.locator('#vulkansignatur')).to_be_visible()
     begge = billede(side)
@@ -91,6 +95,7 @@ def afproev_seismik(side, ud):
     }''')
     assert not maal['overlap'] and maal['vandret'] == 0, maal
     bredde, hoejde = side.viewport_size['width'], side.viewport_size['height']
+    luk_lag(side)
     side.screenshot(path=str(ud / f'seismik-{bredde}x{hoejde}.png'))
 
     # Dialogen har tekstalternativ, opgaver, tal og kilder.
@@ -103,7 +108,8 @@ def afproev_seismik(side, ud):
     side.keyboard.press('Escape')
 
     # Slå fra igen: tegningen vender tilbage til udgangspunktet.
-    skaelvknap.click(); vulkanknap.click()
+    aabn_lag(side, skaelvknap).click(); aabn_lag(side, vulkanknap).click()
+    luk_lag(side)
     expect(skaelvknap).to_have_attribute('aria-pressed', 'false')
     expect(side.locator('#skaelvsignatur')).to_be_hidden()
     expect(side.locator('#vulkansignatur')).to_be_hidden()
@@ -128,9 +134,10 @@ def afproev_seismikfejl(browser, adresse):
             side.route(moenster, lambda r: r.fulfill(json={'skaelv': [1, 2, None], 'vulkaner': [['x', 400, 0]]}))
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        knap = side.get_by_role('button', name=navn, exact=True)
+        knap = side.get_by_role('button', name=navn, exact=True, include_hidden=True)
         foer = billede(side)
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(side.locator('#kortstatus')).to_contain_text(tekst)
         expect(knap).to_have_attribute('aria-pressed', 'false')
         expect(knap).to_be_enabled()
@@ -138,10 +145,12 @@ def afproev_seismikfejl(browser, adresse):
         side.get_by_role('button', name='Drej mod øst', exact=True).click()
         assert billede(side) != foer, f'Globussen virker ikke efter {fil} {fejltype}'
         # Et andet lag kan stadig slås til, og en ny prøve lykkes, når data er tilbage.
-        side.get_by_role('button', name='Pladegrænser', exact=True).click()
-        expect(side.get_by_role('button', name='Pladegrænser', exact=True)).to_have_attribute('aria-pressed', 'true')
+        aabn_lag(side, side.get_by_role('button', name='Pladegrænser', exact=True, include_hidden=True)).click()
+        luk_lag(side)
+        expect(side.get_by_role('button', name='Pladegrænser', exact=True, include_hidden=True)).to_have_attribute('aria-pressed', 'true')
         side.unroute(moenster)
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(knap).to_have_attribute('aria-pressed', 'true')
         expect(side.locator('#kortstatus')).to_be_hidden()
         assert not jsfejl, (fil, fejltype, jsfejl)

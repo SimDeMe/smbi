@@ -3,6 +3,37 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Samlet lagmenu (v447)
+
+Globussens syv lagknapper er samlet under én **Lag**-knap med tre
+sammenfoldelige underpunkter:
+
+- **Geologi:** pladegrænser, havbundens alder, jordskælv og vulkaner.
+- **Klima:** klimazoner med valg af Vahl eller Köppen-Geiger og nedbør måned for måned.
+- **Demografi og levevilkår:** landenes 17 nøgletal, samlet i Befolkning,
+  Fødsel og død samt Udvikling.
+
+Menuen viser samlet antal aktive lag, antal i hvert underpunkt og navnene på
+de aktive lag. Nøgletal og klimasystem kan vælges direkte i menuen og følger
+også ændringer foretaget i signaturerne. Eksisterende filtre, profiler,
+pladenavne, pile, kildevisninger og genveje fra Processer bruger samme
+lagtilstand som før. Klimazoner og temakort udelukker stadig hinanden.
+
+`lagmenu.js` håndterer menu, placering, tilstandsspejling og tastatur. Menuen
+er en native popover med almindelige details- og formularfelter, ikke en
+ARIA-menu med specialroller. Den ændrer ikke figurens størrelse. Escape og
+Luk giver fokus tilbage til Lag; piletaster i menuen drejer ikke globussen.
+I quizzen og Danmarkskortet skjules menuindgangen. Indikatornavne hentes
+først, når Demografi åbnes; selve demografidataene hentes ved valg af lag.
+
+`test/lagmenu.py` afprøver menuen på de fem elevskærme med direkte valg,
+synkronisering, fem samtidige lag, touch, tastatur og fokusvisning. De
+øvrige lagtests åbner nu lagene gennem menuen med `lagmenu_hjaelp.py`.
+Skærmbilleder i `/tmp/smbi-lagmenu-test/` er gennemgået i Chromium.
+Menu- og lagforløbene består på alle fem størrelser; fejl og nyt forsøg
+vises også i selve menuen. De tre laptopfigurer bevarer højderne 391, 439 og 544 px. Fysisk mobil,
+Safari og skærmlæser er ikke særskilt afprøvet.
+
 ## Nedbør måned for måned (v445)
 
 Knappen **Nedbør** farver hele kloden – hav og land – efter den gennemsnitlige
@@ -39,8 +70,7 @@ nedbør i hver måned. Månedsskyder og **Afspil** viser, hvordan regnbæltet ve
   ørkenbæltet, middelhavsklima mod Vahls maki, Bergen/København,
   modelkritik af 2,5°-celler og satellitmåling), genvej til juli over Afrika
   og Sydasien, og kilder.
-- **Lagrækken:** syv lag. 801–1400 px bruger de korte knapnavne, så rækken
-  bliver på én linje på skolelaptops; på mobil står lagene på to rækker (4 + 3).
+- **Lagmenuen (v447):** Nedbør ligger under Klima sammen med klimazonerne.
 - Test: `node atlas/test/nedboer.mjs` (fil, nøgletal, kendte steder, ITK,
   zenitbredde, projektion mod D3, overgang) og `test/nedboer.py` (fem skærme,
   skyder, afspilning, zenitlinje, aflæsning, lagudelukkelse, dialog, fejl og

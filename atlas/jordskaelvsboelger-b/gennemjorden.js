@@ -296,7 +296,11 @@ export function start(rod) {
     const direkteP = p.find(a => a.navn === 'P');
     const dele = [`${g}° svarer til ca. ${km.toLocaleString('da-DK')} km langs overfladen.`];
     if (p.length) dele.push(`Første P: ${minSek(p[0].tid)} (${FASETEKST[p[0].navn]}).`);
-    if (sb) dele.push(`S: ${minSek(sb.tid)}. S − P = ${minSek(sb.tid - p[0].tid)}.`);
+    if (sb) {
+      dele.push(`S: ${minSek(sb.tid)}.`);
+      // P kan være slået fra: vis S alene uden at slå op i en tom P-liste.
+      if (p.length) dele.push(`S − P = ${minSek(sb.tid - p[0].tid)}.`);
+    }
     if (!direkteP && vis.p) {
       if (p.length && p[0].navn === 'PKP') dele.push('P-bølgen er gået gennem kernen. Den er bremset og bøjet, så den kommer senere end en lige vej ville give.');
       else if (p.length) dele.push('Du er i P-skyggezonen. De svage P-bølger her har ramt den indre kerne – det var dem, Inge Lehmann fandt i 1936.');

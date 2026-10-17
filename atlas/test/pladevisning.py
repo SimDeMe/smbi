@@ -1,4 +1,5 @@
 """Navne, relative grænsehastigheder og fejl uden tab af grundkortet."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 import re
 from decimal import Decimal, ROUND_HALF_UP
@@ -8,6 +9,7 @@ from piletaster import billede
 
 
 def afproev_pladevisning(side, ud):
+    luk_lag(side)
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => r.name.endsWith('/plader.json'))")
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => r.name.endsWith('/graensehastigheder.json'))")
     canvas = side.locator('#globus')
@@ -23,7 +25,8 @@ def afproev_pladevisning(side, ud):
       window.gendanCanvasproeve = () => Object.assign(p,{clearRect:clear,arc,fillText:text});
     }''')
     figur = canvas.bounding_box()
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     expect(side.locator('#pladelag')).to_have_attribute('aria-pressed', 'true')
     uden = billede(side)
     side.locator('#pladevisning').click()
@@ -57,6 +60,7 @@ def afproev_pladevisning(side, ud):
     }''')
     assert maal['inde'] and maal['fri'] and maal['vandret'] == 0, maal
     w, h = side.viewport_size.values()
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{w}x{h}-pladevalg.png'))
     side.keyboard.press('Escape')
     expect(side.locator('#pladevisning')).to_have_attribute('aria-expanded', 'false')
@@ -82,6 +86,7 @@ def afproev_pladevisning(side, ud):
         assert tegnet['tekst'] == ('≈ ' if p[3] else '') + f'{tal} cm/år', (tegnet, p)
     side.locator('#globus').scroll_into_view_if_needed()
     side.evaluate('window.gendanCanvasproeve()')
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{w}x{h}-pladebevaegelse.png'))
 
     # Grænsehastigheder virker også med pladenavne slået fra.
@@ -114,13 +119,16 @@ def afproev_pladevisning(side, ud):
     valg.select_option('EU-NA')
     assert side.evaluate('document.documentElement.scrollWidth <= innerWidth')
     assert tabel.bounding_box()['width'] <= side.locator('#dialogindhold').bounding_box()['width']
+    luk_lag(side)
     side.screenshot(path=str(ud / f'{w}x{h}-pladetabel.png'))
     side.locator('#luk').click()
     expect(side.locator('#udforsker')).to_be_hidden()
 
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     expect(side.locator('#signatur')).to_be_hidden()
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     side.locator('#pladevisning').click()
     expect(side.locator('#pladenavne')).to_be_checked()
     expect(side.locator('#pladepile')).to_be_checked()
@@ -138,7 +146,8 @@ def afproev_pladevisning(side, ud):
     side.keyboard.press('Escape')
     expect(side.locator('#pladevisning')).to_have_attribute('aria-expanded', 'false')
     assert 'fokus' not in side.locator('body').get_attribute('class').split()
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     side.locator('#globus').scroll_into_view_if_needed()
 
 
@@ -159,7 +168,8 @@ def afproev_bevaegelsesfejl(browser, adresse):
             side.route(moenster, lambda r: r.fulfill(json=forkert))
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        side.locator('#pladelag').click()
+        aabn_lag(side, side.locator('#pladelag')).click()
+        luk_lag(side)
         expect(side.locator('#pladelag')).to_have_attribute('aria-pressed', 'true')
         uden = billede(side)
         side.locator('#pladevisning').click()
@@ -176,7 +186,8 @@ def afproev_bevaegelsesfejl(browser, adresse):
         if fejltype == 'modul':
             side.reload()
             side.wait_for_function("document.querySelector('#kortstatus').hidden")
-            side.locator('#pladelag').click()
+            aabn_lag(side, side.locator('#pladelag')).click()
+            luk_lag(side)
         side.locator('#pladevisning').click()
         side.locator('#pladenavne').check()
         expect(side.locator('#pladenavne')).to_be_enabled()
@@ -190,7 +201,8 @@ def afproev_bevaegelsestilpasning(browser, adresse):
     side = browser.new_page(viewport={'width': 1366, 'height': 625})
     side.goto(adresse + '/atlas/')
     side.wait_for_function("document.querySelector('#kortstatus').hidden")
-    side.locator('#pladelag').click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
     side.locator('#pladevisning').click()
     side.locator('#pladenavne').check()
     side.locator('#pladepile').check()
@@ -229,7 +241,8 @@ def afproev_graensefejl(browser, adresse):
             side.route(moenster, lambda r: r.fulfill(json=forkert))
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        side.locator('#pladelag').click()
+        aabn_lag(side, side.locator('#pladelag')).click()
+        luk_lag(side)
         side.locator('#pladevisning').click()
         side.locator('#pladenavne').check()
         expect(side.locator('#pladenavne')).to_be_enabled()
@@ -248,7 +261,8 @@ def afproev_graensefejl(browser, adresse):
         if fejltype == 'modul':
             side.reload()
             side.wait_for_function("document.querySelector('#kortstatus').hidden")
-            side.locator('#pladelag').click()
+            aabn_lag(side, side.locator('#pladelag')).click()
+            luk_lag(side)
         side.locator('#pladevisning').click()
         side.locator('#pladepile').check()
         expect(side.locator('#pladepile')).to_be_enabled()

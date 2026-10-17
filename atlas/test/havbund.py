@@ -1,4 +1,5 @@
 """Afprøv laget Havbundens alder: data, tegning, aflæsning, profil, egen profil, dialog og fejl."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import re
 import subprocess
 from pathlib import Path
@@ -38,16 +39,18 @@ def naer(farve, hex_, tol=40):
 
 
 def afproev_havbund(side, ud):
-    knap = side.get_by_role('button', name='Havbundens alder', exact=True)
+    luk_lag(side)
+    knap = side.get_by_role('button', name='Havbundens alder', exact=True, include_hidden=True)
     bredde, hoejde = side.viewport_size['width'], side.viewport_size['height']
     side.get_by_role('button', name='Nulstil', exact=True).click()
     assert not side.evaluate("performance.getEntriesByType('resource').some(r => /havbundsalder\\.bin$/.test(r.name))"), \
         'Havbundsdata hentes uden tilvalg'
     foer = billede(side)
-    knap.focus()
+    aabn_lag(side, knap).focus()
     side.keyboard.press('Enter')
     expect(knap).to_have_attribute('aria-pressed', 'true')
     expect(knap).to_be_focused()
+    luk_lag(side)
     expect(side.locator('#havbundsignatur')).to_be_visible()
     side.wait_for_timeout(300)
     med = billede(side)
@@ -101,6 +104,7 @@ def afproev_havbund(side, ud):
     for profil in ['oestpacifik', 'reykjanes', 'indiske', 'nordatlanten']:
         side.locator('#havbundprofil').select_option(profil)
         expect(side.locator('#profilmaaling')).to_contain_text('cm/år')
+    luk_lag(side)
     side.screenshot(path=str(ud / f'havbund-{bredde}x{hoejde}.png'))
 
     # Signaturerne overlapper ingen kontroller og giver ingen vandret rulning.
@@ -153,8 +157,10 @@ def afproev_havbund(side, ud):
     expect(graf).to_be_focused()
 
     # Slå fra igen: profil og lag forsvinder, og kloden er som før.
-    side.locator('#pladelag').click()
-    knap.click()
+    aabn_lag(side, side.locator('#pladelag')).click()
+    luk_lag(side)
+    aabn_lag(side, knap).click()
+    luk_lag(side)
     expect(knap).to_have_attribute('aria-pressed', 'false')
     expect(side.locator('#havbundsignatur')).to_be_hidden()
     expect(side.locator('#havbundprofil')).to_have_value('')
@@ -174,13 +180,15 @@ def afproev_havbundfejl(browser, adresse):
             side.route('**/havbundsalder.bin', lambda r: r.fulfill(status=200, body=bytes([31, 139, 8, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0])))
         side.goto(adresse + '/atlas/')
         side.wait_for_function("document.querySelector('#kortstatus').hidden")
-        knap = side.get_by_role('button', name='Havbundens alder', exact=True)
-        knap.click()
+        knap = side.get_by_role('button', name='Havbundens alder', exact=True, include_hidden=True)
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(side.locator('#kortstatus')).to_contain_text('Havbundens alder kunne ikke indlæses')
         expect(knap).to_have_attribute('aria-pressed', 'false')
         expect(side.locator('#havbundsignatur')).to_be_hidden()
         side.unroute('**/havbundsalder.bin')
-        knap.click()
+        aabn_lag(side, knap).click()
+        luk_lag(side)
         expect(knap).to_have_attribute('aria-pressed', 'true')
         expect(side.locator('#kortstatus')).to_be_hidden()
         assert not fejl, fejl

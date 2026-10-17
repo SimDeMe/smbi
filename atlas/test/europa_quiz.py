@@ -1,4 +1,5 @@
 """Europa-quiz: hele forløbet, faktisk landepick, småstater og bevaret Atlas."""
+from lagmenu_hjaelp import aabn_lag, luk_lag
 import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
@@ -38,7 +39,8 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
         side.clock.install()
         klar(side,adresse)
         assert not side.evaluate("performance.getEntriesByType('resource').some(r=>r.name.endsWith('/europa-10m.json'))")
-        side.locator('#pladelag').click()
+        aabn_lag(side, side.locator('#pladelag')).click()
+        luk_lag(side)
         side.locator('#pladevisning').click()
         side.locator('#pladenavne').check();expect(side.locator('#pladenavne')).to_be_enabled()
         side.locator('#pladepile').check();expect(side.locator('#pladepile')).to_be_enabled()
@@ -53,6 +55,7 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
         assert side.evaluate('document.documentElement.scrollWidth===innerWidth')
         if w>=900:
             assert side.locator('.atlas').evaluate('(el)=>el.getBoundingClientRect().bottom<=innerHeight')
+        luk_lag(side)
         side.screenshot(path=str(ud/f'quiz-{w}x{h}.png'))
         if w==390:
             c=canvas.bounding_box();x=c['x']+c['width']/2;y=c['y']+c['height']/2
@@ -97,6 +100,7 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
             expect(side.locator('#quiz-land')).to_have_text('Europa gennemført!')
             expect(side.locator('#quiz-besked')).to_have_text('46 af 47 rigtige i første forsøg · 1 forkert svar · 0 viste lande.')
             expect(side.locator('#quiz-vis')).to_be_hidden()
+            luk_lag(side)
             side.screenshot(path=str(ud/'quiz-gennemfoert.png'))
             assert not side.evaluate("performance.getEntriesByType('resource').some(r=>r.name.endsWith('/danmark-10m.json'))")
             side.locator('#quiz-igen').click()
