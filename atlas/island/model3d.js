@@ -27,8 +27,8 @@ const steder = [
     tekst: 'Reykjanesryggen er en del af Den Midtatlantiske Ryg. Den hæver sig over den omgivende havbund og fortsætter mod Island. Vandet skjuler normalt dette landskab.',
     se: 'Slå «Vis havbund» fra og til. Følg ryggens retning mod Reykjanes.' },
   { titel:'Þingvellir: pladernes spor i landskabet',geo:THINGVELLIR.geo,drej:15,vip:50,zoom:1,
-    tekst:'På Thingvallasletten ses pladebevægelsen i jordoverfladen. Ved Almannagjá brydes klippen op langs riftdalens vestlige kant. Hrafnagjá ligger på den modsatte side af dalen.',
-    se:'Tryk på «Vis pladernes bevægelse». Se, hvordan området strækkes, og jorden mellem forkastningerne synker.' }
+    tekst:'På Thingvallasletten ses pladebevægelsen i jordoverfladen. Ved Almannagjá brydes klippen op langs riftdalens vestlige kant. Hrafnagjá ligger på den modsatte side af dalen. Dalen er kun en lille del af den riftzone, der krydser hele Island; i Sydisland sker det meste af udvidelsen i dag i den østlige zone.',
+    se:'Tryk på «Vis pladernes bevægelse». Se, hvordan området strækkes, og jorden mellem forkastningerne synker. Zoom derefter ud, og følg de orange sprækkesværme på tværs af øen.' }
 ];
 let ctx, terraen, data, flader, graenser = [], vulkanlinjer = [], navne = [], W = 0, H = 0, skala = 1;
 let thingvellir,riftmaal=0,rift=0,farveFaktor=null;
@@ -137,9 +137,13 @@ function tegn() {
   if(medFin)tegnThingvellir({raster,p,model:thingvellir,farve:fladeFarve,faktor:farveFaktor,bevaegelse:erThing()?rift:0});
   raster.vis(ctx);
   linjer(terraen.kyst,p,'#d3e4c1',.85);
-  if (tilstand.geologi&&!erThing()) {
+  if (tilstand.geologi) {
+    // Ved Þingvellir tones sprækkesværme og pladegrænse ned tæt på, så dalen
+    // kan ses som en lille del af riftzonen uden at drukne forkastningerne.
+    ctx.save();if(erThing()&&kamera.zoom>=8)ctx.globalAlpha=.55;
     linjer(vulkanlinjer,p,'#713b24',3.6);linjer(vulkanlinjer,p,'#ffb36c',1.6);
     linjer(graenser,p,'#fff2d9bb',3);linjer(graenser,p,'#cf3942',1.5,[6,4]);
+    ctx.restore();
   }
   // En nordpil følger kameraets retning og holdes fast i figurens hjørne.
   const v=p([kamera.x,0,kamera.z-50]),m=p([kamera.x,0,kamera.z]);
@@ -184,7 +188,7 @@ function vaelgSted(i, anim=true) {
   const f=i===4?tilstand.thingFaktor:tilstand.faktor;document.querySelector('#overdrivelse').value=f;document.querySelector('#faktor').value='×'+f;
   snitOffset=null;
   canvas.setAttribute('aria-label',i===4?'Þingvellir i 3D: Almannagjá, Hrafnagjá og riftdalen':'Islands terræn i 3D');
-  document.querySelector('#landskabstekst').textContent=i===4?'Þingvellir på øens 3D-landskab: Þingvallavatn og riftdalen mellem forkastningerne Almannagjá og Hrafnagjá. Pile viser pladernes bevægelse væk fra hinanden. Knappen udvider sprækkerne og sænker dalbunden. Zoom ud for at se stedet på hele øen.':'Islands landskab og havbund i 3D. Orange linjer viser aktive vulkansystemer.';
+  document.querySelector('#landskabstekst').textContent=i===4?'Þingvellir på øens 3D-landskab: Þingvallavatn og riftdalen mellem forkastningerne Almannagjá og Hrafnagjá. Orange omrids viser den aktive sprækkesværm, som dalen er en del af, og den røde stiplede linje pladegrænsen. Pile viser pladernes bevægelse væk fra hinanden. Knappen udvider sprækkerne og sænker dalbunden. Zoom ud for at se riftzonen på tværs af hele øen.':'Islands landskab og havbund i 3D. Orange linjer viser aktive vulkansystemer.';
   document.querySelector('#stedsnummer').textContent=`0${i+1} / 05`;
   for(const id of ['stedsnavn','rejsetitel'])document.querySelector('#'+id).textContent=s.titel;
   document.querySelector('#rejsetekst').textContent=s.tekst;document.querySelector('#undersoeg').textContent=s.se;
