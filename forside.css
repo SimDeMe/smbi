@@ -503,8 +503,9 @@ img{display:block;max-width:100%}
   box-shadow:3px 3px 0 rgba(23,33,31,.38);
 }
 .sims.wip .sim:hover{box-shadow:6px 6px 0 rgba(23,33,31,.38)}
-.sims.wip .sim-fig{position:relative}
-.wip-mark{
+/* Versionsmærker: «Beta» på de gennemarbejdede, «Alfa» på resten. */
+.sim-fig{position:relative}
+.wip-mark,.beta-mark{
   position:absolute;top:9px;right:10px;z-index:2;
   font-family:var(--mono);font-size:0.5rem;font-weight:600;
   letter-spacing:0.12em;text-transform:uppercase;
