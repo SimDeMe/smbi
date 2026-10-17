@@ -227,7 +227,8 @@ body:is(.klimalag,.skaelvlag,.vulkanlag):not(.quiz) .quizsigte{display:block;fon
 .rangtabel td:last-child,.rangtabel th:last-child{text-align:right;white-space:nowrap}
 .rangtabel .tekstknap{text-align:left}
 #temaforklaring b{font-family:var(--display);color:var(--ink)}
-@media(min-width:900px) and (max-height:640px){#temaforklaring .temalang{display:none}}
+@media(min-width:900px) and (max-height:640px){:is(#temaforklaring,#udledningforklaring) .temalang{display:none}}
+.maalvalg{margin-bottom:4px;width:max-content;max-width:100%}.maalvalg label{padding:3px 8px}
 /* Seks knapper i lagrækken (med Temakort): smallere polstring på mobil, så
    Fokus ikke får sin egen række og skubber globussen ned. */
 @media(max-width:500px){.lagvalg{gap:4px}.lagvalg button{padding:7px 5px}}

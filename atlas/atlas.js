@@ -437,7 +437,9 @@ function visProcesser() {
   nedboersopgave.onclick = visNedboersopgave;
   const temaopgave = element('button', 'Undersøg landene på temakort', 'tilbage');
   temaopgave.onclick = visTemaopgave;
-  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave);
+  const udledningsopgave = element('button', 'Undersøg landenes CO₂-udledning', 'tilbage');
+  udledningsopgave.onclick = visUdledningsopgave;
+  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', udledningsopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -1106,6 +1108,10 @@ function opdaterPladebeskrivelse() {
     const ind = temamodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Temakort: landene er farvet efter nøgletallet ${ind.navn} ${temamodul.aarFor(ind)}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
+  if (!landAktivt && udledningsmodul && (nationallaget.aktiv || forbrugslaget.aktiv)) {
+    const ind = udledningsmodul.indikator();
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Landene er farvet efter ${ind.navn[0].toLowerCase()}${ind.navn.slice(1)} ${udledningsmodul.valg.aar} i ${ind.enhed}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
+  }
 }
 
 function placerValgpanel() {
@@ -1202,6 +1208,7 @@ const klimalaget = lavLag({
     // Klimazoner og temakort farver begge landfladerne; kun ét ad gangen.
     if (system && temalaget.aktiv) await temalaget.skift(null);
     if (system && nedboerlaget.aktiv) await nedboerlaget.skift(null);
+    if (system) await slukUdledning();
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
     if (system) { klimasystem = system; tegnKlimasignatur(modul); }
   },
@@ -1263,7 +1270,7 @@ const nedboerlaget = lavLag({
     nedboermodul ??= await import('./nedboer.js');
     if (vis) {
       await nedboermodul.hent();
-      for (const lag of [havbundlaget, klimalaget, temalaget]) if (lag.aktiv) await lag.skift(null);
+      for (const lag of [havbundlaget, klimalaget, temalaget, nationallaget, forbrugslaget]) if (lag.aktiv) await lag.skift(null);
     } else nedboerstyring?.stop();
     await globus.visTemalag('nedboer', vis ? nedboermodul : null);
     if (vis && !nedboerstyring) {
@@ -1340,6 +1347,7 @@ const temalaget = lavLag({
   async vis(vis) {
     if (vis && klimalaget.aktiv) await klimalaget.skift(null);
     if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
+    if (vis) await slukUdledning();
     temamodul ??= await import('./temakort.js');
     await globus.visTemakort(vis ? temamodul : null);
     if (vis) tegnTemasignatur();
@@ -1352,6 +1360,169 @@ temavalg.addEventListener('change', () => {
   globus.gentegn();
   opdaterPladebeskrivelse();
 });
+
+// Klimaforandringer: national og forbrugsbaseret CO₂-udledning (udledning.js).
+// To lag med én fælles signatur; de farver landene og vises derfor ét ad gangen.
+const nationalknap = document.querySelector('#nationallag');
+const forbrugsknap = document.querySelector('#forbrugslag');
+const udledningsignatur = document.querySelector('#udledningsignatur');
+let udledningsmodul;
+function tegnUdledningssignatur() {
+  const m = udledningsmodul;
+  const forbrug = m.valg.opgoerelse === 'forbrug';
+  if (!forbrug && m.valg.maal === 'handel') m.valg.maal = 'pr';
+  const ind = m.indikator();
+  document.querySelector('#udledningtitel').textContent = m.OPGOERELSER[m.valg.opgoerelse].navn;
+  document.querySelector('[data-kun-forbrug]').hidden = !forbrug;
+  for (const felt of document.querySelectorAll('[name="udledningmaal"]')) felt.checked = felt.value === m.valg.maal;
+  const aarvalg = document.querySelector('#udledningaar');
+  if (!aarvalg.childElementCount) {
+    for (const a of m.aarliste()) {
+      const label = element('label');
+      const felt = document.createElement('input');
+      felt.type = 'radio'; felt.name = 'udledningaar'; felt.value = a;
+      felt.onchange = () => { m.valg.aar = a; tegnUdledningssignatur(); globus.gentegn(); opdaterPladebeskrivelse(); };
+      label.append(felt, String(a));
+      aarvalg.append(label);
+    }
+  }
+  for (const felt of aarvalg.querySelectorAll('input')) felt.checked = Number(felt.value) === m.valg.aar;
+  const kort = element('b', `${m.valg.aar} · ${ind.enhed}`);
+  const lang = element('span', ` – ${ind.forklaring}. Kun CO₂ fra fossile brændsler og industri.`, 'temalang');
+  document.querySelector('#udledningforklaring').replaceChildren(kort, lang);
+  const antal = m.optaelling(ind);
+  const maks = Math.max(...antal, 1);
+  const raekker = m.klasser(ind).map(({ farve, tekst }, i) => {
+    const li = element('li');
+    const felt = element('i'); felt.style.background = farve;
+    const soejle = element('span', '', 'temasoejle'); soejle.style.width = `${Math.round(40 * antal[i] / maks)}px`;
+    li.append(felt, element('span', tekst, 'temaklasse'), soejle, element('small', `${antal[i]}`));
+    li.setAttribute('aria-label', `${tekst}: ${antal[i]} lande`);
+    return li;
+  });
+  const ingen = element('li', '', 'ingen');
+  const felt = element('i'); felt.style.background = m.INGEN_DATA;
+  ingen.append(felt, element('span', 'ingen data', 'temaklasse'));
+  document.querySelector('#udledningklasser').replaceChildren(...raekker, ingen);
+}
+function lavUdledningslag(opgoerelse, knap) {
+  return lavLag({
+    knap, signatur: udledningsignatur, klasse: 'udledningslag',
+    fejltekst: 'Udledningsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+    async vis(vis) {
+      udledningsmodul ??= await import('./udledning.js');
+      if (vis) {
+        await udledningsmodul.hent();
+        const anden = opgoerelse === 'national' ? forbrugslaget : nationallaget;
+        for (const lag of [klimalaget, nedboerlaget, temalaget, anden]) if (lag.aktiv) await lag.skift(null);
+        udledningsmodul.valg.opgoerelse = opgoerelse;
+      }
+      await globus.visTemakort(vis ? udledningsmodul : null);
+      if (vis) tegnUdledningssignatur();
+    },
+    efter: opdaterPladebeskrivelse
+  });
+}
+const nationallaget = lavUdledningslag('national', nationalknap);
+const forbrugslaget = lavUdledningslag('forbrug', forbrugsknap);
+async function slukUdledning() {
+  for (const lag of [nationallaget, forbrugslaget]) if (lag.aktiv) await lag.skift(null);
+}
+for (const felt of document.querySelectorAll('[name="udledningmaal"]')) {
+  felt.addEventListener('change', () => {
+    if (!felt.checked || !udledningsmodul) return;
+    udledningsmodul.valg.maal = felt.value;
+    tegnUdledningssignatur();
+    globus.gentegn();
+    opdaterPladebeskrivelse();
+  });
+}
+
+const UDLEDNINGSKILDE = 'Global Carbon Budget 2025 (Global Carbon Project; Friedlingstein m.fl. 2025), samlet af Our World in Data, CC BY 4.0. Tallene er CO₂ fra fossile brændsler og industri (kul, olie, gas, cement og afbrænding af overskudsgas). Skovrydning og anden arealanvendelse, metan, lattergas og international luft- og skibsfart er ikke med. ' +
+  'Nationale (territoriale) udledninger er det, der udledes inden for landets grænser; det er den opgørelse, landene rapporterer til FN’s klimakonvention, og som Parisaftalens mål tælles i. Forbrugsbaserede udledninger er beregnet af Global Carbon Project med en input-output-model over verdenshandlen (metode: Peters m.fl. 2011): udledningen ved at producere landets eksport trækkes fra, og udledningen ved at producere landets import lægges til. De findes kun for omkring 120 lande, fra 1990 og senest for 2023; derfor er 2023 også valgt for de nationale tal. Forbrugsbaserede tal er mere usikre end nationale. ' +
+  'Pr. indbygger er Our World in Data’s beregning med deres befolkningstal. »Forskel fra national« er forbrugsbaseret minus national i procent af national. Danmarks officielle opgørelse fra Energistyrelsen er anderledes, fordi den omfatter alle drivhusgasser. ' +
+  'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med tallene for hele Cypern og Somalia. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er runde tal og er de samme for begge opgørelser, så kortene kan sammenlignes.';
+
+async function visUdledningsopgave() {
+  aabn('Undersøg landenes CO₂-udledning');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Åbn Lag → Klimaforandringer, og vælg nationale eller forbrugsbaserede udledninger. I signaturen kan du vælge pr. indbygger eller i alt og skifte mellem årene. Aflæsningen viser landet ved musen eller midt på globussen – med den anden opgørelse i parentes.'));
+  indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Vælg Nationale udledninger pr. indbygger for 2023. Beskriv mønstret: Hvor udleder hver indbygger mest, og hvor mindst? Sammenlign med kortet over BNI pr. indbygger under Demografi og levevilkår.',
+    'Skift til I alt. Hvilke lande udleder mest? Hvorfor ser kortet så anderledes ud end kortet pr. indbygger? Diskutér, hvilket mål der er mest retfærdigt, når verdens lande skal dele reduktionerne.',
+    'Skift mellem 1990, 2000, 2010 og 2023. Hvor er udledningen steget mest, og hvor er den faldet? Forklar med fx industrialisering, befolkningsvækst og omstilling til vedvarende energi.',
+    'Find Danmark på begge kort. Hvorfor er Danmarks forbrugsbaserede udledning over halvanden gang så stor som den nationale? Hvad betyder det for, hvor meget Danmark reelt har reduceret siden 1990?',
+    'Vælg Forbrugsbaserede udledninger → Forskel fra national. Hvilke lande »eksporterer« udledninger (lilla), og hvilke »importerer« dem (orange)? Hvad fortæller det om, hvor verdens varer produceres?',
+    'Klimaaftalerne tæller de nationale udledninger. Giv argumenter for og imod at bruge den forbrugsbaserede opgørelse i stedet. Hvem ville vinde og tabe på det?',
+    'Kortkritik: Kun CO₂ fra fossile brændsler og industri er med. Hvordan kunne kortet se ud for fx Brasilien eller Indonesien, hvis skovrydning talte med? Hvorfor er så mange lande grå på det forbrugsbaserede kort?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus && !nationallaget.aktiv && !forbrugslaget.aktiv) {
+    const vis = element('button', 'Slå nationale udledninger til', 'tilbage');
+    vis.onclick = async () => { senesteFokus = nationalknap; dialog.close(); await nationallaget.slaaTil(); };
+    indhold.append(vis);
+  }
+  const rang = element('div');
+  indhold.append(element('h3', 'Rangliste', 'underoverskrift'), rang);
+  rang.append(element('p', 'Henter data …', 'antal'));
+  try {
+    udledningsmodul ??= await import('./udledning.js');
+    await udledningsmodul.hent();
+    const m = udledningsmodul;
+    const ind = m.indikator();
+    const raekker = m.rangering(ind);
+    const tabel = (fra, til) => {
+      const t = element('table', '', 'rangtabel');
+      t.innerHTML = '<thead><tr><th scope="col">Nr.</th><th scope="col">Land</th><th scope="col"></th></tr></thead>';
+      t.querySelector('th:last-child').textContent = ind.enhed;
+      const krop = element('tbody');
+      for (const [i, r] of raekker.slice(fra, til).entries()) {
+        const tr = element('tr');
+        const land = element('button', r.navn, 'tekstknap');
+        land.onclick = () => visLandedata({ id: r.id, navn: r.navn }, 'demografi');
+        const celle = element('td'); celle.append(land);
+        tr.append(element('td', String(fra + i + 1)), celle, element('td', m.vaerditekst({ ...ind, enhed: '' }, r.v).trim()));
+        krop.append(tr);
+      }
+      t.append(krop);
+      return t;
+    };
+    rang.replaceChildren(element('p', `${ind.navn} ${m.valg.aar} – ${ind.forklaring}. ${raekker.length} lande med data. Skift lag, mål eller år i signaturen, og åbn ranglisten igen.`));
+    const par = element('div', '', 'rangpar');
+    const top = element('div'); top.append(element('h4', 'Højeste 10'), tabel(0, 10));
+    const bund = element('div'); bund.append(element('h4', 'Laveste 10'), tabel(Math.max(0, raekker.length - 10), raekker.length));
+    par.append(top, bund);
+    const alle = element('details', '', 'pladeoversigt');
+    alle.append(element('summary', `Alle ${raekker.length}`), tabel(0, raekker.length));
+    rang.append(par, alle);
+  } catch {
+    rang.replaceChildren(element('p', 'Udledningsdata kunne ikke hentes. Spørgsmålene kan stadig bruges. Prøv igen senere.'));
+  }
+  indhold.append(lavInformation({
+    navn: 'CO₂-udledninger', overskrift: 'Om data',
+    introduktion: 'Global Carbon Budget 2025 via Our World in Data. CO₂ fra fossile brændsler og industri, 1990–2023.',
+    tekst: UDLEDNINGSKILDE
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['Global Carbon Budget', 'https://globalcarbonbudget.org/'],
+    ['Our World in Data, CO₂-data', 'https://github.com/owid/co2-data'],
+    ['Peters m.fl. 2011 (PNAS)', 'https://doi.org/10.1073/pnas.1006388108'],
+    ['ColorBrewer', 'https://colorbrewer2.org/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+}
+document.querySelector('#udledningopgave').onclick = visUdledningsopgave;
 
 lagmenu = startLagmenu({
   async hentTema() { temamodul ??= await import('./temakort.js'); return temamodul.EMNER; },

@@ -34,7 +34,7 @@ def afproev_oevelser(side):
     # Søgning finder øvelser og folder listen ud.
     side.get_by_role('button', name='Søg', exact=True).click()
     side.get_by_role('searchbox').fill('slinky')
-    expect(side.locator('#dialogindhold .antal')).to_have_text('0 af 9 simulationer · 1 øvelse')
+    expect(side.locator('#dialogindhold .antal')).to_have_text('0 af 10 simulationer · 1 øvelse')
     expect(side.get_by_role('link', name='P- og S-bølger i en slinky', exact=True)).to_be_visible()
     # Escape i et udfyldt søgefelt rydder kun feltet; luk dialogen med knappen.
     side.locator('#luk').click()

@@ -12,6 +12,7 @@ sammenfoldelige underpunkter:
 - **Klima:** klimazoner med valg af Vahl eller Köppen-Geiger og nedbør måned for måned.
 - **Demografi og levevilkår:** landenes 17 nøgletal, samlet i Befolkning,
   Fødsel og død samt Udvikling.
+- **Klimaforandringer** (v449): nationale og forbrugsbaserede CO₂-udledninger.
 
 Menuen viser samlet antal aktive lag, antal i hvert underpunkt og navnene på
 de aktive lag. Nøgletal og klimasystem kan vælges direkte i menuen og følger
@@ -123,6 +124,37 @@ ikke bekræftet** og bør læses i EarthBytes README.txt.
 - Test: `node atlas/test/havbundsalder.mjs` (gitter, kendte steder, profiler,
   projektion) og `test/havbund.py` (fem skærme, mus/touch/tastatur, egen
   profil, dialog, fejl og nyt forsøg) i `test/afproev.py`.
+
+## Klimaforandringer: nationale og forbrugsbaserede udledninger (v449)
+
+Ny lagkategori **Klimaforandringer** i lagmenuen med to lag, der farver
+landene efter CO₂-udledning (koropletkort med temakortets farver og signatur):
+
+- **Nationale udledninger** (territoriale): CO₂ udledt inden for landets
+  grænser – den opgørelse, der rapporteres til FN's klimakonvention.
+- **Forbrugsbaserede udledninger**: CO₂ fra produktionen af det, landets
+  indbyggere forbruger, uanset hvor varerne er lavet (import lagt til,
+  eksport trukket fra).
+
+Data: Global Carbon Budget 2025 via Our World in Data (CC BY 4.0), dannet med
+`data/udledning.py` til `data/udledning.json` (30 kB, hentes først ved
+tilvalg). Kun CO₂ fra fossile brændsler og industri, fordi det er det eneste,
+der findes forbrugsbaseret; arealanvendelse, metan og lattergas er ikke med.
+Forbrugsbaserede tal findes for ca. 120 lande fra 1990 til 2023; årene er
+1990, 2000, 2010 og 2023 for begge, så kortene kan sammenlignes.
+
+- **Mål:** pr. indbygger (t CO₂) eller i alt (mio. t CO₂). Begge opgørelser
+  har samme faste klassegrænser. Kun på forbrugslaget: **Forskel** =
+  forbrugsbaseret minus national i % af national (divergerende skala; orange =
+  landet importerer udledninger, lilla = eksporterer).
+- **Aflæsning** viser også den anden opgørelse i parentes.
+- De to lag, temakortet, klimazoner og nedbør udelukker hinanden.
+- **Undersøg, rangliste og kilde** (også under Processer): syv spørgsmål,
+  rangliste for det valgte mål og år samt ⓘ Om data.
+- Kode: `udledning.js` (bruger `temakort.js`' klasser og farver); globussens
+  `visTemakort(modul)` aflæser i modulets `AFLAESNING`-felt.
+- Test: `test/udledning.py` (farver, aflæsning, mål og år, skift mellem lag,
+  rangliste, fejl og nyt forsøg) indgår i `test/afproev.py`.
 
 ## Temakort: landene farvet efter nøgletal (v440)
 
@@ -482,6 +514,8 @@ kræver ingen ekstra opsætning eller workflow. Git er ændringshistorikken.
   `topojson-simplify` først ved tilvalg og klipper med kystlinjen.
 - `temakort.js`: valgfrit temakort (koropletkort) over landenes nøgletal fra
   `demografi.json`: indikatorer, klassegrænser, farver, rangliste og aflæsning.
+- `udledning.js`: lagene under Klimaforandringer (national og forbrugsbaseret
+  CO₂ fra `udledning.json`), med temakortets klasser og farver.
 - `pladebevaegelse.js`: valgfrie navne for PB2002's 52 plader. Eulerberegningen
   er bevaret til uafhængig kontrol af modellens relative hastigheder.
 - `graensehastigheder.js`: valgfrie hastigheder og pile ved grænserne, fra

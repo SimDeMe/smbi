@@ -101,7 +101,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     if (temakort) {
       opdaterProjektion();
       const punkt = pegepunkt ? projektion.invert(pegepunkt) : centrum;
-      vis(document.querySelector('#temaaflaesning'), `${foran}: ${temakort.aflaes(landVed(punkt), landenavne)}`);
+      vis(document.querySelector(temakort.AFLAESNING || '#temaaflaesning'), `${foran}: ${temakort.aflaes(landVed(punkt), landenavne)}`);
     }
     for (const modul of temalag.values()) {
       vis(document.querySelector(modul.AFLAESNING), `${foran}: ${modul.aflaes(pegepunkt || [bredde / 2, hoejde / 2])}`);

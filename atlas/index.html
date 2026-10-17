@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v448</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v449</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -176,6 +176,20 @@
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="temaopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
       </section>
+      <section id="udledningsignatur" class="signatur temasignatur udledningsignatur" aria-labelledby="udledningtitel" hidden>
+        <h2 id="udledningtitel">Nationale CO₂-udledninger</h2>
+        <div id="udledningmaal" class="systemvalg maalvalg" role="radiogroup" aria-label="Mål">
+          <label><input type="radio" name="udledningmaal" value="pr" checked> Pr. indbygger</label>
+          <label><input type="radio" name="udledningmaal" value="alt"> I alt</label>
+          <label data-kun-forbrug title="Forbrugsbaseret minus national i procent af national"><input type="radio" name="udledningmaal" value="handel" aria-label="Forskel fra national i procent"> Forskel</label>
+        </div>
+        <div id="udledningaar" class="systemvalg aarvalgtema" role="radiogroup" aria-label="År"></div>
+        <p id="udledningforklaring" class="signaturnote"></p>
+        <ul id="udledningklasser" class="temaklasser" aria-label="Farveforklaring med antal lande i hver klasse"></ul>
+        <p id="udledningaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="udledningopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
+      </section>
       <section id="klimasignatur" class="signatur klimasignatur" aria-labelledby="klimatitel" hidden>
         <div class="klimatop">
           <h2 id="klimatitel">Klimazoner</h2>
@@ -223,12 +237,20 @@
         <p class="lagmenu-note">Klimazoner og nedbør vises ét ad gangen.</p>
       </div>
     </details>
+    <details id="lag-klimaforandringer" class="laggruppe">
+      <summary><span class="laggruppe-ikon" aria-hidden="true">⇡</span><span><b>Klimaforandringer</b><small>Landenes udledning af CO₂</small></span><span class="gruppe-antal" hidden></span></summary>
+      <div class="laggruppe-indhold">
+        <button id="nationallag" class="lagknap" aria-label="Nationale udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Nationale udledninger</b><small>CO₂ udledt inden for landets grænser</small></span></button>
+        <button id="forbrugslag" class="lagknap" aria-label="Forbrugsbaserede udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Forbrugsbaserede udledninger</b><small>CO₂ fra det, landets indbyggere forbruger</small></span></button>
+        <p class="lagmenu-note">Pr. indbygger eller i alt, 1990–2023. Vises ét ad gangen og ikke sammen med andre farvede landkort.</p>
+      </div>
+    </details>
     <details id="lag-demografi" class="laggruppe">
       <summary><span class="laggruppe-ikon" aria-hidden="true">▦</span><span><b>Demografi og levevilkår</b><small>Befolkning, sundhed og udvikling</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
         <button id="temalag" class="lagknap" aria-label="Temakort over lande" aria-pressed="false" aria-controls="temasignatur" disabled><span><b>Landenes nøgletal</b><small>Farv landene efter det valgte nøgletal</small></span></button>
         <label class="lagmenu-valg">Nøgletal<select id="lag-indikator" disabled><option>Henter valgmuligheder …</option></select></label>
-        <p class="lagmenu-note">Vælg fx fertilitet, befolkningstæthed eller HDI. Landenes nøgletal kan ikke vises samtidig med klimazoner eller nedbør.</p>
+        <p class="lagmenu-note">Vælg fx fertilitet, befolkningstæthed eller HDI. Landenes nøgletal kan ikke vises samtidig med klimazoner, nedbør eller udledninger.</p>
       </div>
     </details>
     <p id="lagmenu-status" class="lagmenu-status" role="status">Ingen lag valgt</p>

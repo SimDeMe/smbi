@@ -30,7 +30,7 @@ export const INGEN_DATA = '#d6d3cb';
 // Klasse i: værdier ≥ graenser[i-1] og < graenser[i].
 // nul: antallet af klasser under 0 (divergerende skala).
 // neutral: klassen lige efter dem ligger om 0 (fx migration −1 til 1) og bliver gråhvid.
-function farver({ graenser, nul, neutral }) {
+export function farver({ graenser, nul, neutral }) {
   const n = graenser.length + 1;
   if (nul == null) return SEKVENS[n];
   const under = nul;

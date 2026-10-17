@@ -1,0 +1,23 @@
+udledning.json
+==============
+
+Dannet med `python -I atlas/data/udledning.py` (17. oktober 2026) fra
+owid-co2-data.csv (sha256 står i udledning.json). Rådata ligger ikke i repoet.
+
+Global Carbon Project (2025). Global Carbon Budget 2025.
+Friedlingstein, P. m.fl. (2025), Global Carbon Budget 2025, Earth System
+Science Data. https://globalcarbonbudget.org/
+Forbrugsbaserede udledninger: Global Carbon Budget, beregnet med en
+multiregional input-output-model ud fra handelsdata (metode: Peters, G. P.,
+Minx, J. C., Weber, C. L. & Edenhofer, O. (2011), Growth in emission
+transfers via international trade from 1990 to 2008, PNAS 108(21), 8903–8908).
+
+Bearbejdet og samlet af Our World in Data: owid-co2-data.csv,
+  https://github.com/owid/co2-data (hentet 17. oktober 2026)
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+Pr. indbygger er OWID's egen beregning med deres befolkningstal.
+
+Kun CO₂ fra fossile brændsler og industri (cement, gasafbrænding m.m.).
+Arealanvendelse (fx skovrydning), metan og lattergas er ikke med.
+International luft- og skibsfart er ikke fordelt på lande.
+Danske landenavne fra demografi.json.

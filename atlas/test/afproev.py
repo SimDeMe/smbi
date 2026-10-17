@@ -17,6 +17,7 @@ from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasnin
 from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
 from temakort import afproev_temakort, afproev_temafejl
+from udledning import afproev_udledning, afproev_udledningsfejl
 from havbund import afproev_havbund, afproev_havbundfejl, afproev_havbunddata
 from nedboer import afproev_nedboer, afproev_nedboerfejl, afproev_nedboerdata, afproev_nedboerglat
 from island3d import afproev_island3d
@@ -72,12 +73,12 @@ with sync_playwright() as p:
         afproev_kortinformation(side)
         side.get_by_role('button', name='Processer', exact=True).first.click()
         side.get_by_role('button', name='Global atmosfære', exact=True).click()
-        assert side.locator('.modelkort').count() == 2
+        assert side.locator('.modelkort').count() == 3
         assert 'hele Jorden' in side.locator('#dialogindhold').inner_text()
         side.keyboard.press('Escape')
         side.get_by_role('button', name='Søg', exact=True).click()
         felt = side.get_by_role('searchbox')
-        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 9)]:
+        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 10)]:
             felt.fill(ord)
             assert side.locator('.modelkort').count() == antal, (ord, antal)
         side.keyboard.press('Escape')
@@ -98,6 +99,7 @@ with sync_playwright() as p:
         afproev_havbund(side, UD)
         afproev_nedboer(side, UD)
         afproev_temakort(side, UD)
+        afproev_udledning(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -207,6 +209,7 @@ with sync_playwright() as p:
     afproev_seismikdata()
     afproev_seismikfejl(browser, ADRESSE)
     afproev_temafejl(browser, ADRESSE)
+    afproev_udledningsfejl(browser, ADRESSE)
     afproev_havbunddata()
     afproev_havbundfejl(browser, ADRESSE)
     print('Havbundens alder: data, model, data-/modulfejl og nyt forsøg: OK')
