@@ -439,9 +439,11 @@ function visProcesser() {
   temaopgave.onclick = visTemaopgave;
   const temperaturopgave = element('button', 'Undersøg temperaturstigningen', 'tilbage');
   temperaturopgave.onclick = visTemperaturopgave;
+  const havisopgave = element('button', 'Undersøg havisen', 'tilbage');
+  havisopgave.onclick = visHavisopgave;
   const udledningsopgave = element('button', 'Undersøg landenes CO₂-udledning', 'tilbage');
   udledningsopgave.onclick = visUdledningsopgave;
-  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', temperaturopgave, ' ', udledningsopgave);
+  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', temperaturopgave, ' ', havisopgave, ' ', udledningsopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -1114,6 +1116,10 @@ function opdaterPladebeskrivelse() {
     const m = temperaturmodul, i = m.tilstand.periode;
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser temperaturafvigelsen ${m.periodenavn(i)} i forhold til ${m.GRUNDLAG} efter NASA GISTEMP; globalt middel ca. ${m.tekst(m.globaltMiddel(i))}. Aflæsningen under signaturen viser afvigelsen midt på globussen`);
   }
+  if (!landAktivt && havismodul && havislaget.aktiv) {
+    const m = havismodul;
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser havisens udbredelse i ${m.MAANED[m.valg.maaned]} ${m.valg.aar} efter NSIDC: Arktis ${m.km2(m.udbredelse('N'))}, Antarktis ${m.km2(m.udbredelse('S'))}${m.valg.median ? ', med medianen 1981–2010 som stiplet linje' : ''}`);
+  }
   if (!landAktivt && cirkelmodul && cirkellaget.aktiv) {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Cirkler viser landenes samlede CO₂-udledning 1850–${cirkelmodul.valg.aar}; cirklens areal svarer til udledningen, og ranglisten findes under Undersøg`);
   }
@@ -1577,6 +1583,125 @@ function visTemperaturopgave() {
   indhold.append(kilder);
 }
 document.querySelector('#temperaturopgave').onclick = visTemperaturopgave;
+
+// Havisens udbredelse (havis.js): polygoner for marts og september med medianen
+// 1981–2010 og en lille graf over udbredelsen år for år.
+const havisknap = document.querySelector('#havislag');
+let havismodul;
+function tegnHavisgraf() {
+  const m = havismodul, graf = document.querySelector('#havisgraf');
+  const B = 264, H = 78, v = 24, h = 6, top = 6, bund = 14;
+  const serier = Object.keys(m.POL).map(pol => ({ pol, s: m.serie(pol) }));
+  const alle = serier.flatMap(x => x.s.map(([, e]) => e));
+  const maks = Math.ceil(Math.max(...alle) / 5) * 5, min = Math.max(0, Math.floor(Math.min(...alle) / 5) * 5 - 5);
+  const x = a => v + (a - 1979) / (2025 - 1979) * (B - v - h);
+  const y = e => top + (1 - (e - min) / (maks - min)) * (H - top - bund);
+  const el = (type, egenskaber, tekst) => {
+    const e = document.createElementNS(SVGNS, type);
+    for (const [k, val] of Object.entries(egenskaber)) e.setAttribute(k, val);
+    if (tekst != null) e.textContent = tekst;
+    return e;
+  };
+  const dele = [];
+  for (let e = min; e <= maks; e += 5) {
+    dele.push(el('line', { x1: v, x2: B - h, y1: y(e), y2: y(e), stroke: '#17211f22' }),
+      el('text', { x: v - 3, y: y(e) + 3, 'text-anchor': 'end' }, e));
+  }
+  for (const a of [1980, 2000, 2020]) dele.push(el('text', { x: x(a), y: H - 2, 'text-anchor': 'middle' }, a));
+  dele.push(el('line', { x1: x(m.valg.aar), x2: x(m.valg.aar), y1: top, y2: H - bund, stroke: '#17211f', 'stroke-dasharray': '2 2' }));
+  for (const { pol, s } of serier) {
+    const farve = pol === 'N' ? '#0b6fa4' : '#7a4fa0';
+    dele.push(el('polyline', { points: s.map(([a, e]) => `${x(a)},${y(e)}`).join(' '), fill: 'none', stroke: farve, 'stroke-width': 1.6 }));
+    const sidste = s[s.length - 1];
+    dele.push(el('text', { x: x(sidste[0]) - 2, y: y(sidste[1]) + (pol === 'N' ? 11 : -5), 'text-anchor': 'end', fill: farve, style: `fill:${farve}` }, m.POL[pol]));
+  }
+  graf.setAttribute('viewBox', `0 0 ${B} ${H}`);
+  graf.setAttribute('aria-label', `Havisens udbredelse i ${m.MAANED[m.valg.maaned]} 1979–2025 i mio. km²: ` +
+    serier.map(({ pol, s }) => `${m.POL[pol]} fra ${m.km2(s[0][1])} i ${s[0][0]} til ${m.km2(s[s.length - 1][1])} i ${s[s.length - 1][0]}`).join('; '));
+  graf.replaceChildren(...dele);
+}
+function tegnHavissignatur() {
+  const m = havismodul;
+  const aarvalg = document.querySelector('#havisaar');
+  if (!aarvalg.childElementCount) {
+    for (const a of m.hentede().aar) {
+      const label = element('label');
+      const felt = document.createElement('input');
+      felt.type = 'radio'; felt.name = 'havisaar'; felt.value = a;
+      felt.onchange = () => { m.valg.aar = a; tegnHavissignatur(); globus.gentegn(); opdaterPladebeskrivelse(); };
+      label.append(felt, String(a));
+      aarvalg.append(label);
+    }
+  }
+  for (const felt of aarvalg.querySelectorAll('input')) felt.checked = Number(felt.value) === m.valg.aar;
+  for (const felt of document.querySelectorAll('[name="havismaaned"]')) felt.checked = Number(felt.value) === m.valg.maaned;
+  document.querySelector('#havistitel').textContent = `Havis i ${m.MAANED[m.valg.maaned]} ${m.valg.aar}`;
+  document.querySelector('#havistal').textContent = Object.keys(m.POL)
+    .map(pol => `${m.POL[pol]}: ${m.km2(m.udbredelse(pol))} (median ${m.km2(m.median(pol)).replace(' mio. km²', '')})`).join(' · ');
+  tegnHavisgraf();
+}
+const havislaget = lavLag({
+  knap: havisknap, signatur: document.querySelector('#havissignatur'), klasse: 'havislag',
+  fejltekst: 'Havisdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    havismodul ??= await import('./havis.js');
+    await globus.visTemalag('havis', vis ? havismodul : null);
+    if (vis) tegnHavissignatur();
+  },
+  efter: opdaterPladebeskrivelse
+});
+for (const felt of document.querySelectorAll('[name="havismaaned"]')) {
+  felt.addEventListener('change', () => {
+    if (!felt.checked || !havismodul) return;
+    havismodul.valg.maaned = Number(felt.value);
+    tegnHavissignatur(); globus.gentegn(); opdaterPladebeskrivelse();
+  });
+}
+// Polerne ses dårligt fra startvinklen; knapperne drejer kloden hen over dem.
+for (const knap of document.querySelectorAll('.havisdrej button')) {
+  knap.onclick = () => globus?.visUdsnit(knap.dataset.pol === 'N' ? [-40, 78] : [0, -78], 1.15);
+}
+document.querySelector('#havismedian').addEventListener('change', event => {
+  if (!havismodul) return;
+  havismodul.valg.median = event.target.checked;
+  globus.gentegn();
+});
+
+function visHavisopgave() {
+  aabn('Undersøg havisen');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå Lag → Klimaforandringer → Havisens udbredelse til. Det hvide område er hav med mindst 15 % is i den valgte måned; den orange stiplede linje er medianen for 1981–2010. Drej globussen, så du ser Nordpolen eller Sydpolen.'));
+  indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Vælg september og skift mellem 1980, 2000, 2012 og 2025. Hvor er isen forsvundet? Hvor mange procent mindre er udbredelsen i 2025 end medianen for 1981–2010?',
+    'Sammenlign marts og september i Arktis. Hvorfor er forskellen så stor? Hvornår på året smelter mest is?',
+    'Hvorfor har Antarktis mest is i september og mindst i marts – modsat Arktis?',
+    'Grafen viser udbredelsen hvert år. Beskriv udviklingen i Arktis og i Antarktis siden 1979. Hvorfor er Antarktis’ kurve mere ujævn?',
+    'Havisen kaster det meste af sollyset tilbage, åbent hav optager det meste. Forklar med albedo, hvorfor mindre is giver mere opvarmning (en positiv tilbagekobling). Sammenlign med Temperaturstigning over Arktis.',
+    'Stiger havniveauet, når havisen smelter? Forklar forskellen på havis og indlandsis.',
+    'Datakritik: Udbredelse tæller alt hav med mindst 15 % is. Hvad betyder det for tallet? Hvorfor siger udbredelsen ikke noget om, hvor tyk isen er?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus && !havislaget.aktiv) {
+    const vis = element('button', 'Slå havisen til', 'tilbage');
+    vis.onclick = async () => { senesteFokus = havisknap; dialog.close(); await havislaget.slaaTil(); };
+    indhold.append(vis);
+  }
+  indhold.append(lavInformation({
+    navn: 'Havisens udbredelse', overskrift: 'Om data',
+    introduktion: 'NSIDC Sea Ice Index, version 4: satellitmålt udbredelse af havis i marts og september.',
+    tekst: 'National Snow and Ice Data Center (2025), Sea Ice Index, version 4 (G02135), Boulder, Colorado. Udbredelsen er beregnet ud fra satellitters mikrobølgemålinger (passive mikrobølger, 25 km celler) siden 1979. En celle tæller som is, når mindst 15 % af den er dækket. Kortene er NSIDC’s månedlige udbredelsespolygoner omregnet fra polær stereografisk projektion, forenklet med 10 km tolerance og uden isflager under 2000 km². Medianlinjen er NSIDC’s median for 1981–2010; medianen i signaturen er regnet af samme månedsserie. Tallene for 2025 er fra NSIDC’s hurtige produkt (NSIDC-0803) og kan blive justeret en smule.'
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  const link = element('a', 'NSIDC Sea Ice Index (G02135)'); link.href = 'https://nsidc.org/data/g02135/versions/4';
+  kilder.append(link);
+  indhold.append(kilder);
+}
+document.querySelector('#havisopgave').onclick = visHavisopgave;
 
 // Samlet udledning siden 1850 som cirkler (udledningscirkler.js): et punktlag,
 // der kan ligge oven på de farvede kort.

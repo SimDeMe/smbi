@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v455</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v456</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -207,6 +207,24 @@
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="temperaturopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
       </section>
+      <section id="havissignatur" class="signatur havissignatur" aria-labelledby="havistitel" hidden>
+        <h2 id="havistitel">Havis i september 2025</h2>
+        <div class="systemvalg maalvalg" role="radiogroup" aria-label="Måned">
+          <label><input type="radio" name="havismaaned" value="3"> Marts</label>
+          <label><input type="radio" name="havismaaned" value="9" checked> September</label>
+        </div>
+        <div id="havisaar" class="systemvalg aarvalgtema" role="radiogroup" aria-label="År"></div>
+        <ul class="havisforklaring">
+          <li><i class="havisfelt" aria-hidden="true"></i>Havis (mindst 15 % is)</li>
+          <li><label class="zenitvalg"><input id="havismedian" type="checkbox" checked> <i class="medianlinje" aria-hidden="true"></i>Median 1981–2010</label></li>
+        </ul>
+        <p id="havistal" class="signaturnote"></p>
+        <div class="havisdrej" role="group" aria-label="Drej globussen"><button data-pol="N">Vis Arktis</button><button data-pol="S">Vis Antarktis</button></div>
+        <svg id="havisgraf" class="havisgraf" role="img"></svg>
+        <p id="havisaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="havisopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+      </section>
       <section id="cirkelsignatur" class="signatur cirkelsignatur" aria-labelledby="cirkeltitel" hidden>
         <h2 id="cirkeltitel">Samlet CO₂ siden 1850</h2>
         <div class="systemvalg maalvalg" role="radiogroup" aria-label="Kilder">
@@ -271,6 +289,7 @@
       <summary><span class="laggruppe-ikon" aria-hidden="true">⇡</span><span><b>Klimaforandringer</b><small>Landenes udledning af CO₂ og andre drivhusgasser</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
         <button id="temperaturlag" class="lagknap" aria-label="Temperaturstigning" aria-pressed="false" aria-controls="temperatursignatur" disabled><span><b>Temperaturstigning</b><small>Årti for årti siden 1900 – hvor bliver det varmest?</small></span></button>
+        <button id="havislag" class="lagknap" aria-label="Havisens udbredelse" aria-pressed="false" aria-controls="havissignatur" disabled><span><b>Havisens udbredelse</b><small>Arktis og Antarktis i marts og september</small></span></button>
         <button id="nationallag" class="lagknap" aria-label="Nationale udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Nationale udledninger</b><small>CO₂ udledt inden for landets grænser</small></span></button>
         <button id="forbrugslag" class="lagknap" aria-label="Forbrugsbaserede udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Forbrugsbaserede udledninger</b><small>CO₂ fra det, landets indbyggere forbruger</small></span></button>
         <button id="drivhusgaslag" class="lagknap" aria-label="Alle drivhusgasser" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Alle drivhusgasser</b><small>CO₂, metan og lattergas – også fra skovrydning</small></span></button>

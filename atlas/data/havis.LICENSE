@@ -1,0 +1,18 @@
+havis.json
+==========
+
+Dannet med `python -I atlas/data/havis.py` (17. oktober 2026).
+
+National Snow and Ice Data Center (2025). Sea Ice Index, version 4 (G02135).
+Boulder, Colorado, USA. https://nsidc.org/data/g02135/versions/4
+Filerne er hentet uændret fra https://noaadata.apps.nsidc.org/NOAA/G02135/:
+  <north|south>/monthly/shapefiles/shp_extent/<03_Mar|09_Sep>/extent_<N|S>_<år><mm>_polygon_v4.0.zip
+  <north|south>/monthly/shapefiles/shp_median/median_extent_<N|S>_<mm>_1981-2010_polyline_v4.0.zip
+  <north|south>/monthly/data/<N|S>_<mm>_extent_v4.0.csv
+NSIDC's data må frit bruges med kildeangivelse som ovenfor (NSIDC's
+brugsbetingelser for data fra NOAA@NSIDC).
+
+Bearbejdning: se havis.py. Polygonerne er omregnet fra NSIDC's polære
+stereografiske projektion (Hughes 1980-ellipsoiden) til længde/bredde,
+forenklet med 10 km tolerance, og isflager og huller under 2000 km² er fjernet.
+2025 er fra NSIDC's hurtige produkt (NSIDC-0803).

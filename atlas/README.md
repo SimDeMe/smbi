@@ -125,6 +125,23 @@ ikke bekræftet** og bør læses i EarthBytes README.txt.
   projektion) og `test/havbund.py` (fem skærme, mus/touch/tastatur, egen
   profil, dialog, fejl og nyt forsøg) i `test/afproev.py`.
 
+## Klimaforandringer: havisens udbredelse (v456)
+
+Laget **Havisens udbredelse** viser NSIDC Sea Ice Index v4: områder med mindst
+15 % havis i marts og september for 1980, 1990, 2000, 2010, 2012, 2020 og 2025
+i Arktis og Antarktis, med NSIDC's median 1981–2010 som orange stiplet linje
+(kan slås fra). `data/havis.py` omregner NSIDC's shapefiler fra polær
+stereografisk projektion, forenkler med 10 km og fjerner isflager under
+2000 km² (`havis.json`, 180 kB gzip). `havis.js` vender ringe med forkert
+omløb, så polygoner om polen tegnes rigtigt i D3.
+
+- Signaturen viser udbredelsen i mio. km² og medianen for begge poler og en
+  lille graf over hele serien 1979–2025 for den valgte måned (skjules under
+  640 px højde). Knapperne Vis Arktis/Vis Antarktis drejer kloden.
+- Punktlag: kan vises sammen med alle andre lag, fx Temperaturstigning.
+- **Undersøg og kilde**: syv spørgsmål (udvikling, årstider, poler, albedo,
+  havis mod indlandsis, datakritik). Test: `test/havis.py`.
+
 ## Klimaforandringer: temperaturstigning (v455)
 
 Laget **Temperaturstigning** viser NASA GISTEMP v4: afvigelse fra 1951–1980 i
