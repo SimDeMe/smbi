@@ -159,6 +159,16 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     const landsti = new Path2D();
     d3.geoPath(projektion, landsti)(landflader);
     ctx.fillStyle = '#d9e2bb'; ctx.fill(landsti); ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
+    // Lag, der dækker både hav og land (nedbør); kystlinjen tegnes igen ovenpå.
+    let flade = false;
+    if (!quiz) {
+      for (const modul of temalag.values()) {
+        if (!modul.tegnFlade) continue;
+        modul.tegnFlade(ctx, { projektion, centrum, skala: projektion.scale(), bredde, hoejde, gentegn: opdater });
+        flade = true;
+      }
+      if (flade) { ctx.strokeStyle = '#17211f'; ctx.lineWidth = 1; ctx.stroke(landsti); }
+    }
     const tema = temakort && !quiz;
     if (tema) {
       // Ét fyld pr. farve; lande uden farve (Antarktis) beholder grundfarven.
@@ -182,13 +192,13 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
       klimamodul.tegnKlimalag(ctx, sti, klimalag, landsti, centrum, synsvinkel, r);
       ctx.strokeStyle = '#527368'; ctx.lineWidth = 0.8; ctx.stroke(landsti);
     }
-    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = tema ? '#3d4a44' : klimalag && !quiz ? '#17211f66' : '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
+    ctx.beginPath(); sti(landegraenser); ctx.strokeStyle = tema ? '#3d4a44' : (klimalag || flade) && !quiz ? '#17211f66' : '#7b9379'; ctx.lineWidth = 0.55; ctx.stroke();
     if (quiz) quiz.tegn(ctx, sti, projektion, punkt => d3.geoDistance(centrum, punkt) < Math.PI / 2 - .02);
     else {
-      // På temakortet skal landets farve kunne ses: kun en kraftig kant.
+      // På temakortet og nedbørslaget skal farven kunne ses: kun en kraftig kant.
       if (fremhaevet && fremhaevet.id !== valgtLand?.id) {
         ctx.beginPath(); sti(fremhaevet);
-        if (tema) { ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2.2; ctx.stroke(); }
+        if (tema || flade) { ctx.strokeStyle = '#17211f'; ctx.lineWidth = 2.2; ctx.stroke(); }
         else { ctx.fillStyle = '#c3d49a'; ctx.fill(); ctx.strokeStyle = '#345e50'; ctx.lineWidth = 1.2; ctx.stroke(); }
       }
       if (valgtLand) { ctx.beginPath(); sti(iKort(valgtLand)); ctx.fillStyle = '#65b4d8'; ctx.fill(); ctx.strokeStyle = '#075b8b'; ctx.lineWidth = 1.5; ctx.stroke(); }

@@ -3,6 +3,45 @@
 Selvstændig indgang på `/atlas/` til seks eksisterende simulationer. Ingen build,
 login eller ændringer af modellerne. Forsiden og `geografi.html` er uændrede.
 
+## Nedbør måned for måned (v445)
+
+Knappen **Nedbør** farver hele kloden – hav og land – efter den gennemsnitlige
+nedbør i hver måned. Månedsskyder og **Afspil** viser, hvordan regnbæltet ved
+ækvator (ITK) og monsunen flytter sig gennem året (B4 i INDHOLD.md).
+
+- **Data:** GPCP Monthly v2.3 (NOAA CDR; satellit og regnmålere, 2,5°),
+  klimanormal 1991–2020 i mm pr. måned. NOAA's egne servere kunne ikke nås;
+  filerne er hentet uændret fra NOAA's åbne AWS-spejl. `data/nedboer.py`
+  danner `nedboer.bin` (12 × 144 × 72 uint16, gzippet 186 kB), som hentes
+  først ved tilvalg. Vilkår og kontroltal i `data/nedboer.LICENSE`.
+- **Tegning:** raster *over* landfladerne (`tegnFlade`, nyt i `globus.js`);
+  kystlinjen tegnes igen ovenpå, og musen fremhæver kun landets kant. Hver
+  pixels celle og vægte gemmes for den aktuelle projektion, så et
+  månedsskift kun farver om. Under et skift glider farverne 0,5 s (blandet i
+  gitteret); med `prefers-reduced-motion` skiftes der med det samme. Groft
+  under drejning, skarpt når kloden står stille.
+- **Klasser:** 10 klasser i mm pr. måned (0, 10, 25, 50, 75, 100, 150, 200,
+  300, 400), sand → grøn → blå → violet. Klassegrænserne tegnes som svage
+  linjer (isohyeter). Ækvator (hel) og vendekredsene (prikker) står ovenpå,
+  og en orange linje viser **solens zenitbredde** midt i måneden (Spencer
+  1971; kan slås fra), så ITK kan sammenlignes med solen.
+- **Aflæsning:** mm i måneden og på et år ved musen eller sigtekornet og et
+  lille søjlediagram over punktets 12 måneder (som nedbørssøjlerne i et
+  klimadiagram), den viste måned fremhævet.
+- **Udelukker** Havbund, Klimazoner og Temakort (de farver også fladerne);
+  Pladegrænser, Jordskælv og Vulkaner kan ligge ovenpå.
+- **Undersøg og kilde** (også under Processer): mønstret i tekst, ni
+  spørgsmål (ITK og solen, land/hav, monsun, Sahel, Lagos' to regntider,
+  ørkenbæltet, middelhavsklima mod Vahls maki, Bergen/København,
+  modelkritik af 2,5°-celler og satellitmåling), genvej til juli over Afrika
+  og Sydasien, og kilder.
+- **Lagrækken:** syv lag. 801–1400 px bruger de korte knapnavne, så rækken
+  bliver på én linje på skolelaptops; på mobil står lagene på to rækker (4 + 3).
+- Test: `node atlas/test/nedboer.mjs` (fil, nøgletal, kendte steder, ITK,
+  zenitbredde, projektion mod D3, overgang) og `test/nedboer.py` (fem skærme,
+  skyder, afspilning, zenitlinje, aflæsning, lagudelukkelse, dialog, fejl og
+  nyt forsøg) i `test/afproev.py`.
+
 ## Bjergarternes kredsløb (v442)
 
 Ny model på `/atlas/bjergarternes-kredsloeb/` (A7) med modelkort under emnet

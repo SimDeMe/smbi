@@ -430,9 +430,11 @@ function visProcesser() {
   seismikopgave.onclick = visSeismikopgave;
   const havbundsopgave = element('button', 'Undersøg havbundens alder', 'tilbage');
   havbundsopgave.onclick = visHavbundsopgave;
+  const nedboersopgave = element('button', 'Undersøg nedbøren måned for måned', 'tilbage');
+  nedboersopgave.onclick = visNedboersopgave;
   const temaopgave = element('button', 'Undersøg landene på temakort', 'tilbage');
   temaopgave.onclick = visTemaopgave;
-  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', seismikopgave, ' ', temaopgave);
+  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -565,6 +567,7 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(element('p', 'Træk i globussen med mus eller én finger for at dreje. Zoom med to fingre, knapperne +/− eller musehjulet, når globussen har fokus.'));
   indhold.append(element('p', 'Tryk på et land på globussen for at åbne landemenuen. Demografi viser befolkningspyramide, fødsels- og dødsrate og nøgletal som børnedødelighed og HDI fra FN. Klima viser hydrotermfigurer for udvalgte vejrstationer. Med Sammenlign ⇄ vælger du et land mere, som vises ved siden af med samme skala. Zoom ind, hvis landet er for lille at ramme. Med tastatur – og for meget små lande – skriver du landets navn i Søg.'));
   indhold.append(element('p', 'Klimazoner farver landene efter Vahls klimazoner og plantebælter eller efter Köppen – vælg i signaturen. Feltet under farverne viser klassen ved musen, eller midt på globussen ved sigtekornet, når du drejer med piletasterne. Laget kan vises sammen med pladegrænserne.'));
+  indhold.append(element('p', 'Nedbør farver hele kloden – hav og land – efter den gennemsnitlige nedbør i hver måned (1991–2020). Flyt skyderen, eller tryk Afspil for at se mønstret flytte sig gennem året. Den orange linje viser, hvor solen står i zenit. Søjlerne i signaturen viser året ved musen eller midt på globussen.'));
   indhold.append(element('p', 'Havbund farver havbunden efter alder: rød er dannet ved spredningsryggene inden for de seneste 20 mio. år, violet er ældst. Vælg en profil i signaturen – eller tegn din egen med to tryk på kloden – og flyt markøren på grafen for at måle, hvor hurtigt havbunden har bevæget sig væk fra ryggen.'));
   indhold.append(element('p', 'Jordskælv viser skælv med magnitude 5 eller mere siden 1976, farvet efter dybde; Vulkaner viser vulkaner med udbrud inden for de seneste ca. 11 700 år. Vis dem sammen med pladegrænserne, og brug aflæsningen i signaturen til at se det enkelte skælv eller den enkelte vulkan.'));
   indhold.append(element('p', 'Danmark har også et landekort: vælg Landekort i Danmarks menu eller under Steder. På landekortet flytter træk og piletaster kortet; zoom og Nulstil virker her også. Vælg ← Globus eller Escape for at vende tilbage til din tidligere globusvisning.'));
@@ -573,7 +576,7 @@ document.querySelector('#hjaelp').onclick = () => {
   indhold.append(lavInformation({
     navn: 'Globussen', overskrift: 'Om kortet',
     introduktion: 'Oversigtskort – ikke aktuelle vejr- eller klimadata. Pladegrænse- og klimalagene er modeller.',
-    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde. Jordskælv er fra USGS og vulkaner fra Smithsonian GVP; se Jordskælv → Undersøg og kilde. Havbundens alder er en rekonstruktion efter Seton m.fl. (2020); se Havbund → Undersøg og kilde.'
+    tekst: 'Lande og kyster: Natural Earth, forenklet til 1:110 mio. via world-atlas 2.0.2. Grænser er orientering, ikke en stillingtagen til omstridte områder. Globussen viser ikke aktuelle vejr- eller klimadata. Det valgfrie pladegrænselag bygger på Birds model PB2002 fra 2003; kilden står under Pladegrænser → Undersøg og kilde. Klimazonelaget viser klimanormaler for 1991–2020 efter Beck m.fl. (2023); se Klimazoner → Undersøg og kilde. Jordskælv er fra USGS og vulkaner fra Smithsonian GVP; se Jordskælv → Undersøg og kilde. Havbundens alder er en rekonstruktion efter Seton m.fl. (2020); se Havbund → Undersøg og kilde. Nedbørslaget er en klimanormal for 1991–2020 efter GPCP v2.3 (Adler m.fl. 2018); se Nedbør → Undersøg og kilde.'
   }));
 };
 
@@ -843,6 +846,81 @@ function visHavbundsopgave() {
   indhold.append(visOevelser(oevelserTil('opgaver', 'plade')));
 }
 
+const NEDBOERKILDE = 'Data: GPCP Monthly Version 2.3 (Global Precipitation Climatology Project), NOAA Climate Data Record. Adler, R. F., Sapiano, M. R. P., Huffman, G. J. m.fl. (2018), The Global Precipitation Climatology Project (GPCP) Monthly Analysis (New Version 2.3) and a Review of 2017 Global Precipitation, Atmosphere 9(4), 138, doi:10.3390/atmos9040138. Dataserien: Adler, R., Sapiano, M., Wang, J.-J. & NOAA CDR Program (2016), NOAA Climate Data Record (CDR) of Precipitation – GPCP Monthly, Version 2.3, NOAA NCEI, doi:10.7289/V56971M6. Data er offentlige og må bruges uden begrænsninger; atlassets kopi er hentet fra NOAA’s åbne spejl på Amazon Web Services (noaa-cdr-precip-gpcp-monthly-pds). ' +
+  'Sådan er nedbøren målt: Over land bruges målinger fra tusindvis af regnmålere, samlet af GPCC (Tysklands vejrtjeneste). Over havet og i områder uden stationer beregnes nedbøren fra satellitter: mikrobølger fra skyernes regndråber og iskrystaller og infrarøde målinger af kolde skytoppe. Satellitværdierne justeres efter regnmålerne, hvor de findes. Regnmålere fanger for lidt nedbør i blæst og som sne; GPCP korrigerer for det, så tallene for fx Danmark er lidt højere end DMI’s målte normaler (ca. 760 mm på et år for landet som helhed). ' +
+  'Bearbejdning til atlasset: For hver kalendermåned er de 30 år 1991–2020 lagt sammen til et gennemsnit (en klimanormal, samme periode som Klimazoner) og regnet om fra mm pr. døgn til mm pr. måned. Hver celle er 2,5° × 2,5° – ca. 280 km ved ækvator – og værdien er et gennemsnit for hele cellen. Kortet og aflæsningen glider (interpolerer) mellem cellernes midtpunkter. Derfor ses små ørkener ved kysten, regnskygger bag bjerge og meget våde bjergskråninger ikke: Fx blandes Atacamaørkenen med det fugtigere Andes, og Mumbai med det tørre indland. Under et månedsskift glider farverne over et halvt sekund; tallene er altid månedens egne. ' +
+  'Solens zenitbredde er beregnet for den 15. i måneden (Spencer 1971). Farverne er 10 klasser i mm pr. måned, valgt så grænserne passer med klimadiagrammer.';
+
+function visNedboersopgave() {
+  aabn('Undersøg nedbøren måned for måned');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå laget Nedbør til. Flyt månedsskyderen, eller tryk Afspil for at se et helt år. Aflæsningen viser nedbøren ved musen eller midt på globussen ved sigtekornet, og søjlerne viser punktets år – som nedbørssøjlerne i et klimadiagram.'));
+  const tekst = element('details', '', 'pladeoversigt');
+  tekst.open = !globus;
+  tekst.append(element('summary', 'Mønstret i tekst'));
+  const punkter = element('ul');
+  for (const linje of [
+    'Et bælte med meget nedbør (over 200 mm pr. måned) går rundt om Jorden nær ækvator: den intertropiske konvergenszone (ITK). Over Atlanterhavet og Stillehavet ligger det hele året lidt nord for ækvator (ca. 3–9° N).',
+    'Over kontinenterne flytter bæltet sig langt med solen: Over Afrika ligger det ca. 13° S i januar og 11° N i juli–august; over Sydasien flytter det fra syd for ækvator til ca. 20° N i juli–august (monsunen). Det følger solens zenitstand en til to måneder forsinket.',
+    'Ved ca. 15–30° nord og syd ligger de store ørkener: Sahara, Arabien, Kalahari og Namib, Australien og Atacama. De får under 10 mm i de fleste måneder.',
+    'Middelhavet, Californien, Chile og Sydvestaustralien får regn om vinteren og er tørre om sommeren.',
+    'På 40–60° bredde regner det hele året, mest over havet og på vestkysterne. Bergen får over 200 mm i vintermånederne, Danmark 50–90 mm i hver måned med mest i sensommeren og efteråret.',
+    'Steder i troperne har tydelige regn- og tørtider: Niamey (Niger) får næsten al nedbør i juni–september, Darwin (Australien) i december–marts, og Lagos (Nigeria) har to regntider med en pause i august.'
+  ]) punkter.append(element('li', linje));
+  tekst.append(punkter);
+  indhold.append(tekst, element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Afspil et helt år. Beskriv, hvordan bæltet med meget nedbør ved ækvator flytter sig. Sammenlign med den orange linje, der viser, hvor solen står i zenit. Hvorfor følger regnen solen – og hvorfor er den lidt forsinket?',
+    'Bæltet flytter sig meget mere over Afrika og Sydasien end over Atlanterhavet og Stillehavet. Hvad er forskellen på, hvordan land og hav opvarmes?',
+    'Find Indien i januar og i juli. Beskriv forskellen, og forklar monsunen med vindenes retning og havets og landets temperatur.',
+    'Følg Sahel lige syd for Sahara (fx Niamey) gennem året. Hvor mange måneder får over 50 mm? Hvad betyder regntidens længde for landbruget – og hvad sker der, hvis ITK et år ikke når så langt nordpå?',
+    'Lagos ved Guineabugten har to regntider. Brug solens zenitstand til at forklare hvorfor.',
+    'Hvorfor er der ørkener omkring 20–30° nord og syd – også i månederne, hvor solen står højt? Brug den globale atmosfæriske cirkulation (Hadley-cellen) i din forklaring.',
+    'Sammenlign Rom og København. Hvornår regner det mest hvert sted? Slå Klimazoner (Vahl) til, og find maki. Hvordan hænger tør sommer og regnfuld vinter sammen med højtrykket, der flytter sig nordpå om sommeren?',
+    'Find Danmark og Norges vestkyst i januar. Hvorfor får Bergen så meget mere nedbør end København? Brug vestenvinden, fronter og stigningsregn i din forklaring.',
+    'Modelkritik: Hver celle er ca. 280 km bred, og tallet er et gennemsnit for hele cellen. Hvorfor viser kortet nedbør i Atacamaørkenen, som er en af de tørreste steder på Jorden? Hvordan kan man måle nedbør midt på havet, hvor der ingen regnmålere er?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus) {
+    const find = element('button', 'Vis Afrika og Sydasien i juli med nedbør', 'tilbage');
+    find.onclick = async () => {
+      tilbageTilGlobus(false);
+      senesteFokus = document.querySelector('#nedboerspil');
+      dialog.close();
+      await nedboerlaget.slaaTil();
+      nedboerstyring?.visMaaned(6);
+      globus.visUdsnit([45, 8], 1);
+      document.querySelector('#nedboerspil').focus({ preventScroll: true });
+    };
+    indhold.append(find);
+  }
+  indhold.append(lavInformation({
+    navn: 'Nedbør måned for måned', overskrift: 'Om data',
+    introduktion: 'GPCP v2.3: satellitter og regnmålere, gennemsnit for 1991–2020 i celler på 2,5° (ca. 280 km).',
+    tekst: NEDBOERKILDE
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [
+    ['Adler m.fl. (2018)', 'https://doi.org/10.3390/atmos9040138'],
+    ['GPCP v2.3 (datasæt)', 'https://doi.org/10.7289/V56971M6'],
+    ['NOAA’s klimadataserier (CDR)', 'https://www.ncei.noaa.gov/products/climate-data-records/atmospheric'],
+    ['Data på AWS', 'https://registry.opendata.aws/noaa-cdr-atmospheric/']
+  ]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn);
+    link.href = url;
+    kilder.append(link);
+  }
+  indhold.append(kilder);
+  indhold.append(element('h3', 'Undersøg processerne i en model', 'underoverskrift'));
+  indhold.append(visModeller(modeller.filter(model => ['stigningsregn', 'drivhus-enkel'].includes(model.id))));
+  indhold.append(visOevelser(oevelserTil('opgaver', 'klima')));
+}
+
 function visPladeopgave() {
   aabn('Undersøg pladegrænserne');
   const tilbage = element('button', '← Processer', 'tilbage');
@@ -1014,6 +1092,9 @@ function opdaterPladebeskrivelse() {
   if (!landAktivt && document.querySelector('#havbundlag').getAttribute('aria-pressed') === 'true') {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser havbundens alder efter Seton m.fl. 2020 i klasser på 20 mio. år; aflæsningen under signaturen viser alderen midt på globussen. ${havbundsprofil?.beskrivelse() || ''}`);
   }
+  if (!landAktivt && nedboerknap.getAttribute('aria-pressed') === 'true' && nedboerstyring) {
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. ${nedboerstyring.beskrivelse()}; aflæsningen under signaturen viser nedbøren midt på globussen`);
+  }
   // Knappen er først trykket, når temakort.js er hentet.
   if (!landAktivt && document.querySelector('#temalag').getAttribute('aria-pressed') === 'true') {
     const ind = temamodul.indikator();
@@ -1113,6 +1194,7 @@ const klimalaget = lavLag({
   async vis(system) {
     // Klimazoner og temakort farver begge landfladerne; kun ét ad gangen.
     if (system && temalaget.aktiv) await temalaget.skift(null);
+    if (system && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
     if (system) { klimasystem = system; tegnKlimasignatur(modul); }
   },
@@ -1153,11 +1235,33 @@ const havbundlaget = lavLag({
   fejltekst: 'Havbundens alder kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
     havbundmodul ??= await import('./havbundsalder.js');
+    if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     if (!vis) havbundsprofil?.sluk();
     await globus.visTemalag('havbund', vis ? havbundmodul : null);
     if (vis && !havbundsprofil) {
       const { startProfil } = await import('./havbundsprofil.js');
       havbundsprofil = startProfil({ globus, modul: havbundmodul, opdateret: opdaterPladebeskrivelse });
+    }
+  },
+  efter: opdaterPladebeskrivelse
+});
+// Nedbør måned for måned: raster over hav og land med månedsskyder og afspilning.
+// Det dækker både havbund, klimazoner og temakort, så kun ét af dem vises ad gangen.
+const nedboerknap = document.querySelector('#nedboerlag');
+let nedboermodul, nedboerstyring;
+const nedboerlaget = lavLag({
+  knap: nedboerknap, signatur: document.querySelector('#nedboersignatur'), klasse: 'nedboerlag',
+  fejltekst: 'Nedbørsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    nedboermodul ??= await import('./nedboer.js');
+    if (vis) {
+      await nedboermodul.hent();
+      for (const lag of [havbundlaget, klimalaget, temalaget]) if (lag.aktiv) await lag.skift(null);
+    } else nedboerstyring?.stop();
+    await globus.visTemalag('nedboer', vis ? nedboermodul : null);
+    if (vis && !nedboerstyring) {
+      const { startNedboer } = await import('./nedboerstyring.js');
+      nedboerstyring = startNedboer({ globus, modul: nedboermodul, opdateret: opdaterPladebeskrivelse });
     }
   },
   efter: opdaterPladebeskrivelse
@@ -1228,6 +1332,7 @@ const temalaget = lavLag({
   fejltekst: 'Landedata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
     if (vis && klimalaget.aktiv) await klimalaget.skift(null);
+    if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     temamodul ??= await import('./temakort.js');
     await globus.visTemakort(vis ? temamodul : null);
     if (vis) tegnTemasignatur();
@@ -1332,6 +1437,7 @@ document.querySelector('#vulkanopgave').onclick = visSeismikopgave;
 document.querySelector('#klimaopgave').onclick = visKlimaopgave;
 document.querySelector('#pladeopgave').onclick = visPladeopgave;
 document.querySelector('#havbundopgave').onclick = visHavbundsopgave;
+document.querySelector('#nedboeropgave').onclick = visNedboersopgave;
 
 const globusknapper = [...document.querySelectorAll('[data-drej], #zoom-ind, #zoom-ud, #nulstil')];
 globusknapper.forEach(knap => { knap.disabled = true; });

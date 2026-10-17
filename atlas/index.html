@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v444</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v445</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -58,6 +58,7 @@
           <button id="pladelag" class="lagknap" aria-label="Pladegrænser" aria-pressed="false" aria-controls="signatur" disabled><span class="ikon" aria-hidden="true">◬</span> <span class="lang">Pladegrænser</span><span class="kort" aria-hidden="true">Plader</span></button>
           <button id="havbundlag" class="lagknap" aria-label="Havbundens alder" aria-pressed="false" aria-controls="havbundsignatur" disabled><span class="ikon" aria-hidden="true">▥</span> <span class="lang">Havbund</span><span class="kort" aria-hidden="true">Havbund</span></button>
           <button id="klimalag" class="lagknap" aria-label="Klimazoner" aria-pressed="false" aria-controls="klimasignatur" disabled><span class="ikon" aria-hidden="true">☼</span> <span class="lang">Klimazoner</span><span class="kort" aria-hidden="true">Klima</span></button>
+          <button id="nedboerlag" class="lagknap" aria-label="Nedbør måned for måned" aria-pressed="false" aria-controls="nedboersignatur" disabled><span class="ikon" aria-hidden="true">☂</span> <span class="lang">Nedbør</span><span class="kort" aria-hidden="true">Nedbør</span></button>
           <button id="skaelvlag" class="lagknap" aria-label="Jordskælv" aria-pressed="false" aria-controls="skaelvsignatur" disabled><span class="ikon" aria-hidden="true">≈</span> <span class="lang">Jordskælv</span><span class="kort" aria-hidden="true">Skælv</span></button>
           <button id="vulkanlag" class="lagknap" aria-label="Vulkaner" aria-pressed="false" aria-controls="vulkansignatur" disabled><span class="ikon" aria-hidden="true">▲</span> <span class="lang">Vulkaner</span><span class="kort" aria-hidden="true">Vulkan</span></button>
           <button id="temalag" class="lagknap" aria-label="Temakort over lande" aria-pressed="false" aria-controls="temasignatur" disabled><span class="ikon" aria-hidden="true">▦</span> <span class="lang">Temakort</span><span class="kort" aria-hidden="true">Tema</span></button>
@@ -118,6 +119,25 @@
           <button id="profilpunkter" class="opgaveknap" hidden>Vælg nye punkter A og B</button>
         </div>
         <p class="signaturnote lagstatus" role="status" hidden></p>
+      </section>
+      <section id="nedboersignatur" class="signatur nedboersignatur" aria-labelledby="nedboertitel" hidden>
+        <h2 id="nedboertitel">Nedbør i <span id="nedboermaaned">januar</span></h2>
+        <div class="maanedsvalg">
+          <button id="nedboerspil" class="spilknap" aria-pressed="false"><span aria-hidden="true">▶</span> Afspil</button>
+          <div class="maanedsskyder">
+            <input id="nedboerskyder" type="range" min="0" max="11" step="1" value="0" aria-label="Måned" aria-valuetext="januar">
+            <div class="maanedsbogstaver" aria-hidden="true"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>
+          </div>
+        </div>
+        <div id="nedboerskala" class="alderskala nedboerskala" aria-hidden="true"></div>
+        <p class="signaturnote alderenhed"><span>mm pr. måned</span><label class="zenitvalg"><input id="nedboerzenit" type="checkbox" checked> <i aria-hidden="true"></i>Solen i zenit</label></p>
+        <p class="signaturnote nedboernote">Middel 1991–2020 (GPCP: satellit og regnmålere). Hel linje: ækvator, prikker: vendekredse.</p>
+        <div class="klimaaflaesning nedboeraflaesning">
+          <p id="nedboeraflaesning"></p>
+          <svg id="nedboerdiagram" viewBox="0 0 264 52" aria-hidden="true"></svg>
+        </div>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="nedboeropgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
       </section>
       </div>
       <div class="signaturer hoejre">

@@ -1,0 +1,43 @@
+Nedbør måned for måned: nedboer.bin er bearbejdet fra GPCP Monthly Version 2.3.
+
+Dataserie: Adler, R., Sapiano, M., Wang, J.-J. & NOAA CDR Program (2016),
+NOAA Climate Data Record (CDR) of Precipitation – GPCP Monthly, Version 2.3,
+NOAA National Centers for Environmental Information (NCEI),
+https://doi.org/10.7289/V56971M6 (hentet 17. oktober 2026, måned 1991-01 til
+2020-12).
+Artikel: Adler, R. F., Sapiano, M. R. P., Huffman, G. J., Wang, J.-J., Gu, G.,
+Bolvin, D., Chiu, L., Schneider, U., Becker, A., Nelkin, E., Xie, P.,
+Ferraro, R. & Shin, D.-B. (2018), The Global Precipitation Climatology Project
+(GPCP) Monthly Analysis (New Version 2.3) and a Review of 2017 Global
+Precipitation, Atmosphere 9(4), 138, https://doi.org/10.3390/atmos9040138
+
+Hentning: NOAA's egne servere (psl.noaa.gov, ncei.noaa.gov) kunne ikke nås fra
+arbejdsmiljøet (netværkspolitik). Filerne er hentet uændret fra NOAA's åbne
+spejl i NOAA Open Data Dissemination (NODD) på Amazon Web Services:
+  s3://noaa-cdr-precip-gpcp-monthly-pds/data/<år>/gpcp_v02r03_monthly_d<år><måned>_c<dato>.nc
+  https://registry.opendata.aws/noaa-cdr-atmospheric/
+360 filer (én pr. måned), 2,5° × 2,5°, mm/døgn, ingen manglende værdier.
+
+Vilkår: Filernes metadata siger «No constraints on data access or use», og
+NOAA CDR-programmets Use Agreement (documentation/UseAgreement_01B-34.pdf i
+samme bucket) siger, at CDR-data er «non-proprietary, publicly available, and
+no restrictions are placed upon their use». Programmet beder om kildeangivelse
+(dataserien ovenfor); den står med link i atlassets dialog «Undersøg nedbøren
+måned for måned».
+
+Bearbejdning (data/nedboer.py, kan gentages og giver samme fil):
+- For hver kalendermåned middel af de 30 år 1991–2020 i hver celle (klimanormal).
+- Omregnet fra mm/døgn til mm pr. måned med månedens middellængde (februar
+  28,25 døgn), afrundet til 0,1 mm og lagret som uint16. Rækker fra nord,
+  søjler fra -178,75° (cellemidter). Gzippet: 186 kB.
+- Intet er tilføjet, udglattet eller flyttet; atlasset interpolerer bilineært
+  mellem cellemidterne ved tegning og aflæsning.
+SHA-256 (nedboer.bin): 4442fc3e4979f35517962d30e68865c2c6dd4db54f1a4a29c5147a8ec04b47cb
+
+Kontroltal fra den bearbejdede fil: globalt arealvægtet middel 2,69 mm/døgn
+(983 mm/år; samme niveau som de ca. 2,7 mm/døgn, der angives for GPCP). Største
+månedsværdi 884 mm. Cellen over København: 50–95 mm hver måned, 933 mm/år –
+højere end DMI's målte normal, fordi GPCP korrigerer for regnmålernes
+underfangst i blæst, og fordi cellen (ca. 280 × 160 km) også dækker havet.
+Mumbai: 278–490 mm i juni–september, under 10 mm i december–april. Sahara
+(20° Ø, 22° N): 14 mm/år.

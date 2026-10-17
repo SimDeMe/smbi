@@ -16,6 +16,7 @@ from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
 from temakort import afproev_temakort, afproev_temafejl
 from havbund import afproev_havbund, afproev_havbundfejl, afproev_havbunddata
+from nedboer import afproev_nedboer, afproev_nedboerfejl, afproev_nedboerdata
 from island3d import afproev_island3d
 from islandsnit import afproev_islandsnit
 from island import afproev_island, afproev_islandbevaegelse, afproev_islandintegration, afproev_islandtouch, afproev_islandkort
@@ -92,6 +93,7 @@ with sync_playwright() as p:
         afproev_klimalag(side, UD)
         afproev_seismik(side, UD)
         afproev_havbund(side, UD)
+        afproev_nedboer(side, UD)
         afproev_temakort(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
@@ -142,15 +144,20 @@ with sync_playwright() as p:
     expect(side.locator('#pladepile')).to_be_enabled()
     side.keyboard.press('Escape')
     side.evaluate('scrollTo(0, 0)')
+    # Berøringspunkterne regnes fra globussens øverste kant, så de ikke rammer en
+    # stedmarkør, hvis lagrækken over globussen bliver højere eller lavere.
+    top = canvas.bounding_box()['y'] + 200
     foer = canvas.screenshot()
-    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':150,'y':460,'id':1}]})
-    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':230,'y':490,'id':1}]})
+    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':150,'y':top,'id':1}]})
+    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':230,'y':top + 30,'id':1}]})
     session.send('Input.dispatchTouchEvent', {'type':'touchEnd','touchPoints':[]})
     side.wait_for_timeout(100)
     assert canvas.screenshot() != foer
     side.get_by_role('button', name='Nulstil', exact=True).click()
-    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':130,'y':460,'id':1},{'x':240,'y':460,'id':2}]})
-    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':90,'y':460,'id':1},{'x':280,'y':460,'id':2}]})
+    # Nulstil ligger under folden og ruller siden; regn punkterne igen.
+    top = canvas.bounding_box()['y'] + 200
+    session.send('Input.dispatchTouchEvent', {'type':'touchStart','touchPoints':[{'x':130,'y':top,'id':1},{'x':240,'y':top,'id':2}]})
+    session.send('Input.dispatchTouchEvent', {'type':'touchMove','touchPoints':[{'x':90,'y':top,'id':1},{'x':280,'y':top,'id':2}]})
     session.send('Input.dispatchTouchEvent', {'type':'touchEnd','touchPoints':[]})
     side.wait_for_timeout(100)
     assert side.locator('#zoomniveau').inner_text() != '1,0×'
@@ -192,6 +199,9 @@ with sync_playwright() as p:
     afproev_havbunddata()
     afproev_havbundfejl(browser, ADRESSE)
     print('Havbundens alder: data, model, data-/modulfejl og nyt forsøg: OK')
+    afproev_nedboerdata()
+    afproev_nedboerfejl(browser, ADRESSE)
+    print('Nedbør: data, model, datafejl og nyt forsøg: OK')
     print('Klimalag: data, data-/modulfejl og nyt forsøg: OK')
     afproev_pladetilpasning(browser, ADRESSE)
     print('Skærmstørrelsesskift med pladelaget : OK')
