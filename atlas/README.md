@@ -125,6 +125,25 @@ ikke bekræftet** og bør læses i EarthBytes README.txt.
   projektion) og `test/havbund.py` (fem skærme, mus/touch/tastatur, egen
   profil, dialog, fejl og nyt forsøg) i `test/afproev.py`.
 
+## Klimaforandringer: temperaturstigning (v455)
+
+Laget **Temperaturstigning** viser NASA GISTEMP v4: afvigelse fra 1951–1980 i
+2° celler (land og hav, 1200 km udglatning), middel for hvert årti 1900–1909 …
+2010–2019 og 2020–2025. Dannes af `data/temperatur.py` til
+`data/temperatur.bin` (140 kB gzip), som nedbørslaget: raster over hav og land,
+geometrien gemmes pr. projektion, periodeskift farver kun om.
+
+- **Periodeskyder** med Afspil (et årti pr. 1,4 s, stopper i 2020–2025).
+- Divergerende skala (ColorBrewer RdBu) fra under −1 til over +3 °C; celler
+  med data i under halvdelen af månederne er grå (fx Arktis før 1950).
+- Signaturen viser det arealvægtede globale middel (ca. −0,3 °C i 1900'erne,
+  +1,1 °C i 2020–2025). Ækvator og polarcirklerne tegnes ovenpå.
+- Dækker hav og land og udelukker derfor nedbør, havbund, klimazoner og de
+  farvede landekort.
+- **Undersøg og kilde**: syv spørgsmål (Arktis og albedo, land/hav, forløb,
+  »the cold blob« og Grønlandspumpen, grundperiode, datakritik).
+- Kode: `temperatur.js`; test: `test/temperatur.py` i `test/afproev.py`.
+
 ## Klimaforandringer: nationale og forbrugsbaserede udledninger (v449)
 
 Ny lagkategori **Klimaforandringer** i lagmenuen med to lag, der farver

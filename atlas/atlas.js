@@ -437,9 +437,11 @@ function visProcesser() {
   nedboersopgave.onclick = visNedboersopgave;
   const temaopgave = element('button', 'Undersøg landene på temakort', 'tilbage');
   temaopgave.onclick = visTemaopgave;
+  const temperaturopgave = element('button', 'Undersøg temperaturstigningen', 'tilbage');
+  temperaturopgave.onclick = visTemperaturopgave;
   const udledningsopgave = element('button', 'Undersøg landenes CO₂-udledning', 'tilbage');
   udledningsopgave.onclick = visUdledningsopgave;
-  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', udledningsopgave);
+  indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', temperaturopgave, ' ', udledningsopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
   valg.setAttribute('aria-label', 'Filtrér efter proces');
@@ -1108,6 +1110,10 @@ function opdaterPladebeskrivelse() {
     const ind = temamodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Temakort: landene er farvet efter nøgletallet ${ind.navn} ${temamodul.aarFor(ind)}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
+  if (!landAktivt && temperaturmodul && temperaturlaget.aktiv) {
+    const m = temperaturmodul, i = m.tilstand.periode;
+    canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser temperaturafvigelsen ${m.periodenavn(i)} i forhold til ${m.GRUNDLAG} efter NASA GISTEMP; globalt middel ca. ${m.tekst(m.globaltMiddel(i))}. Aflæsningen under signaturen viser afvigelsen midt på globussen`);
+  }
   if (!landAktivt && cirkelmodul && cirkellaget.aktiv) {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Cirkler viser landenes samlede CO₂-udledning 1850–${cirkelmodul.valg.aar}; cirklens areal svarer til udledningen, og ranglisten findes under Undersøg`);
   }
@@ -1212,6 +1218,7 @@ const klimalaget = lavLag({
     if (system && temalaget.aktiv) await temalaget.skift(null);
     if (system && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     if (system) await slukUdledning();
+    if (system && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
     if (system) { klimasystem = system; tegnKlimasignatur(modul); }
   },
@@ -1253,6 +1260,7 @@ const havbundlaget = lavLag({
   async vis(vis) {
     havbundmodul ??= await import('./havbundsalder.js');
     if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
+    if (vis && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     if (!vis) havbundsprofil?.sluk();
     await globus.visTemalag('havbund', vis ? havbundmodul : null);
     if (vis && !havbundsprofil) {
@@ -1273,7 +1281,7 @@ const nedboerlaget = lavLag({
     nedboermodul ??= await import('./nedboer.js');
     if (vis) {
       await nedboermodul.hent();
-      for (const lag of [havbundlaget, klimalaget, temalaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
+      for (const lag of [havbundlaget, klimalaget, temalaget, temperaturlaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
     } else nedboerstyring?.stop();
     await globus.visTemalag('nedboer', vis ? nedboermodul : null);
     if (vis && !nedboerstyring) {
@@ -1351,6 +1359,7 @@ const temalaget = lavLag({
     if (vis && klimalaget.aktiv) await klimalaget.skift(null);
     if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     if (vis) await slukUdledning();
+    if (vis && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     temamodul ??= await import('./temakort.js');
     await globus.visTemakort(vis ? temamodul : null);
     if (vis) tegnTemasignatur();
@@ -1417,7 +1426,7 @@ function lavUdledningslag(opgoerelse, knap) {
       if (vis) {
         await udledningsmodul.hent();
         const andre = udledningslagene.filter(lag => lag.opgoerelse !== opgoerelse);
-        for (const lag of [klimalaget, nedboerlaget, temalaget, ...andre]) if (lag.aktiv) await lag.skift(null);
+        for (const lag of [klimalaget, nedboerlaget, temalaget, temperaturlaget, ...andre]) if (lag.aktiv) await lag.skift(null);
         udledningsmodul.valg.opgoerelse = opgoerelse;
       }
       await globus.visTemakort(vis ? udledningsmodul : null);
@@ -1444,6 +1453,130 @@ for (const felt of document.querySelectorAll('[name="udledningmaal"]')) {
     opdaterPladebeskrivelse();
   });
 }
+
+// Temperaturstigning årti for årti (temperatur.js): raster over hav og land som
+// nedbøren, derfor kun ét af de fladedækkende lag ad gangen.
+const temperaturknap = document.querySelector('#temperaturlag');
+let temperaturmodul, temperaturur = 0;
+function visPeriode(i) {
+  const m = temperaturmodul;
+  m.tilstand.periode = i;
+  const navn = m.periodenavn(i);
+  const skyder = document.querySelector('#temperaturskyder');
+  skyder.value = i; skyder.setAttribute('aria-valuetext', navn);
+  document.querySelector('#temperaturperiode').textContent = navn;
+  document.querySelector('#temperaturglobal').textContent = `Globalt middel ca. ${m.tekst(m.globaltMiddel(i))}. Hel linje: ækvator, prikker: polarcirklerne.`;
+  globus.gentegn(); globus.aflaes?.(); opdaterPladebeskrivelse();
+}
+function stopTemperatur() {
+  if (!temperaturur) return;
+  clearInterval(temperaturur); temperaturur = 0;
+  const spil = document.querySelector('#temperaturspil');
+  spil.setAttribute('aria-pressed', 'false');
+  spil.innerHTML = '<span aria-hidden="true">▶</span> Afspil';
+}
+function tegnTemperatursignatur() {
+  const m = temperaturmodul, d = m.hentede();
+  const skyder = document.querySelector('#temperaturskyder');
+  skyder.max = d.perioder.length - 1;
+  const skala = document.querySelector('#temperaturskala');
+  if (!skala.childElementCount) {
+    const felter = element('div', '', 'alderfelter');
+    felter.style.gridTemplateColumns = `repeat(${m.KLASSER.length},1fr)`;
+    for (const k of m.KLASSER) {
+      const i = element('i'); i.style.background = k.farve;
+      felter.append(i);
+    }
+    const tal = element('div', '', 'alderskalatal');
+    m.KLASSER.forEach((k, i) => {
+      // Kun nogle grænser får tal, så de ikke flyder sammen på smalle skærme.
+      if (![-.5, .5, 1, 2, 3].includes(k.fra)) return;
+      const span = element('span', `${k.fra > 0 ? '+' : k.fra < 0 ? '−' : ''}${Math.abs(k.fra).toLocaleString('da-DK')}`);
+      span.style.left = `${100 * i / m.KLASSER.length}%`;
+      tal.append(span);
+    });
+    tal.firstChild.style.transform = 'translateX(-50%)';
+    skala.append(felter, tal);
+    const aartal = document.querySelector('#temperaturaartal');
+    for (const [i, [fra]] of d.perioder.entries()) {
+      if (fra % 50 && i !== d.perioder.length - 1 || fra === 2000) continue;
+      const span = element('span', String(fra));
+      span.style.left = `${100 * i / (d.perioder.length - 1)}%`;
+      aartal.append(span);
+    }
+    document.querySelector('.temperatursignatur .alderenhed i').style.background = m.INGEN_DATA;
+  }
+  visPeriode(m.tilstand.periode);
+}
+const temperaturlaget = lavLag({
+  knap: temperaturknap, signatur: document.querySelector('#temperatursignatur'), klasse: 'temperaturlag',
+  fejltekst: 'Temperaturdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
+  async vis(vis) {
+    temperaturmodul ??= await import('./temperatur.js');
+    if (vis) {
+      await temperaturmodul.hent();
+      for (const lag of [havbundlaget, klimalaget, temalaget, nedboerlaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
+    } else stopTemperatur();
+    await globus.visTemalag('temperatur', vis ? temperaturmodul : null);
+    if (vis) tegnTemperatursignatur();
+  },
+  efter: opdaterPladebeskrivelse
+});
+document.querySelector('#temperaturskyder').addEventListener('input', event => {
+  stopTemperatur();
+  visPeriode(Number(event.target.value));
+});
+document.querySelector('#temperaturspil').onclick = () => {
+  const spil = document.querySelector('#temperaturspil');
+  if (temperaturur) { stopTemperatur(); return; }
+  const sidste = temperaturmodul.hentede().perioder.length - 1;
+  if (temperaturmodul.tilstand.periode === sidste) visPeriode(0);
+  spil.setAttribute('aria-pressed', 'true');
+  spil.innerHTML = '<span aria-hidden="true">❚❚</span> Pause';
+  temperaturur = setInterval(() => {
+    const i = temperaturmodul.tilstand.periode + 1;
+    visPeriode(Math.min(i, sidste));
+    if (i >= sidste) stopTemperatur();
+  }, 1400);
+};
+
+function visTemperaturopgave() {
+  aabn('Undersøg temperaturstigningen');
+  const tilbage = element('button', '← Processer', 'tilbage');
+  tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', 'Slå Lag → Klimaforandringer → Temperaturstigning til. Farven viser, hvor meget varmere (rød) eller koldere (blå) et årti var end gennemsnittet for 1951–1980. Flyt skyderen, eller tryk Afspil for at gå fra 1900 til i dag.'));
+  indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const spoergsmaal of [
+    'Sammenlign 1900–1909 og 2020–2025. Hvor meget er det globale middel steget? Hvor på Jorden er det blevet mest varmere, og hvor mindst?',
+    'Arktis opvarmes mere end dobbelt så hurtigt som resten af Jorden. Find det på kortet. Forklar med albedo: Hvad sker der, når havis og sne smelter? Brug gerne Havisens udbredelse.',
+    'Er land eller hav blevet mest varmere? Hvorfor opvarmes havet langsommere end landet?',
+    'Afspil fra 1900. Beskriv forløbet: Steg temperaturen jævnt? Sammenlign med udledningerne under Klimaforandringer – hvornår tog de for alvor fart?',
+    'Find det sydlige Grønland og havet syd for. Her er der næsten ikke blevet varmere – det kaldes »the cold blob«. Hvilken sammenhæng kan der være med Grønlandspumpen og den termohaline cirkulation?',
+    'Hvorfor sammenligner man med et gennemsnit (1951–1980) i stedet for med et enkelt år? Hvad betyder valget af grundperiode for tallene?',
+    'Datakritik: Hvorfor er der grå områder i de tidlige årtier? Hvordan kan man kende temperaturen midt på havet i 1910? Hvorfor bruges 1200 km udglatning?'
+  ]) liste.append(element('li', spoergsmaal));
+  indhold.append(liste);
+  if (globus && !temperaturlaget.aktiv) {
+    const vis = element('button', 'Slå temperaturstigningen til', 'tilbage');
+    vis.onclick = async () => { senesteFokus = temperaturknap; dialog.close(); await temperaturlaget.slaaTil(); };
+    indhold.append(vis);
+  }
+  indhold.append(lavInformation({
+    navn: 'Temperaturstigning', overskrift: 'Om data',
+    introduktion: 'NASA GISTEMP v4: temperaturafvigelse i 2° celler i forhold til 1951–1980, middel for hvert årti.',
+    tekst: 'GISTEMP Team (2026), GISS Surface Temperature Analysis (GISTEMP), version 4, NASA Goddard Institute for Space Studies; Lenssen m.fl. (2019), Improvements in the GISTEMP uncertainty model, Journal of Geophysical Research: Atmospheres 124. Vejrstationer på land (NOAA GHCN v4) og havoverfladens temperatur (NOAA ERSST v5) er samlet i 2° × 2° celler. Hver station påvirker celler op til 1200 km væk, så huller mellem stationerne fyldes ud. Tallene er afvigelser fra middel for 1951–1980 for samme sted; de siger, hvor meget varmere eller koldere end normalt der var, ikke hvor varmt der var. Hver periode er middel af alle måneder i årtiet (2020–2025: seks år). En celle med data i under halvdelen af månederne vises grå. Det globale middel er arealvægtet over cellerne med data og passer derfor ikke helt med NASA’s officielle tal i de tidlige årtier. Målt fra slutningen af 1800-tallet er opvarmningen ca. 0,3 °C større end fra 1951–1980. Farver: ColorBrewer (RdBu).'
+  }));
+  const kilder = element('p', '', 'metadata');
+  kilder.append('Kilder: ');
+  for (const [navn, url] of [['NASA GISTEMP v4', 'https://data.giss.nasa.gov/gistemp/'], ['Lenssen m.fl. 2019', 'https://doi.org/10.1029/2018JD029522']]) {
+    if (kilder.childElementCount) kilder.append(' · ');
+    const link = element('a', navn); link.href = url; kilder.append(link);
+  }
+  indhold.append(kilder);
+}
+document.querySelector('#temperaturopgave').onclick = visTemperaturopgave;
 
 // Samlet udledning siden 1850 som cirkler (udledningscirkler.js): et punktlag,
 // der kan ligge oven på de farvede kort.

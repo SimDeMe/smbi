@@ -32,7 +32,7 @@
     <div class="site-linje">
       <div class="site-identitet">
         <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
-        <span id="atlas-version" class="atlas-version" title="Atlasversion">v454</span>
+        <span id="atlas-version" class="atlas-version" title="Atlasversion">v455</span>
       </div>
       <a href="/geografi.html">Alle geografisimulationer →</a>
     </div>
@@ -191,6 +191,22 @@
         <p class="signaturnote lagstatus" role="status" hidden></p>
         <button id="udledningopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg, rangliste og kilde →</button>
       </section>
+      <section id="temperatursignatur" class="signatur nedboersignatur temperatursignatur" aria-labelledby="temperaturtitel" hidden>
+        <h2 id="temperaturtitel">Temperatur <span id="temperaturperiode">2020–2025</span></h2>
+        <div class="maanedsvalg">
+          <button id="temperaturspil" class="spilknap" aria-pressed="false"><span aria-hidden="true">▶</span> Afspil</button>
+          <div class="maanedsskyder">
+            <input id="temperaturskyder" type="range" min="0" max="12" step="1" value="12" aria-label="Periode" aria-valuetext="2020–2025">
+            <div id="temperaturaartal" class="alderskalatal" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div id="temperaturskala" class="alderskala" aria-hidden="true"></div>
+        <p class="signaturnote alderenhed"><span>°C i forhold til 1951–1980</span><span><i></i>ingen data</span></p>
+        <p id="temperaturglobal" class="signaturnote"></p>
+        <p id="temperaturaflaesning" class="klimaaflaesning"></p>
+        <p class="signaturnote lagstatus" role="status" hidden></p>
+        <button id="temperaturopgave" class="opgaveknap" aria-haspopup="dialog">Undersøg og kilde →</button>
+      </section>
       <section id="cirkelsignatur" class="signatur cirkelsignatur" aria-labelledby="cirkeltitel" hidden>
         <h2 id="cirkeltitel">Samlet CO₂ siden 1850</h2>
         <div class="systemvalg maalvalg" role="radiogroup" aria-label="Kilder">
@@ -254,6 +270,7 @@
     <details id="lag-klimaforandringer" class="laggruppe">
       <summary><span class="laggruppe-ikon" aria-hidden="true">⇡</span><span><b>Klimaforandringer</b><small>Landenes udledning af CO₂ og andre drivhusgasser</small></span><span class="gruppe-antal" hidden></span></summary>
       <div class="laggruppe-indhold">
+        <button id="temperaturlag" class="lagknap" aria-label="Temperaturstigning" aria-pressed="false" aria-controls="temperatursignatur" disabled><span><b>Temperaturstigning</b><small>Årti for årti siden 1900 – hvor bliver det varmest?</small></span></button>
         <button id="nationallag" class="lagknap" aria-label="Nationale udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Nationale udledninger</b><small>CO₂ udledt inden for landets grænser</small></span></button>
         <button id="forbrugslag" class="lagknap" aria-label="Forbrugsbaserede udledninger" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Forbrugsbaserede udledninger</b><small>CO₂ fra det, landets indbyggere forbruger</small></span></button>
         <button id="drivhusgaslag" class="lagknap" aria-label="Alle drivhusgasser" aria-pressed="false" aria-controls="udledningsignatur" disabled><span><b>Alle drivhusgasser</b><small>CO₂, metan og lattergas – også fra skovrydning</small></span></button>

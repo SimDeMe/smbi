@@ -1,0 +1,20 @@
+temperatur.bin
+==============
+
+Dannet med `python -I atlas/data/temperatur.py` (17. oktober 2026) fra
+gistemp1200_GHCNv4_ERSSTv5.nc (sidst ændret 8. oktober 2026, data til og med
+september 2026; kun hele år til og med 2025 bruges).
+
+GISTEMP Team (2026): GISS Surface Temperature Analysis (GISTEMP), version 4.
+NASA Goddard Institute for Space Studies. https://data.giss.nasa.gov/gistemp/
+  https://data.giss.nasa.gov/pub/gistemp/gistemp1200_GHCNv4_ERSSTv5.nc.gz
+Lenssen, N., Schmidt, G., Hansen, J., Menne, M., Persin, A., Ruedy, R. &
+Zyss, D. (2019), Improvements in the GISTEMP uncertainty model, J. Geophys.
+Res. Atmos. 124(12), 6307–6326, https://doi.org/10.1029/2018JD029522
+
+NASA-data er offentligt tilgængelige uden ophavsretlige begrænsninger; NASA
+beder om kildeangivelse som ovenfor.
+
+Indhold: middel af de månedlige afvigelser fra 1951–1980 for hvert årti
+1900–1909 … 2010–2019 og for 2020–2025, 2° × 2° celler, 1200 km udglatning.
+Celler med tal i under halvdelen af periodens måneder er uden data.

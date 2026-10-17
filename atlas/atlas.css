@@ -296,3 +296,9 @@ body.nedboerlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}
 .cirkelskala circle{fill:#9e1b3233;stroke:#9e1b32;stroke-width:1}
 .cirkelskala text{font:500 11px var(--mono);fill:var(--ink)}
 .cirkelskala line{stroke:#17211f80;stroke-dasharray:2 2}
+/* Temperaturstigning: periodeskyder og skala som nedbørslaget. */
+.temperatursignatur .alderskalatal{margin-top:2px}
+.temperatursignatur .alderskalatal span:last-child{transform:translateX(-100%)}
+#temperaturperiode{font-size:16px}
+body.temperaturlag .globusnote{display:none}
+body.temperaturlag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75}

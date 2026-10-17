@@ -18,6 +18,7 @@ from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
 from temakort import afproev_temakort, afproev_temafejl
 from udledning import afproev_udledning, afproev_udledningsfejl, afproev_cirkler
+from temperatur import afproev_temperatur, afproev_temperaturfejl
 from havbund import afproev_havbund, afproev_havbundfejl, afproev_havbunddata
 from nedboer import afproev_nedboer, afproev_nedboerfejl, afproev_nedboerdata, afproev_nedboerglat
 from island3d import afproev_island3d
@@ -101,6 +102,7 @@ with sync_playwright() as p:
         afproev_temakort(side, UD)
         afproev_udledning(side, UD)
         afproev_cirkler(side, UD)
+        afproev_temperatur(side, UD)
         foer = canvas.screenshot()
         canvas.focus()
         side.keyboard.press('ArrowRight')
@@ -211,6 +213,7 @@ with sync_playwright() as p:
     afproev_seismikfejl(browser, ADRESSE)
     afproev_temafejl(browser, ADRESSE)
     afproev_udledningsfejl(browser, ADRESSE)
+    afproev_temperaturfejl(browser, ADRESSE)
     afproev_havbunddata()
     afproev_havbundfejl(browser, ADRESSE)
     print('Havbundens alder: data, model, data-/modulfejl og nyt forsøg: OK')
