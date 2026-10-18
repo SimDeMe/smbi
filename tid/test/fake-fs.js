@@ -150,7 +150,16 @@ async function bekraeft(fejlkode = null) {
   vaekKoe(); notify();
 }
 export async function addDoc(col, data) { const r = doc(col); await skriv([[r.path, resolve(data)]]); return r; }
-export async function setDoc(ref, data, opt) { await skriv([[ref.path, opt?.merge ? { ...(store.get(ref.path) || {}), ...resolve(data) } : resolve(data)]]); }
+// Som Firestore: merge fletter undermapper dybt, mergeFields erstatter de
+// nævnte felter helt. Ellers kan en test ikke se, at et ryddet felt bliver.
+const mappe = v => v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Timestamp);
+const dybFlet = (a, b) => Object.fromEntries([...new Set([...Object.keys(a), ...Object.keys(b)])]
+  .map(k => [k, !(k in b) ? a[k] : mappe(a[k]) && mappe(b[k]) ? dybFlet(a[k], b[k]) : b[k]]));
+function flet(gammel, data, opt) {
+  if (opt?.mergeFields) return { ...gammel, ...Object.fromEntries(opt.mergeFields.map(f => [f, data[f]])) };
+  return opt?.merge ? dybFlet(gammel, data) : data;
+}
+export async function setDoc(ref, data, opt) { await skriv([[ref.path, flet(store.get(ref.path) || {}, resolve(data), opt)]]); }
 export async function updateDoc(ref, data) { if (!store.has(ref.path)) throw new Error('no doc ' + ref.path); await skriv([[ref.path, { ...store.get(ref.path), ...resolve(data) }]]); }
 export async function deleteDoc(ref) { await skriv([[ref.path, null]]); }
 export function writeBatch() {

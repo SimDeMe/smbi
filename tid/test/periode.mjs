@@ -253,6 +253,23 @@ const timer = l => { const m = l.match(/Optjent (\d+)t(?: (\d+)m)?|Optjent (\d+)
   await page.context().close();
 }
 
+// ── En ryddet dato slettes på serveren, og favoritterne bliver ──
+{
+  const fav = [{ activityId: 'a0', workType: null }];
+  const page = await side(browser, { seed: [['users/u1/settings/config', { ...settings[1],
+    periodeDatoer: { '2026/27': { gfSlut: '2026-11-06', srStart: '2026-11-09', eksamenFra: '2026-05-20' } }, hurtigstartFavoritter: fav }],
+    act('a0', 'Findes i forvejen')] });
+  await page.click('.nav-btn[data-view="indstillinger"]'); await page.waitForTimeout(300);
+  ok(await page.inputValue('#cfg-eksamenfra') === '2026-05-20', 'den gemte eksamensdato står der');
+  await page.fill('#cfg-eksamenfra', ''); await page.click('#cfg-save-btn'); await page.waitForTimeout(400);
+  ok((await page.textContent('#toast')).includes('Indstillinger gemt'), 'indstillingerne gemmes');
+  const gemt = await page.evaluate(() => window.__fs.store.get('users/u1/settings/config'));
+  ok(!('eksamenFra' in (gemt.periodeDatoer?.['2026/27'] || {})) && gemt.periodeDatoer?.['2026/27']?.gfSlut === '2026-11-06',
+    'den ryddede dato er væk, den anden bevaret: ' + JSON.stringify(gemt.periodeDatoer));
+  ok(JSON.stringify(gemt.hurtigstartFavoritter) === JSON.stringify(fav), 'favoritterne overskrives ikke af indstillingerne');
+  await page.context().close();
+}
+
 // ── Import og kopi til næste år ──
 {
   const page = await side(browser, { seed: [settings, act('a0', 'Findes i forvejen')] });

@@ -1,4 +1,4 @@
-const CACHE = 'tid-v68';
+const CACHE = 'tid-v69';
 const SHELL = [
   '/tid/',
   '/tid/index.html',

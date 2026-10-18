@@ -404,8 +404,10 @@ async function saveSettings() {
   try {
     // Forsidens favoritter har deres egen lytter og må ikke overskrives af
     // indstillingsformularens ældre kopi, heller ikke fra en anden enhed.
+    // mergeFields erstatter hvert felt helt; merge ville flette mapper dybt,
+    // så en ryddet periodedato blev liggende på serveren.
     const { hurtigstartFavoritter, ...tilGem } = updated;
-    await setDoc(doc(db, `users/${userId}/settings/config`), tilGem, { merge: true });
+    await setDoc(doc(db, `users/${userId}/settings/config`), tilGem, { mergeFields: Object.keys(tilGem) });
     settings = updated;
     updateTopYear();
     showToast('Indstillinger gemt');
