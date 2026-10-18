@@ -38,10 +38,15 @@ const seed = [settings, act('a1', 'SRP'), act('a2', 'Retning', { color: '#E8336D
   post('e5', 'a2', kl(12), kl(13))];
 
 // Hvilken blok rammer et klik midt i blokkens synlige del?
-const rammer = (page, id) => page.$eval(`.kal-block[data-id="${id}"]`, b => {
-  const r = b.getBoundingClientRect();
-  return document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height, 10) / 2)?.closest('.kal-block')?.dataset.id;
-});
+const rammer = async (page, id) => {
+  // Navigationen ligger fast oven på bunden af scrolleområdet. Centrér
+  // blokken, så koordinatklikket rammer kalenderen og ikke bundmenuen.
+  await page.locator(`.kal-block[data-id="${id}"]`).evaluate(b => b.scrollIntoView({ block: 'center' }));
+  return page.$eval(`.kal-block[data-id="${id}"]`, b => {
+    const r = b.getBoundingClientRect();
+    return document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height, 10) / 2)?.closest('.kal-block')?.dataset.id;
+  });
+};
 
 const browser = await chromium.launch();
 
@@ -117,7 +122,10 @@ const browser = await chromium.launch();
 
   // Snap: e5 (12:00–13:00) trækkes 38 min op — starten snapper til e4's slutning 11:20
   const tid = id => page.evaluate(id => { const d = window.__fs.store.get('users/u1/entries/' + id); return [d.startTime.toDate().toTimeString().slice(0, 8), d.endTime.toDate().toTimeString().slice(0, 8)]; }, id);
-  const midt = id => page.$eval(`.kal-block[data-id="${id}"]`, b => { const r = b.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  const midt = async id => {
+    await page.locator(`.kal-block[data-id="${id}"]`).evaluate(b => b.scrollIntoView({ block: 'center' }));
+    return page.$eval(`.kal-block[data-id="${id}"]`, b => { const r = b.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  };
   let m = await midt('e5');
   await page.mouse.move(m.x, m.y); await page.mouse.down();
   await page.mouse.move(m.x, m.y - 38 * pxTime / 60, { steps: 6 });

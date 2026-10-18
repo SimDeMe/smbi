@@ -24,7 +24,7 @@ import {
 } from './periode.js';
 import {
   collection, query, orderBy, where, limit, onSnapshot, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 // ─── State ────────────────────────────────────────────────
 let userId       = null;
@@ -44,6 +44,7 @@ const slut  = () => periodeSlut(periodFilter, periodOffset);
 // ─── Init ─────────────────────────────────────────────────
 export function initRapporterView(uid) {
   if (userId === uid) return;
+  unsubEntries?.(); unsubEntries = null; entries = [];
   userId = uid;
   bindListeners();
 }

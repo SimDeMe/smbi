@@ -17,7 +17,7 @@ import { openSheet, closeSheet } from './ark.js';
 import { esc } from './format.js';
 import {
   collection, doc, getDoc, getDocs, writeBatch, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 const FORMAT         = 'tid-backup';
 const FORMAT_VERSION = 2;

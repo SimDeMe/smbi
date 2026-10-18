@@ -25,7 +25,7 @@ import {
 } from './periode.js';
 import {
   collection, onSnapshot, query, where, orderBy, limit, Timestamp, doc, updateDoc
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 // ─── Visningerne ──────────────────────────────────────────
 const VISNINGER = {

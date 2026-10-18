@@ -4,7 +4,7 @@ import { db } from './app.js';
 import { findKortMellemrum } from './pauser.js';
 import {
   collection, doc, query, where, getDocsFromServer, runTransaction, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 export const timerKontrolSti = uid => `users/${uid}/settings/timer`;
 export const TIMER_KONFLIKT = 'Timeren er ændret på en anden enhed. Kontrollér timeren og prøv igen.';

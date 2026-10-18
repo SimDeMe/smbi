@@ -3,6 +3,22 @@ const store = new Map();          // path -> data
 const lyttere = new Set();
 let nid = 1;
 const cfg = window.__fsCfg || {};
+// Valgfri realistisk kø og metadata til lagringsstatus-testen. Standard-
+// testene får som før straks kvittering; synkronisering testes uden rigtige data.
+let serverTilgaengelig = cfg.serverAvailable !== false;
+let holdSkrivninger = !!cfg.holdWrites;
+let opstartsKoe = !!cfg.pendingAtStart;
+const ventende = new Set(), koeLyttere = new Set();
+const metadata = (ref, ids = null) => ({ fromCache: !navigator.onLine || !serverTilgaengelig,
+  hasPendingWrites: (opstartsKoe && cfg.pendingVisible !== false) || [...ventende].some(v => v.ops.some(([p, d]) =>
+    ref.kind === 'doc' ? p === ref.path : d != null && p.startsWith(ref.path + '/') && ids.includes(p.split('/').pop()))) });
+function vaekKoe() {
+  if (opstartsKoe || ventende.size) return;
+  for (const cb of koeLyttere) cb();
+  koeLyttere.clear();
+}
+export const waitForPendingWrites = () => opstartsKoe || ventende.size
+  ? new Promise(resolve => koeLyttere.add(resolve)) : Promise.resolve();
 
 export class Timestamp {
   constructor(ms) { this.ms = ms; this.seconds = Math.floor(ms / 1000); this.nanoseconds = 0; }
@@ -58,19 +74,33 @@ function run(q) {
   }
   const l = c.find(x => x.t === 'limit'); if (l) docs = docs.slice(0, l.n);
   const out = docs.map(({ id, d }) => ({ id, data: () => ({ ...d }) }));
-  return { empty: !out.length, size: out.length, docs: out, forEach: f => out.forEach(f) };
+  return { empty: !out.length, size: out.length, docs: out, metadata: metadata(q, out.map(d => d.id)),
+    docChanges: () => out.map(doc => ({ type: 'added', doc })), forEach: f => out.forEach(f) };
 }
-const docSnap = ref => { const d = store.get(ref.path); return { id: ref.id, exists: () => !!d, data: () => d && { ...d } }; };
+const docSnap = ref => { const d = store.get(ref.path); return { id: ref.id, metadata: metadata(ref), exists: () => !!d, data: () => d && { ...d } }; };
 
 function notify() {
   setTimeout(() => lyttere.forEach(l => l.fire()), 0);
 }
-export function onSnapshot(q, cb, err) {
-  const l = { fire: () => { try { cb(q.kind === 'doc' ? docSnap(q) : run(q)); } catch (e) { console.error(e); } } };
+export function onSnapshot(q, options, cb, err) {
+  if (typeof options === 'function') { err = cb; cb = options; }
+  let lukket = false, foer;
+  const l = { path: q.path, fail: err, fire: () => {
+    if (lukket) return;
+    try {
+      const snap = q.kind === 'doc' ? docSnap(q) : run(q);
+      if (snap.docs) {
+        const data = JSON.stringify(snap.docs.map(d => [d.id, d.data()]));
+        const aendret = data !== foer; foer = data;
+        snap.docChanges = () => aendret ? [{ type: 'modified' }] : [];
+      }
+      cb(snap);
+    } catch (e) { console.error(e); }
+  } };
   const delay = (cfg.delay || []).find(([frag]) => q.path.includes(frag))?.[1] ?? 0;
   // Med forsinkelse er lytteren døv, til første svar kommer
-  setTimeout(() => { lyttere.add(l); l.fire(); }, delay);
-  return () => lyttere.delete(l);
+  setTimeout(() => { if (!lukket) { lyttere.add(l); l.fire(); } }, delay);
+  return () => { lukket = true; lyttere.delete(l); };
 }
 export const getDocs = async q => run(q.kind === 'col' ? { path: q.path, c: [] } : q);
 export async function getDocsFromServer(q) {
@@ -91,10 +121,37 @@ export async function getDocFromServer(ref) {
   await new Promise(r => setTimeout(r, delay));
   return docSnap(ref);
 }
-export async function addDoc(col, data) { const r = doc(col); store.set(r.path, resolve(data)); notify(); return r; }
-export async function setDoc(ref, data, opt) { store.set(ref.path, opt?.merge ? { ...(store.get(ref.path) || {}), ...resolve(data) } : resolve(data)); notify(); }
-export async function updateDoc(ref, data) { if (!store.has(ref.path)) throw new Error('no doc ' + ref.path); store.set(ref.path, { ...store.get(ref.path), ...resolve(data) }); notify(); }
-export async function deleteDoc(ref) { store.delete(ref.path); notify(); }
+async function skriv(ops) {
+  const foer = ops.map(([p]) => [p, store.get(p)]);
+  for (const [p, d] of ops) d == null ? store.delete(p) : store.set(p, d);
+  if (!cfg.sync) { notify(); return; }
+  return new Promise((resolve, reject) => {
+    const v = { ops, resolve, reject, foer }; ventende.add(v); notify();
+    if (!holdSkrivninger && navigator.onLine && serverTilgaengelig) setTimeout(() => bekraeft(), 0);
+  });
+}
+async function bekraeft(fejlkode = null) {
+  if (!fejlkode && (!navigator.onLine || !serverTilgaengelig)) return;
+  opstartsKoe = false;
+  for (const v of [...ventende]) {
+    if (fejlkode) {
+      for (const [p, d] of v.foer) d === undefined ? store.delete(p) : store.set(p, d);
+      v.reject(Object.assign(new Error('Test: write rejected'), { code: fejlkode }));
+    } else {
+      if (window.__fsRemote) {
+        const res = await window.__fsRemote({ type: 'commit', reads: [], ops: encode(v.ops) });
+        receive(res.rows);
+      }
+      v.resolve();
+    }
+    ventende.delete(v);
+  }
+  vaekKoe(); notify();
+}
+export async function addDoc(col, data) { const r = doc(col); await skriv([[r.path, resolve(data)]]); return r; }
+export async function setDoc(ref, data, opt) { await skriv([[ref.path, opt?.merge ? { ...(store.get(ref.path) || {}), ...resolve(data) } : resolve(data)]]); }
+export async function updateDoc(ref, data) { if (!store.has(ref.path)) throw new Error('no doc ' + ref.path); await skriv([[ref.path, { ...store.get(ref.path), ...resolve(data) }]]); }
+export async function deleteDoc(ref) { await skriv([[ref.path, null]]); }
 export function writeBatch() {
   const ops = [];
   return { set: (r, d, o) => ops.push(() => setDoc(r, d, o)), update: (r, d) => ops.push(() => updateDoc(r, d)), delete: r => ops.push(() => deleteDoc(r)), commit: async () => { for (const op of ops) await op(); } };
@@ -144,7 +201,17 @@ function receive(rows) { store.clear(); for (const [path, data] of rows) store.s
 
 // Testkrog
 window.__fs = { store, Timestamp, notify, receive,
+  server(tilgaengelig) { serverTilgaengelig = tilgaengelig; notify(); },
+  holdWrites(hold) { holdSkrivninger = hold; },
+  ack: bekraeft,
+  listenerError(frag, code = 'permission-denied') {
+    for (const l of [...lyttere]) if (l.path.includes(frag)) {
+      lyttere.delete(l); l.fail?.(Object.assign(new Error('Test: listener failed'), { code }));
+    }
+  },
   put(path, data) { store.set(path, data); notify(); },
   entries() { return [...store.entries()].filter(([p]) => p.startsWith('users/u1/entries/')).map(([p, d]) => ({ id: p.split('/').pop(), ...d, startMs: d.startTime?.ms, endMs: d.endTime?.ms })); } };
 const tilTs = d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, v && v.__ts != null ? new Timestamp(v.__ts) : v]));
 for (const [p, d] of (cfg.seed || [])) store.set(p, tilTs(d));
+window.addEventListener('offline', notify);
+window.addEventListener('online', () => { notify(); if (!holdSkrivninger) bekraeft(); });

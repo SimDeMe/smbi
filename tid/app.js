@@ -7,6 +7,7 @@ import {
 import {
   initializeFirestore, persistentLocalCache
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { initLagringsstatus, lagringStartet } from './lager.js';
 import { firebaseConfig } from './firebase-config.js';
 import { initActivitiesView, refreshAktiviteter, aktiviteterHentet } from './activities.js';
 import { initTimerView, refreshQuickStart } from './timer.js';
@@ -89,6 +90,7 @@ btnLogout.addEventListener('click', async () => {
 // stod brugeren og så på "loader", mens appen hentede ting, ingen kigger på
 // endnu.
 onAuthStateChanged(auth, async user => {
+  initLagringsstatus(db, user?.uid ?? null);
   if (user) {
     loginScreen.classList.add('hidden');
     appEl.classList.remove('hidden');
@@ -106,10 +108,14 @@ onAuthStateChanged(auth, async user => {
     } catch (err) {
       console.error('Init fejl:', err);
     }
+    lagringStartet();
     navigateTo('hjem');
     loadingScreen.classList.add('hidden');
     visOnboardingHvisTom();
   } else {
+    initActivitiesView(null);
+    initHistorikView(null);
+    initRapporterView(null);
     initTimerView(null);
     initBackup(null);
     initHjem(null);

@@ -17,7 +17,7 @@ import { normerFor, tolkTal, fmtTimer } from './normer.js';
 import { datoInput, langDato } from './periode.js';
 import { esc } from './format.js';
 import { openSheet, closeSheet } from './ark.js';
-import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { doc, updateDoc } from './lager.js';
 
 const HURTIGVALG = [1, 2, 3, 4];
 

@@ -10,7 +10,7 @@ import { datoInput } from './periode.js';
 import {
   collection, doc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, where, getDocs, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 // ─── State ────────────────────────────────────────────────
 let userId       = null;
@@ -34,6 +34,7 @@ let naboDato     = '';
 // ─── Init ─────────────────────────────────────────────────
 export function initHistorikView(uid) {
   if (userId === uid) return;
+  unsubEntries?.(); unsubEntries = null; entries = [];
   userId = uid;
   bindListeners();
 }

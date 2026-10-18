@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import { initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence, browserPopupRedirectResolver, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
-import { initializeFirestore } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { initializeFirestore } from './lager.js';
 import { firebaseConfig } from './firebase-config.js';
 import { validateLectio } from './lectio-data.js';
 import { saveLectio } from './lectio-store.js';

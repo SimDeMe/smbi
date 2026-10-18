@@ -12,7 +12,7 @@ import { db } from './app.js';
 import { getSettings } from './indstillinger.js';
 import {
   collection, addDoc, getDocs, query, where, orderBy, limit, Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 export const KORT_PAUSE_MAX = 30;            // minutter — mellemrum herunder bliver til pause
 export const PAUSE_NAVN     = 'Kort pause';

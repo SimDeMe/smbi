@@ -29,6 +29,16 @@ En privat webapp til at registrere arbejdstid på de aktiviteter, der står i en
 ## Firebase
 Brugeren leverer `firebaseConfig` i `firebase-config.js`. Brug Firebase v10+ modulær SDK via CDN. Aktivér Firestore offline-persistens.
 
+Lagringsstatus står kompakt under topbjælken og kan foldes ud. `lager.js`
+samler appens Firestore-skrivninger og lyttere. »Synkroniseret« kræver
+servermetadata fra alle aktive lyttere, ingen igangværende skrivninger og
+kvittering for den eksisterende offlinekø via `waitForPendingWrites`.
+`hasPendingWrites` viser lokale ændringer som afventende; `fromCache` og
+netværksstatus skelner cache fra bekræftede serverdata. Detaljerne forklarer,
+når en anden enhed endnu ikke kan hente ændringen. »Kontrollér igen«
+genstarter lyttere og kontrollerer køen; afviste ændringer genafsendes ikke.
+Timerhandlinger kræver fortsat forbindelse og lægges aldrig i offlinekø.
+
 ## Centrale begreber
 
 **Aktivitet** = en linje i opgavefordelingen. Enten et hold (med faste arbejdstyper undervisning/forberedelse/retning) eller en opgave (registreres direkte). Hver aktivitet har et timebudget for skoleåret. Opgave-aktiviteter kan have under-aktiviteter (fx SRP under "Eksamen og årsprøver").

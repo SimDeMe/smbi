@@ -14,7 +14,7 @@ try {
   for (const [frag, file] of [['firebase-app.js', 'fake-app.js'], ['firebase-auth.js', 'fake-auth.js'], ['firebase-firestore.js', 'fake-fs.js']]) await context.route('**/' + frag, r => r.fulfill({ contentType: 'text/javascript', body: readFileSync(here + file, 'utf8') }));
   await context.route('https://smbi.dk/tid/**', r => {
     const file = new URL(r.request().url()).pathname.split('/').at(-1);
-    if (!['lectio-import.html', 'lectio-import.js', 'lectio-data.js', 'lectio-store.js', 'firebase-config.js', 'styles.css', 'lectio-kalender.css'].includes(file)) return r.abort();
+    if (!['lectio-import.html', 'lectio-import.js', 'lectio-data.js', 'lectio-store.js', 'lager.js', 'firebase-config.js', 'styles.css', 'lectio-kalender.css'].includes(file)) return r.abort();
     return r.fulfill({ contentType: file.endsWith('.html') ? 'text/html' : file.endsWith('.css') ? 'text/css' : 'text/javascript', body: readFileSync(tid + file, 'utf8') });
   });
   const helper = await context.newPage();

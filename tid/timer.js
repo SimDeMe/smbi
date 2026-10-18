@@ -13,7 +13,7 @@ import {
   collection, doc,
   onSnapshot, query, where, limit, getDocs, orderBy,
   Timestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 // ─── State ────────────────────────────────────────────────
 let userId          = null;

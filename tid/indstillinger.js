@@ -6,7 +6,7 @@ import { taelFeriedage, arbejdsdageIPerioden, tilDato, ferieListe } from './feri
 import { skoleaarStart, kortDato, datoInput } from './periode.js';
 import { esc } from './format.js';
 import { PERIODER, datoerFor, periodeBeskrivelse } from './aktivitetsperiode.js';
-import { doc, getDoc, getDocFromCache, getDocFromServer, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { doc, getDoc, getDocFromCache, getDocFromServer, setDoc, updateDoc } from './lager.js';
 
 // ─── Defaults ─────────────────────────────────────────────
 // currentSchoolYear er tom som default, så getCurrentSchoolYear() falder

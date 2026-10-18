@@ -1,4 +1,4 @@
-import { doc, collection, onSnapshot, runTransaction } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { doc, collection, onSnapshot, runTransaction } from './lager.js';
 import { validateLectio, yearsInRange, mergeLectio } from './lectio-data.js';
 
 export async function saveLectio(db, uid, raw) {

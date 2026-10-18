@@ -10,7 +10,7 @@ import { renderSaetListe } from './rettet.js';
 import {
   collection, doc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, writeBatch, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+} from './lager.js';
 
 // ─── State ────────────────────────────────────────────────
 let userId       = null;
@@ -42,7 +42,11 @@ export function naarAktiviteterAendres(fn) { lyttere.add(fn); }
 // ─── Init (kaldes fra app.js efter login) ─────────────────
 export function initActivitiesView(uid) {
   if (userId === uid && unsub) return;
+  unsub?.(); unsub = null;
+  unsubEntries?.(); unsubEntries = null;
+  activities = []; activitiesLoaded = false; entries = [];
   userId = uid;
+  if (!uid) return;
   selectedYear = getCurrentSchoolYear();
   startListener();
   bindListeners();

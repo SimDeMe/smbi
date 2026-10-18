@@ -128,6 +128,18 @@ img{display:block;max-width:100%}
   letter-spacing:0.08em;color:var(--slate)}
 .version:empty{display:none}
 
+/* Lagringsstatus kan foldes ud uden at optage plads fra hurtigstarten. */
+.lagringsstatus{
+  flex-shrink:0;font:0.76rem/1.45 var(--display);color:var(--slate);
+  border-bottom:1px solid var(--rule);background:var(--paper);
+  padding:0 max(16px,env(safe-area-inset-right),var(--app-kant)) 0 max(16px,env(safe-area-inset-left),var(--app-kant));
+  max-height:35vh;overflow:auto;
+}
+.lagringsstatus summary{cursor:pointer;padding:6px 0;min-height:32px}
+.lagringsstatus[data-tilstand="fejl"]{color:var(--ink);background:var(--tint-slem)}
+.lagringsstatus-detaljer{max-width:65ch;padding:2px 0 12px}
+.lagringsstatus-detaljer p{margin-bottom:10px}
+
 /* ─── Fuldskærm: indlæsning, log ind, opstart ───────────── */
 .fullscreen-overlay{
   position:fixed;inset:0;z-index:100;

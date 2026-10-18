@@ -8,7 +8,7 @@ import { listenLectio } from './lectio-store.js';
 import { lectioNavn, visLectio } from './lectio-kalender.js';
 import { danishDate } from './lectio-data.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
-import { collection, doc, setDoc, onSnapshot, query, where, orderBy, limit, Timestamp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { collection, doc, setDoc, onSnapshot, query, where, orderBy, limit, Timestamp } from './lager.js';
 
 const $ = id => document.getElementById(id);
 const typer = ['undervisning', 'forberedelse', 'retning'];
