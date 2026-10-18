@@ -55,7 +55,7 @@ function startTidspunkt(data) {
 
 // ─── Mellemrummet foran en ny post ────────────────────────
 // Returnerer pause-posten, der lukker mellemrummet — eller null
-async function findKortMellemrum(userId, start) {
+export async function findKortMellemrum(userId, start) {
   if (getSettings().autoShortBreaks === false) return null;
 
   const slut = senesteSlutFoer(await dagensPosterFoer(userId, start));

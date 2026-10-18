@@ -1967,3 +1967,8 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 #hjem-lectio{margin-top:18px;white-space:normal;text-align:left;overflow-wrap:anywhere}
 #favorit-valg .form-group{border-bottom:1px solid var(--slate);padding-bottom:14px}
 #favorit-valg label{display:block;margin:8px 0 5px}
+
+/* Timerkonflikter skal kunne ses og rettes fra alle faner. */
+.timer-status { padding: 12px; margin-bottom: 14px; border: 2px solid var(--accent); border-radius: 8px; }
+.timer-status p { margin: 0 0 8px; }
+.timer-status .btn { margin: 4px 4px 0 0; white-space: normal; }

@@ -20,7 +20,7 @@ export const persistentLocalCache = () => ({});
 
 export const collection = (db, path) => ({ kind: 'col', path });
 export function doc(a, path) {
-  if (a?.kind === 'col') { const id = 'd' + (nid++); return { kind: 'doc', path: a.path + '/' + id, id }; }
+  if (a?.kind === 'col') { const id = (cfg.clientId || '') + 'd' + (nid++); return { kind: 'doc', path: a.path + '/' + id, id }; }
   return { kind: 'doc', path, id: path.split('/').pop() };
 }
 export const where = (f, op, v) => ({ t: 'where', f, op, v });
@@ -73,6 +73,11 @@ export function onSnapshot(q, cb, err) {
   return () => lyttere.delete(l);
 }
 export const getDocs = async q => run(q.kind === 'col' ? { path: q.path, c: [] } : q);
+export async function getDocsFromServer(q) {
+  if (!navigator.onLine) throw new Error('unavailable');
+  if (window.__fsRemote) receive(await window.__fsRemote({ type: 'read' }));
+  return getDocs(q);
+}
 export const getDoc = async ref => docSnap(ref);
 // cache: { 'sti': data } er telefonens egen kopi; mangler stien, er den ikke
 // i cachen. Serveren svarer med lageret, efter forsinkelsen i cfg.delay
@@ -95,15 +100,50 @@ export function writeBatch() {
   return { set: (r, d, o) => ops.push(() => setDoc(r, d, o)), update: (r, d) => ops.push(() => updateDoc(r, d)), delete: r => ops.push(() => deleteDoc(r)), commit: async () => { for (const op of ops) await op(); } };
 }
 export async function runTransaction(db, callback) {
-  const ops = [];
-  const result = await callback({ get: async ref => docSnap(ref), set: (ref, data) => ops.push([ref.path, data]) });
-  if (cfg.failTransaction) throw new Error('Test: transaction failed');
-  for (const [path, data] of ops) store.set(path, resolve(data));
-  notify(); return result;
+  for (let retry = 0; retry < 5; retry++) {
+    if (!navigator.onLine) throw new Error('unavailable');
+    if (window.__fsRemote) receive(await window.__fsRemote({ type: 'read' }));
+    const reads = new Map(), ops = [];
+    const result = await callback({
+      get: async ref => { const snap = docSnap(ref); reads.set(ref.path, snap.data() ?? null); return snap; },
+      set: (ref, data) => ops.push([ref.path, resolve(data)]),
+      update: (ref, data) => ops.push([ref.path, { ...store.get(ref.path), ...resolve(data) }]),
+      delete: ref => ops.push([ref.path, null])
+    });
+    if (cfg.transactionDelay) await new Promise(r => setTimeout(r, cfg.transactionDelay));
+    if (cfg.failTransaction) throw new Error('Test: transaction failed');
+    if (!navigator.onLine) throw new Error('unavailable');
+    if (window.__fsRemote) {
+      const response = await window.__fsRemote({ type: 'commit', reads: encode([...reads]), ops: encode(ops) });
+      receive(response.rows);
+      if (!response.ok) continue;
+    } else {
+      if ([...reads].some(([path, data]) => JSON.stringify(data) !== JSON.stringify(store.get(path) ?? null))) continue;
+      for (const [path, data] of ops) data ? store.set(path, data) : store.delete(path);
+      notify();
+    }
+    return result;
+  }
+  throw new Error('aborted');
 }
+// Valgfri fælles server i testen: to browserfaner får samme dokumenter,
+// men beholder hver sin lytter/copy. Commit bruger compare-and-swap.
+function encode(v) {
+  if (v instanceof Timestamp) return { __ts: v.ms };
+  if (Array.isArray(v)) return v.map(encode);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, encode(x)]));
+  return v;
+}
+function decode(v) {
+  if (v?.__ts != null) return new Timestamp(v.__ts);
+  if (Array.isArray(v)) return v.map(decode);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, decode(x)]));
+  return v;
+}
+function receive(rows) { store.clear(); for (const [path, data] of rows) store.set(path, decode(data)); notify(); }
 
 // Testkrog
-window.__fs = { store, Timestamp, notify,
+window.__fs = { store, Timestamp, notify, receive,
   put(path, data) { store.set(path, data); notify(); },
   entries() { return [...store.entries()].filter(([p]) => p.startsWith('users/u1/entries/')).map(([p, d]) => ({ id: p.split('/').pop(), ...d, startMs: d.startTime?.ms, endMs: d.endTime?.ms })); } };
 const tilTs = d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, v && v.__ts != null ? new Timestamp(v.__ts) : v]));

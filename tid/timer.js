@@ -5,17 +5,25 @@ import { getLoadedActivities, isActivitiesLoaded, aktiviteterHentet, naarAktivit
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaDatoer, skemaLaengde, skemaInterval, skemaNu } from './skema.js';
 import { opretPost } from './pauser.js';
+import { timerKontrolSti, udfoerTimerHandling, TIMER_KONFLIKT } from './timer-store.js';
+import { openEntrySheet } from './historik.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { openSheet, closeSheet } from './ark.js';
 import {
-  collection, doc, updateDoc, deleteDoc,
+  collection, doc,
   onSnapshot, query, where, limit, getDocs, orderBy,
-  serverTimestamp, Timestamp
+  Timestamp
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // ─── State ────────────────────────────────────────────────
 let userId          = null;
 let activeEntry     = null;
+let aabnePoster = [];
+let kontrolToken = null;
+let timerHentet = false;
+let kontrolHentet = false;
+let timerOptaget = false;
+let unsubKontrol = null;
 let pendingAct      = null;
 let modulHoldId     = null;
 let modulWhen       = 'nu';
@@ -30,6 +38,16 @@ let sessionAutoStopWarned = false;
 export function initTimerView(uid) {
   if (userId === uid) return;
   userId = uid;
+  activeEntry = null;
+  aabnePoster = [];
+  kontrolToken = null;
+  timerHentet = kontrolHentet = false;
+  clearTimeout(autoStopTimerId);
+  if (unsubActive) unsubActive();
+  if (unsubKontrol) unsubKontrol();
+  stopTick();
+  renderTimerState();
+  if (!uid) return;
   setupActiveListener();
   bindListeners();
   // Hurtigstarten og timerens navn hænger på aktiviteterne. Kommer de efter
@@ -53,10 +71,19 @@ export function refreshQuickStart() {
 // ─── Active entry listener ────────────────────────────────
 function setupActiveListener() {
   if (unsubActive) unsubActive();
+  const uid = userId;
+  unsubKontrol = onSnapshot(doc(db, timerKontrolSti(uid)), snap => {
+    if (uid !== userId) return;
+    kontrolToken = snap.data()?.token ?? null;
+    kontrolHentet = true;
+  });
   unsubActive = onSnapshot(
-    query(collection(db, `users/${userId}/entries`), where('endTime', '==', null), limit(2)),
+    query(collection(db, `users/${uid}/entries`), where('endTime', '==', null)),
     snap => {
-      activeEntry = snap.empty ? null : { id: snap.docs[0].id, ...snap.docs[0].data() };
+      if (uid !== userId) return;
+      timerHentet = true;
+      aabnePoster = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      activeEntry = aabnePoster.length === 1 ? aabnePoster[0] : null;
 
       clearTimeout(autoStopTimerId);
       autoStopTimerId = null;
@@ -92,24 +119,29 @@ function setupActiveListener() {
 // capMins begrænser varigheden (og sluttiden), så et modul der først opdages
 // efter planlagt sluttid — fx fordi appen var lukket — ikke registrerer for meget.
 async function autoStopEntry(entry, capMins, isPlanned = false) {
-  try {
-    const startMs = entry.startTime?.toDate()?.getTime() ?? Date.now();
-    let duration  = Math.max(0, Math.round((Date.now() - startMs) / 60000));
-    let endMs     = Date.now();
-    if (capMins != null && duration >= capMins) {
-      duration = capMins;
-      endMs    = startMs + capMins * 60000;
-    }
-    await updateDoc(doc(db, `users/${userId}/entries/${entry.id}`), {
-      endTime: Timestamp.fromMillis(endMs), durationMinutes: duration, autoStopped: !isPlanned
-    });
-    sessionAutoStopWarned = true;
-    showToast(isPlanned
-      ? `Modul afsluttet · ${fmtMins(duration)}`
-      : `Timer stoppet automatisk · ${fmtMins(duration)}`, 5000);
-  } catch (err) {
-    console.error('Auto-stop fejl:', err);
+  if (!timerHentet || !kontrolHentet || timerOptaget) {
+    autoStopTimerId = setTimeout(() => {
+      if (activeEntry?.id === entry.id) autoStopEntry(entry, capMins, isPlanned);
+    }, 1000);
+    return;
   }
+  const uid = userId;
+  timerOptaget = true;
+  try {
+    await udfoerTimerHandling(uid, {
+      poster: [entry], kontrol: kontrolToken,
+      slutMs: Math.min(Date.now(), entry.startTime.toMillis() + capMins * 60000), auto: !isPlanned
+    });
+    if (uid !== userId) return;
+    sessionAutoStopWarned = true;
+    showToast(isPlanned ? `Modul afsluttet · ${fmtMins(capMins)}`
+      : `Timer stoppet automatisk · ${fmtMins(capMins)}`, 5000);
+  } catch (err) {
+    // Offline forbliver timeren synlig; cap håndhæves ved næste onlineforsøg.
+    if (uid === userId) autoStopTimerId = setTimeout(() => {
+      if (activeEntry?.id === entry.id) autoStopEntry(activeEntry, capMins, isPlanned);
+    }, 30000);
+  } finally { timerOptaget = false; }
 }
 
 async function checkRecentAutoStop() {
@@ -144,6 +176,7 @@ function renderTimerState() {
   const banner = document.getElementById('active-timer-banner');
   const qlabel = document.getElementById('qs-section-label');
   if (!card || !banner) return;
+  renderTimerStatus();
 
   if (activeEntry?.startTime) {
     const acts  = getLoadedActivities();
@@ -425,6 +458,7 @@ function modulStarterIFremtiden() {
 }
 
 async function confirmModul() {
+  if (timerOptaget) return;
   if (!modulHoldId) { showToast('Vælg et hold'); return; }
   const btn  = document.getElementById('btn-do-modul');
   const mins = getModuleMins();
@@ -458,8 +492,7 @@ async function confirmModul() {
       } else {
         // Modulet kører stadig: timeren løber fra modulets start og stoppes
         // automatisk ved modulets sluttid
-        if (activeEntry) await stopEntry(activeEntry, false);
-        await opretPost(userId, {
+        await skiftTimer({
           activityId: modulHoldId, workType: 'undervisning',
           startTime: Timestamp.fromDate(start), endTime: null,
           durationMinutes: null, note: '', isModule: true, autoStopped: false,
@@ -469,12 +502,11 @@ async function confirmModul() {
       }
 
     } else if (modulWhen === 'nu') {
-      if (activeEntry) await stopEntry(activeEntry, false);
       // plannedDurationMinutes håndhæves af active-entry-lytteren, så modulet
       // også stoppes til tiden efter en genindlæsning af appen
-      await opretPost(userId, {
+      await skiftTimer({
         activityId: modulHoldId, workType: 'undervisning',
-        startTime: serverTimestamp(), endTime: null,
+        startTime: Timestamp.now(), endTime: null,
         durationMinutes: null, note: '', isModule: true, autoStopped: false,
         plannedDurationMinutes: mins
       });
@@ -513,62 +545,108 @@ async function confirmModul() {
     closeSheet('modul-sheet', 'modul-backdrop');
   } catch (err) {
     console.error('Modul fejl:', err);
-    showToast('Kunne ikke registrere modul');
+    timerFejl(err, 'Kunne ikke registrere modul');
   } finally { btn.disabled = false; }
 }
 
 // ─── Start / stop timer ───────────────────────────────────
-export async function startTimer(activityId, workType) {
-  if (activeEntry?.activityId === activityId && activeEntry?.workType === workType) {
-    showToast('Allerede i gang'); return;
-  }
+function klarTilHandling() {
+  if (!userId || !timerHentet || !kontrolHentet) throw new Error('Vent, mens timeren hentes.');
+  if (aabnePoster.length > 1) throw new Error('Der er flere åbne timere. Stop dem og kontrollér registreringerne først.');
+}
+function timerFejl(err, besked) {
+  console.error(besked, err);
+  showToast(err.message === TIMER_KONFLIKT || !navigator.onLine ||
+    /Vent, mens|flere åbne|Sluttidspunktet/.test(err.message)
+    ? err.message : `${besked}. Timeren er uændret — prøv igen online.`, 6500);
+}
+async function skiftTimer(ny) {
+  klarTilHandling();
+  const uid = userId;
+  timerOptaget = true;
   try {
-    if (activeEntry) await stopEntry(activeEntry, false);
-    await opretPost(userId, {
+    return await udfoerTimerHandling(uid, {
+      poster: [...aabnePoster], kontrol: kontrolToken, ny,
+      // Ved et igangværende modul skal den tidligere timer slutte ved
+      // modulstarten, så skiftet ikke skaber et overlap.
+      slutMs: ny.startTime.toMillis()
+    });
+  } finally { timerOptaget = false; }
+}
+export async function startTimer(activityId, workType) {
+  if (timerOptaget) return;
+  try {
+    klarTilHandling();
+    if (activeEntry && (activeEntry.activityId || null) === (activityId || null) &&
+        (activeEntry.workType || null) === (workType || null)) {
+      showToast('Allerede i gang'); return;
+    }
+    await skiftTimer({
       activityId: activityId || null, workType: workType || null,
-      startTime: serverTimestamp(), endTime: null,
+      startTime: Timestamp.now(), endTime: null,
       durationMinutes: null, note: '', isModule: false, autoStopped: false
     });
-    const act  = getLoadedActivities().find(a => a.id === activityId);
-    const name = activityId ? (act?.name || 'Timer') : 'Ubundet tid';
-    const wt   = workType ? ` · ${capitalize(workType)}` : '';
-    showToast(`${name}${wt}`);
-  } catch (err) {
-    console.error('Start timer fejl:', err);
-    showToast('Kunne ikke starte timer');
-  }
+    const act = getLoadedActivities().find(a => a.id === activityId);
+    showToast(`${activityId ? (act?.name || 'Timer') : 'Ubundet tid'}${workType ? ` · ${capitalize(workType)}` : ''}`);
+  } catch (err) { timerFejl(err, 'Kunne ikke starte timer'); }
 }
 
 export async function stopActiveTimer() {
-  if (!activeEntry) return;
-  try { await stopEntry(activeEntry, true); }
-  catch (err) { console.error('Stop timer fejl:', err); showToast('Kunne ikke stoppe timer'); }
+  if (timerOptaget) return;
+  try {
+    klarTilHandling();
+    if (!activeEntry) return;
+    timerOptaget = true;
+    const resultat = await udfoerTimerHandling(userId, { poster: [...aabnePoster], kontrol: kontrolToken });
+    const gemt = resultat.efter[0].data;
+    showToast(gemt ? `Stoppet · ${fmtMins(gemt.durationMinutes)}` : 'Under ét minut · ikke gemt');
+  } catch (err) { timerFejl(err, 'Kunne ikke stoppe timer'); }
+  finally { timerOptaget = false; }
 }
 
-// En timer, der har kørt under ét minut, er et fejltryk eller et skift, man
-// fortrød — den slettes i stedet for at blive gemt som en post på 0 m
-const MIN_POST_MS = 60 * 1000;
-
-async function stopEntry(entry, showMsg) {
-  const now      = Timestamp.fromDate(new Date());
-  const startMs  = entry.startTime?.toDate()?.getTime() ?? Date.now();
-  if (Date.now() - startMs < MIN_POST_MS) {
-    await deleteDoc(doc(db, `users/${userId}/entries/${entry.id}`));
-    if (showMsg) showToast('Under ét minut · ikke gemt');
-    return 0;
+// Alle åbne poster vises, også hvis en gammel klient har synkroniseret en
+// ekstra timer. Brugeren kan rette hver post eller lukke dem samlet.
+function renderTimerStatus() {
+  const el = document.getElementById('timer-status');
+  if (!el) return;
+  el.replaceChildren();
+  el.classList.toggle('hidden', navigator.onLine && aabnePoster.length < 2);
+  if (!navigator.onLine) {
+    const p = document.createElement('p');
+    p.textContent = 'Offline · Timerhandlinger kræver forbindelse. Timeren fortsætter; glemt tid kan tilføjes bagefter.';
+    el.append(p);
   }
-  const duration = Math.max(0, Math.round((Date.now() - startMs) / 60000));
-  await updateDoc(doc(db, `users/${userId}/entries/${entry.id}`), {
-    endTime: now, durationMinutes: duration
+  if (aabnePoster.length < 2) return;
+  const p = document.createElement('p');
+  p.textContent = `${aabnePoster.length} åbne timere · Kontrollér registreringerne og eventuelle overlap.`;
+  el.append(p);
+  for (const post of aabnePoster) {
+    const knap = document.createElement('button');
+    knap.className = 'btn btn-secondary';
+    knap.textContent = `${getLoadedActivities().find(a => a.id === post.activityId)?.name || 'Ubundet tid'} · ${fmtTime(post.startTime.toDate())} · Ret`;
+    knap.addEventListener('click', () => openEntrySheet(post.id, null, post));
+    el.append(knap);
+  }
+  const stop = document.createElement('button');
+  stop.className = 'btn btn-stop'; stop.textContent = 'Stop alle timere';
+  stop.addEventListener('click', async () => {
+    if (timerOptaget) return;
+    timerOptaget = true;
+    try {
+      await udfoerTimerHandling(userId, { poster: [...aabnePoster], kontrol: kontrolToken });
+      showToast('Alle timere stoppet. Kontrollér eventuelle overlap i historikken.', 6500);
+    } catch (err) { timerFejl(err, 'Kunne ikke stoppe timerne'); }
+    finally { timerOptaget = false; }
   });
-  if (showMsg) showToast(`Stoppet · ${fmtMins(duration)}`);
-  return duration;
+  el.append(stop);
 }
 
 // ─── Event listeners ─────────────────────────────────────
 function bindListeners() {
   if (listenersOk) return;
   listenersOk = true;
+  window.addEventListener('online', renderTimerStatus);
+  window.addEventListener('offline', renderTimerStatus);
 
   document.getElementById('btn-stop-timer')?.addEventListener('click', stopActiveTimer);
   document.getElementById('banner-stop')?.addEventListener('click', stopActiveTimer);

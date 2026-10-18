@@ -110,6 +110,7 @@ onAuthStateChanged(auth, async user => {
     loadingScreen.classList.add('hidden');
     visOnboardingHvisTom();
   } else {
+    initTimerView(null);
     initBackup(null);
     initHjem(null);
     initKalenderView(null);
