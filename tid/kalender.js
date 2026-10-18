@@ -275,7 +275,7 @@ function render() {
   renderBar();
   markerZoom();
   v.tegn(rod, byggKontekst());
-  tegnLectioListe(document.getElementById('kal-lectio-list'), lectioEvents, start(), slut(), lectioFetchedAt, visLectioLag);
+  tegnLectioListe(document.getElementById('kal-lectio-list'), lectioEvents, start(), slut(), lectioFetchedAt, visLectioLag, poster);
   markerValgt();
 
   const hint = document.getElementById('kal-hint');

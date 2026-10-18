@@ -1999,3 +1999,34 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .timer-handling span { flex: 1 0 100%; font-size: 14px; }
 .timer-handling .btn { min-height: 44px; }
 #timer-ret-tid { min-width: 0; max-width: 100%; box-sizing: border-box; }
+
+/* Rapportens tre spørgsmål kan hver åbnes til brugerens egen regning. */
+.rapport-hovedtal-grid{display:grid;gap:12px;align-items:start}
+.rapport-hovedtal{min-width:0;border:1.5px solid var(--border);border-radius:10px;background:var(--panel)}
+.rapport-hovedtal summary{cursor:pointer;padding:14px;list-style:none;display:flex;flex-direction:column;gap:10px}
+.rapport-hovedtal summary::-webkit-details-marker{display:none}
+.rapport-hovedtal summary:focus-visible,.rapport-indstillinger summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.rapport-hovedtal-navn{font-family:var(--display);font-weight:700;font-size:1rem}
+.rapport-hovedtal-tal{font-family:var(--display);font-weight:800;font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.rapport-hovedtal-kort{font-size:.82rem;line-height:1.5;color:var(--slate)}
+.rapport-hovedtal-kort small{display:block;margin-top:5px;font-size:.78rem}
+.rapport-hovedtal-aabn{font-size:.78rem;color:var(--accent);font-weight:700}
+.rapport-hovedtal-aabn::before{content:'＋ ';font-family:var(--mono)}
+.rapport-hovedtal[open] .rapport-hovedtal-aabn::before{content:'− '}
+.rapport-forklaring{padding:0 14px 14px;font-size:.83rem;line-height:1.6;overflow-wrap:anywhere}
+.rapport-forklaring p{margin:10px 0}
+.rapport-regnestykke{margin:12px 0}
+.rapport-regnestykke>div{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.rapport-regnestykke dt{min-width:0}
+.rapport-regnestykke dd{margin:0;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums;max-width:60%}
+.rapport-tabel-rul{overflow-x:auto;max-width:100%}
+.rapport-beregning{border-collapse:collapse;width:100%;font-size:.78rem}
+.rapport-beregning th,.rapport-beregning td{padding:6px;text-align:right;border-bottom:1px solid var(--border)}
+.rapport-beregning th:first-child{text-align:left}
+.rapport-beregning td{white-space:nowrap}
+.rapport-indstillinger{margin-top:16px;border-top:1px solid var(--border);padding-top:12px}
+.rapport-indstillinger summary{cursor:pointer;font-size:.85rem;font-weight:700}
+@media(min-width:1000px){
+  .rapport-hovedtal-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .rapport-hovedtal[open]{grid-column:1/-1}
+}

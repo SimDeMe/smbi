@@ -823,6 +823,7 @@ NV-eksamen; opgave; 15; ; afslutning; eksamen</div>
         </button>
       </div>
       <form id="hist-form" novalidate>
+        <p id="hist-lectio" class="form-hint hidden" role="status"></p>
         <div class="form-group">
           <label class="form-label" for="hist-date">Dato</label>
           <input class="form-input" type="date" id="hist-date" required>
@@ -847,6 +848,7 @@ NV-eksamen; opgave; 15; ; afslutning; eksamen</div>
         </div>
         <p id="hist-fremtid" class="form-notice hidden" role="status" aria-live="polite"></p>
         <p id="hist-overlap" class="form-notice hidden" role="status" aria-live="polite"></p>
+        <label id="hist-lectio-overlap" class="akkord-fordel hidden"><input type="checkbox" id="hist-lectio-bekraeft" class="settings-check"><span>Jeg har kontrolleret overlap og vil gemme tiden alligevel.</span></label>
         <div class="form-group">
           <label class="form-label" for="hist-act-sel">Aktivitet</label>
           <select class="form-input" id="hist-act-sel">

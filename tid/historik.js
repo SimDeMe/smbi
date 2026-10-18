@@ -7,6 +7,8 @@ import { opretPost, erPause, PAUSE_NAVN } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { openSheet, closeSheet, somKnap } from './ark.js';
 import { datoInput } from './periode.js';
+import { danishDate } from './lectio-data.js';
+import { LectioFejl, lectioHold, matchHold, alleredeRegistreret, hentLectioKontrol, gemLectioRegistrering } from './lectio-registrering.js';
 import {
   collection, doc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, limit, where, getDocs, Timestamp
@@ -19,6 +21,8 @@ let unsubEntries = null;
 let listenersOk  = false;
 let editingId    = null;
 let redigeret    = null;       // posten i arket — også når den er ældre end listen
+let lectioKilde  = null, lectioOverlap = '';
+export const historikBruger = () => userId;
 let periodFilter = 'uge';
 let actFilter    = '';
 
@@ -34,6 +38,9 @@ let naboDato     = '';
 // ─── Init ─────────────────────────────────────────────────
 export function initHistorikView(uid) {
   if (userId === uid) return;
+  if (lectioKilde) closeSheet('hist-sheet', 'hist-backdrop');
+  if (document.getElementById('lectio-sheet')?.classList.contains('open')) document.getElementById('lectio-backdrop').click();
+  lectioKilde = null;
   unsubEntries?.(); unsubEntries = null; entries = [];
   userId = uid;
   bindListeners();
@@ -252,11 +259,24 @@ export function openEntrySheet(entryId, prefill = null, post = null) {
   const e   = post || (entryId ? entries.find(x => x.id === entryId) : null) || null;
   editingId = e?.id || null;
   redigeret = e;
+  lectioKilde = prefill?.lectio || null; lectioOverlap = '';
+  document.getElementById('hist-lectio-bekraeft').checked = false;
+  document.getElementById('hist-lectio-overlap').classList.add('hidden');
+  const kilde = document.getElementById('hist-lectio');
+  kilde.classList.toggle('hidden', !lectioKilde);
+  kilde.textContent = lectioKilde ? 'Fra planlagt Lectio-aftale. Kontrollér hold og faktisk arbejdstid, og godkend med Gem. Intet er registreret endnu.' : '';
 
   document.getElementById('hist-sheet-title').textContent =
     !e ? 'Ny registrering' : erPause(e) ? 'Redigér kort pause' : 'Redigér registrering';
 
   fyldAktivitetsliste(e);
+  if (lectioKilde) {
+    const sel = document.getElementById('hist-act-sel');
+    const hold = lectioHold(lectioKilde), match = matchHold(lectioKilde, hold);
+    sel.innerHTML = '<option value="">— Vælg hold —</option>' + hold.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+    sel.value = match?.id || '';
+    if (!match) kilde.textContent += ' Holdet kunne ikke findes entydigt; vælg det selv.';
+  }
 
   if (e) {
     const sd = e.startTime.toDate();
@@ -274,7 +294,7 @@ export function openEntrySheet(entryId, prefill = null, post = null) {
     document.getElementById('hist-start').value = fmtTime(start);
     document.getElementById('hist-end').value   = prefill?.end ? fmtTime(prefill.end) : '';
     document.getElementById('hist-note').value  = '';
-    document.querySelectorAll('input[name="hist-wt"]').forEach(r => r.checked = false);
+    document.querySelectorAll('input[name="hist-wt"]').forEach(r => r.checked = !!lectioKilde && r.value === 'undervisning');
   }
 
   renderSkemaChips();
@@ -287,6 +307,10 @@ export function openEntrySheet(entryId, prefill = null, post = null) {
   updateWtVisibility();
   document.getElementById('hist-delete-btn').classList.toggle('hidden', !e);
   openSheet('hist-sheet', 'hist-backdrop');
+}
+
+export function openLectioEntry(event) {
+  openEntrySheet(null, { start: danishDate(event.start), end: danishDate(event.end), lectio: event });
 }
 
 // ─── Aktivitetsliste i formularen ─────────────────────────
@@ -358,6 +382,7 @@ function vaelgSkema(id) {
   const valgtIgen = document.querySelector(`.skema-chip[data-skema="${id}"]`)?.classList.contains('selected');
   document.getElementById('hist-start').value = valgtIgen ? '' : sk.start;
   document.getElementById('hist-end').value   = valgtIgen ? '' : sk.slut;
+  document.getElementById('hist-lectio-bekraeft').checked = false;
   if (!document.getElementById('hist-date').value)
     document.getElementById('hist-date').value = datoInput(new Date());
   syncSkemaChips();
@@ -415,6 +440,7 @@ function vaelgVarighed(minutter) {
 
   document.getElementById('hist-end').value =
     fmtTime(new Date(start.getTime() + minutter * 60000));
+  document.getElementById('hist-lectio-bekraeft').checked = false;
 
   syncSkemaChips();
   syncVarighedChips();
@@ -497,11 +523,12 @@ function formularensTidsrum() {
   if (!start || isNaN(start)) return null;
   let slut = endVal ? parseDateTime(dateVal, endVal) : new Date();
   if (!slut || isNaN(slut)) return null;
-  if (endVal && slut < start) slut = new Date(slut.getTime() + 24 * 60 * 60 * 1000);
+  if (endVal && slut < start) slut.setDate(slut.getDate() + 1);
   return slut > start ? { start, slut } : null;
 }
 
 async function syncOverlapNotice() {
+  if (lectioKilde) { await kontrollerLectio(); return; }
   const el = document.getElementById('hist-overlap');
   if (!el) return;
   const dateVal = document.getElementById('hist-date').value;
@@ -535,6 +562,34 @@ async function syncOverlapNotice() {
   el.classList.remove('hidden');
 }
 
+// Hent igen ved gemning: en anden enhed kan have registreret siden åbning.
+// Nye overlap kræver et nyt flueben, så en gammel godkendelse ikke genbruges.
+let lectioKontrolNr = 0;
+async function kontrollerLectio() {
+  const nr = ++lectioKontrolNr, uid = userId, event = lectioKilde;
+  const tr = formularensTidsrum(), el = document.getElementById('hist-overlap');
+  if (!event || !tr) return null;
+  el.textContent = 'Kontrollerer overlap og allerede registreret undervisning…'; el.classList.remove('hidden');
+  try {
+    const svar = await hentLectioKontrol(uid, event, tr.start, tr.slut);
+    if (nr !== lectioKontrolNr || uid !== userId || event !== lectioKilde) return null;
+    const dublet = alleredeRegistreret(event, svar.poster, document.getElementById('hist-act-sel').value);
+    if (dublet) { el.textContent = 'Aftalen er allerede registreret. Luk formularen, og åbn aftalen igen for at redigere registreringen.'; return null; }
+    const signatur = JSON.stringify(svar.overlap.map(p => [p.id, +p.startTime.toDate(), p.endTime ? +p.endTime.toDate() : null, p.activityId, p.workType]));
+    if (signatur !== lectioOverlap) document.getElementById('hist-lectio-bekraeft').checked = false;
+    lectioOverlap = signatur;
+    document.getElementById('hist-lectio-overlap').classList.toggle('hidden', !svar.overlap.length);
+    el.textContent = svar.overlap.length ? 'OBS · Overlapper med ' + svar.overlap.map(p => {
+      const navn = getLoadedActivities().find(a => a.id === p.activityId)?.name || (p.isBreak ? PAUSE_NAVN : 'Ubundet tid');
+      return `${navn} ${fmtTime(p.startTime.toDate())}–${p.endTime ? fmtTime(p.endTime.toDate()) : 'nu'}`;
+    }).join(', ') + ' — tiden tælles dobbelt i rapporterne.' : 'Ingen overlap eller allerede registreret undervisning fundet.';
+    return svar;
+  } catch (err) {
+    if (nr === lectioKontrolNr && uid === userId && event === lectioKilde) el.textContent = 'Kunne ikke kontrollere registreringerne. Kontrollér forbindelsen, og prøv igen med Gem.';
+    return null;
+  }
+}
+
 function updateWtVisibility() {
   const actSel = document.getElementById('hist-act-sel');
   const acts   = getLoadedActivities();
@@ -546,6 +601,8 @@ function updateWtVisibility() {
 // ─── Save ─────────────────────────────────────────────────
 async function saveEntry(ev) {
   ev.preventDefault();
+  if (document.getElementById('hist-save-btn').disabled) return;
+  const uid = userId, kilde = lectioKilde;
 
   const dateVal  = document.getElementById('hist-date').value;
   const startVal = document.getElementById('hist-start').value;
@@ -565,13 +622,16 @@ async function saveEntry(ev) {
     endDate = parseDateTime(dateVal, endVal);
     if (!endDate) { showToast('Ugyldig sluttid'); return; }
     // Sluttid før starttid tolkes som næste dag (arbejde hen over midnat)
-    if (endDate < startDate) endDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000);
+    if (endDate < startDate) endDate.setDate(endDate.getDate() + 1);
     durationMinutes = Math.round((endDate - startDate) / 60000);
   }
 
   const actId  = document.getElementById('hist-act-sel').value || null;
   const acts   = getLoadedActivities();
   const selAct = acts.find(a => a.id === actId);
+  if (kilde && (!selAct || !lectioHold(kilde).some(a => a.id === actId) || !endDate || durationMinutes <= 0)) {
+    showToast('Vælg et hold og et gyldigt, afsluttet tidsrum'); return;
+  }
 
   if (selAct?.type === 'hold') {
     const wtChecked = document.querySelector('input[name="hist-wt"]:checked');
@@ -585,6 +645,9 @@ async function saveEntry(ev) {
   const note = document.getElementById('hist-note').value.trim();
 
   const btn = document.getElementById('hist-save-btn');
+  const formularVaerdi = () => JSON.stringify(['hist-date', 'hist-start', 'hist-end', 'hist-act-sel', 'hist-note'].map(id => document.getElementById(id).value).concat(document.querySelector('input[name="hist-wt"]:checked')?.value));
+  const vaerdi = formularVaerdi();
+  const stadigSamme = () => uid === userId && kilde === lectioKilde && vaerdi === formularVaerdi();
   btn.disabled = true;
   try {
     const data = {
@@ -595,7 +658,16 @@ async function saveEntry(ev) {
       durationMinutes,
       note
     };
-    if (editingId) {
+    if (kilde) {
+      const kontrol = await kontrollerLectio();
+      if (!kontrol || !stadigSamme()) return;
+      if (kontrol.overlap.length && !document.getElementById('hist-lectio-bekraeft').checked) {
+        showToast('Kontrollér og godkend overlap før gemning'); return;
+      }
+      await gemLectioRegistrering(uid, kilde, data, stadigSamme);
+      if (uid !== userId || kilde !== lectioKilde) return;
+      showToast('Undervisning registreret fra Lectio');
+    } else if (editingId) {
       // Kun de redigérbare felter opdateres — isModule/autoStopped bevares.
       // Får en pause tildelt en aktivitet, er den ikke længere en pause.
       const felter = erPause(redigeret) && actId ? { ...data, isBreak: false } : data;
@@ -608,7 +680,7 @@ async function saveEntry(ev) {
     closeSheet('hist-sheet', 'hist-backdrop');
   } catch (err) {
     console.error('Gem entry fejl:', err);
-    showToast('Kunne ikke gemme — prøv igen');
+    showToast(kilde && err instanceof LectioFejl ? err.message : 'Kunne ikke gemme — kontrollér forbindelsen og prøv igen');
   } finally { btn.disabled = false; }
 }
 
@@ -653,10 +725,11 @@ function bindListeners() {
     ?.addEventListener('click', deleteEntry);
 
   document.getElementById('hist-act-sel')
-    ?.addEventListener('change', updateWtVisibility);
+    ?.addEventListener('change', () => { updateWtVisibility(); if (lectioKilde) syncOverlapNotice(); });
 
   ['hist-start', 'hist-end', 'hist-date'].forEach(id =>
     document.getElementById(id)?.addEventListener('input', () => {
+      document.getElementById('hist-lectio-bekraeft').checked = false;
       syncSkemaChips();
       syncVarighedChips();
       syncFremtidNotice();

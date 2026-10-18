@@ -44,6 +44,8 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 
 | Fil | Tester |
 | --- | --- |
+| `lectio-registrering.mjs` | godkendelse fra Lectio med hold/tider/arbejdstype, dublet og manuel undervisning, ændret import, overlap og ny godkendelse, redigering/sletning, samtidige enheder, offline/fejl/logout, tastatur og 340/390/1280 px |
+| `rapport-forklaring.mjs` | tre adskilte hovedtal med egne beregninger, uafhængige referenceværdier, fortegn, normperiode og effektive indstillinger, historiske/fremtidige perioder, fordeling uden ændret saldo, holdnormer/underopgaver/overført optjening mod grafer, tastatur og 340/390/1280 px |
 | `gennemgang.mjs` | frivillig dagsgennemgang, ubundet tid, overlap og auto-stop, accept/fortryd af fælles tid uden ændret beregning, accept på ny browser og ugyldighed efter rettelse, neutrale huller med manuel formular, pauser, sekunder, midnat, 550 poster, to enheder, offline/serverkvittering, rollback, lytterfejl, kontoskift, tastatur og 340/390/1280 px |
 | `lagringsstatus.mjs` | cache mod servermetadata, ventende ændringer og opstartskø, offline/online uden falsk kvittering, to enheder, sletning og batch uden for viste queries, afvisning og rollback, lytterfejl og ny kontrol, kontoskift, tastatur og 340/390/1280 px |
 | `timer-og-hurtigstart.mjs` | hurtigstart følger aktiviteterne, poster under ét minut gemmes ikke |

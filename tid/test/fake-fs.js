@@ -104,7 +104,8 @@ export function onSnapshot(q, options, cb, err) {
 }
 export const getDocs = async q => run(q.kind === 'col' ? { path: q.path, c: [] } : q);
 export async function getDocsFromServer(q) {
-  if (!navigator.onLine) throw new Error('unavailable');
+  if (cfg.readDelay) await new Promise(r => setTimeout(r, cfg.readDelay));
+  if (!navigator.onLine || !serverTilgaengelig) throw new Error('unavailable');
   if (window.__fsRemote) receive(await window.__fsRemote({ type: 'read' }));
   return getDocs(q);
 }

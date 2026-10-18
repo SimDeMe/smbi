@@ -1,4 +1,4 @@
-const CACHE = 'tid-v67';
+const CACHE = 'tid-v68';
 const SHELL = [
   '/tid/',
   '/tid/index.html',
@@ -18,12 +18,14 @@ const SHELL = [
   '/tid/kalender-oversigt.js',
   '/tid/periode.js',
   '/tid/rapporter.js',
+  '/tid/rapport-forklaring.js',
   '/tid/lectio.js',
   '/tid/lectio-data.js',
   '/tid/lectio-import.html',
   '/tid/lectio-import.js',
   '/tid/lectio-store.js',
   '/tid/lectio-kalender.js',
+  '/tid/lectio-registrering.js',
   '/tid/lectio-kalender.css',
   '/tid/indstillinger.js',
   '/tid/skema.js',

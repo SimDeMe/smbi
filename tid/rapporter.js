@@ -18,6 +18,7 @@ import {
 import { normerFor, budgetTimer, fmtTimer, faktorerFor } from './normer.js';
 import { beregnUdvikling, tegnUdvikling, tegnUger, tegnNorm, bindUdvikling } from './udvikling.js';
 import { tegnLectio } from './lectio.js';
+import { registreretForklaring, belastningForklaring, akkordForklaring, rapportIndstillinger } from './rapport-forklaring.js';
 import {
   periodeStart, periodeSlut, periodeTitel, periodeUnder, periodeNoegle,
   forskydningFor, skoleaarForPeriode, datoInput
@@ -221,6 +222,8 @@ function renderReport() {
   renderPeriodeBar();
   const el = document.getElementById('rapport-content');
   if (!el) return;
+  const aabne = [...el.querySelectorAll('details[data-hovedtal][open]')].map(d => d.dataset.hovedtal);
+  const fokus = document.activeElement?.matches('summary') ? document.activeElement.closest('[data-hovedtal]')?.dataset.hovedtal : null;
   if (lectio) { el.innerHTML = tegnLectio(entries, start(), slut()); return; }
   const acts = getLoadedActivities();
   const { rows, uboundMins, pauseMins, totalMins, archivedRows, archivedMins, filtered, year } = aggregate(acts);
@@ -232,12 +235,16 @@ function renderReport() {
     : null;
 
   el.innerHTML =
-    renderSummary(totalMins, ak, acts) +
+    renderSummary({ rows, uboundMins, pauseMins, totalMins, archivedMins, year }, ak, acts) +
     renderUdvikling(acts, filtered, year) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
     renderArchivedList(archivedRows, ak) +
     renderOverfoert(ak);
+  for (const d of el.querySelectorAll('details[data-hovedtal]')) {
+    d.open = aabne.includes(d.dataset.hovedtal);
+    if (d.dataset.hovedtal === fokus) d.querySelector('summary').focus({ preventScroll: true });
+  }
 }
 
 // ─── Engangsopgaver fra sidste år ─────────────────────────
@@ -315,9 +322,11 @@ function normLinje(brugtM, normM, elapsed) {
 const forskelOrd = v => v >= 0 ? 'merarbejde' : 'overskud';
 
 // ─── Summary card ─────────────────────────────────────────
-function renderSummary(totalMins, ak, acts) {
+function renderSummary(aggregeret, ak, acts) {
+  const { totalMins } = aggregeret;
   const year = skoleaarForPeriode(periodFilter, periodOffset);
   let extra  = '';
+  let hovedtal = registreretForklaring(aggregeret, start(), slut(), periodFilter === 'skolear');
 
   if (periodFilter === 'skolear') {
     const elapsed = forloebAndel();
@@ -328,9 +337,11 @@ function renderSummary(totalMins, ak, acts) {
     const SKAL    = NORM - ANDET;
     const normM   = SKAL * 60;
     const pct     = normM > 0 ? Math.min(100, Math.round(totalMins / normM * 100)) : 0;
-    const forv    = beregnBelastning({ ak, acts, normM, elevferie: elevferieFor(year), ...aarsPeriode(year) }).ved(new Date());
+    const bel     = beregnBelastning({ ak, acts, normM, elevferie: elevferieFor(year), ...aarsPeriode(year) });
+    const forv    = bel.ved(new Date());
     const expPct  = normM > 0 ? Math.min(99, Math.max(0, Math.round(forv / normM * 100))) : 0;
     const chip    = forloebChip(totalMins, forv, elapsed, true);
+    hovedtal += belastningForklaring(totalMins, forv, bel, acts, aarsPeriode(year), chip) + akkordForklaring(ak, aarsPeriode(year));
 
     extra = `
       <div class="norm-progress-outer">
@@ -345,13 +356,13 @@ function renderSummary(totalMins, ak, acts) {
         ${normLinje(totalMins, normM, elapsed)}
         ${ANDET ? `<div class="norm-andet">Årsnorm ${NORM} t ${ANDET > 0 ? '−' : '+'} ${fmtTal(Math.abs(ANDET))} t andet i porteføljen</div>` : ''}
       </div>
-      ${chip ? `<div class="norm-mod bel-mod">Mod belastningen ${chip}</div>` : ''}
-      ${ak ? renderAkkord(ak, elapsed, NORM, ANDET) : ''}`;
+      ${ak ? renderAkkord(ak, elapsed, NORM, ANDET) : ''}
+      ${rapportIndstillinger(acts, aarsPeriode(year), NORM, ANDET)}`;
   }
 
   return `<div class="rapport-summary">
-    <div class="rapport-total">${totalMins > 0 ? fmtMins(totalMins) : '—'}</div>
-    <div class="rapport-total-sub">Samlet tid${periodFilter === 'skolear' ? ` · ${year}` : ''}</div>
+    <div class="rapport-hovedtal-grid">${hovedtal}</div>
+    ${periodFilter !== 'skolear' ? '<p class="form-hint">Afvigelse fra forventet belastning og akkordsaldo gælder hele normperioden. <button type="button" class="btn btn-secondary" id="rapport-vis-skoleaar">Vis skoleårsrapport</button></p>' : ''}
     ${extra}
   </div>`;
 }
@@ -365,10 +376,6 @@ function renderAkkord(ak, elapsed, norm, andet) {
   const kal = Math.min(99, Math.round(elapsed * 100));
   return `<div class="akkord">
     <div class="akkord-head">Akkord</div>
-    <div class="akkord-saldo">
-      <span class="akkord-saldo-tal ${ak.saldo >= 0 ? 'is-pos' : 'is-neg'}">${fmtSaldo(ak.saldo)}</span>
-      <span class="akkord-saldo-sub">Saldo · optjent − brugt · ${saldoOrd(ak.saldo)}</span>
-    </div>
     <dl class="akkord-tal">
       <div><dt>Optjent</dt><dd>${fmtMins(ak.optjent)}</dd></div>
       <div><dt>Brugt</dt><dd>${fmtMins(ak.brugt)}</dd></div>
@@ -928,6 +935,8 @@ function bindListeners() {
   bindUdvikling(document.getElementById('rapport-content'));
 
   // Fluebenet i akkordregnskabet tegnes med rapporten, så det fanges her
+  document.getElementById('rapport-content')
+    ?.addEventListener('click', e => { if (e.target.closest('#rapport-vis-skoleaar')) setPeriod('skolear'); });
   document.getElementById('rapport-content')
     ?.addEventListener('change', e => {
       if (e.target.id !== 'akkord-fordel') return;
