@@ -168,6 +168,12 @@
           <button id="btn-stop-timer" class="btn btn-stop btn-full">■ Stop</button>
         </div>
 
+        <div id="timer-handling" class="timer-handling hidden" aria-live="polite">
+          <span id="timer-handling-tekst"></span>
+          <button id="timer-fortryd" class="btn btn-secondary">Fortryd</button>
+          <button id="timer-ret" class="btn btn-secondary">Ret tidspunkt</button>
+        </div>
+
         <div class="hjem-favorit-head"><h2 class="section-label">Favoritter</h2><button id="hjem-vaelg-favoritter" class="btn btn-secondary">Vælg favoritter</button></div>
         <div id="hjem-favoritter" class="quickstart-grid"></div>
         <button id="hjem-fortsaet" class="btn btn-secondary btn-full hidden"></button>
@@ -949,6 +955,26 @@ NV-eksamen; opgave; 15; ; afslutning; eksamen</div>
         <div class="form-actions">
           <button type="submit" id="saet-save-btn" class="btn btn-primary btn-full">Registrér sæt</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="timer-ret-backdrop" class="sheet-backdrop hidden"></div>
+  <div id="timer-ret-sheet" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="timer-ret-titel" tabindex="-1">
+    <div class="sheet-handle-bar"></div>
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <h3 id="timer-ret-titel">Ret tidspunkt</h3>
+        <button id="timer-ret-luk" class="btn-icon" aria-label="Luk">✕</button>
+      </div>
+      <form id="timer-ret-form">
+        <p id="timer-ret-forklaring" class="sheet-desc"></p>
+        <div class="form-group">
+          <label class="form-label" for="timer-ret-tid">Tidspunkt for stop eller skift</label>
+          <input class="form-input" id="timer-ret-tid" type="datetime-local" step="1" required>
+        </div>
+        <p id="timer-ret-fejl" class="warn-text" role="alert"></p>
+        <button id="timer-ret-gem" type="submit" class="btn btn-primary btn-full">Gem tidspunkt</button>
       </form>
     </div>
   </div>

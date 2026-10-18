@@ -5,7 +5,7 @@ import { getLoadedActivities, isActivitiesLoaded, aktiviteterHentet, naarAktivit
 import { getSettings } from './indstillinger.js';
 import { MODULER, skemaDatoer, skemaLaengde, skemaInterval, skemaNu } from './skema.js';
 import { opretPost } from './pauser.js';
-import { timerKontrolSti, udfoerTimerHandling, TIMER_KONFLIKT } from './timer-store.js';
+import { timerKontrolSti, udfoerTimerHandling, retTimerHandling, TIMER_KONFLIKT } from './timer-store.js';
 import { openEntrySheet } from './historik.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { openSheet, closeSheet } from './ark.js';
@@ -24,6 +24,8 @@ let timerHentet = false;
 let kontrolHentet = false;
 let timerOptaget = false;
 let unsubKontrol = null;
+let senesteHandling = null;
+let retHandling = null;
 let pendingAct      = null;
 let modulHoldId     = null;
 let modulWhen       = 'nu';
@@ -39,6 +41,9 @@ export function initTimerView(uid) {
   if (userId === uid) return;
   userId = uid;
   activeEntry = null;
+  senesteHandling = retHandling = null;
+  renderTimerHandling();
+  if (document.getElementById('timer-ret-sheet')?.classList.contains('open')) closeSheet('timer-ret-sheet', 'timer-ret-backdrop');
   aabnePoster = [];
   kontrolToken = null;
   timerHentet = kontrolHentet = false;
@@ -76,6 +81,10 @@ function setupActiveListener() {
     if (uid !== userId) return;
     kontrolToken = snap.data()?.token ?? null;
     kontrolHentet = true;
+    if (senesteHandling && senesteHandling.token !== kontrolToken) {
+      senesteHandling = null;
+      renderTimerHandling();
+    }
   });
   unsubActive = onSnapshot(
     query(collection(db, `users/${uid}/entries`), where('endTime', '==', null)),
@@ -557,7 +566,7 @@ function klarTilHandling() {
 function timerFejl(err, besked) {
   console.error(besked, err);
   showToast(err.message === TIMER_KONFLIKT || !navigator.onLine ||
-    /Vent, mens|flere åbne|Sluttidspunktet/.test(err.message)
+    /Vent, mens|flere åbne|Sluttidspunktet|overlappe/.test(err.message)
     ? err.message : `${besked}. Timeren er uændret — prøv igen online.`, 6500);
 }
 async function skiftTimer(ny) {
@@ -565,12 +574,14 @@ async function skiftTimer(ny) {
   const uid = userId;
   timerOptaget = true;
   try {
-    return await udfoerTimerHandling(uid, {
+    const resultat = await udfoerTimerHandling(uid, {
       poster: [...aabnePoster], kontrol: kontrolToken, ny,
       // Ved et igangværende modul skal den tidligere timer slutte ved
       // modulstarten, så skiftet ikke skaber et overlap.
       slutMs: ny.startTime.toMillis()
     });
+    huskTimerHandling(resultat);
+    return resultat;
   } finally { timerOptaget = false; }
 }
 export async function startTimer(activityId, workType) {
@@ -598,6 +609,8 @@ export async function stopActiveTimer() {
     if (!activeEntry) return;
     timerOptaget = true;
     const resultat = await udfoerTimerHandling(userId, { poster: [...aabnePoster], kontrol: kontrolToken });
+    huskTimerHandling(resultat);
+    if (resultat.uid !== userId) return;
     const gemt = resultat.efter[0].data;
     showToast(gemt ? `Stoppet · ${fmtMins(gemt.durationMinutes)}` : 'Under ét minut · ikke gemt');
   } catch (err) { timerFejl(err, 'Kunne ikke stoppe timer'); }
@@ -641,10 +654,77 @@ function renderTimerStatus() {
   el.append(stop);
 }
 
+// Den seneste stop-/skifthandling kan fortrydes i denne session. En ny
+// timerhandling eller et kontoskift erstatter den; data beskyttes af tokenet.
+function huskTimerHandling(resultat) {
+  if (resultat.uid !== userId) return;
+  senesteHandling = resultat.foer.length === 1 ? resultat : null;
+  renderTimerHandling();
+}
+function renderTimerHandling() {
+  const el = document.getElementById('timer-handling');
+  if (!el) return;
+  el.classList.toggle('hidden', !senesteHandling);
+  if (!senesteHandling) return;
+  const skift = senesteHandling.efter.some(p => p.data && !p.data.endTime);
+  document.getElementById('timer-handling-tekst').textContent =
+    `${skift ? 'Skiftet' : 'Stoppet'} kl. ${fmtTime(new Date(senesteHandling.slutMs))}`;
+}
+async function fortrydTimerHandling() {
+  if (timerOptaget || !senesteHandling || senesteHandling.uid !== userId) return;
+  const handling = senesteHandling;
+  timerOptaget = true;
+  try {
+    await retTimerHandling(handling, { fortryd: true });
+    if (handling.uid !== userId) return;
+    senesteHandling = null;
+    renderTimerHandling();
+    showToast('Fortrudt · den tidligere timer fortsætter');
+  } catch (err) { timerFejl(err, 'Kunne ikke fortryde'); }
+  finally { timerOptaget = false; }
+}
+function datoTidInput(ms) {
+  const d = new Date(ms), to = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${to(d.getMonth() + 1)}-${to(d.getDate())}T${to(d.getHours())}:${to(d.getMinutes())}:${to(d.getSeconds())}`;
+}
+function aabnTimerRettelse() {
+  if (!senesteHandling) return;
+  retHandling = senesteHandling;
+  document.getElementById('toast')?.classList.remove('visible');
+  document.getElementById('timer-ret-tid').value = datoTidInput(retHandling.slutMs);
+  document.getElementById('timer-ret-fejl').textContent = '';
+  document.getElementById('timer-ret-forklaring').textContent = retHandling.efter.some(p => p.data && !p.data.endTime)
+    ? 'Den gamle timers slutning og den nye timers start flyttes sammen.'
+    : 'Ret, hvornår arbejdet faktisk sluttede. Timeren forbliver stoppet.';
+  openSheet('timer-ret-sheet', 'timer-ret-backdrop');
+}
+async function gemTimerRettelse(e) {
+  e.preventDefault();
+  if (timerOptaget || !retHandling || retHandling.uid !== userId) return;
+  const handling = retHandling;
+  const knap = document.getElementById('timer-ret-gem');
+  timerOptaget = knap.disabled = true;
+  try {
+    const tidspunkt = new Date(document.getElementById('timer-ret-tid').value).getTime();
+    const resultat = await retTimerHandling(handling, { tidspunkt });
+    if (handling.uid !== userId) return;
+    huskTimerHandling(resultat);
+    closeSheet('timer-ret-sheet', 'timer-ret-backdrop');
+    showToast('Tidspunkt rettet');
+  } catch (err) {
+    document.getElementById('timer-ret-fejl').textContent = err.code
+      ? 'Kunne ikke gemme. Timeren er uændret — prøv igen online.' : err.message;
+  } finally { timerOptaget = knap.disabled = false; }
+}
+
 // ─── Event listeners ─────────────────────────────────────
 function bindListeners() {
   if (listenersOk) return;
   listenersOk = true;
+  document.getElementById('timer-fortryd')?.addEventListener('click', fortrydTimerHandling);
+  document.getElementById('timer-ret')?.addEventListener('click', aabnTimerRettelse);
+  document.getElementById('timer-ret-form')?.addEventListener('submit', gemTimerRettelse);
+  for (const id of ['timer-ret-luk', 'timer-ret-backdrop']) document.getElementById(id)?.addEventListener('click', () => closeSheet('timer-ret-sheet', 'timer-ret-backdrop'));
   window.addEventListener('online', renderTimerStatus);
   window.addEventListener('offline', renderTimerStatus);
 

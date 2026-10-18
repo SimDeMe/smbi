@@ -45,6 +45,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | Fil | Tester |
 | --- | --- |
 | `timer-og-hurtigstart.mjs` | hurtigstart følger aktiviteterne, poster under ét minut gemmes ikke |
+| `timer-fortryd.mjs` | fortryd stop/skift med bevaret id og note, slettede korte poster, fælles skiftetidspunkt, manuel rettelse, overlap, offline/fejl, nyere timer fra anden enhed, midnat og formular ved 340/390/1280 px |
 | `timer-sikkerhed.mjs` | hurtige tryk, atomiske skift, to browserenheder med fælles lager og compare-and-swap, forældede stop, offline/online, flere åbne timere og transaktionsfejl |
 | `hjem.mjs` | dagens sum med aktiv timer og midnat, pauser og fremtid, seneste poster med redigering, glemt tid, Lectio som plan, favoritter med arbejdstype, fortsæt, arkivering, kontoændringer og mobil/desktop |
 | `historik-overlap-pauser.mjs` | overlap, pauser som linjer, «Vis 500 mere», kalenderen retter gamle poster |

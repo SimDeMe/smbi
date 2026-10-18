@@ -1972,3 +1972,8 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .timer-status { padding: 12px; margin-bottom: 14px; border: 2px solid var(--accent); border-radius: 8px; }
 .timer-status p { margin: 0 0 8px; }
 .timer-status .btn { margin: 4px 4px 0 0; white-space: normal; }
+
+.timer-handling { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 18px; }
+.timer-handling span { flex: 1 0 100%; font-size: 14px; }
+.timer-handling .btn { min-height: 44px; }
+#timer-ret-tid { min-width: 0; max-width: 100%; box-sizing: border-box; }
