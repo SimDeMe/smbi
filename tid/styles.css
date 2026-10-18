@@ -1977,6 +1977,16 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .hjem-post span{font-family:var(--display);font-weight:700;font-size:.95rem}
 .hjem-post small{color:var(--text-2);font-size:.78rem}
 #hjem-lectio{margin-top:18px;white-space:normal;text-align:left;overflow-wrap:anywhere}
+.hjem-gennemgang{margin-top:22px;border:1px solid var(--ink);padding:12px}
+.hjem-gennemgang summary{cursor:pointer;font-family:var(--display);font-weight:700}
+.hjem-gennemgang summary small{display:inline-block;font-weight:400;color:var(--text-2);margin-left:6px}
+.gennemgang-info{font-size:.8rem;color:var(--text-2);line-height:1.5}
+.hjem-gennemgang ul{list-style:none;padding:0;margin:0}
+.hjem-gennemgang li{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px 0;border-top:1px solid var(--border);font-size:.85rem;overflow-wrap:anywhere}
+.gennemgang-knapper{display:flex;flex-wrap:wrap;gap:6px}
+.hjem-gennemgang .btn{font-size:.8rem;padding:8px 10px;white-space:normal;text-align:left}
+#gennemgang-fejl{color:var(--danger);font-size:.85rem}
+#gennemgang-fejl:empty{display:none}
 #favorit-valg .form-group{border-bottom:1px solid var(--slate);padding-bottom:14px}
 #favorit-valg label{display:block;margin:8px 0 5px}
 

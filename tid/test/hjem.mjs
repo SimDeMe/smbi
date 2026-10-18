@@ -32,6 +32,8 @@ async function side(browser, width = 390, data = seed) {
   await page.goto('http://localhost:8777/tid/');
   await page.waitForSelector('#view-hjem:not(.hidden)');
   await page.waitForFunction(() => document.getElementById('hjem-total').textContent === '1t 40m');
+  // Dagens sum og seneste poster kommer fra uafhængige lyttere.
+  await page.waitForSelector('#hjem-seneste button');
   return { page, context, fejl };
 }
 const browser = await chromium.launch();

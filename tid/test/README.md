@@ -44,6 +44,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 
 | Fil | Tester |
 | --- | --- |
+| `gennemgang.mjs` | frivillig dagsgennemgang, ubundet tid, overlap og auto-stop, accept/fortryd af fælles tid uden ændret beregning, accept på ny browser og ugyldighed efter rettelse, neutrale huller med manuel formular, pauser, sekunder, midnat, 550 poster, to enheder, offline/serverkvittering, rollback, lytterfejl, kontoskift, tastatur og 340/390/1280 px |
 | `lagringsstatus.mjs` | cache mod servermetadata, ventende ændringer og opstartskø, offline/online uden falsk kvittering, to enheder, sletning og batch uden for viste queries, afvisning og rollback, lytterfejl og ny kontrol, kontoskift, tastatur og 340/390/1280 px |
 | `timer-og-hurtigstart.mjs` | hurtigstart følger aktiviteterne, poster under ét minut gemmes ikke |
 | `timer-fortryd.mjs` | fortryd stop/skift med bevaret id og note, slettede korte poster, fælles skiftetidspunkt, manuel rettelse, overlap, offline/fejl, nyere timer fra anden enhed, midnat og formular ved 340/390/1280 px |

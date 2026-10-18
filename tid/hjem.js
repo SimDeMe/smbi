@@ -3,6 +3,7 @@ import { db, getCurrentSchoolYear, showToast } from './app.js';
 import { getLoadedActivities, naarAktiviteterAendres } from './activities.js';
 import { startTimer } from './timer.js';
 import { openEntrySheet } from './historik.js';
+import { initGennemgang, tegnGennemgang } from './gennemgang.js';
 import { openSheet, closeSheet } from './ark.js';
 import { listenLectio } from './lectio-store.js';
 import { lectioNavn, visLectio } from './lectio-kalender.js';
@@ -14,7 +15,7 @@ const $ = id => document.getElementById(id);
 const typer = ['undervisning', 'forberedelse', 'retning'];
 let uid = null, afmeld = [], afmeldDag = [], afmeldSeneste = null, ur = null;
 let afsluttede = [], aktive = [], seneste = [], favoritter = [], lectio = [];
-let dag = '', dagHentet = [false, false], bundet = false;
+let dag = '', dagHentet = [false, false], dagFejl = false, bundet = false;
 const poster = snap => snap.docs.map(d => ({ id: d.id, ...d.data({ serverTimestamps: 'estimate' }) }));
 const ms = t => t?.toDate?.().getTime();
 const dagensStart = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
@@ -29,6 +30,7 @@ export function initHjem(id) {
   afmeldSeneste?.(); clearInterval(ur);
   uid = id; afmeld = []; afmeldDag = []; afmeldSeneste = null; dag = '';
   afsluttede = []; aktive = []; seneste = []; favoritter = []; lectio = [];
+  initGennemgang(id);
   tegn();
   if (!uid) return;
   bind();
@@ -56,18 +58,19 @@ export function refreshHjem() {
 
 function hentDag() {
   afmeldDag.forEach(fn => fn());
-  dag = String(+dagensStart()); dagHentet = [false, false];
+  dag = String(+dagensStart()); dagHentet = [false, false]; dagFejl = false;
   afsluttede = []; aktive = []; $('hjem-total').textContent = '…';
+  tegnGennemgang([], false);
   // Sluttid fanger også poster, som begyndte i går. Åbne timere hentes
   // særskilt. Ingen grænse på antal poster i dagens sum eller sammensat indeks.
   const col = collection(db, `users/${uid}/entries`);
   afmeldDag = [
     onSnapshot(query(col, where('endTime', '>=', Timestamp.fromDate(dagensStart()))), snap => {
       afsluttede = poster(snap); dagHentet[0] = true; tegnTotal();
-    }, () => { dagHentet[0] = false; $('hjem-total').textContent = 'Kunne ikke hentes'; }),
+    }, () => { dagHentet[0] = false; dagFejl = true; tegnGennemgang([], false, true); $('hjem-total').textContent = 'Kunne ikke hentes'; }),
     onSnapshot(query(col, where('endTime', '==', null)), snap => {
       aktive = poster(snap); dagHentet[1] = true; tegnTotal();
-    }, () => { dagHentet[1] = false; $('hjem-total').textContent = 'Kunne ikke hentes'; })
+    }, () => { dagHentet[1] = false; dagFejl = true; tegnGennemgang([], false, true); $('hjem-total').textContent = 'Kunne ikke hentes'; })
   ];
 }
 
@@ -84,11 +87,12 @@ function hentSeneste(graense = 20) {
 function tegn() { tegnTotal(); tegnFavoritter(); tegnSeneste(); tegnLectio(); }
 function tegnTotal() {
   if (!uid) { $('hjem-total').textContent = '…'; return; }
-  if (!dagHentet.every(Boolean)) return;
+  if (!dagHentet.every(Boolean)) { tegnGennemgang([], false, dagFejl); return; }
   const fra = +dagensStart(), nu = Date.now();
   // Lytterne kan svare i hver sit øjeblik ved stop. Saml på id, så en post
   // aldrig tælles både som afsluttet og aktiv i overgangsøjeblikket.
   const samlede = new Map([...aktive, ...afsluttede].map(e => [e.id, e]));
+  tegnGennemgang([...samlede.values()], true);
   let total = 0;
   for (const e of samlede.values()) {
     if (e.isBreak) continue;
