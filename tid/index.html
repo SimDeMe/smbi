@@ -151,6 +151,11 @@
 
       <div id="view-hjem" class="view hidden">
 
+        <div class="hjem-dag">
+          <div><span class="section-label">Registreret i dag</span><strong id="hjem-total">…</strong><span class="hjem-info">Inkl. aktiv timer · uden pauser</span></div>
+          <button id="hjem-glemt" class="btn btn-secondary">+ Tilføj glemt tid</button>
+        </div>
+
         <!-- Aktiv timer-kort -->
         <div id="timer-card" class="timer-card hidden">
           <div class="timer-card-top">
@@ -161,6 +166,10 @@
           <div id="timer-elapsed" class="timer-elapsed">0:00</div>
           <button id="btn-stop-timer" class="btn btn-stop btn-full">■ Stop</button>
         </div>
+
+        <div class="hjem-favorit-head"><h2 class="section-label">Favoritter</h2><button id="hjem-vaelg-favoritter" class="btn btn-secondary">Vælg favoritter</button></div>
+        <div id="hjem-favoritter" class="quickstart-grid"></div>
+        <button id="hjem-fortsaet" class="btn btn-secondary btn-full hidden"></button>
 
         <!-- Hurtigstart -->
         <div id="qs-section-label" class="section-label">Hurtigstart</div>
@@ -177,6 +186,12 @@
           <button id="btn-1-modul" class="btn btn-secondary btn-full">⏱ 1 modul</button>
           <button id="btn-rettet-saet" class="btn btn-secondary btn-full">✓ Rettet sæt</button>
         </div>
+
+        <section class="hjem-seneste" aria-labelledby="hjem-seneste-titel">
+          <h2 id="hjem-seneste-titel" class="section-label">Seneste registreringer</h2>
+          <div id="hjem-seneste">Henter registreringer…</div>
+        </section>
+        <button id="hjem-lectio" class="btn btn-secondary btn-full hidden"></button>
 
       </div>
 

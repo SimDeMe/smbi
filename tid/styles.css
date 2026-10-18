@@ -1944,3 +1944,26 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .gendan-fejl{background:var(--tint-slem)}
 .gendan-advarsler{background:#FFE9DC}
 .gendan-fejl li+li,.gendan-advarsler li+li{margin-top:4px}
+
+/* Dagsoverblik: genvejene bliver før den udfoldede historik. */
+.hjem-dag{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.hjem-dag .section-label{display:block;margin:0 0 4px}
+#hjem-total{display:block;font-family:var(--display);font-size:1.7rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.hjem-info{display:block;font-size:.78rem;color:var(--text-2);margin-top:4px}
+.hjem-dag .btn{max-width:48%;white-space:normal;flex-shrink:0}
+#view-hjem .timer-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;padding:20px 16px 14px;margin-bottom:16px}
+#view-hjem .timer-card-top,#view-hjem .timer-worktype{grid-column:1;margin:0}
+#view-hjem .timer-elapsed{grid-column:2;grid-row:1 / span 2;font-size:2.3rem;align-self:center;margin:0}
+#btn-stop-timer{grid-column:1 / -1;margin-top:7px}
+.hjem-favorit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hjem-favorit-head h2{margin:0}
+.hjem-favorit-head .btn{padding:8px 12px;font-size:.8rem}
+.hjem-genvej-navn{font-family:var(--display);font-weight:700;overflow-wrap:anywhere;min-width:0}
+#hjem-fortsaet{margin-bottom:16px;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.hjem-seneste{margin-top:22px}
+.hjem-post{display:flex;flex-direction:column;gap:5px;text-align:left;width:100%;padding:12px 0;cursor:pointer;border:0;border-bottom:1px solid var(--ink);background:none;color:var(--ink);overflow-wrap:anywhere}
+.hjem-post span{font-family:var(--display);font-weight:700;font-size:.95rem}
+.hjem-post small{color:var(--text-2);font-size:.78rem}
+#hjem-lectio{margin-top:18px;white-space:normal;text-align:left;overflow-wrap:anywhere}
+#favorit-valg .form-group{border-bottom:1px solid var(--slate);padding-bottom:14px}
+#favorit-valg label{display:block;margin:8px 0 5px}

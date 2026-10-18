@@ -45,6 +45,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | Fil | Tester |
 | --- | --- |
 | `timer-og-hurtigstart.mjs` | hurtigstart følger aktiviteterne, poster under ét minut gemmes ikke |
+| `hjem.mjs` | dagens sum med aktiv timer og midnat, pauser og fremtid, seneste poster med redigering, glemt tid, Lectio som plan, favoritter med arbejdstype, fortsæt, arkivering, kontoændringer og mobil/desktop |
 | `historik-overlap-pauser.mjs` | overlap, pauser som linjer, «Vis 500 mere», kalenderen retter gamle poster |
 | `roegtest.mjs` | alle faner og ark åbner, navne med `&`, `<b>` og `"` vises som tekst |
 | `ferie.mjs` | foran/bagud på arbejdsdage og ferieindtastningen (fast dato: 2. okt. 2026) |

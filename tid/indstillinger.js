@@ -402,7 +402,10 @@ async function saveSettings() {
   const btn = document.getElementById('cfg-save-btn');
   if (btn) btn.disabled = true;
   try {
-    await setDoc(doc(db, `users/${userId}/settings/config`), updated);
+    // Forsidens favoritter har deres egen lytter og må ikke overskrives af
+    // indstillingsformularens ældre kopi, heller ikke fra en anden enhed.
+    const { hurtigstartFavoritter, ...tilGem } = updated;
+    await setDoc(doc(db, `users/${userId}/settings/config`), tilGem, { merge: true });
     settings = updated;
     updateTopYear();
     showToast('Indstillinger gemt');

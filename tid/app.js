@@ -10,6 +10,7 @@ import {
 import { firebaseConfig } from './firebase-config.js';
 import { initActivitiesView, refreshAktiviteter, aktiviteterHentet } from './activities.js';
 import { initTimerView, refreshQuickStart } from './timer.js';
+import { initHjem, refreshHjem } from './hjem.js';
 import { initHistorikView, refreshHistorik } from './historik.js';
 import { initKalenderView, refreshKalender } from './kalender.js';
 import { initRapporterView, refreshRapporter } from './rapporter.js';
@@ -99,6 +100,7 @@ onAuthStateChanged(auth, async user => {
       initTimerView(user.uid);
       initRettet(user.uid);
       initHistorikView(user.uid);
+      initHjem(user.uid);
       initKalenderView(user.uid);
       initRapporterView(user.uid);
     } catch (err) {
@@ -109,6 +111,7 @@ onAuthStateChanged(auth, async user => {
     visOnboardingHvisTom();
   } else {
     initBackup(null);
+    initHjem(null);
     initKalenderView(null);
     loadingScreen.classList.add('hidden');
     appEl.classList.add('hidden');
@@ -181,6 +184,7 @@ export function navigateTo(viewName) {
   const btn  = document.querySelector(`.nav-btn[data-view="${viewName}"]`);
 
   if (view) view.classList.remove('hidden');
+  if (viewName === 'hjem') refreshHjem();
   if (btn)  btn.classList.add('active');
   // Hjem har sit eget timerkort; banneret er til de andre faner
   appEl.dataset.view = viewName;
