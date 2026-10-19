@@ -17,6 +17,12 @@ export const steder = [
     forbehold: 'Markøren angiver en region syd for Grønland, ikke et enkelt nedsynkningspunkt. Grønlandspumpen er en idealiseret model af dele af havcirkulationen.'
   },
   {
+    id: 'stillehavet', navn: 'Det tropiske Stillehav', kortnavn: 'ENSO · Stillehavet', koordinater: [-145, 0],
+    forklaring: 'I det tropiske Stillehav påvirker passatvindene og havtemperaturen hinanden. Samspillet kaldes ENSO og har faserne El Niño, La Niña og neutral.',
+    modelnote: 'Regionalt klimasystem · idealiseret undervisningsmodel.',
+    forbehold: 'Markøren ligger på ækvator i det centrale Stillehav, midt i Niño 3.4-området (5° N–5° S, 170° V–120° V). ENSO omfatter samspillet mellem hav og atmosfære over et langt større område. Simuleringen viser processerne med illustrative modelværdier, ikke observationer eller en vejrprognose.'
+  },
+  {
     id: 'alperne', navn: 'Alperne', koordinater: [10, 46.5],
     forklaring: 'Når fugtig luft tvinges op over en bjergkæde, afkøles den. Vanddamp kan kondensere og give nedbør; på læsiden kan luften blive varm og tør.',
     modelnote: 'Skematisk bjergmodel – ikke en lokal vejrprognose.',
@@ -49,6 +55,9 @@ export const modeller = [
   { id: 'groenlandspumpen', titel: 'Grønlandspumpen', emne: 'Havcirkulation', niveau: 'NV / Naturgeografi C / B', steder: ['nordatlanten'],
     beskrivelse: 'Skru på kulde og smeltevand, og undersøg hvordan havcirkulationen reagerer i en kvalitativ model.',
     sti: '/geografi/groenlandspumpen.html', soegeord: 'grønland hav salt temperatur dybvand termohalin amoc' },
+  { id: 'enso', titel: 'ENSO — El Niño & La Niña', emne: 'Hav og klima', niveau: 'Naturgeografi C / B', steder: ['stillehavet'],
+    beskrivelse: 'Skru på passatvinden, følg det varme vand og termoklinen i Stillehavet, og undersøg samspillet mellem hav og atmosfære. Klik på begreberne undervejs.',
+    sti: '/geografi/enso.html', soegeord: 'enso el nino la nina southern oscillation stillehavet passatvind termoklin opvelling walker feedback temperatur hav klima' },
   { id: 'stigningsregn', titel: 'Stigningsregn & føhn', emne: 'Vejr og klima', niveau: 'Naturgeografi C / B', steder: ['alperne'],
     beskrivelse: 'Løft en luftpakke over et bjerg, og følg temperatur, kondensation og nedbør.',
     sti: '/geografi/Stigningsregn.html', soegeord: 'bjerg regn føhn foehn fugt alper' },

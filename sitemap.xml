@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://smbi.dk/geografi/enso.html</loc>
+    <lastmod>2026-10-19</lastmod>
+  </url>
+  <url>
     <loc>https://smbi.dk/atlas/jordskaelvsboelger-a/</loc>
     <lastmod>2026-10-16</lastmod>
   </url>
@@ -18,7 +22,7 @@
   </url>
   <url>
     <loc>https://smbi.dk/atlas/</loc>
-    <lastmod>2026-10-14</lastmod>
+    <lastmod>2026-10-19</lastmod>
   </url>
   <url>
     <loc>https://smbi.dk/atlas/island/</loc>
@@ -34,7 +38,7 @@
   </url>
   <url>
     <loc>https://smbi.dk/geografi.html</loc>
-    <lastmod>2026-08-19</lastmod>
+    <lastmod>2026-10-19</lastmod>
   </url>
   <url>
     <loc>https://smbi.dk/biologi.html</loc>
