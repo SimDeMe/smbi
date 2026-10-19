@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fjordens vand, salt og ilt — smbi.dk</title>
+<meta name="description" content="Interaktiv to-lags model af en dansk fjord: ferskvand fra åerne, havvand ind over tærsklen, springlag og ilt i bundvandet. Bygget på Knudsens relationer og data fra Horsens Fjord.">
+<link rel="canonical" href="https://smbi.dk/geografi/fjord.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/geografi/fjord.html">
+<meta property="og:title" content="Fjordens vand, salt og ilt">
+<meta property="og:description" content="Interaktiv to-lags model af en dansk fjord: ferskvand fra åerne, havvand ind over tærsklen, springlag og ilt i bundvandet.">
+<meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — naturgeografi: simuleringer, forsøg og opgaver">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFF9EE; --paper-2:#FFF3DC; --panel:#FFFFFF;
+  --ink:#17211F; --slate:#566B68;
+  --pink:#E8336D; --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+  --geo:var(--blue);
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1240px; --side:370px;
+  --hard:4px 4px 0 var(--ink); --hard-lg:7px 7px 0 var(--ink);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:0.68rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+sub{font-size:0.72em;line-height:0}
+
+/* ── Topbjælke ─────────────────────────────────────────── */
+.rainbow{height:7px;background:linear-gradient(90deg,var(--pink) 0 14.3%,var(--coral) 14.3% 28.6%,var(--amber) 28.6% 42.9%,var(--lime) 42.9% 57.2%,var(--teal) 57.2% 71.5%,var(--blue) 71.5% 85.8%,var(--grape) 85.8% 100%)}
+.top-bar{background:rgba(255,249,238,0.93);border-bottom:2px solid var(--ink)}
+.top-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:16px;height:52px}
+.brand{font-family:var(--display);font-variation-settings:'wdth' 125;font-weight:800;font-size:1.15rem;
+  letter-spacing:-0.02em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.brand-mark{width:24px;height:24px;border-radius:9px;border:2px solid var(--ink);flex-shrink:0;
+  background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink))}
+.brand em{font-family:var(--mono);font-size:0.72rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{display:flex;gap:6px;margin-left:auto}
+.top-nav a{font-family:var(--display);font-size:0.84rem;font-weight:600;text-decoration:none;white-space:nowrap;
+  padding:6px 14px;border-radius:20px;border:2px solid transparent}
+.top-nav a:hover{background:#C7E6F6;border-color:var(--ink)}
+
+/* ── Sidehoved ─────────────────────────────────────────── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.head{padding:22px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:32px;align-items:end}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFF6E0;
+  padding:5px 13px;border-radius:20px;justify-self:start;grid-column:1}
+h1{grid-column:1;font-family:var(--display);font-variation-settings:'wdth' 118;font-weight:800;
+  font-size:clamp(1.7rem,3vw,2.4rem);line-height:1.05;letter-spacing:-0.03em;margin:10px 0 0}
+.hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
+.hi::before{content:'';position:absolute;z-index:-1;left:-6px;right:-6px;top:14%;bottom:8%;
+  background:#C7E6F6;border-radius:6px;transform:rotate(-1.3deg)}
+.lead{grid-column:2;grid-row:1 / span 2;font-size:0.96rem;line-height:1.45;color:#3E4E4C;max-width:52ch;justify-self:end}
+
+/* ── Panelet ───────────────────────────────────────────── */
+.rig{background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
+  box-shadow:var(--hard-lg);margin-top:16px}
+.rig-bar{height:8px;background:var(--geo)}
+.rig-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 14px;
+  border-bottom:2px solid var(--ink);background:#E7F4FB}
+.rig-head .titel{font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase}
+.rig-head .hoejre{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.version{font-family:var(--mono);font-size:0.58rem;color:var(--slate)}
+.btn-mini,select.btn-mini{font-family:var(--display);font-size:0.74rem;font-weight:700;background:#fff;
+  border:2px solid var(--ink);color:var(--ink);padding:4px 11px;border-radius:18px;cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.btn-mini:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.btn-mini[aria-pressed="true"]{background:var(--geo);color:#fff;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+select.btn-mini{padding-right:8px}
+
+.rig-body{display:grid;grid-template-columns:minmax(0,1fr) var(--side);min-height:clamp(380px,calc(100vh - 190px),620px)}
+.stage{position:relative;min-height:300px;border-right:2px solid var(--ink);
+  background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;padding:10px}
+#fig{display:block;position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);
+  border:2px solid var(--ink);border-radius:12px;background:#F4FAFD}
+.side{display:flex;flex-direction:column;background:var(--paper-2);min-width:0}
+
+/* mode-vælger */
+.modus{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:2px solid var(--ink)}
+.modus button{font-family:var(--display);font-weight:700;font-size:0.8rem;line-height:1.2;
+  padding:8px 10px;border:0;background:#fff;color:var(--ink);cursor:pointer;text-align:left}
+.modus button + button{border-left:2px solid var(--ink)}
+.modus button small{display:block;font-family:var(--mono);font-size:0.56rem;font-weight:500;letter-spacing:0.06em;color:var(--slate);margin-top:2px}
+.modus button[aria-pressed="true"]{background:var(--ink);color:#FFF6E0}
+.modus button[aria-pressed="true"] small{color:#C9D6D3}
+
+/* aflæsninger */
+.aflaes{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--ink);background:#fff}
+.aflaes > div{padding:7px 12px 8px;border-top:2px solid var(--ink)}
+.aflaes > div:nth-child(-n+2){border-top:0}
+.aflaes > div:nth-child(even){border-left:2px solid var(--ink)}
+.aflaes dt{font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5A6C69}
+.aflaes dd{font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;font-size:1.12rem;
+  line-height:1.15;font-variant-numeric:tabular-nums}
+.aflaes dd small{font-size:0.7em;font-weight:700;color:#5A6C69;margin-left:2px}
+.aflaes .note{display:block;font-family:var(--mono);font-size:0.56rem;font-weight:600;letter-spacing:0.04em;color:#5A6C69;margin-top:1px}
+.ilt-0{background:#EDF8E4}
+.ilt-1{background:#FFF1D6}
+.ilt-2,.ilt-3{background:#FFE0D6}
+.ilt-2 .note,.ilt-3 .note{color:#B83A12}
+
+/* faner */
+.faner{display:flex;border-bottom:2px solid var(--ink);background:#fff}
+.faner button{flex:1;font-family:var(--display);font-weight:700;font-size:0.78rem;padding:6px 8px;border:0;
+  background:transparent;cursor:pointer;color:var(--slate);border-bottom:3px solid transparent}
+.faner button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--geo)}
+.knobs{padding:8px 14px 10px;display:flex;flex-direction:column;gap:3px}
+.knobs[hidden]{display:none}
+.knob{display:flex;flex-direction:column;gap:1px}
+.knob-top{display:flex;align-items:baseline;gap:8px;line-height:1.25}
+.knob-top .navn{font-family:var(--display);font-size:0.8rem;font-weight:700}
+.knob-top .navn i{font-family:var(--body);font-weight:600}
+.knob-top .hjaelp{font-family:var(--body);font-size:0.74rem;color:var(--slate)}
+.knob-val{margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;font-size:0.86rem;
+  font-variant-numeric:tabular-nums;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:0 9px;white-space:nowrap}
+.knob.beregnet .knob-val{background:#EEF3F2}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border:2px solid var(--ink);border-radius:8px;background:var(--track,#fff)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;margin-top:-8px;border-radius:50%;
+  border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink)}
+input[type=range]::-moz-range-track{height:8px;border:2px solid var(--ink);border-radius:8px;background:var(--track,#fff)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--ink);background:var(--kc,var(--amber));box-shadow:2px 2px 0 var(--ink)}
+.k-fersk{--track:linear-gradient(90deg,#fff,#0FA593);--kc:var(--teal)}
+.k-salt{--track:linear-gradient(90deg,#E8F6FB,#0B4F7C);--kc:#3F8FC0}
+.k-flow{--track:linear-gradient(90deg,#fff,#7A4FD6);--kc:var(--grape)}
+.k-naer{--track:linear-gradient(90deg,#fff,#5FB030);--kc:var(--lime)}
+.k-ilt{--track:linear-gradient(90deg,#FFE0D6,#BFE3F5);--kc:var(--blue)}
+.k-temp{--track:linear-gradient(90deg,#BFE3F5,#FF6A3D);--kc:var(--coral)}
+.fast{font-size:0.76rem;color:var(--slate);line-height:1.3}
+
+.advarsel{margin:0 14px 10px;padding:7px 10px;border:2px solid #B83A12;border-radius:10px;background:#FFE9E0;
+  font-size:0.82rem;line-height:1.35}
+.advarsel[hidden]{display:none}
+.advarsel b{font-family:var(--display)}
+
+/* ── Om modellen ───────────────────────────────────────── */
+.om{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.om details{background:#fff;border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard);padding:10px 16px}
+.om summary{font-family:var(--display);font-weight:800;font-size:1.02rem;cursor:pointer}
+.om details[open] summary{margin-bottom:6px}
+.om p,.om li{font-size:0.95rem;line-height:1.5}
+.om p + p,.om ul,.om ol{margin-top:6px}
+.om ul,.om ol{padding-left:20px}
+.om .lign{font-family:var(--mono);font-size:0.82rem;background:var(--paper);border-radius:8px;padding:6px 10px;margin-top:6px;line-height:1.7;overflow-x:auto}
+
+/* ── Bund ──────────────────────────────────────────────── */
+.foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:24px 0 30px}
+.foot-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.foot .brand{color:#FFF6E0}
+.foot .mono{color:#8FA29E;margin-top:5px}
+.foot-links{display:flex;gap:8px;flex-wrap:wrap}
+.foot-links a{font-family:var(--display);font-size:0.82rem;font-weight:700;text-decoration:none;border:2px solid #FFF6E0;border-radius:20px;padding:5px 13px}
+
+/* ── Figurens tekster (SVG) ────────────────────────────── */
+#fig text{font-family:var(--display);font-weight:700}
+#fig .lbl{font-size:15px}
+#fig .lbl-s{font-size:13px;font-weight:600}
+#fig .mono-s{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.08em}
+
+/* ── Fokus/projektor ───────────────────────────────────── */
+body[data-fokus="1"] .top,body[data-fokus="1"] .head,body[data-fokus="1"] .foot,body[data-fokus="1"] .om{display:none}
+body[data-fokus="1"] .wrap{max-width:none;padding:0 12px}
+body[data-fokus="1"] .rig{margin-top:12px}
+
+/* ── Lave skærme ───────────────────────────────────────── */
+@media (max-height:760px) and (min-width:900px){
+  .top-in{height:42px}
+  .head{padding-top:4px}
+  .eyebrow{display:none}
+  h1{font-size:1.6rem;margin-top:0}
+  .lead{font-size:0.86rem}
+  .rig{margin-top:6px}
+  .rig-head{padding:5px 12px}
+  .aflaes > div{padding:4px 12px 5px}
+  .aflaes dd{font-size:1rem}
+  .knobs{gap:2px;padding:6px 14px 8px}
+}
+@media (max-height:640px) and (min-width:900px){
+  .lead{display:none}
+}
+
+/* ── Smal skærm: alt under hinanden ────────────────────── */
+@media (max-width:899px){
+  .rig-body{grid-template-columns:1fr;min-height:0}
+  .stage{border-right:0;border-bottom:2px solid var(--ink);min-height:0}
+  #fig{position:static;width:100%;height:auto}
+  .head{grid-template-columns:1fr}
+  .lead{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .wrap,.top-in,.foot-in{padding-left:12px;padding-right:12px}
+  .stage{padding:6px}
+  .rig{border-radius:14px;box-shadow:var(--hard)}
+  .rig-head .titel{display:none}
+  .rig-head .hoejre{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.top,.foot,.btn-mini{display:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar"><div class="top-in">
+    <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+    <nav class="top-nav"><a href="/geografi.html">Naturgeografi</a><a href="/">Forside</a></nav>
+  </div></div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="head">
+    <span class="eyebrow mono">Naturgeografi · hav og kyst</span>
+    <h1>Fjordens vand, salt og <span class="hi">ilt</span></h1>
+    <p class="lead">Ferskvand fra åerne løber ud i overfladen, tungt saltvand strømmer ind langs bunden. Saliniteterne afslører, hvor meget vand der skiftes ud — og om bundvandet får ilt nok.</p>
+  </div>
+
+  <section class="rig" aria-label="Fjordmodel">
+    <div class="rig-bar"></div>
+    <div class="rig-head">
+      <span class="titel">To-lags fjordmodel i ligevægt</span>
+      <span class="version" title="Modellens version">v1.0</span>
+      <span class="hoejre">
+        <label class="sr" for="eksempel">Eksempel</label>
+        <select class="btn-mini" id="eksempel" title="Indlæs typiske værdier">
+          <option value="aug">Horsens Fjord, august</option>
+          <option value="feb">Horsens Fjord, februar</option>
+          <option value="indre">Indre fjord, august</option>
+          <option value="" hidden>Egne værdier</option>
+        </select>
+        <button type="button" class="btn-mini" id="btn-anim" aria-pressed="true" title="Vis eller stop de bevægelige strømpile">Strøm ▶</button>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul sidens overskrift og menu">Fokus</button>
+      </span>
+    </div>
+    <div class="rig-body">
+      <div class="stage">
+        <svg id="fig" role="img" aria-labelledby="fig-titel fig-besk" viewBox="0 0 760 420">
+          <title id="fig-titel">Tværsnit af fjorden</title>
+          <desc id="fig-besk"></desc>
+        </svg>
+      </div>
+      <div class="side">
+        <div class="modus" role="group" aria-label="Hvad er kendt?">
+          <button type="button" id="modus-a" aria-pressed="true">Målt salt → strømme<small>Knudsens metode</small></button>
+          <button type="button" id="modus-b" aria-pressed="false">Hvad nu hvis …<small>sæt strømme → salt</small></button>
+        </div>
+        <dl class="aflaes" aria-live="polite">
+          <div><dt>Ud af fjorden</dt><dd id="v-forst">6,0<small>× åvandet</small></dd><span class="note" id="n-forst">Q<sub>ud</sub>/Q<sub>f</sub></span></div>
+          <div><dt>Springlag</dt><dd id="v-ds">3,6<small>g/kg</small></dd><span class="note" id="n-ds">S<sub>b</sub> − S<sub>o</sub></span></div>
+          <div id="boks-ilt"><dt>Ilt i bundvandet</dt><dd id="v-ilt">5,2<small>mg/L</small></dd><span class="note" id="n-ilt"></span></div>
+          <div><dt>Fosfor fra åerne</dt><dd id="v-pb">1,0<small>mmol/m³</small></dd><span class="note" id="n-pb"></span></div>
+        </dl>
+        <div class="faner" role="tablist" aria-label="Skydere">
+          <button type="button" role="tab" id="fane-vand" aria-selected="true" aria-controls="knobs-vand">Vand og salt</button>
+          <button type="button" role="tab" id="fane-ilt" aria-selected="false" aria-controls="knobs-ilt" tabindex="-1">Næring og ilt</button>
+        </div>
+        <div class="knobs" id="knobs-vand" role="tabpanel" aria-labelledby="fane-vand"></div>
+        <div class="knobs" id="knobs-ilt" role="tabpanel" aria-labelledby="fane-ilt" hidden></div>
+        <p class="advarsel" id="advarsel" role="alert" hidden></p>
+      </div>
+    </div>
+  </section>
+  <p class="sr" id="sr-status" aria-live="polite"></p>
+
+  <div class="om">
+    <details open>
+      <summary>Hvad sker der i fjorden?</summary>
+      <p>Åerne leverer ferskvand (<i>Q</i><sub>f</sub>) til overfladen. Det er let og bliver liggende øverst, mens tungt, salt vand fra havet strømmer ind langs bunden over tærsklen (<i>Q</i><sub>ind</sub>). Mellem de to lag ligger <b>springlaget</b>, hvor saliniteten skifter brat.</p>
+      <p>Vind og tidevand blander lidt overfladevand ned (<i>Q</i><sub>ned</sub>) og meget bundvand op (<i>Q</i><sub>op</sub>). Derfor er det vand, der løber ud af fjorden (<i>Q</i><sub>ud</sub>), ikke bare åvandet: det er åvandet <i>plus</i> alt det havvand, der er blandet op. Jo saltere overfladen er, jo mere havvand må der være blandet i — og jo større bliver udskiftningen.</p>
+      <p>Bundvandet får kun ilt med det vand, der kommer ind (<i>Q</i><sub>ind</sub> og <i>Q</i><sub>ned</sub>). Alger, der vokser på næringsstof fra åer og hav, synker ned og bliver nedbrudt dernede — det bruger ilt. Går udskiftningen langsomt, eller er der meget næring, opstår <b>iltsvind</b>.</p>
+    </details>
+    <details>
+      <summary>Ligningerne</summary>
+      <p>Hvert lag er i ligevægt: det, der kommer ind, kommer også ud — både vand og salt (åvandet er saltfrit).</p>
+      <div class="lign">Overflade: Q<sub>f</sub> + Q<sub>op</sub> = Q<sub>ned</sub> + Q<sub>ud</sub><br>
+        S<sub>b</sub>·Q<sub>op</sub> = S<sub>o</sub>·(Q<sub>ned</sub> + Q<sub>ud</sub>)<br>
+        Bund: Q<sub>ind</sub> + Q<sub>ned</sub> = Q<sub>op</sub><br>
+        S<sub>kat</sub>·Q<sub>ind</sub> + S<sub>o</sub>·Q<sub>ned</sub> = S<sub>b</sub>·Q<sub>op</sub></div>
+      <p>Løst for strømmene (Knudsens relationer for de to første):</p>
+      <div class="lign">Q<sub>ind</sub> = Q<sub>f</sub>·S<sub>o</sub> / (S<sub>kat</sub> − S<sub>o</sub>)<br>
+        Q<sub>ud</sub> = Q<sub>f</sub>·S<sub>kat</sub> / (S<sub>kat</sub> − S<sub>o</sub>)<br>
+        Q<sub>op</sub> = Q<sub>f</sub>·S<sub>o</sub> / (S<sub>b</sub> − S<sub>o</sub>)<br>
+        Q<sub>ned</sub> = Q<sub>op</sub> − Q<sub>ind</sub></div>
+      <p>Ilt i bundvandet, hvor algerne fjerner fosfor fra overfladen med raten γ·P<sub>o</sub> og bruger η = 130 mol O₂ pr. mol P, når de nedbrydes:</p>
+      <div class="lign">P<sub>o</sub> = (Q<sub>f</sub>·P<sub>f</sub> + Q<sub>ind</sub>·P<sub>kat</sub>) / Q<sub>ud</sub><br>
+        O<sub>b</sub> = (Q<sub>ind</sub>·O<sub>kat</sub> + Q<sub>ned</sub>·O<sub>s</sub> − η·γ·P<sub>o</sub>) / Q<sub>op</sub></div>
+      <p>I «Hvad nu hvis» bruges de samme ligninger omvendt: du sætter Q<sub>ind</sub> og Q<sub>ned</sub>, og modellen finder S<sub>o</sub> og S<sub>b</sub>.</p>
+    </details>
+    <details>
+      <summary>Forenklinger og grænser</summary>
+      <ul>
+        <li>Modellen er i <b>ligevægt</b> på månedsbasis. Fjordvand udskiftes typisk på 10–30 døgn, så den passer bedst til månedsmidler — ikke til en enkelt storm.</li>
+        <li>Hvert lag er <b>ens blandet</b>. Rigtige fjorde har gradvise overgange, og den indre fjord er mindre salt end den ydre.</li>
+        <li>Strømmene beregnes ud fra saliniteter, ikke måles. Små fejl i S<sub>kat</sub> − S<sub>o</sub> giver store fejl i strømmene, når forskellen er lille.</li>
+        <li>Er S<sub>o</sub> ≥ S<sub>kat</sub>, S<sub>b</sub> ≤ S<sub>o</sub> eller S<sub>b</sub> &gt; S<sub>kat</sub>, har ligningerne ingen fysisk løsning (division med nul eller negativ blanding).</li>
+        <li>Algerne ophobes ikke; alt, der synker ned, nedbrydes med det samme. Det kan forskyde iltsvindet en til to måneder i forhold til virkeligheden.</li>
+        <li>Iltsvind regnes som under 4 mg/L (moderat) og under 2 mg/L (kraftigt). Giver modellen negativ ilt, betyder det iltfrit vand, hvor bakterier i stedet danner svovlbrinte.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Prøv selv</summary>
+      <ol>
+        <li>Sammenlign februar og august. Hvorfor er udskiftningen så meget større om vinteren?</li>
+        <li>Skru overfladens salinitet <i>S</i><sub>o</sub> op mod <i>S</i><sub>kat</sub>. Hvad sker der med Q<sub>ud</sub>/Q<sub>f</sub>? Hvorfor?</li>
+        <li>Vælg «Indre fjord». Overfladen er 3 g/kg mindre salt. Hvorfor kommer iltsvindet tættere på?</li>
+        <li>Under «Næring og ilt»: Halvér fosfor i åvandet, og prøv derefter at halvere fosfor i havvandet. Hvad betyder mest for ilten i den ydre fjord? Og i den indre?</li>
+        <li>I «Hvad nu hvis»: Skru på vind og tidevand (Q<sub>ned</sub>). Hvad sker der med springlaget og med ilten?</li>
+        <li>Skru temperaturen op. Hvorfor giver varmt vand mindre ilt i bundvandet?</li>
+      </ol>
+    </details>
+    <details>
+      <summary>Kilder og data</summary>
+      <p>Modellen følger C. J. Bjerrum (KU, IGN): «Iltsvind i de danske farvande», øvelse 1 (vand- og saltbalance) og 2 (nærings- og iltbalance), STEM Academy 2026. Den bygger på Knudsens relationer (1900) og er inspireret af Timmermann, Markager &amp; Gustafsson (2010): <i>Streams or open sea?</i> J. Mar. Syst. 82: 111–121.</p>
+      <p>Eksemplerne er medianer af månedsmidler 1988–2026 fra kursets regneark: station 94330001 (ydre Horsens Fjord), stationer ud for Juelsminde (åbent hav, ODA) og Bygholm Å og Hansted Å (vandportalen.dk). Fosfor er omregnet til biologisk tilgængeligt P (× 0,83 i åer, × 0,5 i havet; Jørgensen m.fl. 2014). γ = 1,3 m³/s er kursets tilpasning til Horsens Fjord.</p>
+    </details>
+  </div>
+</div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div><a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Fjordens vand, salt og ilt</div></div>
+    <nav class="foot-links"><a href="/geografi.html">Naturgeografi</a><a href="/">Alle simuleringer</a><a href="/contact.html">Kontakt</a></nav>
+  </div>
+</footer>
+<script type="module" src="fjord/side.js"></script>
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){document.body.dataset.fokus='1';}}catch(x){}})();
+</script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
