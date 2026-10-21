@@ -186,3 +186,21 @@ Relateret: [ressourceinventar](SIMULATIONSOVERSIGT.md),
 [afprøvningsbelæg](gennemgang-46.json),
 [Claude-overdragelse](OVERDRAGELSE-CLAUDE.md),
 [ROADMAP.md](ROADMAP.md) og [ISLAND-DEMO.md](ISLAND-DEMO.md).
+
+## Tilføjelse 18. oktober 2026 – atlaslag til K5 og K8
+
+Atlas har nu månedlig middeltemperatur (NCEP/NCAR-reanalyse, 1991–2020),
+en punktvis tabel med temperatur og GPCP-nedbør for samme normalperiode,
+skematisk vind/tryk i januar og juli (passat, vestenvinde, ITK og monsun)
+samt varme/kolde overfladestrømme med forklaring af forbindelsen til AMOC
+og Grønlandspumpen. Vindlaget linker til den eksisterende cirkulationsmodel.
+Det giver geografisk anvendelse til K5 og kortkritik til F4/F7; K8 støttes
+af forskellen mellem varmefordeling og temperaturændring. Elever kan
+sammenligne lokaliteter og forklare årstider, regntid og kystklima.
+
+Vind/tryk og havstrømme er redaktionelle skitser, ikke observerede felter;
+temperaturen er reanalyse og udjævner lokal topografi. Ny belæg/status:
+**E/D** – kortkoblingen er leveret, men dokumenterer ikke i sig selv fuld
+kernestofdækning eller elevernes målopfyldelse. Kilder og afgrænsning:
+[data/klimavejr-kilder.md](data/klimavejr-kilder.md),
+[data/middeltemperatur.LICENSE](data/middeltemperatur.LICENSE).

@@ -134,3 +134,11 @@ Derefter følger rækkefølgen i INDHOLD.md: istidslandskab og Danmarkskort i
 højere opløsning (A9, C3), grundvandstværsnit (C2), kulstofkredsløbet (E4),
 samfundsdatalag (energi, GHI, vandstress) og vandbalance/sol- og vindpotentiale
 for et sted (C1, E2).
+
+## Ressourcer og samfund · leveret 18. oktober 2026
+
+Samfundsdata har nu en særskilt lagkategori **Ressourcer og samfund** med
+energimiks pr. land (el og primærenergi, 2023), solindstråling og
+vindpotentiale (NASA POWER 2001–2020) og vandstress (FAO, 2022).
+Se README.md og data/ressourcer.LICENSE. GHI, energiforbrug pr. indbygger
+og en lokal model for anlægsproduktion står fortsat åbne i INDHOLD.md.

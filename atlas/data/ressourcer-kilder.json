@@ -1,0 +1,18 @@
+{
+  "energi.csv": {
+    "url": "https://raw.githubusercontent.com/owid/energy-data/master/owid-energy-data.csv",
+    "sha256": "266f2e2baad7975351bc9bb4aa061d22b1da9fe4c47d51d2ac6071e01e171f76"
+  },
+  "vand.json": {
+    "url": "https://api.worldbank.org/v2/country/all/indicator/ER.H2O.FWST.ZS?format=json&date=2022&per_page=1000",
+    "sha256": "520ed18649a2c14ba84b1f35cfb75870596ebbe185b19a195afa1ae3c02ca125"
+  },
+  "ALLSKY_SFC_SW_DWN.tif": {
+    "url": "https://gis.earthdata.nasa.gov/portal/rest/services/POWER/POWER_CLIMATOLOGY_RADIATION_LST/ImageServer/exportImage?bbox=-180%2C-90%2C180%2C90&bboxSR=4326&imageSR=4326&size=360%2C180&format=tiff&pixelType=F32&interpolation=RSP_NearestNeighbor&mosaicRule=%7B%22multidimensionalDefinition%22%3A+%5B%7B%22variableName%22%3A+%22ALLSKY_SFC_SW_DWN%22%2C+%22dimensionName%22%3A+%22month%22%2C+%22values%22%3A+%5B13%5D%2C+%22isSlice%22%3A+true%7D%5D%7D&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&f=image",
+    "sha256": "7e4406e0594fb8c4dd18a55c72b76e116443144e2f23a7d87fd1fc98c67eaf46"
+  },
+  "WS50M.tif": {
+    "url": "https://gis.earthdata.nasa.gov/portal/rest/services/POWER/POWER_CLIMATOLOGY_METEOROLOGY_LST/ImageServer/exportImage?bbox=-180%2C-90%2C180%2C90&bboxSR=4326&imageSR=4326&size=360%2C180&format=tiff&pixelType=F32&interpolation=RSP_NearestNeighbor&mosaicRule=%7B%22multidimensionalDefinition%22%3A+%5B%7B%22variableName%22%3A+%22WS50M%22%2C+%22dimensionName%22%3A+%22month%22%2C+%22values%22%3A+%5B13%5D%2C+%22isSlice%22%3A+true%7D%5D%7D&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&f=image",
+    "sha256": "2c5bee4eb3bb2cd92673ca01189911df04f20423e5d28f30bf1edca19b14a117"
+  }
+}

@@ -1,0 +1,28 @@
+Relief and land-cover overview maps, downloaded 2026-10-17.
+
+RELIEF
+Natural Earth Cross Blended Hypso with Relief, Water, Drains, and Ocean Bottom
+v3.2.0, HYP_LR_SR_OB_DR (16200 x 8100 source pixels).
+https://www.naturalearthdata.com/downloads/10m-raster-data/10m-cross-blend-hypso/
+https://naturalearth.s3.amazonaws.com/10m_raster/HYP_LR_SR_OB_DR.zip
+Public domain: https://www.naturalearthdata.com/about/terms-of-use/
+Resized to 5400 x 2700 using Pillow Lanczos; JPEG quality 90.
+This is a rendered shaded-relief map, NOT an elevation grid. Land tints vary
+by region as well as elevation. No numerical elevation is inferred from RGB.
+
+LAND COVER
+NASA GIBS, MODIS Aqua+Terra IGBP Land Cover Type Annual, 2023.
+https://modis-land.gsfc.nasa.gov/landcover.html
+https://nasa-gibs.github.io/gibs-api-docs/python-usage/
+Source imagery is available openly through NASA GIBS; NASA Earth science data
+are openly available. Credit NASA EOSDIS GIBS and the MODIS land-cover team.
+Global WMS image, EPSG:4326, bbox -180,-90,180,90, 3600 x 1800:
+https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=MODIS_Combined_L3_IGBP_Land_Cover_Type_Annual&STYLES=&FORMAT=image/png&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=3600&HEIGHT=1800&TIME=2023-01-01
+https://gibs.earthdata.nasa.gov/colormaps/v1.3/MODIS_IGBP_Land_Cover_Type.xml
+PNG copied unchanged. NASA RGB classes translated into Danish. Nearest-neighbour
+sampling on the globe; source resolution 500 m, overview image 0.1 degree.
+This is categorical land cover, not fractional cover or a forest-loss time series.
+Barren includes deserts and other sparsely vegetated surfaces. Do not infer
+forest clearance from this single year, or claim numerical areas from its pixels.
+
+Rebuild: python3 atlas/data/naturraster.py relief.zip vegetation.png vegetation.xml

@@ -1,0 +1,57 @@
+Ressourcer og samfund – datakilder og bearbejdning
+Hentet 17.–18. oktober 2026. Dannes af ressourcer.py; råfilernes URL'er og
+SHA-256 står i ressourcer-kilder.json. Ingen eksterne kald ved elevens brug.
+
+ENERGIMIKS (samfund.json)
+Our World in Data, Energy dataset (Energy Institute Statistical Review og
+Ember m.fl.). https://github.com/owid/energy-data
+OWID-datasæt: CC BY 4.0; oprindelige kilders vilkår gælder fortsat deres data.
+År: 2023, fast fælles år. 210 lande/områder med mindst ét eltal, færre for
+primærenergi. ISO3 kobles til atlassets demografi.json; aggregater udelades.
+Kolonner: *_share_elec og *_share_energy for renewables, coal, oil, gas,
+nuclear, hydro, solar, wind, biofuel og other_renewables. Afrundet til 0,001 %.
+Ingen udfyldning af manglende værdier; ingen data vises gråt, ægte 0 bevares.
+El er produktionsmiks, ikke forbrugsmiks (import/eksport indregnes ikke).
+Primærenergi: substitutionsmetoden, traditionel biomasse udeladt.
+Vedvarende omfatter underkategorierne og skal ikke lægges til dem igen.
+Ingen påstand om at alle viste delkategorier summerer præcist til 100 %.
+
+VANDSTRESS (samfund.json)
+FAO AQUASTAT via Verdensbankens World Development Indicators,
+ER.H2O.FWST.ZS, SDG 6.4.2, 2022. 176 lande/områder med data.
+https://databank.worldbank.org/metadataglossary/world-development-indicators/series/ER.H2O.FWST.ZS
+https://data.worldbank.org/indicator/ER.H2O.FWST.ZS
+CC BY 4.0 (Verdensbankens dataside). Vandindvinding i procent af fornybare
+ferskvandsressourcer efter naturens vandbehov. Grænser: <25 intet stress,
+25–<50 lavt, 50–<75 middel, 75–<100 højt, >=100 kritisk.
+Værdier over 100 % bevares; manglende lande erstattes ikke af 0.
+Nationalt årstal skjuler variation i oplande og årstider, og er ikke et mål
+for andelen af indbyggere uden sikkert drikkevand.
+
+SOL OG VIND (potentiale.bin)
+NASA POWER, global Climatology Radiation og Climatology Meteorology Image
+Services, årsnormal 2001–2020, month=13 (annual).
+https://power.larc.nasa.gov/
+https://gis.earthdata.nasa.gov/portal/rest/services/POWER/POWER_CLIMATOLOGY_RADIATION_LST/ImageServer
+https://gis.earthdata.nasa.gov/portal/rest/services/POWER/POWER_CLIMATOLOGY_METEOROLOGY_LST/ImageServer
+NASA POWER-data er frit tilgængelige med kildeangivelse; se tjenesternes
+brugsvilkår og https://power.larc.nasa.gov/docs/ .
+Tak til NASA POWER-projektet ved NASA Langley Research Center, finansieret
+gennem NASA Earth Action Program, samt CERES og NASA GMAO/MERRA-2.
+
+Sol: ALLSKY_SFC_SW_DWN (CERES), direkte + diffus kortbølget indstråling på
+vandret flade under faktiske skyforhold, oprindeligt 1°. Tjenesten angiver
+W m-2; ganget med 24/1000 til kWh/m²/døgn. Ikke solcellers elproduktion.
+Vind: WS50M (MERRA-2 reanalyse), m/s ved 50 m over overfladen, oprindeligt
+ca. 0,5° bredde × 0,625° længde, hentet til 1° med nærmeste nabo. Ikke et
+kort over teknisk/økonomisk vindenergi; navhøjde, terræn, ruhed, variation,
+net og beskyttede områder kræver yderligere data. Der beregnes ingen
+energiproduktion ved at opløfte middelvinden til tredje potens.
+
+Begge: 360×180, koordinater -180,-90,180,90, rækkeorden nord→syd,
+cellemidter -179,5…179,5° og 89,5…-89,5°. Ingen interpolation på kortet.
+Binær gzip: RES1 (4 bytes), bredde og højde uint16 little-endian,
+derefter sol og vind som hver 64800 uint16, 1/100 enhed; 65535 = ingen data.
+Oversigtscellerne må ikke anvendes til konkret placering af anlæg.
+NASA POWERs almindelige API kan have en nyere normalperiode; denne fil
+bruger udtrykkeligt ImageServer-tjenestens dokumenterede 2001–2020-normal.

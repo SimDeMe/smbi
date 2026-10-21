@@ -158,3 +158,16 @@ atlasset under de relevante steder, undersøgelser og i søgningen:
 3. **Ja, atlasset skal have et Danmarkskort i højere opløsning** til istid,
    grundvand og oplande (A9, C2, C3), og ikke kun Danmark som sted.
 4. **Ja, Vestnorge skal være sted for stigningsregn** ud over Alperne (B2).
+
+### Ressourcer og samfund · 18. oktober 2026
+
+- **C4:** lag for vandstress er leveret med FAO/SDG 6.4.2-data (2022),
+  klassegrænser, datatabel, kilde og elevspørgsmål.
+- **E1:** energimiks er leveret (2023, elproduktion/primærenergi og andele
+  for ti energikilder). Energiforbrug pr. indbygger og tidsudvikling mangler.
+- **E2/D4:** globalt oversigtslag for solindstråling og middelvind i 50 m
+  højde er leveret (NASA POWER 2001–2020), med forbindelse til forsøget
+  Vindmøller og solceller. En lokal produktionsmodel med areal,
+  virkningsgrad, vindfordeling og ruhed er fortsat åben.
+- Samfundsdata hedder nu **Ressourcer og samfund** i lagmenuen. GHI er
+  fortsat en åben opgave; det er Global Hunger Index, ikke solindstråling.

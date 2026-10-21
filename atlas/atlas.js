@@ -1,3 +1,4 @@
+import { startRessourcer } from './ressourcestyring.js';
 import { steder, modeller, oevelser } from './modeller.js';
 import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
@@ -445,6 +446,9 @@ function visProcesser() {
   havniveauopgave.onclick = visHavniveauopgave;
   const udledningsopgave = element('button', 'Undersøg landenes CO₂-udledning', 'tilbage');
   udledningsopgave.onclick = visUdledningsopgave;
+  for (const [navn, tekst] of [['relief', 'Undersøg højde og dybde'], ['vegetation', 'Undersøg arealanvendelse og vegetation']]) {
+    const knap = element('button', tekst, 'tilbage'); knap.onclick = () => visNaturopgave(navn); indhold.append(knap, ' ');
+  }
   indhold.append(pladeopgave, ' ', havbundsopgave, ' ', klimaopgave, ' ', nedboersopgave, ' ', seismikopgave, ' ', temaopgave, ' ', temperaturopgave, ' ', havisopgave, ' ', havniveauopgave, ' ', udledningsopgave);
   const valg = element('div', '', 'valg');
   valg.setAttribute('role', 'group');
@@ -1086,12 +1090,16 @@ const valgstatus = document.querySelector('#pladevalgstatus');
 
 function opdaterPladebeskrivelse() {
   lagmenu?.opdater();
+  const ressourcebeskrivelse = ressourcer?.beskrivelse();
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
   bevaegelsesnote.textContent = 'cm/år mellem pladerne: samlet åbning/lukning på tværs; forskydning langs transformforkastninger. ≈: diffus zone.';
   document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
   canvas.setAttribute('aria-label', landAktivt ? 'Interaktivt Danmarkskort med Jylland, de danske øer inklusive Bornholm og orienteringsbyer. Nord er opad.' : pladeknap.getAttribute('aria-pressed') === 'true'
     ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
     : canvasbeskrivelse);
+  for (const [id, tekst] of [['relief', 'farvet relief med bjergkæder, oceanrygge og dybhavsgrave, uden meterskala'], ['vegetation', 'satellitklassificeret arealdække fra MODIS 2023; aflæsningen viser klassen ved sigtekornet']]) {
+    if (!landAktivt && document.querySelector(`#${id}lag`).getAttribute('aria-pressed') === 'true') canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser ${tekst}`);
+  }
   if (!landAktivt && klimaknap.getAttribute('aria-pressed') === 'true') {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Viser ${klimasystem === 'vahl' ? 'Vahls klimazoner og plantebælter' : 'Köppen-Geigers klimatyper'} for 1991–2020; aflæsningen under signaturen viser klassen midt på globussen`);
   }
@@ -1109,6 +1117,9 @@ function opdaterPladebeskrivelse() {
   if (!landAktivt && nedboerknap.getAttribute('aria-pressed') === 'true' && nedboerstyring) {
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. ${nedboerstyring.beskrivelse()}; aflæsningen under signaturen viser nedbøren midt på globussen`);
   }
+  if (!landAktivt && document.querySelector('#middellag').getAttribute('aria-pressed') === 'true') canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Middeltemperatur i ${middelmodul.MAANEDER[middelmodul.tilstand.vist]}, 1991–2020, °C, NCEP/NCAR`);
+  if (!landAktivt && document.querySelector('#vindlag').getAttribute('aria-pressed') === 'true') canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Skematisk vind og lufttryk i ${vindmodul.valg.maaned === 0 ? 'januar' : 'juli'}: passat, vestenvinde, ITK og monsun. H er højtryk, L er lavtryk`);
+  if (!landAktivt && document.querySelector('#havstroemlag').getAttribute('aria-pressed') === 'true') canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Skematiske havstrømme: varme røde hele pile og kolde blå stiplede pile`);
   // Knappen er først trykket, når temakort.js er hentet.
   if (!landAktivt && document.querySelector('#temalag').getAttribute('aria-pressed') === 'true') {
     const ind = temamodul.indikator();
@@ -1132,6 +1143,7 @@ function opdaterPladebeskrivelse() {
     const ind = udledningsmodul.indikator();
     canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. Landene er farvet efter ${ind.navn[0].toLowerCase()}${ind.navn.slice(1)} ${udledningsmodul.valg.aar} i ${ind.enhed}; aflæsningen under signaturen viser landet midt på globussen, og ranglisten findes under Undersøg`);
   }
+  if (!landAktivt && ressourcebeskrivelse) canvas.setAttribute('aria-label', `${canvas.getAttribute('aria-label')}. ${ressourcebeskrivelse}`);
 }
 
 function placerValgpanel() {
@@ -1225,10 +1237,13 @@ const klimalaget = lavLag({
   knap: klimaknap, signatur: klimasignatur, klasse: 'klimalag', standard: 'vahl',
   fejltekst: 'Klimazonerne kunne ikke indlæses. Globussen virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(system) {
+    if (system) await ressourcer.sluk();
     // Klimazoner og temakort farver begge landfladerne; kun ét ad gangen.
     if (system && temalaget.aktiv) await temalaget.skift(null);
     if (system && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     if (system) await slukUdledning();
+    if (system) await slukNatur();
+    if (system && middellaget.aktiv) await middellaget.skift(null);
     if (system && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     const [modul] = await Promise.all([import('./klimalag.js'), globus.visKlimalag(system)]);
     if (system) { klimasystem = system; tegnKlimasignatur(modul); }
@@ -1269,8 +1284,11 @@ const havbundlaget = lavLag({
   knap: havbundknap, signatur: document.querySelector('#havbundsignatur'), klasse: 'havbundlag',
   fejltekst: 'Havbundens alder kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
+    if (vis) await ressourcer.sluk();
     havbundmodul ??= await import('./havbundsalder.js');
     if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
+    if (vis) await slukNatur();
+    if (vis && middellaget.aktiv) await middellaget.skift(null);
     if (vis && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     if (!vis) havbundsprofil?.sluk();
     await globus.visTemalag('havbund', vis ? havbundmodul : null);
@@ -1289,10 +1307,11 @@ const nedboerlaget = lavLag({
   knap: nedboerknap, signatur: document.querySelector('#nedboersignatur'), klasse: 'nedboerlag',
   fejltekst: 'Nedbørsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
+    if (vis) await ressourcer.sluk();
     nedboermodul ??= await import('./nedboer.js');
     if (vis) {
       await nedboermodul.hent();
-      for (const lag of [havbundlaget, klimalaget, temalaget, temperaturlaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
+      for (const lag of [...naturlagene, havbundlaget, klimalaget, temalaget, temperaturlaget, middellaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
     } else nedboerstyring?.stop();
     await globus.visTemalag('nedboer', vis ? nedboermodul : null);
     if (vis && !nedboerstyring) {
@@ -1367,9 +1386,12 @@ const temalaget = lavLag({
   knap: temaknap, signatur: temasignatur, klasse: 'temalag',
   fejltekst: 'Landedata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
+    if (vis) await ressourcer.sluk();
     if (vis && klimalaget.aktiv) await klimalaget.skift(null);
     if (vis && nedboerlaget.aktiv) await nedboerlaget.skift(null);
     if (vis) await slukUdledning();
+    if (vis) await slukNatur();
+    if (vis && middellaget.aktiv) await middellaget.skift(null);
     if (vis && temperaturlaget.aktiv) await temperaturlaget.skift(null);
     temamodul ??= await import('./temakort.js');
     await globus.visTemakort(vis ? temamodul : null);
@@ -1433,11 +1455,12 @@ function lavUdledningslag(opgoerelse, knap) {
     knap, signatur: udledningsignatur, klasse: 'udledningslag',
     fejltekst: 'Udledningsdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
     async vis(vis) {
+      if (vis) await ressourcer.sluk();
       udledningsmodul ??= await import('./udledning.js');
       if (vis) {
         await udledningsmodul.hent();
         const andre = udledningslagene.filter(lag => lag.opgoerelse !== opgoerelse);
-        for (const lag of [klimalaget, nedboerlaget, temalaget, temperaturlaget, ...andre]) if (lag.aktiv) await lag.skift(null);
+        for (const lag of [...naturlagene, klimalaget, nedboerlaget, temalaget, temperaturlaget, middellaget, ...andre]) if (lag.aktiv) await lag.skift(null);
         udledningsmodul.valg.opgoerelse = opgoerelse;
       }
       await globus.visTemakort(vis ? udledningsmodul : null);
@@ -1523,10 +1546,11 @@ const temperaturlaget = lavLag({
   knap: temperaturknap, signatur: document.querySelector('#temperatursignatur'), klasse: 'temperaturlag',
   fejltekst: 'Temperaturdata kunne ikke indlæses. Globussen og de andre lag virker stadig. Prøv igen, eller genindlæs siden.',
   async vis(vis) {
+    if (vis) await ressourcer.sluk();
     temperaturmodul ??= await import('./temperatur.js');
     if (vis) {
       await temperaturmodul.hent();
-      for (const lag of [havbundlaget, klimalaget, temalaget, nedboerlaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
+      for (const lag of [...naturlagene, havbundlaget, klimalaget, temalaget, nedboerlaget, middellaget, ...udledningslagene]) if (lag.aktiv) await lag.skift(null);
     } else stopTemperatur();
     await globus.visTemalag('temperatur', vis ? temperaturmodul : null);
     if (vis) tegnTemperatursignatur();
@@ -1982,6 +2006,207 @@ async function visUdledningsopgave() {
   indhold.append(kilder);
 }
 document.querySelector('#udledningopgave').onclick = visUdledningsopgave;
+
+// Physical landscape and observed land cover share the existing layer lifecycle.
+const naturlagene = [];
+async function slukNatur() {
+  for (const lag of naturlagene) if (lag.aktiv) await lag.skift(null);
+}
+for (const navn of ['relief', 'vegetation']) {
+  let modul;
+  const lag = lavLag({
+    knap: document.querySelector(`#${navn}lag`),
+    signatur: document.querySelector(`#${navn}signatur`), klasse: `${navn}lag`,
+    fejltekst: 'Kortdata kunne ikke indlæses. Prøv at vælge laget igen.',
+    async vis(vis) {
+      modul ??= (await import(`./${navn}.js`)).default;
+      if (vis) {
+        await modul.hent();
+        await ressourcer.sluk();
+        for (const andet of [...naturlagene, havbundlaget, klimalaget, temalaget, nedboerlaget, temperaturlaget, middellaget, ...udledningslagene]) {
+          if (andet !== lag && andet.aktiv) await andet.skift(null);
+        }
+        if (navn === 'vegetation') {
+          document.querySelector('#vegetationklasser').replaceChildren(...modul.klasser.map(k => {
+            const li = element('li'), farve = element('i');
+            farve.style.background = `rgb(${k.rgb.join(',')})`;
+            li.append(farve, element('span', k.navn)); return li;
+          }));
+        }
+      }
+      await globus.visTemalag(navn, vis ? modul : null);
+    },
+    efter: opdaterPladebeskrivelse
+  });
+  naturlagene.push(lag);
+}
+function visNaturopgave(navn) {
+  const relief = navn === 'relief';
+  aabn(relief ? 'Undersøg højde og dybde' : 'Undersøg arealanvendelse og vegetation');
+  const tilbage = element('button', '← Processer', 'tilbage'); tilbage.onclick = visProcesser;
+  indhold.append(tilbage);
+  indhold.append(element('p', relief
+    ? 'Reliefkortet viser bjergkæder, kontinentalsokler, midtoceaniske rygge og dybhavsgrave med farver og skygger. Farverne på land afhænger både af højden og regionen; de er ikke en fælles meterskala. Havet bliver generelt mørkere med dybden. Skygger fremhæver terrænets form.'
+    : 'Satellitkortet viser arealdække i 2023, klassificeret efter IGBP. Skov, landbrug, savanne og bar jord er observerede overfladetyper. Bar jord omfatter både ørken og andre områder med meget lidt vegetation. Landbrug blandet med naturlig vegetation har sin egen klasse.'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const tekst of (relief ? [
+    'Find Andesbjergene og Himalaya. Slå pladegrænser til: Hvordan hænger bjergkæderne sammen med pladernes bevægelse?',
+    'Følg den Midtatlantiske Ryg. Sammenlign med Havbundens alder: Hvor findes den yngste havbund?',
+    'Find dybhavsgravene øst for Japan og vest for Sydamerika. Læg jordskælv og vulkaner oven på. Hvad fortæller mønstret om subduktion?',
+    'Find den brede kontinentalsokkel i Nordsøen. Hvorfor er kystlinjen ikke grænsen mellem kontinental og oceanisk skorpe?',
+    'Kortkritik: Hvorfor kan du ikke måle en bjergtop eller en dybhavsgrav præcist med farverne på dette oversigtskort?'
+  ] : [
+    'Sammenlign skovene i Amazonas, Congo og Sibirien. Hvilke skovtyper dominerer?',
+    'Find landbrugsområder i Europa, Indien og Nordamerika. Sammenlign med klimazoner og nedbør.',
+    'Følg overgangen fra Sahara gennem Sahel til skovbæltet. Hvordan ændres vegetationen?',
+    'Hvorfor kan kortets klasse bar jord ikke alene bruges til at afgrænse varme ørkener?',
+    'Kortkritik: Kortet er et generaliseret øjebliksbillede. Hvorfor kan det ikke fortælle, hvor meget skov der er ryddet siden 2000?'
+  ])) liste.append(element('li', tekst));
+  indhold.append(liste);
+  indhold.append(element('h3', 'Kilde og begrænsninger', 'underoverskrift'));
+  indhold.append(element('p', relief
+    ? 'Natural Earth, Cross Blended Hypso with Relief, Water, Drains, and Ocean Bottom, version 3.2.0, public domain. Generaliseret billedkort, lokalt nedskaleret til 5400 × 2700 pixels (ca. 7,4 km ved ækvator). Det er ikke et højdegitter til målinger; smalle grave og toppe udglattes.'
+    : 'NASA GIBS, MODIS Aqua + Terra, IGBP Land Cover Type Annual, 2023. Satellitklassifikation med 500 m kildedata; dette oversigtskort er hentet i 0,1° (ca. 11 km ved ækvator). Små marker, skove og byer kan forsvinde ved generalisering. Farverne følger NASA. Der er ikke et lag for skovrydning: tab af trædække kræver en særskilt tidsserie og er heller ikke altid permanent skovrydning.'));
+  const link = element('a', relief ? 'Natural Earth: kort og dokumentation' : 'NASA: MODIS Land Cover');
+  link.href = relief ? 'https://www.naturalearthdata.com/downloads/10m-raster-data/10m-cross-blend-hypso/' : 'https://modis-land.gsfc.nasa.gov/landcover.html';
+  indhold.append(link);
+}
+for (const navn of ['relief', 'vegetation']) document.querySelector(`#${navn}opgave`).onclick = () => visNaturopgave(navn);
+
+// Klima og vejr: månedstemperatur, skematisk cirkulation og havstrømme.
+let middelmodul, middelur = 0, klimadata = null;
+function stopMiddel() {
+  clearInterval(middelur); middelur = 0;
+  document.querySelector('#middelspil').setAttribute('aria-pressed','false');
+  document.querySelector('#middelspil').textContent = '▶ Afspil';
+}
+function visMiddelmaaned(m) {
+  middelmodul.saetMaaned(m);
+  document.querySelector('#middelskyder').value = m;
+  document.querySelector('#middelskyder').setAttribute('aria-valuetext',middelmodul.MAANEDER[m]);
+  document.querySelector('#middelmaaned').textContent = middelmodul.MAANEDER[m];
+  globus.gentegn(); globus.aflaes(); opdaterPladebeskrivelse();
+}
+const middellaget = lavLag({
+ knap:document.querySelector('#middellag'),signatur:document.querySelector('#middelsignatur'),klasse:'middellag',
+ fejltekst:'Middeltemperaturen kunne ikke hentes. Prøv igen.',
+ async vis(vis) {
+  middelmodul ??= await import('./middeltemperatur.js');
+  if(vis) {
+   await middelmodul.hent();
+   await ressourcer.sluk();
+   for(const lag of [...naturlagene,havbundlaget,klimalaget,temalaget,nedboerlaget,temperaturlaget,...udledningslagene]) if(lag.aktiv) await lag.skift(null);
+   document.querySelector('#middelskala').innerHTML = middelmodul.KLASSER.map((k,i)=>`<span><i style="background:${k.farve}"></i>${i===0?'&lt; −30':k.til===null?'≥ 40':`${k.fra}–${k.til}`} °C</span>`).join('');
+   middelmodul.lytTil((aaret,m)=>{
+    klimadata = aaret;
+    const svg=document.querySelector('#middeldiagram');
+    if(!aaret) {svg.replaceChildren();return;}
+    const min=Math.floor(Math.min(...aaret)/10)*10, max=Math.max(min+10,Math.ceil(Math.max(...aaret)/10)*10);
+    const y=t=>48-(t-min)/(max-min)*40;
+    svg.innerHTML=`<text x="0" y="12">${max}°</text><text x="0" y="48">${min}°</text><polyline fill="none" stroke="#b83c28" stroke-width="2" points="${aaret.map((t,i)=>`${32+i*20},${y(t)}`).join(' ')}"/><circle cx="${32+m*20}" cy="${y(aaret[m])}" r="3" fill="#17211f"/>`+aaret.map((t,i)=>`<text x="${32+i*20}" y="63" text-anchor="middle">${'JFMAMJJASOND'[i]}</text>`).join('');
+    svg.setAttribute('aria-label',aaret.map((t,i)=>`${middelmodul.MAANEDER[i]} ${middelmodul.temperaturTekst(t)}`).join(', '));
+   });
+  } else stopMiddel();
+  await globus.visTemalag('middel',vis?middelmodul:null);
+  if(vis) visMiddelmaaned(middelmodul.tilstand.vist);
+ },efter:opdaterPladebeskrivelse
+});
+document.querySelector('#middelskyder').oninput=e=>{stopMiddel();visMiddelmaaned(Number(e.target.value));};
+document.querySelector('#middelspil').onclick=()=>{
+ if(middelur){stopMiddel();return;}
+ document.querySelector('#middelspil').setAttribute('aria-pressed','true');
+ document.querySelector('#middelspil').textContent='❚❚ Pause';
+ middelur=setInterval(()=>visMiddelmaaned((middelmodul.tilstand.vist+1)%12),2500);
+};
+let vindmodul,havstroemmodul;
+const vindlaget=lavLag({knap:document.querySelector('#vindlag'),signatur:document.querySelector('#vindsignatur'),klasse:'vindlag',fejltekst:'Vindlaget kunne ikke hentes. Prøv igen.',async vis(vis){vindmodul??=await import('./vind.js');await globus.visTemalag('vind',vis?vindmodul:null);},efter:opdaterPladebeskrivelse});
+const havstroemlaget=lavLag({knap:document.querySelector('#havstroemlag'),signatur:document.querySelector('#havstroemsignatur'),klasse:'havstroemlag',fejltekst:'Havstrømmene kunne ikke hentes. Prøv igen.',async vis(vis){havstroemmodul??=await import('./havstroemme.js');await globus.visTemalag('havstroem',vis?havstroemmodul:null);},efter:opdaterPladebeskrivelse});
+document.querySelector('#vindmaaned').onchange=e=>{vindmodul.valg.maaned=Number(e.target.value);globus.gentegn();opdaterPladebeskrivelse();};
+document.querySelector('#havstroemnavne').onchange=e=>{havstroemmodul.valg.navne=e.target.checked;globus.gentegn();};
+function klimaKilde(url,navn){const a=element('a',navn);a.href=url;indhold.append(a);}
+document.querySelector('#middelopgave').onclick=async()=>{
+ stopMiddel();
+ // Fastfrys koordinaterne, før dialogen flytter fokus og markøren.
+ const m=middelmodul, temperatur=klimadata?.slice();
+ const punkt=m.aflaestPunkt?.slice();
+ aabn('Klimadiagrammets data');
+ indhold.append(element('p','Sammenlign årets varmeste og koldeste måned. Er der sommerregn, vinterregn eller regn hele året? Drej globussen, luk dialogen og vælg et nyt punkt.'));
+ const status=element('p','Henter nedbør til samme punkt …');indhold.append(status);
+ try {
+  const n=await import('./nedboer.js');await n.hent();
+  if(!punkt||!temperatur) throw new Error('Intet punkt');
+  const regn=n.aaretI(...punkt);
+  status.textContent=`${punkt[1].toFixed(1)}° bredde, ${punkt[0].toFixed(1)}° længde · middel 1991–2020. Gitterdata, ikke en lokal vejrstation.`;
+  const tabel=document.createElement('table');tabel.className='klimadatatabel';
+  tabel.innerHTML='<caption>Temperatur og nedbør måned for måned</caption><thead><tr><th>Måned</th><th>°C</th><th>mm</th></tr></thead><tbody>'+temperatur.map((t,i)=>`<tr><th scope="row">${m.MAANEDER[i]}</th><td>${t.toLocaleString('da-DK',{maximumFractionDigits:1})}</td><td>${Math.round(regn[i])}</td></tr>`).join('')+'</tbody>';
+  indhold.append(tabel);
+ }catch{status.textContent='Klimadata kunne ikke hentes. Luk og prøv igen.';}
+ indhold.append(element('p','Temperatur: NCEP/NCAR Reanalysis 1, luft i 2 m over land og hav, bilineært interpoleret til 2,5°. Reanalyse kombinerer observationer med en atmosfæremodel; især bjerge og kyster udjævnes. Nedbør: GPCP v2.3, 2,5°. Samme normalperiode, forskellige datagrundlag.'));
+ klimaKilde('https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.derived.surface.html','NOAA PSL · temperaturdata');
+ klimaKilde('https://psl.noaa.gov/data/gridded/data.gpcp.html',' · GPCP-nedbør');
+};
+document.querySelector('#vindopgave').onclick=()=>{
+ aabn('Vind, lufttryk og ITK');
+ indhold.append(element('p','Skift mellem januar og juli. Følg passatvindene ind mod ITK, hvor luften stiger og giver mulighed for kraftig regn. Sammenlign med nedbørslaget. Forklar, hvorfor monsunen over Sydasien skifter fra nordøst om vinteren til sydvest om sommeren.'));
+ indhold.append(element('p','H og L angiver idealiserede trykbælter og det asiatiske trykcenter. ITK flytter sig mest over kontinenterne. Linjen og pilene er redaktionelle skitser, ikke målte positioner, isobarer eller vindhastigheder. Lokale forhold og dagligt vejr er udeladt.'));
+ klimaKilde('./cirkulation/','Åbn cirkulationsmodellen');
+ klimaKilde('https://www.noaa.gov/jetstream/tropical/convergence-zone',' · NOAA: ITK og monsun');
+};
+document.querySelector('#havstroemopgave').onclick=()=>{
+ aabn('Havstrømme og Grønlandspumpen');
+ indhold.append(element('p','Følg Golfstrømmen og den nordatlantiske strøm mod Norge. Sammenlign Europas og Canadas temperaturer på samme breddegrad. Find kolde strømme ved vestkysterne af Sydamerika og det sydlige Afrika, og sammenlign med nedbør og klimazoner.'));
+ indhold.append(element('p','Varme og kolde strømme angiver temperatur i forhold til omgivelserne. Pilene viser generaliseret retning; bredde og længde viser ikke hastighed eller transport. Vind driver en stor del af overfladecirkulationen. Afkøling og forskelle i saltholdighed bidrager til dybvandsdannelse i Nordatlanten, ofte kaldt Grønlandspumpen. AMOC omfatter også en dyb returstrøm, som dette overfladekort ikke viser. Golfstrømmen og AMOC er ikke det samme. Monsunens sæsonstrømme i det nordlige Indiske Ocean er udeladt.'));
+ klimaKilde('https://www.noaa.gov/education/resource-collections/ocean-coasts/ocean-currents','NOAA: havstrømme');
+ klimaKilde('https://www.aoml.noaa.gov/moc/',' · NOAA: AMOC');
+};
+
+const ressourcer = startRessourcer({
+  globus: () => globus,
+  async slukAndre(raster) {
+    for (const lag of [...naturlagene, middellaget, klimalaget, temalaget, nedboerlaget, temperaturlaget, ...udledningslagene, ...(raster ? [havbundlaget] : [])]) {
+      if (lag.aktiv) await lag.skift(null);
+    }
+  },
+  opdater: opdaterPladebeskrivelse,
+  undersoeg: visRessourceopgave
+});
+
+function visRessourceopgave(m, raster) {
+  aabn('Undersøg ressourcer og samfund');
+  const ind = m.indikator();
+  indhold.append(element('p', `${ind.navn} · ${ind.aar || '2001–2020'}. ${ind.forklaring}`));
+  indhold.append(element('p', 'Energimiks viser faktisk anvendelse; sol og vind viser naturgrundlaget. Primærenergi er energi før omdannelse til fx el. Solindstråling er ikke solcellers elproduktion, og middelvind er ikke et mål for en vindmølles årsproduktion. Vindens effekt afhænger omtrent af hastigheden i tredje potens; gennemsnittet alene beskriver ikke vindens variation.'));
+  const liste = element('ol', '', 'opgaveliste');
+  for (const tekst of [
+    'Sammenlign Danmark, Kina og Frankrig. Vælg kul, atomkraft og vedvarende energi. Skift fra elproduktion til primærenergi. Hvorfor ændres andelene?',
+    'Vedvarende energi omfatter også vandkraft og bioenergi. Find et land med meget vedvarende energi, og undersøg hvilke kilder der bidrager. Atomkraft er ikke vedvarende.',
+    'Sammenlign solindstrålingen i Danmark, Sahara og Amazonas. Forklar forskellene med breddegrad og skydække. Hvorfor er et solrigt sted ikke nødvendigvis et godt sted at bygge et anlæg?',
+    'Skift til vindpotentiale. Sammenlign Nordsøen, kontinenternes indre og passatområderne. Hvilken betydning har friktion, højde og terræn for et lokalt valg af placering?',
+    'Find Egypten, Indien og Danmark på vandstresskortet. Sammenlign med nedbørslaget. Forklar, hvorfor både forbrug, vanding og tilgængeligt ferskvand betyder noget.',
+    'Et land kan have vandstress over 100 %. Forklar hvordan grundvandslagre kan tømmes. Hvorfor fortæller et nationalt årstal ikke, om en bestemt by mangler drikkevand i juli?'
+  ]) liste.append(element('li', tekst));
+  indhold.append(liste);
+  const oevelse = element('a', 'Forsøgsvejledning: Vindmøller og solceller →');
+  oevelse.href = '/Øvelser/Geografi/vindmoeller-og-solceller/vindmoeller-og-solceller.html'; indhold.append(oevelse);
+  if (!raster) {
+    const t = element('table', '', 'rangtabel'), body = element('tbody');
+    t.append(element('caption', `${ind.navn} ${ind.aar} · alle ${m.rangering().length} lande med data, højest først`));
+    for (const r of m.rangering()) {
+      const tr = element('tr'), th = element('th', r.navn); th.scope = 'row';
+      tr.append(th, element('td', m.vaerditekst(ind, r.v))); body.append(tr);
+    }
+    t.append(body); const details = element('details'); details.append(element('summary', 'Se landenes tal'), t); indhold.append(details);
+  }
+  indhold.append(element('h3', 'Kilder og begrænsninger', 'underoverskrift'), element('p',
+    'Energimiks: Our World in Data, Energy Institute og Ember, 2023. Primærenergi bruger substitutionsmetoden (ikke-fossil el omregnes til den fossile energi, der ellers skulle bruges); traditionel biomasse er udeladt. Elproduktion har bredere landedækning. Vedvarende er en samlet kategori; sol, vind og vandkraft er delmængder og må ikke lægges til igen. Vandstress: FAO AQUASTAT via Verdensbanken, SDG 6.4.2, 2022. Vandindvinding divideret med fornybare ressourcer efter fradrag af miljøets vandbehov; grænser ved 25, 50, 75 og 100 %. Sol og vind: NASA POWER, årsnormal 2001–2020 fra deres globale klimatjeneste. Sol: CERES, vandret flade med skyer, W/m² omregnet til kWh/m²/døgn. Vind: MERRA-2, 50 m, oprindeligt ca. 0,5° × 0,625°, vist i 1° celler; sol oprindeligt 1°. Cellerne vises uden interpolation. Kortet er til global sammenligning; anlægsvalg kræver lokale målinger, sæsonvariation, nettilslutning og hensyn til natur og samfund. Grå betyder ingen data.'));
+  for (const [navn, url] of [
+    ['Our World in Data · energidata og metode', 'https://github.com/owid/energy-data'],
+    ['FAO / Verdensbanken · vandstress', 'https://databank.worldbank.org/metadataglossary/world-development-indicators/series/ER.H2O.FWST.ZS'],
+    ['NASA POWER · datakilder', 'https://power.larc.nasa.gov/'],
+    ['Global Solar Atlas · lokal undersøgelse', 'https://globalsolaratlas.info/'],
+    ['Global Wind Atlas · lokal undersøgelse', 'https://globalwindatlas.info/']
+  ]) { const p = element('p'), a = element('a', navn); a.href = url; a.target = '_blank'; a.rel = 'noopener'; p.append(a); indhold.append(p); }
+}
 
 lagmenu = startLagmenu({
   async hentTema() { temamodul ??= await import('./temakort.js'); return temamodul.EMNER; },

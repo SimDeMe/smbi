@@ -1,0 +1,19 @@
+Middeltemperatur måned for måned
+================================
+NCEP/NCAR Reanalysis 1, NOAA Physical Sciences Laboratory.
+Lufttemperatur 2 m over overfladen, månedlige normaler 1991–2020.
+Hentet 18. oktober 2026:
+https://psl.noaa.gov/thredds/fileServer/Datasets/ncep.reanalysis.derived/surface_gauss/air.2m.mon.ltm.1991-2020.nc
+https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.derived.surface.html
+Kalnay et al. (1996), The NCEP/NCAR 40-Year Reanalysis Project,
+Bulletin of the American Meteorological Society 77, 437–471.
+NOAA-data er offentligt tilgængelige; angiv NOAA PSL som dataleverandør.
+
+Reanalyse, ikke rene stationsmålinger: model og observationer kombineres.
+Originalt Gauss-gitter interpoleres bilineært i længde/bredde til 144 × 72
+cellemidter (-178,75…178,75; 88,75…-88,75). Nærmeste række ved polerne.
+Kelvin omregnes til °C; afrunding til 0,1 °C. Gitterets interval er
+-71,9 til 38,5 °C. Bjerge og kyster udjævnes; ingen lokal stationsnormal.
+Script: middeltemperatur.py, numpy + netCDF4; råfil gives som argument.
+Format efter gzip: MTM1 + uint16 LE (144,72,12) + 12*72*144 int16 LE,
+tiendedele °C. Alle celler har data.
