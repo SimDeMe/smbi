@@ -1327,8 +1327,8 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .udv-uge-mark{fill:var(--ink);opacity:0.08}
 .udv-uge-valgt{fill:var(--grape);opacity:0.16}
 .udv-markering{fill:var(--grape);opacity:0.18;stroke:var(--grape);stroke-width:1.5}
-.udv-uger svg{cursor:crosshair}
-.udv-uger svg:focus-visible{outline-offset:4px}
+.udv-kort[data-graf-id] svg{cursor:crosshair}
+.udv-kort[data-graf-id] svg:focus-visible{outline-offset:4px}
 /* Zoom: udsnittet til venstre, knapperne til højre */
 .udv-vaerktoej{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;margin-top:10px}
 .udv-udsnit{font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.06em;color:var(--slate)}

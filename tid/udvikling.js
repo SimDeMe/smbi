@@ -222,18 +222,117 @@ function trin(spaen) {
   return [1, 2, 5, 10].map(f => f * p).find(s => s >= raa) || p * 10;
 }
 
+// ─── Zoom ─────────────────────────────────────────────────
+// Alle graferne kan zoomes: træk hen over grafen (eller +/−, ‹ › og
+// Ctrl+hjul). Udsnittet [a, b) er i grafens egne enheder — uger i ugegrafen,
+// målepunkter i kurverne — og står her, så det overlever, at rapporten
+// tegnes om.
+const grafTilstand = new Map();    // id → { slags, N, a, b, valgt, … }
+const MIN_UGER = 2;                // det mindste udsnit af ugegrafen
+const MIN_PUNKTER = 3;             // og af en kurve
+const UGE_ETIKET = 14;             // højst så mange uger: ugenumre/datoer på x-aksen
+const UGE_MS = 7 * 864e5;
+
+function nyTilstand(id, slags, N, data) {
+  const gl = grafTilstand.get(id);
+  const st = { id, slags, N, a: 0, b: N, valgt: null, ...data };
+  if (gl && gl.slags === slags && gl.N === N && +gl.start === +data.start) {
+    st.a = gl.a; st.b = gl.b; st.valgt = gl.valgt;
+  }
+  grafTilstand.set(id, st);
+  return st;
+}
+const minUdsnit = st => st.slags === 'uger' ? MIN_UGER : MIN_PUNKTER;
+const helt = st => st.a === 0 && st.b === st.N;
+
+// En kurves vindue i tid: hele normperioden, eller første til sidste punkt i udsnittet
+const vindue = st => helt(st) ? [st.start, st.slut] : [st.punkter[st.a].d, st.punkter[st.b - 1].d];
+
+function udsnitTekst(st) {
+  if (helt(st)) return 'Hele året · træk hen over grafen for at zoome';
+  if (st.slags === 'uger') {
+    const w = st.u.uger;
+    return `${fmtSpaend(w[st.a].fra, w[st.b - 1].til)} · ${st.b - st.a} uger`;
+  }
+  const [v0, v1] = vindue(st);
+  return `${fmtDag(v0)} – ${fmtDag(v1)} · ${Math.round((v1 - v0) / UGE_MS)} uger`;
+}
+
+function zoomKnapper(st) {
+  const n = st.b - st.a;
+  const k = (z, tegn, navn, slaaet) =>
+    `<button type="button" class="udv-zk" data-zoom="${z}" aria-label="${navn}" title="${navn}"${slaaet ? '' : ' disabled'}>${tegn}</button>`;
+  return k('venstre', '‹', 'Tidligere', st.a > 0) +
+    k('ud', '−', 'Zoom ud', n < st.N) +
+    k('ind', '+', 'Zoom ind', n > minUdsnit(st)) +
+    k('hoejre', '›', 'Senere', st.b < st.N) +
+    k('alt', 'Hele året', 'Vis hele året', n < st.N);
+}
+
+const vaerktoej = st => `<div class="udv-vaerktoej">
+      <span class="udv-udsnit">${udsnitTekst(st)}</span>
+      <span class="udv-zoom" role="group" aria-label="Zoom i grafen">${zoomKnapper(st)}</span>
+    </div>`;
+
+// x-aksen under en kurve: måneder, eller punkternes datoer i et kort udsnit
+function datoakse(x, pp, v0, v1) {
+  if (v1 - v0 > UGE_ETIKET * UGE_MS) return maanedsakse(x, v0, v1);
+  let akse = '', sidst = -Infinity;
+  pp.forEach(p => {
+    const xx = x(p.d);
+    akse += `<line class="udv-maaned" x1="${xx.toFixed(1)}" x2="${xx.toFixed(1)}" y1="${H - M.b}" y2="${H - M.b + 5}"/>`;
+    // Ellers står datoerne oven i hinanden; den sidste står helt til venstre for sit punkt
+    const anker = xx > B - M.r - 30 ? 'end' : 'middle';
+    if (xx - sidst < (anker === 'end' ? 110 : 70)) return;
+    sidst = xx;
+    akse += `<text class="udv-akse udv-akse-x" x="${xx.toFixed(1)}" y="${H - M.b + 24}" text-anchor="${anker}">${fmtDag(p.d)}</text>`;
+  });
+  return akse;
+}
+
 // omvendt: over nul er det dårlige (merarbejde), så farverne byttes
 export function tegnUdvikling(id, titel, under, punkter, start, slut, ordFor, omvendt = false) {
   if (!punkter || punkter.length < 2) return '';
-  const vH = punkter.map(p => p.v / 60);
+  const st = nyTilstand(id, 'linje', punkter.length, { start, slut, punkter, ordFor });
+  const sidste = punkter[punkter.length - 1].v;
+
+  const data = punkter.map(p => [p.d.getTime(), Math.round(p.v)]);
+  const tabel = punkter.map(p => `<tr><td>${fmtDag(p.d)}</td><td>${fmtT(p.v)}</td></tr>`).join('');
+  const nu = ordFor(sidste);
+
+  return `<div class="udv-kort${omvendt ? ' udv-omvendt' : ''}" data-graf-id="${esc(id)}" data-udv="${esc(JSON.stringify({ data, start: +start, slut: +slut }))}">
+    <div class="udv-head">
+      <span class="udv-titel">${titel}</span>
+      <span class="udv-nu ${sidste >= 0 ? 'is-pos' : 'is-neg'}">${fmtT(sidste)} ${nu}</span>
+    </div>
+    <div class="udv-under">${under}</div>
+    ${vaerktoej(st)}
+    <div class="udv-plot">
+      <svg viewBox="0 0 ${B} ${H}" tabindex="0" role="img" aria-label="${esc(titel)}: ${fmtT(sidste)} ${nu}. Træk eller brug plus og minus for at zoome. Se tabellen for ugens tal.">${linjeFigur(st)}</svg>
+      <div class="udv-tip" hidden></div>
+    </div>
+    <details class="udv-tabel">
+      <summary>Vis som tabel</summary>
+      <table><thead><tr><th>Uge fra</th><th>Timer</th></tr></thead><tbody>${tabel}</tbody></table>
+    </details>
+  </div>`;
+}
+
+// Det, der står inde i svg'en, for udsnittet
+function linjeFigur(st) {
+  const { id } = st;
+  const pp = st.punkter.slice(st.a, st.b);
+  const [v0, v1] = vindue(st);
+  const vH = pp.map(p => p.v / 60);
   const lo0 = Math.min(0, ...vH), hi0 = Math.max(0, ...vH);
   const s = trin(Math.max(hi0 - lo0, 4));
   const lo = Math.floor(lo0 / s) * s, hi = Math.ceil(hi0 / s) * s || s;
   const lo2 = lo === hi ? lo - s : lo;
 
-  const x = d => M.l + (d - start) / (slut - start) * (B - M.l - M.r);
+  const x = d => M.l + (d - v0) / (v1 - v0) * (B - M.l - M.r);
   const y = t => M.t + (hi - t) / (hi - lo2) * (H - M.t - M.b);
   const y0 = y(0);
+  st.skala = { x, y: m => y(m / 60) };
 
   // Gitter og y-akse
   let gitter = '';
@@ -242,48 +341,29 @@ export function tegnUdvikling(id, titel, under, punkter, start, slut, ordFor, om
     gitter += `<line class="udv-gitter${t === 0 ? ' udv-nul' : ''}" x1="${M.l}" x2="${B - M.r}" y1="${yy}" y2="${yy}"/>
       <text class="udv-akse" x="${M.l - 8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${t > 0 ? '+' : t < 0 ? '−' : ''}${Math.abs(t)}</text>`;
   }
-  const mdr = maanedsakse(x, start, slut);
 
-  const xy = punkter.map((p, i) => [x(p.d), y(vH[i])]);
+  const xy = pp.map((p, i) => [x(p.d), y(vH[i])]);
   const linje = xy.map(([a, b], i) => `${i ? 'L' : 'M'}${a.toFixed(1)},${b.toFixed(1)}`).join('');
   const flade = `${linje}L${xy[xy.length - 1][0].toFixed(1)},${y0.toFixed(1)}L${xy[0][0].toFixed(1)},${y0.toFixed(1)}Z`;
   const [lx, ly] = xy[xy.length - 1];
-  const sidste = punkter[punkter.length - 1].v;
+  // Prikken står ved sidste punkt — i dag — når det er med i udsnittet
+  const prik = st.b === st.N ? `<circle class="udv-prik" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="5"/>` : '';
 
-  const data = punkter.map(p => [p.d.getTime(), Math.round(p.v)]);
-  const tabel = punkter.map(p => `<tr><td>${fmtDag(p.d)}</td><td>${fmtT(p.v)}</td></tr>`).join('');
-  const nu = ordFor(sidste);
-
-  return `<div class="udv-kort${omvendt ? ' udv-omvendt' : ''}" data-udv="${esc(JSON.stringify({ data, start: +start, slut: +slut, hi, lo: lo2, op: ordFor(1), ned: ordFor(-1) }))}">
-    <div class="udv-head">
-      <span class="udv-titel">${titel}</span>
-      <span class="udv-nu ${sidste >= 0 ? 'is-pos' : 'is-neg'}">${fmtT(sidste)} ${nu}</span>
-    </div>
-    <div class="udv-under">${under}</div>
-    <div class="udv-plot">
-      <svg viewBox="0 0 ${B} ${H}" role="img" aria-label="${esc(titel)}: ${fmtT(sidste)} ${nu}. Se tabellen for ugens tal.">
-        <defs>
-          <clipPath id="${id}-op"><rect x="0" y="0" width="${B}" height="${y0.toFixed(1)}"/></clipPath>
-          <clipPath id="${id}-ned"><rect x="0" y="${y0.toFixed(1)}" width="${B}" height="${(H - y0).toFixed(1)}"/></clipPath>
-        </defs>
-        ${gitter}${mdr}
-        <path class="udv-flade-op"  d="${flade}" clip-path="url(#${id}-op)"/>
-        <path class="udv-flade-ned" d="${flade}" clip-path="url(#${id}-ned)"/>
-        <path class="udv-linje" d="${linje}"/>
-        <circle class="udv-prik" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="5"/>
-        <g class="udv-hover" visibility="hidden">
-          <line class="udv-kryds" y1="${M.t}" y2="${H - M.b}"/>
-          <circle class="udv-prik" r="5"/>
-        </g>
-        <rect class="udv-maal" x="${M.l}" y="0" width="${B - M.l - M.r}" height="${H}" fill="transparent"/>
-      </svg>
-      <div class="udv-tip" hidden></div>
-    </div>
-    <details class="udv-tabel">
-      <summary>Vis som tabel</summary>
-      <table><thead><tr><th>Uge fra</th><th>Timer</th></tr></thead><tbody>${tabel}</tbody></table>
-    </details>
-  </div>`;
+  return `<defs>
+      <clipPath id="${id}-op"><rect x="0" y="0" width="${B}" height="${y0.toFixed(1)}"/></clipPath>
+      <clipPath id="${id}-ned"><rect x="0" y="${y0.toFixed(1)}" width="${B}" height="${(H - y0).toFixed(1)}"/></clipPath>
+    </defs>
+    ${gitter}${datoakse(x, pp, v0, v1)}
+    <path class="udv-flade-op"  d="${flade}" clip-path="url(#${id}-op)"/>
+    <path class="udv-flade-ned" d="${flade}" clip-path="url(#${id}-ned)"/>
+    <path class="udv-linje" d="${linje}"/>
+    ${prik}
+    <g class="udv-hover" visibility="hidden">
+      <line class="udv-kryds" y1="${M.t}" y2="${H - M.b}"/>
+      <circle class="udv-prik" r="5"/>
+    </g>
+    <rect class="udv-markering" y="${M.t}" height="${H - M.t - M.b}" visibility="hidden"/>
+    <rect class="udv-maal" x="${M.l}" y="0" width="${B - M.l - M.r}" height="${H}" fill="transparent"/>`;
 }
 
 // ─── Arbejdet mod normen ──────────────────────────────────
@@ -297,28 +377,12 @@ export function tegnNorm(id, titel, under, n, start, slut) {
   const fortid = k.filter(p => p.arb != null);
   const nu = fortid[fortid.length - 1];
   const diff = nu.arb - nu.norm;
-  const hi0 = Math.max(4, ...k.map(p => Math.max(p.arb ?? 0, p.norm) / 60));
-  const s = trin(hi0);
-  const hi = Math.ceil(hi0 / s) * s;
-  const x = d => M.l + (d - start) / (slut - start) * (B - M.l - M.r);
-  const y = t => M.t + (hi - t) / hi * (H - M.t - M.b);
-
-  let gitter = '';
-  for (let t = 0; t <= hi + 1e-9; t += s) {
-    const yy = y(t).toFixed(1);
-    gitter += `<line class="udv-gitter${t === 0 ? ' udv-nul' : ''}" x1="${M.l}" x2="${B - M.r}" y1="${yy}" y2="${yy}"/>
-      <text class="udv-akse" x="${M.l - 8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${t}</text>`;
-  }
-  const sti = (pp, f) => pp.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(f(p) / 60).toFixed(1)}`).join('');
-  // Fladen mellem de to kurver til i dag: grøn over normen, rød under
-  const mellem = `${sti(fortid, p => p.arb)}L${[...fortid].reverse().map(p => `${x(p.d).toFixed(1)},${y(p.norm / 60).toFixed(1)}`).join('L')}Z`;
-  const iDag = nu.d < slut
-    ? `<line class="udv-idag" x1="${x(nu.d).toFixed(1)}" x2="${x(nu.d).toFixed(1)}" y1="${M.t}" y2="${H - M.b}"/>` : '';
+  const st = nyTilstand(id, 'norm', k.length, { start, slut, punkter: k, nuPunkt: nu });
 
   const data = k.map(p => [+p.d, p.arb == null ? null : Math.round(p.arb), Math.round(p.norm)]);
   const tabel = k.map(p => `<tr><td>${fmtDag(p.d)}</td><td>${p.arb == null ? '' : fmtU(p.arb)}</td><td>${fmtU(p.norm)}</td><td>${p.arb == null ? '' : fmtT(p.arb - p.norm)}</td></tr>`).join('');
 
-  return `<div class="udv-kort udv-norm-kort" data-norm="${esc(JSON.stringify({ data, start: +start, slut: +slut, hi }))}">
+  return `<div class="udv-kort udv-norm-kort" data-graf-id="${esc(id)}" data-norm="${esc(JSON.stringify({ data, start: +start, slut: +slut }))}">
     <div class="udv-head">
       <span class="udv-titel">${titel}</span>
       <span class="udv-nu ${diff >= 0 ? 'is-pos' : 'is-neg'}">${fmtNorm(diff)}</span>
@@ -328,20 +392,9 @@ export function tegnNorm(id, titel, under, n, start, slut) {
       <span><i class="udv-n-arb"></i>Arbejdet i alt</span>
       <span><i class="udv-n-norm"></i>Normen i alt</span>
     </div>
+    ${vaerktoej(st)}
     <div class="udv-plot">
-      <svg viewBox="0 0 ${B} ${H}" role="img" aria-label="${esc(titel)}: arbejdet ${fmtU(nu.arb)}, normen indtil nu ${fmtU(nu.norm)}, ${fmtNorm(diff)}. Se tabellen for ugens tal.">
-        ${gitter}${maanedsakse(x, start, slut)}
-        <path class="udv-mellem ${diff >= 0 ? 'is-pos' : 'is-neg'}" d="${mellem}"/>
-        <path class="udv-norm" d="${sti(k, p => p.norm)}"/>
-        <path class="udv-linje" d="${sti(fortid, p => p.arb)}"/>
-        ${iDag}
-        <circle class="udv-prik" cx="${x(nu.d).toFixed(1)}" cy="${y(nu.arb / 60).toFixed(1)}" r="5"/>
-        <g class="udv-hover" visibility="hidden">
-          <line class="udv-kryds" y1="${M.t}" y2="${H - M.b}"/>
-          <circle class="udv-prik" r="5"/>
-        </g>
-        <rect class="udv-maal" x="${M.l}" y="0" width="${B - M.l - M.r}" height="${H}" fill="transparent"/>
-      </svg>
+      <svg viewBox="0 0 ${B} ${H}" tabindex="0" role="img" aria-label="${esc(titel)}: arbejdet ${fmtU(nu.arb)}, normen indtil nu ${fmtU(nu.norm)}, ${fmtNorm(diff)}. Træk eller brug plus og minus for at zoome. Se tabellen for ugens tal.">${normFigur(st)}</svg>
       <div class="udv-tip" hidden></div>
     </div>
     <details class="udv-tabel">
@@ -351,26 +404,62 @@ export function tegnNorm(id, titel, under, n, start, slut) {
   </div>`;
 }
 
+function normFigur(st) {
+  const pp = st.punkter.slice(st.a, st.b), nu = st.nuPunkt;
+  const [v0, v1] = vindue(st);
+  const fortid = pp.filter(p => p.arb != null);
+  // Hele året fra 0; et udsnit fra det mindste tal i det, så forskellen kan ses
+  const vaerdier = pp.flatMap(p => p.arb == null ? [p.norm] : [p.arb, p.norm]).map(m => m / 60);
+  const hi0 = Math.max(4, ...vaerdier);
+  const lo0 = helt(st) ? 0 : Math.min(...vaerdier);
+  const s = trin(Math.max(hi0 - lo0, 4));
+  const lo = Math.floor(lo0 / s) * s;
+  const hi = Math.max(Math.ceil(hi0 / s) * s, lo + s);
+  const x = d => M.l + (d - v0) / (v1 - v0) * (B - M.l - M.r);
+  const y = t => M.t + (hi - t) / (hi - lo) * (H - M.t - M.b);
+  st.skala = { x, y: m => y(m / 60) };
+
+  let gitter = '';
+  for (let t = lo; t <= hi + 1e-9; t += s) {
+    const yy = y(t).toFixed(1);
+    gitter += `<line class="udv-gitter${t === 0 ? ' udv-nul' : ''}" x1="${M.l}" x2="${B - M.r}" y1="${yy}" y2="${yy}"/>
+      <text class="udv-akse" x="${M.l - 8}" y="${yy}" text-anchor="end" dominant-baseline="middle">${t}</text>`;
+  }
+  const sti = (kk, f) => kk.map((p, i) => `${i ? 'L' : 'M'}${x(p.d).toFixed(1)},${y(f(p) / 60).toFixed(1)}`).join('');
+  // Fladen mellem de to kurver til i dag: grøn over normen, rød under
+  const diff = nu.arb - nu.norm;
+  const mellem = fortid.length > 1
+    ? `<path class="udv-mellem ${diff >= 0 ? 'is-pos' : 'is-neg'}" d="${sti(fortid, p => p.arb)}L${[...fortid].reverse().map(p => `${x(p.d).toFixed(1)},${y(p.norm / 60).toFixed(1)}`).join('L')}Z"/>` : '';
+  const iDag = nu.d > v0 && nu.d < v1
+    ? `<line class="udv-idag" x1="${x(nu.d).toFixed(1)}" x2="${x(nu.d).toFixed(1)}" y1="${M.t}" y2="${H - M.b}"/>` : '';
+  const prik = nu.d >= v0 && nu.d <= v1
+    ? `<circle class="udv-prik" cx="${x(nu.d).toFixed(1)}" cy="${y(nu.arb / 60).toFixed(1)}" r="5"/>` : '';
+
+  return `${gitter}${datoakse(x, pp, v0, v1)}
+    ${mellem}
+    <path class="udv-norm" d="${sti(pp, p => p.norm)}"/>
+    ${fortid.length ? `<path class="udv-linje" d="${sti(fortid, p => p.arb)}"/>` : ''}
+    ${iDag}
+    ${prik}
+    <g class="udv-hover" visibility="hidden">
+      <line class="udv-kryds" y1="${M.t}" y2="${H - M.b}"/>
+      <circle class="udv-prik" r="5"/>
+    </g>
+    <rect class="udv-markering" y="${M.t}" height="${H - M.t - M.b}" visibility="hidden"/>
+    <rect class="udv-maal" x="${M.l}" y="0" width="${B - M.l - M.r}" height="${H}" fill="transparent"/>`;
+}
+
 // ─── Belastning og arbejde, uge for uge ───────────────────
-// Grafen kan zoomes: træk hen over den (eller +/−, ‹ › og Ctrl+hjul), og et
-// klik på en uge viser, hvad belastningen består af. Udsnit og valgt uge står
-// her, så de overlever, at rapporten tegnes om.
+// Et klik på en uge viser, hvad belastningen består af. Den valgte uge står i
+// grafens tilstand sammen med udsnittet.
 const fmtU = m => `${Math.round(m / 60)} t`;
 const fmtTal1 = t => (Math.round(t * 10) / 10).toLocaleString('da-DK');
 const fmtT1 = m => `${fmtTal1(m / 60)} t`;
-const ugeTilstand = new Map();     // id → { u, start, slut, nu, a, b, valgt }
-const MIN_UGER = 2;                // det mindste udsnit
-const UGE_ETIKET = 14;             // højst så mange uger: ugenumre på x-aksen
 
 export function tegnUger(id, u, start, slut, nu = new Date()) {
   const uger = u?.uger;
   if (!uger?.length) return '';
-  const gl = ugeTilstand.get(id);
-  const st = { id, u, start, slut, nu, a: 0, b: uger.length, valgt: null };
-  if (gl && gl.u.uger.length === uger.length && +gl.start === +start) {
-    st.a = gl.a; st.b = gl.b; st.valgt = gl.valgt;
-  }
-  ugeTilstand.set(id, st);
+  const st = nyTilstand(id, 'uger', uger.length, { u, start, slut, nu });
 
   const rest = u.rest;
   const hoved = rest
@@ -381,7 +470,7 @@ export function tegnUger(id, u, start, slut, nu = new Date()) {
   const data = uger.map(w => [+w.fra, +w.til, w.arbejdet == null ? null : Math.round(w.arbejdet), Math.round(w.belastning), Math.round(w.norm)]);
   const tabel = uger.map(w => `<tr><td>${ugeNr(w.fra)}</td><td>${fmtDag(w.fra)}</td><td>${w.arbejdet == null ? '' : fmtU(w.arbejdet)}</td><td>${fmtU(w.belastning)}</td><td>${fmtU(w.norm)}</td></tr>`).join('');
 
-  return `<div class="udv-kort udv-uger" data-uger-id="${esc(id)}" data-uger="${esc(JSON.stringify({ data, start: +start, slut: +slut }))}">
+  return `<div class="udv-kort udv-uger" data-graf-id="${esc(id)}" data-uger="${esc(JSON.stringify({ data, start: +start, slut: +slut }))}">
     <div class="udv-head">
       <span class="udv-titel">Belastning og arbejde</span>
       ${hoved}
@@ -394,12 +483,7 @@ export function tegnUger(id, u, start, slut, nu = new Date()) {
       <span><i class="udv-n-elev"></i>Elevferie</span>
       <span><i class="udv-n-ferie"></i>Ferie</span>
     </div>
-    <div class="udv-vaerktoej">
-      <span class="udv-udsnit">${udsnitTekst(st)}</span>
-      <span class="udv-zoom" role="group" aria-label="Zoom i grafen">
-        ${zoomKnapper(st)}
-      </span>
-    </div>
+    ${vaerktoej(st)}
     <div class="udv-plot">
       <svg viewBox="0 0 ${B} ${H}" tabindex="0" role="img" aria-label="Belastning og arbejde uge for uge.${rest ? ` Resten af året ${fmtTal1(rest.belastning / 60)} timer om ugen.` : ''} Klik eller brug piletasterne for at se en uges opgaver. Se tabellen for ugens tal.">${ugeFigur(st)}</svg>
       <div class="udv-tip" hidden></div>
@@ -413,23 +497,6 @@ export function tegnUger(id, u, start, slut, nu = new Date()) {
 }
 
 const fmtSpaend = (fra, til) => `${fmtDag(fra)} – ${fmtDag(addDays(til, -1))}`;
-
-function udsnitTekst(st) {
-  const w = st.u.uger;
-  if (st.a === 0 && st.b === w.length) return 'Hele året · træk hen over grafen for at zoome';
-  return `${fmtSpaend(w[st.a].fra, w[st.b - 1].til)} · ${st.b - st.a} uger`;
-}
-
-function zoomKnapper(st) {
-  const N = st.u.uger.length, n = st.b - st.a;
-  const k = (z, tegn, navn, slaaet) =>
-    `<button type="button" class="udv-zk" data-zoom="${z}" aria-label="${navn}" title="${navn}"${slaaet ? '' : ' disabled'}>${tegn}</button>`;
-  return k('venstre', '‹', 'Tidligere', st.a > 0) +
-    k('ud', '−', 'Zoom ud', n < N) +
-    k('ind', '+', 'Zoom ind', n > MIN_UGER) +
-    k('hoejre', '›', 'Senere', st.b < N) +
-    k('alt', 'Hele året', 'Vis hele året', n < N);
-}
 
 // Det, der står inde i svg'en, for udsnittet [a, b)
 function ugeFigur(st) {
@@ -531,12 +598,17 @@ function ugeDetalje(st) {
 
 // ─── Hover, zoom og klik ──────────────────────────────────
 // Lyttes på rapportens beholder, så det overlever, at rapporten tegnes om
+const FIGUR = { uger: ugeFigur, linje: linjeFigur, norm: normFigur };
+
 export function bindUdvikling(rod) {
   if (!rod || rod.dataset.udvBundet) return;
   rod.dataset.udvBundet = '1';
 
-  // ─ Ugegrafen ─
-  const tilstand = kort => ugeTilstand.get(kort.dataset.ugerId);
+  const tilstand = kort => grafTilstand.get(kort?.dataset.grafId);
+  const grafVed = el => {
+    const kort = el?.closest?.('.udv-kort[data-graf-id]');
+    return kort && tilstand(kort) ? kort : null;
+  };
   const vx = (kort, klientX) => {
     const r = kort.querySelector('svg').getBoundingClientRect();
     return (klientX - r.left) / r.width * B;
@@ -552,6 +624,14 @@ export function bindUdvikling(rod) {
     for (let j = st.a; j < st.b; j++) if (t < w[j].til) return j;
     return st.b - 1;
   };
+  // Kurvens nærmeste punkt i udsnittet
+  const punktVed = (st, x) => {
+    const af = i => Math.abs(st.skala.x(st.punkter[i].d) - x);
+    let bedst = st.a;
+    for (let i = st.a + 1; i < st.b; i++) if (af(i) < af(bedst)) bedst = i;
+    return bedst;
+  };
+  const enhedVed = (st, x) => st.slags === 'uger' ? ugeVed(st, x) : punktVed(st, x);
   const xFor = (st, d) => {
     const w = st.u.uger, v0 = w[st.a].fra, v1 = w[st.b - 1].til;
     return M.l + (d - v0) / (v1 - v0) * (B - M.l - M.r);
@@ -559,7 +639,7 @@ export function bindUdvikling(rod) {
 
   const tegnOm = kort => {
     const st = tilstand(kort);
-    kort.querySelector('svg').innerHTML = ugeFigur(st);
+    kort.querySelector('svg').innerHTML = FIGUR[st.slags](st);
     kort.querySelector('.udv-udsnit').textContent = udsnitTekst(st);
     const fokus = document.activeElement?.closest?.('.udv-zoom') ? document.activeElement.dataset.zoom : null;
     kort.querySelector('.udv-zoom').innerHTML = zoomKnapper(st);
@@ -574,18 +654,22 @@ export function bindUdvikling(rod) {
     el.innerHTML = st.valgt == null ? '' : ugeDetalje(st);
   };
   const saetUdsnit = (st, a, n) => {
-    const N = st.u.uger.length;
-    n = Math.min(N, Math.max(MIN_UGER, Math.round(n)));
-    a = Math.min(Math.max(0, Math.round(a)), N - n);
+    n = Math.min(st.N, Math.max(minUdsnit(st), Math.round(n)));
+    a = Math.min(Math.max(0, Math.round(a)), st.N - n);
     st.a = a; st.b = a + n;
   };
-  // Zoom om en uge (den valgte, eller midten af udsnittet)
+  // Zoom om en enhed (den valgte uge, eller midten af udsnittet)
   const zoom = (kort, faktor, om = null) => {
     const st = tilstand(kort), n = st.b - st.a;
     const c = om ?? (st.valgt != null && st.valgt >= st.a && st.valgt < st.b ? st.valgt + 0.5 : (st.a + st.b) / 2);
-    const ny = Math.max(MIN_UGER, Math.round(n * faktor));
+    const ny = Math.max(minUdsnit(st), Math.round(n * faktor));
     // Punktet om bliver stående samme sted i grafen
     saetUdsnit(st, c - (c - st.a) * ny / n, ny);
+    tegnOm(kort);
+  };
+  const flyt = (kort, skridt) => {
+    const st = tilstand(kort);
+    saetUdsnit(st, st.a + skridt, st.b - st.a);
     tegnOm(kort);
   };
   const vaelg = (kort, i) => {
@@ -596,8 +680,7 @@ export function bindUdvikling(rod) {
     visDetalje(kort);
   };
 
-  const visUge = (kort, klientX) => {
-    const st = tilstand(kort);
+  const visUge = (kort, st, klientX) => {
     const i = ugeVed(st, vx(kort, klientX));
     const w = st.u.uger[i];
     const mark = kort.querySelector('.udv-uge-mark');
@@ -619,6 +702,42 @@ export function bindUdvikling(rod) {
     tip.style.left = `${Math.max(0, Math.min(hoejre ? px1 + 10 : px0 - 10 - bred, r.width - bred))}px`;
   };
 
+  // Kurverne: nærmeste punkt, med kryds, prik og tal
+  const visPunkt = (kort, st, klientX) => {
+    const p = st.punkter[punktVed(st, vx(kort, klientX))];
+    const { x, y } = st.skala, px = x(p.d);
+    const g = kort.querySelector('.udv-hover');
+    g.setAttribute('visibility', 'visible');
+    g.querySelector('line').setAttribute('x1', px);
+    g.querySelector('line').setAttribute('x2', px);
+    g.querySelector('circle').setAttribute('cx', px);
+    const tip = kort.querySelector('.udv-tip');
+    tip.hidden = false;
+    if (st.slags === 'norm') {
+      // Arbejdet (til i dag) og normen
+      g.querySelector('circle').setAttribute('cy', y(p.arb ?? p.norm));
+      tip.innerHTML = `<span>${fmtDag(p.d)}</span>` + (p.arb == null
+        ? `normen <b>${fmtU(p.norm)}</b>`
+        : `arbejdet <b>${fmtU(p.arb)}</b> · normen <b>${fmtU(p.norm)}</b> · <b>${fmtT(p.arb - p.norm)}</b>`);
+    } else {
+      g.querySelector('circle').setAttribute('cy', y(p.v));
+      tip.innerHTML = `<span>${fmtDag(p.d)}</span><b>${fmtT(p.v)}</b> ${st.ordFor(p.v >= 0 ? 1 : -1)}`;
+    }
+    // Midt over punktet, men aldrig ud over kortets kanter
+    const r = kort.querySelector('svg').getBoundingClientRect();
+    const half = tip.offsetWidth / 2, pp = px / B * r.width;
+    tip.style.left = `${Math.min(Math.max(pp, half), r.width - half)}px`;
+  };
+  const vis = (kort, klientX) => {
+    const st = tilstand(kort);
+    (st.slags === 'uger' ? visUge : visPunkt)(kort, st, klientX);
+  };
+  const skjul = kort => {
+    kort.querySelector('.udv-hover')?.setAttribute('visibility', 'hidden');
+    const tip = kort.querySelector('.udv-tip');
+    if (tip) tip.hidden = true;
+  };
+
   // Træk: et udsnit, der markeres og zoomes ind på, når man slipper
   let traek = null;
   const markering = (kort, x0, x1) => {
@@ -628,62 +747,8 @@ export function bindUdvikling(rod) {
     m.setAttribute('visibility', 'visible');
   };
 
-  const vis = (kort, klientX) => {
-    if (kort.dataset.ugerId) return visUge(kort, klientX);
-    if (kort.dataset.norm) return visNorm(kort, klientX);
-    const cfg = JSON.parse(kort.dataset.udv);
-    const svg = kort.querySelector('svg');
-    const r   = svg.getBoundingClientRect();
-    const vx  = (klientX - r.left) / r.width * B;
-    const x   = t => M.l + (t - cfg.start) / (cfg.slut - cfg.start) * (B - M.l - M.r);
-    const y   = m => M.t + (cfg.hi - m / 60) / (cfg.hi - cfg.lo) * (H - M.t - M.b);
-    let bedst = cfg.data[0];
-    cfg.data.forEach(p => { if (Math.abs(x(p[0]) - vx) < Math.abs(x(bedst[0]) - vx)) bedst = p; });
-    const [t, v] = bedst;
-    const g = kort.querySelector('.udv-hover');
-    g.setAttribute('visibility', 'visible');
-    g.querySelector('line').setAttribute('x1', x(t));
-    g.querySelector('line').setAttribute('x2', x(t));
-    g.querySelector('circle').setAttribute('cx', x(t));
-    g.querySelector('circle').setAttribute('cy', y(v));
-    const tip = kort.querySelector('.udv-tip');
-    tip.hidden = false;
-    tip.innerHTML = `<span>${fmtDag(new Date(t))}</span><b>${fmtT(v)}</b> ${v >= 0 ? cfg.op : cfg.ned}`;
-    // Midt over punktet, men aldrig ud over kortets kanter
-    const px = x(t) / B * r.width, half = tip.offsetWidth / 2;
-    tip.style.left = `${Math.min(Math.max(px, half), r.width - half)}px`;
-  };
-  // Normkurven: nærmeste punkt, med arbejdet (til i dag) og normen
-  const visNorm = (kort, klientX) => {
-    const cfg = JSON.parse(kort.dataset.norm);
-    const r   = kort.querySelector('svg').getBoundingClientRect();
-    const px  = (klientX - r.left) / r.width * B;
-    const x   = t => M.l + (t - cfg.start) / (cfg.slut - cfg.start) * (B - M.l - M.r);
-    const y   = m => M.t + (cfg.hi - m / 60) / cfg.hi * (H - M.t - M.b);
-    let [t, a, n] = cfg.data[0];
-    cfg.data.forEach(p => { if (Math.abs(x(p[0]) - px) < Math.abs(x(t) - px)) [t, a, n] = p; });
-    const g = kort.querySelector('.udv-hover');
-    g.setAttribute('visibility', 'visible');
-    g.querySelector('line').setAttribute('x1', x(t));
-    g.querySelector('line').setAttribute('x2', x(t));
-    g.querySelector('circle').setAttribute('cx', x(t));
-    g.querySelector('circle').setAttribute('cy', y(a ?? n));
-    const tip = kort.querySelector('.udv-tip');
-    tip.hidden = false;
-    tip.innerHTML = `<span>${fmtDag(new Date(t))}</span>` + (a == null
-      ? `normen <b>${fmtU(n)}</b>`
-      : `arbejdet <b>${fmtU(a)}</b> · normen <b>${fmtU(n)}</b> · <b>${fmtT(a - n)}</b>`);
-    const half = tip.offsetWidth / 2, p = x(t) / B * r.width;
-    tip.style.left = `${Math.min(Math.max(p, half), r.width - half)}px`;
-  };
-  const skjul = kort => {
-    kort.querySelector('.udv-hover')?.setAttribute('visibility', 'hidden');
-    const tip = kort.querySelector('.udv-tip');
-    if (tip) tip.hidden = true;
-  };
-
   rod.addEventListener('pointermove', e => {
-    const kort = e.target.closest?.('.udv-kort');
+    const kort = grafVed(e.target);
     if (!kort || !e.target.closest('svg')) return;
     if (traek?.kort === kort) {
       if (Math.abs(e.clientX - traek.klientX) > 6) traek.flyttet = true;
@@ -692,9 +757,9 @@ export function bindUdvikling(rod) {
     vis(kort, e.clientX);
   });
   rod.addEventListener('pointerdown', e => {
-    const kort = e.target.closest?.('.udv-kort');
+    const kort = grafVed(e.target);
     if (!kort || !e.target.closest('svg')) return;
-    if (kort.dataset.ugerId && (e.pointerType !== 'mouse' || e.button === 0)) {
+    if (e.pointerType !== 'mouse' || e.button === 0) {
       traek = { kort, klientX: e.clientX, x0: vx(kort, e.clientX), flyttet: false };
       if (e.pointerType === 'mouse') e.preventDefault();   // ingen tekstmarkering
     }
@@ -707,13 +772,13 @@ export function bindUdvikling(rod) {
     if (!st) return;
     kort.querySelector('.udv-markering')?.setAttribute('visibility', 'hidden');
     if (t.flyttet) {
-      const i0 = ugeVed(st, t.x0), i1 = ugeVed(st, vx(kort, e.clientX));
-      const a = Math.min(i0, i1), n = Math.abs(i1 - i0) + 1;
-      saetUdsnit(st, n < MIN_UGER ? a - (MIN_UGER - n) / 2 : a, n);
+      const i0 = enhedVed(st, t.x0), i1 = enhedVed(st, vx(kort, e.clientX));
+      const a = Math.min(i0, i1), n = Math.abs(i1 - i0) + 1, min = minUdsnit(st);
+      saetUdsnit(st, n < min ? a - (min - n) / 2 : a, n);
       tegnOm(kort);
       return;
     }
-    vaelg(kort, ugeVed(st, vx(kort, e.clientX)));
+    if (st.slags === 'uger') vaelg(kort, ugeVed(st, vx(kort, e.clientX)));
   });
   rod.addEventListener('pointercancel', () => {
     traek?.kort.querySelector('.udv-markering')?.setAttribute('visibility', 'hidden');
@@ -727,7 +792,7 @@ export function bindUdvikling(rod) {
   // Ctrl + hjul (og knib på en touchpad): zoom om musen
   rod.addEventListener('wheel', e => {
     if (!e.ctrlKey) return;
-    const kort = e.target.closest?.('.udv-uger');
+    const kort = grafVed(e.target);
     if (!kort || !e.target.closest('svg')) return;
     e.preventDefault();
     const st = tilstand(kort);
@@ -737,9 +802,10 @@ export function bindUdvikling(rod) {
   }, { passive: false });
 
   rod.addEventListener('click', e => {
-    const k = e.target.closest?.('.udv-uger .udv-zk');
-    if (!k) return;
-    const kort = k.closest('.udv-uger'), st = tilstand(kort);
+    const k = e.target.closest?.('.udv-zk');
+    const kort = grafVed(k);
+    if (!kort) return;
+    const st = tilstand(kort);
     const n = st.b - st.a, skridt = Math.max(1, Math.round(n / 2));
     if (k.classList.contains('udv-luk')) {
       st.valgt = null; tegnOm(kort); visDetalje(kort);
@@ -749,22 +815,25 @@ export function bindUdvikling(rod) {
     switch (k.dataset.zoom) {
       case 'ind':     zoom(kort, 0.5); break;
       case 'ud':      zoom(kort, 2); break;
-      case 'venstre': saetUdsnit(st, st.a - skridt, n); tegnOm(kort); break;
-      case 'hoejre':  saetUdsnit(st, st.a + skridt, n); tegnOm(kort); break;
-      case 'alt':     saetUdsnit(st, 0, st.u.uger.length); tegnOm(kort); break;
+      case 'venstre': flyt(kort, -skridt); break;
+      case 'hoejre':  flyt(kort, skridt); break;
+      case 'alt':     saetUdsnit(st, 0, st.N); tegnOm(kort); break;
     }
   });
 
-  // Tastatur på grafen: ←/→ flytter den valgte uge, +/− zoomer, Escape lukker
+  // Tastatur på grafen: +/− zoomer. ←/→ flytter den valgte uge i ugegrafen
+  // og udsnittet i kurverne. Escape lukker ugens opgaver
   rod.addEventListener('keydown', e => {
-    const svg = e.target.closest?.('.udv-uger svg');
-    if (!svg) return;
-    const kort = svg.closest('.udv-uger'), st = tilstand(kort);
-    const N = st.u.uger.length;
+    const svg = e.target.closest?.('.udv-kort svg');
+    const kort = grafVed(svg);
+    if (!kort) return;
+    const st = tilstand(kort);
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      const fra = st.valgt ?? (e.key === 'ArrowLeft' ? st.b : st.a - 1);
-      const i = Math.min(N - 1, Math.max(0, fra + (e.key === 'ArrowLeft' ? -1 : 1)));
+      const ret = e.key === 'ArrowLeft' ? -1 : 1;
+      if (st.slags !== 'uger') return flyt(kort, ret);
+      const fra = st.valgt ?? (ret < 0 ? st.b : st.a - 1);
+      const i = Math.min(st.N - 1, Math.max(0, fra + ret));
       st.valgt = null;
       vaelg(kort, i);
     } else if (e.key === '+' || e.key === '=') { e.preventDefault(); zoom(kort, 0.5); }

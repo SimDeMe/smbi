@@ -181,7 +181,7 @@ const browser = await chromium.launch();
   // Zoom: træk hen over grafen fra august til oktober
   const antalUger = () => page.$$eval('.udv-uger .udv-bel', p => (p[0].getAttribute('d').match(/M|L/g).length) / 2);
   ok(await antalUger() === uger.length, 'hele året vises fra start: ' + await antalUger());
-  ok(await page.$eval('.udv-zk[data-zoom="alt"]', b => b.disabled), '«Hele året» er slået fra, når hele året vises');
+  ok(await page.$eval('.udv-uger .udv-zk[data-zoom="alt"]', b => b.disabled), '«Hele året» er slået fra, når hele året vises');
   const x1 = await ugeX(new Date(2026, 7, 10).getTime()), x2 = await ugeX(new Date(2026, 9, 5).getTime());
   await page.mouse.move(x1, bu.y + bu.height / 2);
   await page.mouse.down();
@@ -193,14 +193,66 @@ const browser = await chromium.launch();
   ok(await page.$eval('.udv-uger .udv-detalje', el => el.hidden), 'et træk vælger ikke en uge');
   const akse = await page.$$eval('.udv-uger .udv-akse-x', t => t.map(x => x.textContent));
   ok(akse[0] === 'uge' && akse.includes('33') && akse.includes('41'), 'kort udsnit: ugenumre på x-aksen: ' + akse.join(' '));
-  ok((await page.textContent('.udv-udsnit')).includes('9 uger'), 'udsnittet står over grafen: ' + await page.textContent('.udv-udsnit'));
-  await page.click('.udv-zk[data-zoom="hoejre"]');
-  ok((await page.textContent('.udv-udsnit')).startsWith('14. sep'), '› flytter udsnittet et halvt udsnit frem: ' + await page.textContent('.udv-udsnit'));
-  await page.click('.udv-zk[data-zoom="ind"]');
+  ok((await page.textContent('.udv-uger .udv-udsnit')).includes('9 uger'), 'udsnittet står over grafen: ' + await page.textContent('.udv-uger .udv-udsnit'));
+  await page.click('.udv-uger .udv-zk[data-zoom="hoejre"]');
+  ok((await page.textContent('.udv-uger .udv-udsnit')).startsWith('14. sep'), '› flytter udsnittet et halvt udsnit frem: ' + await page.textContent('.udv-uger .udv-udsnit'));
+  await page.click('.udv-uger .udv-zk[data-zoom="ind"]');
   ok(await antalUger() === 5, '+ halverer udsnittet: ' + await antalUger());
-  await page.click('.udv-zk[data-zoom="alt"]');
+  await page.click('.udv-uger .udv-zk[data-zoom="alt"]');
   ok(await antalUger() === uger.length, '«Hele året» viser hele året igen');
   ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'tabellen har stadig alle uger');
+
+  // Zoom på kurverne: træk, knapper, taster og Ctrl+hjul
+  const punkter = (sel, sti = '.udv-linje') => page.$eval(sel + ' ' + sti, p => p.getAttribute('d').match(/[ML]/g).length);
+  const fSel = '.udv-kort[data-graf-id="udv-forskel"]';
+  ok(await punkter(fSel) === skema.length, 'forskelskurven viser alle punkter fra start: ' + await punkter(fSel));
+  ok(await page.$eval(fSel + ' .udv-zk[data-zoom="alt"]', b => b.disabled), 'forskelskurven har zoomknapper');
+  const svgF = await page.$(fSel + ' svg');
+  await svgF.scrollIntoViewIfNeeded();
+  const bf = await svgF.boundingBox();
+  await page.mouse.move(bf.x + bf.width * 0.15, bf.y + bf.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(bf.x + bf.width * 0.25, bf.y + bf.height / 2, { steps: 4 });
+  await page.mouse.move(bf.x + bf.width * 0.35, bf.y + bf.height / 2, { steps: 4 });
+  await page.mouse.up();
+  await page.waitForTimeout(100);
+  const nF = await punkter(fSel);
+  ok(nF >= 3 && nF < skema.length, 'trukket udsnit af forskelskurven: ' + nF + ' punkter');
+  ok(/uger$/.test(await page.textContent(fSel + ' .udv-udsnit')), 'udsnittet står over kurven: ' + await page.textContent(fSel + ' .udv-udsnit'));
+  await page.mouse.move(bf.x + bf.width * 0.5, bf.y + bf.height / 2);
+  ok(/\d+\. \w+.*t (merarbejde|overskud)/.test((await page.textContent(fSel + ' .udv-tip')).trim()), 'hover virker i udsnittet: ' + (await page.textContent(fSel + ' .udv-tip')).trim());
+  await page.click(fSel + ' .udv-zk[data-zoom="alt"]');
+  ok(await punkter(fSel) === skema.length, '«Hele året» viser hele forskelskurven igen');
+
+  const nSel = '.udv-norm-kort';
+  const nAlle = await punkter(nSel, '.udv-norm');
+  const yAkse = () => page.$$eval(nSel + ' .udv-akse:not(.udv-akse-x)', t => t.map(x => x.textContent).join(' '));
+  const yHele = await yAkse();
+  await page.focus(nSel + ' svg');
+  await page.keyboard.press('+'); await page.keyboard.press('+');
+  await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
+  const nZ = await punkter(nSel, '.udv-norm');
+  ok(nZ < nAlle, `+ og → zoomer og flytter normkurven: ${nZ} af ${nAlle} punkter`);
+  const yZ = await yAkse();
+  ok(yZ !== yHele && !yZ.startsWith('0 '), `y-aksen følger udsnittet: ${yZ} (hele året ${yHele})`);
+  await page.keyboard.press('ArrowLeft');
+  ok(await page.$eval(nSel + ' .udv-zk[data-zoom="hoejre"]', b => !b.disabled), '← flytter udsnittet tilbage');
+  await page.keyboard.press('-'); await page.keyboard.press('-'); await page.keyboard.press('-');
+  ok(await punkter(nSel, '.udv-norm') === nAlle, '− zoomer helt ud igen');
+
+  if ((await page.$$('[data-graf-id="udv-akkord"]')).length) {
+    const aSel = '[data-graf-id="udv-akkord"]';
+    const svgA = await page.$(aSel + ' svg');
+    await svgA.scrollIntoViewIfNeeded();
+    const ba = await svgA.boundingBox();
+    await page.mouse.move(ba.x + ba.width * 0.3, ba.y + ba.height / 2);
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(0, -100);
+    await page.keyboard.up('Control');
+    await page.waitForTimeout(100);
+    ok(await page.$eval(aSel + ' .udv-zk[data-zoom="alt"]', b => !b.disabled), 'Ctrl+hjul zoomer akkordkurven');
+    await page.click(aSel + ' .udv-zk[data-zoom="alt"]');
+  }
 
   ok((await page.$$eval('.udv-kort[data-udv]', k => k[0].querySelectorAll('tbody tr').length)) === skema.length, 'tabellen har en række pr. punkt');
   ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'ugetabellen har en række pr. uge');
