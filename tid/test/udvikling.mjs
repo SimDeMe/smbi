@@ -265,6 +265,36 @@ const browser = await chromium.launch();
   await page.context().close();
 }
 
+// En engangsopgave (ved afslutning) belaster kun med den brugte tid: det
+// ubrugte lægges ikke ud over de kommende uger
+{
+  const s = new Date(2026, 8, 8, 8).getTime();
+  const seed = [settings,
+    act('a1', 'Hold-arbejde', { budgetHours: 800 }),
+    act('a3', 'Efteruddannelse', { budgetHours: 30, optjening: 'afslutning' }),
+    post('e1', 'a3', s, 120)];
+  const page = await side(browser, { seed });
+  await tilRapport(page);
+  const uger = await page.$eval('.udv-uger', k => JSON.parse(k.dataset.uger).data);
+  const sumBel = uger.reduce((t, w) => t + w[3], 0) / 60;
+  ok(Math.abs(sumBel - (1690 - 28)) <= 2, 'de 28 ubrugte timer ligger ikke i nogen uge: ' + Math.round(sumBel));
+  const ugeKlik = async t => {
+    const i = uger.findIndex(u => u[0] === t);
+    await page.focus('.udv-uger svg');
+    await page.keyboard.press('ArrowRight');
+    for (let j = 0; j < i; j++) await page.keyboard.press('ArrowRight');
+    return page.$$eval('.udv-uger .udv-opg li', l => l.map(li => [li.querySelector('.udv-opg-navn').textContent, li.querySelector('b').textContent]));
+  };
+  const sep = await ugeKlik(new Date(2026, 8, 7).getTime());
+  ok(sep.find(([n]) => n === 'Efteruddannelse')?.[1] === '2 t', 'ugen med efteruddannelse: de brugte 2 t: ' + sep.map(o => o.join(' ')).join(' / '));
+  await page.keyboard.press('Escape');
+  const nov = await ugeKlik(new Date(2026, 10, 2).getTime());
+  ok(nov.length > 0 && !nov.some(([n]) => n === 'Efteruddannelse'), 'ingen efteruddannelse i en uge frem i tiden: ' + nov.map(o => o.join(' ')).join(' / '));
+  const under = await page.textContent('.udv-uger .udv-under');
+  ok(under.includes('28 t på engangsopgaver er ikke brugt endnu'), 'undertitlen nævner de ubrugte timer: ' + under.match(/[^.]*engangsopgaver er[^.]*/)?.[0]);
+  await page.context().close();
+}
+
 // Uden budgetter: ingen akkordkurve
 {
   const s = new Date(2026, 8, 7, 8).getTime();

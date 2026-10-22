@@ -9,9 +9,10 @@
 //
 //   hold og løbende opgaver — budgettet jævnt over de dage i aktivitetens
 //       periode, der er arbejdsdage og ikke elevferie (aktivitetsperiode.js)
-//   engangsopgaver — eksamen, SRP, et møde: når tiden er brugt, altså det
-//       optjente (som i akkord.js). Det, der ikke er brugt endnu, lægges
-//       fremad jævnt over de dage, der er tilbage
+//   engangsopgaver — eksamen, SRP, efteruddannelse, et møde: når tiden er
+//       brugt, altså det optjente (som i akkord.js), og resten af budgettet
+//       den dag, opgaven afsluttes. De kommer ikke jævnt, så det, der ikke er
+//       brugt endnu, lægges ikke ud i nogen uge — det står som ubrugt
 //   elevferie — arbejdsdage for læreren, men ingen opgaver: belastning 0
 //       (ferie.js). Lærerens egen ferie er heller ikke med
 //   resten af normen — tid, der ikke står på en opgave i porteføljen, er
@@ -39,8 +40,6 @@ import { erEngang } from './akkord.js';
 
 export const REST = '_rest';
 
-const midnat = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
 // ak: akkordregnskabet ved det tidspunkt, belastningen gælder
 // ferie, elevferie: lærerens og elevernes ferie (ferieFor / elevferieFor)
 export function beregnBelastning({ ak, acts, aar, normM, start, slut, ferie, elevferie }) {
@@ -64,16 +63,12 @@ export function beregnBelastning({ ak, acts, aar, normM, start, slut, ferie, ele
   const planlagt = d =>
     perioder.reduce((s, x) => s + faktor * x.budget * andel(x.f, x.t, d), 0) + rest * andel(start, slut, d);
 
-  // Opgavernes dele ved d, id → minutter; med nu som i frem
-  const dele = (d, nu = null) => {
+  // Opgavernes dele ved d, id → minutter
+  const dele = d => {
     const m = new Map();
     perioder.forEach(x => m.set(x.id, (m.get(x.id) || 0) + faktor * x.budget * andel(x.f, x.t, d)));
     if (rest) m.set(REST, rest * andel(start, slut, d));
-    const fremad = nu && d > nu ? andel(midnat(nu), slut, d) : 0;
-    engang.forEach(u => {
-      const o = Math.min(u.optjent, u.budget);
-      m.set(u.act.id, (m.get(u.act.id) || 0) + o + (u.budget - o) * fremad);
-    });
+    engang.forEach(u => m.set(u.act.id, (m.get(u.act.id) || 0) + Math.min(u.optjent, u.budget)));
     return m;
   };
 
@@ -83,9 +78,7 @@ export function beregnBelastning({ ak, acts, aar, normM, start, slut, ferie, ele
     dele,
     // Belastningen til og med d, med engangsopgaverne, som de står i ak
     ved: d => planlagt(d) + optjent,
-    // Fremskrevet fra nu: det ubrugte af engangsopgaverne jævnt over de
-    // belastningsdage, der er tilbage
-    frem: (d, nu) => planlagt(d) + optjent +
-      (d > nu ? (E - optjent) * andel(midnat(nu), slut, d) : 0)
+    // Engangsopgavernes budget, der hverken er brugt eller optjent ved afslutning
+    ubrugt: E - optjent
   };
 }

@@ -134,7 +134,7 @@ function ugerne({ pkt, bels, bel, poster, start, slut, ferie, normM, nu }) {
   // Opgavernes dele ved d: målt, hvis d er et målepunkt før i dag, ellers fremskrevet
   const deleAt = d => {
     const i = iPkt.get(d.getTime());
-    return i != null && d <= nu ? bels[i].dele(d) : bel.dele(d, nu);
+    return i != null && d <= nu ? bels[i].dele(d) : bel.dele(d);
   };
   const norm = d => normM * forloebIArbejdsdage(start, slut, ferie, d);
   const uger = [];
@@ -183,14 +183,16 @@ function opgaveNavne(acts) {
   return o;
 }
 
-// Resten af året: belastningen og det, der skal arbejdes for at gå lige op,
-// pr. uge med arbejdsdage (elevferien tæller — der kan man indhente)
+// Resten af året: belastningen fra hold og løbende opgaver og det, der skal
+// arbejdes for at gå lige op, pr. uge med arbejdsdage (elevferien tæller — der
+// kan man indhente). Engangsopgavernes ubrugte timer har ingen uge; de står for
+// sig og er med i det, der skal arbejdes
 function resten({ bel, brugt, belNu, slut, ferie, nu }) {
   if (nu >= slut) return null;
   const imorgen = addDays(new Date(nu.getFullYear(), nu.getMonth(), nu.getDate()), 1);
   const uger = arbejdsdageIPerioden(imorgen, slut, ferie) / 5;
   if (uger < 1) return null;
-  return { uger, belastning: (bel.total - belNu) / uger, lige: (bel.total - brugt) / uger };
+  return { uger, belastning: (bel.total - belNu - bel.ubrugt) / uger, ubrugt: bel.ubrugt, lige: (bel.total - brugt) / uger };
 }
 
 // ─── Tegning ──────────────────────────────────────────────
@@ -465,7 +467,7 @@ export function tegnUger(id, u, start, slut, nu = new Date()) {
   const hoved = rest
     ? `<span class="udv-nu">Resten af året ${fmtTal1(rest.belastning / 60)} t/uge</span>` : '';
   const restTekst = rest
-    ? ` Resten af året er belastningen ${fmtTal1(rest.belastning / 60)} t om ugen. Arbejder du ${fmtTal1(rest.lige / 60)} t om ugen, går det lige op med det, du allerede har arbejdet.` : '';
+    ? ` Resten af året er belastningen ${fmtTal1(rest.belastning / 60)} t om ugen${rest.ubrugt >= 30 ? `, og ${fmtU(rest.ubrugt)} på engangsopgaver er ikke brugt endnu — de kommer, når du bruger tiden eller afslutter opgaven` : ''}. Arbejder du ${fmtTal1(rest.lige / 60)} t om ugen, går det lige op med det, du allerede har arbejdet.` : '';
 
   const data = uger.map(w => [+w.fra, +w.til, w.arbejdet == null ? null : Math.round(w.arbejdet), Math.round(w.belastning), Math.round(w.norm)]);
   const tabel = uger.map(w => `<tr><td>${ugeNr(w.fra)}</td><td>${fmtDag(w.fra)}</td><td>${w.arbejdet == null ? '' : fmtU(w.arbejdet)}</td><td>${fmtU(w.belastning)}</td><td>${fmtU(w.norm)}</td></tr>`).join('');
@@ -475,7 +477,7 @@ export function tegnUger(id, u, start, slut, nu = new Date()) {
       <span class="udv-titel">Belastning og arbejde</span>
       ${hoved}
     </div>
-    <div class="udv-under">Timer om ugen. Belastningen er det, opgaverne forventes at tage: hold og opgaver i deres perioder, engangsopgaver når tiden er brugt, og intet i elevernes ferier.${restTekst}</div>
+    <div class="udv-under">Timer om ugen. Belastningen er det, opgaverne forventes at tage: hold og løbende opgaver i deres perioder, engangsopgaver når tiden er brugt og resten, når de afsluttes, og intet i elevernes ferier.${restTekst}</div>
     <div class="udv-noegle" aria-hidden="true">
       <span><i class="udv-n-soejle"></i>Arbejdet</span>
       <span><i class="udv-n-bel"></i>Belastning</span>
@@ -586,7 +588,7 @@ function ugeDetalje(st) {
     </li>`).join('');
   const f = st.u.faktor;
   const note = f > 1.005 && dele.some(d => d.id !== REST)
-    ? `<p class="udv-det-note">Hold og løbende opgaver er ganget med ${fmtTal1(f)}, så resten af normen — den tid, der ikke står på en opgave — er med i deres timer. Engangsopgaver tæller med den tid, der er brugt; det ubrugte er lagt jævnt ud over resten af året.</p>` : '';
+    ? `<p class="udv-det-note">Hold og løbende opgaver er ganget med ${fmtTal1(f)}, så resten af normen — den tid, der ikke står på en opgave — er med i deres timer. Engangsopgaver tæller med den tid, der er brugt, og resten af budgettet i ugen, de afsluttes.</p>` : '';
   return `<div class="udv-det-head">
       <span><b>Uge ${ugeNr(w.fra)}</b> ${fmtSpaend(w.fra, w.til)}</span>
       <span class="udv-det-sum">belastning <b>${fmtT1(w.belastning)}</b>${w.arbejdet == null ? '' : ` · arbejdet <b>${fmtT1(w.arbejdet)}</b>`}</span>
