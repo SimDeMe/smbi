@@ -660,13 +660,29 @@ export function bindUdvikling(rod) {
     a = Math.min(Math.max(0, Math.round(a)), st.N - n);
     st.a = a; st.b = a + n;
   };
-  // Zoom om en enhed (den valgte uge, eller midten af udsnittet)
+  // I dag som enhed, hvis det er i udsnittet: ugen med i dag, eller punktet i
+  // dag (kurvernes sidste punkt, normkurvens punkt med det arbejdede til nu)
+  const iDag = st => {
+    let i;
+    if (st.slags === 'uger') i = st.u.uger.findIndex(w => st.nu >= w.fra && st.nu < w.til);
+    else if (st.slags === 'norm') i = st.punkter.indexOf(st.nuPunkt);
+    else i = st.N - 1;
+    return i >= st.a && i < st.b ? i : null;
+  };
+  // Zoom om en enhed: musen, den valgte uge, i dag eller midten af udsnittet
   const zoom = (kort, faktor, om = null) => {
     const st = tilstand(kort), n = st.b - st.a;
-    const c = om ?? (st.valgt != null && st.valgt >= st.a && st.valgt < st.b ? st.valgt + 0.5 : (st.a + st.b) / 2);
     const ny = Math.max(minUdsnit(st), Math.round(n * faktor));
-    // Punktet om bliver stående samme sted i grafen
-    saetUdsnit(st, c - (c - st.a) * ny / n, ny);
+    const valgt = st.valgt != null && st.valgt >= st.a && st.valgt < st.b ? st.valgt : null;
+    const nu = om == null && valgt == null ? iDag(st) : null;
+    if (nu != null && faktor < 1) {
+      // Ind på i dag: midt i udsnittet — kurverne slutter i dag, så dér til højre
+      saetUdsnit(st, st.slags === 'linje' ? st.N - ny : nu + 0.5 - ny / 2, ny);
+    } else {
+      const c = om ?? (valgt != null ? valgt + 0.5 : nu != null ? nu + 0.5 : (st.a + st.b) / 2);
+      // Punktet c bliver stående samme sted i grafen
+      saetUdsnit(st, c - (c - st.a) * ny / n, ny);
+    }
     tegnOm(kort);
   };
   const flyt = (kort, skridt) => {

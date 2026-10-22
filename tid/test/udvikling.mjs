@@ -200,6 +200,13 @@ const browser = await chromium.launch();
   ok(await antalUger() === 5, '+ halverer udsnittet: ' + await antalUger());
   await page.click('.udv-uger .udv-zk[data-zoom="alt"]');
   ok(await antalUger() === uger.length, '«Hele året» viser hele året igen');
+  // + uden valgt uge zoomer ind på i dag (fredag 2. oktober, uge 40)
+  await page.click('.udv-uger .udv-zk[data-zoom="ind"]');
+  await page.click('.udv-uger .udv-zk[data-zoom="ind"]');
+  const udsnitNu = await page.textContent('.udv-uger .udv-udsnit');
+  const aksNu = await page.$$eval('.udv-uger .udv-akse-x', t => t.map(x => x.textContent));
+  ok(await page.$('.udv-uger .udv-idag') !== null && aksNu.includes('40'), '+ zoomer ind på i dag: ' + udsnitNu);
+  await page.click('.udv-uger .udv-zk[data-zoom="alt"]');
   ok((await page.$$eval('.udv-uger tbody tr', r => r.length)) === uger.length, 'tabellen har stadig alle uger');
 
   // Zoom på kurverne: træk, knapper, taster og Ctrl+hjul
@@ -223,6 +230,10 @@ const browser = await chromium.launch();
   ok(/\d+\. \w+.*t (merarbejde|overskud)/.test((await page.textContent(fSel + ' .udv-tip')).trim()), 'hover virker i udsnittet: ' + (await page.textContent(fSel + ' .udv-tip')).trim());
   await page.click(fSel + ' .udv-zk[data-zoom="alt"]');
   ok(await punkter(fSel) === skema.length, '«Hele året» viser hele forskelskurven igen');
+  await page.click(fSel + ' .udv-zk[data-zoom="ind"]');
+  const fUds = await page.textContent(fSel + ' .udv-udsnit');
+  ok(fUds.includes('2. okt') && await page.$(fSel + ' circle.udv-prik[cx]') !== null, '+ zoomer forskelskurven ind på de sidste uger frem til i dag: ' + fUds);
+  await page.click(fSel + ' .udv-zk[data-zoom="alt"]');
 
   const nSel = '.udv-norm-kort';
   const nAlle = await punkter(nSel, '.udv-norm');
@@ -230,7 +241,8 @@ const browser = await chromium.launch();
   const yHele = await yAkse();
   await page.focus(nSel + ' svg');
   await page.keyboard.press('+'); await page.keyboard.press('+');
-  await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
+  ok(await page.$(nSel + ' .udv-idag') !== null, '+ zoomer normkurven ind på i dag');
+  await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
   const nZ = await punkter(nSel, '.udv-norm');
   ok(nZ < nAlle, `+ og → zoomer og flytter normkurven: ${nZ} af ${nAlle} punkter`);
   const yZ = await yAkse();
