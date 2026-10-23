@@ -1,47 +1,35 @@
 // pauser.js — korte pauser mellem to registreringer
 //
 // Et mellemrum på under KORT_PAUSE_MAX minutter mellem to poster er sjældent
-// glemt tid: det er pausen mellem to moduler eller frokosten. Når en ny post
-// oprettes, lukkes sådan et mellemrum automatisk med en pause-post, så dagen
-// hænger sammen. Længere mellemrum lades i fred — de er bare tom tid.
+// glemt tid: det er pausen mellem to moduler eller frokosten. Sådan et
+// mellemrum lukkes automatisk med en pause-post, så dagen hænger sammen —
+// uanset hvordan posterne er kommet til: timer, modul, Historik, Lectio eller
+// flytning i kalenderen, og uanset rækkefølgen. Længere mellemrum lades i
+// fred — de er bare tom tid.
 //
 // En pause er en almindelig post med isBreak:true. Den kan redigeres og
 // slettes som alle andre, men tæller ikke som arbejdstid i rapporterne.
+// Slettes en pause, huskes hullet i indstillingerne (afvistePauser), så det
+// ikke bliver lukket igen.
 
 import { db } from './app.js';
-import { getSettings } from './indstillinger.js';
+import { getSettings, gemIndstilling } from './indstillinger.js';
 import {
-  collection, addDoc, getDocs, query, where, orderBy, limit, Timestamp
+  collection, doc, addDoc, getDocs, writeBatch, query, where, orderBy, limit, Timestamp
 } from './lager.js';
+import { skoleaarStart, skoleaarFor } from './periode.js';
 
 export const KORT_PAUSE_MAX = 30;            // minutter — mellemrum herunder bliver til pause
 export const PAUSE_NAVN     = 'Kort pause';
 export const erPause        = e => e?.isBreak === true;
 
 // ─── Opret post ───────────────────────────────────────────
-// Alle nye registreringer går gennem denne, så pausen foran posten bliver
-// oprettet ét sted i stedet for på hvert kaldested.
+// Alle nye registreringer går gennem denne, så hullerne omkring posten bliver
+// lukket ét sted i stedet for på hvert kaldested.
 export async function opretPost(userId, data) {
-  // Mellemrummet måles før posten er oprettet — ellers ville den nye post selv
-  // være med i opslaget, og en igangværende timer ville se ud som dækket tid
-  const start = startTidspunkt(data);
-  let pause = null;
-  try {
-    pause = await findKortMellemrum(userId, start);
-  } catch (err) {
-    console.error('Kort pause fejl:', err);
-  }
-
   const ref = await addDoc(collection(db, `users/${userId}/entries`), data);
-
-  if (pause) {
-    try {
-      // En manglende pause må aldrig vælte selve registreringen
-      await addDoc(collection(db, `users/${userId}/entries`), pause);
-    } catch (err) {
-      console.error('Kort pause fejl:', err);
-    }
-  }
+  // En manglende pause må aldrig vælte selve registreringen
+  await lukKortePauser(userId, startTidspunkt(data));
   return ref;
 }
 
@@ -95,4 +83,87 @@ function senesteSlutFoer(poster) {
     if (!senest || slut > senest) senest = slut;
   }
   return senest;
+}
+
+// ─── Luk alle korte huller ────────────────────────────────
+// Ren beregning: poster er dokumenternes data. Hullerne findes inden for
+// hver dag mellem poster, der begynder samme dag; pauser og igangværende
+// timere dækker også tid. Returnerer [{ fra, til }] i millisekunder.
+export function kortePauser(poster, afviste = {}) {
+  const dage = new Map();
+  for (const e of poster) {
+    const fra = e.startTime?.toMillis?.();
+    if (!Number.isFinite(fra)) continue;
+    const til = e.endTime ? e.endTime.toMillis() : Infinity;
+    const d = new Date(fra); d.setHours(0, 0, 0, 0);
+    if (!dage.has(+d)) dage.set(+d, []);
+    dage.get(+d).push({ fra, til });
+  }
+  const huller = [];
+  for (const liste of dage.values()) {
+    liste.sort((a, b) => a.fra - b.fra || a.til - b.til);
+    let daekket = null;
+    for (const p of liste) {
+      if (daekket !== null && p.fra > daekket) {
+        const minutter = Math.round((p.fra - daekket) / 60000);
+        if (minutter >= 1 && minutter < KORT_PAUSE_MAX && !afviste[daekket]) {
+          huller.push({ fra: daekket, til: p.fra });
+        }
+      }
+      daekket = Math.max(daekket ?? p.til, p.til);
+    }
+  }
+  return huller;
+}
+
+// Lukker hullerne fra dagen for `fra` til og med dagen for `til` (uden `til`:
+// alt derefter). Id'et følger hullet, så to enheder, der lukker det samme
+// hul på én gang, skriver den samme post. Returnerer de nye posters refs.
+export async function lukKortePauser(userId, fra, til = fra) {
+  const s = getSettings();
+  if (!userId || s.autoShortBreaks === false) return [];
+  try {
+    const dagStart = new Date(fra); dagStart.setHours(0, 0, 0, 0);
+    const betingelser = [where('startTime', '>=', Timestamp.fromDate(dagStart))];
+    if (til) {
+      const dagSlut = new Date(til); dagSlut.setHours(0, 0, 0, 0); dagSlut.setDate(dagSlut.getDate() + 1);
+      betingelser.push(where('startTime', '<', Timestamp.fromDate(dagSlut)));
+    }
+    const col  = collection(db, `users/${userId}/entries`);
+    const snap = await getDocs(query(col, ...betingelser));
+    const huller = kortePauser(snap.docs.map(d => d.data()), s.afvistePauser || {});
+    const refs = [];
+    // Firestore tager højst 500 skrivninger pr. batch
+    for (let i = 0; i < huller.length; i += 450) {
+      const batch = writeBatch(db);
+      for (const h of huller.slice(i, i + 450)) {
+        const ref = doc(db, `users/${userId}/entries/pause-${h.fra}-${h.til}`);
+        batch.set(ref, {
+          activityId: null, workType: null,
+          startTime: Timestamp.fromMillis(h.fra), endTime: Timestamp.fromMillis(h.til),
+          durationMinutes: Math.round((h.til - h.fra) / 60000), note: '',
+          isModule: false, autoStopped: false, isBreak: true
+        });
+        refs.push(ref);
+      }
+      await batch.commit();
+    }
+    return refs;
+  } catch (err) {
+    console.error('Kort pause fejl:', err);
+    return [];
+  }
+}
+
+// Ved opstart: hele det aktuelle skoleår, også poster lagt ind før denne
+// version, fra Lectio eller i en anden rækkefølge
+export function lukSkoleaaretsPauser(userId) {
+  return lukKortePauser(userId, skoleaarStart(skoleaarFor(new Date())), null);
+}
+
+// En slettet pause er et hul, brugeren vil have stående
+export async function afvisPause(e) {
+  const fra = e?.startTime?.toMillis?.();
+  if (!erPause(e) || !Number.isFinite(fra)) return;
+  await gemIndstilling('afvistePauser', { ...(getSettings().afvistePauser || {}), [fra]: true });
 }

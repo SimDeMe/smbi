@@ -16,6 +16,7 @@ import { initHistorikView, refreshHistorik } from './historik.js';
 import { initKalenderView, refreshKalender } from './kalender.js';
 import { initRapporterView, refreshRapporter } from './rapporter.js';
 import { initRettet } from './rettet.js';
+import { lukSkoleaaretsPauser } from './pauser.js';
 import { fangTab } from './ark.js';
 import { initBackup } from './backup.js';
 import { initIndstillingerView, refreshIndstillinger, getSettings, visVersion } from './indstillinger.js';
@@ -105,6 +106,9 @@ onAuthStateChanged(auth, async user => {
       initHjem(user.uid);
       initKalenderView(user.uid);
       initRapporterView(user.uid);
+      // Korte huller fra før denne version, fra Lectio eller fra en anden
+      // enhed lukkes i baggrunden — appen venter ikke på det
+      lukSkoleaaretsPauser(user.uid);
     } catch (err) {
       console.error('Init fejl:', err);
     }

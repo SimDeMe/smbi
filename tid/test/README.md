@@ -52,6 +52,7 @@ Under kørsel kan testen nå lageret via `window.__fs` (`store`, `put`,
 | `timer-fortryd.mjs` | fortryd stop/skift med bevaret id og note, slettede korte poster, fælles skiftetidspunkt, manuel rettelse, overlap, offline/fejl, nyere timer fra anden enhed, midnat og formular ved 340/390/1280 px |
 | `timer-sikkerhed.mjs` | hurtige tryk, atomiske skift, to browserenheder med fælles lager og compare-and-swap, forældede stop, offline/online, flere åbne timere og transaktionsfejl |
 | `hjem.mjs` | dagens sum med aktiv timer og midnat, pauser og fremtid, seneste poster med redigering, glemt tid, Lectio som plan, favoritter med arbejdstype, fortsæt, arkivering, kontoændringer og mobil/desktop |
+| `korte-pauser.mjs` | alle huller under 30 min lukkes ved opstart (også Lectio og gamle dage), ingen dubletter, 35 min står tomt, slået fra, igangværende timer, omvendt rækkefølge i Historik, slettet pause huskes, rapporten for i dag |
 | `historik-overlap-pauser.mjs` | overlap, pauser som linjer, «Vis 500 mere», kalenderen retter gamle poster |
 | `roegtest.mjs` | alle faner og ark åbner, navne med `&`, `<b>` og `"` vises som tekst |
 | `ferie.mjs` | foran/bagud på arbejdsdage og ferieindtastningen (fast dato: 2. okt. 2026) |

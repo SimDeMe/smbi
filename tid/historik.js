@@ -3,7 +3,7 @@
 import { db, showToast, getCurrentSchoolYear } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { SKEMA, VARIGHEDER, minutterFraTid, skemaFraTider, skemaNu, skemaInterval } from './skema.js';
-import { opretPost, erPause, PAUSE_NAVN } from './pauser.js';
+import { opretPost, erPause, PAUSE_NAVN, lukKortePauser, afvisPause } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { openSheet, closeSheet, somKnap } from './ark.js';
 import { datoInput } from './periode.js';
@@ -665,6 +665,7 @@ async function saveEntry(ev) {
         showToast('Kontrollér og godkend overlap før gemning'); return;
       }
       await gemLectioRegistrering(uid, kilde, data, stadigSamme);
+      await lukKortePauser(uid, startDate);
       if (uid !== userId || kilde !== lectioKilde) return;
       showToast('Undervisning registreret fra Lectio');
     } else if (editingId) {
@@ -672,6 +673,9 @@ async function saveEntry(ev) {
       // Får en pause tildelt en aktivitet, er den ikke længere en pause.
       const felter = erPause(redigeret) && actId ? { ...data, isBreak: false } : data;
       await updateDoc(doc(db, `users/${userId}/entries/${editingId}`), felter);
+      // Både den gamle og den nye dag kan have fået et kort hul
+      const foer = redigeret?.startTime?.toDate?.();
+      await lukKortePauser(uid, foer && foer < startDate ? foer : startDate, foer && foer > startDate ? foer : startDate);
       showToast(iFremtiden ? 'Registrering opdateret · i fremtiden' : 'Registrering opdateret');
     } else {
       await opretPost(userId, { ...data, isModule: false, autoStopped: false });
@@ -691,7 +695,10 @@ async function deleteEntry() {
   const btn = document.getElementById('hist-delete-btn');
   btn.disabled = true;
   try {
-    await deleteDoc(doc(db, `users/${userId}/entries/${editingId}`));
+    const slettet = redigeret, uid = userId;
+    await deleteDoc(doc(db, `users/${uid}/entries/${editingId}`));
+    if (erPause(slettet)) await afvisPause(slettet);
+    else if (slettet?.startTime) await lukKortePauser(uid, slettet.startTime.toDate());
     showToast('Registrering slettet');
     closeSheet('hist-sheet', 'hist-backdrop');
   } catch (err) {

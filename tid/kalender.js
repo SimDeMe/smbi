@@ -13,7 +13,7 @@ import { db, showToast } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { openEntrySheet } from './historik.js';
 import { fmtMins, fmtTime } from './format.js';
-import { erPause } from './pauser.js';
+import { erPause, lukKortePauser } from './pauser.js';
 import { tegnDag, tegnUge } from './kalender-akse.js';
 import { tegnMaaned, tegnAar } from './kalender-oversigt.js';
 import { listenLectio } from './lectio-store.js';
@@ -24,7 +24,7 @@ import {
   startOfDay, addDays, datoInput
 } from './periode.js';
 import {
-  collection, onSnapshot, query, where, orderBy, limit, Timestamp, doc, updateDoc
+  collection, onSnapshot, query, where, orderBy, limit, Timestamp, doc, updateDoc, deleteDoc
 } from './lager.js';
 
 // ─── Visningerne ──────────────────────────────────────────
@@ -339,6 +339,8 @@ async function flytPost(id, fra, til, flyttet) {
     render();                          // blokken tilbage, hvor den stod
     return;
   }
+  const foer = p.startTime.toDate();
+  const pauser = await lukKortePauser(userId, foer < fra ? foer : fra, foer > fra ? foer : fra);
 
   const ctx  = byggKontekst();
   const nu   = Date.now();
@@ -351,7 +353,8 @@ async function flytPost(id, fra, til, flyttet) {
     ramt.length ? ` · OBS: overlapper ${navn}` : ''}`;
   showToast(tekst, ramt.length ? 9000 : 6000, {
     tekst: 'Fortryd',
-    fn: () => updateDoc(ref, gl).catch(err => {
+    // Pauser, flytningen lukkede, ville overlappe posten, når den står igen
+    fn: () => Promise.all([updateDoc(ref, gl), ...pauser.map(r => deleteDoc(r))]).catch(err => {
       console.error('Fortryd fejl:', err);
       showToast('Kunne ikke fortryde');
     })

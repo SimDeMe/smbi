@@ -119,6 +119,9 @@ const browser = await chromium.launch();
   await page.mouse.move(g.x, g.y - pxTime / 4, { steps: 5 });
   await page.mouse.up(); await page.waitForTimeout(300);
   ok((await e3()).join() === '09:40,11:00,80', 'grebet ændrer kun sluttiden: ' + await e3());
+  const pause = await page.evaluate(() => window.__fs.entries().filter(e => e.isBreak && e.id.startsWith('pause-'))
+    .map(e => new Date(e.startMs).toTimeString().slice(0, 5) + '–' + new Date(e.endMs).toTimeString().slice(0, 5)).join());
+  ok(pause === '11:00–11:15', 'det nye hul til e4 bliver en kort pause: ' + pause);
 
   // Snap: e5 (12:00–13:00) trækkes 38 min op — starten snapper til e4's slutning 11:20
   const tid = id => page.evaluate(id => { const d = window.__fs.store.get('users/u1/entries/' + id); return [d.startTime.toDate().toTimeString().slice(0, 8), d.endTime.toDate().toTimeString().slice(0, 8)]; }, id);
@@ -133,7 +136,7 @@ const browser = await chromium.launch();
   ok((await tid('e5')).join() === '11:20:00,12:20:00', 'starten snapper til naboens slutning: ' + await tid('e5'));
   ok(!(await page.textContent('#toast')).includes('OBS'), 'kant i kant er ikke overlap: ' + await page.textContent('#toast'));
 
-  // Overlap: e5 trækkes 30 min op, ind over e3 (09:40–11:00) og e4
+  // Overlap: e5 trækkes 30 min op, ind over e3 (09:40–11:00), pausen og e4
   m = await midt('e5');
   await page.mouse.move(m.x, m.y); await page.mouse.down();
   await page.mouse.move(m.x, m.y - 30 * pxTime / 60, { steps: 6 });
@@ -141,12 +144,12 @@ const browser = await chromium.launch();
     selv: document.querySelector('.kal-block[data-id="e5"]').classList.contains('kal-block-overlap'),
     ramt: [...document.querySelectorAll('.kal-block-ramt')].map(b => b.dataset.id).join(),
     tekst: document.querySelector('.kal-block[data-id="e5"] .kal-block-time').textContent }));
-  ok(under.selv && under.ramt === 'e3,e4', 'under trækket markeres blokken og de ramte: ' + under.ramt);
+  ok(under.selv && /^e3,pause-\d+-\d+,e4$/.test(under.ramt), 'under trækket markeres blokken og de ramte: ' + under.ramt);
   ok(under.tekst.includes('overlap'), 'tiden i blokken siger overlap: ' + under.tekst);
   await page.screenshot({ path: DIR + '/kalender-overlap.png' });
   await page.mouse.up(); await page.waitForTimeout(300);
   const toast = await page.textContent('#toast');
-  ok(toast.includes('10:50–11:50') && toast.includes('OBS: overlapper Retning og SRP'), 'beskeden advarer om overlap: ' + toast);
+  ok(toast.includes('10:50–11:50') && toast.includes('OBS: overlapper Retning, en pause og SRP'), 'beskeden advarer om overlap: ' + toast);
   ok(await page.$$eval('.kal-block-ramt,.kal-block-overlap', l => l.length) === 0, 'markeringen forsvinder, når man slipper');
   await page.click('.toast-knap'); await page.waitForTimeout(300);
   ok((await tid('e5')).join() === '11:20:00,12:20:00', 'Fortryd efter overlap: ' + await tid('e5'));
