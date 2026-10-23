@@ -1536,6 +1536,8 @@ html[data-ark="hist-sheet"] .kal-dl-raekke.kal-valgt{background:var(--tint);box-
 .rapport-akkord .forecast-chip-sm{margin-top:0}
 .rapport-akkord-note{color:var(--slate);text-transform:none;letter-spacing:0.04em}
 .rapport-act-row-faelles{background:var(--paper-2);border-style:dashed}
+.rapport-pauser{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:-6px 0 18px}
+.rapport-pauser-hjaelp{font-size:13px;color:var(--slate);flex:1 1 200px}
 
 /* Holdets arbejdstyper: navn og saldo øverst, tallene, så bjælken */
 .akkord-type{

@@ -119,34 +119,54 @@ export function kortePauser(poster, afviste = {}) {
 }
 
 // Lukker hullerne fra dagen for `fra` til og med dagen for `til` (uden `til`:
-// alt derefter). Id'et følger hullet, så to enheder, der lukker det samme
-// hul på én gang, skriver den samme post. Returnerer de nye posters refs.
+// alt derefter). Returnerer de nye posters refs.
 export async function lukKortePauser(userId, fra, til = fra) {
   const s = getSettings();
   if (!userId || s.autoShortBreaks === false) return [];
   try {
     const huller = kortePauser(await dagenesPoster(userId, fra, til), s.afvisteHuller || {});
-    const refs = [];
-    // Firestore tager højst 500 skrivninger pr. batch
-    for (let i = 0; i < huller.length; i += 450) {
-      const batch = writeBatch(db);
-      for (const h of huller.slice(i, i + 450)) {
-        const ref = doc(db, `users/${userId}/entries/pause-${h.fra}-${h.til}`);
-        batch.set(ref, {
-          activityId: null, workType: null,
-          startTime: Timestamp.fromMillis(h.fra), endTime: Timestamp.fromMillis(h.til),
-          durationMinutes: Math.round((h.til - h.fra) / 60000), note: '',
-          isModule: false, autoStopped: false, isBreak: true
-        });
-        refs.push(ref);
-      }
-      await batch.commit();
-    }
-    return refs;
+    return await skrivPauser(userId, huller);
   } catch (err) {
     console.error('Kort pause fejl:', err);
     return [];
   }
+}
+
+// Id'et følger hullet, så to enheder, der lukker det samme hul på én gang,
+// skriver den samme post
+async function skrivPauser(userId, huller) {
+  const refs = [];
+  // Firestore tager højst 500 skrivninger pr. batch
+  for (let i = 0; i < huller.length; i += 450) {
+    const batch = writeBatch(db);
+    for (const h of huller.slice(i, i + 450)) {
+      const ref = doc(db, `users/${userId}/entries/pause-${h.fra}-${h.til}`);
+      batch.set(ref, {
+        activityId: null, workType: null,
+        startTime: Timestamp.fromMillis(h.fra), endTime: Timestamp.fromMillis(h.til),
+        durationMinutes: Math.round((h.til - h.fra) / 60000), note: '',
+        isModule: false, autoStopped: false, isBreak: true
+      });
+      refs.push(ref);
+    }
+    await batch.commit();
+  }
+  return refs;
+}
+
+// Knappen «Registrér pauser» i dagsrapporten: brugeren beder selv om det,
+// så alle dagens korte huller lukkes — også afviste, og også når de
+// automatiske pauser er slået fra. Afvisningerne for dagen glemmes.
+// Fejl kastes videre, så knappen kan sige det. Returnerer antallet.
+export async function registrerDagensPauser(userId, dag) {
+  const huller = kortePauser(await dagenesPoster(userId, dag));
+  await skrivPauser(userId, huller);
+  const fra = new Date(dag); fra.setHours(0, 0, 0, 0);
+  const til = new Date(fra); til.setDate(til.getDate() + 1);
+  const afviste = getSettings().afvisteHuller || {};
+  const tilbage = Object.fromEntries(Object.entries(afviste).filter(([a]) => +a < +fra || +a >= +til));
+  if (Object.keys(tilbage).length !== Object.keys(afviste).length) await gemIndstilling('afvisteHuller', tilbage);
+  return huller.length;
 }
 
 async function dagenesPoster(userId, fra, til) {

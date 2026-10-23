@@ -140,5 +140,37 @@ for (const pauseFoerst of [true, false]) {
   await page.context().close();
 }
 
+// ── Knappen «Registrér pauser» i dagsrapporten ──
+// Lukker også afviste huller og virker, selv om de automatiske er slået fra
+for (const w of [390, 1280]) {
+  const page = await side(browser, { seed: [settings({ autoShortBreaks: false, afvisteHuller: { [kl(9, 35)]: kl(9, 50) } }),
+    act('a1', 'SRP'), ...dag(0)] }, w);
+  ok((await pauser(page)).length === 0, `${w} px: slået fra, ingen pauser ved opstart`);
+  await page.click('.nav-btn[data-view="rapporter"]');
+  ok(await page.$('#rapport-registrer-pauser') == null, 'knappen står ikke i skoleårsrapporten');
+  await page.click('.rapport-tab[data-period="dag"]'); await page.waitForTimeout(200);
+  const knap = page.getByRole('button', { name: 'Registrér pauser' });
+  ok(await knap.isVisible(), 'knappen står i dagsrapporten');
+  await knap.click(); await page.waitForTimeout(400);
+  ok(somTekst(await pauser(page)) === '09:35–09:50, 13:00–13:10', 'knappen registrerer begge pauser, også den afviste: ' + somTekst(await pauser(page)));
+  ok((await page.textContent('#toast')).includes('2 pauser registreret'), 'besked: ' + await page.textContent('#toast'));
+  ok(/Pauser 25m/.test((await page.textContent('#rapport-content')).replace(/\s+/g, ' ')), 'rapporten viser pauserne med det samme');
+  const afvist = await page.evaluate(() => __fs.store.get('users/u1/settings/config').afvisteHuller);
+  ok(Object.keys(afvist || {}).length === 0, 'dagens afvisning er glemt');
+  ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'ingen vandret rulning');
+  await page.locator('.rapport-pauser').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: HER + `ud/rapport-pauser-${w}.png` });
+
+  // Igen: intet nyt, ingen dubletter, og knappen kan bruges med tastaturet
+  await page.focus('#rapport-registrer-pauser'); await page.keyboard.press('Enter'); await page.waitForTimeout(400);
+  ok((await pauser(page)).length === 2, 'andet tryk laver ingen dubletter');
+  ok((await page.textContent('#toast')).includes('Ingen huller under 30 min'), 'besked: ' + await page.textContent('#toast'));
+
+  // En dag uden registreringer har ingen knap
+  await page.click('#rapport-prev'); await page.click('#rapport-prev'); await page.waitForTimeout(200);
+  ok(await page.$('#rapport-registrer-pauser') == null, 'tom dag: ingen knap');
+  await page.context().close();
+}
+
 await browser.close();
 if (fejl.length) { console.log(`\n${fejl.length} fejl`); process.exit(1); }

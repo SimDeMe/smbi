@@ -4,10 +4,10 @@
 // skoleår. Man bladrer frem og tilbage med pilene, så man kan se, hvordan i
 // går, ugen før eller sidste skoleår så ud — ikke kun den periode man står i.
 
-import { db, COLOR_PALETTE } from './app.js';
+import { db, COLOR_PALETTE, showToast } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { getSettings, gemIndstilling, aarsnorm, andetSum, FULD_AARSNORM, FLEKSBAAND } from './indstillinger.js';
-import { erPause, PAUSE_NAVN } from './pauser.js';
+import { erPause, PAUSE_NAVN, registrerDagensPauser, KORT_PAUSE_MAX } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { forloebIArbejdsdage, ferieFor, elevferieFor } from './ferie.js';
 import { aktivitetsAndel, periodeFor, PERIODER } from './aktivitetsperiode.js';
@@ -239,11 +239,38 @@ function renderReport() {
     renderUdvikling(acts, filtered, year) +
     renderDonut(rows, uboundMins + pauseMins, totalMins, archivedMins) +
     renderActList(rows, uboundMins, pauseMins, ak) +
+    (periodFilter === 'dag' && filtered.length ? renderPauseKnap() : '') +
     renderArchivedList(archivedRows, ak) +
     renderOverfoert(ak);
   for (const d of el.querySelectorAll('details[data-hovedtal]')) {
     d.open = aabne.includes(d.dataset.hovedtal);
     if (d.dataset.hovedtal === fokus) d.querySelector('summary').focus({ preventScroll: true });
+  }
+}
+
+// ─── Registrér pauser ─────────────────────────────────────
+// Kun i dagsrapporten: lukker dagens korte huller med det samme
+function renderPauseKnap() {
+  return `<div class="rapport-pauser">
+    <button type="button" id="rapport-registrer-pauser" class="btn btn-secondary">Registrér pauser</button>
+    <span class="rapport-pauser-hjaelp">Huller under ${KORT_PAUSE_MAX} min mellem dagens registreringer gemmes som kort pause.</span>
+  </div>`;
+}
+
+async function registrerPauser(knap) {
+  if (knap.disabled || !userId) return;
+  knap.disabled = true;
+  try {
+    const n = await registrerDagensPauser(userId, start());
+    showToast(n === 0 ? `Ingen huller under ${KORT_PAUSE_MAX} min`
+      : n === 1 ? '1 pause registreret' : `${n} pauser registreret`);
+  } catch (err) {
+    console.error('Registrér pauser fejl:', err);
+    showToast('Kunne ikke registrere pauserne — prøv igen');
+  } finally {
+    // Lytteren tegner rapporten om med pauserne; står knappen der endnu, låses den op
+    const ny = document.getElementById('rapport-registrer-pauser');
+    if (ny) { ny.disabled = false; if (document.activeElement === document.body) ny.focus({ preventScroll: true }); }
   }
 }
 
@@ -936,7 +963,11 @@ function bindListeners() {
 
   // Fluebenet i akkordregnskabet tegnes med rapporten, så det fanges her
   document.getElementById('rapport-content')
-    ?.addEventListener('click', e => { if (e.target.closest('#rapport-vis-skoleaar')) setPeriod('skolear'); });
+    ?.addEventListener('click', e => {
+      if (e.target.closest('#rapport-vis-skoleaar')) setPeriod('skolear');
+      const knap = e.target.closest('#rapport-registrer-pauser');
+      if (knap) registrerPauser(knap);
+    });
   document.getElementById('rapport-content')
     ?.addEventListener('change', e => {
       if (e.target.id !== 'akkord-fordel') return;
