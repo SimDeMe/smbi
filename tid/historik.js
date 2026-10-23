@@ -3,7 +3,7 @@
 import { db, showToast, getCurrentSchoolYear } from './app.js';
 import { getLoadedActivities } from './activities.js';
 import { SKEMA, VARIGHEDER, minutterFraTid, skemaFraTider, skemaNu, skemaInterval } from './skema.js';
-import { opretPost, erPause, PAUSE_NAVN, lukKortePauser, afvisPause } from './pauser.js';
+import { opretPost, erPause, PAUSE_NAVN, lukKortePauser, afvisPause, glemAfvisteHuller } from './pauser.js';
 import { esc, capitalize, fmtMins, fmtTime } from './format.js';
 import { openSheet, closeSheet, somKnap } from './ark.js';
 import { datoInput } from './periode.js';
@@ -697,8 +697,11 @@ async function deleteEntry() {
   try {
     const slettet = redigeret, uid = userId;
     await deleteDoc(doc(db, `users/${uid}/entries/${editingId}`));
-    if (erPause(slettet)) await afvisPause(slettet);
-    else if (slettet?.startTime) await lukKortePauser(uid, slettet.startTime.toDate());
+    if (erPause(slettet)) await afvisPause(uid, slettet);
+    else if (slettet?.startTime) {
+      await glemAfvisteHuller(slettet);
+      await lukKortePauser(uid, slettet.startTime.toDate());
+    }
     showToast('Registrering slettet');
     closeSheet('hist-sheet', 'hist-backdrop');
   } catch (err) {

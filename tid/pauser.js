@@ -9,8 +9,10 @@
 //
 // En pause er en almindelig post med isBreak:true. Den kan redigeres og
 // slettes som alle andre, men tæller ikke som arbejdstid i rapporterne.
-// Slettes en pause, huskes hullet i indstillingerne (afvistePauser), så det
-// ikke bliver lukket igen.
+// Slettes en pause mellem to poster, der står endnu, huskes hullet i
+// indstillingerne (afvisteHuller: { fra: til }), så det ikke lukkes igen.
+// Slettes en af posterne omkring hullet, glemmes det igen — ellers ville en
+// dag, der ryddes og tastes ind på ny, aldrig få sine pauser tilbage.
 
 import { db } from './app.js';
 import { getSettings, gemIndstilling } from './indstillinger.js';
@@ -106,7 +108,7 @@ export function kortePauser(poster, afviste = {}) {
     for (const p of liste) {
       if (daekket !== null && p.fra > daekket) {
         const minutter = Math.round((p.fra - daekket) / 60000);
-        if (minutter >= 1 && minutter < KORT_PAUSE_MAX && !afviste[daekket]) {
+        if (minutter >= 1 && minutter < KORT_PAUSE_MAX && afviste[daekket] !== p.fra) {
           huller.push({ fra: daekket, til: p.fra });
         }
       }
@@ -123,15 +125,7 @@ export async function lukKortePauser(userId, fra, til = fra) {
   const s = getSettings();
   if (!userId || s.autoShortBreaks === false) return [];
   try {
-    const dagStart = new Date(fra); dagStart.setHours(0, 0, 0, 0);
-    const betingelser = [where('startTime', '>=', Timestamp.fromDate(dagStart))];
-    if (til) {
-      const dagSlut = new Date(til); dagSlut.setHours(0, 0, 0, 0); dagSlut.setDate(dagSlut.getDate() + 1);
-      betingelser.push(where('startTime', '<', Timestamp.fromDate(dagSlut)));
-    }
-    const col  = collection(db, `users/${userId}/entries`);
-    const snap = await getDocs(query(col, ...betingelser));
-    const huller = kortePauser(snap.docs.map(d => d.data()), s.afvistePauser || {});
+    const huller = kortePauser(await dagenesPoster(userId, fra, til), s.afvisteHuller || {});
     const refs = [];
     // Firestore tager højst 500 skrivninger pr. batch
     for (let i = 0; i < huller.length; i += 450) {
@@ -155,15 +149,42 @@ export async function lukKortePauser(userId, fra, til = fra) {
   }
 }
 
+async function dagenesPoster(userId, fra, til) {
+  const dagStart = new Date(fra); dagStart.setHours(0, 0, 0, 0);
+  const betingelser = [where('startTime', '>=', Timestamp.fromDate(dagStart))];
+  if (til) {
+    const dagSlut = new Date(til); dagSlut.setHours(0, 0, 0, 0); dagSlut.setDate(dagSlut.getDate() + 1);
+    betingelser.push(where('startTime', '<', Timestamp.fromDate(dagSlut)));
+  }
+  const snap = await getDocs(query(collection(db, `users/${userId}/entries`), ...betingelser));
+  return snap.docs.map(d => d.data());
+}
+
 // Ved opstart: hele det aktuelle skoleår, også poster lagt ind før denne
 // version, fra Lectio eller i en anden rækkefølge
 export function lukSkoleaaretsPauser(userId) {
   return lukKortePauser(userId, skoleaarStart(skoleaarFor(new Date())), null);
 }
 
-// En slettet pause er et hul, brugeren vil have stående
-export async function afvisPause(e) {
-  const fra = e?.startTime?.toMillis?.();
-  if (!erPause(e) || !Number.isFinite(fra)) return;
-  await gemIndstilling('afvistePauser', { ...(getSettings().afvistePauser || {}), [fra]: true });
+// En slettet pause er et hul, brugeren vil have stående — men kun hvis der
+// stadig er poster på begge sider, så hullet ellers ville blive lukket igen.
+// Kaldes, efter pausen er slettet.
+export async function afvisPause(userId, e) {
+  const fra = e?.startTime?.toMillis?.(), til = e?.endTime?.toMillis?.();
+  if (!erPause(e) || !Number.isFinite(fra) || getSettings().autoShortBreaks === false) return;
+  try {
+    // Også en rettet pause: det hul, den lå i
+    const hul = kortePauser(await dagenesPoster(userId, new Date(fra))).find(h => h.fra < til && h.til > fra);
+    if (hul) await gemIndstilling('afvisteHuller', { ...(getSettings().afvisteHuller || {}), [hul.fra]: hul.til });
+  } catch (err) {
+    console.error('Kort pause fejl:', err);
+  }
+}
+
+// En slettet post ophæver afvisningen af hullerne lige før og lige efter den
+export async function glemAfvisteHuller(e) {
+  const fra = e?.startTime?.toMillis?.(), til = e?.endTime?.toMillis?.();
+  const afviste = getSettings().afvisteHuller || {};
+  const tilbage = Object.fromEntries(Object.entries(afviste).filter(([a, b]) => +a !== til && b !== fra));
+  if (Object.keys(tilbage).length !== Object.keys(afviste).length) await gemIndstilling('afvisteHuller', tilbage);
 }

@@ -100,11 +100,43 @@ const browser = await chromium.launch();
   await page.waitForSelector('#hist-sheet.open');
   await page.click('#hist-delete-btn'); await page.waitForTimeout(400);
   ok((await pauser(page)).length === 0, 'pausen er slettet');
-  const afvist = await page.evaluate(() => __fs.store.get('users/u1/settings/config').afvistePauser);
-  ok(afvist && afvist[String(new Date().setHours(9, 0, 0, 0))] === true, 'hullet er husket som afvist');
+  const afvist = await page.evaluate(() => __fs.store.get('users/u1/settings/config').afvisteHuller);
+  ok(afvist && afvist[String(kl(9, 0))] === kl(9, 20), 'hullet er husket som afvist');
 
   await kørIgen(page);
   ok((await pauser(page)).length === 0, 'ny kørsel: pausen kommer ikke igen');
+
+  // Slettes posten før hullet, glemmes afvisningen
+  await page.click('.entry-row[data-id="a"]'); await page.waitForSelector('#hist-sheet.open'); await page.waitForTimeout(200);
+  await page.click('#hist-delete-btn'); await page.waitForTimeout(400);
+  const efter = await page.evaluate(() => __fs.store.get('users/u1/settings/config').afvisteHuller);
+  ok(Object.keys(efter || {}).length === 0, 'slettet nabopost: afvisningen er glemt');
+  await page.context().close();
+}
+
+// ── Dagen ryddes og tastes ind igen: pauserne kommer igen ──
+// Både når pausen slettes før og efter posterne omkring den
+for (const pauseFoerst of [true, false]) {
+  const page = await side(browser, { seed: [settings(), act('a1', 'SRP'),
+    post('m1', 'a1', kl(8, 0), kl(9, 35)), post('m2', 'a1', kl(9, 50), kl(11, 25))] });
+  ok((await pauser(page)).length === 1, 'opstart: én pause');
+  await page.click('.nav-btn[data-view="historik"]');
+  await page.waitForSelector('#view-historik:not(.hidden)');
+  await page.click('.hist-mode-tab[data-mode="liste"]');
+  await page.selectOption('#hist-period-select', 'dag'); await page.waitForTimeout(200);
+  const raekkefoelge = pauseFoerst ? ['.entry-pause-line', '.entry-row', '.entry-row'] : ['.entry-row', '.entry-pause-line', '.entry-row'];
+  for (const sel of raekkefoelge) {
+    await page.click(sel); await page.waitForSelector('#hist-sheet.open'); await page.waitForTimeout(200);
+    await page.click('#hist-delete-btn'); await page.waitForTimeout(400);
+  }
+  ok(await page.evaluate(() => __fs.entries().length) === 0, 'dagen er ryddet');
+  for (const [s, e] of [['08:00', '09:35'], ['09:50', '11:25']]) {
+    await page.click('#btn-new-entry'); await page.waitForSelector('#hist-sheet.open');
+    await page.fill('#hist-start', s); await page.fill('#hist-end', e);
+    await page.selectOption('#hist-act-sel', 'a1');
+    await page.click('#hist-save-btn'); await page.waitForTimeout(400);
+  }
+  ok(somTekst(await pauser(page)) === '09:35–09:50', `genindtastet (pausen slettet ${pauseFoerst ? 'først' : 'i midten'}): pausen er der igen`);
   await page.context().close();
 }
 

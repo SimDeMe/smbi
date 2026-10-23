@@ -139,5 +139,20 @@ try {
     await p.context().close();
   }
   console.log('OK   Lectio-tider hen over midnat og vintertid bevarer det rigtige tidsrum');
+  {
+    // Med korte pauser slået til: hullet før og efter modulet bliver pauser
+    const foer = post('foer', '2026-10-19T05:00:00Z', '2026-10-19T06:00:00Z');   // 07:00–08:00
+    const efter = post('efter', '2026-10-19T07:55:00Z', '2026-10-19T08:30:00Z'); // 09:55–10:30
+    const p = await lavSide(browser, { seed: [[settings[0], { currentSchoolYear: '2026/27' }], hold, seed[2], foer, efter] });
+    await p.waitForTimeout(300);
+    assert.equal((await p.evaluate(() => __fs.entries().filter(e => e.isBreak))).length, 0);   // 115 min: tom tid
+    await formular(p); await p.click('#hist-save-btn'); await p.waitForSelector('#hist-sheet', { state: 'hidden' });
+    await p.waitForTimeout(300);
+    const pauser = (await p.evaluate(() => __fs.entries().filter(e => e.isBreak))).map(e => [e.startMs, e.endMs]).sort((a, b) => a[0] - b[0]);
+    assert.deepEqual(pauser, [[Date.parse('2026-10-19T06:00:00Z'), Date.parse('2026-10-19T06:10:00Z')],
+      [Date.parse('2026-10-19T07:45:00Z'), Date.parse('2026-10-19T07:55:00Z')]]);
+    await p.context().close();
+  }
+  console.log('OK   Registrering fra Lectio lukker de korte huller før og efter modulet');
   assert.deepEqual(fejl, []);
 } finally { await browser.close(); }
