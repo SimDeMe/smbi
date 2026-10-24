@@ -1,6 +1,7 @@
 // Temakort (koropletkort): landene farves efter et nøgletal fra landemenuens
-// demografidata (FN WPP 2024, UNDP HDR 2025, Verdensbanken; se data/lande.LICENSE).
-// Samme datafil som Demografi-fanen, så tallene altid er de samme som dér.
+// demografidata (FN WPP 2024, UNDP HDR 2025, Verdensbanken; se data/lande.LICENSE)
+// og fødevaredata (FAO, UNICEF/WHO; se data/foedevarer.LICENSE). Samme
+// datafiler som fanerne Demografi og Fødevarer, så tallene altid er de samme.
 //
 // Klassegrænserne er faste og runde, ikke kvantiler: eleven kan genkende
 // tallene, og kortene ser ens ud fra gang til gang. Hvor et tal har en faglig
@@ -13,6 +14,7 @@
 // indbygger eller i procent kan sammenlignes på tværs af landenes størrelse.
 
 import { hentDemografi } from './demografi.js';
+import { hentFoedevarer } from './foedevarer.js';
 import { landFraKort } from './landemenu.js';
 
 // ColorBrewer (Cynthia Brewer, Apache 2.0): YlOrRd og PuOr.
@@ -105,6 +107,19 @@ export const EMNER = [
       graenser: [2000, 5000, 10000, 20000, 40000, 60000], forklaring: 'købekraftskorrigeret, 2021-dollar' },
     { id: 'skoleaar', navn: 'Skolegang', enhed: 'år', decimaler: 1,
       graenser: [4, 6, 8, 10, 12], forklaring: 'gennemsnitlig skolegang for voksne over 25 år' }
+  ]],
+  // Fødevaretal har hver sit seneste år (dataaar); enkelte lande har et ældre
+  // år, som så står i aflæsningen. felt: nøglen i foedevarer.json.
+  ['Fødevarer og sult', [
+    { id: 'underernaering', navn: 'Underernæring', enhed: '%', decimaler: 1, felt: 'u', dataaar: 2024, under: 2.5,
+      graenser: [5, 15, 25, 35], forklaring: 'andel af befolkningen, der ikke får energi nok til et normalt, aktivt liv (FAO’s skøn)' },
+    { id: 'kalorier', navn: 'Kalorieforsyning', enhed: 'kcal pr. person pr. døgn', decimaler: 0, felt: 'k', dataaar: 2023,
+      graenser: [2200, 2500, 2800, 3100, 3400], forklaring: 'mad til rådighed i landet pr. indbygger; madspild og ulighed er ikke trukket fra (FAO)' },
+    { id: 'vaeksthaemning', navn: 'Væksthæmmede børn', enhed: '%', decimaler: 1, felt: 'v', dataaar: 2024,
+      graenser: [2.5, 10, 20, 30], klassenavne: ['meget lav', 'lav', 'middel', 'høj', 'meget høj'],
+      forklaring: 'børn under 5 år, der er for lave til alderen – tegn på langvarig fejlernæring; grupper som WHO' },
+    { id: 'kornudbytte', navn: 'Kornudbytte', enhed: 't pr. ha', decimaler: 1, felt: 'c', dataaar: '2022–2024',
+      graenser: [1, 2, 3, 5, 7], forklaring: 'høstet korn pr. hektar, gennemsnit af 2022–2024; lande med under 10.000 ha korn er udeladt (FAO)' }
   ]]
 ];
 
@@ -141,24 +156,35 @@ export function klasseFor(ind, v) {
 
 export function vaerditekst(ind, v) {
   if (v == null) return 'ingen data';
+  if (ind.under != null && v <= ind.under) return `under ${fmt(ind.under, 1)}${ind.enhed ? ` ${ind.enhed}` : ''}`;
   const tal = v < 0 ? `−${fmt(-v, ind.decimaler)}` : fmt(v, ind.decimaler);
   return ind.enhed ? `${tal} ${ind.enhed}` : tal;
 }
 
 // Tilstand: data, valgt indikator og år. Globussen spørger via farve() og aflaes().
-let data = null;
+let data = null, foede = null;
 export const valg = { id: 'tfr', aar: 2023 };
 export const indikator = () => INDIKATORER[valg.id];
-export const aarFor = ind => ind.aar ? valg.aar : data?.noegleaar ?? 2023;
+export const aarFor = ind => ind.aar ? valg.aar : ind.dataaar ?? data?.noegleaar ?? 2023;
 export const fremskrivning = ind => Boolean(ind.aar && data && valg.aar > data.noegleaar);
 
 export async function hent() {
-  data = await hentDemografi();
+  // Fejler fødevaredata, virker de andre kort stadig; fødevarekortene viser »ingen data«.
+  [data, foede] = await Promise.all([hentDemografi(), hentFoedevarer().catch(() => null)]);
   if (!data?.lande?.['208']?.noegletal || !Array.isArray(data.serieaar)) throw new Error('Demografidata er ugyldige');
   return data;
 }
 
-function vaerdiFor(ind, land) {
+// Fødevaretal: [værdi, år] eller et tal (kornudbyttets gennemsnit).
+const foedetal = (ind, id) => foede?.lande[id]?.[ind.felt] ?? null;
+// Året for et lands fødevaretal, hvis det er ældre end kortets år.
+function aeldreAar(ind, id) {
+  const t = ind.felt && foedetal(ind, id);
+  return Array.isArray(t) && t[1] !== ind.dataaar ? t[1] : null;
+}
+
+function vaerdiFor(ind, land, id) {
+  if (ind.felt) { const t = foedetal(ind, id); return Array.isArray(t) ? t[0] : t; }
   if (!land) return null;
   return ind.vaerdi ? ind.vaerdi(land, aarFor(ind), data) : land.noegletal?.[ind.id] ?? null;
 }
@@ -167,7 +193,7 @@ function vaerdiFor(ind, land) {
 export function vaerdiForKort(feature, ind = indikator()) {
   if (!data) return null;
   const { id } = landFraKort(feature);
-  return vaerdiFor(ind, data.lande[id]);
+  return vaerdiFor(ind, data.lande[id], id);
 }
 
 // Farve for et kortobjekt; null = laget tegner ikke landet (fx Antarktis).
@@ -176,7 +202,7 @@ export function farve(feature) {
   const { id } = landFraKort(feature);
   if (!id || id === '010') return null;
   const ind = indikator();
-  const k = klasseFor(ind, vaerdiFor(ind, data.lande[id]));
+  const k = klasseFor(ind, vaerdiFor(ind, data.lande[id], id));
   return k < 0 ? INGEN_DATA : ind.farver[k];
 }
 
@@ -184,7 +210,7 @@ export function farve(feature) {
 export function rangering(ind = indikator()) {
   if (!data) return [];
   return Object.entries(data.lande)
-    .map(([id, land]) => ({ id, navn: land.navn, v: vaerdiFor(ind, land) }))
+    .map(([id, land]) => ({ id, navn: land.navn, v: vaerdiFor(ind, land, id), aar: aeldreAar(ind, id) }))
     .filter(r => r.v != null)
     .sort((a, b) => b.v - a.v || a.navn.localeCompare(b.navn, 'da'));
 }
@@ -201,5 +227,6 @@ export function aflaes(feature, navne) {
   const { id, navn, note } = landFraKort(feature, navne);
   const ind = indikator();
   const v = vaerdiForKort(feature, ind);
-  return `${navn}: ${vaerditekst(ind, v)}${note && v != null ? ` (tal for hele ${data.lande[id].navn})` : ''}`;
+  const aar = v != null && aeldreAar(ind, id);
+  return `${navn}: ${vaerditekst(ind, v)}${aar ? ` (${aar})` : ''}${note && v != null ? ` (tal for hele ${data.lande[id].navn})` : ''}`;
 }

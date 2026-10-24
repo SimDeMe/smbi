@@ -17,6 +17,7 @@ from pladelag import afproev_pladelag, afproev_pladefejl, afproev_pladetilpasnin
 from klimalag import afproev_klimalag, afproev_klimafejl, afproev_klimadata
 from seismik import afproev_seismik, afproev_seismikfejl, afproev_seismikdata
 from temakort import afproev_temakort, afproev_temafejl
+from foedevarer import afproev_foedevarer, afproev_foedevaredata
 from udledning import afproev_udledning, afproev_udledningsfejl, afproev_cirkler
 from temperatur import afproev_temperatur, afproev_temperaturfejl
 from havis import afproev_havis
@@ -81,7 +82,7 @@ with sync_playwright() as p:
         side.keyboard.press('Escape')
         side.get_by_role('button', name='Søg', exact=True).click()
         felt = side.get_by_role('searchbox')
-        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 10)]:
+        for ord, antal in [('Island', 2), ('groenland', 1), ('føhn', 1), ('CO2', 2), ('umuligtsoegeord', 0), ('', 11)]:
             felt.fill(ord)
             assert side.locator('.modelkort').count() == antal, (ord, antal)
         side.keyboard.press('Escape')
@@ -102,6 +103,7 @@ with sync_playwright() as p:
         afproev_havbund(side, UD)
         afproev_nedboer(side, UD)
         afproev_temakort(side, UD)
+        afproev_foedevarer(side, UD)
         afproev_udledning(side, UD)
         afproev_cirkler(side, UD)
         afproev_temperatur(side, UD)
@@ -216,6 +218,7 @@ with sync_playwright() as p:
     afproev_seismikdata()
     afproev_seismikfejl(browser, ADRESSE)
     afproev_temafejl(browser, ADRESSE)
+    afproev_foedevaredata()
     afproev_udledningsfejl(browser, ADRESSE)
     afproev_temperaturfejl(browser, ADRESSE)
     afproev_havbunddata()

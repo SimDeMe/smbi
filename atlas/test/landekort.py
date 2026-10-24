@@ -244,9 +244,9 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         expect(side.locator('#landefejl')).to_contain_text('kunne ikke hentes')
         side.locator('#luk').click()
         side.get_by_role('button', name='Processer', exact=True).first.click()
-        assert side.locator('.modelkort a').count() == 10
+        assert side.locator('.modelkort a').count() == 11
         side.get_by_role('button', name='Alle', exact=True).click()
-        assert side.locator('.modelkort a').count() == 10
+        assert side.locator('.modelkort a').count() == 11
         side.keyboard.press('Escape')
         if fejltype != 'modul':
             side.unroute('**/countries-50m.json' if fejltype == 'baggrund' else '**/danmark-10m.json')

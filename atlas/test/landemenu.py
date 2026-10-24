@@ -70,7 +70,7 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
         menu = side.locator('#landemenu')
         expect(menu).to_be_visible()
         expect(menu.locator('h2')).to_have_text('Algeriet')
-        expect(menu.locator('[data-valg]')).to_have_count(2)
+        expect(menu.locator('[data-valg]')).to_have_count(3)
         expect(menu.locator('[data-valg="demografi"]')).to_be_focused()
         boks = menu.bounding_box()
         assert boks['x'] >= 0 and boks['x'] + boks['width'] <= w and boks['y'] + boks['height'] <= h

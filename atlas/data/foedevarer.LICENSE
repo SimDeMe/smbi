@@ -1,0 +1,52 @@
+foedevarer.json
+===============
+
+Dannet med `python3 -I atlas/data/foedevarer.py` (24. oktober 2026).
+Rådata ligger ikke i repoet; adresser og SHA-256 står i foedevarer.json under
+«kilder». Landene kobles til globussen med ISO 3166-alfa-3-koden i demografi.json.
+
+Underernæring (u, us)
+---------------------
+FAO, Prevalence of undernourishment (% of population), via Verdensbanken,
+World Development Indicators, SN.ITK.DEFC.ZS, hentet 24.10.2026.
+  https://data.worldbank.org/indicator/SN.ITK.DEFC.ZS
+Andelen af befolkningen, hvis sædvanlige fødeindtag ikke dækker energibehovet
+til et normalt aktivt og sundt liv. Et modelberegnet skøn ud fra
+kalorieforsyning, fordeling og energibehov, ikke en optælling. FAO angiver
+værdier under 2,5 % som 2,5; atlasset viser dem som «under 2,5 %».
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+
+Væksthæmning (v)
+----------------
+UNICEF, WHO og Verdensbanken, Joint Child Malnutrition Estimates (JME),
+modelestimat: Prevalence of stunting, height for age (% of children under 5),
+via Verdensbanken, SH.STA.STNT.ME.ZS, hentet 24.10.2026.
+  https://data.worldbank.org/indicator/SH.STA.STNT.ME.ZS
+Børn under 5 år, hvis højde for alderen er mere end to standardafvigelser under
+medianen i WHO's vækststandard fra 2006. Et mål for langvarig fejlernæring.
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+
+Kornudbytte (c)
+---------------
+FAO, FAOSTAT (QCL), Cereal yield (kg per hectare), via Verdensbanken,
+AG.YLD.CREL.KG, hentet 24.10.2026.
+  https://data.worldbank.org/indicator/AG.YLD.CREL.KG
+Høstet korn (hvede, ris, majs, byg, havre, rug, hirse, durra m.fl.) pr. hektar
+høstet areal. Atlasset viser gennemsnittet af 2022–2024 i ton pr. hektar
+(mindst to år med tal), fordi udbyttet svinger meget med vejret fra år til år.
+Lande, hvis kornareal (AG.LND.CREL.HA) i gennemsnit er under 10.000 ha, er
+udeladt (markeret «cl»): udbyttet fra få, ofte kunstvandede marker eller
+drivhuse – fx Oman 31 t/ha – kan ikke sammenlignes med et landbrugslands.
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+
+Kalorieforsyning (k, ks)
+------------------------
+Food and Agriculture Organization of the United Nations (2025), Food Balances
+(FBS og den ældre FBSH), bearbejdet af Our World in Data: «Daily supply of
+calories per person», hentet 24.10.2026.
+  https://ourworldindata.org/grapher/daily-per-capita-caloric-supply
+Kilokalorier pr. person pr. døgn, der er til rådighed som fødevarer i landet
+(produktion + import − eksport − foder, frø, svind m.m.), delt med
+befolkningen. Det er udbuddet, ikke det, folk faktisk spiser: madspild i
+husholdningerne og ulighed i fordelingen er ikke trukket fra.
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0).

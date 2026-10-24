@@ -27,6 +27,21 @@ export const steder = [
     forklaring: 'Når fugtig luft tvinges op over en bjergkæde, afkøles den. Vanddamp kan kondensere og give nedbør; på læsiden kan luften blive varm og tør.',
     modelnote: 'Skematisk bjergmodel – ikke en lokal vejrprognose.',
     forbehold: 'Alperne er et eksempel på stigningsregn og føhn. Modellen bruger et skematisk bjerg og beregner ikke det aktuelle vejr i Alperne.'
+  },
+  {
+    id: 'afrikas-horn', navn: 'Afrikas Horn', koordinater: [44, 8],
+    forklaring: 'Etiopien, Eritrea, Djibouti og Somalia har nogle af verdens højeste andele af underernærede. Landbruget og kvægdriften er afhængige af regntider, der kommer med ITK – og i 2020–2023 slog fem regntider i træk fejl.',
+    modelnote: 'Regionalt eksempel · landedata fra FAO og FN · nedbør som klimanormal.',
+    forbehold: 'Markøren angiver regionen, ikke et bestemt punkt. I det meste af Somalia og det sydlige Etiopien falder regnen i to korte regntider (marts–maj og oktober–december); i Etiopiens højland falder det meste om sommeren. Landetallene er gennemsnit for hele lande, så forskellen mellem fx Etiopiens frodige højland og Somalias tørre lavland ses ikke. Eritrea har ingen FAO-tal for underernæring og kalorieforsyning.',
+    // Knapper på stedets side: lag, der passer til stedet, og landenes egne tal.
+    lag: [
+      { tekst: 'Vis underernæring på temakortet', lag: 'tema', tema: 'underernaering' },
+      { tekst: 'Vis nedbør måned for måned (april)', lag: 'nedboer', maaned: 3 }
+    ],
+    lande: [['231', 'Etiopien'], ['232', 'Eritrea'], ['262', 'Djibouti'], ['706', 'Somalia']],
+    // Globale modeller, der hjælper med at forklare stedet. De bevarer deres
+    // globale note og bliver ikke stedbundne af det.
+    modeller: ['global-cirkulation']
   }
 ];
 

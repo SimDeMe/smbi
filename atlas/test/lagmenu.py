@@ -38,7 +38,7 @@ def afproev_lagmenu(browser, adresse, ud):
         side.keyboard.press('End'); side.keyboard.press('Enter')
         expect(side.locator('#lag-demografi')).to_have_attribute('open', '')
         expect(side.locator('#lag-indikator')).to_be_enabled()
-        expect(side.locator('#lag-indikator option')).to_have_count(17)
+        expect(side.locator('#lag-indikator option')).to_have_count(21)
         assert not side.evaluate("performance.getEntriesByType('resource').some(r => r.name.endsWith('/data/demografi.json'))")
         # En indikator vælges direkte i menuen og synkroniseres med signaturen.
         side.locator('#lag-indikator').select_option('hdi')

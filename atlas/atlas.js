@@ -49,7 +49,7 @@ async function visDanmark() {
   }
 }
 
-const BETJENING = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi og klima.';
+const BETJENING = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi, klima og fødevarer.';
 
 // Tryk på et land på globussen: lille menu ved trykket. Danmark har også landekort.
 async function vaelgLand(feature, punkt) {
@@ -60,7 +60,8 @@ async function vaelgLand(feature, punkt) {
   globus.markerLand(feature);
   const valg = [
     { id: 'demografi', titel: 'Demografi', tekst: 'Befolkningspyramide og nøgletal' },
-    { id: 'klima', titel: 'Klima', tekst: 'Hydrotermfigurer fra vejrstationer' }
+    { id: 'klima', titel: 'Klima', tekst: 'Hydrotermfigurer fra vejrstationer' },
+    { id: 'foedevarer', titel: 'Fødevarer', tekst: 'Sult, kalorier og kornudbytte' }
   ];
   if (land.id === '208') valg.push({ id: 'landekort', titel: 'Landekort', tekst: 'Jylland, øerne og Bornholm' });
   visLandemenu({
@@ -92,7 +93,7 @@ function visLandedata(land, fane, fokusEfter) {
     aktiv = id;
     const nr = ++landevisning;
     for (const knap of faner.querySelectorAll('[data-fane]')) knap.setAttribute('aria-pressed', String(knap.dataset.fane === id));
-    rum.replaceChildren(element('p', id === 'demografi' ? 'Henter befolkningsdata …' : 'Henter klimadata …', 'antal'));
+    rum.replaceChildren(element('p', { demografi: 'Henter befolkningsdata …', foedevarer: 'Henter fødevaredata …' }[id] || 'Henter klimadata …', 'antal'));
     rum.setAttribute('aria-busy', 'true');
     const par = andet ? [land, andet] : null;
     try {
@@ -102,6 +103,12 @@ function visLandedata(land, fane, fokusEfter) {
         if (nr !== landevisning) return;
         if (par) modul.visDemografiSammenligning(rum, par.map(l => ({ navn: l.navn, data: data.lande[l.id] })), data);
         else modul.visDemografi(rum, data.lande[land.id], data);
+      } else if (id === 'foedevarer') {
+        const modul = await import('./foedevarer.js');
+        const data = await modul.hentFoedevarer();
+        if (nr !== landevisning) return;
+        if (par) modul.visFoedevarerSammenligning(rum, par.map(l => ({ navn: l.navn, data: data.lande[l.id] })), data);
+        else modul.visFoedevarer(rum, data.lande[land.id], data, land.navn);
       } else {
         const modul = await import('./klima.js');
         const [data, andele] = await Promise.all([modul.hentKlima(), modul.hentKlimaandele().catch(() => null)]);
@@ -116,7 +123,7 @@ function visLandedata(land, fane, fokusEfter) {
       if (nr === landevisning) rum.removeAttribute('aria-busy');
     }
   };
-  for (const [id, tekst] of [['demografi', 'Demografi'], ['klima', 'Klima']]) {
+  for (const [id, tekst] of [['demografi', 'Demografi'], ['klima', 'Klima'], ['foedevarer', 'Fødevarer']]) {
     const knap = element('button', tekst);
     knap.type = 'button'; knap.dataset.fane = id;
     knap.onclick = () => vis(id);
@@ -379,9 +386,43 @@ function visSted(sted) {
       document.querySelector('#globus').focus({ preventScroll: true });
     };
     indhold.append(find);
+    for (const valg of sted.lag || []) {
+      const knap = element('button', valg.tekst, 'tilbage');
+      knap.onclick = async () => {
+        tilbageTilGlobus(false);
+        dialog.close();
+        if (valg.lag === 'tema') {
+          senesteFokus = temaknap;
+          temamodul ??= await import('./temakort.js');
+          temamodul.valg.id = valg.tema;
+          if (!temalaget.aktiv) await temalaget.slaaTil();
+          else { tegnTemasignatur(); globus.gentegn(); opdaterPladebeskrivelse(); }
+        } else {
+          senesteFokus = document.querySelector('#nedboerspil');
+          await nedboerlaget.slaaTil();
+          nedboerstyring?.visMaaned(valg.maaned);
+        }
+        globus.visSted(sted);
+        senesteFokus.focus({ preventScroll: true });
+      };
+      indhold.append(knap);
+    }
+  }
+  if (sted.lande) {
+    const boks = element('section', '', 'stedlande');
+    boks.append(element('h3', 'Landenes fødevaretal og demografi', 'underoverskrift'));
+    const knapper = element('div', '', 'landeknapper');
+    for (const [id, navn] of sted.lande) {
+      const knap = element('button', navn);
+      knap.type = 'button';
+      knap.onclick = () => visLandedata({ id, navn }, 'foedevarer');
+      knapper.append(knap);
+    }
+    boks.append(knapper, element('p', 'Åbner landets Fødevarer-fane. Skift til Demografi for befolkningspyramiden, og brug Sammenlign ⇄ til at stille to lande side om side.', 'metadata'));
+    indhold.append(boks);
   }
   if (sted.fordybelse) indhold.append(visFordybelse(sted.fordybelse));
-  indhold.append(visModeller(modeller.filter(model => model.steder.includes(sted.id))));
+  indhold.append(visModeller(modeller.filter(model => model.steder.includes(sted.id) || sted.modeller?.includes(model.id))));
   const egne = oevelserTil('steder', sted.id);
   if (egne.length) indhold.append(visOevelser(egne));
 }
@@ -2222,16 +2263,17 @@ lagmenu = startLagmenu({
   async skiftKlima(system) { if (globus && !klimaknap.disabled) await klimalaget.skift(system); }
 });
 
-const TEMAKILDE = 'Alle tal er de samme som i landemenuens Demografi-fane. Befolkningstæthed, tilvækst, fødsels- og dødsrate, fertilitet, spædbørns- og børnedødelighed, middellevetid, medianalder, migration og aldersfordeling: United Nations, Department of Economic and Social Affairs, Population Division (2024), World Population Prospects 2024, mellemvarianten, CC BY 3.0 IGO. Tal til og med 2023 er estimater; 2050 og 2100 er fremskrivninger, som bygger på antagelser om fertilitet, dødelighed og migration. Fødsels- og dødsrate for 1950, 1980, 2000, 2050 og 2100 er FN’s femårsgennemsnit omkring året. Naturlig tilvækst er fødselsrate minus dødsrate. Andel 0–14 og 65+ år er regnet ud fra befolkningen fordelt på alder. ' +
+const TEMAKILDE = 'Alle tal er de samme som i landemenuens faner Demografi og Fødevarer. Befolkningstæthed, tilvækst, fødsels- og dødsrate, fertilitet, spædbørns- og børnedødelighed, middellevetid, medianalder, migration og aldersfordeling: United Nations, Department of Economic and Social Affairs, Population Division (2024), World Population Prospects 2024, mellemvarianten, CC BY 3.0 IGO. Tal til og med 2023 er estimater; 2050 og 2100 er fremskrivninger, som bygger på antagelser om fertilitet, dødelighed og migration. Fødsels- og dødsrate for 1950, 1980, 2000, 2050 og 2100 er FN’s femårsgennemsnit omkring året. Naturlig tilvækst er fødselsrate minus dødsrate. Andel 0–14 og 65+ år er regnet ud fra befolkningen fordelt på alder. ' +
   'HDI, BNI pr. indbygger (købekraftskorrigeret i 2021-dollar) og gennemsnitlig skolegang: UNDP, Human Development Report 2025 (data for 2023). HDI-grupperne er UNDP’s egne. Byandel: Verdensbanken, World Development Indicators (SP.URB.TOTL.IN.ZS, 2023); landenes definition af »by« er forskellig. ' +
-  'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med FN’s tal for hele Cypern og Somalia. Grænser og navne er ikke en stillingtagen til omstridte områder. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er valgt som runde tal og, hvor det giver mening, faglige grænser (fertilitet 2,1, UNDP’s HDI-grupper, 0).';
+  'Kortet: Natural Earth via world-atlas. Nordcypern og Somaliland vises med FN’s tal for hele Cypern og Somalia. Grænser og navne er ikke en stillingtagen til omstridte områder. Farver: ColorBrewer (YlOrRd og PuOr). Klassegrænserne er valgt som runde tal og, hvor det giver mening, faglige grænser (fertilitet 2,1, UNDP’s HDI-grupper, WHO’s grupper for væksthæmning, 0). ' +
+  'Fødevarer og sult: Underernæring er FAO’s modelberegnede skøn (Prevalence of undernourishment, via Verdensbanken SN.ITK.DEFC.ZS, 2024); FAO angiver værdier under 2,5 % som »under 2,5 %«. Kalorieforsyning er FAO’s fødevarebalancer via Our World in Data (2023): mad til rådighed pr. indbygger, ikke det, der faktisk spises. Væksthæmmede børn er UNICEF/WHO/Verdensbankens Joint Child Malnutrition Estimates (SH.STA.STNT.ME.ZS, 2024). Kornudbytte er FAOSTAT via Verdensbanken (AG.YLD.CREL.KG), gennemsnit af 2022–2024; lande med under 10.000 ha korn (AG.LND.CREL.HA) er udeladt, fordi udbyttet fra få, ofte kunstvandede marker ikke kan sammenlignes. Mangler et lands tal for kortets år, bruges det seneste fra de to foregående år, og året står i aflæsningen. CC BY 4.0.';
 
 async function visTemaopgave() {
   aabn('Undersøg landene på temakort');
   const tilbage = element('button', '← Processer', 'tilbage');
   tilbage.onclick = visProcesser;
   indhold.append(tilbage);
-  indhold.append(element('p', 'Åbn Lag → Demografi og levevilkår, og vælg et nøgletal. Hvert land får én farve efter sin værdi; tallene ved farverne er antal lande i klassen. Aflæsningen viser landet ved musen eller midt på globussen. Tryk på et land for hele demografien.'));
+  indhold.append(element('p', 'Åbn Lag → Demografi og levevilkår, og vælg et nøgletal – også under Fødevarer og sult. Hvert land får én farve efter sin værdi; tallene ved farverne er antal lande i klassen. Aflæsningen viser landet ved musen eller midt på globussen. Tryk på et land for hele demografien og fødevaretallene over tid.'));
   indhold.append(element('h3', 'Undersøg', 'underoverskrift'));
   const liste = element('ol', '', 'opgaveliste');
   for (const spoergsmaal of [
@@ -2241,6 +2283,9 @@ async function visTemaopgave() {
     'Vælg Naturlig tilvækst og Andel 65+ år for 2100*. Hvor forventer FN, at der dør flere, end der fødes? Hvad bygger en fremskrivning på, og hvor sikker er den?',
     'Sammenlign HDI, BNI pr. indbygger og Skolegang. Find et land, der ligger højere på det ene kort end på det andet. Hvad kan forklare forskellen?',
     'Vælg Nettomigration og Befolkningstilvækst. Find lande, hvor befolkningen vokser, selvom den naturlige tilvækst er lav – eller omvendt.',
+    'Vælg Underernæring. Hvor i verden er over en fjerdedel af befolkningen underernæret? Slå Nedbør til bagefter: Hvad har de områder til fælles? Find også undtagelser, som naturforholdene ikke kan forklare.',
+    'Sammenlign Kalorieforsyning og Underernæring. Find et land med over 2500 kcal pr. person og alligevel mange underernærede. Hvordan kan det lade sig gøre?',
+    'Vælg Kornudbytte, og sammenlign Afrika syd for Sahara med Europa og Østasien. Hvilke natur- og samfundsforhold kan forklare forskellen? Sammenlign med Befolkningstilvækst: Hvorfor siges det, at Afrika skal fordoble sin fødevareproduktion?',
     'Kortkritik: Hvert land har kun én farve, selvom forskellene inde i landet kan være store. Hvordan påvirker klassegrænserne og landenes areal dit indtryk? Hvorfor er der ikke et kort over befolkningstal (antal indbyggere)?'
   ]) liste.append(element('li', spoergsmaal));
   indhold.append(liste);
@@ -2267,9 +2312,9 @@ async function visTemaopgave() {
       for (const [i, r] of raekker.slice(fra, til).entries()) {
         const tr = element('tr');
         const land = element('button', r.navn, 'tekstknap');
-        land.onclick = () => visLandedata({ id: r.id, navn: r.navn }, 'demografi');
+        land.onclick = () => visLandedata({ id: r.id, navn: r.navn }, ind.felt ? 'foedevarer' : 'demografi');
         const celle = element('td'); celle.append(land);
-        tr.append(element('td', String(fra + i + 1)), celle, element('td', m.vaerditekst({ ...ind, enhed: '' }, r.v)));
+        tr.append(element('td', String(fra + i + 1)), celle, element('td', m.vaerditekst({ ...ind, enhed: '' }, r.v) + (r.aar ? ` (${r.aar})` : '')));
         krop.append(tr);
       }
       t.append(krop);
@@ -2288,7 +2333,7 @@ async function visTemaopgave() {
   }
   indhold.append(lavInformation({
     navn: 'Temakort', overskrift: 'Om data',
-    introduktion: 'FN’s befolkningsestimater og -fremskrivninger (WPP 2024), UNDP (HDR 2025) og Verdensbanken. Nøgletal for 2023.',
+    introduktion: 'FN’s befolkningsestimater og -fremskrivninger (WPP 2024), UNDP (HDR 2025), Verdensbanken, FAO og UNICEF/WHO. Demografiske nøgletal for 2023; fødevaretal for 2022–2024.',
     tekst: TEMAKILDE
   }));
   const kilder = element('p', '', 'metadata');
@@ -2297,6 +2342,10 @@ async function visTemaopgave() {
     ['FN, World Population Prospects 2024', 'https://population.un.org/wpp/'],
     ['UNDP, Human Development Report', 'https://hdr.undp.org/data-center/documentation-and-downloads'],
     ['Verdensbanken, byandel', 'https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS'],
+    ['FAO, underernæring', 'https://data.worldbank.org/indicator/SN.ITK.DEFC.ZS'],
+    ['FAO via Our World in Data, kalorieforsyning', 'https://ourworldindata.org/grapher/daily-per-capita-caloric-supply'],
+    ['UNICEF/WHO/Verdensbanken, væksthæmning', 'https://data.worldbank.org/indicator/SH.STA.STNT.ME.ZS'],
+    ['FAO, kornudbytte', 'https://data.worldbank.org/indicator/AG.YLD.CREL.KG'],
     ['ColorBrewer', 'https://colorbrewer2.org/']
   ]) {
     if (kilder.childElementCount) kilder.append(' · ');

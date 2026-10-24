@@ -14,3 +14,6 @@ tid/test/ud/
 # Pladstjekket i værktøj: Playwright-link og skærmbilleder
 værktøj/node_modules
 værktøj/ud/
+
+# Rådata til atlassets fødevarelag (hentes af atlas/data/foedevarer.py)
+atlas/data/raa-foedevarer/
