@@ -54,7 +54,7 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         klar(side, adresse)
         canvas = side.locator('#globus')
         # Landekort hentes ikke før valg; alle eksisterende lag skal bevares.
-        assert not any('danmark-10m' in r['name'] for r in side.evaluate('performance.getEntriesByType("resource").map(r=>({name:r.name}))'))
+        assert not any('danmark-dagi' in r['name'] for r in side.evaluate('performance.getEntriesByType("resource").map(r=>({name:r.name}))'))
         aabn_lag(side, side.locator('#pladelag')).click()
         luk_lag(side)
         side.locator('#pladevisning').click()
@@ -75,7 +75,8 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         if w == 1280:
             # Polen må ikke blive til hav i et bredt kort; kendt punkt på land.
             rgb = side.evaluate('''async () => {
-              const dk = (await (await fetch('data/danmark-10m.json')).json()).features[0];
+              const t = await (await fetch('data/danmark-dagi.json')).json();
+              const dk = topojson.merge(t, t.objects.kommuner.geometries);
               const c = document.querySelector('#globus');
               const p = d3.geoMercator().fitExtent([[32,66],[c.clientWidth-32,c.clientHeight-64]],dk);
               const xy = p([17,54.4]);
@@ -101,14 +102,16 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         assert canvas.evaluate('el => el.toDataURL()') == kort
         if w == 1280:
             canvas.focus()
-            for _ in range(16): side.keyboard.press('+')
+            for _ in range(24): side.keyboard.press('+')
             expect(side.locator('#zoom-ind')).to_be_disabled()
-            expect(side.locator('#zoomniveau')).to_have_text('8,0×')
+            expect(side.locator('#zoomniveau')).to_have_text('16,0×')
+            side.wait_for_timeout(100)
+            side.screenshot(path=str(ud / f'danmark-zoom16-{w}x{h}.png'))
             side.locator('#nulstil').click()
         # Kilde og hjælp er underdialoger; Escape dér må ikke forlade landekortet.
         side.locator('#landekilde').click()
         expect(side.locator('#dialogindhold')).to_contain_text('Bornholm')
-        expect(side.locator('#dialogindhold')).to_contain_text('1:10 mio.')
+        expect(side.locator('#dialogindhold')).to_contain_text('1:500.000')
         side.keyboard.press('Escape'); land_aabent(side)
         expect(side.locator('#landekilde')).to_be_focused()
         side.locator('#til-globus').click(); side.wait_for_timeout(100)
@@ -160,11 +163,13 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
     klar(side, adresse)
     # Geografisk kontrol mod kendte steder, inkl. Bornholm, og udenlandske punkter.
     geografi = side.evaluate('''async () => {
-      const data = await (await fetch('data/danmark-10m.json')).json();
-      const dk = data.features.find(f=>f.id==='208');
+      const t = await (await fetch('data/danmark-dagi.json')).json();
+      const dk = topojson.merge(t, t.objects.kommuner.geometries);
+      // Inde: Aarhus, Odense, København, Bornholm, Anholt, Læsø, Fanø, Christiansø.
+      // Ude: Hamborg, Malmø, Kattegat, Grønland, Limfjorden, Storebælt, Øresund.
       return {bounds:d3.geoBounds(dk),
-        inde:[[10.2,56.15],[10.38,55.4],[12.56,55.68],[14.92,55.1]].map(p=>d3.geoContains(dk,p)),
-        ude:[[10,53.55],[13,55.6],[11,57.5],[-42,65]].map(p=>d3.geoContains(dk,p))};
+        inde:[[10.2,56.15],[10.38,55.4],[12.56,55.68],[14.92,55.1],[11.6,56.72],[11.0,57.29],[8.42,55.4],[15.19,55.32]].map(p=>d3.geoContains(dk,p)),
+        ude:[[10,53.55],[13,55.6],[11,57.5],[-42,65],[9.2,56.97],[10.97,55.25],[12.72,55.85]].map(p=>d3.geoContains(dk,p))};
     }''')
     assert all(geografi['inde']) and not any(geografi['ude']), geografi
     assert 8 < geografi['bounds'][0][0] < 8.2 and 15 < geografi['bounds'][1][0] < 15.3, geografi
@@ -232,9 +237,9 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         side.on('pageerror', lambda e: fejl.append(str(e)))
         klar(side, adresse)
         if fejltype == 'modul': side.route('**/landekort.js', lambda r:r.abort())
-        elif fejltype == 'baggrund': side.route('**/countries-50m.json', lambda r:r.abort())
-        elif fejltype == 'data': side.route('**/danmark-10m.json', lambda r:r.abort())
-        else: side.route('**/danmark-10m.json', lambda r:r.fulfill(json={'type':'FeatureCollection','features':[]}))
+        elif fejltype == 'baggrund': side.route('**/europa-10m.json', lambda r:r.abort())
+        elif fejltype == 'data': side.route('**/danmark-dagi.json', lambda r:r.abort())
+        else: side.route('**/danmark-dagi.json', lambda r:r.fulfill(json={'type':'Topology','objects':{'kommuner':{'type':'GeometryCollection','geometries':[]}},'arcs':[]}))
         side.mouse.click(**globuspunkt(side, [9.2,56]))
         vaelg_landekort(side)
         expect(side.locator('#kortstatus')).to_contain_text('Danmarkskortet kunne ikke hentes')
@@ -249,7 +254,7 @@ def afproev_landekort(browser, adresse, ud, skaerme=SKAERME):
         assert side.locator('.modelkort a').count() == 11
         side.keyboard.press('Escape')
         if fejltype != 'modul':
-            side.unroute('**/countries-50m.json' if fejltype == 'baggrund' else '**/danmark-10m.json')
+            side.unroute('**/europa-10m.json' if fejltype == 'baggrund' else '**/danmark-dagi.json')
             side.mouse.click(**globuspunkt(side, [9.2,56])); vaelg_landekort(side); land_aabent(side)
         side.close()
     assert not fejl, fejl

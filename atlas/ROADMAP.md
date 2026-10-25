@@ -130,8 +130,8 @@ deres implementation automatisk.
   læses i README.txt på earthbyte.org (kunne ikke nås herfra); se
   `data/havbundsalder.LICENSE`.
 
-Derefter følger rækkefølgen i INDHOLD.md: istidslandskab og Danmarkskort i
-højere opløsning (A9, C3), grundvandstværsnit (C2), kulstofkredsløbet (E4),
+Derefter følger rækkefølgen i INDHOLD.md: istidslandskab på Danmarkskortet
+(A9, C3; grundkortet i DAGI 1:500.000 er leveret i v460), grundvandstværsnit (C2), kulstofkredsløbet (E4),
 samfundsdatalag (energi, GHI, vandstress) og vandbalance/sol- og vindpotentiale
 for et sted (C1, E2).
 

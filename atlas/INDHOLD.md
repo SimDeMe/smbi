@@ -157,6 +157,10 @@ atlasset under de relevante steder, undersøgelser og i søgningen:
    atlasset**, med kilde og årstal synligt, ligesom de naturgeografiske lag.
 3. **Ja, atlasset skal have et Danmarkskort i højere opløsning** til istid,
    grundvand og oplande (A9, C2, C3), og ikke kun Danmark som sted.
+   *Status v460:* grundkortet er leveret — DAGI 1:500.000 med fjorde, småøer,
+   region- og kommunegrænser, 30 byer og farvandsnavne. De faglige lag
+   (isranden/hovedopholdslinjen, landskabstyper, grundvand, vandløb og
+   oplande) mangler og kræver egne, dokumenterede datakilder.
 4. **Ja, Vestnorge skal være sted for stigningsregn** ud over Alperne (B2).
 
 ### Ressourcer og samfund · 18. oktober 2026

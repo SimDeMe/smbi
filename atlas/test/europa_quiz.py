@@ -102,7 +102,7 @@ def afproev_europa_quiz(browser, adresse, ud, skaerme=SKAERME):
             expect(side.locator('#quiz-vis')).to_be_hidden()
             luk_lag(side)
             side.screenshot(path=str(ud/'quiz-gennemfoert.png'))
-            assert not side.evaluate("performance.getEntriesByType('resource').some(r=>r.name.endsWith('/danmark-10m.json'))")
+            assert not side.evaluate("performance.getEntriesByType('resource').some(r=>r.name.endsWith('/danmark-dagi.json'))")
             side.locator('#quiz-igen').click()
             expect(side.locator('#quiz-fremskridt')).to_have_text('0 / 47')
             expect(side.locator('#quiz-land')).to_have_text('Andorra')

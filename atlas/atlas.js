@@ -245,11 +245,13 @@ function tilbageTilGlobus(fokus = true) {
 document.querySelector('#til-globus').onclick = () => tilbageTilGlobus();
 document.querySelector('#landekilde').onclick = () => {
   aabn('Om Danmarkskortet');
-  indhold.append(element('p', 'Kortet viser Jylland og de danske øer, inklusive Bornholm. Grønland og Færøerne indgår ikke i denne første landevisning. Nord er opad. Byerne er orienteringspunkter.'));
-  indhold.append(element('p', 'Kyster og landegrænser: Natural Earth via world-atlas 2.0.2. Danmark vises i 1:10 mio.; omgivelserne er nedtonet i 1:50 mio. Kortet er generaliseret: småøer og kystdetaljer kan mangle. Det er et oversigtskort uden terræn, veje eller aktuelle måledata. Projektionen er Mercator. Målestokken viser en lokal, omtrentlig afstand.'));
-  const kilde = element('a', 'Natural Earth: data og vilkår →');
-  kilde.href = 'https://www.naturalearthdata.com/about/terms-of-use/';
-  indhold.append(kilde);
+  indhold.append(element('p', 'Kortet viser Jylland og de danske øer, inklusive Bornholm og Ertholmene. Grønland og Færøerne indgår ikke i denne landevisning. Nord er opad. Stiplede linjer er regionsgrænser; kommunegrænser og kommunenavne kommer frem, når du zoomer ind. Byer og farvandsnavne er orienteringspunkter.'));
+  indhold.append(element('p', 'Indeholder data fra Styrelsen for Dataforsyning og Infrastruktur (tidl. Geodatastyrelsen): DAGI, kommuner og regioner i 1:500.000, 2014. Omgivelserne er Natural Earth i 1:10 mio. Kysterne er generaliseret til målestokken: meget små øer og holme kan mangle, og ved landegrænsen kan de to kilder afvige lidt ved stærk zoom. Det er et oversigtskort uden terræn, vandløb, veje eller aktuelle måledata. Projektionen er Mercator. Målestokken viser en lokal, omtrentlig afstand.'));
+  const kilde = element('a', 'Dataforsyningen: danske kortdata →');
+  kilde.href = 'https://dataforsyningen.dk/';
+  const ne = element('a', 'Natural Earth: data og vilkår →');
+  ne.href = 'https://www.naturalearthdata.com/about/terms-of-use/';
+  indhold.append(kilde, ' ', ne);
 };
 
 let quizdel = verdensdele[0];
@@ -1135,7 +1137,7 @@ function opdaterPladebeskrivelse() {
   bevaegelsesnote.hidden = !pladevalg.bevaegelse;
   bevaegelsesnote.textContent = 'cm/år mellem pladerne: samlet åbning/lukning på tværs; forskydning langs transformforkastninger. ≈: diffus zone.';
   document.querySelector('#graenseforklaring').hidden = !pladevalg.bevaegelse;
-  canvas.setAttribute('aria-label', landAktivt ? 'Interaktivt Danmarkskort med Jylland, de danske øer inklusive Bornholm og orienteringsbyer. Nord er opad.' : pladeknap.getAttribute('aria-pressed') === 'true'
+  canvas.setAttribute('aria-label', landAktivt ? 'Interaktivt Danmarkskort med Jylland, de danske øer inklusive Bornholm, regionsgrænser, orienteringsbyer og farvandsnavne. Kommunegrænser og kommunenavne vises ved zoom. Nord er opad.' : pladeknap.getAttribute('aria-pressed') === 'true'
     ? `${canvasbeskrivelse}. Viser pladegrænser: konstruktive, destruktive og bevarende, efter Bird 2003${pladevalg.navne ? ', med pladenavne' : ''}${pladevalg.bevaegelse ? ' og relative grænsehastigheder i cm/år mellem pladerne' : ''}`
     : canvasbeskrivelse);
   for (const [id, tekst] of [['relief', 'farvet relief med bjergkæder, oceanrygge og dybhavsgrave, uden meterskala'], ['vegetation', 'satellitklassificeret arealdække fra MODIS 2023; aflæsningen viser klassen ved sigtekornet']]) {

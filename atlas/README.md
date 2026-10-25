@@ -535,19 +535,26 @@ før åbnede trykket kortet direkte); zoom ind ved behov. Ingen landeknap ligger
 tastaturtilgængelige alternativ, også når landet vender væk. Der er endnu ikke
 landekort for andre lande. De tre faglige markører har deres hidtidige funktion.
 
-Landekortet viser Jylland og øerne inklusive Bornholm, med nabolande nedtonet,
-fem orienteringsbyer og en lokal, omtrentlig målestok. Grønland og Færøerne indgår
-ikke i denne visning. Natural Earth 1:10 mio. giver mere detaljerede kyster end
-globussen (1:110 mio.), men er stadig generaliseret: småøer kan mangle; terræn,
-veje og lokale faglige temalag er ikke med. Kilde og forbehold åbnes med ⓘ.
-Omgivelserne vises i 1:50 mio. fra et helt verdenskort, så der ikke mangler
-land ved panorering eller i brede vinduer. De to lokale kortfiler på i alt ca.
-841 kB hentes først ved valg af Danmark.
-Kun synlige baggrundspolygoner projekteres ved træk og zoom; kyster og data
-ændres ikke ved denne frasortering.
+Landekortet viser Jylland og øerne inklusive Bornholm og Ertholmene, med
+nabolande nedtonet. Grønland og Færøerne indgår ikke i denne visning.
+
+**Detaljeret kort (v460):** Danmark tegnes nu fra Geodatastyrelsens/SDFI's
+DAGI i 1:500.000 (ca. 20 gange mere detaljeret end Natural Earth 1:10 mio.,
+som kortet brugte før). Fjorde, vige og småøer som Anholt, Læsø, Fanø og
+Ertholmene er med. Regionsgrænser vises stiplede; kommunegrænser kommer frem
+fra 2× og kommunenavne fra 3,5×. Op til 30 orienteringsbyer og elleve
+farvandsnavne vises efter zoom, uden at etiketter overlapper. Omgivelserne er
+Natural Earth 1:10 mio. (`europa-10m.json`, samme fil som Europa-quizzen).
+Kortet er stadig et oversigtskort uden terræn, vandløb, veje eller aktuelle
+måledata. Kilde og forbehold åbnes med ⓘ; byggescript og kontrolsummer i
+`data/danmark-dagi.mjs` og `data/danmark-dagi.LICENSE`. De to kortfiler
+(ca. 1,2 MB, ca. 0,4 MB komprimeret) hentes først ved valg af Danmark.
+Stierne projekteres én gang pr. vinduesstørrelse og tegnes ved træk og zoom
+med en ren skalering/forskydning (Mercator). Under 6× bruges forenklede
+udgaver (topojson-simplify, ca. en halv pixel), som forberedes i ledig tid.
 
 Træk/piletaster flytter landekortet; +/−, hjul med fokus og tofingerzoom ændrer
-kortets forstørrelse (1–8×). Nulstil/Home viser hele Danmark igen. **← Globus**
+kortets forstørrelse (1–16×). Nulstil/Home viser hele Danmark igen. **← Globus**
 eller Escape gendanner globussens tidligere vinkel, zoom og tilvalg. Pladelagene
 er kun synlige på globussen. Steder, Processer, Søg og Island-modulet er bevaret.
 Træk, knib og afbrudte berøringer udløser ikke landevalg.
@@ -799,8 +806,8 @@ Alle nødvendige kortressourcer serveres fra eget site. Ingen CDN-kald ved brug.
 | europa-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/europa-10m.LICENSE` |
 | afrika-, nordamerika-, sydamerika-, asien-oceanien-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; bearbejdning og kontrolsum i `data/verdensdele-10m.LICENSE` |
 | countries-110m.json | world-atlas 2.0.2 | [world-atlas](https://github.com/topojson/world-atlas), ISC; `data/world-atlas.LICENSE` |
-| countries-50m.json | world-atlas 2.0.2, 1:50 mio. | Uændret baggrundskort, samme world-atlas/Natural Earth-licens; kontrolsum i `data/danmark-10m.LICENSE` |
-| danmark-10m.json | Udtag af world-atlas 2.0.2, 1:10 mio. | Natural Earth, public domain; kildens SHA-256 og bearbejdning i `data/danmark-10m.LICENSE` |
+| countries-50m.json | world-atlas 2.0.2, 1:50 mio. | Uændret baggrundskort, samme world-atlas/Natural Earth-licens; kontrolsum i `data/countries-50m.LICENSE` |
+| danmark-dagi.json | DAGI 1:500.000 (2014) | Styrelsen for Dataforsyning og Infrastruktur, frie data med kildeangivelse, via ok-dk/dagi; kontrolsummer og bearbejdning i `data/danmark-dagi.LICENSE`, script `data/danmark-dagi.mjs` |
 | pladegraenser.json | PB2002 (Bird 2003) | [doi:10.1029/2001GC000252](https://doi.org/10.1029/2001GC000252), ODC-By 1.0 via [fraxen/tectonicplates](https://github.com/fraxen/tectonicplates); `data/pladegraenser.LICENSE` |
 | plader.json | PB2002 (Bird 2003), tabel 1 | Samme kilde/licens; poler og pladepolygoner, bearbejdet som beskrevet i `data/plader.LICENSE` |
 | vahl.json, koppen.json | Beck m.fl. (2023), 1991–2020 | [doi:10.1038/s41597-023-02549-6](https://doi.org/10.1038/s41597-023-02549-6), CC BY 4.0; Vahl beregnet her; `data/klimazoner.LICENSE` |

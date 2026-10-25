@@ -129,7 +129,7 @@ export async function startGlobus(steder, vaelgSted, vaelgLand) {
     ctx.clearRect(0, 0, bredde, hoejde);
     if (landekort) {
       landekort.tegn(ctx, bredde, hoejde);
-      visZoom(landekort.zoom, 1, 8);
+      visZoom(landekort.zoom, 1, landekort.maksZoom);
       return;
     }
     opdaterProjektion();

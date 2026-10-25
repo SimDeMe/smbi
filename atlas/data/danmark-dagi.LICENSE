@@ -1,0 +1,30 @@
+Danmarkskortet (landekort.js): danmark-dagi.json
+
+Indeholder data fra Styrelsen for Dataforsyning og Infrastruktur (tidligere
+Geodatastyrelsen): DAGI, kommune- og regionsinddeling, målestok 1:500.000,
+datasæt af 13.02.2014 (FOT/Danske Kommuner). Frie geografiske data efter SDFI's vilkår:
+må bruges og videregives frit med kildeangivelse som ovenfor.
+https://dataforsyningen.dk/  ·  https://www.sdfi.dk/
+
+Hentet som GeoJSON (WGS84/CRS84) fra Open Knowledge Danmarks spejl:
+https://raw.githubusercontent.com/ok-dk/dagi/master/geojson/kommuner.geojson
+  SHA-256: 78003a638315d0c359807371f09f0a680c8077f26e30797315b9ae5436560b7c
+https://raw.githubusercontent.com/ok-dk/dagi/master/geojson/regioner.geojson
+  SHA-256: 922fe86aaf9e53e578317ab6bb25cb92a49d22c1abb922d747491356e1be0c0f
+Kommune- og regionsgrænserne er uændrede siden kommunalreformen 2007.
+
+Bearbejdning (danmark-dagi.mjs, topojson-server 3.0.1): kildens figurer pr. ø
+er samlet til 98 kommuner + Ertholmene (Christiansø, som ikke er en kommune).
+Hver kommune har fået sin region ved punkt-i-polygon mod regioner.geojson
+(Ertholmene ligger uden for kildens regionsfigurer og er sat til Hovedstaden);
+fordelingen kontrolleres mod 29/17/22/19/11 kommuner. Koordinater afrundet til
+1e-5° (ca. 1 m) og kvantiseret i TopoJSON (2·10^5 trin, ca. 2 m) — langt under
+kortets egen generalisering. Feltet p er et indre punkt til kommunenavnet.
+Kyst og landegrænse = buer med kun én kommune; ingen nye linjer er tegnet.
+
+Byernes koordinater i landekort.js: Natural Earth populated places (public
+domain) og kendte bymidter; hver by er kontrolleret til at ligge i sin egen
+kommune. Farvandsnavne er etiketpunkter i vand, ikke afgrænsninger.
+
+Omgivelser: europa-10m.json (Natural Earth 1:10 mio., se europa-10m.LICENSE).
+Ved landegrænsen mod Tyskland kan de to kilder afvige lidt ved stærk zoom.
