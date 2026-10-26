@@ -2,6 +2,7 @@
 from lagmenu_hjaelp import aabn_lag, luk_lag
 import json
 from pathlib import Path
+from landemenu import sammenlign_med
 from playwright.sync_api import expect
 
 DATA = Path(__file__).parents[1] / 'data'
@@ -20,7 +21,14 @@ def afproev_foedevaredata():
         if 'k' in l: assert 1000 < l['k'][0] < 4500, id
         if 'v' in l: assert 0 < l['v'][0] < 70, id
         if 'c' in l: assert 0 < l['c'] < 15 and 'cl' not in l, id
+        if 'a' in l:
+            assert 1 <= len(l['a']) <= 6 and all(str(a[0]) in d['afgroeder'] for a in l['a']), id
+            assert [a[1] for a in l['a']] == sorted((a[1] for a in l['a']), reverse=True), id
+            assert sum(a[1] for a in l['a']) <= l['at'], id
     assert sum('u' in l for l in lande.values()) > 150 and sum('k' in l for l in lande.values()) > 170
+    assert sum('a' in l for l in lande.values()) > 180
+    # Etiopiens «andet korn» er teff og hedder det.
+    assert d['afgroeder'][str(lande['231']['a'][1][0])] == 'Teff og andet korn'
     # Oman høster få, kunstvandede marker og er udeladt fra kornudbyttet.
     assert lande['512'].get('cl') and 'c' not in lande['512']
     print('Fødevaredata: OK', flush=True)
@@ -49,6 +57,12 @@ def afproev_foedevarer(side, ud):
     procent = f"{somalia['u'][0]:.1f}".replace('.', ',')
     expect(rum.locator('.noegletal div').first).to_contain_text(f'{procent} %')
     expect(rum.locator('svg.foedekurve')).to_have_count(2)
+    # De største afgrøder står i rækkefølge med andel af det høstede areal.
+    afgroeder = rum.locator('.afgroededel .afgroeder li')
+    expect(afgroeder).to_have_count(len(somalia['a']))
+    expect(afgroeder.first.locator('.afgroedenavn')).to_have_text(d['afgroeder'][str(somalia['a'][0][0])])
+    andel = round(100 * somalia['a'][0][1] / somalia['at'])
+    expect(afgroeder.first.locator('.afgroedeandel')).to_have_text(f'{andel} %')
     vandret = side.evaluate("document.querySelector('#udforsker').scrollWidth - document.querySelector('#udforsker').clientWidth")
     assert vandret <= 0, vandret
     side.screenshot(path=str(ud / f'foedevarer-{bredde}x{hoejde}.png'))
@@ -64,6 +78,11 @@ def afproev_foedevarer(side, ud):
     expect(rum.locator('svg.pyramide')).to_be_visible()
     dialog.locator('[data-fane="foedevarer"]').click()
     expect(rum.locator('svg.foedekurve').first).to_be_visible()
+    # Sammenligning med Danmark: afgrøderne side om side.
+    sammenlign_med(side, 'dan', 'Danmark')
+    par = rum.locator('.sammenligning-forloeb', has_text='Største afgrøder')
+    expect(par.locator('.landenavn')).to_have_text(['Djibouti', 'Danmark'])
+    expect(par.locator('.afgroeder').last.locator('li').first).to_contain_text('Byg')
     side.keyboard.press('Escape')
     expect(dialog).to_be_hidden()
 

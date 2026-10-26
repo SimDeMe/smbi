@@ -61,7 +61,7 @@ async function vaelgLand(feature, punkt) {
   const valg = [
     { id: 'demografi', titel: 'Demografi', tekst: 'Befolkningspyramide og nøgletal' },
     { id: 'klima', titel: 'Klima', tekst: 'Hydrotermfigurer fra vejrstationer' },
-    { id: 'foedevarer', titel: 'Fødevarer', tekst: 'Sult, kalorier og kornudbytte' }
+    { id: 'foedevarer', titel: 'Fødevarer', tekst: 'Sult, kalorier og afgrøder' }
   ];
   if (land.id === '208') valg.push({ id: 'landekort', titel: 'Landekort', tekst: 'Jylland, øerne og Bornholm' });
   visLandemenu({

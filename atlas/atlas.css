@@ -124,6 +124,12 @@ dialog.bred{width:min(1080px,calc(100% - 28px))}
 .noegletal dt{font:600 12.5px/1.25 var(--display);color:var(--slate)}.noegletal dd{margin:0}.noegletal .vaerdi{font:700 19px/1.3 var(--display)}.noegletal .forklaring{font-size:12px;line-height:1.3;color:var(--slate)}
 .transition .fremskrivning{fill:#17211f0d}.transition .tilvaekst{fill:#ffb30033}
 .transition polyline{fill:none;stroke-width:2.6;stroke-linejoin:round}.transition .cbr{stroke:#e8336d}.transition .cdr{stroke:var(--ink)}.transition .fremskrevet{stroke-dasharray:6 4}
+.afgroeder{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.afgroeder li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 8px;align-items:baseline}
+.afgroedenavn{font:600 14px/1.3 var(--display)}.afgroedeandel{font:700 14px/1.3 var(--display);text-align:right}
+.afgroedesoejle{grid-column:1/-1;height:9px;border:1px solid var(--ink);border-radius:3px;background:#fffdf7;overflow:hidden}
+.afgroedesoejle span{display:block;height:100%;background:#7bb661}
+.afgroeder .forklaring{grid-column:1/-1;font-size:12px;line-height:1.3;color:var(--slate)}
 .foedefigur{margin:0 0 10px}.foedefigur figcaption{font:600 13px/1.3 var(--display);color:var(--slate);margin:2px 0 4px}.foedekurve .punkt{fill:#e8336d}.stedlande{margin:14px 0 4px}
 .kurvenavn{font:700 12px var(--display)}.cbr-tekst{fill:#b8124a}.cdr-tekst{fill:var(--ink)}.valgtaar{stroke:#0e86c8;stroke-width:1.5;stroke-dasharray:2 3}
 .undersoeg{margin-top:16px}

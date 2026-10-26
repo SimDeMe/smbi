@@ -1,5 +1,6 @@
-// Fødevarer og sult for ét eller to lande: nøgletal og udvikling over tid.
-// Data: FAO (underernæring, kalorieforsyning, kornudbytte) og UNICEF/WHO/
+// Fødevarer og sult for ét eller to lande: nøgletal, største afgrøder og
+// udvikling over tid.
+// Data: FAO (underernæring, kalorieforsyning, kornudbytte, afgrøder) og UNICEF/WHO/
 // Verdensbanken (væksthæmning). Dannes af data/foedevarer.py; kilder i
 // data/foedevarer.LICENSE. Samme tal som temakortene under «Fødevarer og sult».
 import { lavInformation } from './information.js';
@@ -9,7 +10,7 @@ export async function hentFoedevarer() {
   if (!data) {
     data = fetch(new URL('./data/foedevarer.json', import.meta.url), { signal: AbortSignal.timeout(15000) })
       .then(svar => { if (!svar.ok) throw new Error('Fødevaredata kunne ikke hentes'); return svar.json(); })
-      .then(d => { if (!d?.lande?.['208']?.k || !Array.isArray(d.uaar) || !Array.isArray(d.kaar)) throw new Error('Ugyldige fødevaredata'); return d; })
+      .then(d => { if (!d?.lande?.['208']?.k || !d.afgroeder || !Array.isArray(d.uaar) || !Array.isArray(d.kaar)) throw new Error('Ugyldige fødevaredata'); return d; })
       .catch(fejl => { data = null; throw fejl; });
   }
   return data;
@@ -112,15 +113,49 @@ function kurver(rum, land, verden, d, landnavn, faelles) {
   return ud;
 }
 
+// Største afgrøder efter høstet areal: søjle for andelen af landets samlede
+// høstede areal, og areal og produktion som tal.
+const maengde = (t, enhed) => t >= 1e6 ? `${fmt(t / 1e6, t >= 1e8 ? 0 : 1)} mio. ${enhed}`
+  : t >= 1e4 ? `${Math.round(t / 1e3).toLocaleString('da-DK')}.000 ${enhed}` : `${Math.round(t).toLocaleString('da-DK')} ${enhed}`;
+function afgroedeliste(land, d) {
+  if (!land?.a?.length) return element('p', 'FAOSTAT har ingen afgrødetal for dette område.', 'antal');
+  const liste = element('ol', null, 'afgroeder');
+  for (const [kode, areal, prod] of land.a) {
+    const andel = 100 * areal / land.at;
+    const li = element('li');
+    const navn = element('span', d.afgroeder[kode] ?? `FAO-vare ${kode}`, 'afgroedenavn');
+    const tal = element('span', `${andel < 1 ? fmt(andel) : Math.round(andel)} %`, 'afgroedeandel');
+    const soejle = element('span', null, 'afgroedesoejle');
+    soejle.append(element('span'));
+    soejle.firstChild.style.width = `${Math.max(1, andel).toFixed(1)}%`;
+    soejle.setAttribute('aria-hidden', 'true');
+    li.append(navn, tal, soejle,
+      element('span', `areal ${maengde(areal, 'ha')}${prod != null ? ` · høst ${maengde(prod, 't')}` : ''}`, 'forklaring'));
+    liste.append(li);
+  }
+  return liste;
+}
+function afgroededel(land, d, id) {
+  const del = element('section', null, 'afgroededel');
+  const t = element('h3', 'Største afgrøder', 'figurtitel'); t.id = id;
+  del.setAttribute('aria-labelledby', t.id);
+  del.append(t, afgroedeliste(land, d));
+  return del;
+}
+const AFGROEDENOTE = d => `Andel af landets samlede høstede areal, gns. ${d.afgroedeaar[0]}–${d.afgroedeaar.at(-1)} (FAOSTAT). ` +
+  `Græs, kløver og andre foderafgrøder er ikke med. Verden: ${d.lande.verden.a.slice(0, 3).map(a => d.afgroeder[a[0]].toLowerCase()).join(', ')}.`;
+
 const NOTE = 'Fuldt optrukket: landet. Stiplet: verdensgennemsnittet. På underernæringskurven betyder 2,5 % «under 2,5 %».';
 
 const OM = d => lavInformation({
   navn: 'fødevaredata', overskrift: 'Om data',
-  introduktion: 'FAO’s skøn over underernæring og kalorieforsyning, FAO’s kornudbytte og UNICEF/WHO/Verdensbankens tal for væksthæmning.',
+  introduktion: 'FAO’s skøn over underernæring og kalorieforsyning, FAO’s kornudbytte og afgrøder og UNICEF/WHO/Verdensbankens tal for væksthæmning.',
   tekst: 'Underernæring: FAO, Prevalence of undernourishment, via Verdensbanken (SN.ITK.DEFC.ZS). Andelen af befolkningen, hvis sædvanlige fødeindtag ikke dækker energibehovet til et normalt aktivt og sundt liv. Det er et modelberegnet skøn ud fra kalorieforsyningen, hvor ulige maden er fordelt, og befolkningens energibehov – ikke en optælling af sultne. Under 2,5 % angives ikke præcist. ' +
     'Kalorieforsyning: FAO, Food Balances, via Our World in Data. Den energi, der er til rådighed som mad i landet (produktion plus import minus eksport, foder, udsæd og svind), delt med indbyggerne. Det er udbuddet, ikke det, folk faktisk spiser; madspild i husholdningerne og ulighed er ikke trukket fra, så et land kan have nok kalorier i gennemsnit og alligevel mange sultne. Brud i kurven betyder manglende tal, fx efter at et land er delt eller dannet. ' +
     'Væksthæmning: UNICEF, WHO og Verdensbanken, Joint Child Malnutrition Estimates, modelestimat (SH.STA.STNT.ME.ZS). Børn under 5 år, der er mere end to standardafvigelser lavere end WHO’s vækststandard for alderen – et tegn på langvarig fejlernæring og sygdom, ikke kun for lidt mad. ' +
-    'Kornudbytte: FAO (FAOSTAT) via Verdensbanken (AG.YLD.CREL.KG). Høstet korn pr. hektar høstet areal, gennemsnit af 2022–2024, fordi udbyttet svinger meget med vejret. Lande med under 10.000 ha korn (fx Djibouti og golfstaterne) er udeladt, fordi udbyttet fra få, ofte kunstvandede marker ikke kan sammenlignes med et landbrugslands. Alle tal er landsgennemsnit; forskelle mellem egne, by og land og rig og fattig ses ikke. Licens: CC BY 4.0. Grænser og navne er ikke en stillingtagen til omstridte områder.'
+    'Kornudbytte: FAO (FAOSTAT) via Verdensbanken (AG.YLD.CREL.KG). Høstet korn pr. hektar høstet areal, gennemsnit af 2022–2024, fordi udbyttet svinger meget med vejret. Lande med under 10.000 ha korn (fx Djibouti og golfstaterne) er udeladt, fordi udbyttet fra få, ofte kunstvandede marker ikke kan sammenlignes med et landbrugslands. ' +
+    'Største afgrøder: FAOSTAT, Crops and livestock products (QCL). De seks primærafgrøder med størst høstet areal, gennemsnit af 2022–2024, og deres andel af det samlede høstede areal for alle primærafgrøder. Høstes en mark to gange om året, tælles den to gange. Græs, kløver, foderroer og andre foderafgrøder indgår ikke i FAOSTAT’s afgrødetal, så i lande med meget kvægbrug (fx Danmark og Irland) er en stor del af landbrugsjorden ikke med. «Andre grøntsager», «andre frugter» o.l. er FAO’s samlegrupper for afgrøder, landet ikke opgør hver for sig; i Etiopien og Eritrea er FAO’s «andet korn» især teff. Produktionen er i ton høstet vare og afhænger af vandindholdet – sukkerrør og kassava vejer meget, korn og bønner lidt – så den egner sig ikke til at sammenligne afgrøder med hinanden. ' +
+    'Alle tal er landsgennemsnit; forskelle mellem egne, by og land og rig og fattig ses ikke. Licens: CC BY 4.0. Grænser og navne er ikke en stillingtagen til omstridte områder.'
 });
 
 export function visFoedevarer(rod, land, d, landnavn) {
@@ -131,6 +166,8 @@ export function visFoedevarer(rod, land, d, landnavn) {
   tal.setAttribute('aria-labelledby', tt.id);
   tal.append(tt, noegletal(land, verden));
   if (!land) tal.append(element('p', 'FAO og UNICEF/WHO har ingen fødevaretal for dette område.', 'figurnote'));
+  const afgroeder = afgroededel(land, d, 'foedeafgroeder');
+  afgroeder.append(element('p', AFGROEDENOTE(d), 'figurnote'));
   const forloeb = element('section', null, 'demografi-forloeb');
   const ft = element('h3', 'Udvikling over tid', 'figurtitel'); ft.id = 'foedeforloeb';
   forloeb.setAttribute('aria-labelledby', ft.id);
@@ -144,13 +181,14 @@ export function visFoedevarer(rod, land, d, landnavn) {
     'Er kalorieforsyningen over eller under verdensgennemsnittet? Er der alligevel underernærede? Forklar, hvordan begge dele kan være sandt på én gang.',
     'Følg underernæringen fra 2001 til i dag. Find år, hvor kurven knækker, og undersøg, om tørke, konflikt eller priskriser kan forklare det.',
     'Hvorfor kan andelen af væksthæmmede børn være høj, selvom underernæringen er lav? Tænk på kostens sammensætning, sygdom og rent vand.',
+    'Se på de største afgrøder. Er det mest korn, rod- og knoldfrugter eller eksportafgrøder som kaffe, kakao og soja? Hvad siger det om klimaet, og om hvem afgrøderne dyrkes til?',
     'Sammenlign kornudbyttet med Danmark. Hvilke naturforhold (nedbør, regntidens længde, jordbund) og hvilke samfundsforhold (gødning, vanding, sorter, ejerskab) kan forklare forskellen?',
     'Skift til Demografi-fanen. Hvordan påvirker befolkningsvæksten den fødevareproduktion, landet skal nå i 2050?'
   ]) spoergsmaal.append(element('li', s));
   undersoeg.append(spoergsmaal);
 
   rod.append(element('div', null, 'demografi-gitter foede-gitter'));
-  rod.firstChild.append(tal, forloeb);
+  rod.firstChild.append(tal, afgroeder, forloeb);
   rod.append(undersoeg, OM(d));
   plads.append(...kurver(plads, land, verden, d, landnavn));
 }
@@ -200,6 +238,16 @@ export function visFoedevarerSammenligning(rod, lande, d) {
   const ft = element('h3', 'Udvikling over tid', 'figurtitel'); ft.id = 'foedesammenligningforloeb';
   forloebsdel.setAttribute('aria-labelledby', ft.id);
   forloebsdel.append(ft, forloeb, element('p', `Samme skala for begge lande. ${NOTE}`, 'figurnote'));
-  rod.append(taldel, forloebsdel, OM(d));
+  const afgroedepar = element('div', null, 'sammenligning-par');
+  for (const l of lande) {
+    const kolonne = element('div', null, 'sammenligning-kolonne');
+    kolonne.append(element('h4', l.navn, 'landenavn'), afgroedeliste(l.data, d));
+    afgroedepar.append(kolonne);
+  }
+  const afgroededelen = element('section', null, 'sammenligning-forloeb');
+  const at = element('h3', 'Største afgrøder', 'figurtitel'); at.id = 'foedesammenligningafgroeder';
+  afgroededelen.setAttribute('aria-labelledby', at.id);
+  afgroededelen.append(at, afgroedepar, element('p', AFGROEDENOTE(d), 'figurnote'));
+  rod.append(taldel, afgroededelen, forloebsdel, OM(d));
   lande.forEach((l, i) => kolonner[i].append(...kurver(kolonner[i], l.data, verden, d, l.navn, faelles)));
 }

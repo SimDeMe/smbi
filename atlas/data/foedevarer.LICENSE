@@ -1,9 +1,11 @@
 foedevarer.json
 ===============
 
-Dannet med `python3 -I atlas/data/foedevarer.py` (24. oktober 2026).
+Dannet med `python3 -I atlas/data/foedevarer.py` (24. oktober 2026; afgrøder
+tilføjet 26. oktober 2026).
 Rådata ligger ikke i repoet; adresser og SHA-256 står i foedevarer.json under
-«kilder». Landene kobles til globussen med ISO 3166-alfa-3-koden i demografi.json.
+«kilder». Landene kobles til globussen med ISO 3166-alfa-3-koden i demografi.json (afgrøderne med
+FN's M49-landekode).
 
 Underernæring (u, us)
 ---------------------
@@ -50,3 +52,19 @@ Kilokalorier pr. person pr. døgn, der er til rådighed som fødevarer i landet
 befolkningen. Det er udbuddet, ikke det, folk faktisk spiser: madspild i
 husholdningerne og ulighed i fordelingen er ikke trukket fra.
 Licens: Creative Commons Attribution 4.0 (CC BY 4.0).
+
+Største afgrøder (a, at, afgroeder)
+-----------------------------------
+FAO, FAOSTAT, Crops and livestock products (QCL), bulkfilen
+Production_Crops_Livestock_E_All_Data_(Normalized) (udgivet december 2025),
+hentet 26.10.2026.
+  https://www.fao.org/faostat/en/#data/QCL
+  https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip
+For hver primærafgrøde: høstet areal (element 5312, ha) og produktion (5510, t),
+gennemsnit af 2022–2024. Summer med varekode fra 1700 (fx «Cereals, primary»)
+er udeladt. «a» er de seks afgrøder med størst høstet areal; «at» er det samlede
+høstede areal for alle primærafgrøder. Danske navne er sat i foedevarer.py; i
+Etiopien og Eritrea vises FAO's «Cereals n.e.c.» som «Teff og andet korn»
+(kode 1080 i filen). Græs og andre foderafgrøder indgår ikke i QCL.
+Licens: Creative Commons Attribution 4.0 (CC BY 4.0), jf. FAO's
+statistiske databasers vilkår.
