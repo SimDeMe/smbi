@@ -1,0 +1,19 @@
+/* PDF-værkstedet følger smbi.dk uden at ændre PDF-behandlingen. */
+:root{--paper:#FFF9EE;--ink:#17211F;--teal:#0FA593;--slate:#566B68}
+body{background:var(--paper);color:var(--ink);font-family:'Archivo',system-ui,sans-serif}
+.rainbow{height:6px;background:linear-gradient(90deg,#E8336D 0 14.3%,#FF6A3D 14.3% 28.6%,#FFB300 28.6% 42.9%,#5FB030 42.9% 57.2%,#0FA593 57.2% 71.5%,#0E86C8 71.5% 85.8%,#7A4FD6 85.8%)}
+header{background:var(--paper);border-bottom:2px solid var(--ink);padding:12px 24px}
+.home{display:inline-block;margin-bottom:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);text-underline-offset:3px}
+h1{font-variation-settings:'wdth' 118;font-weight:850;font-size:26px}
+header p,.panel p,.footer{color:var(--slate)}
+.filebar{padding:10px 24px;background:var(--paper)}
+.tabs{padding:0 24px 10px;background:var(--paper)}
+button,select,input[type=number]{border:2px solid var(--ink);border-radius:5px;padding:7px 10px}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #7A4FD6;outline-offset:3px}
+button:hover{background:#E6F4EF}.primary{background:#176448;border-color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.tabs button[aria-selected=true]{color:var(--ink);background:#D8F2E8;border-color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.panel{padding:10px 24px;background:#FFFDF8;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.panel p{margin-top:7px}.navigation{padding:9px 24px}#status{padding:0 24px 10px}.footer{padding-bottom:12px}
+.coordinates{margin-top:8px;font-size:13px}.coordinates summary{cursor:pointer;width:fit-content}.coordinates .row{margin-top:8px}
+.focus-view header,.focus-view .rainbow,.focus-view .footer{display:none}
+@media(max-width:600px){header,.filebar,.panel{padding-left:14px;padding-right:14px}.tabs{padding-left:14px;padding-right:14px;gap:6px}.tabs button{padding:7px 8px;font-size:13px}.navigation{padding-left:14px;padding-right:14px}#filename{min-width:120px}#workspace{padding-left:10px;padding-right:10px}.row{gap:8px}}
