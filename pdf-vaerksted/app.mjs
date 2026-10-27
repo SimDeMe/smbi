@@ -40,7 +40,7 @@ function draw(){
  canvas.style.cursor=tool==='crop'&&!cropPreview?'crosshair':tool==='split'&&!splitPreview?'col-resize':'default';
  if(tool==='crop'&&selection&&!cropPreview){const [a,b,c,d]=selection.map((v,i)=>v*(i%2?ch:cw));ctx.fillStyle='rgba(14,23,34,.5)';ctx.fillRect(0,0,cw,b);ctx.fillRect(0,d,cw,ch-d);ctx.fillRect(0,b,a,d-b);ctx.fillRect(c,b,cw-c,d-b);ctx.strokeStyle='#18af79';ctx.lineWidth=2;ctx.strokeRect(a,b,c-a,d-b);}
  if(tool==='split'&&!splitPreview){const split=position*cw;ctx.fillStyle='rgba(14,23,34,.5)';if(mode()==='left')ctx.fillRect(split,0,cw-split,ch);if(mode()==='right')ctx.fillRect(0,0,split,ch);if(mode()==='skip')ctx.fillRect(0,0,cw,ch);if(!['whole','skip'].includes(mode())){ctx.strokeStyle='white';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(split,0);ctx.lineTo(split,ch);ctx.stroke();ctx.strokeStyle='#159d6b';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#176448';ctx.fillRect(split-16,ch/2-18,32,36);ctx.fillStyle='white';ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText('↔',split,ch/2+6);}}
- if(!boxes.length){ctx.fillStyle='#526370';ctx.font='16px system-ui';ctx.fillText('Denne scanning springes over.',20,40);}
+ if(!boxes.length){ctx.fillStyle='#526370';ctx.font='16px system-ui';ctx.fillText('Denne side springes over.',20,40);}
 }
 async function post(action,data){
  if(action==='crop')return commit(await cropPDF(PDFLib,bytes,data),name.replace(/\.pdf$/i,'')+'-beskaaret.pdf');

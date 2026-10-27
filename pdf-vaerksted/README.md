@@ -1,7 +1,7 @@
 # PDF-værksted på smbi.dk
 
 En statisk udgave af eScanners PDF-værktøjer: visuel beskæring, deling af
-bogopslag til enkeltsider og OCR til en søgbar PDF. Der er ingen Python-backend,
+dobbeltsider til enkeltsider og OCR til en søgbar PDF. Der er ingen Python-backend,
 login eller filupload. PDF'en og arbejdshistorikken ligger kun i browserens
 hukommelse. Genindlæsning eller lukning mister arbejdskopien; hent PDF'en først.
 
@@ -14,7 +14,7 @@ Python-backend eller API-nøgle.
 ## Brug
 
 1. Åbn en PDF. Træk et udsnit og anvend eventuelt beskæringen.
-2. Del eventuelle dobbeltsider. Vælg særskilt håndtering af forsider pr. scanning.
+2. Del eventuelle dobbeltsider. Vælg særskilt håndtering af forsider pr. PDF-side.
 3. Vælg OCR-sprog og start. Du kan bruge andre faner og programmer imens.
 4. Hent PDF'en, når behandlingen er færdig. Resultatet markeres også i fanetitlen.
 
