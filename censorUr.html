@@ -96,6 +96,20 @@
   }
   .countsub{color:var(--ink-40);font-size:13px;letter-spacing:.3px;position:relative;}
 
+  /* afvigelse fra tidsplanen */
+  .plan{
+    display:inline-flex;align-items:center;gap:7px;position:relative;
+    margin-top:10px;padding:4px 12px;border-radius:99px;
+    border:1px solid var(--hair);background:var(--panel-2);
+    font-size:13px;color:var(--ink-60);letter-spacing:.2px;
+  }
+  .plan[hidden]{display:none;}
+  .plan::before{content:"";width:8px;height:8px;border-radius:99px;background:var(--pc,var(--neutral));}
+  .plan b{font-weight:600;color:var(--ink);}
+  .plan.paa{--pc:var(--green);}
+  .plan.bag{--pc:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%, transparent);}
+  .plan.foran{--pc:var(--blue);}
+
   /* phase progress */
   .bar{
     position:relative;height:6px;border-radius:99px;background:var(--panel-2);
@@ -255,6 +269,7 @@
     <div class="instruct" id="instruct">Tryk start, når eleven er klar</div>
     <div class="count" id="count">24:00</div>
     <div class="countsub" id="countsub">samlet eksamenstid</div>
+    <div class="plan" id="plan" role="status" hidden></div>
 
     <div class="bar"><i id="phaseBar"></i></div>
 
@@ -383,13 +398,19 @@
   try { autoNext = localStorage.getItem("censorur-auto") === "1"; } catch(e) {}
   let elevNr = 1;
 
+  // ---- tidsplan ----
+  // Hver elev har krav på den fulde eksamenstid. Planen er: elev n slutter
+  // planStart + n · planDur. Forsinkelse = forventet slut − planlagt slut.
+  let planStart = 0;                  // ms, da første elev startede
+  let planDur = 0;                    // s, normal eksamenstid pr. elev
+
   // ---- elements ----
   const $ = id => document.getElementById(id);
   const root=$("root"), clockEl=$("clock"), phaseEl=$("phaseName"), instrEl=$("instruct"),
         countEl=$("count"), subEl=$("countsub"), barEl=$("phaseBar"),
         nextMsgEl=$("nextMsg"), nextAtEl=$("nextAt"), rowsEl=$("rows"),
         startBtn=$("startBtn"), skipBtn=$("skipBtn"), resetBtn=$("resetBtn"),
-        plusBtn=$("plus"), minusBtn=$("minus"), autoEl=$("autoNext");
+        plusBtn=$("plus"), minusBtn=$("minus"), autoEl=$("autoNext"), planEl=$("plan");
 
   // ---- helpers ----
   const pad = n => String(n).padStart(2,"0");
@@ -436,6 +457,29 @@
 
   function setPhaseTheme(key){ root.dataset.phase = key; }
 
+  // sekunder bagud (+) eller foran (−) i forhold til planen
+  function planAfvigelse(){
+    const nu = Date.now();
+    if (state === "done")                 // næste elev kunne have startet ved planlagt slut
+      return (nu - (planStart + elevNr*planDur*1000)) / 1000;
+    const forventetSlut = nu + (totalDur() - currentElapsed())*1000;
+    return (forventetSlut - (planStart + elevNr*planDur*1000)) / 1000;
+  }
+  function paintPlan(){
+    if (state === "idle"){ planEl.hidden = true; return; }
+    planEl.hidden = false;
+    const d = planAfvigelse();
+    const min = Math.round(Math.abs(d)/60);
+    planEl.classList.toggle("paa", min === 0);
+    planEl.classList.toggle("bag", min > 0 && d > 0);
+    planEl.classList.toggle("foran", min > 0 && d < 0);
+    planEl.innerHTML = min === 0 ? "Følger planen"
+      : "<b>" + min + " min</b>" + (d > 0 ? "bagud" : "foran") + " planen";
+    planEl.title = "Planlagt slut for elev " + (state==="done" ? elevNr+1 : elevNr) + ": kl. " +
+      new Date(planStart + (state==="done" ? elevNr+1 : elevNr)*planDur*1000)
+        .toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
+  }
+
   // ---- main render loop ----
   function tick(){
     const now = new Date();
@@ -456,6 +500,7 @@
       nextAtEl.textContent = "";
       root.classList.remove("urgent");
       paintRows(-1, []);
+      paintPlan();
       return;
     }
 
@@ -467,9 +512,11 @@
       subEl.textContent = "tryk start til næste elev";
       barEl.style.width = "100%";
       nextMsgEl.textContent = "Klar til en ny elev";
-      nextAtEl.textContent = "";
+      nextAtEl.textContent = "elev " + (elevNr+1) + " planlagt kl. " +
+        new Date(planStart + elevNr*planDur*1000).toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
       root.classList.remove("urgent");
       paintRows(phases.length, b);
+      paintPlan();
       return;
     }
 
@@ -514,6 +561,7 @@
     root.classList.toggle("urgent", state==="running" && loc.remaining <= 10);
 
     paintRows(loc.idx, b);
+    paintPlan();
   }
 
   // update timeline highlight + clock windows
@@ -543,7 +591,12 @@
 
   function start(){
     if (state==="idle" || state==="done"){
-      if (state==="done"){ const nr = elevNr; reset(false); elevNr = nr+1; }
+      if (state==="done"){
+        const nr = elevNr, ps = planStart, pd = planDur;
+        reset(false); elevNr = nr+1; planStart = ps; planDur = pd;
+      } else {
+        planStart = Date.now(); planDur = totalDur();
+      }
       startEpoch = Date.now();
       state="running";
       acquireWakeLock();
