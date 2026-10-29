@@ -9,7 +9,7 @@ const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Tilstanden; rotation og kontinenter glider mod deres mål.
 const tilstand = {
-  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, pause: roligt,
+  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, luftringe: true, pause: roligt,
   fremhaev: null, afspil: false, ballon: false,
   maal: { rotation: 1, kontinenter: 1 },
 };
@@ -105,10 +105,16 @@ function betjening(globus) {
   saetPause(tilstand.pause);
   pause.addEventListener('click', () => saetPause(!tilstand.pause));
 
+  const cellesignatur = () => document.querySelector('.signatur').classList.toggle('uden-celler', !tilstand.celler && !tilstand.luftringe);
   $('#celler').addEventListener('click', e => {
     tilstand.celler = !tilstand.celler; e.currentTarget.setAttribute('aria-pressed', String(tilstand.celler));
-    document.querySelector('.signatur').classList.toggle('uden-celler', !tilstand.celler);
-    meddel(tilstand.celler ? 'Cellerne vises som bælter og luftringe på globussen.' : 'Cellerne er skjult på globussen.');
+    cellesignatur();
+    meddel(tilstand.celler ? 'Cellerne vises som farvede bælter på globussen.' : 'Cellebælterne er skjult på globussen.');
+  });
+  $('#luftringe').addEventListener('click', e => {
+    tilstand.luftringe = !tilstand.luftringe; e.currentTarget.setAttribute('aria-pressed', String(tilstand.luftringe));
+    cellesignatur();
+    meddel(tilstand.luftringe ? 'Luftringene vises: hver celle som en gennemsigtig ring rundt om Jorden, hvor luften stiger, strømmer og synker.' : 'Luftringene er skjult.');
   });
   $('#etiketter').addEventListener('click', e => {
     tilstand.etiketter = !tilstand.etiketter; e.currentTarget.setAttribute('aria-pressed', String(tilstand.etiketter));

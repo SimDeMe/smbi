@@ -18,9 +18,11 @@ videre hertil.
 - Snit fra Sydpol til Nordpol: seks celler (to uden rotation) som ellipser
   med løbende prikker, L ↑ / H ↓ ved jorden og tordensky ved ITK.
 - Cellerne på globussen: gennemsigtige bælter (Hadley, Ferrel, polar) og
-  luftringe på klodens kant med prikker, der løber rundt – som lærebogsfiguren.
-- Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler» og
-  «Navne», «Slip en ballon», pause og fokus.
+  luftringe – hver celle som en gennemsigtig 3D-«donut» rundt om jordaksen
+  (højden stærkt overdrevet) med prikker, der løber rundt i løkkerne. Ringene
+  følger globussen, når den drejes og vippes.
+- Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler»,
+  «Luftringe» og «Navne», «Slip en ballon», pause og fokus.
 - Fem korte trin; hvert trin drejer globussen og fremhæver det, der skal ses.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster.
 

@@ -242,7 +242,7 @@ export function lavGlobus(canvas, land, tilstand) {
 
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.strokeStyle = '#b5dac060'; ctx.lineWidth = 1; ctx.stroke();
 
-    if (s.celler) luftringe(s, b, itk, t);
+    if (s.luftringe) luftringe(s, b, itk, t);
 
     // Solen: lodret over sin bredde, med en stiplet stråle ind mod kloden.
     const sol = solbredde(s.maaned);
@@ -296,34 +296,94 @@ export function lavGlobus(canvas, land, tilstand) {
     }
   }
 
-  // Luftringene på klodens højre kant: hver celle som en løkke ud i
-  // atmosfæren (meget overdrevet) med prikker, der løber rundt. Ved jorden går
-  // Hadley- og polarcellen mod ækvator, Ferrelcellen mod polen.
+  // Luftringene: hver celle som en gennemsigtig «donut» rundt om jordaksen.
+  // Tværsnittet er en løkke fra jorden op i atmosfæren (højden er stærkt
+  // overdrevet) mellem cellens grænser på hver længde. Fladerne er mest
+  // tætte, hvor man ser dem fra siden, og prikker med hale løber rundt i
+  // løkkerne. Ved jorden går Hadley- og polarcellen mod ækvator, Ferrel mod polen.
   function luftringe(s, b, itk, t) {
     const [cx, cy] = proj.translate(), r = proj.scale();
-    const l0 = centrum[0], h0 = Math.min(r * 0.14, 40);
-    const punkt = (bred, rho) => {
-      const th = (bred - centrum[1]) * RAD;
-      return [cx + rho * Math.cos(th), cy - rho * Math.sin(th)];
+    const h0 = Math.min(0.13, 34 / r);
+    const [l0, b0] = centrum;
+    const sb = Math.sin(b0 * RAD), cb = Math.cos(b0 * RAD);
+    // 3D-punkt i skærmens koordinater (z mod beskueren) for bredde, længde og højde.
+    const rum = (lat, lon, hoej) => {
+      const f = lat * RAD, l = (lon - l0) * RAD, k = 1 + hoej;
+      const X = Math.cos(f) * Math.sin(l), Y = Math.sin(f), Z = Math.cos(f) * Math.cos(l);
+      return [k * X, k * (Y * cb - Z * sb), k * (Y * sb + Z * cb)];
     };
+    const skjult = q => q[2] < 0 && q[0] * q[0] + q[1] * q[1] < 1;
+    const xy = q => [cx + r * q[0], cy - r * q[1]];
+    const DL = 10, NV = 16, ALFA = [0.02, 0.04, 0.07, 0.11, 0.17];
+
     for (const c of celleBaelter(s, b, itk)) {
-      const a = c.syd(l0), e = c.nord(l0);
-      if (e - a < 4) continue;
-      const nord = (a + e) / 2 > itk(l0);
-      const h = h0 * ({ Hadley: 1, Ferrel: 0.72, Polar: 0.5, 'Én celle': 1 })[c.navn];
-      const midt = (a + e) / 2, halv = (e - a) / 2 * 0.86, rm = r + 3 + h / 2;
-      const p = v => punkt(midt + halv * Math.cos(v), rm + h / 2 * Math.sin(v));
       const farve = CELLEFARVE[c.navn];
-      ctx.beginPath();
-      for (let i = 0; i <= 48; i++) { const [x, y] = p(i / 48 * 2 * Math.PI); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.strokeStyle = farve + '99'; ctx.lineWidth = 1.3; ctx.stroke();
-      // Retning: v aftager → ved jorden mod ækvator på nordlig halvkugle.
-      const retning = (nord ? -1 : 1) * (c.navn === 'Ferrel' ? -1 : 1);
-      ctx.fillStyle = farve;
-      for (let j = 0; j < 5; j++) {
-        const [x, y] = p(t * 0.65 * retning + j * 2 * Math.PI / 5);
-        ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill();
+      const h = h0 * ({ Hadley: 1, Ferrel: 0.72, Polar: 0.5, 'Én celle': 1 })[c.navn];
+      const nord = c.navn === 'Én celle' ? c.nord(0) > 80 : c.syd(0) + c.nord(0) > 0;
+      // Løkken på længden lon; v = -π/2 er ved jorden.
+      const loekke = (lon, v) => {
+        const a = c.syd(lon), e = c.nord(lon);
+        const midt = (a + e) / 2, halv = Math.max(0, (e - a) / 2 * 0.9);
+        return rum(Math.max(-89.5, Math.min(89.5, midt + halv * Math.cos(v))), lon, h / 2 + h / 2 * Math.sin(v));
+      };
+      // Gitter af punkter på donutten.
+      const net = [];
+      for (let l = -180; l <= 180; l += DL) {
+        const række = [];
+        for (let i = 0; i <= NV; i++) række.push(loekke(l, i / NV * 2 * Math.PI));
+        net.push(række);
       }
+      // Flader sorteret i fem gennemsigtighedstrin efter, hvor skråt man ser dem.
+      const stier = ALFA.map(() => new Path2D());
+      for (let j = 0; j < net.length - 1; j++) for (let i = 0; i < NV; i++) {
+        const p = [net[j][i], net[j + 1][i], net[j + 1][i + 1], net[j][i + 1]];
+        if (p.some(skjult)) continue;
+        const u = [p[1][0] - p[0][0], p[1][1] - p[0][1], p[1][2] - p[0][2]];
+        const w = [p[3][0] - p[0][0], p[3][1] - p[0][1], p[3][2] - p[0][2]];
+        const n = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
+        const nl = Math.hypot(...n);
+        if (nl < 1e-9) continue;
+        const skraa = 1 - Math.abs(n[2]) / nl;
+        const sti = stier[Math.min(ALFA.length - 1, Math.floor(skraa * skraa * ALFA.length))];
+        p.forEach((q, k) => { const [x, y] = xy(q); k ? sti.lineTo(x, y) : sti.moveTo(x, y); });
+        sti.closePath();
+      }
+      ctx.fillStyle = farve;
+      stier.forEach((sti, k) => { ctx.globalAlpha = ALFA[k]; ctx.fill(sti); });
+
+      // Spanter for hver 30° og kammen øverst, så formen kan ses.
+      const kurve = (punkter) => {
+        ctx.beginPath();
+        let i = false;
+        for (const q of punkter) {
+          if (skjult(q)) { i = false; continue; }
+          const [x, y] = xy(q);
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); i = true;
+        }
+        ctx.stroke();
+      };
+      ctx.strokeStyle = farve; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.32;
+      for (let j = 0; j < net.length - 1; j += 30 / DL) kurve(net[j]);
+      ctx.globalAlpha = 0.45;
+      kurve(net.map(række => række[Math.round(NV / 4)]));
+
+      // Luftstrømmen: prikker med hale. v aftager → ved jorden mod ækvator på nordlig halvkugle.
+      const retning = (nord ? -1 : 1) * (c.navn === 'Ferrel' ? -1 : 1);
+      const haler = new Path2D(), hoveder = new Path2D();
+      for (let l = -180; l < 180; l += 20) {
+        for (let k = 0; k < 3; k++) {
+          const v = t * 0.65 * retning + k * 2 * Math.PI / 3 + l * 0.05;
+          const hale = [];
+          for (let i = 0; i <= 5; i++) hale.push(loekke(l, v - retning * 0.45 * (1 - i / 5)));
+          if (hale.some(skjult)) continue;
+          hale.forEach((q, i) => { const [x, y] = xy(q); i ? haler.lineTo(x, y) : haler.moveTo(x, y); });
+          const [x, y] = xy(hale[5]);
+          hoveder.moveTo(x + 2, y); hoveder.arc(x, y, 2, 0, 2 * Math.PI);
+        }
+      }
+      ctx.strokeStyle = farve; ctx.lineWidth = 1.5; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5; ctx.stroke(haler);
+      ctx.fillStyle = farve; ctx.globalAlpha = 1; ctx.fill(hoveder);
+      ctx.globalAlpha = 1;
     }
   }
 
