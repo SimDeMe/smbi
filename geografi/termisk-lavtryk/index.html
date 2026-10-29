@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Termisk lavtryk — smbi.dk</title>
-  <meta name="description" content="Se luften udvide sig, trykket stige i højden og falde ved jorden, når et termisk lavtryk dannes.">
+  <meta name="description" content="Se trykfladerne løfte sig over varm luft, luften strømme ud i højden og et lavtryk opstå ved jorden.">
   <link rel="canonical" href="https://smbi.dk/geografi/termisk-lavtryk/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css">
@@ -12,56 +12,39 @@
 <body>
   <header><div class="regnbue"></div><nav aria-label="Navigation"><a class="brand" href="/">smbi<span>.dk</span></a><span>NATURGEOGRAFI</span><a href="/geografi.html">← Geografi</a></nav></header>
   <main>
-    <div class="titel"><div><p class="overlinje">Vejr &amp; klima · to luftsøjler</p><h1>Fra varm luft til lavtryk</h1></div><button id="fokus" aria-pressed="false">Fokus</button></div>
+    <div class="titel">
+      <div><p class="overlinje">Vejr &amp; klima · tre luftsøjler</p><h1>Fra varm luft til lavtryk</h1></div>
+      <button id="fokus" class="lille" aria-pressed="false">Fokus</button>
+    </div>
     <section class="laboratorium" aria-label="Simulation af et termisk lavtryk">
-      <div class="trin" role="group" aria-label="Vælg trin i dannelsen">
-        <button data-trin="0" aria-pressed="true">1 <span>Ens tryk</span></button><button data-trin="1" aria-pressed="false">2 <span>Udvidelse</span></button><button data-trin="2" aria-pressed="false">3 <span>Udstrømning</span></button><button data-trin="3" aria-pressed="false">4 <span>Lavtryk</span></button>
+      <div class="figur" id="figur" role="img" aria-label="Tre luftsøjler side om side. Den midterste opvarmes fra jorden." aria-describedby="trykliste">
+        <svg id="tegning" aria-hidden="true"></svg>
       </div>
-      <div class="visning">
-        <div class="soejlenavne"><span>Køligere omgivelser <b id="kold-temp">15 °C</b></span><span>Jorden opvarmes <b id="varm-temp">15 °C</b></span></div>
-        <div class="figur" role="img" aria-label="To luftsøjler med udvidelse og luftstrømme" aria-describedby="figurtekst tryktip">
-          <svg viewBox="0 0 800 360" preserveAspectRatio="none" aria-hidden="true">
-            <defs><marker id="pil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1 9 5 1 9" fill="none" stroke="context-stroke" stroke-width="2"/></marker></defs>
-            <rect width="800" height="360" fill="#f2f5ed"/>
-            <rect x="100" y="30" width="200" height="300" fill="#dfeced"/>
-            <rect x="500" y="30" width="200" height="300" fill="#f5e6ce"/>
-            <rect x="100" y="104.55" width="200" height="225.45" fill="#bfdbe0"/>
-            <rect id="varmt-lag" x="500" y="104.55" width="200" height="225.45" fill="#edbf8b"/>
-            <g id="luftpakker"></g>
-            <path d="M88 104.55H312 M488 104.55H712" stroke="#647778" stroke-width="1.5" stroke-dasharray="5 5"/>
-            <path id="lagtop" d="M500 104.55H700" stroke="#ab4b24" stroke-width="3"/>
-            <path id="udvidelse" d="M725 104.55V104.55" stroke="#ab4b24" stroke-width="3" marker-end="url(#pil)"/>
-            <path d="M40 160.9H760" stroke="#274c63" stroke-width="2" stroke-dasharray="7 6"/>
-            <path d="M40 330H760" stroke="#172b2b" stroke-width="2"/>
-            <path d="M0 345H800V360H0Z" fill="#d8d0b1"/>
-            <path id="jordvarme" d="M500 345H700" stroke="#ba572b" stroke-width="6"/>
-            <g fill="none" stroke-width="5" stroke-linecap="round"><path id="ud" d="M485 140H320" stroke="#a74926" marker-end="url(#pil)"/><path id="ind" d="M320 300H485" stroke="#2a6c8b" marker-end="url(#pil)"/></g>
-            <g id="vindprikker"></g>
-          </svg>
-          <span class="hoejde">3.000 m · samme højde</span>
-          <span class="bundlabel">Ved jorden</span>
-          <span class="laglabel" id="laglabel">Markeret luftlag</span>
-          <span class="flowtekst udtekst" id="udtekst" hidden>H → L</span>
-          <span class="flowtekst indtekst" id="indtekst" hidden>H → L</span>
+      <aside class="panel">
+        <div class="trin" role="group" aria-label="Vælg trin i dannelsen">
+          <button data-trin="0" aria-pressed="true"><i>1</i><span>Ens søjler</span></button>
+          <button data-trin="1" aria-pressed="false"><i>2</i><span>Udvidelse</span></button>
+          <button data-trin="2" aria-pressed="false"><i>3</i><span>Udstrømning</span></button>
+          <button data-trin="3" aria-pressed="false"><i>4</i><span>Lavtryk</span></button>
         </div>
-        <div class="trykoversigt" aria-label="Tryk i samme højde i de to søjler">
-          <div class="tabelhoved"><span>Modeltryk</span><span>Kølig søjle</span><span>Varm søjle</span></div>
-          <div class="tryk-raekke"><b>I 3.000 m</b><output id="kold-top"></output><output id="varm-top"></output></div>
-          <div class="tryk-raekke"><b>Ved jorden</b><output id="kold-bund"></output><output id="varm-bund"></output></div>
-          <p id="tryktip">H og L er relative til den anden søjle i samme højde. Trykket falder stadig opad i begge søjler.</p>
+        <div class="tekst" aria-live="polite"><h2 id="trin-titel"></h2><p id="trin-tekst"></p></div>
+        <div class="knapper">
+          <button id="afspil" aria-pressed="false"><span aria-hidden="true">▶</span> Afspil</button>
+          <button id="naeste">Næste trin →</button>
         </div>
-      </div>
-      <div class="betjening">
-        <label for="varme">Opvarmning <output id="varmetal" for="varme">65 %</output><input id="varme" type="range" min="0" max="100" value="65"><span class="akse"><span>Ingen</span><span>Kraftig</span></span></label>
-        <div class="knapper"><button id="afspil" aria-pressed="false">Afspil forløbet</button><button id="naeste">Næste trin →</button><button id="nulstil">Nulstil</button></div>
-      </div>
-      <div class="aflaesning" aria-live="polite"><b id="trin-titel"></b><p id="figurtekst"></p></div>
+      </aside>
+      <p class="sr" id="trykliste"></p>
     </section>
     <div class="forklaring">
-      <p><b>Følg det markerede luftlag.</b> Prikkerne viser udvalgte luftpakker. Ved opvarmning får de større afstand, og laget bliver højere. Den stiplede vandrette linje lader dig sammenligne trykket i <em>samme geometriske højde</em>.</p>
-      <details><summary>Om trykket og modellen</summary><div class="uddybning"><p>Opvarmning alene ændrer ikke luftsøjlens masse. Derfor ændres trykket ved bunden ikke i trin 2. Udvidelsen fordeler mere luft over målehøjden, så trykket her stiger. Luften strømmer fra det højere tryk over den varme søjle mod det lavere tryk over den kølige.</p><p>Når den varme søjle afgiver masse, falder dens tryk ved jorden. I trin 4 strømmer luft ind ved jorden. Ind- og udstrømning kan være i balance, så lavtrykket og cirkulationen opretholdes under fortsat opvarmning. Trinene adskiller processer, som i virkeligheden overlapper.</p><p>Illustrative modeltal, ikke målinger. To tørre, hydrostatiske søjler med ens tværsnit: p(z) = p₀ exp(−gz/RT). Temperaturen antages ens gennem hver søjle, og opvarmningen er højst 30 °C. En foreskrevet masseoverførsel ændrer bundtrykket med højst 10 hPa i hver søjle; den samlede masse bevares. Vindhastighed og tid er illustrative. Jordrotation, fugt, blanding og den kolde søjles temperaturrespons er udeladt.</p><p>Fagligt grundlag: <a href="https://courses.ems.psu.edu/meteo3/book/export/html/2009">Penn State: temperatur og trykfladers højde</a> og <a href="https://www.nwcg.gov/node/1879833">NWCG: heat low</a>.</p><p><a href="/geografi/TermiskTryk3.html">Undersøg også land- og havbrise og monsun →</a></p></div></details>
+      <p><b>Sådan læses figuren.</b> De tynde linjer er <em>trykflader</em>: højder med samme tryk. Hvor en trykflade ligger højt, er der højt tryk i en given højde. H og L er højere og lavere tryk end i nabosøjlerne i samme højde — i 5 km og ved jorden.</p>
+      <details><summary>Om modellen</summary><div class="uddybning">
+        <p>Opvarmning alene ændrer ikke søjlens masse, så trykket ved jorden er uændret i trin 2. Varm luft fylder mere, så trykfladerne løftes, mest højt oppe. Derfor er der højere tryk i 5 km over den varme søjle, og luften strømmer ud til siderne. Når søjlen har mistet luft, falder bundtrykket. Lavt nede ligger trykfladerne nu lavest i midten; højt oppe ligger de stadig højest.</p>
+        <p>Illustrative modeltal, ikke målinger. Tre tørre, hydrostatiske søjler med ens tværsnit og ens temperatur hele vejen op: p(z) = p₀·exp(−gz/RT). Midtersøjlen opvarmes fra 15 til 35 °C. En foreskrevet udstrømning sænker dens bundtryk med 10 hPa; hver nabosøjle får halvdelen, så den samlede luftmasse bevares. Trinene adskiller processer, der i virkeligheden overlapper. Tid og vind er illustrative; jordrotation, fugt og blanding er udeladt. Lodret akse er målfast.</p>
+        <p>Fagligt grundlag: <a href="https://courses.ems.psu.edu/meteo3/book/export/html/2009">Penn State: temperatur og trykfladers højde</a> og <a href="https://www.nwcg.gov/node/1879833">NWCG: heat low</a>.</p>
+        <p><a href="/geografi/TermiskTryk3.html">Undersøg også land- og havbrise og monsun →</a></p>
+      </div></details>
     </div>
-    <noscript><p>Opvarmning udvider luftsøjlen. Først stiger trykket i højden, mens bundtrykket er uændret. Når luft strømmer væk i højden, mister søjlen masse, og bundtrykket falder. Slå JavaScript til for at undersøge modellen.</p></noscript>
+    <noscript><p>Opvarmning udvider luftsøjlen. Først stiger trykket i højden, mens bundtrykket er uændret. Når luft strømmer væk i højden, mister søjlen masse, og bundtrykket falder. Slå JavaScript til for at se modellen.</p></noscript>
   </main>
 </body>
 </html>
