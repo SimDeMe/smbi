@@ -46,8 +46,8 @@ h1{margin:0;font:800 20px/1.1 var(--display);letter-spacing:-.03em;white-space:n
 .signatur:not(.med-vind) .vind,.signatur:not(.med-baand) .baand,.signatur:not(.med-temp) .temp{display:none}
 .signatur i.skala{width:auto;height:9px;background:none;display:inline-flex}
 .signatur i.skala b{display:block;width:9px;height:9px;opacity:.85}
-.signatur i.skala::before{content:'−2 °C';margin-right:4px;font-style:normal;line-height:9px}
-.signatur i.skala::after{content:'29 °C';margin-left:4px;font-style:normal;line-height:9px}
+.signatur i.skala::before{content:'−2 °C';white-space:nowrap;margin-right:4px;font-style:normal;line-height:9px}
+.signatur i.skala::after{content:'29 °C';white-space:nowrap;margin-left:4px;font-style:normal;line-height:9px}
 .ballontip{position:absolute;right:16px;top:38px;margin:0;font:600 12px var(--display);background:#ff9274;color:var(--ink);border-radius:4px;padding:3px 8px}
 .fejl{position:absolute;inset:auto 20px 45% 20px;text-align:center;font:600 14px var(--display);color:#edf2e7}
 
@@ -74,6 +74,12 @@ h1{margin:0;font:800 20px/1.1 var(--display);letter-spacing:-.03em;white-space:n
 .vippe::after{content:'';position:absolute;width:9px;height:9px;top:1.5px;left:2px;border-radius:50%;background:var(--ink);transition:left .12s}
 [aria-pressed="true"] .vippe{background:#176f57;border-color:#176f57}
 [aria-pressed="true"] .vippe::after{background:var(--paper);left:13px}
+.faser{display:flex}
+.faser button{min-height:32px;padding:3px 10px;font-size:13px;box-shadow:none;border-width:1.5px;border-radius:0;margin-left:-1.5px;white-space:nowrap}
+.faser button:first-child{border-radius:6px 0 0 6px;margin-left:0}
+.faser button:last-child{border-radius:0 6px 6px 0}
+.faser button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.faser button:focus-visible{position:relative;z-index:1}
 .handlinger{display:flex;gap:8px;margin-left:auto}
 .ballon{background:#bfe6d4}
 #om{font-size:13px}

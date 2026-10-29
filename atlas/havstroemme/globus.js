@@ -2,7 +2,7 @@
 // 2D, mørk «natkort»-stil), her med havstrømme i stedet for vind: partikelspor
 // farvet efter varm/kold, vinden ved jorden som pile, hvirvlerne,
 // transportbåndet og flaskepost, der driver med strømmen.
-import { STROEMME, HVIRVLER, BAAND, fart, modRetning, TYPENAVN } from './model.js';
+import { STROEMME, HVIRVLER, BAAND, FASER, iStillehavet, fart, modRetning, TYPENAVN } from './model.js';
 import { vind } from '../cirkulation/model.js';
 import { KLASSER, klasseFor } from './havtemperatur.js';
 
@@ -171,6 +171,10 @@ export function lavGlobus(canvas, land, felt, tilstand) {
     if (s.baand) baand(t);
     ctx.restore();
 
+    // Navnet på den viste hændelse midt i Stillehavet.
+    const fase = FASER[s.fase];
+    if (fase?.hændelse) maerke(-125, 1.5, fase.hændelse.toUpperCase(), '#f4ce72', true);
+
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.strokeStyle = '#b5dac060'; ctx.lineWidth = 1; ctx.stroke();
 
     if (s.etiketter) etiketter(s);
@@ -201,7 +205,7 @@ export function lavGlobus(canvas, land, felt, tilstand) {
   let tempNoegle = '';
   function havtemperatur(sst, cx, cy, r) {
     const trin = Math.max(1.5, r / 160), n = Math.ceil(2 * r / trin);
-    const noegle = `${centrum[0].toFixed(2)},${centrum[1].toFixed(2)},${r},${n}`;
+    const noegle = `${centrum[0].toFixed(2)},${centrum[1].toFixed(2)},${r},${n},${sst.fase}`;
     if (noegle !== tempNoegle) {
       tempNoegle = noegle;
       temp.width = temp.height = n;
@@ -225,15 +229,17 @@ export function lavGlobus(canvas, land, felt, tilstand) {
     ctx.globalAlpha = 1;
   }
 
-  // Faste strømpile langs hver strøm (på pause og ved reduceret bevægelse).
-  function pile() {
+  // Faste strømpile langs hver strøm (på pause og ved reduceret bevægelse);
+  // tykkelsen følger farten, også under El Niño og La Niña.
+  function pile(s) {
+    const faktor = (FASER[s.fase] || FASER.normal).faktor;
     for (const strom of STROEMME) {
-      const farve = FARVER[strom.type];
+      const farve = FARVER[strom.type], f = strom.fart * (faktor[strom.enso] ?? 1);
       for (let i = 0; i < strom.punkter.length - 1; i++) {
         const a0 = strom.punkter[i], b0 = strom.punkter[i + 1];
         if (!synlig(a0) || !synlig(b0)) continue;
         const a = proj(a0), b = proj(b0);
-        ctx.strokeStyle = farve; ctx.fillStyle = farve; ctx.lineWidth = 1 + strom.fart * 1.4; ctx.globalAlpha = 0.85;
+        ctx.strokeStyle = farve; ctx.fillStyle = farve; ctx.lineWidth = 0.6 + f * 1.8; ctx.globalAlpha = 0.85;
         ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke();
         if (i % 2 === 0 || i === strom.punkter.length - 2) pilespids(b, Math.atan2(b[1] - a[1], b[0] - a[0]), 5);
       }
@@ -247,8 +253,10 @@ export function lavGlobus(canvas, land, felt, tilstand) {
   }
 
   // Vinden ved jorden fra cirkulationsmodellen (jævndøgn, uden kontinenter):
-  // passat mod vest, vestenvind mod øst – samme retning som strømmene.
+  // passat mod vest, vestenvind mod øst – samme retning som strømmene. Under
+  // El Niño og La Niña bliver passaten over Stillehavet svagere eller stærkere.
   function vindpile(s) {
+    const fase = FASER[s.fase] || FASER.normal;
     const staerk = (s.fremhaev || []).includes('vind');
     ctx.strokeStyle = VINDFARVE; ctx.fillStyle = VINDFARVE; ctx.lineWidth = staerk ? 1.6 : 1.1;
     ctx.globalAlpha = staerk ? 0.85 : 0.55;
@@ -257,7 +265,7 @@ export function lavGlobus(canvas, land, felt, tilstand) {
       if (!synlig(p) || felt.erLand(...p)) continue;
       const w = vind(lat, p[0], 4, { rotation: 1, kontinenter: 0 }), f = Math.hypot(w.u, w.v);
       if (f < 0.8) continue;
-      const k = 4.2 / f;
+      const k = 4.2 / f * (iStillehavet(...p) ? fase.vind : 1);
       const q = [p[0] + w.u * k / Math.max(0.2, Math.cos(lat * RAD)), lat + w.v * k];
       if (!synlig(q)) continue;
       const a = proj(p), b = proj(q);

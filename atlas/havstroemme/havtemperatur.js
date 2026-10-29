@@ -38,10 +38,53 @@ export function afkod(bytes) {
   };
 }
 
-export async function hentHavtemperatur() {
-  if (typeof DecompressionStream === 'undefined') throw new Error('Browseren kan ikke pakke data ud');
-  const svar = await fetch(new URL('../data/havtemperatur.bin', import.meta.url), { signal: AbortSignal.timeout(20000) });
-  if (!svar.ok) throw new Error('Havtemperaturen kunne ikke hentes');
-  const ud = svar.body.pipeThrough(new DecompressionStream('gzip'));
-  return afkod(new Uint8Array(await new Response(ud).arrayBuffer()));
+export const hentHavtemperatur = async () => afkod(await hentGzip('havtemperatur.bin', 'Havtemperaturen kunne ikke hentes'));
+
+// Målt afvigelse under El Niño 1997/98 og La Niña 2010/11 (NOAA ERSST v5,
+// nov–jan minus 1991–2020). Dannes af ../data/enso.py; se ../data/enso.LICENSE.
+// Filen (efter gunzip): 'ENSO', bredde og højde (uint16 LE), antal (uint8),
+// derefter pr. hændelse int8 i tiendedele °C række for række fra nord; −128 = ingen.
+export const HAENDELSER = ['elnino', 'lanina'];
+export function afkodEnso(bytes) {
+  const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if (String.fromCharCode(...bytes.subarray(0, 4)) !== 'ENSO' || v.getUint16(4, true) !== NX ||
+      v.getUint16(6, true) !== NY || v.getUint8(8) !== HAENDELSER.length || bytes.length !== 9 + HAENDELSER.length * NX * NY) {
+    throw new Error('El Niño-data er ugyldige eller ufuldstændige');
+  }
+  const ud = {};
+  HAENDELSER.forEach((navn, h) => {
+    const data = new Int8Array(bytes.buffer, bytes.byteOffset + 9 + h * NX * NY, NX * NY);
+    ud[navn] = (lon, lat) => {
+      const i = Math.min(NX - 1, Math.max(0, Math.floor(((lon + 180) % 360 + 360) % 360)));
+      const j = Math.min(NY - 1, Math.max(0, Math.floor(90 - lat)));
+      const a = data[j * NX + i];
+      return a === -128 ? 0 : a / 10;
+    };
+  });
+  return ud;
 }
+
+// Normal temperatur plus fasens afvigelse; havis holder vandet ved frysepunktet.
+// afvigelse(lon, lat) → °C eller null, når fasen er normal.
+export function medFase(sst, enso, fase) {
+  const afv = enso?.[fase];
+  if (!sst) return null;
+  if (!afv) return { temperatur: sst.temperatur, afvigelse: () => null, fase: 'normal' };
+  return {
+    fase,
+    afvigelse: (lon, lat) => sst.temperatur(lon, lat) === null ? null : afv(lon, lat),
+    temperatur(lon, lat) {
+      const t = sst.temperatur(lon, lat);
+      return t === null ? null : Math.max(-1.8, Math.round((t + afv(lon, lat)) * 10) / 10);
+    },
+  };
+}
+
+async function hentGzip(navn, fejl) {
+  if (typeof DecompressionStream === 'undefined') throw new Error('Browseren kan ikke pakke data ud');
+  const svar = await fetch(new URL(`../data/${navn}`, import.meta.url), { signal: AbortSignal.timeout(20000) });
+  if (!svar.ok) throw new Error(fejl);
+  const ud = svar.body.pipeThrough(new DecompressionStream('gzip'));
+  return new Uint8Array(await new Response(ud).arrayBuffer());
+}
+export const hentEnso = async () => afkodEnso(await hentGzip('enso.bin', 'El Niño-data kunne ikke hentes'));

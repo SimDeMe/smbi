@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Havstrømme — smbi.dk</title>
-  <meta name="description" content="Interaktiv globus med havets overfladestrømme: varme og kolde strømme, målt havtemperatur, vinden som drivkraft, hvirvlerne, Golfstrømmen og det termohaline transportbånd.">
+  <meta name="description" content="Interaktiv globus med havets overfladestrømme: varme og kolde strømme, målt havtemperatur, vinden som drivkraft, hvirvlerne, Golfstrømmen, El Niño og La Niña og det termohaline transportbånd.">
   <meta name="theme-color" content="#FFF9EE">
   <link rel="canonical" href="https://smbi.dk/atlas/havstroemme/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -45,7 +45,7 @@
           <span class="vind"><i class="stiplet" style="--f:#f6e7b8"></i>Vind ved jorden</span>
           <span class="baand"><i class="tyk" style="--f:#ff8a5c"></i>Transportbånd, overflade</span>
           <span class="baand"><i class="tyk" style="--f:#5d8ff0"></i>Transportbånd, dybt</span>
-          <span class="temp">Havtemperatur, årsmiddel <i class="skala" id="tempskala"></i></span>
+          <span class="temp"><span id="temptekst">Havtemperatur, årsmiddel</span> <i class="skala" id="tempskala"></i></span>
         </div>
         <p class="ballontip" id="flasketip" hidden>Klik på havet for at slippe en flaskepost</p>
         <p class="fejl" id="fejl" role="status" hidden></p>
@@ -76,6 +76,9 @@
         <button id="havtemp" class="kontakt" aria-pressed="false" title="Målt havoverfladetemperatur, årsmiddel 1991–2020 (NOAA OISST)"><span class="vippe" aria-hidden="true"></span>Havtemperatur</button>
         <button id="etiketter" class="kontakt" aria-pressed="true"><span class="vippe" aria-hidden="true"></span>Navne</button>
       </div>
+      <div class="faser" id="faser" role="group" aria-label="Tilstand i Stillehavet" title="Passat, strømme og havtemperatur i Stillehavet">
+        <button data-fase="normal" aria-pressed="true">Normal</button><button data-fase="elnino" aria-pressed="false">El Niño</button><button data-fase="lanina" aria-pressed="false">La Niña</button>
+      </div>
       <div class="handlinger">
         <button id="flaske" class="ballon" aria-pressed="false">Slip en flaskepost</button>
         <button id="om" aria-haspopup="dialog">Om modellen</button>
@@ -87,16 +90,18 @@
   <dialog id="om-dialog" class="om" aria-labelledby="om-titel">
     <h2 id="om-titel">Om modellen</h2>
     <p>Strømmene er generaliserede hovedlinjer som på et lærebogskort. «Varm» og «kold» betyder varmere eller koldere end vandet omkring. Sporenes fart er kun relativ: de vestlige randstrømme (Golfstrømmen, Kuroshio, Agulhas) er hurtigst. Monsunens skiftende strømme i det nordlige Indiske Ocean, hvirvler og strømme i Ishavet og alle mindre strømme er udeladt. Vinden er cirkulationsmodellens skematiske vind ved jævndøgn. Havtemperaturen er derimod målt: årsmiddel af havoverfladens temperatur 1991–2020 fra NOAA OISST v2 (satellit og skibe, 1°-gitter); under havis er den sat til frysepunktet. Transportbåndet er en stærkt forenklet tegning af den termohaline cirkulation; i virkeligheden blandes vandet og deler sig på mange måder.</p>
+    <p><b>El Niño og La Niña.</b> Knapperne skifter Stillehavet mellem et normalår, El Niño og La Niña. At passaten og ækvatorialstrømmene svækkes eller styrkes, er vist skematisk. Temperaturen er derimod målt: normalen plus afvigelsen i november–januar under El Niño 1997/98 og La Niña 2010/11 i forhold til de samme måneder 1991–2020 (NOAA ERSST v5, 2°-gitter). Globussen viser kun overfladen; at springlaget (termoklinen) i dybet bliver fladere under El Niño og stejlere under La Niña, kan undersøges i <a href="/geografi/enso.html">ENSO-modellen</a>.</p>
     <p>Kilder:</p>
     <ul class="kilder">
       <li>NOAA National Ocean Service: <a href="https://oceanservice.noaa.gov/education/tutorial_currents/" lang="en">Currents</a> og <a href="https://oceanservice.noaa.gov/education/tutorial_currents/05conveyor2.html" lang="en">The Global Conveyor Belt</a>.</li>
       <li>NOAA PSL: <a href="https://psl.noaa.gov/data/gridded/data.noaa.oisst.v2.html" lang="en">NOAA OI SST V2</a>, månedsnormaler 1991–2020. Reynolds m.fl. (2002): <a href="https://doi.org/10.1175/1520-0442(2002)015%3C1609:AIISAS%3E2.0.CO;2" lang="en">An Improved In Situ and Satellite SST Analysis for Climate</a>, <i lang="en">Journal of Climate</i> 15, 1609–1625.</li>
+      <li>NOAA PSL: <a href="https://psl.noaa.gov/data/gridded/data.noaa.ersst.v5.html" lang="en">NOAA Extended Reconstructed SST V5</a>. Huang m.fl. (2017): <a href="https://doi.org/10.1175/JCLI-D-16-0836.1" lang="en">Extended Reconstructed Sea Surface Temperature, Version 5 (ERSSTv5): Upgrades, Validations, and Intercomparisons</a>, <i lang="en">Journal of Climate</i> 30, 8179–8205.</li>
       <li>Talley, Pickard, Emery og Swift (2011): <a href="https://doi.org/10.1016/C2009-0-24322-4" lang="en"><i>Descriptive Physical Oceanography: An Introduction</i></a>, 6. udg., Elsevier.</li>
     </ul>
     <form method="dialog"><button>Luk</button></form>
   </dialog>
   <p class="skjult" id="meddelelse" aria-live="polite"></p>
-  <noscript><p>Modellen kræver JavaScript. Vinden driver havets overfladestrømme. Kontinenterne og Corioliseffekten bøjer dem til store hvirvler, med uret på den nordlige halvkugle og mod uret på den sydlige. Koldt, salt vand synker ved Grønland og Antarktis og driver det termohaline transportbånd.</p></noscript>
+  <noscript><p>Modellen kræver JavaScript. Vinden driver havets overfladestrømme. Kontinenterne og Corioliseffekten bøjer dem til store hvirvler, med uret på den nordlige halvkugle og mod uret på den sydlige. Koldt, salt vand synker ved Grønland og Antarktis og driver det termohaline transportbånd. Under El Niño svækkes passaten over Stillehavet, og varmt vand breder sig mod øst til Peru; under La Niña er passaten ekstra stærk.</p></noscript>
   <script src="/feedback.js" defer></script>
 </body>
 </html>

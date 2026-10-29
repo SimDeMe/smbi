@@ -10,6 +10,7 @@ const RAD = Math.PI / 180;
 // brede, østgående strømme, hvor det ikke giver mening at sige varm/kold.
 // fart: relativ (1 = Golfstrømmen); bredde: halv bredde i grader.
 // randstrøm: smal, hurtig vestlig randstrøm (fremhæves i trin 3–4).
+// enso: strømme i Stillehavet, der ændrer sig med El Niño og La Niña (se FASER).
 export const STROEMME = [
   // Nordatlanten – hvirvel med uret.
   { navn: 'Golfstrømmen', type: 'varm', fart: 1, bredde: 2.2, randstroem: true,
@@ -56,23 +57,23 @@ export const STROEMME = [
     punkter: [[146, 37], [158, 39.5], [170, 41], [-178, 42], [-165, 43], [-150, 44], [-138, 44.5], [-130, 44]] },
   { navn: 'Californiske strøm', type: 'kold', fart: 0.45, bredde: 3.5,
     punkter: [[-130, 47], [-128, 42], [-125.5, 37], [-122, 32], [-118, 27], [-115, 22], [-113, 18]] },
-  { navn: 'Nordlige ækvatorialstrøm', type: 'varm', fart: 0.5, bredde: 4.5,
+  { navn: 'Nordlige ækvatorialstrøm', type: 'varm', fart: 0.5, bredde: 4.5, enso: 'passat',
     punkter: [[-113, 16], [-125, 14], [-140, 13], [-155, 13], [-170, 13], [175, 13], [160, 13.5], [145, 14], [132, 15], [124, 18]] },
   { navn: 'Alaskastrømmen', type: 'varm', fart: 0.35, bredde: 2.5,
     punkter: [[-130, 47.5], [-134, 53], [-140, 58], [-147, 59.6], [-153, 56.3], [-162, 54.5], [-172, 52.5]] },
   { navn: 'Oyashio', type: 'kold', fart: 0.5, bredde: 2.5,
     punkter: [[166, 57], [162, 53], [157, 49.5], [151.5, 45.5], [147, 42.5], [145, 40]] },
-  { navn: 'Ækvatoriale modstrøm', type: 'varm', fart: 0.4, bredde: 2.5,
+  { navn: 'Ækvatoriale modstrøm', type: 'varm', fart: 0.4, bredde: 2.5, enso: 'modstroem',
     punkter: [[128, 6], [140, 6], [155, 6.5], [170, 7], [-175, 7], [-160, 7], [-140, 7], [-120, 7], [-100, 6.5], [-88, 6]] },
 
   // Sydstillehavet – hvirvel mod uret.
-  { navn: 'Sydlige ækvatorialstrøm', type: 'varm', fart: 0.55, bredde: 4.5,
+  { navn: 'Sydlige ækvatorialstrøm', type: 'varm', fart: 0.55, bredde: 4.5, enso: 'passat',
     punkter: [[-84, -2], [-95, -2.5], [-110, -3.5], [-125, -4.5], [-140, -6], [-155, -8], [-170, -10.5], [175, -12.5], [162, -14.5], [154, -16]] },
   { navn: 'Østaustralske strøm', type: 'varm', fart: 0.75, bredde: 2.2, randstroem: true,
     punkter: [[154, -16], [155.2, -21], [154.5, -26], [153.8, -30.5], [154, -34], [157, -37], [162, -39]] },
   { navn: 'Sydpacifiske strøm', type: 'blandet', fart: 0.35, bredde: 4,
     punkter: [[164, -42], [178, -44], [-168, -45], [-150, -45], [-132, -43], [-114, -41], [-96, -40], [-82, -40]] },
-  { navn: 'Humboldtstrømmen', type: 'kold', fart: 0.5, bredde: 3.5,
+  { navn: 'Humboldtstrømmen', type: 'kold', fart: 0.5, bredde: 3.5, enso: 'opstigning',
     punkter: [[-77, -44], [-75.5, -38], [-74, -32], [-73, -26], [-73.5, -20], [-77.5, -15], [-81.5, -9], [-84, -4]] },
 
   // Det Indiske Ocean – hvirvel mod uret på den sydlige halvkugle.
@@ -113,6 +114,21 @@ export const BAAND = {
   stiger: [{ navn: 'Opstigning i Stillehavet', punkt: [-160, 36] }, { navn: 'Opstigning i Det Indiske Ocean', punkt: [80, -14] }],
 };
 
+// El Niño og La Niña: Stillehavets passat svækkes eller styrkes, og med den
+// ækvatorialstrømmene. Under El Niño løber det varme vand fra Vestpacific mod
+// øst med modstrømmen og lægger sig over det kolde opstigningsvand ud for Peru.
+// Faktorerne er skematiske (retningen er rigtig, størrelsen er afrundet);
+// temperaturen til faserne er målt (../data/enso.LICENSE).
+// vind: faktor på passaten over Stillehavet (vindpilene).
+export const FASER = {
+  normal: { navn: 'Normal', vind: 1, faktor: {} },
+  elnino: { navn: 'El Niño', hændelse: 'El Niño 1997/98', vind: 0.35, faktor: { passat: 0.35, modstroem: 1.8, opstigning: 0.6 } },
+  lanina: { navn: 'La Niña', hændelse: 'La Niña 2010/11', vind: 1.4, faktor: { passat: 1.35, modstroem: 0.7, opstigning: 1.25 } },
+};
+// Stillehavet i ækvatorbæltet, hvor passaten ændres i vindpilene.
+export const iStillehavet = (lon, lat) => Math.abs(lat) < 22 && (lon > 120 || lon < -80);
+const GRUPPER = ['', 'passat', 'modstroem', 'opstigning'];
+
 // ----- Strømfeltet -----
 
 const laengdeforskel = (a, b) => ((a - b + 540) % 360) - 180;
@@ -141,44 +157,66 @@ function afstand(lon, lat, s) {
 // Bygger strømfeltet på et 1°-gitter. erLand(lon, lat) → true på land; uden
 // funktion regnes hele kloden som hav (bruges i modelprøven).
 // u, v: fart mod øst og nord (relativ); hvem: index i STROEMME for den strøm,
-// der dominerer cellen, eller -1.
-export function lavFelt(erLand = () => false) {
-  const B = 360, H = 180;
-  const u = new Float32Array(B * H), v = new Float32Array(B * H), hvem = new Int16Array(B * H).fill(-1), land = new Uint8Array(B * H);
-  const alle = STROEMME.map(stykker);
+// der dominerer cellen, eller -1. fase: nøgle i FASER; kan skiftes bagefter
+// med saetFase uden at regne afstandene igen.
+export function lavFelt(erLand = () => false, fase = 'normal') {
+  const B = 360, H = 180, N = B * H, G = GRUPPER.length;
+  const u = new Float32Array(N), v = new Float32Array(N), hvem = new Int16Array(N).fill(-1), land = new Uint8Array(N);
+  // Bidragene holdes adskilt pr. ENSO-gruppe, så en fase blot vægter dem om.
+  const gu = new Float32Array(N * G), gv = new Float32Array(N * G), gb = new Float32Array(N * G), gh = new Int16Array(N * G).fill(-1);
+  const alle = STROEMME.map(stykker), gruppe = STROEMME.map(s => GRUPPER.indexOf(s.enso || ''));
   for (let j = 0; j < H; j++) {
     const lat = 89.5 - j;
     for (let i = 0; i < B; i++) {
       const lon = -179.5 + i, c = j * B + i;
       if (erLand(lon, lat)) { land[c] = 1; continue; }
-      let su = 0, sv = 0, bedst = 0, hvis = -1;
       for (let s = 0; s < STROEMME.length; s++) {
-        const strom = STROEMME[s];
+        const strom = STROEMME[s], k = c * G + gruppe[s];
         for (const st of alle[s]) {
           const [d] = afstand(lon, lat, st);
           if (d > strom.bredde * 2.5) continue;
           const w = Math.exp(-((d / strom.bredde) ** 2)) * strom.fart;
-          su += w * st.dx / st.n; sv += w * st.dy / st.n;
-          if (w > bedst) { bedst = w; hvis = s; }
+          gu[k] += w * st.dx / st.n; gv[k] += w * st.dy / st.n;
+          if (w > gb[k]) { gb[k] = w; gh[k] = s; }
         }
+      }
+    }
+  }
+  const starter = [];
+  let aktuel = null;
+  function saetFase(navn) {
+    const fase = FASER[navn];
+    if (!fase) throw new Error(`Ukendt fase: ${navn}`);
+    aktuel = navn;
+    const f = GRUPPER.map(g => fase.faktor[g] ?? 1);
+    starter.length = 0;
+    for (let c = 0; c < N; c++) {
+      if (land[c]) continue;
+      let su = 0, sv = 0, bedst = 0, hvis = -1;
+      for (let g = 0; g < G; g++) {
+        const k = c * G + g;
+        su += f[g] * gu[k]; sv += f[g] * gv[k];
+        if (f[g] * gb[k] > bedst) { bedst = f[g] * gb[k]; hvis = g; }
       }
       // Overlappende stykker af samme strøm må ikke lægges sammen til mere
       // end strømmens egen fart.
-      const f = Math.hypot(su, sv), maks = hvis >= 0 ? STROEMME[hvis].fart : 0;
-      const skala = f > maks && f > 0 ? maks / f : 1;
+      const s = hvis >= 0 ? gh[c * G + hvis] : -1;
+      const fs = Math.hypot(su, sv), maks = s >= 0 ? STROEMME[s].fart * f[hvis] : 0;
+      const skala = fs > maks && fs > 0 ? maks / fs : 1;
       u[c] = su * skala; v[c] = sv * skala;
-      hvem[c] = bedst > 0.08 ? hvis : -1;
+      hvem[c] = bedst > 0.08 ? s : -1;
+      // Startsteder til partikler: hav, hvor strømmen er tydelig.
+      if (Math.hypot(u[c], v[c]) > 0.12) starter.push(c);
     }
   }
+  saetFase(fase);
   const indeks = (lon, lat) => {
     const i = Math.floor(((lon + 180) % 360 + 360) % 360), j = Math.floor(90 - lat);
     return Math.max(0, Math.min(H - 1, j)) * B + Math.min(B - 1, i);
   };
-  // Startsteder til partikler: hav, hvor strømmen er tydelig.
-  const starter = [];
-  for (let c = 0; c < B * H; c++) if (!land[c] && Math.hypot(u[c], v[c]) > 0.12) starter.push(c);
   return {
-    u, v, hvem, land, starter,
+    u, v, hvem, land, starter, saetFase,
+    get fase() { return aktuel; },
     erLand: (lon, lat) => land[indeks(lon, lat)] === 1,
     // Bilineær interpolation, så partiklerne glider jævnt.
     stroem(lon, lat) {

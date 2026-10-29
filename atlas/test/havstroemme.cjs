@@ -14,7 +14,7 @@ require('node:fs').mkdirSync(ud, { recursive: true });
     const ctx = await browser.newContext({ viewport: { width: bredde, height: hoejde }, hasTouch: mobil, isMobile: mobil, reducedMotion: 'reduce' });
     const side = await ctx.newPage();
     side.on('pageerror', e => fejl.push(e.message));
-    const hentet = side.waitForResponse(r => r.url().endsWith('/havtemperatur.bin'));
+    const hentet = Promise.all(['/havtemperatur.bin', '/enso.bin'].map(n => side.waitForResponse(r => r.url().endsWith(n))));
     await side.goto(base + '/atlas/havstroemme/');
     await side.waitForFunction(() => document.querySelector('#trin-titel').textContent.length > 0);
     await hentet;
@@ -81,13 +81,34 @@ require('node:fs').mkdirSync(ud, { recursive: true });
     assert.match(await side.locator('#aflaesning').textContent(), /70° V.*Golfstrømmen.*varm strøm.*mod (øst|nordøst).*\d+,\d °C/, 'Golfstrømmen aflæses som varm strøm mod øst med målt temperatur');
     assert.equal(await side.locator('#havtemp').getAttribute('aria-pressed'), 'true', 'trin 4 viser havtemperaturen');
 
-    // Trinene: fem; det sidste slår transportbåndet til.
-    assert.equal(await side.locator('#prikker button').count(), 5);
+    // Trinene: seks; trin 5 slår transportbåndet til, trin 6 viser El Niño.
+    assert.equal(await side.locator('#prikker button').count(), 6);
     await side.locator('#prikker button').nth(4).click();
     assert.match(await side.locator('#trin-titel').textContent(), /transportbånd/);
     assert.equal(await side.locator('#baand').getAttribute('aria-pressed'), 'true');
+    assert.equal(await side.locator('[data-fase="normal"]').getAttribute('aria-pressed'), 'true', 'andre trin er normalår');
+    await side.locator('#naeste').click();
+    assert.match(await side.locator('#trin-titel').textContent(), /El Niño/);
+    assert.equal(await side.locator('[data-fase="elnino"]').getAttribute('aria-pressed'), 'true', 'trin 6 viser El Niño');
+    assert.equal(await side.locator('#havtemp').getAttribute('aria-pressed'), 'true');
     assert.ok(await side.locator('#naeste').isDisabled());
-    for (let i = 0; i < 4; i++) await side.locator('#forrige').click();
+
+    // El Niño og La Niña: trinet drejer til 130° V, 2° S; aflæs midt på.
+    await side.waitForTimeout(100);
+    await globus.focus(); await side.keyboard.press('ArrowRight'); await side.keyboard.press('ArrowLeft');
+    const varm = await side.locator('#aflaesning').textContent();
+    assert.match(varm, /Midt på.*\d+,\d °C \(\+\d,\d °C\)/, 'El Niño: varmere end normalt midt i Stillehavet');
+    assert.match(await side.locator('#temptekst').textContent(), /El Niño 1997\/98/);
+    før = await billede(globus);
+    await side.locator('[data-fase="lanina"]').click();
+    assert.notDeepEqual(før, await billede(globus), 'La Niña ændrer globussen');
+    assert.match(await side.locator('#meddelelse').textContent(), /La Niña/);
+    await globus.focus(); await side.keyboard.press('ArrowRight'); await side.keyboard.press('ArrowLeft');
+    assert.match(await side.locator('#aflaesning').textContent(), /Midt på.*°C \(−\d,\d °C\)/, 'La Niña: koldere end normalt midt i Stillehavet');
+    await side.locator('[data-fase="normal"]').click();
+    await globus.focus(); await side.keyboard.press('ArrowRight'); await side.keyboard.press('ArrowLeft');
+    assert.doesNotMatch(await side.locator('#aflaesning').textContent(), /\(/, 'normalår uden afvigelse');
+    for (let i = 0; i < 5; i++) await side.locator('#forrige').click();
     assert.ok(await side.locator('#forrige').isDisabled());
 
     // Pause.

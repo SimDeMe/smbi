@@ -1,6 +1,7 @@
-// Fem korte trin om havstrømmene, i samme form som cirkulationsmodellen.
+// Seks korte trin om havstrømmene, i samme form som cirkulationsmodellen.
 // fokus: hvor globussen drejer hen; fremhaev: strømme (navne) og figurdele,
-// der gløder; saet: kontakter, trinet slår til eller fra.
+// der gløder; saet: kontakter, trinet slår til eller fra; fase: tilstanden i
+// Stillehavet (FASER i model.js), ellers normal.
 export const TRIN = [
   {
     titel: 'Vinden skubber havet',
@@ -36,5 +37,12 @@ export const TRIN = [
     proev: 'Find de to steder, hvor vandet synker, og følg det blå dybvand.',
     fokus: [-30, 35], fremhaev: [],
     saet: { vind: false, hvirvler: false, baand: true, havtemp: false },
+  },
+  {
+    titel: 'El Niño og La Niña',
+    tekst: 'Passaten skubber normalt det varme overfladevand mod vest, mens koldt vand stiger op ud for Peru. Under El Niño svækkes passaten: det varme vand flyder mod øst og dækker det kolde, så fiskeriet svigter, Peru får regn og Australien tørke. Under La Niña er passaten ekstra stærk, og det kolde vand når længere mod vest.',
+    proev: 'Skift mellem Normal, El Niño og La Niña, og aflæs temperaturen ud for Peru og ved ækvator.',
+    fokus: [-130, -2], fremhaev: ['vind', 'Ækvatoriale modstrøm', 'Humboldtstrømmen'], fase: 'elnino',
+    saet: { vind: true, hvirvler: false, baand: false, havtemp: true },
   },
 ];

@@ -17,8 +17,13 @@ de to moduler kan ændres hver for sig; vinden importeres fra
   pile), «Hvirvler» (de fem subtropiske hvirvler, med/mod uret),
   «Transportbånd» (skematisk termohalin cirkulation med nedsynkning ved
   Grønland og i Weddellhavet), «Havtemperatur» (målt årsmiddel) og «Navne».
+- «Normal · El Niño · La Niña»: passaten over Stillehavet (vindpilene) og
+  Stillehavets ækvatorialstrømme, modstrøm og Humboldtstrøm svækkes eller
+  styrkes; havtemperaturen får den målte afvigelse fra El Niño 1997/98 eller
+  La Niña 2010/11 lagt til, og aflæsningen viser afvigelsen i parentes.
 - «Slip en flaskepost»: driver med strømmen og strander på land.
-- Fem trin; hvert trin drejer globussen, slår lag til og fremhæver strømme.
+- Seks trin; hvert trin drejer globussen, slår lag til, vælger fase og
+  fremhæver strømme. Trin 6 er El Niño og La Niña.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster: strøm,
   varm/kold, retning (strømme angives *mod*, vind *fra*) og havtemperatur.
 
@@ -26,8 +31,8 @@ de to moduler kan ændres hver for sig; vinden importeres fra
 
 | Fil | Ansvar |
 | --- | --- |
-| `model.js` | Strømmene som linjer, hvirvler, transportbånd og strømfeltet på 1°-gitter |
-| `havtemperatur.js` | Afkodning og farver for havtemperaturen |
+| `model.js` | Strømmene som linjer, hvirvler, transportbånd, El Niño/La Niña-faser og strømfeltet på 1°-gitter |
+| `havtemperatur.js` | Afkodning og farver for havtemperaturen og El Niño/La Niña-afvigelsen |
 | `globus.js` | Globus, spor, lag, etiketter og flaskepost |
 | `tekst.js` | De fem trin |
 | `app.js` | Landmaske, betjening, trin og animationsløkke |
@@ -44,6 +49,14 @@ Havtemperaturen er målt: NOAA OISST v2, årsmiddel af månedsnormalerne
 1991–2020 på 1°-gitter, lavet med `../data/havtemperatur.py`
 (kilde og format i `../data/havtemperatur.LICENSE`). Mangler filen, slås
 kontakten fra, og resten virker.
+
+El Niño og La Niña: strømmenes ændring er skematisk (faktorer i `FASER`,
+`model.js`); feltet regnes én gang med bidragene delt op pr. gruppe, så et
+faseskift blot vægter dem om. Temperaturafvigelsen er målt: NOAA ERSST v5,
+november–januar under El Niño 1997/98 og La Niña 2010/11 minus samme måneder
+1991–2020, lavet med `../data/enso.py` (kilde og format i
+`../data/enso.LICENSE`). Termoklinen vises ikke her, men i
+[ENSO-modellen](/geografi/enso.html). Mangler filen, vises normalen i alle faser.
 
 ## Afprøvning
 

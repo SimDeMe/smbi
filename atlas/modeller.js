@@ -65,7 +65,7 @@ export const modeller = [
   { id: 'havstroemme', titel: 'Havstrømme', emne: 'Havcirkulation', niveau: 'Naturgeografi C / B', steder: [],
     beskrivelse: 'Følg varme og kolde strømme på en globus. Se vinden drive hvirvlerne, slip en flaskepost, og følg transportbåndet ned i dybet.',
     modelnote: 'Skematiske hovedstrømme · relativ fart',
-    sti: '/atlas/havstroemme/', soegeord: 'havstrømme golfstrømmen hvirvel gyre humboldt benguela kuroshio agulhas varm kold strøm termohalin transportbånd amoc dybvand flaskepost hav' },
+    sti: '/atlas/havstroemme/', soegeord: 'havstrømme golfstrømmen hvirvel gyre humboldt benguela kuroshio agulhas varm kold strøm termohalin transportbånd amoc dybvand flaskepost hav el nino la nina enso stillehavet' },
   { id: 'pladegraenser', titel: 'Pladegrænser', emne: 'Pladetektonik', niveau: 'Naturgeografi C / B', steder: ['island'],
     beskrivelse: 'Undersøg spredning, subduktion og bevaring ved forskellige pladegrænser.',
     sti: '/geografi/pladegraenser.html', soegeord: 'tektonik kontinenter jordskælv ryg' },

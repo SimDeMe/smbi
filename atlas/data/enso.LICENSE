@@ -1,0 +1,22 @@
+Havtemperaturafvigelse under El Niño og La Niña
+===============================================
+NOAA Extended Reconstructed SST V5 (ERSST v5), NOAA NCEI / PSL. Månedsmidler
+1970–2021 på 2°-gitter. Hentet 29. oktober 2026 som xarray's øvelsesudtræk af
+PSL-filen (uændrede værdier, data_modified 2022-06-07):
+https://raw.githubusercontent.com/pydata/xarray-data/master/ersstv5.nc
+(sha256 2ae53611d00069440641ad8ec36b216c9f543462161ae86589723c9d19ff90c6)
+Originalen: https://psl.noaa.gov/data/gridded/data.noaa.ersst.v5.html
+Huang et al. (2017), Extended Reconstructed Sea Surface Temperature, Version 5
+(ERSSTv5): Upgrades, Validations, and Intercomparisons, Journal of Climate 30,
+8179–8205, doi:10.1175/JCLI-D-16-0836.1.
+NOAA-data er offentligt tilgængelige; angiv NOAA NCEI/PSL som dataleverandør.
+
+Afvigelse = middel af november, december og januar i hændelsen minus middel
+af de samme måneder 1991–2020 (samme normalperiode som havtemperatur.bin).
+El Niño 1997/98 (nov 1997–jan 1998; Niño 3.4 ca. +2,4 °C) og La Niña 2010/11
+(nov 2010–jan 2011; Niño 3.4 ca. −1,6 °C). Lagt om bilineært til
+cellemidter −179,5…179,5 °Ø og 89,5…−89,5 °N (360 × 180).
+Script: enso.py, numpy + netCDF4; råfilen gives som argument.
+Format efter gzip: ENSO + uint16 LE (360,180) + uint8 antal (2), derefter for
+hver hændelse 180*360 int8 i tiendedele °C, række for række fra nord;
+−128 = ingen værdi. Rækkefølge: El Niño 1997/98, La Niña 2010/11.

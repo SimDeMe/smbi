@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { lavFelt, modRetning, fart, STROEMME, HVIRVLER } from './model.js';
-import { afkod, klasseFor, KLASSER } from './havtemperatur.js';
+import { afkod, afkodEnso, medFase, klasseFor, KLASSER } from './havtemperatur.js';
 
 const felt = lavFelt();
 const mod = (lon, lat) => modRetning(felt.stroem(lon, lat));
@@ -60,4 +60,35 @@ assert.ok(T(-75, 33) > T(-122, 33) + 5, 'Golfstrømmen varmere end Californiske 
 assert.equal(KLASSER[klasseFor(-1.8)].fra, -2);
 assert.equal(KLASSER[klasseFor(29.9)].fra, 29);
 
-console.log('Modellen: strømretninger, hvirvlernes omløb, landmasken og havtemperaturen består.');
+// El Niño og La Niña: passatstrømmen svækkes/styrkes, modstrømmen omvendt;
+// Atlanten er uændret, og normalfasen giver det oprindelige felt.
+const u = (lon, lat) => felt.stroem(lon, lat).u;
+const normalt = { sek: u(-140, -4), mod: u(-150, 7), atl: u(-25, -4.5), hum: felt.stroem(-73, -26).v };
+felt.saetFase('elnino');
+assert.equal(felt.fase, 'elnino');
+assert.ok(u(-140, -4) < 0 && u(-140, -4) > normalt.sek / 2, 'El Niño: svagere sydlig ækvatorialstrøm, stadig mod vest');
+assert.ok(u(-150, 7) > normalt.mod * 1.5, 'El Niño: stærkere modstrøm mod øst');
+assert.ok(felt.stroem(-73, -26).v < normalt.hum, 'El Niño: svagere Humboldtstrøm');
+assert.equal(u(-25, -4.5), normalt.atl, 'El Niño ændrer ikke Atlanten');
+felt.saetFase('lanina');
+assert.ok(u(-140, -4) < normalt.sek * 1.2 && u(-150, 7) < normalt.mod, 'La Niña: stærkere passatstrøm, svagere modstrøm');
+felt.saetFase('normal');
+assert.equal(u(-140, -4), normalt.sek);
+assert.throws(() => felt.saetFase('monsun'));
+
+// Målt afvigelse (NOAA ERSST v5): El Niño varmer det østlige Stillehav,
+// La Niña køler det centrale; Vestpacific bliver lidt koldere under El Niño.
+const enso = afkodEnso(gunzipSync(readFileSync(new URL('../data/enso.bin', import.meta.url))));
+const nino34 = f => { let s = 0, n = 0; for (let lat = -4.5; lat <= 4.5; lat++) for (let lon = -169.5; lon <= -120.5; lon++) { s += enso[f](lon, lat); n++; } return s / n; };
+assert.ok(nino34('elnino') > 2 && nino34('elnino') < 2.8, 'Niño 3.4 ca. +2,4 °C i 1997/98');
+assert.ok(nino34('lanina') < -1.2 && nino34('lanina') > -2, 'Niño 3.4 ca. −1,6 °C i 2010/11');
+assert.ok(enso.elnino(-82.5, -5.5) > 3.5, 'El Niño: meget varmt ud for Peru');
+assert.ok(enso.elnino(150.5, 5.5) < 0, 'El Niño: koldere i Vestpacific');
+const nino = medFase(sst, enso, 'elnino'), nina = medFase(sst, enso, 'lanina'), normal = medFase(sst, enso, 'normal');
+assert.ok(nino.temperatur(-82.5, -5.5) > T(-82.5, -5.5) + 3.5 && nina.temperatur(-150, 0) < T(-150, 0) - 1);
+assert.equal(normal.temperatur(-150, 0), T(-150, 0)); assert.equal(normal.afvigelse(-150, 0), null);
+assert.equal(nino.temperatur(20, 5), null, 'land forbliver land');
+for (let lat = -89.5; lat < 90; lat += 3) for (let lon = -179.5; lon < 180; lon += 3) { const t = nina.temperatur(lon, lat); assert.ok(t === null || t >= -1.8, 'aldrig under frysepunktet'); }
+assert.equal(medFase(sst, null, 'elnino').afvigelse(-150, 0), null, 'uden data vises normalen');
+
+console.log('Modellen: strømretninger, hvirvlernes omløb, landmasken, havtemperaturen og El Niño/La Niña består.');

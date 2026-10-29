@@ -1,15 +1,16 @@
 // Havstrømme: betjening, trin og animationsløkke (bygget som cirkulationsmodellens app.js).
 import { lavGlobus, beskriv } from './globus.js';
-import { hentHavtemperatur, KLASSER } from './havtemperatur.js';
+import { hentHavtemperatur, hentEnso, medFase, KLASSER } from './havtemperatur.js';
 import { TRIN } from './tekst.js';
-import { lavFelt } from './model.js';
+import { lavFelt, FASER } from './model.js';
 
 const $ = s => document.querySelector(s);
 const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const tilstand = {
   vind: false, hvirvler: false, baand: false, havtemp: false, etiketter: true, pause: roligt,
-  fremhaev: [], flaske: false, sst: null,
+  fremhaev: [], flaske: false, fase: 'normal',
+  normalSst: null, enso: null, sst: null, // sst: normalen med fasens afvigelse lagt til.
 };
 const hent = () => tilstand;
 const KONTAKTER = ['vind', 'hvirvler', 'baand', 'havtemp', 'etiketter'];
@@ -19,6 +20,11 @@ const BESKED = {
   baand: ['Transportbåndet vises: varm overfladegren mod Nordatlanten, kold dybgren tilbage.', 'Transportbåndet er skjult.'],
   havtemp: ['Havtemperaturen vises: målt årsmiddel 1991–2020, fra under 2 °C ved polerne til over 29 °C i troperne.', 'Havtemperaturen er skjult.'],
   etiketter: ['Navnene vises.', 'Navnene er skjult.'],
+};
+const FASEBESKED = {
+  normal: 'Normalår i Stillehavet: passaten skubber det varme vand mod vest, og koldt vand stiger op ud for Peru.',
+  elnino: 'El Niño 1997/98: passaten er svag, det varme vand breder sig mod øst, og havet ud for Peru er op til 5 °C varmere end normalt.',
+  lanina: 'La Niña 2010/11: passaten er stærk, det kolde vand breder sig langt mod vest, og havet langs ækvator i det centrale Stillehav er 1–2 °C koldere end normalt.',
 };
 
 function meddel(tekst) { $('#meddelelse').textContent = tekst; }
@@ -51,12 +57,15 @@ async function start() {
   tilpas();
 
   // Havtemperaturen hentes i baggrunden; uden den virker resten af modellen.
-  hentHavtemperatur().then(sst => { tilstand.sst = sst; }).catch(() => {
+  hentHavtemperatur().then(sst => { tilstand.normalSst = sst; opdaterSst(); }).catch(() => {
     const k = $('#havtemp'); k.disabled = true; k.title = 'Havtemperaturen kunne ikke hentes';
     if (tilstand.havtemp) saet('havtemp', false, false);
   });
+  // Uden afvigelserne vises normalen, også under El Niño og La Niña.
+  hentEnso().then(enso => { tilstand.enso = enso; opdaterSst(); }).catch(() => {});
 
   betjening(globus, felt);
+  faseknapper(felt, globus);
   trinvisning(globus);
 
   let sidst = performance.now(), tid = 0;
@@ -67,6 +76,26 @@ async function start() {
     requestAnimationFrame(loekke);
   }
   requestAnimationFrame(loekke);
+}
+
+function opdaterSst() {
+  tilstand.sst = medFase(tilstand.normalSst, tilstand.enso, tilstand.fase);
+  const malt = tilstand.sst?.fase !== 'normal';
+  $('#temptekst').textContent = malt ? `Havtemperatur, årsmiddel + ${FASER[tilstand.fase].hændelse} (nov–jan)` : 'Havtemperatur, årsmiddel';
+}
+
+let skiftFase = () => {};
+function faseknapper(felt, globus) {
+  const knapper = [...document.querySelectorAll('#faser button')];
+  skiftFase = (fase, annoncer = true) => {
+    if (!FASER[fase]) return;
+    tilstand.fase = fase;
+    knapper.forEach(k => k.setAttribute('aria-pressed', String(k.dataset.fase === fase)));
+    if (felt.fase !== fase) { felt.saetFase(fase); globus.rydSpor(); }
+    opdaterSst();
+    if (annoncer) meddel(FASEBESKED[fase]);
+  };
+  knapper.forEach(k => k.addEventListener('click', () => skiftFase(k.dataset.fase)));
 }
 
 function saet(navn, v, annoncer = true) {
@@ -157,8 +186,9 @@ function betjening(globus, felt) {
 
 function tekstFor(felt, lon, lat) {
   const d = beskriv(lon, lat, felt);
-  const t = tilstand.sst?.temperatur(lon, lat);
-  if (t != null && d.navn !== 'Land') d.tekst = `${d.tekst} · ${t.toLocaleString('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} °C`;
+  const t = tilstand.sst?.temperatur(lon, lat), a = tilstand.sst?.afvigelse(lon, lat);
+  const tal = (x, fortegn = false) => (fortegn && x > 0 ? '+' : '') + x.toLocaleString('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).replace('-', '−');
+  if (t != null && d.navn !== 'Land') d.tekst = `${d.tekst} · ${tal(t)} °C${a != null ? ` (${tal(a, true)} °C)` : ''}`;
   const sted = `${Math.abs(lat).toFixed(0)}° ${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(0)}° ${lon >= 0 ? 'Ø' : 'V'}`;
   return { sted, ...d };
 }
@@ -197,6 +227,7 @@ function trinvisning(globus) {
     $('#naeste').disabled = nr === TRIN.length - 1;
     tilstand.fremhaev = t.fremhaev;
     if (t.saet) for (const [navn, v] of Object.entries(t.saet)) saet(navn, v, false);
+    skiftFase(t.fase || 'normal', false);
     globus.flyvTil(...t.fokus);
   }
   $('#forrige').addEventListener('click', () => vis(nr - 1));
