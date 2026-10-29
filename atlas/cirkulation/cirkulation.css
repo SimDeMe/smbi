@@ -38,6 +38,17 @@ h1{margin:0;font:800 20px/1.1 var(--display);letter-spacing:-.03em;white-space:n
 .maerkat{flex:none;color:#b7cac4;font-size:10px;border:1px solid #ffffff30;padding:3px 7px}
 .signatur{position:absolute;left:16px;right:16px;bottom:10px;display:flex;flex-wrap:wrap;gap:4px 16px;font:500 11px var(--mono);color:#cedbd2;pointer-events:none}
 .signatur span{display:flex;align-items:center;gap:6px}
+/* Klimalag: to små knapper i globusfeltet og en farveskala over signaturen. */
+.lagvalg{position:absolute;top:38px;right:16px;z-index:2;display:flex;gap:6px}
+.lagvalg button{min-height:28px;padding:2px 10px;font:600 12px var(--display);background:#102c2ae8;color:#d7e8cc;border:1px solid #d7e8cc55;border-radius:14px;box-shadow:none}
+.lagvalg button:hover{background:#1d4743;color:#fff6dc}
+.lagvalg button[aria-pressed="true"]{background:var(--guld);color:var(--ink);border-color:var(--guld)}
+.signatur .klimaskala{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.klimaskala b{font-weight:600;color:#fff6dc;white-space:nowrap}.klimaskala b span{display:inline}
+.klimaskala ol{display:flex;margin:0;padding:0;list-style:none}
+.klimaskala li{min-width:30px;padding:1px 3px;text-align:center;font-size:9.5px;line-height:14px}
+.klimaskala li:first-child{border-radius:3px 0 0 3px}.klimaskala li:last-child{border-radius:0 3px 3px 0}
+.klimaskala small{font-size:9.5px;color:#9fb5ab}
 .signatur i{display:inline-block;width:16px;height:2px;background:var(--f)}
 .signatur .celle i{height:9px;width:12px;opacity:.55;border-radius:2px}
 .signatur.uden-celler .celle{display:none}

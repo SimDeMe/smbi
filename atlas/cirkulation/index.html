@@ -35,9 +35,14 @@
           <p class="aflaesning" id="aflaesning"><span id="globushjaelp">Peg på globussen for at aflæse vinden · træk for at dreje</span></p>
           <span class="maerkat">Model · ikke målfast</span>
         </div>
+        <div class="lagvalg" role="group" aria-label="Kortlag med målte klimanormaler">
+          <button id="lag-temperatur" data-lag="temperatur" aria-pressed="false">Temperatur</button>
+          <button id="lag-nedboer" data-lag="nedboer" aria-pressed="false">Nedbør</button>
+        </div>
         <canvas id="globus" tabindex="0" aria-describedby="globushjaelp"
           aria-label="Globus med vindpartikler. Træk eller brug piletasterne for at dreje. Enter slipper en ballon midt på globussen, når ballonen er valgt."></canvas>
         <div class="signatur" aria-label="Signatur">
+          <div class="klimaskala" id="klimaskala" hidden></div>
           <span><i style="--f:#7ce1c1"></i>Passat</span>
           <span><i style="--f:#f0b97a"></i>Vestenvind</span>
           <span><i style="--f:#a9bdeb"></i>Polar østenvind</span>

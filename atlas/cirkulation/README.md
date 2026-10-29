@@ -23,6 +23,14 @@ videre hertil.
   luftringe – hver celle som en gennemsigtig 3D-«donut» rundt om jordaksen
   (højden stærkt overdrevet) med prikker, der løber rundt i løkkerne. Ringene
   følger globussen, når den drejes og vippes.
+- Klimalagene «Temperatur» og «Nedbør» (knapperne øverst til højre på
+  globussen, højst ét ad gangen): målte klimanormaler 1991–2020 fra atlassets
+  egne data (`../data/middeltemperatur.bin`, NCEP/NCAR-reanalyse, og
+  `../data/nedboer.bin`, GPCP v2.3) med atlassets farveskalaer. De følger
+  måneden og glider mellem månederne, når året afspilles; aflæsningen viser
+  værdien for den viste måned. Mens et lag er tændt, skjules de flade
+  cellebælter (luftringene vises stadig). Modellen er skematisk, lagene er
+  målinger – sammenlign fx ITK med det målte regnbælte.
 - Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler»,
   «Luftringe» og «Navne», «Slip en ballon», pause og fokus.
 - Fem korte trin; hvert trin drejer globussen og fremhæver det, der skal ses.
@@ -39,6 +47,8 @@ videre hertil.
 | `app.js` | Betjening, trin og animationsløkke |
 
 D3 og TopoJSON hentes fra `../vendor/`, landene fra `../data/countries-110m.json`.
+Klimalagene genbruger `../middeltemperatur.js` og `../nedboer.js` (hentning,
+geometri og farvning); data og kilder er beskrevet i `../data/*.LICENSE`.
 
 ## Modellen
 

@@ -1,5 +1,5 @@
 // Global cirkulation: betjening, trin og animationsløkke.
-import { lavGlobus, beskriv } from './globus.js';
+import { lavGlobus, beskriv, KLIMALAG, datamaaned } from './globus.js';
 import { lavSnit } from './snit.js';
 import { TRIN } from './tekst.js';
 import { maanedsnavn, retningsnavn, fraRetning, itkBredde, solbredde } from './model.js';
@@ -9,7 +9,7 @@ const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Tilstanden; rotation og kontinenter glider mod deres mål.
 const tilstand = {
-  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, luftringe: true, pause: roligt,
+  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, luftringe: true, klimalag: null, pause: roligt,
   fremhaev: null, afspil: false, ballon: false,
   maal: { rotation: 1, kontinenter: 1 },
 };
@@ -66,6 +66,8 @@ function saetMaaned(m, annoncer = true) {
   const navn = maanedsnavn(Math.floor(m));
   input.setAttribute('aria-valuetext', navn);
   $('#maanedsnavn').textContent = navn;
+  const km = document.getElementById('klimamaaned');
+  if (km) km.textContent = navn;
   if (annoncer) {
     const sol = solbredde(m), itk = itkBredde(m, 0, 0);
     meddel(`${navn}: solen står lodret over ${Math.abs(sol).toFixed(0)}° ${sol >= 0 ? 'nord' : 'syd'}; ITK ligger i gennemsnit ved ${Math.abs(itk).toFixed(0)}° ${itk >= 0 ? 'nord' : 'syd'}.`);
@@ -116,6 +118,19 @@ function betjening(globus) {
     cellesignatur();
     meddel(tilstand.luftringe ? 'Luftringene vises: hver celle som en gennemsigtig ring rundt om Jorden, hvor luften stiger, strømmer og synker.' : 'Luftringene er skjult.');
   });
+  // Klimalagene: højst ét ad gangen; data hentes første gang, laget slås til.
+  for (const knap of document.querySelectorAll('.lagvalg button')) {
+    knap.addEventListener('click', async () => {
+      const navn = tilstand.klimalag === knap.dataset.lag ? null : knap.dataset.lag;
+      if (navn) {
+        knap.setAttribute('aria-busy', 'true');
+        try { await KLIMALAG[navn].modul.hent(); }
+        catch (fejl) { meddel(`${KLIMALAG[navn].navn}: ${fejl.message}.`); return; }
+        finally { knap.removeAttribute('aria-busy'); }
+      }
+      saetKlimalag(globus, navn);
+    });
+  }
   $('#etiketter').addEventListener('click', e => {
     tilstand.etiketter = !tilstand.etiketter; e.currentTarget.setAttribute('aria-pressed', String(tilstand.etiketter));
   });
@@ -171,11 +186,37 @@ function betjening(globus) {
   c.addEventListener('focus', () => aflaesMidt(globus));
 }
 
+function saetKlimalag(globus, navn) {
+  tilstand.klimalag = navn;
+  for (const k of document.querySelectorAll('.lagvalg button')) k.setAttribute('aria-pressed', String(k.dataset.lag === navn));
+  visKlimaskala();
+  globus.tilpas(); globus.rydSpor();
+  meddel(navn ? `${KLIMALAG[navn].navn} måned for måned vises på globussen (${KLIMALAG[navn].kilde}).` : 'Klimalaget er slået fra.');
+}
+
+// Farveskalaen over signaturen; måneden står i overskriften.
+function visKlimaskala() {
+  const boks = $('#klimaskala'), lag = KLIMALAG[tilstand.klimalag];
+  boks.hidden = !lag;
+  if (!lag) return;
+  const tal = v => v.toLocaleString('da-DK').replace('-', '−');
+  const klasser = lag.modul.KLASSER;
+  const felter = klasser.map((k, i) => {
+    const t = i === 0 ? `<${tal(klasser[1].fra)}` : tal(k.fra);
+    const [r, g, b] = [1, 3, 5].map(j => parseInt(k.farve.slice(j, j + 2), 16));
+    const lys = 0.299 * r + 0.587 * g + 0.114 * b > 150;
+    return `<li style="background:${k.farve};color:${lys ? '#17211f' : '#fff9ee'}">${t}</li>`;
+  }).join('');
+  boks.innerHTML = `<b>${lag.navn} (${lag.enhed}) · <span id="klimamaaned">${maanedsnavn(Math.floor(tilstand.maaned))}</span></b><ol aria-label="Farveskala">${felter}</ol><small>${lag.kilde}</small>`;
+}
+
 function tekstFor(lon, lat) {
   const d = beskriv(lon, lat, tilstand);
   const sted = `${Math.abs(lat).toFixed(0)}° ${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(0)}° ${lon >= 0 ? 'Ø' : 'V'}`;
   const vind = d.fart < 1.2 ? 'næsten stille' : `fra ${retningsnavn(fraRetning(d.w))}`;
-  return { sted, navn: d.navn, vind };
+  const lag = KLIMALAG[tilstand.klimalag];
+  const klima = lag?.modul.data() ? ` · ${lag.tekst(lag.vaerdi(lon, lat, datamaaned(tilstand.maaned)))}` : '';
+  return { sted, navn: d.navn, vind: vind + klima };
 }
 function aflaes(globus, x, y, annoncer = false) {
   const p = globus.aflaes(x, y);

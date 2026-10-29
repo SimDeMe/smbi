@@ -2,6 +2,8 @@
 // Tre lag: grundkort (hav, land, ITK), vindspor på et separat lærred, der
 // langsomt falmer, og etiketter/balloner/sol øverst.
 import { vind, fart, vindbaelte, itkBredde, baelter, solbredde, modelbredde } from './model.js';
+import * as middeltemperatur from '../middeltemperatur.js';
+import * as nedboer from '../nedboer.js';
 
 const RAD = Math.PI / 180;
 // Lyse farver til den mørke globus; snittet bruger mørkere udgaver af samme tone.
@@ -32,6 +34,28 @@ export function farvenoegle(navn) {
 }
 
 const ANTAL = 850;
+
+// Klimalagene genbruger atlassets egne data og farveskalaer: målte
+// klimanormaler 1991–2020, ikke modellens skematiske vind.
+export const KLIMALAG = {
+  temperatur: {
+    modul: middeltemperatur, navn: 'Temperatur', enhed: '°C',
+    kilde: 'NCEP/NCAR-reanalyse, 2 m, normal 1991–2020',
+    vaerdi: middeltemperatur.tI, tekst: middeltemperatur.temperaturTekst,
+  },
+  nedboer: {
+    modul: nedboer, navn: 'Nedbør', enhed: 'mm/md.',
+    kilde: 'GPCP v2.3, normal 1991–2020',
+    vaerdi: nedboer.mmI, tekst: mm => `${nedboer.mmTekst(mm)} i måneden`,
+  },
+};
+// Modellens måned 1,0–12,9 (1,5 = midt i januar) → to datamåneder og blanding.
+export function maanedsblanding(m) {
+  const pos = m - 1.5, f = Math.floor(pos);
+  return { fra: ((f % 12) + 12) % 12, maaned: (((f + 1) % 12) + 12) % 12, t: pos - f };
+}
+// Den hele måned, som navnet under skyderen viser (0–11).
+export const datamaaned = m => ((Math.floor(m) - 1) % 12 + 12) % 12;
 
 // Farve efter vindbælte; i stillebæltet og ved bæltegrænserne efter cellen.
 function noegle(lat, lon, s, valg) {
@@ -76,8 +100,11 @@ export function lavGlobus(canvas, land, tilstand) {
     bredde = r.width; hoejde = r.height;
     for (const c of [canvas, spor]) { c.width = Math.round(bredde * dpr); c.height = Math.round(hoejde * dpr); }
     // Plads til solen til venstre og til overskrift og signatur over og under.
-    const radius = Math.max(60, Math.min((bredde - 110) / 2, (hoejde - 92) / 2));
-    proj.translate([bredde / 2 + 14, hoejde / 2 - 2]).scale(radius);
+    // Med et klimalag fylder signaturen mere (farveskalaen, på mobil flere linjer).
+    const skala = tilstand().klimalag && canvas.parentElement.querySelector('.klimaskala');
+    const ekstra = skala ? skala.offsetHeight + 6 : 0;
+    const radius = Math.max(60, Math.min((bredde - 110) / 2, (hoejde - 92 - ekstra) / 2));
+    proj.translate([bredde / 2 + 14, hoejde / 2 - 2 - ekstra / 2]).scale(radius);
     sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -183,7 +210,11 @@ export function lavGlobus(canvas, land, tilstand) {
     const itk = l => itkBredde(s.maaned, l, s.kontinenter);
     const b = baelter(s.maaned);
     ctx.beginPath(); sti(land); ctx.fillStyle = '#8c9e7c'; ctx.fill();
-    if (s.rotation > 0.5) {
+    const lag = s.klimalag && KLIMALAG[s.klimalag];
+    if (lag?.modul.data()) {
+      klimaflade(lag, s, cx, cy, r);
+      ctx.beginPath(); sti(land); ctx.strokeStyle = '#0d282bb0'; ctx.lineWidth = 0.8; ctx.stroke();
+    } else if (s.rotation > 0.5) {
       ctx.save(); ctx.beginPath(); sti(land); ctx.clip();
       for (const [syd, nord] of [[b.nordHoej - 8, b.nordHoej + 5], [b.sydHoej - 5, b.sydHoej + 8]]) {
         ctx.beginPath(); sti(baand(() => syd, () => nord)); ctx.fillStyle = '#c9a76d'; ctx.globalAlpha = 0.55; ctx.fill();
@@ -192,8 +223,9 @@ export function lavGlobus(canvas, land, tilstand) {
     }
     ctx.beginPath(); sti(land); ctx.strokeStyle = '#bcc5a05c'; ctx.lineWidth = 0.55; ctx.stroke();
 
-    // Cellerne som gennemsigtige bælter, som i lærebogsfiguren.
-    if (s.celler) for (const c of celleBaelter(s, b, itk)) {
+    // Cellerne som gennemsigtige bælter, som i lærebogsfiguren (ikke oven i et
+    // klimalag, hvor de ville farve de målte værdier om).
+    if (s.celler && !lag?.modul.data()) for (const c of celleBaelter(s, b, itk)) {
       ctx.beginPath(); sti(baand(c.syd, c.nord));
       ctx.fillStyle = CELLEFARVE[c.navn]; ctx.globalAlpha = 0.17; ctx.fill(); ctx.globalAlpha = 1;
     }
@@ -273,6 +305,38 @@ export function lavGlobus(canvas, land, tilstand) {
       ctx.fillStyle = '#ff9274'; ctx.beginPath(); ctx.ellipse(x, y - 8, 6, 7.5, 0, 0, 7); ctx.fill();
       ctx.fillStyle = '#fff2bc'; ctx.beginPath(); ctx.arc(x - 2, y - 10, 1.6, 0, 7); ctx.fill();
     }
+  }
+
+  // Klimalaget som raster over kloden. Mens kloden drejes, bruges en grov
+  // geometri; står den stille et øjeblik, følger en skarp. Et månedsskift
+  // genbruger geometrien og farver kun om.
+  let flade = null, sidstFlyttet = 0;
+  function klimaflade(lag, s, cx, cy, r) {
+    const nu = performance.now();
+    const noegle = `${centrum[0]},${centrum[1]},${r},${cx},${cy}`;
+    const flyttet = flade?.noegle !== noegle;
+    if (flyttet) sidstFlyttet = nu;
+    const groft = nu - sidstFlyttet < 150;
+    const faktor = groft ? 0.4 : Math.min(dpr, 1.25) * (s.afspil ? 0.75 : 1);
+    const side = Math.max(1, Math.ceil(2 * r * faktor));
+    if (flyttet || flade.faktor !== faktor) {
+      const laerred = flade?.laerred.width === side ? flade.laerred : Object.assign(document.createElement('canvas'), { width: side, height: side });
+      flade = {
+        noegle, faktor, laerred, vist: null,
+        geo: lag.modul.geometri(side, side, { centrum, skala: r * faktor, cx: side / 2, cy: side / 2 }),
+        billede: laerred.getContext('2d').createImageData(side, side),
+      };
+    }
+    const bl = maanedsblanding(s.maaned);
+    const vist = `${lag.navn},${bl.fra},${bl.maaned},${bl.t.toFixed(2)},${groft}`;
+    if (flade.vist !== vist) {
+      lag.modul.farvTil(flade.billede.data, flade.geo, bl, lag.modul.data(), !groft);
+      flade.laerred.getContext('2d').putImageData(flade.billede, 0, 0);
+      flade.vist = vist;
+    }
+    ctx.globalAlpha = 0.8; ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(flade.laerred, cx - r, cy - r, 2 * r, 2 * r);
+    ctx.globalAlpha = 1;
   }
 
   // Faste vindpile i et net (kun på pause og ved reduceret bevægelse).
