@@ -301,6 +301,10 @@ export function lavGlobus(canvas, land, tilstand) {
   // overdrevet) mellem cellens grænser på hver længde. Fladerne er mest
   // tætte, hvor man ser dem fra siden, og prikker med hale løber rundt i
   // løkkerne. Ved jorden går Hadley- og polarcellen mod ækvator, Ferrel mod polen.
+  // Alt deles i en bagside (z < 0) og en forside. Bagsiden tegnes kun uden for
+  // klodens skive, så kloden skjuler den pixelpræcist; ellers ville hele flader
+  // blinke frem og væk ved randen, når globussen drejes.
+  const LAGTRIN = 12;
   function luftringe(s, b, itk, t) {
     const [cx, cy] = proj.translate(), r = proj.scale();
     const h0 = Math.min(0.13, 34 / r);
@@ -312,12 +316,16 @@ export function lavGlobus(canvas, land, tilstand) {
       const X = Math.cos(f) * Math.sin(l), Y = Math.sin(f), Z = Math.cos(f) * Math.cos(l);
       return [k * X, k * (Y * cb - Z * sb), k * (Y * sb + Z * cb)];
     };
-    const skjult = q => q[2] < 0 && q[0] * q[0] + q[1] * q[1] < 1;
     const xy = q => [cx + r * q[0], cy - r * q[1]];
-    const DL = 10, NV = 16, ALFA = [0.02, 0.04, 0.07, 0.11, 0.17];
+    const DL = 10, NV = 16;
+    const nytLag = () => ({ flader: Array.from({ length: LAGTRIN }, () => new Path2D()), spanter: new Path2D(), kam: new Path2D(), haler: new Path2D(), hoveder: new Path2D() });
+    const tegnet = [];
 
     for (const c of celleBaelter(s, b, itk)) {
       const farve = CELLEFARVE[c.navn];
+      const lag = [nytLag(), nytLag()]; // [bagside, forside]
+      const side = (...q) => (q.reduce((sum, p) => sum + p[2], 0) < 0 ? lag[0] : lag[1]);
+      const streg = (sti, p, q) => { sti.moveTo(...xy(p)); sti.lineTo(...xy(q)); };
       const h = h0 * ({ Hadley: 1, Ferrel: 0.72, Polar: 0.5, 'Én celle': 1 })[c.navn];
       const nord = c.navn === 'Én celle' ? c.nord(0) > 80 : c.syd(0) + c.nord(0) > 0;
       // Løkken på længden lon; v = -π/2 er ved jorden.
@@ -333,58 +341,60 @@ export function lavGlobus(canvas, land, tilstand) {
         for (let i = 0; i <= NV; i++) række.push(loekke(l, i / NV * 2 * Math.PI));
         net.push(række);
       }
-      // Flader sorteret i fem gennemsigtighedstrin efter, hvor skråt man ser dem.
-      const stier = ALFA.map(() => new Path2D());
+      // Flader i gennemsigtighedstrin efter, hvor skråt man ser dem. Alle
+      // lægges ind med samme omløbsretning på skærmen, så overlap ikke giver huller.
       for (let j = 0; j < net.length - 1; j++) for (let i = 0; i < NV; i++) {
         const p = [net[j][i], net[j + 1][i], net[j + 1][i + 1], net[j][i + 1]];
-        if (p.some(skjult)) continue;
         const u = [p[1][0] - p[0][0], p[1][1] - p[0][1], p[1][2] - p[0][2]];
         const w = [p[3][0] - p[0][0], p[3][1] - p[0][1], p[3][2] - p[0][2]];
         const n = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
         const nl = Math.hypot(...n);
         if (nl < 1e-9) continue;
         const skraa = 1 - Math.abs(n[2]) / nl;
-        const sti = stier[Math.min(ALFA.length - 1, Math.floor(skraa * skraa * ALFA.length))];
-        p.forEach((q, k) => { const [x, y] = xy(q); k ? sti.lineTo(x, y) : sti.moveTo(x, y); });
-        sti.closePath();
+        const sti = side(...p).flader[Math.min(LAGTRIN - 1, Math.floor(skraa * skraa * LAGTRIN))];
+        const hj = (n[2] < 0 ? p.slice().reverse() : p).map(xy);
+        sti.moveTo(...hj[0]); sti.lineTo(...hj[1]); sti.lineTo(...hj[2]); sti.lineTo(...hj[3]); sti.closePath();
       }
-      ctx.fillStyle = farve;
-      stier.forEach((sti, k) => { ctx.globalAlpha = ALFA[k]; ctx.fill(sti); });
-
       // Spanter for hver 30° og kammen øverst, så formen kan ses.
-      const kurve = (punkter) => {
-        ctx.beginPath();
-        let i = false;
-        for (const q of punkter) {
-          if (skjult(q)) { i = false; continue; }
-          const [x, y] = xy(q);
-          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); i = true;
-        }
-        ctx.stroke();
-      };
-      ctx.strokeStyle = farve; ctx.lineWidth = 0.8; ctx.globalAlpha = 0.32;
-      for (let j = 0; j < net.length - 1; j += 30 / DL) kurve(net[j]);
-      ctx.globalAlpha = 0.45;
-      kurve(net.map(række => række[Math.round(NV / 4)]));
+      for (let j = 0; j < net.length - 1; j += 30 / DL) for (let i = 0; i < NV; i++) {
+        streg(side(net[j][i], net[j][i + 1]).spanter, net[j][i], net[j][i + 1]);
+      }
+      const top = Math.round(NV / 4);
+      for (let j = 0; j < net.length - 1; j++) streg(side(net[j][top], net[j + 1][top]).kam, net[j][top], net[j + 1][top]);
 
       // Luftstrømmen: prikker med hale. v aftager → ved jorden mod ækvator på nordlig halvkugle.
       const retning = (nord ? -1 : 1) * (c.navn === 'Ferrel' ? -1 : 1);
-      const haler = new Path2D(), hoveder = new Path2D();
       for (let l = -180; l < 180; l += 20) {
         for (let k = 0; k < 3; k++) {
           const v = t * 0.65 * retning + k * 2 * Math.PI / 3 + l * 0.05;
           const hale = [];
           for (let i = 0; i <= 5; i++) hale.push(loekke(l, v - retning * 0.45 * (1 - i / 5)));
-          if (hale.some(skjult)) continue;
-          hale.forEach((q, i) => { const [x, y] = xy(q); i ? haler.lineTo(x, y) : haler.moveTo(x, y); });
+          for (let i = 0; i < 5; i++) streg(side(hale[i], hale[i + 1]).haler, hale[i], hale[i + 1]);
           const [x, y] = xy(hale[5]);
+          const hoveder = side(hale[5]).hoveder;
           hoveder.moveTo(x + 2, y); hoveder.arc(x, y, 2, 0, 2 * Math.PI);
         }
       }
-      ctx.strokeStyle = farve; ctx.lineWidth = 1.5; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5; ctx.stroke(haler);
-      ctx.fillStyle = farve; ctx.globalAlpha = 1; ctx.fill(hoveder);
-      ctx.globalAlpha = 1;
+      tegnet.push({ farve, lag });
     }
+
+    const tegnLag = k => {
+      for (const { farve, lag } of tegnet) {
+        const L = lag[k];
+        ctx.fillStyle = farve; ctx.strokeStyle = farve;
+        L.flader.forEach((sti, i) => { const m = (i + 0.5) / LAGTRIN; ctx.globalAlpha = 0.02 + 0.15 * m; ctx.fill(sti); });
+        ctx.lineWidth = 0.8; ctx.globalAlpha = 0.32; ctx.stroke(L.spanter);
+        ctx.globalAlpha = 0.45; ctx.stroke(L.kam);
+        ctx.lineWidth = 1.5; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5; ctx.stroke(L.haler);
+        ctx.globalAlpha = 1; ctx.fill(L.hoveder);
+      }
+    };
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, bredde, hoejde); ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI); ctx.clip('evenodd');
+    tegnLag(0);
+    ctx.restore();
+    tegnLag(1);
+    ctx.globalAlpha = 1;
   }
 
   function glod(syd, nord) {
