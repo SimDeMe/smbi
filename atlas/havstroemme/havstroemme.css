@@ -120,4 +120,6 @@ body.fokus .site-header{display:none}
 .om::backdrop{background:#17211f66}
 .om h2{margin:0 0 8px;font:800 18px var(--display)}
 .om p{margin:0 0 10px;font-size:14.5px}
+.om .kilder{margin:0 0 12px;padding-left:18px;font-size:13.5px}
+.om .kilder li{margin-bottom:4px}
 .om form{text-align:right}
