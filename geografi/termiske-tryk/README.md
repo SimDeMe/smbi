@@ -1,8 +1,14 @@
-# Termisk lavtryk
+# Termiske tryk
 
-Selvstændig, buildfri simulation på `/geografi/termisk-lavtryk/`, med links fra
-geografibiblioteket og atlasset. Tre luftsøjler side om side — kølig, varm,
-kølig — og fire trin, der kan vælges direkte eller afspilles:
+Selvstændig, buildfri simulation på `/geografi/termiske-tryk/`, med links fra
+geografibiblioteket og atlasset. Den gamle adresse `/geografi/termisk-lavtryk/`
+viderestiller hertil. En kontakt øverst i panelet skifter mellem **lavtryk**
+(midtersøjlen opvarmes) og **højtryk** (midtersøjlen afkøles); `?tryk=hoejtryk`
+i adressen åbner højtrykket direkte. Skiftet beholder trinnet og glider via de
+ens søjler, så strømningspilene vender roligt.
+
+Tre luftsøjler side om side og fire trin, der kan vælges direkte eller
+afspilles. Lavtryk:
 
 1. Tre ens søjler: vandrette trykflader, ens tryk i alle højder.
 2. Den midterste søjle opvarmes og udvider sig. Trykfladerne løftes, mest
@@ -12,17 +18,23 @@ kølig — og fire trin, der kan vælges direkte eller afspilles:
 4. Hele kredsløbet: indstrømning ved jorden, opstigning i midten, udstrømning
    i højden og nedsynkning over siderne — to cirkulationsceller.
 
+Højtrykket er samme forløb med modsat fortegn: afkøling og sammentrækning,
+indstrømning i højden og stigende bundtryk, og til sidst nedsynkning i midten,
+udstrømning ved jorden og opstigning over siderne.
+
 Figuren tegner fem trykflader (900–500 hPa) og en stiplet 5 km-linje. H/L ved
 5 km og ved jorden er relative til nabosøjlerne i samme højde. Lavt nede
-ender trykfladerne med at ligge lavest i midten, højt oppe højest.
+ender trykfladerne i lavtrykket med at ligge lavest i midten, højt oppe højest;
+i højtrykket omvendt.
 
 ## Model
 
-`model.js`: tre tørre, isoterme, hydrostatiske søjler med samme tværsnit.
+`model.js`: `beregn(opvarmning, overfoersel)` tager andele fra −1 til 1;
+negative værdier er højtrykket. Tre tørre, isoterme, hydrostatiske søjler med samme tværsnit.
 `p(z) = p₀ exp(−gz/RT)`, R = 287,05 J/(kg K), g = 9,81 m/s².
 Alle starter med 1.000 hPa ved jorden og 288,15 K. Midtersøjlen opvarmes
-fast med 20 K (15 → 35 °C). En foreskrevet masseoverførsel sænker dens
-bundtryk med 10 hPa, og hver kølig søjle får 5 hPa, så summen af bundtryk —
+fast med 20 K (15 → 35 °C) eller afkøles med 20 K (15 → −5 °C). En foreskrevet
+masseoverførsel ændrer dens bundtryk med ∓10 hPa, og hver sidesøjle får ±5 hPa, så summen af bundtryk —
 og dermed massen — er konstant. Den lodrette akse (0–6,9 km) er målfast;
 trykfladernes løft er altså ikke overdrevet.
 
@@ -42,7 +54,7 @@ Figuren tegnes som SVG i containerens faktiske pixelstørrelse, så tekst har
 samme størrelse på mobil og projektor. En skjult tekst giver skærmlæsere
 trykket i hvert trin. Ingen ekstern JavaScript-afhængighed.
 
-`node geografi/termisk-lavtryk/model.test.mjs` kontrollerer massebevarelse,
+`node geografi/termiske-tryk/model.test.mjs` kontrollerer for begge retninger massebevarelse,
 uændret bundtryk før massetab, løft af trykfladerne, begge trykgradienter og
 uafhængige kontroltal.
 

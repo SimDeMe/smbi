@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Termiske tryk — smbi.dk</title>
+  <meta name="description" content="Skift mellem termisk lavtryk og højtryk: se trykfladerne løfte sig over varm og synke over kold luft, luften strømme i højden og trykket ændre sig ved jorden.">
+  <link rel="canonical" href="https://smbi.dk/geografi/termiske-tryk/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css">
+  <script type="module" src="simulation.js"></script>
+</head>
+<body>
+  <header><div class="regnbue"></div><nav aria-label="Navigation"><a class="brand" href="/">smbi<span>.dk</span></a><span>NATURGEOGRAFI</span><a href="/geografi.html">← Geografi</a></nav></header>
+  <main>
+    <div class="titel">
+      <div><p class="overlinje">Vejr &amp; klima · tre luftsøjler</p><h1>Termiske tryk</h1></div>
+      <button id="fokus" class="lille" aria-pressed="false">Fokus</button>
+    </div>
+    <section class="laboratorium" aria-label="Simulation af termisk lavtryk og højtryk">
+      <div class="figur" id="figur" role="img" aria-label="Tre luftsøjler side om side. Den midterste opvarmes fra jorden." aria-describedby="trykliste">
+        <svg id="tegning" aria-hidden="true"></svg>
+      </div>
+      <aside class="panel">
+        <div class="type" role="group" aria-label="Vælg tryktype">
+          <button data-type="lavtryk" aria-pressed="true"><b>Lavtryk</b><small>opvarmning</small></button>
+          <button data-type="hoejtryk" aria-pressed="false"><b>Højtryk</b><small>afkøling</small></button>
+        </div>
+        <div class="trin" role="group" aria-label="Vælg trin i dannelsen">
+          <button data-trin="0" aria-pressed="true"><i>1</i><span>Ens søjler</span></button>
+          <button data-trin="1" aria-pressed="false"><i>2</i><span>Udvidelse</span></button>
+          <button data-trin="2" aria-pressed="false"><i>3</i><span>Udstrømning</span></button>
+          <button data-trin="3" aria-pressed="false"><i>4</i><span>Lavtryk</span></button>
+        </div>
+        <div class="tekst" aria-live="polite"><h2 id="trin-titel"></h2><p id="trin-tekst"></p></div>
+        <div class="knapper">
+          <button id="afspil" aria-pressed="false"><span aria-hidden="true">▶</span> Afspil</button>
+          <button id="naeste">Næste trin →</button>
+        </div>
+      </aside>
+      <p class="sr" id="trykliste"></p>
+    </section>
+    <div class="forklaring">
+      <p><b>Sådan læses figuren.</b> De tynde linjer er <em>trykflader</em>: højder med samme tryk. Hvor en trykflade ligger højt, er der højt tryk i en given højde. H og L er højere og lavere tryk end i nabosøjlerne i samme højde — i 5 km og ved jorden. Skift øverst i panelet mellem en opvarmet og en afkølet midtersøjle.</p>
+      <details><summary>Om modellen</summary><div class="uddybning">
+        <p>Opvarmning eller afkøling alene ændrer ikke søjlens masse, så trykket ved jorden er uændret i trin 2. Varm luft fylder mere, så trykfladerne løftes, mest højt oppe: højere tryk i 5 km, og luften strømmer ud til siderne. Søjlen mister luft, og bundtrykket falder – et <em>termisk lavtryk</em>. Kold luft fylder mindre, så trykfladerne sænkes: lavere tryk i 5 km, og luft strømmer ind i højden. Søjlen får mere luft, og bundtrykket stiger – et <em>termisk højtryk</em>. I begge tilfælde er trykforskellen ved jorden modsat den i højden.</p>
+        <p>Termiske lavtryk dannes over stærkt opvarmet land, fx ørkener om sommeren. Termiske højtryk dannes over kold jord, fx Sibirien om vinteren og indlandsisen. De er lave: højt oppe ligger der et lavtryk over et termisk højtryk og omvendt. Synkende luft opvarmes ved kompression, så højtryk giver ofte klart og tørt vejr – det er ikke med i modellen.</p>
+        <p>Illustrative modeltal, ikke målinger. Tre tørre, hydrostatiske søjler med ens tværsnit og ens temperatur hele vejen op: p(z) = p₀·exp(−gz/RT). Midtersøjlen opvarmes fra 15 til 35 °C eller afkøles til −5 °C. En foreskrevet ud- eller indstrømning ændrer dens bundtryk med 10 hPa; hver nabosøjle får eller afgiver halvdelen, så den samlede luftmasse bevares. Trinene adskiller processer, der i virkeligheden overlapper. Tid og vind er illustrative; jordrotation, fugt og blanding er udeladt. Lodret akse er målfast.</p>
+        <p>Fagligt grundlag: <a href="https://courses.ems.psu.edu/meteo3/book/export/html/2009">Penn State: temperatur og trykfladers højde</a> og <a href="https://www.nwcg.gov/node/1879833">NWCG: heat low</a>. Termiske højtryk: <a href="https://glossary.ametsoc.org/wiki/Thermal_high/">AMS Glossary: thermal high</a>.</p>
+        <p><a href="/geografi/TermiskTryk3.html">Undersøg også land- og havbrise og monsun →</a></p>
+      </div></details>
+    </div>
+    <noscript><p>Opvarmning udvider luftsøjlen. Først stiger trykket i højden, mens bundtrykket er uændret. Når luft strømmer væk i højden, mister søjlen masse, og bundtrykket falder. Ved afkøling sker det modsatte: luft strømmer ind i højden, og bundtrykket stiger. Slå JavaScript til for at se modellen.</p></noscript>
+  </main>
+</body>
+</html>

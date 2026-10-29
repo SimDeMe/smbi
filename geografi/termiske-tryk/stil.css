@@ -29,6 +29,15 @@ h1{font:800 clamp(22px,3vw,30px)/1.1 var(--display);letter-spacing:-.035em;margi
 .figur text{font-family:var(--mono)}
 
 .panel{display:flex;flex-direction:column;gap:12px;padding:12px 14px;border-left:2px solid var(--blaek);background:var(--papir)}
+.type{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--blaek);border-radius:7px;overflow:hidden}
+.type button{display:flex;flex-direction:column;align-items:center;gap:0;border:0;border-radius:0;box-shadow:none;padding:5px 6px;min-height:44px;line-height:1.15}
+.type button+button{border-left:1.5px solid var(--blaek)}
+.type small{font:500 11px var(--mono);color:var(--daempet)}
+.type button[data-type=lavtryk][aria-pressed=true]{background:#f9dcc0}
+.type button[data-type=hoejtryk][aria-pressed=true]{background:#cfe0ee}
+.type button[aria-pressed=true] small{color:var(--blaek)}
+.type button[aria-pressed=false] b{font-weight:600}
+.type button:active{transform:none}
 .trin{display:flex;flex-direction:column;gap:3px}
 .trin button{display:flex;align-items:center;gap:10px;text-align:left;box-shadow:none;border-color:transparent;background:none;padding:4px 8px;min-height:36px}
 .trin button:hover{background:#e3f0f5}
