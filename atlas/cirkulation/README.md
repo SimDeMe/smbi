@@ -15,7 +15,9 @@ videre hertil.
   ikke er eneste signal. På pause vises faste vindpile i stedet.
 - ITK som et glødende bælte, der vandrer med måneden; svagt ørkenbånd på land
   ved højtrykkene. Solen står ved sin bredde med en stråle ind mod kloden.
-- Snit fra Sydpol til Nordpol: seks celler (to uden rotation) som ellipser
+- Snit fra Sydpol til Nordpol som i lærebogen: et tyndt lag under en
+  tropopause (16 km ved ITK, 8 km ved polerne) med seks celler (to uden
+  rotation) som flade, afrundede løkker
   med løbende prikker, L ↑ / H ↓ ved jorden og tordensky ved ITK.
 - Cellerne på globussen: gennemsigtige bælter (Hadley, Ferrel, polar) og
   luftringe – hver celle som en gennemsigtig 3D-«donut» rundt om jordaksen
