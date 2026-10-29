@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Termisk lavtryk — smbi.dk</title>
+  <meta name="description" content="Skru op for solvarmen, og se hvordan opstigende luft, udstrømning i højden og vind ved jorden danner et termisk lavtryk.">
+  <link rel="canonical" href="https://smbi.dk/geografi/termisk-lavtryk/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="stil.css">
+  <script type="module" src="simulation.js"></script>
+</head>
+<body>
+  <header>
+    <div class="regnbue"></div>
+    <nav aria-label="Navigation"><a class="brand" href="/">smbi<span>.dk</span></a><span>NATURGEOGRAFI</span><a href="/geografi.html">← Geografi</a></nav>
+  </header>
+  <main>
+    <div class="titel"><div><p class="overlinje">Vejr &amp; klima · en enkel principmodel</p><h1>Hvordan dannes et termisk lavtryk?</h1></div><button id="fokus" aria-pressed="false">Fokus</button></div>
+    <section class="laboratorium" aria-label="Simulation af et termisk lavtryk">
+      <div class="figurhoved"><span>Et snit gennem atmosfæren</span><span id="tilstand" role="status">Jorden varmes op</span></div>
+      <div class="figur" role="img" aria-label="Luftens kredsløb" aria-describedby="figurtekst">
+        <svg viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="himmel" x2="0" y2="1"><stop stop-color="#e8f1f0"/><stop offset="1" stop-color="#fcf9ec"/></linearGradient>
+            <radialGradient id="varmeglod"><stop stop-color="#efac65" stop-opacity=".65"/><stop offset="1" stop-color="#efac65" stop-opacity="0"/></radialGradient>
+            <marker id="pil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="context-stroke" stroke-width="2"/></marker>
+          </defs>
+          <path fill="url(#himmel)" d="M0 0h800v400H0z"/>
+          <ellipse id="varmefelt" cx="400" cy="320" rx="180" ry="190" fill="url(#varmeglod)"/>
+          <path fill="#d9d3b7" d="M0 358Q200 347 400 358T800 358V400H0Z"/>
+          <path d="M0 358Q200 347 400 358T800 358" fill="none" stroke="#293c38" stroke-width="2"/>
+          <path id="jordvarme" d="M300 359Q400 354 500 359" fill="none" stroke="#d37635" stroke-width="8"/>
+          <g id="stroemme" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+            <path id="op" d="M400 200L400 95" stroke="#b5502d" marker-end="url(#pil)"/>
+            <path id="ud-v" d="M400 95Q320 65 190 95" stroke="#b5502d" marker-end="url(#pil)"/>
+            <path id="ud-h" d="M400 95Q480 65 610 95" stroke="#b5502d" marker-end="url(#pil)"/>
+            <path id="ned-v" d="M150 115Q95 200 150 290" stroke="#337b96" stroke-dasharray="7 9" marker-end="url(#pil)"/>
+            <path id="ned-h" d="M650 115Q705 200 650 290" stroke="#337b96" stroke-dasharray="7 9" marker-end="url(#pil)"/>
+            <path id="ind-v" d="M170 320Q265 335 355 320" stroke="#337b96" marker-end="url(#pil)"/>
+            <path id="ind-h" d="M630 320Q535 335 445 320" stroke="#337b96" marker-end="url(#pil)"/>
+          </g>
+          <g id="partikler"></g>
+        </svg>
+        <div class="etiket ud"><b>2</b><span>Luft strømmer ud i højden</span></div>
+        <div class="etiket op"><b>1</b><span>Varm luft stiger</span></div>
+        <div class="tryk"><strong id="trykbogstav">L</strong><span id="trykord">Lavere tryk</span></div>
+        <div class="etiket ind"><b>3</b><span>Vind ind mod lavtrykket</span></div>
+        <span class="omgivelse venstre">Køligere<br>omgivelser</span><span class="omgivelse hoejre">Køligere<br>omgivelser</span>
+        <span class="jord">Jordoverflade</span>
+      </div>
+      <div class="betjening">
+        <label for="varme">Opvarmning af jorden <output id="varmetal" for="varme">65 %</output><input id="varme" type="range" min="0" max="100" value="65"><span class="akse"><span>Ingen</span><span>Kraftig</span></span></label>
+        <div class="knapper"><button id="sluk">Sluk varmen</button><button id="pause" aria-pressed="false">Pause</button><button id="nulstil">Nulstil</button></div>
+      </div>
+      <p id="figurtekst" class="aflaesning" aria-live="polite"></p>
+    </section>
+    <div class="forklaring">
+      <p><b>Hvorfor falder trykket?</b> Varm luft udvider sig og får lavere tæthed. Når luft strømmer væk i højden, bliver der mindre luftmasse i søjlen over den varme jord. Så falder trykket ved jorden, og luft strømmer ind fra omgivelserne.</p>
+      <details><summary>Undersøg modellen og dens begrænsninger</summary><div class="uddybning"><p><b>Prøv:</b> Nulstil, skru helt op og følg rækkefølgen. Sluk derefter varmen. Forsvinder lavtrykket med det samme?</p><p>Opvarmning alene fjerner ikke luftmasse. Udstrømningen i højden er afgørende for trykfaldet. Luften, der strømmer ind ved jorden, begrænser trykfaldet; ved vedvarende opvarmning kan strømningen fortsætte i en omtrent stabil tilstand.</p><p>Dette er en kvalitativ animation med forsinket respons, ikke en beregning af vejret. Pile og prikker viser retning; afstande, hastigheder og tid er ikke målfast. Returstrømmen i omgivelserne er idealiseret. Jordens rotation, fugt, skyer og nedbør er udeladt.</p><p>Fagligt grundlag: <a href="https://www.nwcg.gov/node/1879833">NWCG: heat low</a> og <a href="https://www.weather.gov/source/zhu/ZHU_Training_Page/Miscellaneous/Divergence/divergence.html">NWS: luftmassens balance og tryk</a>.</p><p><a href="/geografi/TermiskTryk3.html">Undersøg også land- og havbrise og monsun →</a></p></div></details>
+    </div>
+    <noscript><p>Slå JavaScript til for at bruge simulationen. Opvarmning får luft til at stige. Udstrømning i højden mindsker luftmassen over området og sænker trykket ved jorden. Luft strømmer ind mod lavtrykket.</p></noscript>
+  </main>
+</body>
+</html>
