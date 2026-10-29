@@ -14,7 +14,8 @@ export const steder = [
     id: 'nordatlanten', navn: 'Grønland / Nordatlanten', kortnavn: 'Nordatlanten', koordinater: [-37, 58],
     forklaring: 'I Nordatlanten kan afkøling og høj saltholdighed gøre havvand tungere og bidrage til dannelsen af dybvand.',
     modelnote: 'Regionalt eksempel – markøren angiver ikke ét nedsynkningspunkt.',
-    forbehold: 'Markøren angiver en region syd for Grønland, ikke et enkelt nedsynkningspunkt. Grønlandspumpen er en idealiseret model af dele af havcirkulationen.'
+    forbehold: 'Markøren angiver en region syd for Grønland, ikke et enkelt nedsynkningspunkt. Grønlandspumpen er en idealiseret model af dele af havcirkulationen.',
+    modeller: ['havstroemme']
   },
   {
     id: 'stillehavet', navn: 'Det tropiske Stillehav', kortnavn: 'ENSO · Stillehavet', koordinater: [-145, 0],
@@ -61,6 +62,10 @@ export const modeller = [
   { id: 'global-cirkulation', titel: 'Global cirkulation', emne: 'Global atmosfære', niveau: 'Naturgeografi C / B', steder: [],
     beskrivelse: 'Følg vinden på en levende globus. Skift årstid, stop Jordens rotation, og undersøg passat, ITK og monsun.',
     sti: '/atlas/cirkulation/', soegeord: 'vind tryk hadley ferrel polar coriolis monsun passat atmosfære ITK' },
+  { id: 'havstroemme', titel: 'Havstrømme', emne: 'Havcirkulation', niveau: 'Naturgeografi C / B', steder: [],
+    beskrivelse: 'Følg varme og kolde strømme på en globus. Se vinden drive hvirvlerne, slip en flaskepost, og følg transportbåndet ned i dybet.',
+    modelnote: 'Skematiske hovedstrømme · relativ fart',
+    sti: '/atlas/havstroemme/', soegeord: 'havstrømme golfstrømmen hvirvel gyre humboldt benguela kuroshio agulhas varm kold strøm termohalin transportbånd amoc dybvand flaskepost hav' },
   { id: 'pladegraenser', titel: 'Pladegrænser', emne: 'Pladetektonik', niveau: 'Naturgeografi C / B', steder: ['island'],
     beskrivelse: 'Undersøg spredning, subduktion og bevaring ved forskellige pladegrænser.',
     sti: '/geografi/pladegraenser.html', soegeord: 'tektonik kontinenter jordskælv ryg' },

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Havstrømme — smbi.dk</title>
+  <meta name="description" content="Interaktiv globus med havets overfladestrømme: varme og kolde strømme, målt havtemperatur, vinden som drivkraft, hvirvlerne, Golfstrømmen og det termohaline transportbånd.">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="canonical" href="https://smbi.dk/atlas/havstroemme/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="havstroemme.css">
+  <script defer src="../vendor/d3-array.min.js"></script>
+  <script defer src="../vendor/d3-geo.min.js"></script>
+  <script defer src="../vendor/topojson-client.min.js"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="spring" href="#globus">Spring til globussen</a>
+  <header class="site-header">
+    <div class="regnbue"></div>
+    <div class="site-linje">
+      <div class="identitet">
+        <a class="brand" href="/" aria-label="smbi.dk — forside"><span aria-hidden="true"></span>smbi<small>.dk</small></a>
+        <h1>Havstrømme</h1>
+      </div>
+      <a href="/atlas/">← Atlas</a>
+    </div>
+  </header>
+
+  <main class="lab">
+    <div class="visninger">
+      <section class="globusfelt" aria-label="Globus med havstrømme">
+        <div class="overskrift">
+          <p class="aflaesning" id="aflaesning"><span id="globushjaelp">Peg på havet for at aflæse strømmen · træk for at dreje</span></p>
+          <span class="maerkat">Skematisk · ikke målfast</span>
+        </div>
+        <canvas id="globus" tabindex="0" aria-describedby="globushjaelp"
+          aria-label="Globus med havstrømme som løbende spor. Træk eller brug piletasterne for at dreje. Enter slipper en flaskepost midt på globussen, når flaskeposten er valgt."></canvas>
+        <div class="signatur" aria-label="Signatur">
+          <span><i style="--f:#ff9a76"></i>Varm strøm</span>
+          <span><i style="--f:#7cc8ff"></i>Kold strøm</span>
+          <span><i style="--f:#d7e8cc"></i>Hverken varm eller kold</span>
+          <span class="vind"><i class="stiplet" style="--f:#f6e7b8"></i>Vind ved jorden</span>
+          <span class="baand"><i class="tyk" style="--f:#ff8a5c"></i>Transportbånd, overflade</span>
+          <span class="baand"><i class="tyk" style="--f:#5d8ff0"></i>Transportbånd, dybt</span>
+          <span class="temp">Havtemperatur, årsmiddel <i class="skala" id="tempskala"></i></span>
+        </div>
+        <p class="ballontip" id="flasketip" hidden>Klik på havet for at slippe en flaskepost</p>
+        <p class="fejl" id="fejl" role="status" hidden></p>
+      </section>
+
+      <aside class="side">
+        <section class="historie" aria-labelledby="trin-titel" aria-live="polite">
+          <div class="trinhoved">
+            <span id="trin-nr">1 / 5</span>
+            <div class="prikker" id="prikker"></div>
+            <div class="pile">
+              <button id="forrige" aria-label="Forrige trin">←</button>
+              <button id="naeste" aria-label="Næste trin">→</button>
+            </div>
+          </div>
+          <h2 id="trin-titel"></h2>
+          <p id="trin-tekst"></p>
+          <p class="proev"><b>Prøv:</b> <span id="trin-proev"></span></p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="betjening">
+      <div class="kontakter">
+        <button id="vind" class="kontakt" aria-pressed="false" title="Vinden ved jorden fra cirkulationsmodellen"><span class="vippe" aria-hidden="true"></span>Vind</button>
+        <button id="hvirvler" class="kontakt" aria-pressed="false" title="De fem store hvirvler i oceanerne"><span class="vippe" aria-hidden="true"></span>Hvirvler</button>
+        <button id="baand" class="kontakt" aria-pressed="false" title="Den termohaline cirkulation: overfladegren og dybgren"><span class="vippe" aria-hidden="true"></span>Transportbånd</button>
+        <button id="havtemp" class="kontakt" aria-pressed="false" title="Målt havoverfladetemperatur, årsmiddel 1991–2020 (NOAA OISST)"><span class="vippe" aria-hidden="true"></span>Havtemperatur</button>
+        <button id="etiketter" class="kontakt" aria-pressed="true"><span class="vippe" aria-hidden="true"></span>Navne</button>
+      </div>
+      <div class="handlinger">
+        <button id="flaske" class="ballon" aria-pressed="false">Slip en flaskepost</button>
+        <button id="om" aria-haspopup="dialog">Om modellen</button>
+        <button id="pause" aria-pressed="false">❚❚ <span>Pause</span></button>
+        <button id="fokus" aria-pressed="false" title="Skjul sidehovedet" aria-label="Fokus: skjul sidehovedet">⤢</button>
+      </div>
+    </div>
+  </main>
+  <dialog id="om-dialog" class="om" aria-labelledby="om-titel">
+    <h2 id="om-titel">Om modellen</h2>
+    <p>Strømmene er generaliserede hovedlinjer som på et lærebogskort. «Varm» og «kold» betyder varmere eller koldere end vandet omkring. Sporenes fart er kun relativ: de vestlige randstrømme (Golfstrømmen, Kuroshio, Agulhas) er hurtigst. Monsunens skiftende strømme i det nordlige Indiske Ocean, hvirvler og strømme i Ishavet og alle mindre strømme er udeladt. Vinden er cirkulationsmodellens skematiske vind ved jævndøgn. Havtemperaturen er derimod målt: årsmiddel af havoverfladens temperatur 1991–2020 fra NOAA OISST v2 (satellit og skibe, 1°-gitter); under havis er den sat til frysepunktet. Transportbåndet er en stærkt forenklet tegning af den termohaline cirkulation; i virkeligheden blandes vandet og deler sig på mange måder.</p>
+    <p>Kilder: NOAA Ocean Service om havstrømme og transportbåndet; NOAA PSL, OISST v2 (Reynolds m.fl. 2002); L.D. Talley m.fl., <i>Descriptive Physical Oceanography</i> (2011).</p>
+    <form method="dialog"><button>Luk</button></form>
+  </dialog>
+  <p class="skjult" id="meddelelse" aria-live="polite"></p>
+  <noscript><p>Modellen kræver JavaScript. Vinden driver havets overfladestrømme. Kontinenterne og Corioliseffekten bøjer dem til store hvirvler, med uret på den nordlige halvkugle og mod uret på den sydlige. Koldt, salt vand synker ved Grønland og Antarktis og driver det termohaline transportbånd.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Havoverfladetemperatur, årsmiddel
+=================================
+NOAA OI SST V2 (Optimum Interpolation Sea Surface Temperature), NOAA Physical
+Sciences Laboratory. Månedlige normaler 1991–2020 på 1°-gitter samt
+land/hav-maske. Hentet 29. oktober 2026:
+https://psl.noaa.gov/thredds/fileServer/Datasets/noaa.oisst.v2/sst.ltm.1991-2020.nc
+https://psl.noaa.gov/thredds/fileServer/Datasets/noaa.oisst.v2/lsmask.nc
+https://psl.noaa.gov/data/gridded/data.noaa.oisst.v2.html
+Reynolds et al. (2002), An improved in situ and satellite SST analysis for
+climate, Journal of Climate 15, 1609–1625.
+NOAA-data er offentligt tilgængelige; angiv NOAA PSL som dataleverandør.
+
+Satellit- og skibsmålinger samlet ved optimal interpolation. Under havis er
+værdien sat til frysepunktet (ca. −1,8 °C). Årsmiddel = gennemsnit af de tolv
+månedsnormaler, afrundet til 0,1 °C; interval −1,8 til 29,9 °C. Ingen
+interpolation: cellemidter −179,5…179,5 °Ø og 89,5…−89,5 °N (360 × 180).
+Script: havtemperatur.py, numpy + netCDF4; råfilerne gives som argumenter.
+Format efter gzip: SST1 + uint16 LE (360,180) + 180*360 int16 LE, tiendedele
+°C, række for række fra nord; −32768 = land.

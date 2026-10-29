@@ -2199,7 +2199,8 @@ document.querySelector('#havstroemopgave').onclick=()=>{
  aabn('Havstrømme og Grønlandspumpen');
  indhold.append(element('p','Følg Golfstrømmen og den nordatlantiske strøm mod Norge. Sammenlign Europas og Canadas temperaturer på samme breddegrad. Find kolde strømme ved vestkysterne af Sydamerika og det sydlige Afrika, og sammenlign med nedbør og klimazoner.'));
  indhold.append(element('p','Varme og kolde strømme angiver temperatur i forhold til omgivelserne. Pilene viser generaliseret retning; bredde og længde viser ikke hastighed eller transport. Vind driver en stor del af overfladecirkulationen. Afkøling og forskelle i saltholdighed bidrager til dybvandsdannelse i Nordatlanten, ofte kaldt Grønlandspumpen. AMOC omfatter også en dyb returstrøm, som dette overfladekort ikke viser. Golfstrømmen og AMOC er ikke det samme. Monsunens sæsonstrømme i det nordlige Indiske Ocean er udeladt.'));
- klimaKilde('https://www.noaa.gov/education/resource-collections/ocean-coasts/ocean-currents','NOAA: havstrømme');
+ klimaKilde('./havstroemme/','Åbn havstrømsmodellen');
+ klimaKilde('https://www.noaa.gov/education/resource-collections/ocean-coasts/ocean-currents',' · NOAA: havstrømme');
  klimaKilde('https://www.aoml.noaa.gov/moc/',' · NOAA: AMOC');
 };
 
