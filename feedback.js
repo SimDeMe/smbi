@@ -86,6 +86,13 @@ var CSS = [
 '  border-radius:12px;padding:2px 8px;line-height:1.7;',
 '  position:relative;z-index:2;transition:background .15s,color .15s}',
 '.fb-knap:hover{background:var(--ink,#17211F);color:#FFF6E0}',
+/* Værtspladsen i en header: står den direkte i atlassets .site-linje, holder
+   den sig ved logoet, så højresidens link bliver i højre side. */
+'[data-feedback-vaert]{display:inline-flex;align-items:center}',
+'.site-linje>[data-feedback-vaert]{margin-right:auto}',
+/* Sidens egne knapregler (min-højde, skygge) skal ikke gøre den til en stor knap. */
+'[data-feedback-vaert] .fb-knap{min-height:0;min-width:0;width:auto;box-shadow:none;white-space:nowrap}',
+'@media(max-width:500px){[data-feedback-vaert] .fb-knap{letter-spacing:0.02em;padding:2px 6px}}',
 /* Knappen i simuleringens .rig-head låner sidens egen .btn-mini og skal
    bare holde sig væk fra tavlen. */
 'body[data-projektor="1"] .fb-knap-rig{display:none}',

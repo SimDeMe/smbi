@@ -17,7 +17,7 @@
   <script type="module" src="enso/app.js"></script>
 </head>
 <body>
-  <header class="site-header"><a class="brand" href="/">smbi<span>.dk</span></a><a href="/geografi.html">← Naturgeografi</a><span class="header-note">ET INTERAKTIVT KLIMALABORATORIUM</span><button id="fokus" aria-pressed="false">Fokusvisning ↗</button></header>
+  <header class="site-header"><a class="brand" href="/">smbi<span>.dk</span></a><a href="/geografi.html">← Naturgeografi</a><span class="header-note">ET INTERAKTIVT KLIMALABORATORIUM</span><div data-feedback-vaert></div><button id="fokus" aria-pressed="false">Fokusvisning ↗</button></header>
   <main>
     <div class="intro"><div><p class="eyebrow">HAV + ATMOSFÆRE <span>01 / ENSO</span></p><h1>Et hav, der ændrer vejret.</h1></div><p>Skru på vinden. Flyt varmen.<br>Opdag El Niño og La Niña.</p></div>
     <section class="laboratorium" aria-label="ENSO-simulering">
@@ -58,5 +58,6 @@
   </main>
   <dialog id="begrebsdialog" aria-labelledby="dialogtitel"><button id="luk-dialog" class="luk" aria-label="Luk forklaring">×</button><p class="eyebrow" id="dialogkategori">FORSTÅ PROCESSEN</p><h2 id="dialogtitel"></h2><p id="dialogtekst"></p><div class="i-modellen"><strong>Se det i simuleringen</strong><p id="dialogtip"></p></div><div class="dialogbund"><span id="guide-trin"></span><button id="guide-naeste" class="primaer" hidden>Næste →</button></div></dialog>
   <noscript>Denne simulering kræver JavaScript for at vise havets udvikling. Slå JavaScript til, eller læs modellens forklaring og kilder nederst på siden.</noscript>
+  <script src="/feedback.js" defer></script>
 </body>
 </html>
