@@ -96,6 +96,20 @@
   }
   .countsub{color:var(--ink-40);font-size:13px;letter-spacing:.3px;position:relative;}
 
+  /* afvigelse fra tidsplanen */
+  .plan{
+    display:inline-flex;align-items:center;gap:7px;position:relative;
+    margin-top:10px;padding:4px 12px;border-radius:99px;
+    border:1px solid var(--hair);background:var(--panel-2);
+    font-size:13px;color:var(--ink-60);letter-spacing:.2px;
+  }
+  .plan[hidden]{display:none;}
+  .plan::before{content:"";width:8px;height:8px;border-radius:99px;background:var(--pc,var(--neutral));}
+  .plan b{font-weight:600;color:var(--ink);}
+  .plan.paa{--pc:var(--green);}
+  .plan.bag{--pc:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%, transparent);}
+  .plan.foran{--pc:var(--blue);}
+
   /* phase progress */
   .bar{
     position:relative;height:6px;border-radius:99px;background:var(--panel-2);
@@ -143,6 +157,14 @@
   }
   .controls .primary:hover{filter:brightness(1.06);}
   button:disabled{opacity:.4;cursor:not-allowed;}
+
+  /* automatisk næste elev */
+  .auto{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    margin-top:16px;position:relative;color:var(--ink-60);font-size:14px;cursor:pointer;
+  }
+  .auto input{width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer;}
+  .auto input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
   /* timeline */
   .timeline{margin-top:26px;}
@@ -238,7 +260,6 @@
       <p>MUNDTLIG EKSAMEN</p>
     </div>
     <div class="clock" id="clock">kl. --.--.--</div>
-    <button class="iconbtn" id="muteBtn" aria-label="Lyd til/fra" title="Lyd">🔊</button>
     <button class="iconbtn" id="fsBtn" aria-label="Fuld skærm" title="Fuld skærm">⤢</button>
     <button class="iconbtn" id="setBtn" aria-label="Indstillinger" title="Indstillinger">⚙</button>
   </div>
@@ -248,6 +269,7 @@
     <div class="instruct" id="instruct">Tryk start, når eleven er klar</div>
     <div class="count" id="count">24:00</div>
     <div class="countsub" id="countsub">samlet eksamenstid</div>
+    <div class="plan" id="plan" role="status" hidden></div>
 
     <div class="bar"><i id="phaseBar"></i></div>
 
@@ -268,6 +290,11 @@
       <button id="skipBtn" disabled>Næste fase</button>
       <button id="resetBtn" disabled>Nulstil</button>
     </div>
+
+    <label class="auto">
+      <input type="checkbox" id="autoNext">
+      Start næste elev automatisk, når voteringen er slut
+    </label>
   </div>
 
   <div class="timeline">
@@ -348,8 +375,6 @@
   let state = "idle";
   let startEpoch = 0;       // effective start (Date.now ms) such that elapsed = (now-startEpoch)/1000
   let pausedElapsed = 0;    // frozen elapsed while paused
-  let lastPhaseIdx = -1;    // for transition detection
-  let lastSecsLeft = Infinity;
 
   // ---- wake lock ----
   let wakeLock = null;
@@ -368,32 +393,16 @@
     if (document.visibilityState === "visible" && state === "running") acquireWakeLock();
   });
 
-  // ---- audio ----
-  let audioCtx = null, muted = false;
-  function ensureAudio(){
-    if (!audioCtx){
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch(e){ audioCtx = null; }
-    }
-    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-  }
-  function tone(freq, dur, when=0, vol=0.28){
-    if (muted || !audioCtx) return;
-    const t = audioCtx.currentTime + when;
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = "sine"; osc.frequency.value = freq;
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(vol, t+0.012);
-    g.gain.setValueAtTime(vol, t+dur-0.04);
-    g.gain.linearRampToValueAtTime(0, t+dur);
-    osc.connect(g).connect(audioCtx.destination);
-    osc.start(t); osc.stop(t+dur+0.02);
-  }
-  const warnSoft = () => tone(660,0.13,0,0.22);
-  const warnTwice = () => { tone(660,0.12); tone(660,0.12,0.18); };
-  function transitionChime(){ tone(740,0.16); tone(988,0.16,0.18); tone(1319,0.34,0.36,0.32); }
-  function finishChime(){ tone(880,0.18); tone(660,0.18,0.2); tone(880,0.4,0.4,0.32); }
+  // ---- automatisk næste elev ----
+  let autoNext = false;
+  try { autoNext = localStorage.getItem("censorur-auto") === "1"; } catch(e) {}
+  let elevNr = 1;
+
+  // ---- tidsplan ----
+  // Hver elev har krav på den fulde eksamenstid. Planen er: elev n slutter
+  // planStart + n · planDur. Forsinkelse = forventet slut − planlagt slut.
+  let planStart = 0;                  // ms, da første elev startede
+  let planDur = 0;                    // s, normal eksamenstid pr. elev
 
   // ---- elements ----
   const $ = id => document.getElementById(id);
@@ -401,7 +410,7 @@
         countEl=$("count"), subEl=$("countsub"), barEl=$("phaseBar"),
         nextMsgEl=$("nextMsg"), nextAtEl=$("nextAt"), rowsEl=$("rows"),
         startBtn=$("startBtn"), skipBtn=$("skipBtn"), resetBtn=$("resetBtn"),
-        plusBtn=$("plus"), minusBtn=$("minus");
+        plusBtn=$("plus"), minusBtn=$("minus"), autoEl=$("autoNext"), planEl=$("plan");
 
   // ---- helpers ----
   const pad = n => String(n).padStart(2,"0");
@@ -448,6 +457,29 @@
 
   function setPhaseTheme(key){ root.dataset.phase = key; }
 
+  // sekunder bagud (+) eller foran (−) i forhold til planen
+  function planAfvigelse(){
+    const nu = Date.now();
+    if (state === "done")                 // næste elev kunne have startet ved planlagt slut
+      return (nu - (planStart + elevNr*planDur*1000)) / 1000;
+    const forventetSlut = nu + (totalDur() - currentElapsed())*1000;
+    return (forventetSlut - (planStart + elevNr*planDur*1000)) / 1000;
+  }
+  function paintPlan(){
+    if (state === "idle"){ planEl.hidden = true; return; }
+    planEl.hidden = false;
+    const d = planAfvigelse();
+    const min = Math.round(Math.abs(d)/60);
+    planEl.classList.toggle("paa", min === 0);
+    planEl.classList.toggle("bag", min > 0 && d > 0);
+    planEl.classList.toggle("foran", min > 0 && d < 0);
+    planEl.innerHTML = min === 0 ? "Følger planen"
+      : "<b>" + min + " min</b>" + (d > 0 ? "bagud" : "foran") + " planen";
+    planEl.title = "Planlagt slut for elev " + (state==="done" ? elevNr+1 : elevNr) + ": kl. " +
+      new Date(planStart + (state==="done" ? elevNr+1 : elevNr)*planDur*1000)
+        .toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
+  }
+
   // ---- main render loop ----
   function tick(){
     const now = new Date();
@@ -468,6 +500,7 @@
       nextAtEl.textContent = "";
       root.classList.remove("urgent");
       paintRows(-1, []);
+      paintPlan();
       return;
     }
 
@@ -476,12 +509,14 @@
       phaseEl.textContent = "Færdig";
       instrEl.textContent = "Kald næste elev ind";
       countEl.textContent = "00:00";
-      subEl.textContent = "tryk nulstil til næste elev";
+      subEl.textContent = "tryk start til næste elev";
       barEl.style.width = "100%";
       nextMsgEl.textContent = "Klar til en ny elev";
-      nextAtEl.textContent = "";
+      nextAtEl.textContent = "elev " + (elevNr+1) + " planlagt kl. " +
+        new Date(planStart + elevNr*planDur*1000).toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
       root.classList.remove("urgent");
       paintRows(phases.length, b);
+      paintPlan();
       return;
     }
 
@@ -489,40 +524,36 @@
     const loc = locate(elapsed);
     const p = phases[loc.idx];
 
-    // transition / warning detection (only while running)
-    if (state === "running"){
-      if (loc.idx !== lastPhaseIdx){
-        if (lastPhaseIdx !== -1){           // a real phase change happened
-          (loc.idx >= phases.length-1 && elapsed >= b[b.length-1]) ? null : transitionChime();
-        }
-        lastPhaseIdx = loc.idx;
-        lastSecsLeft = Infinity;
+    // reached the very end?
+    if (state === "running" && elapsed >= b[b.length-1]){
+      if (autoNext){
+        // næste elev starter straks; tid ud over slutningen tæller med,
+        // så uret ikke driver, og justeringer (± 1 min) gælder kun én elev
+        const overskud = elapsed - b[b.length-1];
+        phases = buildPhases(); renderRows();
+        startEpoch = Date.now() - overskud*1000;
+        elevNr++;
+        return tick();
       }
-      const secsLeft = Math.ceil(loc.remaining);
-      if (secsLeft <= 30 && lastSecsLeft > 30) warnSoft();
-      if (secsLeft <= 10 && lastSecsLeft > 10) warnTwice();
-      lastSecsLeft = secsLeft;
-
-      // reached the very end?
-      if (elapsed >= b[b.length-1]){
-        state = "done";
-        finishChime();
-        releaseWakeLock();
-        syncButtons();
-      }
+      state = "done";
+      releaseWakeLock();
+      syncButtons();
+      return tick();
     }
 
     setPhaseTheme(p.key);
     phaseEl.textContent = p.name;
     instrEl.textContent = p.instruct + (state==="paused" ? " · på pause" : "");
     countEl.textContent = fmt(loc.remaining);
-    subEl.textContent = "tilbage af " + (p.key==="oplaeg"?"oplægget":p.name.toLowerCase());
+    subEl.textContent = "tilbage af " + (p.key==="oplaeg"?"oplægget":p.name.toLowerCase()) + " · elev " + elevNr;
 
     const phaseLen = loc.boundary - loc.prevB;
     const phaseDone = phaseLen>0 ? (elapsed - loc.prevB)/phaseLen : 1;
     barEl.style.width = Math.min(100, Math.max(0, phaseDone*100)) + "%";
 
-    nextMsgEl.textContent = p.end;
+    nextMsgEl.textContent = (autoNext && loc.idx === phases.length-1)
+      ? p.name+" slut — næste elev starter automatisk"
+      : p.end;
     nextAtEl.textContent = (state==="running")
       ? "ca. " + atClock(loc.remaining)
       : "— sat på pause —";
@@ -530,6 +561,7 @@
     root.classList.toggle("urgent", state==="running" && loc.remaining <= 10);
 
     paintRows(loc.idx, b);
+    paintPlan();
   }
 
   // update timeline highlight + clock windows
@@ -558,11 +590,15 @@
   }
 
   function start(){
-    ensureAudio();
     if (state==="idle" || state==="done"){
-      if (state==="done") reset(false);
+      if (state==="done"){
+        const nr = elevNr, ps = planStart, pd = planDur;
+        reset(false); elevNr = nr+1; planStart = ps; planDur = pd;
+      } else {
+        planStart = Date.now(); planDur = totalDur();
+      }
       startEpoch = Date.now();
-      state="running"; lastPhaseIdx=-1; lastSecsLeft=Infinity;
+      state="running";
       acquireWakeLock();
     } else if (state==="running"){
       pausedElapsed = currentElapsed(); state="paused";
@@ -575,17 +611,16 @@
   }
   function skip(){
     if (state!=="running" && state!=="paused") return;
-    ensureAudio();
     const b = boundaries();
     const loc = locate(currentElapsed());
     const target = b[loc.idx];                  // jump to end of current phase
     if (state==="paused"){ pausedElapsed = target; }
     else { startEpoch = Date.now() - target*1000; }
-    lastSecsLeft = Infinity;
     tick();
   }
   function reset(repaint=true){
-    state="idle"; startEpoch=0; pausedElapsed=0; lastPhaseIdx=-1; lastSecsLeft=Infinity;
+    state="idle"; startEpoch=0; pausedElapsed=0; elevNr=1;
+    phases=buildPhases(); renderRows();    // ± 1 min gælder kun den elev, der var i gang
     releaseWakeLock();
     syncButtons(); if (repaint) tick();
   }
@@ -617,11 +652,14 @@
     }
   });
 
-  // ---- mute & fullscreen ----
-  $("muteBtn").addEventListener("click", e => {
-    muted = !muted; e.currentTarget.textContent = muted ? "🔇" : "🔊";
-    if (!muted) ensureAudio();
+  autoEl.checked = autoNext;
+  autoEl.addEventListener("change", () => {
+    autoNext = autoEl.checked;
+    try { localStorage.setItem("censorur-auto", autoNext ? "1" : "0"); } catch(e) {}
+    tick();
   });
+
+  // ---- fullscreen ----
   $("fsBtn").addEventListener("click", () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
