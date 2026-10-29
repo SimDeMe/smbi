@@ -4,8 +4,8 @@ Selvstændig, buildfri simulation på `/geografi/termiske-tryk/`, med links fra
 geografibiblioteket og atlasset. Den gamle adresse `/geografi/termisk-lavtryk/`
 viderestiller hertil. En kontakt øverst i panelet skifter mellem **lavtryk**
 (midtersøjlen opvarmes) og **højtryk** (midtersøjlen afkøles); `?tryk=hoejtryk`
-i adressen åbner højtrykket direkte. Skiftet beholder trinnet og glider via de
-ens søjler, så strømningspilene vender roligt.
+i adressen åbner højtrykket direkte. Et skift nulstiller til trin 1 og stopper
+afspilningen.
 
 Tre luftsøjler side om side og fire trin, der kan vælges direkte eller
 afspilles. Lavtryk:

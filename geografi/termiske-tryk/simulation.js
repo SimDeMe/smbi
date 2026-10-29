@@ -179,8 +179,9 @@ function vaelgType(ny) {
   const url = new URL(location.href);
   if (type === 'hoejtryk') url.searchParams.set('tryk', 'hoejtryk'); else url.searchParams.delete('tryk');
   history.replaceState(null, '', url);
-  // Samme trin i den anden type; overgangen går gennem de ens søjler.
-  vaelgTrin(trin, {fraAfspil: afspiller});
+  // Ny type starter forfra med tre ens søjler.
+  nu = [0, 0, 0, 0];
+  vaelgTrin(0);
 }
 function opdaterAfspil() {
   $('afspil').innerHTML = afspiller ? '<span aria-hidden="true">❚❚</span> Pause' : '<span aria-hidden="true">▶</span> ' + (trin === 3 ? 'Afspil igen' : 'Afspil');
