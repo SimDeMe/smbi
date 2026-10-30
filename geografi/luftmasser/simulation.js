@@ -1,132 +1,174 @@
-import { KONFIG, LUFTMASSER, PROFILER, skybase, tilstand, pakketemperatur, omgivelser, fritLoeft } from './model.mjs';
+import { FORLOEB, TRINSEKUNDER, vejrtilstand } from './forloeb.mjs';
 const $ = id => document.getElementById(id);
-const format = (n, decimal = 1) => n.toLocaleString('da-DK', { minimumFractionDigits: decimal, maximumFractionDigits: decimal });
-let profil = 'stabil', massenoegle = 'maritimTropisk', z = 800, hastighed = 0, koersel = 'klar', sidst = null, frame = null;
+const svg = $('landskab'), figur = $('figur');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
-const masse = () => LUFTMASSER[massenoegle];
-function stop(status = 'klar') {
-  cancelAnimationFrame(frame); frame = null; sidst = null; koersel = status;
+let profil = 'stabil', tid = 0, afspiller = !reduceret.matches, frame = null, sidst = null, vistTrin = -1;
+let W = 0, H = 0;
+const slut = TRINSEKUNDER * 4;
+const typer = [...document.querySelectorAll('[data-profil]')];
+const trinknapper = [...document.querySelectorAll('[data-trin]')];
+function trae(x, y, s, farve = '#37685b') {
+  return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0V-25" stroke="#665449" stroke-width="3"/><path d="M-15 -18C-31 -27 -20 -45 -9 -43C-9 -62 17 -61 19 -43C38 -40 31 -18 13 -19Z" fill="${farve}"/><path d="M-5 -44C-16 -39 -18 -29 -11 -27" fill="none" stroke="#96ac78" opacity=".35" stroke-width="4"/></g>`;
 }
-function pil(x, y, retning, laengde, farve) {
-  const ende = y - retning * laengde;
-  return `<path d="M${x} ${y}V${ende}m-5 ${retning * 7} 5 ${-retning * 7} 5 ${retning * 7}" fill="none" stroke="${farve}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+function hus(x, y, s) {
+  return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-17" y="-25" width="34" height="25" fill="#f6e8c8"/><path d="M-23 -25 0 -44 23 -25Z" fill="#a3634f"/><path d="M-16 -25H17" stroke="#774e40" stroke-width="2"/><rect x="-3" y="-15" width="8" height="15" fill="#647776"/><rect x="-12" y="-18" width="5" height="7" fill="#7bafb6"/><rect x="8" y="-18" width="5" height="7" fill="#7bafb6"/></g>`;
 }
-function tegn() {
-  const m = masse(), t = tilstand(z, m, profil), base = skybase(m);
-  const svg = $('landskab'), graf = $('graf');
-  const w = svg.clientWidth, h = svg.clientHeight, gw = graf.clientWidth, gh = graf.clientHeight;
-  if (!w || !h || !gw) return;
-  svg.setAttribute('viewBox', `0 0 ${w} ${h}`); graf.setAttribute('viewBox', `0 0 ${gw} ${gh}`);
-  const smal = w < 240, venstre = smal ? 34 : 48, bund = h - 30, top = 36;
-  const y = hoejde => bund - hoejde / KONFIG.top * (bund - top);
-  const cx = venstre + (w - venstre - 14) * .48, py = y(z), r = (smal ? 17 : 22) + z / 1000 * 1.6;
-  let lag = '', gitter = '';
-  // Temperaturfarver følger absolut temperatur: koldt blåligt, varmt orange.
-  for (let hoejde = 0; hoejde < KONFIG.top; hoejde += 100) {
-    const temp = omgivelser(hoejde + 50, m, profil), varm = Math.max(0, Math.min(1, (temp + 15) / 45));
-    lag += `<rect x="${venstre}" y="${y(hoejde + 100)}" width="${w - venstre - 12}" height="${(bund - top) / 40 + .5}" fill="rgb(${Math.round(170 + 80 * varm)},${Math.round(205 + 8 * varm)},${Math.round(230 - 65 * varm)})"/>`;
-  }
-  for (let hoejde = 0; hoejde <= KONFIG.top; hoejde += 1000) {
-    gitter += `<path d="M${venstre} ${y(hoejde)}H${w - 12}" stroke="#172b2b25"/><text x="${venstre - 7}" y="${y(hoejde) + 4}" text-anchor="end">${hoejde / 1000}</text>`;
-  }
-  const inversion = profil === 'inversion' ? `<rect x="${venstre}" y="${y(800)}" width="${w - venstre - 12}" height="${bund - y(800)}" fill="#ecac5222" stroke="#9b5f26" stroke-dasharray="4 3"/><text x="${venstre + 6}" y="${y(800) + 14}">Inversion</text>` : '';
-  const skylinje = base <= KONFIG.top ? `<path d="M${venstre} ${y(base)}H${w - 12}" stroke="#527c8c" stroke-width="1.5" stroke-dasharray="2 4"/>` : '';
-  const fyld = t.sky ? '#fffdf3' : (t.pakke > 10 ? '#f5b586' : '#b8d9ed');
-  let partikler = '';
-  for (let i = 0; i < 9; i++) {
-    const vinkel = i * 2.39996, radius = Math.sqrt(i / 9) * r * .72;
-    partikler += `<circle cx="${cx + Math.cos(vinkel) * radius}" cy="${py + Math.sin(vinkel) * radius}" r="${t.sky ? 2.8 : 1.7}" fill="${t.sky ? '#668a9b' : '#172b2b'}" opacity=".65"/>`;
-  }
-  const opdrift = Math.abs(t.forskel) > .04 ? pil(Math.min(w - 24, cx + r + 15), py + (t.forskel > 0 ? 10 : -10), Math.sign(t.forskel), Math.min(36, 12 + Math.abs(t.forskel) * 2), '#172b2b') : '';
-  svg.innerHTML = `<text x="${venstre - 7}" y="14" text-anchor="end">km</text>${lag}${gitter}${inversion}${skylinje}<path d="M${venstre} ${py}H${w - 12}" stroke="#172b2b" stroke-dasharray="3 5" opacity=".45"/><circle cx="${cx}" cy="${py}" r="${r}" fill="${fyld}" stroke="#c45524" stroke-width="2.5"/>${partikler}${opdrift}<path d="M${venstre} ${bund + 2}H${w - 12}" stroke="#172b2b" stroke-width="3"/><text x="${cx}" y="${h - 7}" text-anchor="middle">${t.sky ? 'Sky i pakken' : 'Umættet luft'}</text>`;
-  // Begge figurer har samme højdeakse; grafens x-akse tilpasses luftmassen.
-  const gx0 = smal ? 16 : 30, gx1 = gw - 18, gy0 = top, gy1 = gh - 30;
-  const minT = Math.floor((m.temperatur - 45) / 10) * 10, maxT = Math.ceil((m.temperatur + 7) / 10) * 10;
-  const gx = temp => gx0 + (temp - minT) / (maxT - minT) * (gx1 - gx0);
-  const gy = hoejde => gy1 - hoejde / KONFIG.top * (gy1 - gy0);
-  let akser = '';
-  for (let temp = minT; temp <= maxT; temp += smal ? 20 : 10) {
-    akser += `<path d="M${gx(temp)} ${gy0}V${gy1}" stroke="#172b2b18"/><text x="${gx(temp)}" y="${gh - 11}" text-anchor="middle">${temp}</text>`;
-  }
-  for (let hoejde = 0; hoejde <= KONFIG.top; hoejde += 1000) akser += `<path d="M${gx0} ${gy(hoejde)}H${gx1}" stroke="#172b2b20"/>`;
-  const kurve = fn => Array.from({ length: 81 }, (_, i) => `${i ? 'L' : 'M'}${gx(fn(i * 50))},${gy(i * 50)}`).join(' ');
-  const punkter = `<circle cx="${gx(t.pakke)}" cy="${gy(z)}" r="5" fill="#c45524" stroke="#fff9ee" stroke-width="2"/><rect x="${gx(t.ude) - 4}" y="${gy(z) - 4}" width="8" height="8" fill="#172b2b" stroke="#fff9ee" stroke-width="1.5"/>`;
-  const skygraf = base <= KONFIG.top ? `<path d="M${gx0} ${gy(base)}H${gx1}" stroke="#527c8c" stroke-dasharray="2 4"/><text x="${gx0 + 3}" y="${gy(base) - 5}" fill="#527c8c">Skybase</text>` : '';
-  graf.innerHTML = `${akser}<text x="${gx1}" y="14" text-anchor="end">°C →</text>${skygraf}<path d="${kurve(hoejde => omgivelser(hoejde, m, profil))}" stroke="#172b2b" stroke-width="2.5" stroke-dasharray="7 4" fill="none"/><path d="${kurve(hoejde => pakketemperatur(hoejde, m))}" stroke="#c45524" stroke-width="3" fill="none"/><path d="M${gx0} ${gy(z)}H${gx1}" stroke="#172b2b" opacity=".4" stroke-dasharray="3 5"/>${punkter}`;
+function bygLandskab() {
+  W = figur.clientWidth; H = figur.clientHeight;
+  if (!W || !H) return;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const hor = H * .77, skala = Math.min(1.2, W / 650), nat = profil === 'inversion';
+  let skov = '';
+  for (let i = 0; i < 11; i++) skov += trae(W * (.03 + i * .027), hor + H * (.035 + Math.sin(i * .8) * .008), (.5 + (i % 3) * .13) * skala, i % 2 ? '#477869' : '#5b8265');
+  for (let i = 0; i < 5; i++) skov += trae(W * (.83 + i * .033), H * (.87 + Math.sin(i) * .008), (.8 + (i % 2) * .25) * skala);
+  svg.innerHTML = `<defs>
+    <linearGradient id="himmel" x2="0" y2="1"><stop id="himmel-top" stop-color="${nat ? '#7895b0' : '#8dc5df'}"/><stop offset="1" stop-color="${nat ? '#e4d8c8' : '#eef4e4'}"/></linearGradient>
+    <linearGradient id="mark" x2="0.4" y2="1"><stop stop-color="#a4b977"/><stop offset="1" stop-color="#6b965f"/></linearGradient>
+    <linearGradient id="skygge" x2="0.2" y2="1"><stop stop-color="#fffef6"/><stop offset=".56" stop-color="#f4f5ef"/><stop offset="1" stop-color="#c6d8dd"/></linearGradient>
+    <linearGradient id="storm" x2="0.2" y2="1"><stop stop-color="#fcfcf4"/><stop offset=".4" stop-color="#e1e7e5"/><stop offset="1" stop-color="#6c8290"/></linearGradient>
+    <linearGradient id="regnfarve" x2="0" y2="1"><stop stop-color="#55768c" stop-opacity=".5"/><stop offset="1" stop-color="#81a9b7" stop-opacity="0"/></linearGradient>
+    <linearGradient id="disfarve" x2="0" y2="1"><stop stop-color="#f2f1df" stop-opacity="0"/><stop offset=".5" stop-color="#eceddc" stop-opacity=".85"/><stop offset="1" stop-color="#edf0df" stop-opacity=".3"/></linearGradient>
+    <radialGradient id="solglod"><stop stop-color="#fff6b5" stop-opacity=".8"/><stop offset="1" stop-color="#fff6b5" stop-opacity="0"/></radialGradient>
+    <radialGradient id="jordvarme"><stop stop-color="#edaa4d" stop-opacity=".6"/><stop offset="1" stop-color="#edaa4d" stop-opacity="0"/></radialGradient>
+    <marker id="pil" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 10 5 0 10Z" fill="context-stroke"/></marker>
+    <path id="skyform" d="M-89 0C-123 -2 -121 -33 -98 -38C-105 -62 -77 -77 -56 -63C-54 -101 -5 -114 13 -80C43 -100 74 -69 67 -47C106 -58 131 -19 107 -2C77 9 -58 9 -89 0Z"/>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#himmel)"/>
+  <g id="sol">${nat ? `<path d="M${W * .16 - 12} ${H * .18 - 16}a20 20 0 1 0 24 27a17 17 0 0 1-24-27" fill="#fff6cf"/>` : `<circle cx="${W * .14}" cy="${H * .21}" r="${H * .19}" fill="url(#solglod)"/><circle cx="${W * .14}" cy="${H * .21}" r="${Math.min(25, W * .035)}" fill="#fff5c1"/>`}</g>
+  <path d="M0 ${hor - 4}Q${W * .15} ${hor - H * .16} ${W * .34} ${hor - H * .04}T${W * .72} ${hor - H * .07}Q${W * .88} ${hor - H * .2} ${W} ${hor - H * .08}V${H}H0Z" fill="#92afa0"/>
+  <path d="M0 ${hor + 10}Q${W * .19} ${hor - H * .035} ${W * .36} ${hor + H * .04}T${W * .75} ${hor + H * .01}Q${W * .9} ${hor - H * .035} ${W} ${hor + 10}V${H}H0Z" fill="#aabe8c"/>
+  <path d="M0 ${hor + H * .06}Q${W * .22} ${hor + H * .13} ${W * .5} ${hor + H * .07}T${W} ${hor + H * .12}V${H}H0Z" fill="url(#mark)"/>
+  <path d="M${W * .4} ${hor + 18}Q${W * .53} ${H * .88} ${W * .46} ${H}H${W * .48}Q${W * .55} ${H * .88} ${W * .41} ${hor + 18}Z" fill="#b6ccd0"/>
+  <path d="M0 ${H * .94}Q${W * .35} ${H * .81} ${W * .66} ${H * .94}L${W * .73} ${H}H0Z" fill="#c6be7a"/>
+  <g stroke="#e9db9c" stroke-width="1" opacity=".45">${Array.from({length:8},(_,i)=>`<path d="M${W * (.03 + i * .06)} ${H}Q${W * (.2 + i * .028)} ${H * .9} ${W * .36} ${H * .91}" fill="none"/>`).join('')}</g>
+  <path d="M${W * .74} ${hor + 12}Q${W * .69} ${H * .9} ${W * .81} ${H}" fill="none" stroke="#dacdb1" stroke-width="${8 * skala}"/>
+  ${skov}${hus(W * .77, H * .85, .8 * skala)}${hus(W * .83, H * .86, .6 * skala)}${hus(W * .74, H * .88, .65 * skala)}
+  <g id="vejr"></g>`;
+  tegnVejr();
 }
-function opdater() {
-  const m = masse(), t = tilstand(z, m, profil), base = skybase(m), fri = fritLoeft(m, profil);
-  $('hoejdetal').textContent = `${format(z, 0)} m`;
-  $('hoejde').value = z;
-  $('hoejde').setAttribute('aria-valuetext', `${format(z, 0)} meter`);
-  $('pakketemp').textContent = `${format(t.pakke)} °C`;
-  $('udetemp').textContent = `${format(t.ude)} °C`;
-  $('forskel').textContent = Math.abs(t.forskel) < .05 ? 'Samme temperatur · ingen opdrift' : `${format(Math.abs(t.forskel))} °C ${t.forskel > 0 ? 'varmere · opdrift ↑' : 'koldere · neddrift ↓'}`;
-  const betegnelse = { stabil: 'Stabil atmosfære', ustabil: 'Ustabil atmosfære', betinget: 'Betinget stabil atmosfære', inversion: 'Inversion' };
-  $('begreb').textContent = betegnelse[profil];
-  let tekst = PROFILER[profil].tekst;
-  if (profil === 'betinget' && z > 0) tekst = !t.sky ? 'Pakken er endnu umættet og køles hurtigere end omgivelserne. Slipper du den her, søger den ned igen.' : t.forskel <= 0 ? 'Der er dannet sky, og afkølingen er langsommere. Men pakken er stadig koldere end omgivelserne: den skal løftes højere for at få opdrift.' : 'Pakken har passeret både skybasen og niveauet for fri opstigning. Nu er den varmere end omgivelserne og kan stige videre af sig selv.';
-  $('forklaring').textContent = tekst;
-  $('figurtekst').textContent = `Højde ${format(z, 0)} meter. Luftpakken er ${format(t.pakke)} grader, omgivelserne ${format(t.ude)} grader. ${t.sky ? 'Sky i luftpakken.' : 'Luften er umættet.'} ${$('forskel').textContent}. Pilen viser opdriften.`;
-  $('massetekst').textContent = `${m.fag}. ${m.tekst} Modeltal ved jorden: ${format(m.temperatur, 0)} °C og dugpunkt ${format(m.dugpunkt, 0)} °C.`;
-  $('skytekst').textContent = `For den valgte luftmasse ligger skybasen ved ${format(base, 0)} m. ${fri === null ? 'Pakken får ikke positiv opdrift inden for modellens 4 km.' : fri <= 10 ? 'Pakken får opdrift straks, den løftes fra jorden.' : `Positiv opdrift begynder omkring ${format(fri, 0)} m.`}`;
-  $('slip').textContent = koersel === 'koerer' ? 'Pause' : koersel === 'pause' ? 'Fortsæt' : 'Slip luftpakken ↑↓';
-  $('slip').setAttribute('aria-pressed', String(koersel === 'koerer'));
-  $('slip').disabled = koersel !== 'koerer' && koersel !== 'pause' && (z <= 0 || z >= KONFIG.top);
-  tegn();
+function sky(x, y, bredde, hoejde, opacity = 1, storm = false) {
+  return `<g transform="translate(${x} ${y}) scale(${bredde / 220} ${hoejde / 100})" opacity="${opacity}"><use href="#skyform" fill="url(#${storm ? 'storm' : 'skygge'})"/><path d="M-86 -4Q0 7 98 -5" fill="none" stroke="${storm ? '#536c7b' : '#a9bec8'}" stroke-width="2" opacity=".25"/></g>`;
 }
-function besked(tekst) { $('besked').textContent = tekst; }
-function tick(tid) {
-  if (koersel !== 'koerer') return;
-  const dt = sidst === null ? 0 : Math.min(.05, (tid - sidst) / 1000) * 24;
-  sidst = tid;
-  // Små deltrin sikrer rolig integration også ved langsomme skærmopdateringer.
-  const antal = Math.max(1, Math.ceil(dt / .04)), trin = dt / antal;
-  for (let i = 0; i < antal; i++) {
-    hastighed += (tilstand(z, masse(), profil).acceleration - .02 * hastighed) * trin;
-    z += hastighed * trin;
-    if (z <= 0 || z >= KONFIG.top) {
-      z = Math.max(0, Math.min(KONFIG.top, z)); hastighed = 0;
-      stop('faerdig');
-      besked(z === 0 ? 'Pakken er tilbage ved jorden. Løft den for at prøve igen.' : 'Pakken når modellens top ved 4 km. Det er ikke nødvendigvis skyens top.');
-      break;
+function stroem(d, farve, styrke, fart = 1) {
+  if (styrke < .005) return '';
+  const bredde = W < 500 ? 2.4 : 3;
+  return `<path d="${d}" fill="none" stroke="${farve}" stroke-width="${bredde}" stroke-linecap="round" stroke-dasharray="2 9" stroke-dashoffset="${-tid * 20 * fart}" marker-end="url(#pil)" opacity="${styrke}"/>`;
+}
+function tegnVejr() {
+  if (!W || !H) return;
+  const v = vejrtilstand(profil, tid), cx = W * .57, jord = H * .8, base = H * .52;
+  const unit = Math.min(W / 850, H / 420), smal = W < 500;
+  const o = [], orange = '#c56b35', blaa = '#3e809e';
+  $('himmel-top').setAttribute('stop-color', profil === 'inversion' ? '#7895b0' : v.regn > .2 ? '#8aa6ba' : '#8dc5df');
+  if (profil === 'inversion') {
+    const lag = H * .54;
+    o.push(`<rect x="0" y="${lag - H * .06}" width="${W}" height="${H * .13}" fill="#e8b076" opacity="${v.inversion * .24}"/>`);
+    o.push(`<path d="M${W * .05} ${lag}Q${W * .5} ${lag - 10} ${W * .95} ${lag}" fill="none" stroke="#ae784c" stroke-width="1.4" stroke-dasharray="7 7" opacity="${v.inversion * .65}"/>`);
+    o.push(`<path d="M0 ${H * .62}Q${W * .5} ${H * .5} ${W} ${H * .64}V${H * .9}H0Z" fill="url(#disfarve)" opacity="${v.dis}"/>`);
+    for (let i = 0; i < 5; i++) o.push(`<path d="M${W * (.08 + i * .16)} ${H * (.71 + i % 2 * .025)}q${W * .07} -8 ${W * .14} 0" fill="none" stroke="#faf7e9" stroke-width="${7 * unit + 3}" opacity="${v.dis * .4}"/>`);
+    o.push(stroem(`M${W * .45} ${jord - 10}C${W * .47} ${H * .61} ${W * .5} ${H * .57} ${W * .57} ${H * .64}Q${W * .63} ${H * .7} ${W * .65} ${jord - 18}`, blaa, v.inversion * .7, .45));
+    if (v.inversion > .1) o.push(`<text x="${W * .72}" y="${lag - 10}" text-anchor="middle" opacity="${v.inversion}">Varm luft</text><text x="${W * .72}" y="${H * .74}" text-anchor="middle" opacity="${v.inversion}">Kold luft og dis</text>`);
+  } else {
+    o.push(`<ellipse cx="${cx}" cy="${jord + 6}" rx="${W * .18}" ry="${H * .07}" fill="url(#jordvarme)" opacity="${v.varme}"/>`);
+    for (let i = 0; i < 4; i++) {
+      const p = (tid * .25 + i * .25) % 1, x = cx + (i - 1.5) * 20 * unit;
+      o.push(`<path d="M${x} ${jord - 8 - p * 35 * unit}q${6 * unit} ${-8 * unit} 0 ${-16 * unit}t0 ${-16 * unit}" fill="none" stroke="${orange}" stroke-width="2" opacity="${v.varme * (1 - p) * .5}"/>`);
+    }
+    const sommet = base - H * .35 * v.taarn;
+    // Pilene forbliver synlige under skybasen.
+    o.push(stroem(`M${cx - W * .04} ${jord - 16}C${cx - W * .07} ${H * .65} ${cx - W * .025} ${H * .61} ${cx} ${base + 10}`, orange, v.loeft));
+    if (v.taarn > .05) o.push(stroem(`M${cx + W * .04} ${jord - 18}Q${cx + W * .01} ${H * .64} ${cx + W * .035} ${base + 14}`, orange, v.taarn * .8, 1.25));
+    if (v.taarn < .6) o.push(stroem(`M${cx - W * .035} ${base + 9}C${cx - W * .2} ${base - 13} ${cx - W * .23} ${H * .65} ${cx - W * .24} ${H * .72}`, blaa, v.loeft * (1 - v.taarn) * .7, .7));
+    // Små, flade skyer i det stabile forløb; én voksende sky i bygeforløbene.
+    if (v.skyer > .005) {
+      const driv = Math.sin(tid * .18) * 5 * unit;
+      if (profil === 'stabil') {
+        o.push(sky(cx + driv, base, W * .19, H * .095, v.skyer));
+        o.push(sky(W * .27 + driv * .7, H * .44, W * .12, H * .065, v.skyer * .85));
+        o.push(sky(W * .82 + driv, H * .4, W * .1, H * .055, v.skyer * .8));
+      } else {
+        o.push(sky(cx, base, W * (.2 + .06 * v.taarn), H * (.1 + .31 * v.taarn), v.skyer, v.taarn > .15));
+        if (v.taarn > .3) {
+          // De øverste skypartier breder sig til en ambolt i stabil luft højt oppe.
+          const ambolt = Math.max(0, (v.taarn - .3) / .7);
+          o.push(`<path d="M${cx - W * .1} ${sommet + H * .075}C${cx - W * .24} ${sommet + H * .09} ${cx - W * .28} ${sommet + H * .005} ${cx - W * .14} ${sommet + H * .005}Q${cx} ${sommet - H * .015} ${cx + W * .18} ${sommet + H * .005}L${cx + W * .31} ${sommet + H * .015}Q${cx + W * .3} ${sommet + H * .055} ${cx + W * .15} ${sommet + H * .07}L${cx + W * .08} ${sommet + H * .13}Z" fill="url(#skygge)" opacity="${ambolt}"/>`);
+          o.push(sky(cx - W * .012, base - H * .07 * v.taarn, W * .23, H * .18, v.taarn, true));
+          o.push(sky(cx - W * .022, base - H * .19 * v.taarn, W * .17, H * .15, v.taarn));
+        }
+      }
+    }
+    if (v.ekstra > .01) {
+      o.push(stroem(`M${W * .23} ${jord - 5}Q${W * .4} ${jord - 18} ${cx - 14} ${jord - 12}`, blaa, v.ekstra));
+      o.push(stroem(`M${W * .9} ${jord - 5}Q${W * .73} ${jord - 18} ${cx + 18} ${jord - 12}`, blaa, v.ekstra));
+      o.push(`<text x="${cx}" y="${jord + H * .07}" text-anchor="middle" opacity="${v.ekstra}">Vindene mødes → luft løftes</text>`);
+    }
+    if (v.regn > .01) {
+      const rx = cx + W * .09;
+      o.push(`<path d="M${cx + W * .005} ${base}H${cx + W * .19}L${cx + W * .22} ${jord}H${cx + W * .04}Z" fill="url(#regnfarve)" opacity="${v.regn * .18}"/>`);
+      for (let i = 0; i < 65; i++) {
+        const p = (tid * .9 + i * .618034) % 1, x = rx + ((i * .754877) % 1 - .5) * W * .16 + p * W * .025, y = base + p * (jord - base - 10);
+        o.push(`<path d="M${x} ${y}l${3 * unit} ${10 * unit + 3}" stroke="#507d96" stroke-width="${smal ? 1 : 1.4}" opacity="${v.regn * .65}"/>`);
+      }
+      o.push(stroem(`M${cx + W * .22} ${base + 20}C${cx + W * .23} ${H * .68} ${cx + W * .23} ${jord - 10} ${cx + W * .32} ${jord - 7}`, blaa, v.regn * .85, 1.2));
+      // Et lille lyn i skyen, uden blinkende baggrund; højst ét hvert 5,5 sekund.
+      const lyn = reduceret.matches || !afspiller || tid % 5.5 > 5.12;
+      if (lyn) o.push(`<path d="M${cx + W * .09} ${base - H * .1}l${-W * .035} ${H * .09}h${W * .028}l${-W * .035} ${H * .1}" fill="none" stroke="#fff1ad" stroke-width="${3 * unit + 1}" stroke-linejoin="miter" opacity="${v.regn}"/>`);
     }
   }
-  if (koersel === 'koerer' && Math.abs(hastighed) < .15 && Math.abs(tilstand(z, masse(), profil).forskel) < .03 && dt > 0) {
-    stop('faerdig'); besked('Pakken er næsten i ro: temperaturen er som i omgivelserne.');
-  }
-  opdater();
-  if (koersel === 'koerer') frame = requestAnimationFrame(tick);
+  $('vejr').innerHTML = o.join('');
+  figur.dataset.vejr = v.regn > .5 ? 'torden' : v.dis > .5 ? 'dis' : v.skyer > .5 ? 'smaaskyer' : 'start';
+  figur.dataset.taarn = v.taarn.toFixed(2);
 }
-function slip() {
-  if (koersel === 'koerer') { stop('pause'); besked('Bevægelsen er sat på pause. Fortsæt, eller løft pakken til en ny højde.'); opdater(); return; }
-  if (reduceret.matches) {
-    // Samme model og slutpunkt uden animation ved reduceret bevægelse.
-    stop(); hastighed = 0;
-    for (let i = 0; i < 120000; i++) {
-      hastighed += (tilstand(z, masse(), profil).acceleration - .02 * hastighed) * .04;
-      z += hastighed * .04;
-      if (z <= 0 || z >= KONFIG.top) { z = Math.max(0, Math.min(KONFIG.top, z)); break; }
-      if (i > 50 && Math.abs(hastighed) < .15 && Math.abs(tilstand(z, masse(), profil).forskel) < .03) break;
-    }
-    stop('faerdig'); besked(z >= KONFIG.top ? 'Pakken når modeltoppen ved 4 km. Resultatet vises uden animation.' : 'Pakken søger tilbage mod jorden. Resultatet vises uden animation.'); opdater(); return;
+function opdaterTekst() {
+  const t = vejrtilstand(profil, tid).trin, f = FORLOEB[profil];
+  if (t !== vistTrin) {
+    vistTrin = t;
+    trinknapper.forEach((k, i) => k.setAttribute('aria-pressed', String(i === t)));
+    $('trin-titel').textContent = f.trin[t][0]; $('trin-tekst').textContent = f.trin[t][1];
+    $('figurtekst').textContent = `${f.navn}. Trin ${t + 1}: ${f.trin[t].join('. ')}`;
   }
-  if (koersel !== 'pause') hastighed = 0;
-  koersel = 'koerer'; sidst = null;
-  besked('Pakken er sluppet. Pilen viser opdriften; bevægelsen er fremskyndet.');
-  opdater(); frame = requestAnimationFrame(tick);
+  $('naeste').disabled = t === 3;
+  $('afspil').textContent = reduceret.matches ? 'Se forfra' : afspiller ? '❚❚ Pause' : tid >= slut ? '↻ Se igen' : '▶ Afspil';
+  $('afspil').setAttribute('aria-pressed', String(afspiller));
 }
-document.querySelectorAll('[data-profil]').forEach(knap => knap.addEventListener('click', () => {
-  stop(); profil = knap.dataset.profil; hastighed = 0;
-  document.querySelectorAll('[data-profil]').forEach(b => b.setAttribute('aria-pressed', String(b === knap)));
-  besked('Profilen er ændret. Forudsig bevægelsen, og slip pakken.'); opdater();
-}));
-$('luftmasse').addEventListener('change', e => { stop(); massenoegle = e.target.value; hastighed = 0; besked('Luftmassen er ændret. Sammenlign temperaturerne, før du slipper.'); opdater(); });
-$('hoejde').addEventListener('input', e => { stop(); z = Number(e.target.value); hastighed = 0; besked(z === 0 ? 'Løft pakken fra jorden for at undersøge stabiliteten.' : 'Du holder pakken her. Hvad sker der, når du slipper?'); opdater(); });
-$('slip').addEventListener('click', slip);
-$('nulstil').addEventListener('click', () => { stop(); z = 0; hastighed = 0; besked('Pakken er ved jorden. Løft den med skyderen.'); opdater(); });
+function stop() { cancelAnimationFrame(frame); frame = null; sidst = null; afspiller = false; }
+function billede(nu) {
+  if (!afspiller) return;
+  if (sidst !== null) tid = Math.min(slut, tid + Math.min(.1, (nu - sidst) / 1000));
+  sidst = nu;
+  if (tid >= slut) stop();
+  opdaterTekst(); tegnVejr();
+  if (afspiller) frame = requestAnimationFrame(billede);
+}
+function start() { if (reduceret.matches) return; afspiller = true; sidst = null; frame = requestAnimationFrame(billede); }
+function vaelgProfil(ny) {
+  stop(); profil = ny; tid = 0; vistTrin = -1;
+  typer.forEach(k => k.setAttribute('aria-pressed', String(k.dataset.profil === profil)));
+  trinknapper.forEach((k, i) => k.querySelector('span').textContent = FORLOEB[profil].etiketter[i]);
+  $('scenenavn').textContent = FORLOEB[profil].navn;
+  if (!reduceret.matches) start();
+  bygLandskab(); opdaterTekst();
+}
+function vaelgTrin(n) {
+  stop(); tid = n === 3 ? slut : n * TRINSEKUNDER + TRINSEKUNDER * .88; vistTrin = -1;
+  opdaterTekst(); tegnVejr();
+}
+typer.forEach(k => k.addEventListener('click', () => vaelgProfil(k.dataset.profil)));
+trinknapper.forEach(k => k.addEventListener('click', () => vaelgTrin(Number(k.dataset.trin))));
+document.querySelector('.trin').addEventListener('keydown', e => {
+  const ny = { ArrowRight: vistTrin + 1, ArrowDown: vistTrin + 1, ArrowLeft: vistTrin - 1, ArrowUp: vistTrin - 1, Home: 0, End: 3 }[e.key];
+  if (ny === undefined) return;
+  e.preventDefault(); const n = Math.max(0, Math.min(3, ny)); vaelgTrin(n); trinknapper[n].focus();
+});
+$('afspil').addEventListener('click', () => {
+  if (reduceret.matches) { vaelgTrin(0); return; }
+  if (afspiller) stop(); else { if (tid >= slut) { tid = 0; vistTrin = -1; } start(); }
+  opdaterTekst(); tegnVejr();
+});
+$('naeste').addEventListener('click', () => vaelgTrin(Math.min(3, vistTrin + 1)));
 $('fokus').addEventListener('click', () => { const fokus = document.body.classList.toggle('fokus'); $('fokus').setAttribute('aria-pressed', String(fokus)); $('fokus').textContent = fokus ? 'Afslut fokus' : 'Fokus'; });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('fokus')) $('fokus').click(); });
-reduceret.addEventListener('change', () => { if (koersel === 'koerer') { stop('pause'); besked('Bevægelsen er sat på pause.'); opdater(); } });
-new ResizeObserver(tegn).observe(document.querySelector('.figurer'));
-opdater();
+document.addEventListener('visibilitychange', () => { sidst = null; });
+reduceret.addEventListener('change', () => { stop(); vaelgTrin(vistTrin); });
+new ResizeObserver(bygLandskab).observe(figur);
+vaelgProfil(profil);

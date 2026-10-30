@@ -1,54 +1,52 @@
-# Luftmasser, stabilitet og inversion
+# Luftmasser, skyer og stabilitet
 
-Selvstændig, buildfri simulation på `/geografi/luftmasser/`. Linkes fra
-geografibiblioteket. Dansk elevvisning med fire temperaturprofiler, fire
-illustrative luftmasser, manuel løfteskyder, slip/pause og fokustilstand.
+Selvstændig, buildfri SVG-animation på `/geografi/luftmasser/`. Forløb og
+betjening følger `geografi/termiske-tryk/`: stor figur, fire trin, én kort
+forklaring, afspil/pause, næste trin og fokus. Fire situationer kan vælges:
+stabil, ustabil, betinget stabil og inversion. Der er ingen grafer,
+temperaturaflæsninger, skyder eller manuel justering af luftpakker.
 
-Eleven sammenligner luftpakkens temperatur med omgivelserne ved samme højde.
-Figurens pil viser opdrift, ikke hastighed. En temperaturgraf viser også
-skybasen og overgangen mellem tør- og fugtadiabatisk afkøling. Opgaver,
-forklaringer om luftmasser, modelantagelser og kilder kan foldes ud.
+## Forløb og grafik
 
-## Model
+Landskabet tegnes responsivt som SVG med marker, vandløb, træer og huse.
+Luftstrømme, opvarmning, små skyer, en voksende cumulonimbus med ambolt,
+regn og lyn samt dis ved inversion vises efter scenariet.
 
-`model.mjs` indeholder de rene beregninger og justerbare modeltal.
-`simulation.js` tegner SVG og integrerer bevægelsen efter slip.
+`forloeb.mjs` indeholder fire faglige årsagskæder og deres synlige faser.
+`simulation.js` styrer afspilning og tegning. Hvert trin varer syv sekunder;
+forløbet starter automatisk ved valg af situation og stopper efter 28 sekunder.
+Trinknapper viser stillbilleder, og afspilning kan fortsættes eller gentages.
 
-- Umættet: −9,8 °C/km; mættet: −6 °C/km; dugpunkt: −1,8 °C/km indtil mætning.
-- Stabil profil: −4 °C/km; ustabil: −11 °C/km; betinget: −7 °C/km.
-- Inversion: +6 °C/km op til 800 m, derefter −7 °C/km.
-- Alle luftpakker starter ved samme temperatur som omgivelserne ved jorden.
-  Skift af luftmasse ændrer begge temperaturer og pakkens startdugpunkt,
-  men bevarer omgivelsernes valgte temperaturgradient.
-- Skybase beregnes ved skæringen mellem pakkens temperatur og dugpunkt.
-  For varm havluft er skybasen 500 m; i den betingede profil er pakken først
-  varmere end omgivelserne over 1.900 m. Tør varm fastlandsluft får ikke
-  positiv opdrift inden for modellens 4 km i den betingede profil.
-- Opdrift: g·(T_pakke−T_ude)/(T_ude+273,15). Samme tryk, idealgas,
-  uden korrektion for virtuel temperatur. Dæmpning: 0,02 s⁻¹.
-  Integration med deltrin på højst 0,04 s; tid fremskyndet 24 gange.
-- Ingen blanding, nedbør, is eller vind. Konstant fugtadiabatisk gradient er
-  en tilnærmelse. Kondensat følger pakken og fordamper igen ved nedsynkning,
-  så temperaturvejen er reversibel. Figuren stopper ved jorden og 4 km.
-- Reduceret bevægelse beregner samme bevægelsesforløb og viser slutpunktet
-  uden animation. Der er ingen eksterne JavaScript-afhængigheder eller lagring.
+Den første udgaves numeriske luftpakkeundersøgelse er erstattet af fire
+kvalitative, fastlagte vejrforløb. Grafik og skyudvikling er illustrative,
+ikke resultater fra en beregnet vejrmodel. Alle skyforløb antager fugtig luft;
+opvarmning eller sammenstrømning leverer løftet. Det stabile eksempel viser
+opvarmede termikbobler, der bremses i stabil luft højere oppe. Betinget
+stabilitet viser først bremsning og derefter sammenstrømning ved jorden,
+som giver ekstra løft nok til at udløse fri konvektion. Inversion viser
+kold luft nær jorden under varmere luft og svag lodret blanding.
 
-Fagligt grundlag: NWCG, *Atmospheric Stability*, og FAA, *Aviation Weather
-Handbook*, kapitel 13. Links findes på siden.
+Der er ingen universel kobling mellem en stabilitetsklasse og én skytype.
+Torden kræver fugt, løft og tilstrækkelig dyb ustabilitet. En kort note og
+faglige kilder er samlet under «Om modellen» på siden.
+
+Pause stopper alle bevægelser. Faneskift springer ikke frem i forløbet.
+`prefers-reduced-motion` viser stillbilleder med trinvalg. Lyn tegnes i skyen,
+udsendes højst én gang hvert 5,5 sekund og giver ingen blinkende baggrund.
+SVG har tekstalternativ, og alle knapper virker med tastatur. Trinrækken
+understøtter piletaster, Home og End. Escape forlader fokusvisning.
 
 ## Kontrol
 
-`node geografi/luftmasser/model.test.mjs` kontrollerer uafhængige
-håndberegninger af skybase, temperaturer, fri opstigning, inversion og
-opdriftens fortegn for samtlige luftmasser.
+`node geografi/luftmasser/forloeb.test.mjs` kontrollerer faser og rækkefølge:
+fire trin, ingen byge i stabil luft eller inversion, ekstra løft før vækst
+i det betingede forløb og regn først efter udvikling af en høj sky.
 
 `node værktøj/pladstjek.mjs geografi/luftmasser/index.html` kontrollerer
-skærmplads og gemmer skærmbilleder. Efterset ved 1280×577, 1366×625,
-1536×730 og 390×750. Figur og primære kontroller kan ses samtidigt på de
-nævnte laptopstørrelser. Ingen vandret rulning ved 380, 390 eller 640 px.
+skærmplads. Figur og primære kontroller er samtidigt synlige ved 1280×577,
+1366×625 og 1536×730. Ingen vandret rulning ved 380, 390 og 640 px.
 
-Chromium-funktionstest: stabil tilbagebevægelse; ustabil opstigning;
-betinget profil med sky uden opdrift ved 800 m og med opdrift ved 2.500 m;
-tør fastlandsluft; pause/fortsæt; profilskift under bevægelse; modeltop;
-nulstilling; tastaturbetjent skyder; fokus og Escape; reduceret bevægelse.
+Chromium: alle fire forløb, automatisk start og afslutning, pause,
+genafspilning, trinvalg, næste, tastatur, fokus, Escape og reduceret bevægelse.
+Skærmbilleder af alle fire sluttilstande og mobil er visuelt efterset.
 Ingen JavaScript-fejl. Fysisk touch, Safari og skærmlæser er ikke særskilt testet.

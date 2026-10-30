@@ -2,47 +2,35 @@
 <html lang="da">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Luftmasser, stabilitet og inversion — smbi.dk</title>
-  <meta name="description" content="Løft en luftpakke: synker den tilbage, eller stiger den videre? Undersøg luftmasser, stabil og ustabil atmosfære, fugt og inversion i en interaktiv model.">
+  <title>Luftmasser, skyer og stabilitet — smbi.dk</title>
+  <meta name="description" content="Se luft strømme over et landskab, små skyer dannes og tordenskyer vokse. Fire automatiske forløb om stabilitet og inversion.">
   <link rel="canonical" href="https://smbi.dk/geografi/luftmasser/">
-  <meta property="og:title" content="Luftmasser, stabilitet og inversion"><meta property="og:description" content="Løft en luftpakke, og undersøg hvad der får luften til at stige eller synke."><meta property="og:type" content="website"><meta property="og:url" content="https://smbi.dk/geografi/luftmasser/">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css">
-  <script type="module" src="simulation.js"></script>
+  <meta property="og:title" content="Luftmasser, skyer og stabilitet"><meta property="og:description" content="Fire visuelle vejrforløb: stabil luft, ustabil luft, betinget stabilitet og inversion."><meta property="og:type" content="website"><meta property="og:url" content="https://smbi.dk/geografi/luftmasser/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css?v=landskab">
+  <script type="module" src="simulation.js?v=landskab"></script>
 </head>
 <body>
 <header><div class="regnbue"></div><nav aria-label="Navigation"><a class="brand" href="/">smbi<span>.dk</span></a><span>NATURGEOGRAFI</span><a href="/geografi.html">← Geografi</a><div data-feedback-vaert></div></nav></header>
 <main>
-  <div class="titel"><div><p class="overlinje">VEJR &amp; KLIMA / LUFT I BEVÆGELSE</p><h1>Stiger luften videre?</h1><p class="hook">Løft en luftpakke. Vil den synke tilbage — eller fortsætte opad af sig selv?</p></div><button id="fokus" aria-pressed="false">Fokus</button></div>
-  <section class="laboratorium" aria-label="Undersøg atmosfærens stabilitet">
-    <div class="situationer" role="group" aria-label="Vælg atmosfærens temperaturprofil" data-pladstjek="kontrol">
-      <button data-profil="stabil" aria-pressed="true">01 <b>Stabil</b></button><button data-profil="ustabil" aria-pressed="false">02 <b>Ustabil</b></button><button data-profil="betinget" aria-pressed="false">03 <b>Betinget stabil</b></button><button data-profil="inversion" aria-pressed="false">04 <b>Inversion</b></button>
+  <div class="titel"><div><p class="overlinje">LUFTMASSER · ATMOSFÆRISK STABILITET</p><h1>Fra blå himmel til tordenvejr</h1></div><button id="fokus" aria-pressed="false">Fokus</button></div>
+  <section class="laboratorium" aria-label="Fire vejrforløb over et landskab">
+    <div class="situationer" role="group" aria-label="Vælg vejrforløb" data-pladstjek="kontrol">
+      <button data-profil="stabil" aria-pressed="true">Stabil</button><button data-profil="ustabil" aria-pressed="false">Ustabil</button><button data-profil="betinget" aria-pressed="false">Betinget stabil</button><button data-profil="inversion" aria-pressed="false">Inversion</button>
     </div>
     <div class="arbejde">
-      <div class="visualisering" data-pladstjek="figur">
-        <div class="figurtop"><span>LUFTPAKKEN</span><span>TEMPERATURPROFIL</span></div>
-        <div class="figurer" role="img" aria-label="Luftpakke i atmosfæren og temperaturkurver" aria-describedby="figurtekst"><svg id="landskab" aria-hidden="true"></svg><svg id="graf" aria-hidden="true"></svg></div>
-        <div class="signatur"><span><i class="pakke"></i>Luftpakke</span><span><i class="ude"></i>Omgivelser</span><span><i class="sky"></i>Skybase</span></div>
-      </div>
+      <div class="figur" id="figur" data-pladstjek="figur" role="img" aria-label="Animeret landskab med luftstrømme og skyer" aria-describedby="figurtekst"><svg id="landskab" aria-hidden="true"></svg><span class="scenenavn" id="scenenavn">Stabil luft</span><span class="figur-note">Illustrativt forløb · ikke i målestok</span></div>
       <aside>
-        <div class="kontrolblok"><label for="luftmasse">Vælg luftmasse</label><select id="luftmasse" data-pladstjek="kontrol"><option value="maritimTropisk">Varm havluft · fugtig</option><option value="kontinentalTropisk">Varm fastlandsluft · tør</option><option value="maritimPolar">Kølig havluft · fugtig</option><option value="kontinentalPolar">Kold fastlandsluft · tør</option></select></div>
-        <div class="kontrolblok"><label for="hoejde">Løft luftpakken <output id="hoejdetal" for="hoejde"></output></label><input id="hoejde" type="range" min="0" max="4000" step="50" value="800" data-pladstjek="kontrol"><div class="ender"><span>Jorden</span><span>4.000 m</span></div></div>
-        <div class="aflaesning"><div><span>Luftpakke</span><strong id="pakketemp"></strong></div><div><span>Omgivelser</span><strong id="udetemp"></strong></div></div>
-        <p id="forskel"></p>
-        <div class="knapper" data-pladstjek="kontrol"><button id="slip">Slip luftpakken ↑↓</button><button id="nulstil" aria-label="Nulstil luftpakken til jordoverfladen">↺</button></div>
-        <p id="besked" role="status">Forudsig bevægelsen, og slip så luftpakken.</p>
+        <div class="trin" role="group" aria-label="Trin i vejrforløbet" data-pladstjek="kontrol">
+          <button data-trin="0" aria-pressed="true"><i>1</i><span></span></button><button data-trin="1" aria-pressed="false"><i>2</i><span></span></button><button data-trin="2" aria-pressed="false"><i>3</i><span></span></button><button data-trin="3" aria-pressed="false"><i>4</i><span></span></button>
+        </div>
+        <div class="tekst" aria-live="polite"><h2 id="trin-titel"></h2><p id="trin-tekst"></p></div>
+        <div class="knapper" data-pladstjek="kontrol"><button id="afspil" aria-pressed="true">❚❚ Pause</button><button id="naeste" aria-label="Vis næste trin">Næste →</button></div>
       </aside>
     </div>
-    <div class="forklaring"><b id="begreb">Stabil atmosfære</b><p id="forklaring"></p></div>
-    <p class="sr" id="figurtekst"></p>
   </section>
-  <p class="laesehjaelp">Læs grafen på tværs i samme højde: ligger luftpakken til højre for omgivelserne, er den varmere og får opdrift.</p>
-  <div class="fordybelse">
-    <details><summary>Luftmasser: hvor kommer luften fra?</summary><div class="indhold"><p id="massetekst"></p><p>En <b>luftmasse</b> er et stort område af luft med nogenlunde ens temperatur og fugtighed. Hav eller fastland præger fugten; tropiske eller polare kildeområder præger temperaturen.</p><p>Luftmassens navn afgør ikke stabiliteten. Den afhænger af temperaturens ændring med højden og af, om den løftede luft er mættet. Her kan du undersøge hver luftmasse i alle fire temperaturprofiler.</p></div></details>
-    <details><summary>Hvorfor ændrer fugt og skyer bevægelsen?</summary><div class="indhold"><p>Når luft stiger, falder trykket. Pakken udvider sig og afkøles. Ved <b>skybasen</b> er luften mættet, og vanddamp begynder at kondensere til skydråber. Det frigiver energi, så pakken afkøles langsommere.</p><p>Ved <b>betinget stabilitet</b> (også kaldet <b>betinget ustabilitet</b>) dæmpes et lille løft af umættet luft. Mættet luft er derimod ustabil i laget. En umættet pakke skal først løftes til skybasen og ofte endnu højere, før den får opdrift. Skydannelse alene er altså ikke nok.</p><p id="skytekst"></p><p>Prøv den betingede profil med fugtig havluft: slip ved 800 m og igen ved 2.500 m. Skift derefter til tør fastlandsluft. Hvorfor bliver resultatet anderledes?</p></div></details>
-    <details><summary>Inversion og vejret omkring os</summary><div class="indhold"><p>Ved en <b>inversion</b> stiger temperaturen med højden i et lag. En løftet pakke bliver koldere end omgivelserne, så laget hæmmer lodret blanding. Det er ikke et fast låg: kraftigt løft eller opvarmning kan ændre situationen.</p><p>Efter en klar, stille nat kan jorden køle luften nær overfladen, mens luften ovenover forbliver varmere. Fugt og luftforurening kan ophobes nær jorden; er luften mættet, kan der dannes tåge.</p><p>Ustabil luft giver mulighed for termik og bygeskyer, hvis der er tilstrækkelig fugt. Stabil luft kan også danne skyer, hvis den tvinges op, fx ved en front. Stabilitet er derfor ikke det samme som skyfrit vejr.</p></div></details>
-    <details><summary>Model, tal og faglige kilder</summary><div class="indhold"><p>En idealiseret luftpakke følger omgivelsernes tryk uden at blande sig med dem. Den starter med samme temperatur som omgivelserne ved jorden. Luftmasserne er illustrative eksempler, ikke målinger eller en vejrudsigt. Når luftmassen skiftes, ændres også omgivelsernes temperatur ved jorden; den valgte temperaturgradient bevares.</p><p>Umættet luft afkøles 9,8 °C/km, mættet luft 6 °C/km. Dugpunktet falder 1,8 °C/km indtil mætning. Den virkelige fugtadiabatiske gradient varierer; 6 °C/km er en tilnærmelse. Profilerne falder henholdsvis 4, 11 og 7 °C/km. Inversionen stiger 6 °C/km til 800 m og falder derefter 7 °C/km.</p><p>Opdriften beregnes ud fra temperaturforskellen ved samme tryk. Fugtens direkte bidrag til massefylden, is, nedbør, vind og blanding er udeladt. Skyvand antages at følge pakken; ved nedsynkning fordamper det igen. Bevægelsen har dæmpning, og tiden er fremskyndet 24 gange. Pilen viser opdriftens retning, ikke nødvendigvis pakkens øjeblikkelige bevægelse. Pakken og skydråberne er ikke i målestok. Modellen stopper ved 4 km.</p><p>Fagligt grundlag: <a href="https://www.nwcg.gov/publications/pms425-1/4-atmospheric-stability">NWCG: Atmospheric Stability</a> og <a href="https://www.faa.gov/sites/faa.gov/files/FAA-H-8083-28B.pdf">FAA: Aviation Weather Handbook, kapitel 13</a>.</p><p>Undersøg også <a href="/geografi/Dugpunkt.html">dugpunkt</a>, <a href="/geografi/Stigningsregn.html">stigningsregn</a> og <a href="/geografi/termiske-tryk/">termiske tryk</a>.</p></div></details>
-  </div>
-  <noscript><p>En løftet luftpakke synker igen, hvis den bliver koldere end omgivelserne, og får opdrift, hvis den er varmere. Inversion betyder, at temperaturen stiger med højden. Slå JavaScript til for at undersøge modellen.</p></noscript>
+  <div class="bundlinje"><p>Vælg en situation, og se vejret udvikle sig.</p><details><summary>Om modellen</summary><div class="uddybning"><p>Fire idealiserede forløb med fugtig luft. Pile viser luftens bevægelse: orange op, blå ned. Skyerne er skydråber, ikke synlig vanddamp. I den betingede situation giver sammenstrømmende luft det ekstra løft.</p><p>Stabilitet alene bestemmer ikke vejret. Torden kræver også fugt og løft; her er de betingelser valgt på forhånd. I det stabile eksempel bremses opvarmede termikbobler af stabil luft højere oppe. Inversionen viser kølig luft ved jorden under varmere luft. Dis er ikke nødvendigvis tåge.</p><p>Animationen viser en faglig årsagskæde, ikke en numerisk vejrprognose. Skyhøjde, tid, regn og lyn er illustrative. Lyn vises uden lysglimt over hele skærmen. Ved reduceret bevægelse vælges de fire trin som stillbilleder.</p><p>Grundlag: <a href="https://www.nwcg.gov/publications/pms425-1/4-atmospheric-stability">NWCG: stabilitet</a> og <a href="https://www.weather.gov/spotterguide/ingredients">NWS: betingelser for tordenvejr</a>.</p></div></details></div>
+  <p class="sr" id="figurtekst"></p>
+  <noscript><p>Stabil luft hæmmer opstigning. Ustabil, fugtig luft kan danne høje bygeskyer. Inversion betyder varmere luft over kold luft. Slå JavaScript til for at se forløbene.</p></noscript>
 </main>
 <script src="/feedback.js" defer></script>
 </body></html>
