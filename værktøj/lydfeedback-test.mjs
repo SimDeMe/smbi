@@ -217,6 +217,88 @@ try {
     await page.context().close();
   }
 
+  // Langsom mikrofon: dialogen skifter med det samme, og man kan fortryde, mens browseren spørger.
+  {
+    const LANGSOM = `{ const original = navigator.mediaDevices.getUserMedia;
+      navigator.mediaDevices.getUserMedia = c => new Promise(ok => { window.__slip = () => ok(original(c)); }); }`;
+    const page = await nySide({ init: LANGSOM });
+    await page.goto(`${SIDE}?afproevning=${KODE}`);
+    await knap(page).click();
+    await lf(page, 'start').click();
+    await page.getByText('Giv adgang til mikrofonen').waitFor();
+    assert.equal(await lf(page, 'start').count(), 0, 'instruktionerne skal være væk, mens browseren spørger');
+    assert.equal(await page.locator('.lf-bjaelke').count(), 0);
+    await page.evaluate(() => window.__slip());
+    await lf(page, 'stop').waitFor();
+    assert.equal(await page.locator('.lf-dialog').evaluate(d => d.open), false);
+    await page.waitForTimeout(800);
+    await lf(page, 'stop').click();
+    await lf(page, 'slet').click();
+    // Annullér og Escape: et sent svar må ikke starte en optagelse.
+    for (const fortryd of [() => lf(page, 'fortryd').click(), () => page.keyboard.press('Escape')]) {
+      await knap(page).click();
+      await lf(page, 'start').click();
+      await page.getByText('Giv adgang til mikrofonen').waitFor();
+      await fortryd();
+      await page.waitForFunction(() => !document.querySelector('.lf-dialog').open);
+      const foer = await page.evaluate(() => window.__spor.length);
+      await page.evaluate(() => window.__slip());
+      await page.waitForFunction(n => window.__spor.length > n, foer);
+      await page.waitForTimeout(300);
+      assert.equal(await page.locator('.lf-bjaelke').count(), 0, 'fortrudt optagelse må ikke starte');
+      assert.equal(await page.locator('.lf-dialog').evaluate(d => d.open), false);
+      assert.ok(await page.evaluate(() => window.__spor.every(s => s.readyState === 'ended')), 'mikrofonen skal lukkes igen');
+    }
+    // Svarer mikrofonen aldrig, får deltageren besked om, hvad der kan gøres.
+    await knap(page).click();
+    await lf(page, 'start').click();
+    await page.getByText('Mikrofonen svarer ikke').waitFor({ timeout: 15000 });
+    assert.deepEqual(page.fejl, []);
+    await page.context().close();
+  }
+  // Tavs mikrofon: linjen advarer under optagelsen. Med lyd kommer ingen advarsel, og måleren bevæger sig.
+  {
+    const tavs = await nySide({ init: `navigator.mediaDevices.getUserMedia = async () => new AudioContext().createMediaStreamDestination().stream;` });
+    await tavs.goto(`${SIDE}?afproevning=${KODE}`);
+    await knap(tavs).click();
+    await lf(tavs, 'start').click();
+    await tavs.getByText('Hører ingen lyd').waitFor({ timeout: 8000 });
+    assert.deepEqual(tavs.fejl, []);
+    await tavs.context().close();
+    const lyd = await nySide();
+    await lyd.goto(`${SIDE}?afproevning=${KODE}`);
+    await knap(lyd).click();
+    await lf(lyd, 'start').click();
+    await lf(lyd, 'stop').waitFor();
+    await lyd.waitForTimeout(4600);
+    assert.equal(await lf(lyd, 'varsel').textContent(), '');
+    assert.notEqual(await lf(lyd, 'niveau').evaluate(el => el.style.transform), 'scaleX(0)');
+    await lf(lyd, 'stop').click();
+    await lf(lyd, 'send').waitFor();
+    await lyd.context().close();
+  }
+  // Ingen data fra optageren: forklaring i stedet for en tom optagelse.
+  {
+    const page = await nySide({ init: `{ const lyt = MediaRecorder.prototype.addEventListener;
+      MediaRecorder.prototype.addEventListener = function (navn, fn) { if (navn !== 'dataavailable') lyt.call(this, navn, fn); }; }` });
+    await page.goto(`${SIDE}?afproevning=${KODE}`);
+    await knap(page).click();
+    await lf(page, 'start').click();
+    await lf(page, 'stop').waitFor();
+    await page.waitForTimeout(300);
+    await lf(page, 'stop').click();
+    await page.locator('.lf-fejl').waitFor();
+    assert.match(await page.locator('.lf-fejl').textContent(), /for kort/);
+    await lf(page, 'start').click();
+    await lf(page, 'stop').waitFor();
+    await page.waitForTimeout(2200);
+    await lf(page, 'stop').click();
+    await page.getByText('ingen lyd fra mikrofonen').waitFor();
+    assert.match(await page.locator('.lf-fejl').textContent(), /Systemindstillinger/);
+    assert.equal(await lf(page, 'start').isEnabled(), true);
+    await page.context().close();
+  }
+
   // Skærmstørrelser: figur og kontroller er i syne, og optagelinjen dækker ikke simulationens knapper.
   for (const viewport of [{ width: 1280, height: 577 }, { width: 1366, height: 625 }, { width: 1536, height: 730 }, { width: 390, height: 750 }]) {
     const page = await nySide({ viewport });

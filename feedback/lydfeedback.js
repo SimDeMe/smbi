@@ -7,6 +7,9 @@ import { LYD_CONFIG } from './lyd-config.js';
 
 const MAKS_MS = 15 * 60 * 1000;
 const MAKS_LOG = 2000;
+const TAVS_EFTER_MS = 4000;      // så længe må en ny optagelse være helt tavs, før der advares
+const MIKROFON_LANGSOM_MS = 12000;
+const INGEN_LYD = 'Browseren fik ingen lyd fra mikrofonen. Tjek at den rigtige mikrofon er valgt. På en Mac skal browseren også have lov under Systemindstillinger → Anonymitet og sikkerhed → Mikrofon. Hjælper det ikke, så genstart browseren eller prøv en anden.';
 const FORMATER = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/webm'];
 const ENDELSER = { 'audio/webm': 'webm', 'audio/mp4': 'm4a', 'audio/ogg': 'ogg' };
 
@@ -29,6 +32,9 @@ const CSS = `
 .lf-bjaelke{position:fixed;left:50%;top:7px;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:10px;background:#172b2b;color:#fff9ee;border-radius:999px;padding:6px 8px 6px 14px;font:600 14px Archivo,system-ui,sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.35);max-width:calc(100vw - 24px);white-space:nowrap}
 .lf-prik{width:11px;height:11px;border-radius:50%;background:#ff5a5a;flex:none;animation:lf-blink 1.4s infinite}
 .lf-tid{font-variant-numeric:tabular-nums}
+.lf-niveau{width:34px;height:7px;flex:none;border-radius:4px;background:#fff9ee40;overflow:hidden}
+.lf-niveau i{display:block;height:100%;background:#7fd68a;transform:scaleX(0);transform-origin:left}
+.lf-varsel{color:#ffd166;white-space:normal;line-height:1.2}.lf-varsel:empty{display:none}
 .lf-stop{min-height:34px;border-radius:999px;padding:3px 13px}
 .lf-dialog :focus-visible,.lf-bjaelke :focus-visible,.lf-knap:focus-visible{outline:3px solid #7a4fd6;outline-offset:2px}
 @keyframes lf-blink{50%{opacity:.35}}
@@ -61,7 +67,8 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
 
   document.head.append(Object.assign(document.createElement('style'), { textContent: CSS }));
 
-  let dialog, bjaelke, stroem, optager, ur, stopUr;
+  let dialog, bjaelke, stroem, optager, ur, stopUr, lydkontekst, niveauUr, langsomUr;
+  let venter = false, mikrofonForsoeg = 0;
   let startetMs = 0, optagerKoerer = false;
   let optagelse = null;     // { lyd, adresse, type, varighed, startet, starttilstand, log, session, sendt }
 
@@ -85,9 +92,15 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
       dialog.className = 'lf-dialog';
       dialog.setAttribute('aria-labelledby', 'lf-titel');
       // Escape må ikke smide en uafleveret optagelse væk.
-      dialog.addEventListener('cancel', e => { if (optagelse && !optagelse.sendt) e.preventDefault(); });
+      dialog.addEventListener('cancel', e => {
+        if (venter) afbrydVentetid();
+        else if (optagelse && !optagelse.sendt) e.preventDefault();
+      });
       // Chrome lader et gentaget Escape lukke alligevel, så dialogen kommer tilbage.
-      dialog.addEventListener('close', () => { if (optagelse?.lyd && !optagelse.sendt) dialog.showModal(); });
+      dialog.addEventListener('close', () => {
+        if (venter) afbrydVentetid();
+        else if (optagelse?.lyd && !optagelse.sendt) dialog.showModal();
+      });
       document.body.append(dialog);
     }
     dialog.innerHTML = `<div class="lf-indhold">${indhold}</div>`;
@@ -129,18 +142,54 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
     return 'Optagelsen kunne ikke startes i denne browser.';
   }
 
-  async function startOptagelse(e) {
-    if (e?.currentTarget) e.currentTarget.disabled = true;   // ét klik, én mikrofon
+  // Browserens spørgsmål om lov ligger uden for siden og kan tage tid. Imens skal
+  // deltageren kunne se, hvad der sker, og kunne fortryde.
+  function visVenter() {
+    venter = true;
+    visDialog(`
+      <h2 id="lf-titel">Giv adgang til mikrofonen</h2>
+      <p>Browseren spørger om lov til at bruge mikrofonen. Se efter spørgsmålet øverst ved adresselinjen, og vælg Tillad.</p>
+      <p class="lf-lille" data-lf="langsom" role="status"></p>
+      <div class="lf-handlinger"><button type="button" data-lf="fortryd">Annullér</button></div>`);
+    // Med det samme: dialogens close-hændelse kommer først lidt senere, og det kan mikrofonens svar også.
+    paa('fortryd', () => { afbrydVentetid(); lukDialog(); });
+    langsomUr = setTimeout(() => {
+      const felt = dialog.querySelector('[data-lf="langsom"]');
+      if (felt) felt.textContent = 'Der sker ikke noget? Mikrofonen svarer ikke. Annullér, genstart browseren, og prøv igen, eller prøv en anden browser.';
+    }, MIKROFON_LANGSOM_MS);
+  }
+
+  function afbrydVentetid() {
+    venter = false;
+    clearTimeout(langsomUr);
+    mikrofonForsoeg++;      // et svar, der kommer senere, bliver lukket igen
+    knap.focus();
+  }
+
+  async function startOptagelse() {
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
       return visInformation('Denne browser kan ikke optage lyd. Prøv en nyere version af Chrome, Edge, Firefox eller Safari.');
     }
     const type = FORMATER.find(f => MediaRecorder.isTypeSupported(f));
     if (!type) return visInformation('Denne browser kan ikke optage i et lydformat, vi kan modtage.');
+    visVenter();
+    const forsoeg = ++mikrofonForsoeg;
+    let nyStroem;
     try {
-      stroem = await navigator.mediaDevices.getUserMedia({ audio: true });
+      nyStroem = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (fejl) {
+      if (forsoeg !== mikrofonForsoeg) return;
+      venter = false;
+      clearTimeout(langsomUr);
       return visInformation(mikrofonFejl(fejl));
     }
+    if (forsoeg !== mikrofonForsoeg) {      // deltageren fortrød, mens browseren spurgte
+      nyStroem.getTracks().forEach(spor => spor.stop());
+      return;
+    }
+    venter = false;
+    clearTimeout(langsomUr);
+    stroem = nyStroem;
     kasser();
     const stykker = [];
     optager = new MediaRecorder(stroem, { mimeType: type, audioBitsPerSecond: 32000 });
@@ -152,7 +201,8 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
       const lyd = new Blob(stykker, { type });
       if (!lyd.size) {
         kasser();
-        return visInformation('Der kom ingen lyd med. Prøv igen, og tjek mikrofonen.');
+        console.warn('lydfeedback: ingen data fra MediaRecorder', { type, varighed });
+        return visInformation(varighed < 2000 ? 'Optagelsen var for kort til, at der kom lyd med. Prøv igen.' : INGEN_LYD);
       }
       optagelse.lyd = lyd;
       optagelse.adresse = URL.createObjectURL(lyd);
@@ -175,12 +225,40 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
   }
 
   function visBjaelke() {
-    bjaelke = nyt(`<div class="lf-bjaelke" role="group" aria-label="Optagelse"><span class="lf-prik" aria-hidden="true"></span><span>Optager <span class="lf-tid" data-lf="tid">00:00</span></span><button type="button" class="lf-stop" data-lf="stop">Stop</button></div>`);
+    bjaelke = nyt(`<div class="lf-bjaelke" role="group" aria-label="Optagelse"><span class="lf-prik" aria-hidden="true"></span><span>Optager <span class="lf-tid" data-lf="tid">00:00</span></span><span class="lf-niveau" aria-hidden="true"><i data-lf="niveau"></i></span><span class="lf-varsel" data-lf="varsel" role="status"></span><button type="button" class="lf-stop" data-lf="stop">Stop</button></div>`);
     document.body.append(bjaelke);
     const felt = bjaelke.querySelector('[data-lf="tid"]');
     bjaelke.querySelector('[data-lf="stop"]').addEventListener('click', stopOptagelse);
     ur = setInterval(() => { felt.textContent = tidstekst(Date.now() - startetMs); }, 500);
     stopUr = setTimeout(stopOptagelse, MAKS_MS);
+    lytTilNiveau();
+  }
+
+  // Viser at mikrofonen hører noget, så en tavs mikrofon opdages med det samme og
+  // ikke først, når optagelsen er slut. Fejler det, kan optagelsen stadig køre.
+  function lytTilNiveau() {
+    try {
+      lydkontekst = new AudioContext();
+      lydkontekst.resume?.();
+      const analyse = lydkontekst.createAnalyser();
+      analyse.fftSize = 1024;
+      lydkontekst.createMediaStreamSource(stroem).connect(analyse);
+      const proeve = new Float32Array(analyse.fftSize);
+      const streg = bjaelke.querySelector('[data-lf="niveau"]'), varsel = bjaelke.querySelector('[data-lf="varsel"]');
+      let hoert = false;
+      const startet = Date.now();
+      niveauUr = setInterval(() => {
+        analyse.getFloatTimeDomainData(proeve);
+        const top = proeve.reduce((storst, v) => Math.max(storst, Math.abs(v)), 0);
+        streg.style.transform = `scaleX(${Math.min(1, top * 4)})`;
+        if (top > 0.0003) hoert = true;
+        const tavs = !hoert && lydkontekst.state === 'running' && Date.now() - startet > TAVS_EFTER_MS;
+        const tekst = tavs ? 'Hører ingen lyd. Tjek mikrofonen.' : '';
+        if (varsel.textContent !== tekst) varsel.textContent = tekst;
+      }, 200);
+    } catch (fejl) {
+      console.warn('lydfeedback: niveaumåler kunne ikke starte', fejl);
+    }
   }
 
   function stopOptagelse() {
@@ -189,7 +267,9 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
 
   function frigivMikrofon() {
     optagerKoerer = false;
-    clearInterval(ur); clearTimeout(stopUr);
+    clearInterval(ur); clearInterval(niveauUr); clearTimeout(stopUr);
+    lydkontekst?.close().catch(() => {});
+    lydkontekst = null;
     bjaelke?.remove(); bjaelke = null;
     stroem?.getTracks().forEach(spor => spor.stop());
     stroem = null;
