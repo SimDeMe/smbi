@@ -1,52 +1,54 @@
-# Luftmasser, skyer og stabilitet
+# Atmosfærisk stabilitet – luftpakkeundersøgelse
 
-Selvstændig, buildfri SVG-animation på `/geografi/luftmasser/`. Forløb og
-betjening følger `geografi/termiske-tryk/`: stor figur, fire trin, én kort
-forklaring, afspil/pause, næste trin og fokus. Fire situationer kan vælges:
-stabil, ustabil, betinget stabil og inversion. Der er ingen grafer,
-temperaturaflæsninger, skyder eller manuel justering af luftpakker.
+Buildfri SVG-simulation på `/geografi/luftmasser/`. Den samme luftpakke, varmet
+2 °C af jorden, slippes uden løft i fire atmosfærer, som tør eller fugtig pakke.
+Højdefiguren står side om side med en temperatur–højde-graf på samme akse, så
+forklaringen på udfaldet kan aflæses: er pakkens kurve til højre for
+omgivelsernes, har den opdrift.
+Skyderen tvinger pakken op (bjerg, front); derefter kan den slippes.
+Pause, nulstil, fokus og Escape understøttes. Reduceret bevægelse giver
+trin på 30 modelsekunder. Skift af atmosfære eller fugt nulstiller forsøget.
 
-## Forløb og grafik
+## Faglig model
 
-Landskabet tegnes responsivt som SVG med marker, vandløb, træer og huse.
-Luftstrømme, opvarmning, små skyer, en voksende cumulonimbus med ambolt,
-regn og lyn samt dis ved inversion vises efter scenariet.
+Bygger på NaturgeografiGrundbogen B, kapitel 10.5, afsnittet «Konvektion
+afhænger af luftmassens vandindhold» og figur 10.5.19. `model.mjs` adskiller
+fysik fra SVG og betjening.
 
-`forloeb.mjs` indeholder fire faglige årsagskæder og deres synlige faser.
-`simulation.js` styrer afspilning og tegning. Hvert trin varer syv sekunder;
-forløbet starter automatisk ved valg af situation og stopper efter 28 sekunder.
-Trinknapper viser stillbilleder, og afspilning kan fortsættes eller gentages.
+Omgivelserne er 20 °C ved jorden, pakken 22 °C. Umættet afkøling er
+1 °C/100 m, mættet 0,5 °C/100 m. Dugpunktet falder 0,2 °C/100 m og er 10 °C
+(tør, skybase 1.500 m) eller 18,8 °C (fugtig, skybase 400 m).
 
-Den første udgaves numeriske luftpakkeundersøgelse er erstattet af fire
-kvalitative, fastlagte vejrforløb. Grafik og skyudvikling er illustrative,
-ikke resultater fra en beregnet vejrmodel. Alle skyforløb antager fugtig luft;
-opvarmning eller sammenstrømning leverer løftet. Det stabile eksempel viser
-opvarmede termikbobler, der bremses i stabil luft højere oppe. Betinget
-stabilitet viser først bremsning og derefter sammenstrømning ved jorden,
-som giver ekstra løft nok til at udløse fri konvektion. Inversion viser
-kold luft nær jorden under varmere luft og svag lodret blanding.
+| Atmosfære (°C/100 m) | Tør pakke | Fugtig pakke |
+| --- | --- | --- |
+| Inversion (+0,4 til 1.000 m, derefter −0,6) | stopper ved 143 m | stopper ved 143 m |
+| Stabil (−0,4) | stopper ved 333 m | stopper ved 333 m |
+| Betinget stabil (−0,7) | stopper ved 667 m | sky fra 400 m, fortsætter op |
+| Ustabil (−1,2) | sky fra 1.500 m, fortsætter op | sky fra 400 m, fortsætter op |
 
-Der er ingen universel kobling mellem en stabilitetsklasse og én skytype.
-Torden kræver fugt, løft og tilstrækkelig dyb ustabilitet. En kort note og
-faglige kilder er samlet under «Om modellen» på siden.
+Ligevægtshøjden er 2 / (1,0 − gradient) · 100 m, så længe pakken er umættet.
+Tvinges den tørre pakke over 2.750 m i betinget luft, får den opdrift igen.
+Bogen beskriver stabil luft som uden opdrift; de 2 °C ekstra er modellens
+igangsætter, og derfor stiger pakken et kort stykke, før den stopper.
 
-Pause stopper alle bevægelser. Faneskift springer ikke frem i forløbet.
-`prefers-reduced-motion` viser stillbilleder med trinvalg. Lyn tegnes i skyen,
-udsendes højst én gang hvert 5,5 sekund og giver ingen blinkende baggrund.
-SVG har tekstalternativ, og alle knapper virker med tastatur. Trinrækken
-understøtter piletaster, Home og End. Escape forlader fokusvisning.
+Bevægelsen integrerer g·ΔT/T_omgivelser − 0,015·v med højst 0,1 s deltrin og
+vises 30 gange hurtigere end modeltiden. Inertien giver en lille svingning om
+ligevægten. Vanddamps bidrag til densitet er udeladt.
+
+Tryk integreres hydrostatisk i omgivelsesprofilen. Volumen følger idealgasloven
+ved omtrent konstant masse; kugleradius skalerer med kubikroden af volumen.
+Luftpakken er forstørret i forhold til højdeskalaen; den relative vækst er
+korrekt. Ved synkning antages kondensvand bevaret, så fordampning fører pakken
+tilbage langs samme idealiserede temperaturkurve. Ingen nedbør.
+3.000 m er figurens øvre grænse, ikke et stabilt loft.
+
+`forloeb.mjs` og `forloeb.test.mjs` beskriver det tidligere kvalitative
+forløb og bruges ikke længere af siden.
 
 ## Kontrol
 
-`node geografi/luftmasser/forloeb.test.mjs` kontrollerer faser og rækkefølge:
-fire trin, ingen byge i stabil luft eller inversion, ekstra løft før vækst
-i det betingede forløb og regn først efter udvikling af en høj sky.
-
-`node værktøj/pladstjek.mjs geografi/luftmasser/index.html` kontrollerer
-skærmplads. Figur og primære kontroller er samtidigt synlige ved 1280×577,
-1366×625 og 1536×730. Ingen vandret rulning ved 380, 390 og 640 px.
-
-Chromium: alle fire forløb, automatisk start og afslutning, pause,
-genafspilning, trinvalg, næste, tastatur, fokus, Escape og reduceret bevægelse.
-Skærmbilleder af alle fire sluttilstande og mobil er visuelt efterset.
-Ingen JavaScript-fejl. Fysisk touch, Safari og skærmlæser er ikke særskilt testet.
+- `node geografi/luftmasser/model.test.mjs`: temperatur, skybase, tryk, volumen,
+  ligevægtshøjder regnet i hånden og fri bevægelse i alle kombinationer.
+- `node værktøj/luftpakke-test.mjs`: alle otte udfald, tvunget løft, pause,
+  tastatur, fokus, reduceret bevægelse og mobil i browser.
+- `node værktøj/pladstjek.mjs geografi/luftmasser/index.html`: laptop og mobil.
