@@ -13,7 +13,7 @@ export const LUFT = {
   fugtig: { navn: 'Fugtig pakke', dugpunkt: 18.8 }
 };
 export const PROFILER = {
-  afkoeling: { navn: 'Adiabatisk afkøling', tekst: '<strong>Hvor meget afkøles luft, når den stiger?</strong> En luftpakke er en klump luft, vi følger på vej op. Afkølingen afhænger af, om luften er mættet: om den relative luftfugtighed (RF) er 100 %.' },
+  afkoeling: { navn: 'Adiabatisk afkøling', tekst: '<strong>Adiabatisk afkøling:</strong> Luft bliver koldere, når den stiger. En luftpakke er en klump luft, vi følger på vej op. Den er mættet, når den relative luftfugtighed (RF) er 100 %.' },
   stabil: { navn: 'Stabil luft', tekst: '<strong>Stabil luft</strong> modvirker opstigning. Omgivelserne afkøles langsomt med højden (her 0,4 °C pr. 100 m), så en stigende pakke hurtigt bliver lige så kold som dem og mister opdriften. Det gælder både tør og fugtig luft.' },
   ustabil: { navn: 'Ustabil luft', tekst: '<strong>Ustabil luft</strong> fremmer opstigning. Lige over solopvarmet jord afkøles omgivelserne hurtigere end pakken (her 1,2 °C pr. 100 m op til 500 m), så opdriften vokser. Det lag er tyndt: derover afkøles de 0,65 °C pr. 100 m, så en tør pakke bremses, mens en mættet kan fortsætte som sky.' },
   betinget: { navn: 'Betinget stabil luft', tekst: '<strong>Betinget stabil luft</strong> er stabil for tør luft og ustabil for mættet luft. Omgivelserne afkøles her 0,7 °C pr. 100 m, altså mellem tør- og fugtadiabatisk afkøling. Om pakken bliver ved med at stige, afhænger derfor af dens fugt.' },

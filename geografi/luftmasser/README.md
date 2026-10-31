@@ -13,24 +13,22 @@ Hver fane har en kort intro med begrebets betydning lige over figuren (`tekst` i
 
 ## Fanen Adiabatisk afkøling
 
-`afkoeling.js` er sidens åbningsfane. Standardvisningen (`stige.js`) er en højdestige:
-en tør og en fugtig pakke løftes 100 m ad gangen side om side, og en tabel viser
-temperaturen og ændringen for hvert trin. Så kan en nybegynder aflæse 1,0 og
-0,5 °C pr. 100 m på kort tid og se skiftet, hvor pakken bliver mættet. Reglen står fast
-over stigen, og ved toppen kan pakkerne sænkes igen.
+`afkoeling.js` er sidens åbningsfane. Designet følger forskningen i læring med
+multimedier (Mayer, Sweller): én læserækkefølge, tekst ved figuren, ét tal i fokus og
+små trin, eleven selv styrer. Spørgsmål og knap står i en linje over figuren.
 
-Knappen «Hvorfor bliver luften koldere?» åbner energiforklaringen (`begreb.js`), der viser
-energiens vej med en årsagskæde, en voksende luftpakke og et temperaturregnskab.
-To trin fremhæver først udvidelsens arbejde og afkøling, derefter fortætningens
-frigivelse af latent varme. Trin 1 begynder ved jorden; trin 2 viser den fugtige
-pakke ved 1.000 m: 12 °C uden fortætning mod 15 °C med fortætning.
-Udvidelsen fortsætter, så pakken køler stadig af under opstigning.
+Standardvisningen (`stige.js`) er en højdestige: en tør og en fugtig pakke løftes
+100 m ad gangen, og faldet står stort ved hver pakke. Reglerne står som «?» og tændes,
+når de er set: umættet ved 300 m, mættet ved 500 m. Tabellen viser de tre seneste
+trin. Ved toppen kan pakkerne sænkes igen.
 
-I energiforklaringen og kurven er den fugtige pakke valgt fra start. Pakken løftes med konstant fart uden
-opdrift og standser ved skybasen og toppen. Under synkning vendes forklaringen
-til sammentrykning og fordampning. Størrelsen følger stadig modelvolumen.
-“Tal, fugt og temperaturkurve” åbner fugtvalg, den tidligere temperatur–højde-graf
-og beregninger under arbejdsfeltet. De fire regneopgaver står længere nede.
+Først ved 500 m kommer knappen «Hvorfor bliver luften koldere?», der åbner tre korte
+trin (`begreb.js`): trykket falder, udvidelsen koster energi, fortætning giver varme
+tilbage. Højden på stigen bevares imens.
+
+«Tal, fugt og temperaturkurve» åbner den tidligere temperatur–højde-graf med
+fugtvalg, skyder og beregninger. Her løftes pakken med konstant fart uden opdrift og
+standser ved skybasen og toppen. De fire regneopgaver står længere nede.
 
 ## Sidste fane: Opgaver
 
