@@ -19,8 +19,10 @@ try {
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:8782/geografi/luftmasser/');
  await page.emulateMedia({reducedMotion:'reduce'});
+ assert.match(await page.locator('#a-afspil').textContent(),/Løft 100 m/);
+ assert.equal(await page.locator('[data-sky="fugtig"]').isVisible(),false);
  // Hver fane forklarer sit begreb over figuren, og figur og kontroller er synlige uden at rulle.
- for(const [profil,begreb] of [['stabil','Stabil luft'],['ustabil','Ustabil luft'],['betinget','Betinget stabil luft'],['inversion','Inversion'],['afkoeling','Hvorfor bliver stigende luft koldere?']]) {
+ for(const [profil,begreb] of [['stabil','Stabil luft'],['ustabil','Ustabil luft'],['betinget','Betinget stabil luft'],['inversion','Inversion'],['afkoeling','Hvor meget afkøles luft, når den stiger?']]) {
   await page.locator(`[data-profil="${profil}"]`).click();
   assert.equal(await page.locator('#intro strong').textContent(),begreb);
   const id=profil==='afkoeling'?'#a-hoejde':'#hoejde';
@@ -28,9 +30,44 @@ try {
   assert.ok(await page.locator(id).evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: skyder uden for skærmen`);
   assert.ok(await page.locator('#figur').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: figur uden for skærmen`);
  }
- // Begrebet kommer først; graf og fugtvalg er sekundære.
- assert.equal(await page.locator('#a-begreb').isVisible(),true);
+ // Højdestigen kommer først: reglen står fast, og den kan aflæses trin for trin.
+ assert.equal(await page.locator('.stige').isVisible(),true);
  assert.equal(await page.locator('#landskab').isVisible(),false);
+ assert.equal(await page.locator('#a-trin').isVisible(),false);
+ const regel=await page.locator('.stige-regel').textContent();
+ assert.match(regel,/Umættet luft: 1,0 °C pr\. 100 m/);assert.match(regel,/Mættet luft: 0,5 °C pr\. 100 m/);
+ assert.match(await page.locator('#intro').textContent(),/luftpakke er en klump luft/);
+ const raekke=async()=>(await page.locator('.stige-tabel tr.nu').textContent()).replace(/\s+/g,' ');
+ const loeft=async n=>{for(let i=0;i<n;i++)await page.locator('#a-afspil').click();};
+ assert.match(await page.locator('#a-afspil').textContent(),/Løft 100 m/);
+ await loeft(1);
+ assert.equal(await page.locator('#a-hoejde').inputValue(),'100');
+ assert.match(await raekke(),/100 m ?21,0 °C −1,0 ?21,0 °C −1,0/);
+ await loeft(3);
+ assert.match(await raekke(),/400 m ?18,0 °C −1,0 ?18,0 °C −1,0 sky/);
+ assert.match(await page.locator('#a-titel').textContent(),/fugtige pakke er blevet mættet/);
+ await loeft(1);
+ assert.match(await raekke(),/500 m ?17,0 °C −1,0 ?17,5 °C −0,5 sky/);
+ assert.match(await page.locator('#a-titel').textContent(),/afkøles de forskelligt/);
+ await loeft(10);
+ assert.match(await raekke(),/1\.500 m ?7,0 °C −1,0 sky ?12,5 °C −0,5 sky/);
+ assert.match(await page.locator('#a-titel').textContent(),/tørre pakke også mættet/);
+ await loeft(1);
+ assert.match(await raekke(),/1\.600 m ?6,5 °C −0,5 sky ?12,0 °C −0,5 sky/);
+ assert.ok(await page.locator('#a-begreb').evaluate(el=>el.scrollHeight<=el.clientHeight+1),'Stigen klippet');
+ await page.screenshot({path:join(tmpdir(),'luftpakke-stige.png'),fullPage:true});
+ // Ved toppen kan pakkerne sænkes igen; skyderen går i hele trin.
+ await page.locator('#a-hoejde').fill('3000');
+ assert.match(await page.locator('#a-afspil').textContent(),/Sænk 100 m/);
+ await loeft(1);
+ assert.match(await raekke(),/2\.900 m ?\S+ °C \+0,5 sky ?\S+ °C \+0,5 sky/);
+ await page.locator('#a-nulstil').click();
+ assert.equal(await page.locator('#a-hoejde').inputValue(),'0');
+ assert.match(await page.locator('#a-afspil').textContent(),/Løft 100 m/);
+ // Energiforklaringen åbnes bagefter.
+ await page.locator('#a-hvorfor').click();
+ assert.equal(await page.locator('#a-trin').isVisible(),true);
+ assert.match(await page.locator('#a-begreb').textContent(),/indre energi/);
  await page.screenshot({path:join(tmpdir(),'luftpakke-udvidelse.png'),fullPage:true});
  await page.locator('#a-trin-2').click();
  assert.equal(await page.locator('#a-hoejde').inputValue(),'1000');
@@ -46,7 +83,6 @@ try {
  await page.locator('#a-vis-graf').click();
  assert.equal(await page.locator('#landskab').isVisible(),true);
  assert.equal(await page.locator('#a-begreb').isVisible(),false);
- await page.locator('#a-vis-graf').click();
  // Læringsfanen: løft standser ved dugpunktet og toppen, og pakken kan synke igen.
  assert.equal(await page.locator('#a-hoejde').isVisible(),true);
  assert.equal(await page.locator('#hoejde').isVisible(),false);
@@ -62,6 +98,8 @@ try {
   await page.locator('#a-afspil').click();
   assert.equal(await page.locator('#a-hoejde').inputValue(),'0');
  }
+ await page.locator('#a-vis-graf').click();
+ assert.equal(await page.locator('.stige').isVisible(),true);
  await page.locator('#a-ekstra summary').click();
  // Opgaverne: rigtigt og forkert svar, komma som decimaltegn.
  await page.locator('#svar-0').fill('14,0');await page.locator('#svar-0').press('Enter');
@@ -90,6 +128,7 @@ try {
  await page.emulateMedia({reducedMotion:'no-preference'});
  // Animeret løft i læringsfanen standser ved dugpunktet (den fugtige pakke: 400 m).
  await page.locator('[data-profil="afkoeling"]').click();
+ await page.locator('#a-hvorfor').click();
  await page.locator('#a-afspil').click();await page.waitForTimeout(2200);
  assert.equal(await page.locator('#a-hoejde').inputValue(),'400');
  assert.match(await page.locator('#a-afspil').textContent(),/Løft videre/);

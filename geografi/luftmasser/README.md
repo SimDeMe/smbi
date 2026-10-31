@@ -13,14 +13,20 @@ Hver fane har en kort intro med begrebets betydning lige over figuren (`tekst` i
 
 ## Fanen Adiabatisk afkøling
 
-`afkoeling.js` er sidens åbningsfane. Standardvisningen (`begreb.js`) forklarer
+`afkoeling.js` er sidens åbningsfane. Standardvisningen (`stige.js`) er en højdestige:
+en tør og en fugtig pakke løftes 100 m ad gangen side om side, og en tabel viser
+temperaturen og ændringen for hvert trin. Så kan en nybegynder aflæse 1,0 og
+0,5 °C pr. 100 m på kort tid og se skiftet, hvor pakken bliver mættet. Reglen står fast
+over stigen, og ved toppen kan pakkerne sænkes igen.
+
+Knappen «Hvorfor bliver luften koldere?» åbner energiforklaringen (`begreb.js`), der viser
 energiens vej med en årsagskæde, en voksende luftpakke og et temperaturregnskab.
 To trin fremhæver først udvidelsens arbejde og afkøling, derefter fortætningens
 frigivelse af latent varme. Trin 1 begynder ved jorden; trin 2 viser den fugtige
 pakke ved 1.000 m: 12 °C uden fortætning mod 15 °C med fortætning.
 Udvidelsen fortsætter, så pakken køler stadig af under opstigning.
 
-Den fugtige pakke er valgt fra start. Pakken løftes med konstant fart uden
+I energiforklaringen og kurven er den fugtige pakke valgt fra start. Pakken løftes med konstant fart uden
 opdrift og standser ved skybasen og toppen. Under synkning vendes forklaringen
 til sammentrykning og fordampning. Størrelsen følger stadig modelvolumen.
 “Tal, fugt og temperaturkurve” åbner fugtvalg, den tidligere temperatur–højde-graf

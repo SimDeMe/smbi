@@ -1,5 +1,5 @@
 import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke13';
-import { afkoeling } from './afkoeling.js?v=luftpakke13';
+import { afkoeling } from './afkoeling.js?v=luftpakke14';
 import { bygUndersoegelser } from './opgaver.js';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
