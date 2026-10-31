@@ -1,8 +1,9 @@
 import { PROFILER, LUFT, TOP, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs';
+import { afkoeling } from './afkoeling.js';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
-let profil = 'stabil', luft = 'toer', z = 0, v = 0, afspiller = false, frame, sidst, startet = false, afsluttet = false;
+let profil = 'afkoeling', luft = 'toer', z = 0, v = 0, afspiller = false, frame, sidst, startet = false, afsluttet = false;
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
 const hundrede = h => tal(Math.round(h / 10) * 10, 0);
 const TMIN = -20, TMAX = 28;
@@ -66,6 +67,7 @@ function resultat(s) {
 }
 
 function tegn() {
+  if (profil === 'afkoeling') return afkoeling.tegn();
   const s = tilstand(profil, luft, z), w = figur.clientWidth, h = figur.clientHeight;
   const smal = w < 560, top = 60, bund = h - 74;
   const y = hoejde => bund - hoejde / TOP * (bund - top);
@@ -144,12 +146,18 @@ function start() {
 }
 function nulstil() { stop(); z = 0; v = 0; startet = false; afsluttet = false; tegn(); knap(); }
 skyder.addEventListener('input', () => { stop(); z = +skyder.value; v = 0; startet = false; afsluttet = false; tegn(); knap(); });
+function visPanel() {
+  const laering = profil === 'afkoeling';
+  $('panel-afkoeling').hidden = !laering; $('opgaver').hidden = !laering;
+  $('panel-stabilitet').hidden = laering; $('stabilitet-note').hidden = laering; $('afkoeling-note').hidden = !laering;
+}
 function vaelg(attribut, saet) {
   document.querySelectorAll(`[${attribut}]`).forEach(b => b.addEventListener('click', () => {
     saet(b.getAttribute(attribut));
     document.querySelectorAll(`[${attribut}]`).forEach(k => k.setAttribute('aria-pressed', String(k === b)));
-    $('scenenavn').textContent = PROFILER[profil].navn; $('profiltekst').textContent = PROFILER[profil].tekst;
-    nulstil();
+    $('intro').innerHTML = PROFILER[profil].tekst;
+    visPanel();
+    afkoeling.stop(); nulstil();
   }));
 }
 vaelg('data-profil', p => { profil = p; });
@@ -165,5 +173,6 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape' && document.bo
 document.addEventListener('visibilitychange', () => { sidst = null; });
 reduceret.addEventListener('change', stop);
 new ResizeObserver(tegn).observe(figur);
-$('profiltekst').textContent = PROFILER[profil].tekst;
+$('intro').innerHTML = PROFILER[profil].tekst;
+visPanel();
 tegn(); knap();

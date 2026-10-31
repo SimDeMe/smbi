@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { tilstand, ligevaegt, skybase, bevaeg, omgivelser } from './model.mjs';
+import { tilstand, ligevaegt, skybase, bevaeg, omgivelser, latentVarme, uden_kondensation } from './model.mjs';
 const near = (a,b,tol=1e-8) => assert.ok(Math.abs(a-b)<tol,`${a} ≠ ${b}`);
 const PROFILNAVNE = ['stabil','ustabil','betinget','inversion'], LUFTNAVNE = ['toer','fugtig'];
 
@@ -32,6 +32,10 @@ near(ligevaegt('betinget','toer'),666.67,1);
 near(ligevaegt('inversion','toer'),142.86,1);near(ligevaegt('inversion','fugtig'),142.86,1);
 assert.equal(ligevaegt('ustabil','toer'),null);assert.equal(ligevaegt('ustabil','fugtig'),null);
 assert.equal(ligevaegt('betinget','fugtig'),null);
+// Latent varme: (1,0 − 0,5) °C/100 m over skybasen, intet under den.
+near(latentVarme('fugtig',400),0);near(latentVarme('toer',1000),0);
+near(latentVarme('fugtig',3000),13);near(latentVarme('toer',3000),7.5);
+near(uden_kondensation(3000),-8);
 console.log('Temperatur, dugpunkt, skybase, tryk, volumen og ligevægtshøjder: OK');
 
 function slip(profil, luft, z=0) {

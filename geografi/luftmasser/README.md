@@ -9,6 +9,16 @@ Skyderen tvinger pakken op (bjerg, front); derefter kan den slippes.
 Pause, nulstil, fokus og Escape understøttes. Reduceret bevægelse giver
 trin på 30 modelsekunder. Skift af atmosfære eller fugt nulstiller forsøget.
 
+Hver fane har en kort intro med begrebets betydning lige over figuren (`tekst` i `PROFILER`).
+
+## Fanen Adiabatisk afkøling
+
+`afkoeling.js` er siden åbningsfane og en selvstændig del. Pakken løftes med konstant
+fart og uden opdrift, så kun afkølingen er i fokus. Den standser ved dugpunktet
+og toppen og kan synke igen. Grafen viser temperatur, dugpunkt og den tørre kurve
+uden kondensation; feltet imellem er frigivet latent varme. Fire regneopgaver
+med tjek står under figuren.
+
 ## Faglig model
 
 Bygger på NaturgeografiGrundbogen B, kapitel 10.5, afsnittet «Konvektion
