@@ -12,13 +12,15 @@ await new Promise(r => setTimeout(r, 600));
 const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
 const MODTAGER = 'https://script.google.test/macros/s/falsk/exec';
 const KONFIG = `export const LYD_CONFIG = { modtager: '${MODTAGER}', opbevaringDage: 90 };`;
+const TOM_KONFIG = `export const LYD_CONFIG = { modtager: '', opbevaringDage: 90 };`;
 
 async function nySide({ konfig = true, viewport = { width: 1280, height: 577 }, init } = {}) {
   const ctx = await browser.newContext({ viewport });
   const page = await ctx.newPage();
   page.fejl = [];
   page.on('pageerror', e => page.fejl.push(e.message));
-  if (konfig) await page.route('**/feedback/lyd-config.js*', r => r.fulfill({ contentType: 'text/javascript', body: KONFIG }));
+  // Altid falsk: testen må aldrig kunne nå den rigtige modtager i lyd-config.js.
+  await page.route('**/feedback/lyd-config.js*', r => r.fulfill({ contentType: 'text/javascript', body: konfig ? KONFIG : TOM_KONFIG }));
   await page.addInitScript(() => {
     navigator.mediaDevices.getUserMedia = async () => {
       const lyd = new AudioContext(), tone = lyd.createOscillator(), ud = lyd.createMediaStreamDestination();
@@ -222,6 +224,7 @@ try {
     const navn = `${viewport.width}x${viewport.height}`;
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `${navn}: vandret rulning`);
     assert.ok(await knap(page).isVisible(), `${navn}: knap`);
+    assert.ok(await knap(page).evaluate(el => el.getBoundingClientRect().bottom <= innerHeight), `${navn}: knappen skal ses uden at rulle`);
     await knap(page).click();
     const boks = await page.locator('.lf-dialog').boundingBox();
     assert.ok(boks.x >= 0 && boks.x + boks.width <= viewport.width && boks.y >= 0 && boks.y + boks.height <= viewport.height, `${navn}: dialog uden for skærmen`);
