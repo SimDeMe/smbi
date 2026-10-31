@@ -130,8 +130,8 @@ PhETs elevinterviews er en relevant metodeinspiration:
 
 ## 4. Ønsket funktion: direkte aflevering af lydfeedback
 
-**Status: ønsket løsning og designretning. Dokumentet implementerer eller
-aktiverer ikke optagelse, konti, upload eller en Supabase-tjeneste.**
+**Status: bygget til `geografi/luftmasser/`, men slukket, indtil modtageren er
+sat op efter `feedback/LYD.md`. Dokumentet er designretningen.**
 
 ### Formål, deltagere og modtager
 
@@ -142,7 +142,7 @@ aktiverer ikke optagelse, konti, upload eller en Supabase-tjeneste.**
   afleveringsrum til hver lærer eller skole.
 - Deltageren skal før optagelse og aflevering tydeligt se, hvem der modtager
   feedbacken, hvad den bruges til, og hvor længe den opbevares.
-- Deltagelse kræver ikke, at andre skoler selv opretter et Supabase-projekt.
+- Deltagelse kræver ikke, at andre skoler selv opretter noget.
   Almindelig brug af simulationerne skal kunne fortsætte uden optagelse.
 
 ### Deltagerens forløb
@@ -175,34 +175,33 @@ Registrér ikke generelle tastetryk, andre faner eller uvedkommende felter.
 Navn, skole og kontaktoplysninger skal ikke være obligatoriske uden et
 konkret behov. En deltagerkode gør ikke en genkendelig stemme anonym.
 
-### Foreslået tjeneste: Supabase
+### Valgt tjeneste: Google Drive via Apps Script
 
-Bevar den statiske hjemmeside på GitHub Pages. Brug Supabase til privat
-lydlager, feedbackmetadata, en modtagerfunktion og ejerens login.
+Bevar den statiske hjemmeside på GitHub Pages. Et Apps Script under ejerens konto
+modtager afleveringen, lægger lyd og log i en privat Drive-mappe og skriver en
+række i et regneark. Supabase blev fravalgt, fordi opsætningen var for tung.
+Dropbox blev fravalgt, fordi det kræver en adgangsnøgle i sidens kode eller en
+server imellem.
 
-- Deltagere fra alle skoler skal kunne aflevere uden en Supabase-konto;
-  adgang kan gives med et afprøvningslink eller en kode valideret på serveren.
-- Login er til ejerens oversigt, hvor lyd og log kan ses, hentes og slettes.
-- Ingen offentlige lydfiler eller offentlig liste over afleveringer.
-- Databasens og fillagerets adgangsregler skal håndhæve rettigheder på serveren.
-  Et skjult link eller en skjult knap er ikke adgangskontrol.
-- Deltageradgang skal begrænses til den nødvendige upload og kvittering og må
-  ikke give adgang til andres feedback eller mulighed for overskrivning.
-- Administratornøgler må aldrig ligge i hjemmesidens kode eller Git-repoet.
-- Begræns indsendelseshyppighed, antal, filstørrelse og optagelseslængde på
-  server-/lagersiden. Planlæg oprydning af ufuldstændige uploads og dubletter.
-- Opret en slettepolitik og en passende lager-/forbrugsgrænse. Undersøg aktuelle
-  priser og kvoter ved implementering; åben deltagelse kræver forbrugskontrol.
-- Eventuel mail skal være en besked om ny feedback med adgang til ejerens
-  beskyttede oversigt; selve lydfilen behøver ikke sendes som vedhæftning.
+- Deltagere fra alle skoler skal kunne aflevere uden konto; adgang gives med et
+  afprøvningslink, hvis kode valideres i scriptet.
+- Ejeren lytter i Drive og læser oversigten i regnearket.
+- Ingen offentlige lydfiler eller offentlig liste over afleveringer. Mappe og ark
+  deles ikke. Et skjult link eller en skjult knap er ikke adgangskontrol.
+- Deltageradgang er begrænset til upload og kvittering og giver ikke adgang til
+  andres feedback eller mulighed for overskrivning.
+- Scriptet begrænser hyppighed, antal, filstørrelse og optagelseslængde og rydder
+  op efter ufuldstændige afleveringer og dubletter.
+- Filer flyttes til papirkurven efter 60 dage, og Google tømmer den efter 30.
+- Eventuel mail er en besked om ny feedback; lydfilen sendes ikke som vedhæftning.
 
-Vælg en konkret EU-region, fx Frankfurt eller Stockholm, hvis det er det
-besluttede krav. Supabase tilbyder en databehandleraftale. Regionsvalg alene
-beviser ikke, at løsningen opfylder databeskyttelseskrav. Før indsamling af
-virkelige optagelser skal dataansvar, behandlingsgrundlag, information,
-adgang, sletning og relevante aftaler være afklaret, også ved deltagelse fra
-andre skoler. Browserens mikrofontilladelse er en teknisk tilladelse og afgør
-ikke behandlingsgrundlaget. Dette dokument fastlægger ikke det juridiske grundlag.
+Modtagelsen er billigere, men svagere end en tjeneste med databehandleraftale og
+valg af region. En privat Google-konto giver efter alt at dømme ingen af delene.
+Før indsamling af virkelige optagelser fra andre end ejeren skal dataansvar,
+behandlingsgrundlag, information, adgang, sletning og relevante aftaler være
+afklaret, også ved deltagelse fra andre skoler. Browserens mikrofontilladelse er en
+teknisk tilladelse og afgør ikke behandlingsgrundlaget. Dette dokument fastlægger
+ikke det juridiske grundlag.
 
 ### Verifikation før funktionen tages i brug
 
@@ -211,9 +210,8 @@ ikke behandlingsgrundlaget. Dette dokument fastlægger ikke det juridiske grundl
 - Kontrollér serverkvittering, genforsøg, dobbeltafsendelse og uploadfejl.
 - Kontrollér at uvedkommende og andre deltagere ikke kan læse, liste,
   overskrive eller slette afleveringer.
-- Kontrollér ejerens adgang og sletning af både lyd, metadata og log samt
-  politik for eventuelle sikkerhedskopier.
-- Afprøv aflevering fra en ekstern skole uden ejerens browserlogin.
+- Kontrollér sletning af både lyd, metadata og log samt papirkurven.
+- Afprøv aflevering fra en ekstern skole uden ejerens Google-login.
 
 ## 5. Tekniske kilder til aflevering
 
@@ -222,11 +220,6 @@ Dokumentation kontrolleret 31. oktober 2026; verificér igen ved implementering.
 - [GitHub Pages: statisk hosting](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)
 - [MDN: mikrofonadgang og tilladelser](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
 - [MDN: understøttede optageformater](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/isTypeSupported_static)
-- [Supabase: private fillagre og uploadbegrænsninger](https://supabase.com/docs/guides/storage/buckets/fundamentals)
-- [Supabase: adgangskontrol i fillager](https://supabase.com/docs/guides/storage/security/access-control)
-- [Supabase: adgangsregler i databasen](https://supabase.com/docs/guides/database/postgres/row-level-security)
-- [Supabase: hemmelige nøgler](https://supabase.com/docs/guides/functions/secrets)
-- [Supabase: begrænsning af indsendelseshyppighed](https://supabase.com/docs/guides/functions/examples/rate-limiting)
-- [Supabase: regioner](https://supabase.com/docs/guides/platform/regions)
-- [Supabase: databehandleraftale](https://supabase.com/legal/customer-resources/data-processing-addendum)
+- [Google: webapps i Apps Script](https://developers.google.com/apps-script/guides/web)
+- [Google: kvoter i Apps Script](https://developers.google.com/apps-script/guides/services/quotas)
 - [Datatilsynet: skoler og daginstitutioner](https://www.datatilsynet.dk/regler-og-vejledning/skoler-og-daginstitutioner)

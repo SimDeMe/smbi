@@ -109,4 +109,4 @@ Uden link og modtager indlæses modulet uden at vise noget, og simulationen er u
 - `node værktøj/luftpakke-test.mjs`: alle otte udfald, tvunget løft, pause,
   tastatur, fokus, reduceret bevægelse og mobil i browser.
 - `node værktøj/pladstjek.mjs geografi/luftmasser/index.html`: laptop og mobil.
-- `node værktøj/lydfeedback-test.mjs`: optagelse, log, fejl, kvittering og ejerens oversigt.
+- `node værktøj/lydfeedback-test.mjs`: optagelse, log, fejl og kvittering.

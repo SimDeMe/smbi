@@ -1,8 +1,6 @@
-// Offentlige indstillinger for lydfeedback. Her må kun stå adressen og den
-// offentlige anon-nøgle, aldrig tjenestenøglen. Så længe supabaseUrl er tom,
-// vises ingen optageknap, og oversigten siger, at den ikke er sat op.
+// Offentlige indstillinger for lydfeedback. Så længe modtager er tom, vises ingen
+// optageknap. Adressen er offentlig; det er afprøvningskoden, der giver adgang.
 export const LYD_CONFIG = {
-  supabaseUrl: '',
-  anonNoegle: '',
-  opbevaringDage: 90,   // skal passe med slet_efter i supabase/migrations
+  modtager: '',          // Apps Script-webappens /exec-adresse, se feedback/LYD.md
+  opbevaringDage: 90,    // OPBEVARING_DAGE i lyd-apps-script.gs plus 30 i papirkurven
 };

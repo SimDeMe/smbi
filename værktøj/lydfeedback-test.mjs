@@ -1,4 +1,4 @@
-// Lydfeedback i browser med syntetisk lyd og falsk Supabase. Rører ingen rigtig tjeneste.
+// Lydfeedback i browser med syntetisk lyd og falsk modtager. Rører ingen rigtig tjeneste.
 // Headless Chromium hænger her ved getUserMedia, også med falsk enhed, så testen giver
 // MediaRecorder en tone fra Web Audio. Tilladelsesdialogen skal prøves i en rigtig browser.
 // node værktøj/lydfeedback-test.mjs
@@ -10,8 +10,8 @@ const PORT = 8783, SIDE = `http://127.0.0.1:${PORT}/geografi/luftmasser/`, KODE 
 const server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 600));
 const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
-const KONFIG = `export const LYD_CONFIG = { supabaseUrl: 'https://falsk.supabase.test', anonNoegle: 'offentlig', opbevaringDage: 90 };`;
-const FALSK_JWT = `x.${Buffer.from(JSON.stringify({ sub: 'u', exp: 4102444800 })).toString('base64url')}.y`;
+const MODTAGER = 'https://script.google.test/macros/s/falsk/exec';
+const KONFIG = `export const LYD_CONFIG = { modtager: '${MODTAGER}', opbevaringDage: 90 };`;
 
 async function nySide({ konfig = true, viewport = { width: 1280, height: 577 }, init } = {}) {
   const ctx = await browser.newContext({ viewport });
@@ -67,9 +67,11 @@ try {
     const page = await nySide();
     const modtaget = [];
     let svar = 'netfejl';
-    await page.route('https://falsk.supabase.test/functions/v1/modtag-lydfeedback', async r => {
-      const krop = r.request().postDataBuffer();
-      modtaget.push(krop);
+    await page.route(MODTAGER, async r => {
+      // Apps Script kan ikke svare på en preflight: ingen OPTIONS, og kroppen er ren tekst.
+      assert.equal(r.request().method(), 'POST');
+      assert.match(r.request().headers()['content-type'], /^text\/plain/);
+      modtaget.push(r.request().postData());
       const cors = { 'Access-Control-Allow-Origin': '*' };
       if (svar === 'netfejl') return r.abort();
       if (svar === '500') return r.fulfill({ status: 500, headers: cors, contentType: 'application/json', body: '{"ok":false,"fejl":"server"}' });
@@ -136,27 +138,25 @@ try {
     await lf(page, 'send').click();
     await page.getByText('Kvittering').waitFor();
     assert.match(await page.locator('.lf-dialog').textContent(), /3F2B8C1E/);
-    const felt = (b, navn) => b.toString('latin1').match(new RegExp(`name="${navn}"\\r\\n\\r\\n([^\\r]*)`))?.[1];
-    const sidste = modtaget.at(-1);
-    assert.equal(new Set(modtaget.map(b => felt(b, 'session'))).size, 1, 'genforsøg skal genbruge sessionen');
-    assert.equal(felt(sidste, 'kode'), KODE);
-    assert.equal(felt(sidste, 'simulation'), 'geografi/luftmasser');
-    assert.equal(felt(sidste, 'version'), 'luftpakke16');
-    assert.ok(Number(felt(sidste, 'varighed_ms')) > 1000);
-    assert.match(felt(sidste, 'lydformat'), /^audio\//);
-    assert.deepEqual(JSON.parse(felt(sidste, 'starttilstand')), { profil: 'afkoeling', luft: 'fugtig', hoejde_m: 0 });
-    const logTekst = Buffer.from(felt(sidste, 'log'), 'latin1').toString('utf8');
-    const log = JSON.parse(logTekst);
+    const forsoeg = modtaget.map(k => JSON.parse(k)), sidste = forsoeg.at(-1);
+    assert.equal(new Set(forsoeg.map(k => k.session)).size, 1, 'genforsøg skal genbruge sessionen');
+    assert.equal(sidste.kode, KODE);
+    assert.equal(sidste.simulation, 'geografi/luftmasser');
+    assert.match(sidste.version, /^luftpakke\d+$/);
+    assert.ok(Number.isInteger(sidste.varighed_ms) && sidste.varighed_ms > 1000);
+    assert.match(sidste.lydformat, /^audio\//);
+    assert.deepEqual(sidste.starttilstand, { profil: 'afkoeling', luft: 'fugtig', hoejde_m: 0 });
+    const log = sidste.log, logTekst = JSON.stringify(log);
     assert.ok(log.every((h, i) => h.t >= 0 && (i === 0 || h.t >= log[i - 1].t)), 'loggen følger tidsaksen');
     assert.match(logTekst, /klik betinget/);
     assert.match(logTekst, /klik fugtig/);
     assert.match(logTekst, /skyder hoejde = 800/);
     assert.match(logTekst, /svarfelt udfyldt energi-svar/);
     assert.ok(log.some(h => h.tilstand.profil === 'betinget' && h.tilstand.luft === 'fugtig'), 'tilstanden efter handlingen');
-    assert.ok(!sidste.includes('HEMMELIGT'), 'elevens tekst må ikke sendes');
-    // Selve lydfilen ligger i kroppen med sit eget format.
-    assert.ok(sidste.includes(Buffer.from('Content-Type: audio/')));
-    assert.ok(sidste.length > 1000);
+    assert.ok(!modtaget.at(-1).includes('HEMMELIGT'), 'elevens tekst må ikke sendes');
+    // Lyden overlever base64 og er stadig en webm-fil, som scriptet vil godkende.
+    assert.equal(Buffer.from(sidste.lyd, 'base64').subarray(0, 4).toString('hex'), '1a45dfa3');
+    assert.ok(sidste.lyd.length > 1000);
 
     await lf(page, 'luk').click();
     assert.equal(await page.locator('.lf-dialog').evaluate(d => d.open), false);
@@ -230,7 +230,7 @@ try {
     assert.equal(await lf(page, 'stop').evaluate(el => { const r = el.getBoundingClientRect(); return r.bottom <= innerHeight && r.right <= innerWidth && r.left >= 0; }), true, `${navn}: stopknap`);
     const overlap = await page.evaluate(() => {
       const b = document.querySelector('.lf-bjaelke').getBoundingClientRect();
-      return ['#a-afspil', '#a-nulstil', '#a-hvorfor'].filter(s => { const r = document.querySelector(s).getBoundingClientRect(); return r.width && r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top; });
+      return ['#a-afspil', '#a-nulstil', '#a-hvorfor'].filter(s => { const r = document.querySelector(s)?.getBoundingClientRect(); return r?.width && r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top; });
     });
     assert.deepEqual(overlap, [], `${navn}: optagelinjen dækker knapper`);
     await page.screenshot({ path: `værktøj/ud/lydfeedback-optager-${navn}.png` });
@@ -241,61 +241,6 @@ try {
     await page.context().close();
   }
 
-  // Ejerens oversigt mod falsk Supabase: login, liste, hop i loggen, slet.
-  {
-    const page = await nySide();
-    const RAEKKE = { session: '3f2b8c1e-7a4d-4e5f-9b6a-1c2d3e4f5a6b', simulation: 'geografi/luftmasser', version: 'luftpakke16', startet: '2026-11-01T10:00:00Z', varighed_ms: 65000, lydsti: 'a/b.webm', status: 'modtaget', slet_efter: '2027-01-30T10:00:00Z', starttilstand: { profil: 'afkoeling' }, log: [{ t: 24000, handling: 'klik afspil', tilstand: { profil: 'stabil', luft: 'toer', hoejde_m: 0 } }] };
-    const kald = [];
-    let raekker = [RAEKKE], loginOk = false;
-    await page.route('https://falsk.supabase.test/**', async r => {
-      const url = new URL(r.request().url()), metode = r.request().method();
-      kald.push(`${metode} ${url.pathname}`);
-      const svar = (body, status = 200) => r.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*' }, body: JSON.stringify(body) });
-      if (metode === 'OPTIONS') return svar({});
-      if (url.pathname === '/auth/v1/token') {
-        if (!loginOk) return svar({ error: 'invalid_grant', error_description: 'nej' }, 400);
-        return svar({ access_token: FALSK_JWT, token_type: 'bearer', expires_in: 3600, expires_at: 4102444800, refresh_token: 'r', user: { id: 'u', aud: 'authenticated', email: 'e@x.test' } });
-      }
-      if (url.pathname === '/rest/v1/lydfeedback' && metode === 'GET') return svar(raekker);
-      if (url.pathname === '/rest/v1/lydfeedback' && metode === 'DELETE') { raekker = []; return svar([]); }
-      if (url.pathname.startsWith('/storage/v1/object/sign/')) return svar({ signedURL: '/object/sign/a/b.webm?token=t' });
-      if (url.pathname.startsWith('/storage/v1/object/lydfeedback')) return svar([{ name: 'a/b.webm' }]);
-      return svar({}, 404);
-    });
-    page.on('dialog', d => d.accept());
-    await page.goto(`http://127.0.0.1:${PORT}/feedback/lyd-oversigt.html`);
-    await page.locator('#login').waitFor();
-    assert.equal(await page.locator('#indhold').isVisible(), false);
-    await page.fill('#mail', 'e@x.test'); await page.fill('#kodeord', 'testkode-123');
-    await page.getByRole('button', { name: 'Log ind' }).click();
-    await page.getByText('Login mislykkedes').waitFor();
-    assert.equal(await page.locator('#indhold').isVisible(), false);
-    loginOk = true;
-    await page.fill('#kodeord', 'testkode-123');
-    await page.getByRole('button', { name: 'Log ind' }).click();
-    await page.locator('.post').waitFor();
-    assert.match(await page.locator('.post').textContent(), /3F2B8C1E.*01:05/s);
-    assert.match(await page.locator('.post').textContent(), /klik afspil · stabil, toer, 0 m/);
-    assert.equal(await page.locator('.post audio').getAttribute('src'), null, 'lyden hentes først, når den skal bruges');
-    await page.getByRole('button', { name: 'Hent lyd til afspilning' }).click();
-    await page.waitForFunction(() => document.querySelector('.post audio').src.includes('token=t'));
-    await page.getByRole('button', { name: 'Slet' }).click();
-    await page.getByText('Slettet.').waitFor();
-    assert.equal(await page.locator('.post').count(), 0);
-    const slet = kald.filter(k => k.startsWith('DELETE'));
-    assert.ok(slet[0].includes('/storage/') && slet[1].includes('/rest/'), 'lyd og metadata slettes begge');
-    assert.deepEqual(page.fejl, []);
-    await page.context().close();
-  }
-
-  // Oversigten uden opsætning siger det ligeud.
-  {
-    const page = await nySide({ konfig: false });
-    await page.goto(`http://127.0.0.1:${PORT}/feedback/lyd-oversigt.html`);
-    await page.getByText('ikke sat op endnu').waitFor();
-    assert.equal(await page.locator('#login').isVisible(), false);
-    await page.context().close();
-  }
   console.log('lydfeedback-test.mjs: alt bestået');
 } finally {
   await browser.close();

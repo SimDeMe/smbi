@@ -2,12 +2,12 @@
 
 Deltageren tænker højt, mens simulationen bruges, aflytter og sender aktivt.
 Designretningen står i `simulationsdesign.md`, afsnit 4. Første simulation er
-`geografi/luftmasser/`. Den skrevne feedback (`feedback.js` og Google-arket) er
-uafhængig af dette.
+`geografi/luftmasser/`. Den skrevne feedback (`feedback.js` og `apps-script.gs`) er
+uafhængig af dette og har sit eget ark.
 
 Optageknappen vises kun, når begge dele er opfyldt:
 
-1. `supabaseUrl` er sat i `feedback/lyd-config.js`.
+1. `modtager` er sat i `feedback/lyd-config.js`.
 2. Siden er åbnet med et afprøvningslink: `…/geografi/luftmasser/?afproevning=KODE`.
 
 Almindelig brug af simulationen mærker intet og spørger aldrig om mikrofonen.
@@ -18,118 +18,76 @@ Almindelig brug af simulationen mærker intet og spørger aldrig om mikrofonen.
 | --- | --- |
 | `feedback/lydfeedback.js` | information, optagelse, aflytning, afsendelse og kvittering. Kan genbruges |
 | `geografi/luftmasser/afproevning.js` | hvilke handlinger og hvilken tilstand loggen følger på denne side |
-| `feedback/lyd-config.js` | offentlig adresse og anon-nøgle |
-| `feedback/lyd-oversigt.html` | ejerens login: lyt, læs log, hop i lyden, slet |
-| `supabase/migrations/` | tabeller, adgangsregler og privat bucket |
-| `supabase/functions/modtag-lydfeedback/` | modtager; reglerne står i `logik.js` |
-| `supabase/functions/ryd-lydfeedback/` | sletter efter 90 dage og fjerner halve uploads |
-
-Biblioteket `@supabase/supabase-js` 2.118.0 bruges kun i oversigten og på serveren,
-fordi login og fornyelse af sessioner ellers skulle skrives i hånden. Deltagerens
-side henter det ikke. Fejler CDN'et, virker oversigten ikke, men optagelsen gør.
+| `feedback/lyd-config.js` | modtagerens adresse |
+| `feedback/lyd-apps-script.gs` | modtageren. Hører til i Apps Script, ikke på sitet |
 
 ## Opsætning
 
-Skridt 1, 2 og 3 kræver din egen konto og kan ikke gøres for dig.
+1. Lav et nyt Google-regneark, fx «smbi.dk lydfeedback». Brug ikke feedback-arket.
+2. **Udvidelser → Apps Script.** Slet indholdet af `Kode.gs`, og sæt indholdet af
+   `feedback/lyd-apps-script.gs` ind. Skriv evt. din mail i `MAIL_TIL`, og gem.
+3. **Implementer → Ny implementering →** tandhjulet **→ Web-app.** Sæt *Kør som* til
+   dig selv og *Hvem har adgang* til **Alle**. Godkend adgangen (**Avanceret → Gå til
+   … → Tillad**), og kopiér adressen, der ender på `/exec`.
+4. Genindlæs arket. Vælg **Lydfeedback → Sæt op** i menuen. Det laver fanerne, den
+   private Drive-mappe og den daglige oprydning.
+5. Sæt adressen ind som `modtager` i `feedback/lyd-config.js`.
+6. Vælg **Lydfeedback → Nyt afprøvningslink** i arket. Linket vises i en boks. Det
+   gælder 30 dage og 30 afleveringer. Luk det ved at sætte *Aktiv* til `FALSE` i
+   fanen Koder.
 
-1. Opret et projekt på [supabase.com](https://supabase.com) i en EU-region (Stockholm
-   eller Frankfurt). Tjek pris og kvoter; projekter på gratisplanen kan blive sat
-   på pause ved inaktivitet, og så kan der ikke afleveres, før det er vækket.
-2. Installér værktøjet og log ind:
+Ændrer du senere i scriptet: **Implementer → Administrer implementeringer →** blyanten
+**→ Ny version.** Så beholder adressen sit udseende.
 
-   ```bash
-   brew install supabase/tap/supabase
-   ```
+## Sådan lytter du
 
-   ```bash
-   supabase login
-   ```
+Fanen Afleveringer har én række pr. optagelse med link til lydfilen og til loggen.
+Loggen er en tekstfil med tidspunkter, så du kan følge med ved siden af lyden.
 
-3. Koble repoet på projektet (`REF` står i projektets adresse) og send det hele op:
+## Sletning
 
-   ```bash
-   supabase link --project-ref REF
-   ```
+Oprydningen flytter filer til papirkurven efter 60 dage, og Google tømmer papirkurven
+efter 30. Det giver de højst 90 dage, deltageren får at vide.
 
-   ```bash
-   supabase db push
-   ```
-
-   ```bash
-   supabase functions deploy modtag-lydfeedback && supabase functions deploy ryd-lydfeedback
-   ```
-
-   ```bash
-   supabase secrets set RYD_NOEGLE=$(openssl rand -hex 32)
-   ```
-
-   Skriv nøglen ned til oprydningen i skridt 6. Tjenestenøglen sættes af Supabase selv
-   og må aldrig ligge i repoet.
-4. **Authentication → Providers → Email:** slå tilmelding fra. Opret din egen bruger
-   under **Authentication → Users**, og gør den til ejer i **SQL Editor**:
-
-   ```sql
-   insert into public.ejere select id from auth.users where email = 'DIN@MAIL';
-   ```
-
-5. Sæt `supabaseUrl` og `anonNoegle` ind i `feedback/lyd-config.js`. Anon-nøglen er
-   offentlig; reglerne i databasen er det, der beskytter data.
-6. Slå oprydningen til under **Database → Extensions** (`pg_cron` og `pg_net`) og kør:
-
-   ```sql
-   select cron.schedule('ryd-lydfeedback', '30 3 * * *', $$
-     select net.http_post(
-       url := 'https://REF.supabase.co/functions/v1/ryd-lydfeedback',
-       headers := jsonb_build_object('x-ryd-noegle', 'RYD_NOEGLE')
-     ) $$);
-   ```
-
-   Teksten til deltagerne lover sletning senest efter 90 dage, så det her skal køre,
-   før rigtige optagelser kommer ind.
-7. Lav et afprøvningslink. Koden gælder én simulation og har udløb og loft:
-
-   ```sql
-   insert into public.afproevningskoder (kode, simulation, udloeber, maks_afleveringer, note)
-   values (replace(gen_random_uuid()::text, '-', ''), 'geografi/luftmasser',
-           now() + interval '30 days', 30, 'Første prøve')
-   returning kode;
-   ```
-
-   Linket bliver `https://smbi.dk/geografi/luftmasser/?afproevning=KODE`. Luk en kode
-   med `update public.afproevningskoder set aktiv = false where kode = '…';`.
+Beder nogen om at få slettet en optagelse: Find kvitteringen i fanen Afleveringer, slet
+lydfil og log i Drive, tøm dem også fra papirkurven, og slet rækken.
 
 ## Grænser
 
-Højst 15 minutter og 12 MB pr. optagelse, 20 afleveringer i timen pr. kode, 50 i døgnet
-i alt og `maks_afleveringer` pr. kode. Tallene håndhæves på serveren (`GRAENSER` i
-`logik.js`, bucketten i migrationen). Tjekket er ikke låst ved samtidige afleveringer,
-så loftet kan overskrides med nogle få; det er forbrugskontrol, ikke adgangskontrol.
+Højst 15 minutter pr. optagelse (sat i browseren) og 20 MB pr. fil, 20 afleveringer i
+timen pr. kode, 50 i døgnet i alt og *Maks afleveringer* pr. kode. Tallene håndhæves i
+scriptet.
+
+Afsendelsen tager tid: en krop på 6 MB tog cirka 26 sekunder i en prøve, og deltageren
+får besked om at vente. Lyden fylder af din Drive-plads, ca. 15 MB pr. time optagelse.
 
 ## Test
 
 ```bash
-node supabase/functions/modtag-lydfeedback/logik.test.mjs
+node feedback/lyd-apps-script.test.mjs
 ```
 
 ```bash
 node værktøj/lydfeedback-test.mjs
 ```
 
-Browsertesten bruger syntetisk lyd og falsk Supabase, fordi headless Chromium hænger
-ved `getUserMedia`. Den kontrollerer hele forløbet, men ikke tilladelsesdialogen.
+Scriptet testes mod en falsk Google, og browsertesten bruger syntetisk lyd og en falsk
+modtager, fordi headless Chromium hænger ved `getUserMedia`. At svaret fra en rigtig
+Apps Script-webapp kan læses i browseren, er prøvet mod den eksisterende feedback-webapp.
 
 ## Før funktionen tages i brug
 
-Kan først kontrolleres mod det rigtige projekt:
+Kan først kontrolleres mod det rigtige script:
 
 - [ ] Rigtig mikrofon i Chrome, Edge, Firefox og Safari, også iPhone: tilladelse, afvisning, aflytning, mikrofonen slukker efter stop.
-- [ ] Aflevering fra `smbi.dk` i et privat vindue uden login giver kvittering, og optagelsen kan høres i oversigten sammen med en log, der passer med lyden.
-- [ ] I et privat vindue kan anon-nøglen ikke læse, liste, overskrive eller slette noget i `lydfeedback`, koder eller bucketten.
-- [ ] Sletning fra oversigten fjerner både lyd og række. Oprydningen kører og sletter en række med `slet_efter` i fortiden.
+- [ ] Aflevering fra `smbi.dk` i et privat vindue uden Google-login giver kvittering, og optagelsen kan høres i Drive sammen med en log, der passer med lyden.
+- [ ] Mappen og filerne er kun delt med dig, og linkene åbner ikke i et privat vindue.
 - [ ] Udløbet kode, kvote og afbrudt forbindelse giver forståelig besked uden kvittering.
+- [ ] Køres `ryd` med en gammel række og fil, ryger de i papirkurven.
 
 Skal være afklaret, før andre end du selv optager:
 
-- [ ] Dataansvar, behandlingsgrundlag og databehandleraftale med Supabase. Stemmer er personoplysninger, og deltagerne kan være elever.
+- [ ] Dataansvar og behandlingsgrundlag. Stemmer er personoplysninger, og deltagerne kan være elever.
+- [ ] Databehandleraftale og datas placering. En privat Google-konto giver efter alt at dømme hverken aftale eller valg af region. Undersøg, om en Workspace-konto gennem skolen kan bruges, og læg i så fald scriptet dér.
 - [ ] Skolernes rolle ved deltagelse, og hvordan frivilligheden sikres, når en lærer beder klassen om det.
-- [ ] Teksten i dialogen i `feedback/lydfeedback.js` er gennemgået, og den rummer det, der besluttes. Det gælder også, hvordan man får slettet en optagelse.
+- [ ] Teksten i dialogen i `feedback/lydfeedback.js` er gennemgået, og den rummer det, der besluttes.

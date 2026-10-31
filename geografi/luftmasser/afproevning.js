@@ -40,7 +40,7 @@ function haendelser(log) {
 startLydfeedback({
   simulation: 'geografi/luftmasser',
   version: document.querySelector('script[src*="simulation.js"]')?.src.split('v=')[1] ?? '',
-  vaert: document.querySelector('[data-lydfeedback-vaert]'),
+  vaert: document.querySelector('[data-lydfeedback-vaert]') ?? document.querySelector('.titel'),
   tilstand,
   haendelser,
 });

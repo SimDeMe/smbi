@@ -10,5 +10,5 @@
 - Ved arbejde med optagelse eller aflevering af simulationsfeedback gælder
   også designretningen i `simulationsdesign.md`: direkte aflevering til én
   fælles modtager, ejeren af smbi.dk, også når elever og lærere fra andre
-  skoler deltager. Supabase er den foreslåede modtagertjeneste; integrationen
-  er ikke implementeret alene ved at dokumentere den.
+  skoler deltager. Modtageren er et Apps Script, der gemmer i ejerens Google
+  Drive; opsætning og tjekliste står i `feedback/LYD.md`.

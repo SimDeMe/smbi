@@ -42,6 +42,12 @@ const nyt = (html) => {
   return skabelon.content.firstChild;
 };
 const uuid = () => crypto.randomUUID();
+const base64 = blob => new Promise((svar, fejl) => {
+  const laeser = new FileReader();
+  laeser.onload = () => svar(String(laeser.result).split(',')[1]);
+  laeser.onerror = () => fejl(laeser.error);
+  laeser.readAsDataURL(blob);
+});
 export const tidstekst = ms => {
   const s = Math.max(0, Math.floor(ms / 1000));
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
@@ -51,10 +57,9 @@ export const tidstekst = ms => {
 // tilstand(): sidens aktuelle tilstand; haendelser(log): kobler sidens handlinger på loggen.
 export function startLydfeedback({ simulation, version, opgave, vaert, tilstand, haendelser }) {
   const kode = new URLSearchParams(location.search).get('afproevning');
-  if (!kode || !LYD_CONFIG.supabaseUrl || !vaert) return null;
+  if (!kode || !LYD_CONFIG.modtager || !vaert) return null;
 
   document.head.append(Object.assign(document.createElement('style'), { textContent: CSS }));
-  const modtager = `${LYD_CONFIG.supabaseUrl}/functions/v1/modtag-lydfeedback`;
 
   let dialog, bjaelke, stroem, optager, ur, stopUr;
   let startetMs = 0, optagerKoerer = false;
@@ -226,19 +231,22 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
   async function send() {
     const status = dialog.querySelector('[data-lf="status"]');
     dialog.querySelectorAll('.lf-handlinger button').forEach(b => { b.disabled = true; });
-    status.textContent = 'Sender … Luk ikke siden.';
-    const krop = new FormData();
-    Object.entries({
-      kode, simulation, version: version ?? '', opgave: opgave ?? '',
-      session: optagelse.session, startet: optagelse.startet,
-      varighed_ms: String(optagelse.varighed), lydformat: optagelse.type,
-      starttilstand: JSON.stringify(optagelse.starttilstand), log: JSON.stringify(optagelse.log),
-    }).forEach(([felt, vaerdi]) => krop.append(felt, vaerdi));
-    krop.append('lyd', optagelse.lyd, filnavn());
+    status.textContent = 'Sender … Det kan tage op til et minut. Luk ikke siden.';
 
     let svar = null, data = null;
     try {
-      svar = await fetch(modtager, { method: 'POST', body: krop });
+      // Apps Script kan ikke svare på en preflight, så kroppen sendes som ren tekst.
+      svar = await fetch(LYD_CONFIG.modtager, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          kode, simulation, version: version ?? '', opgave: opgave ?? '',
+          session: optagelse.session, startet: optagelse.startet,
+          varighed_ms: optagelse.varighed, lydformat: optagelse.type,
+          starttilstand: optagelse.starttilstand, log: optagelse.log,
+          lyd: await base64(optagelse.lyd),
+        }),
+      });
       data = await svar.json();
     } catch { data = null; }
 
@@ -251,6 +259,7 @@ export function startLydfeedback({ simulation, version, opgave, vaert, tilstand,
     visAflytning(
       grund === 'kode' ? 'Afprøvningslinket gælder ikke længere. Hent optagelsen, og spørg den, der gav dig linket.'
       : grund === 'kvote' ? 'Der er modtaget mange optagelser lige nu. Prøv igen senere, eller hent optagelsen.'
+      : grund === 'stoerrelse' ? 'Optagelsen er for stor til at blive sendt. Hent den, eller optag en kortere.'
       : 'Optagelsen blev ikke modtaget. Tjek forbindelsen og prøv igen, eller hent optagelsen.',
     );
   }
