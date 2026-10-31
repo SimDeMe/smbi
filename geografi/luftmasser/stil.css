@@ -23,3 +23,5 @@ aside{border-left:2px solid var(--blaek);background:var(--papir);display:flex;fl
 @media(min-width:821px) and (max-height:700px){.tekst p{font-size:13px;line-height:1.35}.tekst h2{font-size:14px;margin-bottom:3px}.fugt button{min-height:32px;font-size:12px}.knapper button{min-height:38px}}
 @media(max-width:820px){.fugt{grid-column:1/-1}.opdrift{grid-column:1/-1}.tekst{grid-column:1/-1}.bevaegelse{grid-column:1/-1}.knapper{order:0}}
 .figur svg .halo{paint-order:stroke;stroke:#eef3ec;stroke-width:3px;stroke-linejoin:round}
+.figur svg .forklaring{font:600 10.5px var(--display)}
+.figur svg .pakketal{font:700 12px var(--display);letter-spacing:-.02em}.figur svg .pakkefugt{font:600 11px var(--display)}

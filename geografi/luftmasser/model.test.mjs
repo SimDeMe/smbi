@@ -17,6 +17,13 @@ for (const profil of PROFILNAVNE) for (const luft of LUFTNAVNE) {
 const g=.004, T0=293.15;
 near(tilstand('stabil','toer',3000).tryk,1013.25*((T0-g*3000)/T0)**(9.81/(287.05*g)),.001);
 near(omgivelser('inversion',1000),24);
+// Relativ luftfugtighed: e(10 °C)/e(22 °C) og e(18,8 °C)/e(22 °C) fra damptryktabel.
+near(tilstand('stabil','toer',0).fugtighed,100*12.28/26.45,.2);
+near(tilstand('stabil','fugtig',0).fugtighed,82,.5);
+for (const luft of LUFTNAVNE) {
+ near(tilstand('stabil',luft,skybase(luft)).fugtighed,100);near(tilstand('stabil',luft,3000).fugtighed,100);
+ assert.ok(tilstand('stabil',luft,200).fugtighed>tilstand('stabil',luft,0).fugtighed);
+}
 
 // Bogens tre situationer plus inversion: ligevægtshøjder regnet i hånden.
 // Tør afkøling 1,0 °C/100 m, startforskel 2 °C: z = 2 / (1,0 − gradient) · 100.

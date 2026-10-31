@@ -51,7 +51,11 @@ function tegnGraf(s, g, y, text) {
   <circle cx="${px}" cy="${y(z)}" r="5.5" fill="#b85b29" stroke="#fffdf6" stroke-width="1.5"/>
   ${text(pl, y(z) - 10, `${tal(s.temperatur)}°`, 'grafvaerdi pakkefarve', hoejre ? 'start' : 'end')}
   ${text(ol, y(z) - 10, `${tal(s.omgivelser)}°`, 'grafvaerdi', hoejre ? 'end' : 'start')}
-  ${text(g.x, 26, 'Temperatur · °C', 'lille')}`;
+  ${text(g.x, 26, 'Temperatur · °C', 'lille')}
+  <g id="signatur"><rect x="${g.x + 4}" y="${y(0) - 53}" width="104" height="49" rx="4" fill="#fffdf6" stroke="#172b2b" stroke-opacity=".25"/>
+  <path d="M${g.x + 10} ${y(0) - 42}h17" stroke="#172b2b" stroke-width="2.4"/>${text(g.x + 32, y(0) - 38, 'Omgivelser', 'forklaring')}
+  <path d="M${g.x + 10} ${y(0) - 28}h17" stroke="#b85b29" stroke-width="3.4"/>${text(g.x + 32, y(0) - 24, 'Pakken hidtil', 'forklaring')}
+  <path d="M${g.x + 10} ${y(0) - 14}h17" stroke="#b85b29" stroke-width="1.6" stroke-dasharray="5 4"/>${text(g.x + 32, y(0) - 10, 'Pakken videre', 'forklaring')}</g>`;
 }
 
 function resultat(s) {
@@ -67,7 +71,7 @@ function tegn() {
   const y = hoejde => bund - hoejde / TOP * (bund - top);
   const delX = Math.round(w * (smal ? .47 : .53));
   const x = 46 + (delX - 46) * .5;
-  const r0 = Math.min(22, w * .055), r = r0 * Math.cbrt(s.volumen), cy = y(z) - r0 * .35;
+  const r0 = 29, r = r0 * Math.cbrt(s.volumen), cy = y(z) - r0 * .35;
   const varm = s.forskel > .05, kold = s.forskel < -.05;
   const farve = varm ? '#b85b29' : kold ? '#216c98' : '#587779';
   const text = (xx, yy, t, cls = '', anchor = 'start') => `<text x="${xx}" y="${yy}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
@@ -75,11 +79,11 @@ function tegn() {
 
   $('hoejde-tal').textContent = `${tal(z, 0)} m`;
   skyder.value = z;
-  skyder.setAttribute('aria-valuetext', `${tal(z, 0)} meter. Luftpakken ${tal(s.temperatur)} grader, omgivelserne ${tal(s.omgivelser)} grader. ${s.maettet ? 'Mættet' : 'Umættet'} luft.`);
+  skyder.setAttribute('aria-valuetext', `${tal(z, 0)} meter. Luftpakken ${tal(s.temperatur)} grader, omgivelserne ${tal(s.omgivelser)} grader. Relativ luftfugtighed ${tal(s.fugtighed, 0)} procent.`);
   const stiger = v > .1, synker = v < -.1;
   $('bevaegelse').textContent = afsluttet ? (z >= TOP ? 'Stiger videre ud af figuren ↑' : 'Pakken er faldet til ro') : startet ? (stiger ? 'Pakken stiger ↑' : synker ? 'Pakken synker ↓' : 'Pakken vender') : z > 0 ? 'Pakken holdes i denne højde' : 'Jorden har varmet pakken 2 °C';
   $('trin-titel').textContent = s.maettet ? 'Fugtadiabatisk: 0,5 °C pr. 100 m' : 'Tøradiabatisk: 1,0 °C pr. 100 m';
-  $('trin-tekst').textContent = s.maettet ? 'Pakken er mættet. Vanddamp kondenserer til skydråber og frigiver latent varme, så afkølingen bremses.' : `Pakken er umættet og afkøles, mens den udvider sig. ${base < TOP ? `Ved ${tal(base, 0)} m når den dugpunktet.` : ''}`;
+  $('trin-tekst').textContent = s.maettet ? 'Pakken er mættet: relativ luftfugtighed (RF) 100 %. Vanddamp kondenserer til skydråber og frigiver latent varme, så afkølingen bremses.' : `Pakken er umættet: relativ luftfugtighed (RF) under 100 %. Den afkøles, mens den udvider sig. ${base < TOP ? `Ved ${tal(base, 0)} m når den dugpunktet.` : ''}`;
   if (afsluttet) {
     const [titel, tekst] = resultat(s);
     $('opdrift-titel').textContent = titel; $('opdrift-tekst').textContent = tekst;
@@ -87,11 +91,10 @@ function tegn() {
     $('opdrift-titel').textContent = varm ? `↑ ${tal(s.forskel)} °C varmere · opdrift` : kold ? `↓ ${tal(-s.forskel)} °C koldere · søger ned` : 'Samme temperatur · ingen opdrift';
     $('opdrift-tekst').textContent = varm ? 'Pakken er mindre tæt end omgivelserne i samme højde.' : kold ? 'Pakken er tættere end omgivelserne i samme højde.' : 'Pakken har samme densitet som omgivelserne.';
   }
-  $('figurtekst').textContent = `${PROFILER[profil].navn}, ${LUFT[luft].navn.toLowerCase()}. ${tal(z, 0)} m. Luftpakke ${tal(s.temperatur)} °C, dugpunkt ${tal(s.dugpunkt)} °C, omgivelser ${tal(s.omgivelser)} °C. ${$('opdrift-titel').textContent}.`;
+  $('figurtekst').textContent = `${PROFILER[profil].navn}, ${LUFT[luft].navn.toLowerCase()}. ${tal(z, 0)} m. Luftpakke ${tal(s.temperatur)} °C, relativ luftfugtighed ${tal(s.fugtighed, 0)} %, dugpunkt ${tal(s.dugpunkt)} °C, omgivelser ${tal(s.omgivelser)} °C. ${$('opdrift-titel').textContent}.`;
 
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
   const ticks = [0, 1000, 2000, 3000].map(v => `<path d="M46 ${y(v)}H${delX}" stroke="#476d7f" opacity=".2"/>${text(40, y(v) + 4, v ? tal(v, 0) : '0', 'akse', 'end')}`).join('');
-  const dots = s.maettet ? '' : Array.from({ length: 10 }, (_, i) => { const a = i * 2.39996, d = Math.sqrt((i + .5) / 10) * r * .75; return `<circle cx="${x + Math.cos(a) * d}" cy="${cy + Math.sin(a) * d}" r="1.3" fill="#7c4f26" opacity=".55"/>`; }).join('');
   const skybredde = Math.min(46, (delX - 46) * .24);
   const skyen = s.maettet ? sky(x, y(base), y(z), skybredde) : '';
   svg.innerHTML = `<defs>
@@ -110,7 +113,8 @@ function tegn() {
   ${skyen}
   ${base < TOP ? text(delX - 4, y(base) - 6, s.maettet ? `Skybase ${tal(base, 0)} m` : smal ? `Mættes ${tal(base, 0)} m` : `Bliver mættet ved ${tal(base, 0)} m`, 'akse halo', 'end') : ''}
   <circle cx="${x}" cy="${cy}" r="${r}" fill="url(#pakke)" stroke="${farve}" stroke-width="1.8"/>
-  ${dots}<circle cx="${x}" cy="${cy}" r="${r0}" fill="none" stroke="#496c7c" stroke-dasharray="3 3" opacity=".55"/>
+  <circle cx="${x}" cy="${cy}" r="${r0}" fill="none" stroke="#496c7c" stroke-dasharray="3 3" opacity=".55"/>
+  ${text(x, cy - 1, `${tal(s.temperatur)} °C`, 'pakketal', 'middle')}${text(x, cy + 13, `RF ${tal(s.fugtighed, 0)} %`, 'pakkefugt', 'middle')}
   ${varm || kold ? `<path d="M${x - r - 11} ${cy + (varm ? 13 : -13)}v${varm ? -24 : 24}" stroke="${farve}" stroke-width="3" marker-end="url(#pil)"/>` : ''}
   ${text(x, cy - r - 7, 'Luftpakke', 'pakke-label', 'middle')}
   <rect x="10" y="${h - 36}" width="${w - 20}" height="28" rx="7" fill="#fff9ee" opacity=".95"/>

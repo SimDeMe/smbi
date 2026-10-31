@@ -30,6 +30,8 @@ export function pakketemperatur(luft, z) {
   const base = skybase(luft);
   return PAKKE - TOER * Math.min(z, base) - FUGTIG * Math.max(0, z - base);
 }
+// Mættet damptryk i hPa (Magnus-formlen over vand).
+const damptryk = t => 6.112 * Math.exp(17.62 * t / (243.12 + t));
 export function tilstand(profil, luft, hoejde) {
   const z = Math.max(0, Math.min(TOP, hoejde)), base = skybase(luft);
   const temperatur = pakketemperatur(luft, z);
@@ -40,7 +42,8 @@ export function tilstand(profil, luft, hoejde) {
   const tryk = 1013.25 * Math.exp(-9.81 / 287.05 * integral);
   const volumen = (temperatur + 273.15) / (PAKKE + 273.15) * 1013.25 / tryk;
   const omg = omgivelser(profil, z);
-  return { z, temperatur, dugpunkt, tryk, volumen, omgivelser: omg, forskel: temperatur - omg, maettet: z >= base };
+  const fugtighed = 100 * damptryk(dugpunkt) / damptryk(temperatur);
+  return { z, temperatur, dugpunkt, fugtighed, tryk, volumen, omgivelser: omg, forskel: temperatur - omg, maettet: z >= base };
 }
 // Første højde over jorden, hvor pakken ikke længere er varmere end omgivelserne.
 // null: pakken har opdrift hele vejen til figurens top.

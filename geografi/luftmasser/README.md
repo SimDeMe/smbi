@@ -18,6 +18,8 @@ fysik fra SVG og betjening.
 Omgivelserne er 20 °C ved jorden, pakken 22 °C. Umættet afkøling er
 1 °C/100 m, mættet 0,5 °C/100 m. Dugpunktet falder 0,2 °C/100 m og er 10 °C
 (tør, skybase 1.500 m) eller 18,8 °C (fugtig, skybase 400 m).
+Relativ luftfugtighed (46 % og 82 % ved jorden) følger af dugpunkt og temperatur
+med Magnus-formlen og vises på pakken.
 
 | Atmosfære (°C/100 m) | Tør pakke | Fugtig pakke |
 | --- | --- | --- |
