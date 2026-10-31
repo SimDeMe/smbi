@@ -6,7 +6,7 @@ const forsoeg = (profil, luft, tekst, hoejde = 0) => `<button class="forsoeg" da
 
 export function bygUndersoegelser(aabnForsoeg) {
   const rod = document.getElementById('undersoegelser');
-  rod.innerHTML = `<div class="opgavehoved"><p class="overlinje">FORUDSIG · AFPRØV · FORKLAR</p><h2 id="undersoegelser-titel">På sporet af en luftpakke</h2><p>Tegn, argumentér og lav forsøg. I alle opgaver gælder simulationens idealiserede model.</p></div>
+  rod.innerHTML = `<div class="opgavehoved"><h2>Opgaver</h2><label class="sr" for="opgavevalg">Vælg opgave</label><select id="opgavevalg"></select></div>
   <div class="opgavekort">
     <article aria-labelledby="opgave-1"><p class="opgavetype">01 / Tegn fremtiden</p><h3 id="opgave-1">Hvordan ender turen?</h3>
       <p>En <strong>tør pakke i stabil luft</strong> slippes ved jorden. Den starter ved 22 °C, omgivelserne ved 20 °C. Forudsig højden efter 2, 4 og 6 modelminutter med skyderne. Vil den standse brat, svinge eller stige videre?</p>
@@ -47,6 +47,23 @@ export function bygUndersoegelser(aabnForsoeg) {
       ${sparring('<p>Dag 1: pakken falder til ro omkring 143 m, før skybasen ved 400 m, så der dannes ingen sky ved dette frie løft. Dag 2: mætning ved 400 m; derefter har pakken opdrift og stiger videre ud af figuren ved 3.000 m.</p><p>Modellen afgør fx ikke nedbør, skydække over et helt område eller dagens maksimumtemperatur. Den beskriver én idealiseret pakke uden opblanding eller nedbør. Figurens top er ikke et fysisk loft.</p>')}
     </article>
   </div>`;
+
+  // Ét sted til alt elevarbejde, én opgave fremme ad gangen.
+  const kort = rod.querySelector('.opgavekort');
+  const energi = document.createElement('article');
+  energi.append(document.getElementById('a-forstaaelse'));
+  kort.prepend(energi);
+  const regn = document.createElement('article');
+  regn.append(document.getElementById('opgaver'));
+  kort.append(regn);
+  rod.querySelectorAll('.opgavetype').forEach(p => p.remove());
+  const artikler = [...kort.children];
+  const navne = ['Forklar energien', 'Tegn bevægelsen', 'Temperaturdetektiv', 'Find vippepunktet', 'Ret en forklaring', 'Lav en vejrmelding', 'Regn selv'];
+  const vaelger = document.getElementById('opgavevalg');
+  vaelger.innerHTML = navne.map((navn,i) => `<option value="${i}">${i+1} · ${navn}</option>`).join('');
+  const vis = () => artikler.forEach((a,i) => { a.hidden = i !== +vaelger.value; });
+  vaelger.addEventListener('change', vis);
+  vis();
 
   let visModel = false;
   const faktisk = [{ z: 0 }];

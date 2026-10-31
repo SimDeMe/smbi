@@ -1,6 +1,6 @@
 import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke13';
-import { afkoeling } from './afkoeling.js?v=luftpakke16';
-import { bygUndersoegelser } from './opgaver.js';
+import { afkoeling } from './afkoeling.js?v=luftpakke17';
+import { bygUndersoegelser } from './opgaver.js?v=luftpakke17';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
@@ -152,18 +152,17 @@ function nulstil() { stop(); z = 0; v = 0; startet = false; afsluttet = false; t
 skyder.addEventListener('input', () => { stop(); z = +skyder.value; v = 0; startet = false; afsluttet = false; tegn(); knap(); });
 function visPanel() {
   const laering = profil === 'afkoeling';
-  $('a-ekstra').hidden = opgavevisning || !laering;
-  $('a-forstaaelse').hidden = opgavevisning || !laering;
+  document.querySelector('.laboratorium').dataset.fane = opgavevisning ? 'opgaver' : profil;
+  $('a-navigation').hidden = opgavevisning || !laering;
   $('undersoegelser').hidden = !opgavevisning;
   $('simulationsfelt').hidden = opgavevisning;
-  document.querySelector('.aarsag').hidden = opgavevisning;
-  document.querySelector('.bundlinje').hidden = opgavevisning;
-  if (opgavevisning) { $('opgaver').hidden = true; return; }
+  if (opgavevisning) return;
   figur.classList.toggle('begrebsvisning', laering && !afkoeling.viserGraf());
   $('a-begreb').hidden = !laering || afkoeling.viserGraf();
   svg.toggleAttribute('hidden', laering && !afkoeling.viserGraf());
-  $('panel-afkoeling').hidden = !laering; $('opgaver').hidden = !laering;
-  $('panel-stabilitet').hidden = laering; $('stabilitet-note').hidden = laering; $('afkoeling-note').hidden = !laering;
+  $('panel-afkoeling').hidden = !laering;
+  $('panel-stabilitet').hidden = laering;
+  if (!laering) figur.style.removeProperty('height');
 }
 function vaelg(attribut, saet) {
   document.querySelectorAll(`[${attribut}]`).forEach(b => b.addEventListener('click', () => {
@@ -182,7 +181,7 @@ $('vaelg-opgaver').addEventListener('click', () => {
   stop(); afkoeling.stop(); opgavevisning = true;
   document.querySelectorAll('[data-profil]').forEach(b => b.setAttribute('aria-pressed', 'false'));
   $('vaelg-opgaver').setAttribute('aria-pressed', 'true');
-  $('intro').textContent = 'Forudsig først, undersøg bagefter. Brug temperaturer og kurver som belæg for din forklaring. Dine svar bliver stående, når du skifter fane, indtil siden genindlæses.';
+
   visPanel();
 });
 bygUndersoegelser((p, l, hoejde = 0) => {
@@ -199,11 +198,12 @@ $('afspil').addEventListener('click', () => {
   start();
 });
 $('nulstil').addEventListener('click', nulstil);
-$('fokus').addEventListener('click', () => { const aktiv = document.body.classList.toggle('fokus'); $('fokus').setAttribute('aria-pressed',String(aktiv)); $('fokus').textContent = aktiv ? 'Afslut fokus' : 'Fokus'; });
+$('fokus').addEventListener('click', () => { const aktiv = document.body.classList.toggle('fokus'); $('fokus').setAttribute('aria-pressed',String(aktiv)); $('fokus').textContent = aktiv ? 'Afslut fokus' : 'Fokus'; tegn(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && document.body.classList.contains('fokus')) $('fokus').click(); });
 document.addEventListener('visibilitychange', () => { sidst = null; });
 reduceret.addEventListener('change', stop);
 new ResizeObserver(tegn).observe(figur);
+window.addEventListener('resize', tegn);
 $('intro').innerHTML = PROFILER[profil].tekst;
 visPanel();
 tegn(); knap();

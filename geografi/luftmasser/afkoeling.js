@@ -1,7 +1,7 @@
 // Fanen «Adiabatisk afkøling»: først højdestigen, derefter energien og kurven.
-import { LUFT, PAKKE, PROFILER, TOP, tilstand, skybase, pakketemperatur, uden_kondensation, latentVarme } from './model.mjs';
-import { tegnBegreb, hvorforForklaring, HVORFOR, HVORFOR_INTRO } from './begreb.js?v=luftpakke16';
-import { STIGETRIN, tegnStige, stigeForklaring, stigeBeskrivelse } from './stige.js?v=luftpakke16';
+import { LUFT, PAKKE, TOP, tilstand, skybase, pakketemperatur, uden_kondensation, latentVarme } from './model.mjs';
+import { tegnBegreb, hvorforForklaring, HVORFOR } from './begreb.js?v=luftpakke17';
+import { STIGETRIN, tegnStige, tegnMaalinger, stigeForklaring, stigeBeskrivelse } from './stige.js?v=luftpakke17';
 const $ = id => document.getElementById(id);
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
 const saet = (id, t) => { if ($(id).textContent !== t) $(id).textContent = t; };
@@ -9,7 +9,7 @@ const TMIN = -20, TMAX = 28, FART = 250; // m pr. sekund på skærmen
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
 const skyder = $('a-hoejde');
 let visning = 'stige'; // stige, hvorfor eller graf
-let hvorforTrin = 0, hoejst = 0; // hoejst: den største højde siden nulstilling
+let hvorforTrin = 0;
 let luft = 'fugtig', z = 0, retning = 1, afspiller = false, frame, sidst = null;
 
 function forklaring() {
@@ -29,13 +29,16 @@ function regnskab() {
   return [`Afkølet ${tal(fald)} °C på ${tal(z, 0)} m`, linjer.join(' ')];
 }
 function knap() {
+  $('a-afspil').disabled = false;
   if (visning === 'hvorfor') {
-    $('a-afspil').textContent = hvorforTrin < HVORFOR.length - 1 ? 'Næste →' : '← Tilbage til stigen';
+    $('a-afspil').textContent = hvorforTrin < HVORFOR.length - 1 ? 'Næste →' : 'Til undersøgelsen →';
     $('a-afspil').setAttribute('aria-pressed', 'false');
     return;
   }
   if (visning === 'stige') {
-    $('a-afspil').textContent = z >= TOP || (retning < 0 && z > 0) ? '▼ Sænk 100 m' : '▲ Løft 100 m';
+    $('a-afspil').textContent = '↑ Løft 100 m';
+    $('a-afspil').disabled = z >= TOP;
+    $('a-saenk').disabled = z <= 0;
     $('a-afspil').setAttribute('aria-pressed', 'false');
     return;
   }
@@ -76,44 +79,51 @@ function tegnGraf(s, y, g, text) {
   <path d="M${g.x + 10} ${y(0) - 28}h17" stroke="#197e9c" stroke-width="2"/>${text(g.x + 32, y(0) - 24, 'Dugpunkt', 'forklaring')}
   <path d="M${g.x + 10} ${y(0) - 14}h17" stroke="#6b7c7c" stroke-width="1.4" stroke-dasharray="2 4"/>${text(g.x + 32, y(0) - 10, 'Uden sky', 'forklaring')}</g>`;
 }
+// Tilpas kun figurens ledige højde; teksten og betjeningen beholder deres plads.
+function placerFigur() {
+  const figur = $('figur');
+  if (innerWidth <= 820) { figur.style.removeProperty('height'); return; }
+  const ledig = innerHeight - (figur.getBoundingClientRect().top + scrollY) - document.querySelector('.a-betjening').offsetHeight - 12;
+  figur.style.height = `${Math.max(220, Math.min(620, ledig))}px`;
+}
 function tegn() {
-  const figur = $('figur'), svg = $('landskab'), s = tilstand('stabil', luft, z), w = figur.clientWidth, h = figur.clientHeight;
+  const figur = $('figur'), svg = $('landskab'), s = tilstand('stabil', luft, z);
   const visGraf = visning === 'graf', stige = visning === 'stige';
   figur.classList.toggle('begrebsvisning', !visGraf);
   $('a-begreb').hidden = visGraf;
   svg.toggleAttribute('hidden', !visGraf);
-  const hvorfor = visning === 'hvorfor', intro = hvorfor ? HVORFOR_INTRO : PROFILER.afkoeling.tekst;
-  if ($('intro').innerHTML !== intro) $('intro').innerHTML = intro;
-  $('panel-afkoeling').classList.toggle('toplinje', !visGraf);
-  $('a-fugtvalg').hidden = !visGraf; $('a-maal').hidden = !visGraf;
+  const hvorfor = visning === 'hvorfor';
+  document.querySelectorAll('[data-visning]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.visning === visning)));
+  $('a-fugtvalg').hidden = !visGraf;
+  $('a-maal').hidden = !visGraf;
+  $('a-tabel').hidden = !stige;
+  $('a-maalinger').hidden = hvorfor;
   $('a-nulstil').hidden = hvorfor;
+  $('a-saenk').hidden = !stige;
   $('a-tilbage').hidden = !hvorfor || hvorforTrin === 0;
-  $('a-hvorfor').hidden = hvorfor;
-  $('a-hvorfor').textContent = stige ? 'Hvorfor bliver luften koldere?' : '← Tilbage til stigen';
-  $('a-vis-graf').setAttribute('aria-pressed', String(visGraf));
-  $('a-vis-graf').textContent = visGraf ? 'Tilbage til stigen' : 'Vis temperaturkurven';
+  document.querySelector('.a-skyder').hidden = !visGraf;
+  saet('a-hoejde-tal', `${tal(z,0)} m`);
+  skyder.value = z;
   if (stige) {
     const [titel, tekst] = stigeForklaring(z, retning), beskrivelse = stigeBeskrivelse(z);
     saet('a-titel', titel); saet('a-tekst', tekst);
     saet('figurtekst', `Højdestige, ${tal(z, 0)} m. ${beskrivelse}. ${titel}. ${tekst}`);
-    tegnStige($('a-begreb'), z, retning, hoejst);
+    placerFigur();
+    tegnStige($('a-begreb'), z, retning);
+    tegnMaalinger($('a-tabel'), z, retning);
     return;
   }
   if (hvorfor) {
     const [titel, tekst] = hvorforForklaring(hvorforTrin, z);
-    saet('a-titel', titel); saet('a-tekst', tekst);
     $('a-begreb').innerHTML = tegnBegreb(hvorforTrin, z);
+    const kontekst = $('a-begreb').querySelector('.h-kontekst');
+    saet('a-titel', titel); saet('a-tekst', hvorforTrin === 2 ? `${tekst} ${kontekst.textContent}` : tekst);
+    kontekst.remove();
+    placerFigur();
     saet('figurtekst', `${titel}. ${tekst}. ${$('a-begreb').textContent.replace(/\s+/g, ' ').trim()}`);
     return;
   }
-  if (!w || !h) return;
-  const smal = w < 560, top = 60, bund = h - 74, base = skybase(luft);
-  const y = hoejde => bund - hoejde / TOP * (bund - top);
-  const delX = Math.round(w * (smal ? .47 : .53)), x = 46 + (delX - 46) * .5;
-  const r0 = 40, r = r0 * Math.cbrt(s.volumen), cy = y(z) - 14;
-  const text = (xx, yy, t, cls = '', anchor = 'start') => `<text x="${xx}" y="${yy}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
-  const g = { x: delX + 8, b: w - delX - 22, xStart: x + r + 3 };
-
+  const base = skybase(luft);
   saet('a-hoejde-tal', `${tal(z, 0)} m`);
   skyder.value = z;
   skyder.setAttribute('aria-valuetext', `${tal(z, 0)} meter. Pakken ${tal(s.temperatur)} grader, dugpunkt ${tal(s.dugpunkt)} grader, relativ luftfugtighed ${tal(s.fugtighed, 0)} procent.`);
@@ -121,6 +131,16 @@ function tegn() {
   saet('a-titel', titel); saet('a-tekst', tekst); saet('a-maal-titel', maal); saet('a-maal-tekst', regn);
   saet('figurtekst', `${LUFT[luft].navn}, ${tal(z, 0)} m. Temperatur ${tal(s.temperatur)} °C, dugpunkt ${tal(s.dugpunkt)} °C, relativ luftfugtighed ${tal(s.fugtighed, 0)} %. ${titel}. ${tekst}${z > base ? ` Uden fortætning: ${tal(uden_kondensation(z))} °C. Med fortætning: ${tal(s.temperatur)} °C.` : ''}`);
 
+
+  placerFigur();
+  const w = figur.clientWidth, h = figur.clientHeight;
+  if (!w || !h) return;
+  const smal = w < 560, top = 60, bund = h - 74;
+  const y = hoejde => bund - hoejde / TOP * (bund - top);
+  const delX = Math.round(w * (smal ? .47 : .53)), x = 46 + (delX - 46) * .5;
+  const r0 = 40, r = r0 * Math.cbrt(s.volumen), cy = y(z) - 14;
+  const text = (xx, yy, t, cls = '', anchor = 'start') => `<text x="${xx}" y="${yy}" class="${cls}" text-anchor="${anchor}">${t}</text>`;
+  const g = { x: delX + 8, b: w - delX - 22, xStart: x + r + 3 };
 
   // Luftmolekyler spredes med volumen; vanddamp bliver til dråber over skybasen.
   const prik = (i, n, f = .86) => { const a = i * 2.39996, d = Math.sqrt((i + .5) / n) * r * f; return [x + Math.cos(a) * d, cy + Math.sin(a) * d]; };
@@ -167,12 +187,9 @@ function tick(t) {
   sidst = t;
   if (afspiller) frame = requestAnimationFrame(tick);
 }
-function stigeTrin() {
-  if (z >= TOP) retning = -1;
-  if (z <= 0) retning = 1;
+function stigeTrin(vej = 1) {
+  retning = vej;
   z = Math.max(0, Math.min(TOP, z + retning * STIGETRIN));
-  if (z <= 0) retning = 1;
-  hoejst = Math.max(hoejst, z);
   tegn(); knap();
 }
 function hvorforNaeste() {
@@ -187,7 +204,7 @@ function spil() {
   if (reduceret.matches) { afspiller = true; frem(TOP); afspiller = false; tegn(); knap(); return; }
   afspiller = true; sidst = null; knap(); tegn(); frame = requestAnimationFrame(tick);
 }
-function nulstil() { stop(); z = 0; retning = 1; hoejst = 0; tegn(); knap(); }
+function nulstil() { stop(); z = 0; retning = 1; tegn(); knap(); }
 
 const OPGAVER = [
   { q: 'En umættet pakke på 18 °C løftes 400 m. Hvad bliver dens temperatur?', svar: 14, regn: '400 m × 1,0 °C/100 m = 4 °C. 18 − 4 = 14 °C.' },
@@ -217,13 +234,14 @@ bygOpgaver();
 // Stigen går i hele trin, så højden rundes, når man vender tilbage fra kurven.
 function saetVisning(ny) {
   stop();
-  if (ny === 'stige' && visning === 'graf') { z = Math.round(z / STIGETRIN) * STIGETRIN; retning = 1; hoejst = Math.max(hoejst, z); }
+  if (ny === 'stige' && visning === 'graf') { z = Math.round(z / STIGETRIN) * STIGETRIN; retning = 1; }
   visning = ny;
   tegn(); knap();
 }
 $('a-tilbage').addEventListener('click', () => { hvorforTrin--; tegn(); knap(); });
-$('a-hvorfor').addEventListener('click', () => {
-  if (visning === 'stige') { hvorforTrin = 0; saetVisning('hvorfor'); } else saetVisning('stige');
-});
-$('a-vis-graf').addEventListener('click', () => saetVisning(visning === 'graf' ? 'stige' : 'graf'));
+$('a-saenk').addEventListener('click', () => stigeTrin(-1));
+document.querySelectorAll('[data-visning]').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.visning === 'hvorfor' && visning !== 'hvorfor') hvorforTrin = 0;
+  saetVisning(b.dataset.visning);
+}));
 export const afkoeling = { tegn, stop, nulstil, viserGraf: () => visning === 'graf' };

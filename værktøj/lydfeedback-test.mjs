@@ -100,6 +100,8 @@ try {
     await page.locator('#hoejde').fill('800');
     await page.locator('#hoejde').dispatchEvent('change');
     await page.locator('[data-profil="afkoeling"]').click();
+    await page.locator('#vaelg-opgaver').click();
+    await page.locator('#opgavevalg').selectOption('0');
     await page.locator('#energi-svar').fill('HEMMELIGT ELEVSVAR');
     await page.locator('#energi-svar').blur();
     await page.waitForTimeout(1200);

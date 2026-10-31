@@ -9,44 +9,57 @@ Skyderen tvinger pakken op (bjerg, front); derefter kan den slippes.
 Pause, nulstil, fokus og Escape understøttes. Reduceret bevægelse giver
 trin på 30 modelsekunder. Skift af atmosfære eller fugt nulstiller forsøget.
 
-Hver fane har en kort intro med begrebets betydning lige over figuren (`tekst` i `PROFILER`).
+## Siden som ét arbejdsfelt
+
+Designet følger `design_rules.md` og `simulationsdesign.md`: én aktuel forklaring
+ved figuren, få primære handlinger og sekundære data efter behov. Der er ingen
+introduktion, regelbokse, gentagne årsagskæder eller opgaver under startfiguren.
+Modellen i `model.mjs` er bevaret.
 
 ## Fanen Adiabatisk afkøling
 
-`afkoeling.js` er sidens åbningsfane. Designet følger forskningen i læring med
-multimedier (Mayer, Sweller): én læserækkefølge, tekst ved figuren, ét tal i fokus og
-små trin, eleven selv styrer. Spørgsmål og knap står i en linje over figuren.
+Tre visninger deler højde og forsøgstilstand:
 
-Standardvisningen (`stige.js`) er en højdestige: en tør og en fugtig pakke løftes
-100 m ad gangen, og faldet står stort ved hver pakke. Reglerne står som «?» og tændes,
-når de er set: umættet ved 300 m, mættet ved 500 m. Tabellen viser de tre seneste
-trin. Ved toppen kan pakkerne sænkes igen.
+- **Undersøg** (`stige.js`): to pakker med mindre/mere vanddamp løftes eller
+  sænkes 100 m ad gangen fra enhver højde. Temperaturen, den seneste ændring og
+  tilstanden umættet/mættet står ved pakken. Én tekst ovenover forklarer den
+  aktuelle proces. RF og de seneste trin ses kun ved at åbne “Vis målinger”.
+- **Forklaring** (`begreb.js`): tre elevstyrede illustrationer om trykfald,
+  udvidelsens arbejde og fortætning. De bruger den aktuelle højde fra forsøget.
+  Sammenligningen med/uden fortætning viser en opbygget forskel, ikke en
+  pludselig opvarmning. Forklaring og aktuel sammenligning står samlet ovenover.
+- **Temperaturkurve**: temperatur, dugpunkt og den tænkte temperatur uden
+  fortætning. Fugtvalg og skyder er tilgængelige her. Automatisk løft standser
+  ved skybasen og toppen. Beregninger er samlet under “Vis målinger”.
 
-Knappen «Hvorfor bliver luften koldere?» er tilgængelig fra start og åbner tre korte
-trin (`begreb.js`): trykket falder, udvidelsen koster energi, fortætning giver varme
-tilbage. Figurerne bruger den aktuelle højde fra stigen; højden bevares ved retur.
-En kort energiforklaring ved stigen følger mætningen. Sammenligningen med og uden
-fortætning viser en opbygget temperaturforskel ved samme højde, ikke et pludseligt
-spring i temperaturen. Ved jorden og under skybasen vises ingen frigivet varme.
+På laptop tilpasses figurens højde til pladsen efter tekst og betjening.
+På mobil står betjeningen før figuren og kan følge med under rulning.
 
-To fritekstspørgsmål i “Stop og forklar” forbinder udvidelse, arbejde, indre energi
-og fortætning. Eleven kan åbne en faglig forklaring og sammenligne med sit svar.
-Svarene bevares ved faneskift, men ikke ved genindlæsning; de bedømmes ikke automatisk.
+## Stabilitetsfanerne
 
-«Tal, fugt og temperaturkurve» åbner den tidligere temperatur–højde-graf med
-fugtvalg, skyder og beregninger. Her løftes pakken med konstant fart uden opdrift og
-standser ved skybasen og toppen. De fire regneopgaver står længere nede.
+Figur og temperaturgraf deler højdeakse. Sidepanelet har én forklaring på den
+aktuelle opdrift, fugtvalg, slip/pause og tvunget løft. Definitioner og yderligere
+forklaring af temperatur og graf åbnes efter behov i sidepanelet.
 
 ## Sidste fane: Opgaver
 
-`opgaver.js` indeholder fem åbne undersøgelser: forudsig en højde–tid-kurve,
-tolk tre temperaturmålinger, find opdriftens grænsehøjde med forsøg,
-ret en fejlforklaring og lav en vejrmelding med belæg. Kurvens sammenligning
-beregnes med samme bevægelsesmodel som simulationen; tiden er modelminutter.
-Forsøgsknapper vælger profil, fugt og starthøjde uden at starte bevægelsen.
-Animationer pauses ved åbning af opgavefanen. Skriftlige svar og kurvepunkter
-bevares ved faneskift, men ikke ved genindlæsning. Faglig sparring åbnes af
-eleven og bedømmer ikke fritekstsvar automatisk.
+`opgaver.js` samler alt elevarbejde og viser én valgt opgave ad gangen:
+forklar energien, tegn bevægelsen, tolk temperaturer, find vippepunktet,
+ret en forklaring, lav en vejrmelding og regn selv. De to forståelsesspørgsmål og
+fire regneopgaver er flyttet hertil. Forsøgsknapper vælger profil, fugt og højde
+uden automatisk at starte bevægelsen. Højde–tid-sammenligningen bruger samme
+bevægelsesmodel og modelminutter.
+
+Valg, tekstsvar og kurvepunkter bevares ved skift af opgave og fane, men ikke ved
+genindlæsning. Sparring åbnes af eleven; fritekst bedømmes ikke automatisk.
+
+## Didaktisk afprøvning
+
+Designet er teknisk afprøvet, ikke læringsevalueret med elever. Ved en kort
+neutral tænke-højt-afprøvning undersøges, om eleven kan finde løft/sænk,
+forbinde større pakke og lavere temperatur samt forklare, hvorfor fortætning
+bremser afkølingen. Bed derefter eleven forudsige synkning i et nyt tilfælde.
+Notér behov for hjælp særskilt fra selvstændige forklaringer.
 
 ## Faglig model
 

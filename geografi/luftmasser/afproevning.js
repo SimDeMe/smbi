@@ -19,14 +19,15 @@ function tilstand() {
 const navn = el => [el.id || el.getAttribute('data-profil') || el.getAttribute('data-luft') || el.getAttribute('data-aluft') || el.getAttribute('data-forsoeg'), el.textContent.replace(/\s+/g, ' ').trim().slice(0, 60)].filter(Boolean).join(': ');
 
 function haendelser(log) {
-  const omraader = [document.querySelector('.laboratorium'), $('a-forstaaelse'), $('a-ekstra'), $('opgaver')].filter(Boolean);
+  const omraader = [document.querySelector('.laboratorium')];
   for (const rod of omraader) {
     rod.addEventListener('click', e => {
       const knap = e.target.closest('button');
       if (knap) log(`klik ${navn(knap)}`);
     });
     rod.addEventListener('change', e => {
-      if (e.target.matches('input[type="range"]')) log(`skyder ${e.target.id} = ${e.target.value}`);
+      if (e.target.matches('select')) log(`valg ${e.target.id} = ${e.target.value}`);
+      else if (e.target.matches('input[type="range"]')) log(`skyder ${e.target.id} = ${e.target.value}`);
       // Kun at feltet blev brugt, ikke indholdet.
       else if (e.target.matches('textarea, input')) log(`svarfelt udfyldt ${e.target.id || e.target.name || ''}`.trim());
     });

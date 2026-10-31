@@ -7,63 +7,65 @@
   <link rel="canonical" href="https://smbi.dk/geografi/luftmasser/">
   <meta property="og:title" content="Luftmasser, skyer og stabilitet"><meta property="og:description" content="Lær tør- og fugtadiabatisk afkøling, og se hvornår en varm luftpakke stiger."><meta property="og:type" content="website"><meta property="og:url" content="https://smbi.dk/geografi/luftmasser/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css?v=luftpakke17">
-  <script type="module" src="simulation.js?v=luftpakke16"></script>
-  <script type="module" src="afproevning.js"></script>
+  <script type="module" src="simulation.js?v=luftpakke17"></script>
+  <script type="module" src="afproevning.js?v=luftpakke17"></script>
 </head>
 <body>
 <header><div class="regnbue"></div><nav aria-label="Navigation"><a class="brand" href="/">smbi<span>.dk</span></a><span>NATURGEOGRAFI</span><a href="/geografi.html">← Geografi</a><div data-feedback-vaert></div></nav></header>
 <main>
-  <div class="titel"><div><p class="overlinje">LUFTMASSER · ATMOSFÆRISK STABILITET</p><h1>Luftmasser, skyer og stabilitet</h1></div><div class="titel-knapper" data-lydfeedback-vaert><button id="fokus" aria-pressed="false">Fokus</button></div></div>
-  <section class="laboratorium" aria-label="Undersøg adiabatisk afkøling og en luftpakke i fire atmosfærer">
-    <div class="situationer" role="group" aria-label="Vælg atmosfære" data-pladstjek="kontrol">
+  <div class="titel"><div><p class="overlinje">NATURGEOGRAFI · EN IDEALISERET LUFTPAKKE</p><h1>Luftmasser, skyer og stabilitet</h1></div><button id="fokus" aria-pressed="false">Fokus</button></div>
+  <section class="laboratorium" data-fane="afkoeling" aria-label="Undersøg luftpakker">
+    <div class="situationer" role="group" aria-label="Vælg undersøgelse" data-pladstjek="kontrol">
       <button data-profil="afkoeling" aria-pressed="true">Adiabatisk afkøling</button><button data-profil="stabil" aria-pressed="false">Stabil</button><button data-profil="ustabil" aria-pressed="false">Ustabil</button><button data-profil="betinget" aria-pressed="false">Betinget stabil</button><button data-profil="inversion" aria-pressed="false">Inversion</button><button id="vaelg-opgaver" aria-pressed="false" aria-controls="undersoegelser">Opgaver</button>
     </div>
-    <p id="intro" class="intro" aria-live="polite"></p>
-    <section id="undersoegelser" aria-labelledby="undersoegelser-titel" hidden></section>
+    <div id="a-navigation" class="visningsvalg" role="group" aria-label="Vælg visning">
+      <button data-visning="stige" aria-pressed="true">Undersøg</button><button data-visning="hvorfor" aria-pressed="false">Forklaring</button><button data-visning="graf" aria-pressed="false">Temperaturkurve</button>
+    </div>
+    <section id="undersoegelser" aria-label="Opgaver" hidden></section>
     <div class="arbejde" id="simulationsfelt">
-      <div class="figur" id="figur" data-pladstjek="figur" role="img" aria-label="Luftpakke med højdeskala og temperaturer" aria-describedby="figurtekst"><svg id="landskab" aria-hidden="true"></svg><div id="a-begreb" hidden></div></div>
+      <div class="figur" id="figur" data-pladstjek="figur" role="img" aria-label="Luftpakker og temperaturer" aria-describedby="figurtekst"><svg id="landskab" aria-hidden="true"></svg><div id="a-begreb" hidden></div></div>
       <aside>
         <div class="panel" id="panel-afkoeling">
-          <div class="tekst" aria-live="polite"><h2 id="a-titel"></h2><p id="a-tekst"></p></div>
-          <div class="knapper" data-pladstjek="kontrol"><button id="a-hvorfor" class="a-hvorfor" hidden>Hvorfor bliver luften koldere?</button><button id="a-tilbage" hidden>← Forrige</button><button id="a-afspil" aria-pressed="false">▲ Løft 100 m</button><button id="a-nulstil" aria-label="Tilbage til jorden">↺</button></div>
-          <div class="loeft" data-pladstjek="kontrol"><label for="a-hoejde">Højde <output id="a-hoejde-tal">0 m</output></label><input id="a-hoejde" type="range" min="0" max="3000" step="10" value="0"></div>
+          <div class="a-fortaelling" aria-live="polite"><h2 id="a-titel"></h2><p id="a-tekst"></p></div>
+          <div class="a-betjening" data-pladstjek="kontrol">
+            <output id="a-hoejde-tal" aria-label="Aktuel højde">0 m</output>
+            <div id="a-fugtvalg" class="fugt" role="group" aria-label="Vælg luftpakkens fugt" hidden><button data-aluft="toer" aria-pressed="false">Tør pakke</button><button data-aluft="fugtig" aria-pressed="true">Fugtig pakke</button></div>
+            <div class="a-skyder" hidden><label class="sr" for="a-hoejde">Løft pakken til en højde</label><input id="a-hoejde" type="range" min="0" max="3000" step="10" value="0"></div>
+            <div class="knapper"><button id="a-tilbage" hidden>← Forrige</button><button id="a-saenk">↓ Sænk 100 m</button><button id="a-afspil" aria-pressed="false">↑ Løft 100 m</button><button id="a-nulstil" aria-label="Tilbage til jorden">↺</button></div>
+          </div>
+          <details id="a-maalinger" class="maalinger"><summary>Vis målinger</summary><div id="a-tabel"></div><div id="a-maal" hidden><strong id="a-maal-titel"></strong><p id="a-maal-tekst"></p></div></details>
         </div>
         <div class="panel" id="panel-stabilitet" hidden>
-
-        <div class="fugt" role="group" aria-label="Vælg luftpakkens fugt" data-pladstjek="kontrol"><button data-luft="toer" aria-pressed="true">Tør pakke</button><button data-luft="fugtig" aria-pressed="false">Fugtig pakke</button></div>
-        <div class="knapper" data-pladstjek="kontrol"><button id="afspil" aria-pressed="false">▶ Slip varm luftpakke</button><button id="nulstil" aria-label="Tilbage til jorden">↺</button></div>
-        <p id="bevaegelse" class="bevaegelse" aria-live="polite"></p>
-        <div class="opdrift"><strong id="opdrift-titel"></strong><p id="opdrift-tekst"></p></div>
-        <div class="tekst" aria-live="polite"><h2 id="trin-titel"></h2><p id="trin-tekst"></p></div>
-        <div class="loeft" data-pladstjek="kontrol"><label for="hoejde">Tving pakken op <output id="hoejde-tal">0 m</output></label><input id="hoejde" type="range" min="0" max="3000" step="10" value="0"></div>
+          <div class="fugt" role="group" aria-label="Vælg luftpakkens fugt" data-pladstjek="kontrol"><button data-luft="toer" aria-pressed="true">Tør pakke</button><button data-luft="fugtig" aria-pressed="false">Fugtig pakke</button></div>
+          <div class="opdrift" aria-live="polite"><p id="bevaegelse" class="bevaegelse"></p><h2 id="opdrift-titel"></h2><p id="opdrift-tekst"></p></div>
+          <div class="knapper" data-pladstjek="kontrol"><button id="afspil" aria-pressed="false">▶ Slip varm luftpakke</button><button id="nulstil" aria-label="Tilbage til jorden">↺</button></div>
+          <div class="loeft" data-pladstjek="kontrol"><label for="hoejde">Tving pakken op <output id="hoejde-tal">0 m</output></label><input id="hoejde" type="range" min="0" max="3000" step="10" value="0"></div>
+          <details class="faglig-hjaelp"><summary>Om denne atmosfære</summary><p id="intro"></p></details>
+          <details class="faglig-hjaelp"><summary>Temperatur, fugt og graf</summary><h3 id="trin-titel"></h3><p id="trin-tekst"></p><p>Den sorte kurve er omgivelserne, den orange er pakken. Til højre for den sorte er pakken varmest og har opdrift.</p></details>
         </div>
       </aside>
     </div>
   </section>
+  <footer class="modelinfo"><details><summary>Om modellen · antagelser og kilde</summary><div class="uddybning">
+  <p><strong>Adiabatisk:</strong> Luftpakken udveksler ikke varme med omgivelserne. Ved opstigning falder trykket. Pakken udvider sig og udfører arbejde på omgivelserne; dens indre energi og temperatur falder.</p>
+  <p><strong>Umættet → mættet:</strong> Umættet luft har en relativ luftfugtighed under 100 %. Pakken starter ved 22 °C, varmet 2 °C mere end omgivelsernes 20 °C. Den tørre pakke har dugpunkt 10 °C, den fugtige 18,8 °C. Temperaturen falder 1,0 °C pr. 100 m, dugpunktet cirka 0,2 °C. De mødes ved 1.500 m (tør) og 400 m (fugtig): luften er mættet (100 % relativ luftfugtighed). Dugpunktet er den temperatur, hvor luften ved det aktuelle tryk bliver mættet. Den relative luftfugtighed (RF) på pakken er forholdet mellem det aktuelle og det mættede damptryk, beregnet ud fra dugpunkt og temperatur med Magnus-formlen. Den tørre pakke starter ved 46 %, den fugtige ved 82 %.</p>
+  <p><strong>Kondensation og latent varme:</strong> Ved videre løft kondenserer vanddamp til små flydende skydråber. Derved frigives latent varme, som tidligere blev optaget ved fordampning. Det modvirker en del af afkølingen. Pakken bliver stadig koldere, men her kun 0,5 °C pr. 100 m. Vanddamp er usynlig; en sky består af dråber eller iskrystaller.</p>
+  <p><strong>Forenklinger:</strong> Fugtadiabatisk afkøling er her konstant 0,5 °C pr. 100 m; bogen angiver ca. 0,5–0,9 afhængigt af temperaturen. Profilerne er idealiserede: omgivelserne afkøles henholdsvis 0,4 °C (stabil) og 0,7 °C (betinget) pr. 100 m. I ustabil luft afkøles de 1,2 °C pr. 100 m op til 500 m og derefter 0,65 °C, fordi så hurtig afkøling kun findes i et tyndt lag over solopvarmet jord. Inversionen opvarmes 0,4 °C pr. 100 m til 1.000 m og afkøles derefter 0,6 °C. Bogen beskriver den stabile troposfære som uden opdrift; her får pakken 2 °C ekstra fra jorden og kan derfor stige et lille stykke, før den når omgivelsernes temperatur. Inertien får den til at svinge lidt om ligevægtshøjden, før den falder til ro. I fanen Adiabatisk afkøling løfter eleven pakkerne i trin; i visningen Temperaturkurve kan pakken løftes automatisk med konstant fart. Trykket beregnes i den stabile profil. Skyderen i de øvrige faner viser tvunget løft, fx over et bjerg eller ved en front. Bevægelsen beregnes ud fra termisk opdrift og en forenklet luftmodstand. Der er ingen blanding eller nedbør; i virkeligheden tærer opblanding med omgivende luft også på pakkens overskud, så den fugtige pakkes overskud på 7,3 °C ved 3.000 m er i overkanten. Ved 3.000 m forlader pakken figurens udsnit; det er ikke et stabilt loft.</p>
+  <p>Trykket beregnes hydrostatisk. Relativt volumen følger idealgasloven ved omtrent konstant luftmasse; kuglens radius følger kubikroden af volumen. Vandets bidrag til densiteten er udeladt i opdriftssammenligningen. Luftpakken er forstørret i forhold til højdeskalaen, men dens relative vækst er i målestok. Den stiplede ring om pakken viser dens startstørrelse. Modellen antager, at kondensvand bliver i pakken. Under synkning fordamper dråberne igen, og pakken følger samme idealiserede temperaturkurve tilbage. Opdriftsaccelerationen er g · (T_pakke − T_omgivelser) / T_omgivelser med temperaturer i kelvin, og luftmodstanden er proportional med hastigheden. Fri bevægelse vises 30 gange hurtigere end modellens tid.</p>
+  <p>Fagligt grundlag: <cite>NaturgeografiGrundbogen B, kapitel 10.5: Temperatur, årstid og lufttryk</cite>, især figur 10.5.19 og afsnittene om tør-/fugtadiabatisk afkøling og konvektion.</p>
+  </div></details><span data-lydfeedback-vaert></span></footer>
+  <div id="opgavekilder" hidden>
   <section id="a-forstaaelse" class="forstaaelse" aria-labelledby="forstaaelse-titel">
-    <h2 id="forstaaelse-titel">Stop og forklar</h2><p>Skriv med egne ord. Åbn derefter forklaringen og sammenlign med dit svar. Svarene bliver stående ved faneskift, indtil siden genindlæses.</p>
+    <h2 id="forstaaelse-titel">Stop og forklar</h2><p>Skriv først dit eget svar. Åbn derefter forklaringen og sammenlign.</p>
     <div class="forstaaelse-felter">
       <div><label for="energi-svar">Hvordan kan pakken blive koldere, når den ikke afgiver varme til omgivelserne?</label><textarea id="energi-svar" rows="2"></textarea><details><summary>Sammenlign med en forklaring</summary><p>Luften udvider sig og udfører arbejde ved at skubbe omgivelserne væk. Energien til arbejdet tages fra luftens indre energi. Derfor falder temperaturen, selv om der ikke udveksles varme med omgivelserne. Fik du forklaret, hvor energien går hen?</p></details></div>
       <div><label for="fortaetning-svar">Hvorfor falder temperaturen stadig under opstigning, selv om fortætning frigiver varme?</label><textarea id="fortaetning-svar" rows="2"></textarea><details><summary>Sammenlign med en forklaring</summary><p>Fortætning frigiver energi, der tidligere blev optaget ved fordampning. Men pakken bruger stadig energi på at udvide sig. Den frigivne varme opvejer kun en del af afkølingen: temperaturen falder langsommere. Fik du begge processer med?</p></details></div>
     </div>
   </section>
-          <details class="a-detaljer" id="a-ekstra"><summary>Tal, fugt og temperaturkurve</summary>
-            <div class="fugt" id="a-fugtvalg" role="group" aria-label="Vælg luftpakkens fugt"><button data-aluft="toer" aria-pressed="false">Tør pakke</button><button data-aluft="fugtig" aria-pressed="true">Fugtig pakke</button></div>
-            <button id="a-vis-graf" aria-pressed="false">Vis temperaturkurven</button>
-            <div class="opdrift" id="a-maal"><strong id="a-maal-titel"></strong><p id="a-maal-tekst"></p></div>
-          </details>
-  <div class="aarsag"><span>Lavere tryk</span><b>→</b><span>Luften udvider sig</span><b>→</b><span>Energi bruges på udvidelsen</span><b>→</b><span>Temperaturen falder</span></div>
   <section class="opgaver" id="opgaver" aria-labelledby="opgaver-titel"><h2 id="opgaver-titel">Regn selv</h2><p>Brug 1,0 °C pr. 100 m for umættet og 0,5 °C pr. 100 m for mættet luft.</p><ol id="opgaveliste"></ol></section>
-  <div class="bundlinje"><p id="afkoeling-note">Adiabatisk betyder uden varmeudveksling med omgivelserne. Luften kan alligevel blive koldere: den bruger energi på at udvide sig. Ved fortætning frigives energi fra vanddampen til luften. Åbn “Tal, fugt og temperaturkurve” for at undersøge tallene. På grafen er den orange linje pakkens temperatur, den blå dens dugpunkt. Hvor de mødes, bliver luften mættet. Den prikkede linje viser afkølingen, hvis der ikke kom sky, og det orange felt er forskellen: den frigivne latente varme.</p><p id="stabilitet-note" hidden>Aflæs grafen: Den sorte linje viser omgivelsernes temperatur i hver højde. Den orange viser pakkens temperatur: tyk er det stykke, den har tilbagelagt, og stiplet er vejen videre, hvis den fortsætter. I det orange felt er pakken varmest og har opdrift. I det blå er den koldest og søger ned. Ringen markerer, hvor kurverne krydser, og opdriften slutter.</p><details><summary>Fysikken bag · antagelser og kilde</summary><div class="uddybning">
-  <p><strong>Adiabatisk:</strong> Luftpakken udveksler ikke varme med omgivelserne. Ved opstigning falder trykket. Pakken udvider sig og udfører arbejde på omgivelserne; dens indre energi og temperatur falder.</p>
-  <p><strong>Umættet → mættet:</strong> Umættet luft har en relativ luftfugtighed under 100 %. Pakken starter ved 22 °C, varmet 2 °C mere end omgivelsernes 20 °C. Den tørre pakke har dugpunkt 10 °C, den fugtige 18,8 °C. Temperaturen falder 1,0 °C pr. 100 m, dugpunktet cirka 0,2 °C. De mødes ved 1.500 m (tør) og 400 m (fugtig): luften er mættet (100 % relativ luftfugtighed). Dugpunktet er den temperatur, hvor luften ved det aktuelle tryk bliver mættet. Den relative luftfugtighed (RF) på pakken er forholdet mellem det aktuelle og det mættede damptryk, beregnet ud fra dugpunkt og temperatur med Magnus-formlen. Den tørre pakke starter ved 46 %, den fugtige ved 82 %.</p>
-  <p><strong>Kondensation og latent varme:</strong> Ved videre løft kondenserer vanddamp til små flydende skydråber. Derved frigives latent varme, som tidligere blev optaget ved fordampning. Det modvirker en del af afkølingen. Pakken bliver stadig koldere, men her kun 0,5 °C pr. 100 m. Vanddamp er usynlig; en sky består af dråber eller iskrystaller.</p>
-  <p><strong>Forenklinger:</strong> Fugtadiabatisk afkøling er her konstant 0,5 °C pr. 100 m; bogen angiver ca. 0,5–0,9 afhængigt af temperaturen. Profilerne er idealiserede: omgivelserne afkøles henholdsvis 0,4 °C (stabil) og 0,7 °C (betinget) pr. 100 m. I ustabil luft afkøles de 1,2 °C pr. 100 m op til 500 m og derefter 0,65 °C, fordi så hurtig afkøling kun findes i et tyndt lag over solopvarmet jord. Inversionen opvarmes 0,4 °C pr. 100 m til 1.000 m og afkøles derefter 0,6 °C. Bogen beskriver den stabile troposfære som uden opdrift; her får pakken 2 °C ekstra fra jorden og kan derfor stige et lille stykke, før den når omgivelsernes temperatur. Inertien får den til at svinge lidt om ligevægtshøjden, før den falder til ro. I fanen Adiabatisk afkøling løftes pakken med konstant fart og trykket beregnes i den stabile profil. Skyderen i de øvrige faner viser tvunget løft, fx over et bjerg eller ved en front. Bevægelsen beregnes ud fra termisk opdrift og en forenklet luftmodstand. Der er ingen blanding eller nedbør; i virkeligheden tærer opblanding med omgivende luft også på pakkens overskud, så den fugtige pakkes overskud på 7,3 °C ved 3.000 m er i overkanten. Ved 3.000 m forlader pakken figurens udsnit; det er ikke et stabilt loft.</p>
-  <p>Trykket beregnes hydrostatisk. Relativt volumen følger idealgasloven ved omtrent konstant luftmasse; kuglens radius følger kubikroden af volumen. Vandets bidrag til densiteten er udeladt i opdriftssammenligningen. Luftpakken er forstørret i forhold til højdeskalaen, men dens relative vækst er i målestok. Den stiplede ring om pakken viser dens startstørrelse. Modellen antager, at kondensvand bliver i pakken. Under synkning fordamper dråberne igen, og pakken følger samme idealiserede temperaturkurve tilbage. Opdriftsaccelerationen er g · (T_pakke − T_omgivelser) / T_omgivelser med temperaturer i kelvin, og luftmodstanden er proportional med hastigheden. Fri bevægelse vises 30 gange hurtigere end modellens tid.</p>
-  <p>Fagligt grundlag: <cite>NaturgeografiGrundbogen B, kapitel 10.5: Temperatur, årstid og lufttryk</cite>, især figur 10.5.19 og afsnittene om tør-/fugtadiabatisk afkøling og konvektion.</p>
-  </div></details></div>
+  </div>
   <p class="sr" id="figurtekst"></p>
-  <noscript><p>Stabil luft hæmmer opstigning. Ustabil, fugtig luft kan danne høje bygeskyer. Inversion betyder varmere luft over kold luft. Slå JavaScript til for at se forløbene.</p></noscript>
+  <noscript><p>Slå JavaScript til for at undersøge luftpakkerne.</p></noscript>
 </main>
 <script src="/feedback.js" defer></script>
 </body></html>
