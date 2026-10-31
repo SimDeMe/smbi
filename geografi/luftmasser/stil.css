@@ -63,3 +63,5 @@ aside{border-left:2px solid var(--blaek);background:var(--papir);display:flex;fl
 @media(min-width:821px) and (max-height:700px){.stige-energi{font-size:12px;padding:5px 8px}.h-kontekst{font-size:12px;padding:6px 10px}}
 @media(max-width:820px){.h-forklaring .h-scene{min-height:260px}.h-kontekst{margin-bottom:8px}#panel-afkoeling.toplinje .knapper{flex-wrap:wrap;gap:6px}#panel-afkoeling.toplinje .knapper .a-hvorfor{flex:1 1 100%}body:has(#panel-afkoeling.toplinje:not([hidden])) main{padding-bottom:130px}}
 @media(max-width:540px){.forstaaelse-felter{grid-template-columns:1fr;gap:20px}.h-forklaring .h-scene{display:grid;grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr);gap:8px;align-content:center}.h-forklaring .h-boble{width:calc(84px * var(--faktor));height:calc(84px * var(--faktor))}.h-forklaring .h-etiket{max-width:116px}.h-forklaring .h-under{max-width:120px}.h-forklaring .h-boble.medpile{margin:22px 4px}.h-kontekst{font-size:12px}}
+.titel-knapper{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;align-items:center}
+@media(max-width:540px){.titel{flex-wrap:wrap}.titel-knapper{justify-content:flex-start}}

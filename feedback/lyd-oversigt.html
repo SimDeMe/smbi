@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Lydfeedback — smbi.dk</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/atlas/vendor/fonts/fonts.css">
+  <style>
+    :root{--papir:#fff9ee;--blaek:#172b2b;--daempet:#516565;--blaa:#0e86c8}
+    *{box-sizing:border-box}body{margin:0;background:var(--papir);color:var(--blaek);font:16px/1.45 'Source Serif 4',Georgia,serif}
+    .regnbue{height:6px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
+    main{max-width:900px;margin:auto;padding:16px}
+    h1{font:800 26px/1.15 Archivo,system-ui,sans-serif;margin:8px 0 14px}
+    h2{font:800 16px/1.25 Archivo,system-ui,sans-serif;margin:0}
+    button{font:700 14px Archivo,system-ui,sans-serif;min-height:38px;padding:6px 12px;background:#fff;color:var(--blaek);border:1.5px solid var(--blaek);border-radius:8px;cursor:pointer}
+    button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #7a4fd6;outline-offset:2px}
+    .primaer{background:var(--blaa);color:#fff}
+    label{display:block;font:600 14px Archivo,system-ui,sans-serif;margin:10px 0 3px}
+    input{font:16px 'Source Serif 4',Georgia,serif;width:min(340px,100%);padding:7px 9px;border:1.5px solid var(--blaek);border-radius:8px;background:#fff}
+    .raekke{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+    .post{background:#fff;border:1.5px solid var(--blaek);border-radius:10px;padding:12px;margin-bottom:12px}
+    .meta{font-size:14px;color:var(--daempet);margin:3px 0 8px}
+    audio{width:100%}
+    ol.log{font-size:14px;padding-left:0;list-style:none;margin:8px 0 0;max-height:280px;overflow:auto}
+    ol.log li{padding:2px 0;border-top:1px solid #172b2b20}ol.log button{min-height:0;padding:0 6px;margin-right:6px;font-variant-numeric:tabular-nums}
+    .fejl{color:#b3123f;font-weight:600}
+  </style>
+  <script type="module" src="lyd-oversigt.js"></script>
+</head>
+<body>
+<div class="regnbue"></div>
+<main>
+  <h1>Lydfeedback</h1>
+  <p id="besked" role="status"></p>
+  <form id="login" hidden>
+    <label for="mail">Mail</label><input id="mail" type="email" autocomplete="username" required>
+    <label for="kodeord">Kodeord</label><input id="kodeord" type="password" autocomplete="current-password" required>
+    <div class="raekke"><button class="primaer">Log ind</button></div>
+  </form>
+  <div id="indhold" hidden>
+    <div class="raekke" style="margin:0 0 14px"><button id="opdater" type="button">Opdatér</button><button id="logud" type="button">Log ud</button></div>
+    <div id="liste"></div>
+  </div>
+</main>
+</body></html>

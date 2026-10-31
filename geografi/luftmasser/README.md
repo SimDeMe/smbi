@@ -95,6 +95,13 @@ tilbage langs samme idealiserede temperaturkurve. Ingen nedbør.
 `forloeb.mjs` og `forloeb.test.mjs` beskriver det tidligere kvalitative
 forløb og bruges ikke længere af siden.
 
+## Lydfeedback
+
+`afproevning.js` kobler siden på den fælles lydfeedback (`feedback/LYD.md`). Med et
+afprøvningslink kan deltageren optage sig selv, mens simulationen bruges. Loggen følger
+knapper, skydere og fold-ud med fane, fugt og højde, men aldrig det, der skrives i felter.
+Uden link og modtager indlæses modulet uden at vise noget, og simulationen er uændret.
+
 ## Kontrol
 
 - `node geografi/luftmasser/model.test.mjs`: temperatur, skybase, tryk, volumen,
@@ -102,3 +109,4 @@ forløb og bruges ikke længere af siden.
 - `node værktøj/luftpakke-test.mjs`: alle otte udfald, tvunget løft, pause,
   tastatur, fokus, reduceret bevægelse og mobil i browser.
 - `node værktøj/pladstjek.mjs geografi/luftmasser/index.html`: laptop og mobil.
+- `node værktøj/lydfeedback-test.mjs`: optagelse, log, fejl, kvittering og ejerens oversigt.

@@ -1,0 +1,9 @@
+project_id = "smbi"
+
+# Deltagerne har ingen konto; modtageren tjekker afprøvningskoden, og
+# oprydningen tjekker sin egen hemmelighed.
+[functions.modtag-lydfeedback]
+verify_jwt = false
+
+[functions.ryd-lydfeedback]
+verify_jwt = false
