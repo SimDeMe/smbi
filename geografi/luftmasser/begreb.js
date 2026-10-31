@@ -1,6 +1,5 @@
 // «Hvorfor»: tre korte trin med én figur og én forklaring ad gangen.
-import { PAKKE, tilstand, uden_kondensation, latentVarme } from './model.mjs';
-const HOEJDE = 1500; // her er den tørre pakke netop umættet hele vejen
+import { PAKKE, skybase, tilstand, uden_kondensation, latentVarme } from './model.mjs';
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n }).replace('-', '−');
 
 export const HVORFOR_INTRO = '<strong>Hvorfor bliver stigende luft koldere?</strong> Adiabatisk betyder, at der ikke går varme ind eller ud af pakken.';
@@ -17,12 +16,28 @@ function boble(etiket, vaerdi, { faktor = 1, under = '', ring = false, pile = fa
 }
 const pil = (tekst, under = '') => `<div class="h-pil"><b>${tekst}</b><small>${under}</small></div>`;
 
-export function tegnBegreb(trin) {
-  const jord = tilstand('stabil', 'toer', 0), oppe = tilstand('stabil', 'toer', HOEJDE), faktor = Math.cbrt(oppe.volumen), hoej = `${tal(HOEJDE, 0)} m`;
+export function hvorforForklaring(trin, z) {
+  const [titel, tekst] = HVORFOR[trin];
+  if (trin !== 2) return [titel, tekst];
+  const base = skybase('fugtig');
+  return [titel, z <= base
+    ? 'Den fugtige pakke har endnu ikke fået varme fra fortætning. Løft den over 400 m: vanddamp fortættes til dråber og frigiver energi.'
+    : 'Vanddamp fortættes til dråber og frigiver den energi, der blev optaget ved fordampning. Det bremser afkølingen, mens luften stadig udvider sig.'];
+}
+
+export function tegnBegreb(trin, z) {
+  const jord = tilstand('stabil', 'toer', 0), oppe = tilstand('stabil', 'toer', z), faktor = Math.cbrt(oppe.volumen), hoej = `${tal(z, 0)} m`;
+  const fugtig = tilstand('stabil', 'fugtig', z), varme = latentVarme('fugtig', z);
+  const udenVolumen = fugtig.volumen * (uden_kondensation(z) + 273.15) / (fugtig.temperatur + 273.15);
   const scener = [
     () => boble('Ved jorden', `${tal(jord.tryk, 0)} hPa`) + pil('→') + boble(hoej, `${tal(oppe.tryk, 0)} hPa`, { faktor, ring: true, under: `Fylder ${tal(oppe.volumen, 2)} gange så meget` }),
-    () => boble('Ved jorden', `${tal(PAKKE)} °C`) + pil(`${tal(oppe.temperatur - PAKKE)} °C`) + boble(hoej, `${tal(oppe.temperatur)} °C`, { faktor, ring: true, pile: true, under: 'Skubber omgivelserne væk' }),
-    () => boble(`${hoej}, uden sky`, `${tal(uden_kondensation(HOEJDE))} °C`) + pil(`+${tal(latentVarme('fugtig', HOEJDE))} °C`, 'varme fra fortætning') + boble(`${hoej}, med sky`, `${tal(tilstand('stabil', 'fugtig', HOEJDE).temperatur)} °C`, { maettet: true })
+    () => boble('Ved jorden', `${tal(PAKKE)} °C`) + pil(`${tal(oppe.temperatur - PAKKE)} °C`) + boble(`${hoej} · tør pakke`, `${tal(oppe.temperatur)} °C`, { faktor, ring: true, pile: true, under: oppe.maettet ? 'Nu også mættet: fortætning bremser afkølingen' : 'Skubber omgivelserne væk', maettet: oppe.maettet }),
+    () => boble(`${hoej} · fugtig, uden fortætning`, `${tal(uden_kondensation(z))} °C`, { faktor: Math.cbrt(udenVolumen) }) + pil(`+${tal(latentVarme('fugtig', z))} °C`, 'opbygget forskel') + boble(`${hoej} · fugtig, som på stigen`, `${tal(fugtig.temperatur)} °C`, { faktor: Math.cbrt(fugtig.volumen), maettet: fugtig.maettet })
   ];
-  return `<div class="h-scene">${scener[trin]()}</div>`;
+  const kontekst = z === 0 ? 'Du er ved jorden. Vend tilbage til stigen og løft pakkerne for at se ændringen.'
+    : trin === 2 ? varme > .01
+      ? `Forskellen på ${tal(varme)} °C er opbygget fra 400 m til ${hoej}. Den fugtige pakke er stadig kølet fra 22,0 til ${tal(fugtig.temperatur)} °C.`
+      : 'Ved denne højde er temperaturerne ens. Ved videre løft over 400 m begynder fortætningen at bremse afkølingen.'
+    : `Samme forsøg som på stigen: fra jorden til ${hoej}. Den stiplede ring viser startstørrelsen.`;
+  return `<div class="h-forklaring"><div class="h-scene">${scener[trin]()}</div><p class="h-kontekst">${kontekst}</p></div>`;
 }

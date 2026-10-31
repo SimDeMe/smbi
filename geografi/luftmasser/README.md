@@ -22,9 +22,16 @@ Standardvisningen (`stige.js`) er en højdestige: en tør og en fugtig pakke lø
 når de er set: umættet ved 300 m, mættet ved 500 m. Tabellen viser de tre seneste
 trin. Ved toppen kan pakkerne sænkes igen.
 
-Først ved 500 m kommer knappen «Hvorfor bliver luften koldere?», der åbner tre korte
+Knappen «Hvorfor bliver luften koldere?» er tilgængelig fra start og åbner tre korte
 trin (`begreb.js`): trykket falder, udvidelsen koster energi, fortætning giver varme
-tilbage. Højden på stigen bevares imens.
+tilbage. Figurerne bruger den aktuelle højde fra stigen; højden bevares ved retur.
+En kort energiforklaring ved stigen følger mætningen. Sammenligningen med og uden
+fortætning viser en opbygget temperaturforskel ved samme højde, ikke et pludseligt
+spring i temperaturen. Ved jorden og under skybasen vises ingen frigivet varme.
+
+To fritekstspørgsmål i “Stop og forklar” forbinder udvidelse, arbejde, indre energi
+og fortætning. Eleven kan åbne en faglig forklaring og sammenligne med sit svar.
+Svarene bevares ved faneskift, men ikke ved genindlæsning; de bedømmes ikke automatisk.
 
 «Tal, fugt og temperaturkurve» åbner den tidligere temperatur–højde-graf med
 fugtvalg, skyder og beregninger. Her løftes pakken med konstant fart uden opdrift og

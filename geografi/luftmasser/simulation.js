@@ -1,5 +1,5 @@
 import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke13';
-import { afkoeling } from './afkoeling.js?v=luftpakke15';
+import { afkoeling } from './afkoeling.js?v=luftpakke16';
 import { bygUndersoegelser } from './opgaver.js';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
@@ -153,6 +153,7 @@ skyder.addEventListener('input', () => { stop(); z = +skyder.value; v = 0; start
 function visPanel() {
   const laering = profil === 'afkoeling';
   $('a-ekstra').hidden = opgavevisning || !laering;
+  $('a-forstaaelse').hidden = opgavevisning || !laering;
   $('undersoegelser').hidden = !opgavevisning;
   $('simulationsfelt').hidden = opgavevisning;
   document.querySelector('.aarsag').hidden = opgavevisning;

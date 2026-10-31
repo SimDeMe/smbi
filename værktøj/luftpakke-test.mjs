@@ -30,17 +30,29 @@ try {
   assert.ok(await page.locator(id).evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: skyder uden for skærmen`);
   assert.ok(await page.locator('#figur').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: figur uden for skærmen`);
  }
+ // Forklaringen kan åbnes fra start og bruger også nulhøjden korrekt.
+ await page.locator('#a-hvorfor').click();
+ await page.locator('#a-afspil').click();await page.locator('#a-afspil').click();
+ assert.match(await page.locator('.h-scene').textContent(),/0 m.*22,0 °C.*22,0 °C/s);
+ assert.match(await page.locator('.h-kontekst').textContent(),/ved jorden/);
+ await page.locator('#a-afspil').click();
+ assert.equal(await page.locator('#a-forstaaelse textarea').count(),2);
+ await page.locator('#energi-svar').fill('Energi bruges på arbejde ved udvidelsen.');
+ await page.locator('#fortaetning-svar').fill('Begge processer fortsætter samtidig.');
+ await page.locator('#a-forstaaelse summary').first().click();
+ assert.match(await page.locator('#a-forstaaelse details[open]').textContent(),/indre energi/);
  // Højdestigen kommer først: reglerne tændes, når de er set, og sekundært stof venter.
  assert.equal(await page.locator('.stige').isVisible(),true);
  assert.equal(await page.locator('#landskab').isVisible(),false);
  assert.equal(await page.locator('#a-hoejde').isVisible(),false);
- assert.equal(await page.locator('#a-hvorfor').isVisible(),false);
+ assert.equal(await page.locator('#a-hvorfor').isVisible(),true);
  const regel=n=>page.locator(`[data-regel="${n}"] strong`).textContent();
  assert.match(await regel('umaettet'),/Umættet luft: \? °C/);assert.match(await regel('maettet'),/Mættet luft: \? °C/);
  assert.match(await page.locator('#intro').textContent(),/luftpakke er en klump luft/);
  const raekke=async()=>(await page.locator('.stige-tabel tr.nu').textContent()).replace(/\s+/g,' ');
  const loeft=async n=>{for(let i=0;i<n;i++)await page.locator('#a-afspil').click();};
  assert.match(await page.locator('#a-titel').textContent(),/Hvor meget koldere/);
+ assert.match(await page.locator('.stige-energi').textContent(),/energi bruges/);
  await loeft(1);
  assert.match(await raekke(),/100 m ?21,0 °C −1,0 ?21,0 °C −1,0/);
  assert.equal(await page.locator('[data-fald="toer"]').textContent(),'−1,0 °C');
@@ -49,7 +61,7 @@ try {
  await loeft(1);
  assert.match(await raekke(),/400 m ?18,0 °C −1,0 ?18,0 °C −1,0 sky/);
  assert.match(await page.locator('#a-titel').textContent(),/fugtige pakke er blevet mættet/);
- assert.equal(await page.locator('#a-hvorfor').isVisible(),false);
+ assert.equal(await page.locator('#a-hvorfor').isVisible(),true);
  await loeft(1);
  assert.match(await raekke(),/500 m ?17,0 °C −1,0 ?17,5 °C −0,5 sky/);
  assert.equal(await page.locator('[data-fald="fugtig"]').textContent(),'−0,5 °C');
@@ -67,26 +79,42 @@ try {
  assert.match(await page.locator('.h-scene').textContent(),/1\.013 hPa/);
  await page.locator('#a-afspil').click();
  assert.match(await page.locator('#a-titel').textContent(),/Trin 2 af 3/);
- assert.match(await page.locator('.h-scene').textContent(),/22,0 °C.*−15,0 °C.*7,0 °C/s);
+ assert.match(await page.locator('.h-scene').textContent(),/22,0 °C.*−5,0 °C.*17,0 °C/s);
  await page.locator('#a-tilbage').click();
  assert.match(await page.locator('#a-titel').textContent(),/Trin 1 af 3/);
  await page.locator('#a-afspil').click();await page.locator('#a-afspil').click();
  assert.match(await page.locator('#a-titel').textContent(),/Trin 3 af 3/);
- assert.match(await page.locator('.h-scene').textContent(),/7,0 °C.*\+5,5 °C.*12,5 °C/s);
+ assert.match(await page.locator('.h-scene').textContent(),/17,0 °C.*\+0,5 °C.*17,5 °C/s);
  assert.ok(await page.locator('#a-begreb').evaluate(el=>el.scrollHeight<=el.clientHeight+1),'Hvorfor klippet');
  await page.screenshot({path:join(tmpdir(),'luftpakke-hvorfor.png'),fullPage:true});
  await page.locator('#a-afspil').click();
  assert.equal(await page.locator('.stige').isVisible(),true);
  assert.match(await raekke(),/500 m/);
+ // Et nyt forsøg ved 1.000 m giver samme højde og temperaturer i forklaringen.
+ await loeft(5);await page.locator('#a-hvorfor').click();
+ await page.locator('#a-afspil').click();await page.locator('#a-afspil').click();
+ assert.match(await page.locator('.h-scene').textContent(),/1\.000 m.*12,0 °C.*\+3,0 °C.*15,0 °C/s);
+ assert.match(await page.locator('.h-kontekst').textContent(),/opbygget fra 400 m til 1\.000 m/);
+ await page.screenshot({path:join(tmpdir(),'luftpakke-aktuel-forklaring.png'),fullPage:true});
+ for(const width of [390,640]) {
+  await page.setViewportSize({width,height:750});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Energiforklaring: vandret rul ved ${width}`);
+  assert.equal(await page.locator('#a-forstaaelse').isVisible(),true);
+ }
+ await page.setViewportSize({width:390,height:750});
+ await page.screenshot({path:join(tmpdir(),'luftpakke-energi-mobil.png'),fullPage:true});
+ await page.setViewportSize({width:1280,height:577});
+ await page.locator('#a-afspil').click();
+ assert.match(await raekke(),/1\.000 m/);
  // Ved toppen kan pakkerne sænkes igen.
- await loeft(25);
+ await loeft(20);
  assert.match(await page.locator('#a-afspil').textContent(),/Sænk 100 m/);
  await loeft(1);
  assert.match(await raekke(),/2\.900 m ?\S+ °C \+0,5 sky ?\S+ °C \+0,5 sky/);
  await page.locator('#a-nulstil').click();
  assert.match(await page.locator('#a-afspil').textContent(),/Løft 100 m/);
  assert.match(await regel('maettet'),/\?/);
- assert.equal(await page.locator('#a-hvorfor').isVisible(),false);
+ assert.equal(await page.locator('#a-hvorfor').isVisible(),true);
  // Temperaturkurven åbnes under arbejdsfeltet.
  await page.locator('#a-ekstra summary').click();
  await page.locator('#a-vis-graf').click();
@@ -185,5 +213,9 @@ try {
  await page.locator('[data-profil="afkoeling"]').click();
  assert.equal(await page.locator('#undersoegelser').isVisible(),false);
  assert.equal(await page.locator('#a-hoejde').isVisible(),true);
+ assert.equal(await page.locator('#energi-svar').inputValue(),'Energi bruges på arbejde ved udvidelsen.');
+ assert.equal(await page.locator('#fortaetning-svar').inputValue(),'Begge processer fortsætter samtidig.');
+ assert.equal(await page.locator('#energi-svar').inputValue(),'Energi bruges på arbejde ved udvidelsen.');
+ assert.equal(await page.locator('#fortaetning-svar').inputValue(),'Begge processer fortsætter samtidig.');
  assert.deepEqual(errors,[]);console.log('Fire atmosfærer × tør/fugtig, tvunget løft, pause, tastatur, fokus, reduceret bevægelse og mobil: OK');
 } finally {await browser.close();server.kill();}

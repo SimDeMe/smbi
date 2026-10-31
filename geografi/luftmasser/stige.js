@@ -31,6 +31,7 @@ function skelet() {
   return `<div class="stige">
     <div class="stige-figur"><span class="stige-enhed">Højde · m</span><div class="stige-akse">${akse}</div><div class="stige-spor">${pakker}</div><div class="stige-jord"></div></div>
     <div class="stige-svar">
+      <p class="stige-energi"></p>
       <p class="stige-regel" data-regel="umaettet"><strong></strong><small></small></p>
       <p class="stige-regel maettet" data-regel="maettet"><strong></strong><small></small></p>
       <div class="stige-tabel"><table><caption class="sr">Temperatur og ændring for de seneste løft</caption><thead><tr><th scope="col">Højde</th><th scope="col">Tør pakke</th><th scope="col">Fugtig pakke</th></tr></thead><tbody></tbody></table></div>
@@ -66,6 +67,11 @@ export function tegnStige(el, z, retning, hoejst) {
     linje.hidden = z < base;
     linje.querySelector('span').hidden = z <= base;
   }
+  el.querySelector('.stige-energi').textContent = z === 0
+    ? 'Når du løfter: lavere tryk → udvidelse → energi bruges på at skubbe omgivelserne væk → koldere luft.'
+    : z <= skybase('fugtig')
+      ? 'Pakken udvider sig og skubber omgivelserne væk. Arbejdet tager af dens indre energi, så temperaturen falder.'
+      : 'Udvidelsen bruger stadig energi. Fortætning frigiver varme til den mættede luft og bremser afkølingen.';
   regel(el, 'umaettet', hoejst >= TAEND_UMAETTET, '1,0', 'Kaldes også «tør» · RF under 100 % · tøradiabatisk', 'Løft pakkerne, og aflæs faldet');
   regel(el, 'maettet', hoejst >= TAEND_MAETTET, '0,5', 'RF 100 %, der dannes sky · fugtadiabatisk', 'Viser sig, når der dannes sky');
   el.querySelector('tbody').innerHTML = raekker(z, retning);

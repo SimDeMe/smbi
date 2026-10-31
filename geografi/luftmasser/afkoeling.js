@@ -1,7 +1,7 @@
 // Fanen «Adiabatisk afkøling»: først højdestigen, derefter energien og kurven.
 import { LUFT, PAKKE, PROFILER, TOP, tilstand, skybase, pakketemperatur, uden_kondensation, latentVarme } from './model.mjs';
-import { tegnBegreb, HVORFOR, HVORFOR_INTRO } from './begreb.js?v=luftpakke15';
-import { STIGETRIN, TAEND_MAETTET, tegnStige, stigeForklaring, stigeBeskrivelse } from './stige.js?v=luftpakke15';
+import { tegnBegreb, hvorforForklaring, HVORFOR, HVORFOR_INTRO } from './begreb.js?v=luftpakke16';
+import { STIGETRIN, tegnStige, stigeForklaring, stigeBeskrivelse } from './stige.js?v=luftpakke16';
 const $ = id => document.getElementById(id);
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
 const saet = (id, t) => { if ($(id).textContent !== t) $(id).textContent = t; };
@@ -88,7 +88,7 @@ function tegn() {
   $('a-fugtvalg').hidden = !visGraf; $('a-maal').hidden = !visGraf;
   $('a-nulstil').hidden = hvorfor;
   $('a-tilbage').hidden = !hvorfor || hvorforTrin === 0;
-  $('a-hvorfor').hidden = hvorfor || (stige && hoejst < TAEND_MAETTET);
+  $('a-hvorfor').hidden = hvorfor;
   $('a-hvorfor').textContent = stige ? 'Hvorfor bliver luften koldere?' : '← Tilbage til stigen';
   $('a-vis-graf').setAttribute('aria-pressed', String(visGraf));
   $('a-vis-graf').textContent = visGraf ? 'Tilbage til stigen' : 'Vis temperaturkurven';
@@ -100,10 +100,10 @@ function tegn() {
     return;
   }
   if (hvorfor) {
-    const [titel, tekst] = HVORFOR[hvorforTrin];
+    const [titel, tekst] = hvorforForklaring(hvorforTrin, z);
     saet('a-titel', titel); saet('a-tekst', tekst);
-    saet('figurtekst', `${titel}. ${tekst}`);
-    $('a-begreb').innerHTML = tegnBegreb(hvorforTrin);
+    $('a-begreb').innerHTML = tegnBegreb(hvorforTrin, z);
+    saet('figurtekst', `${titel}. ${tekst}. ${$('a-begreb').textContent.replace(/\s+/g, ' ').trim()}`);
     return;
   }
   if (!w || !h) return;
