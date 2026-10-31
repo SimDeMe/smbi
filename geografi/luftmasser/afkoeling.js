@@ -1,23 +1,23 @@
 // Fanen «Adiabatisk afkøling»: pakken løftes, så kun afkølingen er i fokus.
 import { LUFT, PAKKE, TOP, tilstand, skybase, pakketemperatur, uden_kondensation, latentVarme } from './model.mjs';
+import { tegnBegreb } from './begreb.js';
 const $ = id => document.getElementById(id);
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
 const saet = (id, t) => { if ($(id).textContent !== t) $(id).textContent = t; };
 const TMIN = -20, TMAX = 28, FART = 250; // m pr. sekund på skærmen
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
 const skyder = $('a-hoejde');
-let luft = 'toer', z = 0, retning = 1, afspiller = false, frame, sidst = null;
+let visGraf = false;
+let luft = 'fugtig', z = 0, retning = 1, afspiller = false, frame, sidst = null;
 
 function forklaring() {
-  const base = skybase(luft), paaBase = Math.abs(z - base) < .5;
-  if (z === 0) return ['Pakken ved jorden', `Pakken er ${tal(PAKKE, 0)} °C og umættet. Løft den, og følg, hvordan temperaturen falder.`];
-  if (paaBase) return [`Dugpunktet er nået ved ${tal(base, 0)} m`, 'Temperatur og dugpunkt er ens, så luften er mættet (RF 100 %). Nu begynder vanddamp at kondensere til skydråber.'];
-  if (retning < 0 && afspiller) return z > base
-    ? ['Fugtadiabatisk opvarmning: 0,5 °C pr. 100 m', 'Trykket stiger, og pakken presses sammen og varmes. Skydråber fordamper og optager varme, så opvarmningen er langsom.']
-    : ['Tøradiabatisk opvarmning: 1,0 °C pr. 100 m', 'Trykket stiger, og pakken presses sammen og varmes. Dråberne er væk, og luften er igen umættet.'];
+  const base = skybase(luft);
+  if (retning < 0 && z > 0) return ['Se den omvendte proces', 'Når pakken synker, presses den sammen og varmes op. Følg temperaturen på vej ned.'];
+  if (z === 0) return ['1 · Løft og se udvidelsen', 'Tryk “Løft pakken”. Følg størrelsen og temperaturen. Hvor kommer energien til udvidelsen fra?'];
+  if (Math.abs(z - base) < .5) return ['Nu begynder fortætningen', 'Vanddamp kan nu blive til dråber. Løft videre: Hvilken forskel gør den frigivne varme?'];
   return z > base
-    ? ['Fugtadiabatisk afkøling: 0,5 °C pr. 100 m', 'Pakken udvider sig stadig og bliver koldere. Men kondensationen frigiver latent varme, som opvejer en del af afkølingen.']
-    : ['Tøradiabatisk afkøling: 1,0 °C pr. 100 m', 'Trykket falder, og pakken udvider sig. Arbejdet tager energi fra luften, så temperaturen falder uden varmeudveksling med omgivelserne. RF stiger, fordi koldere luft kan indeholde mindre vanddamp.'];
+    ? ['2 · Afkølingen bremses', 'Sammenlign temperaturerne ved samme højde: med og uden varme fra fortætning. Luften bliver stadig koldere under opstigning.']
+    : ['1 · Energi bruges på udvidelsen', 'Pakken bliver større og koldere. Den bruger sin egen indre energi på at skubbe omgivelserne væk.'];
 }
 function regnskab() {
   const base = skybase(luft), toer = Math.min(z, base), fugtig = Math.max(0, z - base), fald = PAKKE - pakketemperatur(luft, z);
@@ -66,6 +66,9 @@ function tegnGraf(s, y, g, text) {
 }
 function tegn() {
   const figur = $('figur'), svg = $('landskab'), s = tilstand('stabil', luft, z), w = figur.clientWidth, h = figur.clientHeight;
+  figur.classList.toggle('begrebsvisning', !visGraf);
+  $('a-begreb').hidden = visGraf;
+  svg.toggleAttribute('hidden', !visGraf);
   if (!w || !h) return;
   const smal = w < 560, top = 60, bund = h - 74, base = skybase(luft);
   const y = hoejde => bund - hoejde / TOP * (bund - top);
@@ -79,7 +82,12 @@ function tegn() {
   skyder.setAttribute('aria-valuetext', `${tal(z, 0)} meter. Pakken ${tal(s.temperatur)} grader, dugpunkt ${tal(s.dugpunkt)} grader, relativ luftfugtighed ${tal(s.fugtighed, 0)} procent.`);
   const [titel, tekst] = forklaring(), [maal, regn] = regnskab();
   saet('a-titel', titel); saet('a-tekst', tekst); saet('a-maal-titel', maal); saet('a-maal-tekst', regn);
-  saet('figurtekst', `${LUFT[luft].navn}, ${tal(z, 0)} m. Temperatur ${tal(s.temperatur)} °C, dugpunkt ${tal(s.dugpunkt)} °C, relativ luftfugtighed ${tal(s.fugtighed, 0)} %. ${titel}.`);
+  $('a-trin-1').setAttribute('aria-pressed', String(z <= base));
+  $('a-trin-2').setAttribute('aria-pressed', String(z > base));
+  if (!visGraf) $('a-begreb').innerHTML = tegnBegreb(s, luft, retning < 0 && z > 0);
+  saet('figurtekst', `${LUFT[luft].navn}, ${tal(z, 0)} m. Temperatur ${tal(s.temperatur)} °C, dugpunkt ${tal(s.dugpunkt)} °C, relativ luftfugtighed ${tal(s.fugtighed, 0)} %. ${titel}. ${tekst}${z > base ? ` Uden fortætning: ${tal(uden_kondensation(z))} °C. Med fortætning: ${tal(s.temperatur)} °C.` : ''}`);
+
+  if (!visGraf) return;
 
   // Luftmolekyler spredes med volumen; vanddamp bliver til dråber over skybasen.
   const prik = (i, n, f = .86) => { const a = i * 2.39996, d = Math.sqrt((i + .5) / n) * r * f; return [x + Math.cos(a) * d, cy + Math.sin(a) * d]; };
@@ -159,4 +167,22 @@ document.querySelectorAll('[data-aluft]').forEach(b => b.addEventListener('click
 reduceret.addEventListener('change', stop);
 document.addEventListener('visibilitychange', () => { sidst = null; });
 bygOpgaver();
-export const afkoeling = { tegn, stop, nulstil };
+function vaelgLuft(valg) {
+  luft = valg;
+  document.querySelectorAll('[data-aluft]').forEach(k => k.setAttribute('aria-pressed', String(k.dataset.aluft === luft)));
+}
+function vaelgTrin(hoejde) {
+  stop(); vaelgLuft('fugtig'); visGraf = false;
+  $('a-vis-graf').setAttribute('aria-pressed', 'false');
+  $('a-vis-graf').textContent = 'Vis temperaturkurven';
+  z = hoejde; retning = 1; tegn(); knap();
+}
+$('a-trin-1').addEventListener('click', () => vaelgTrin(0));
+$('a-trin-2').addEventListener('click', () => vaelgTrin(1000));
+$('a-vis-graf').addEventListener('click', () => {
+  visGraf = !visGraf;
+  $('a-vis-graf').setAttribute('aria-pressed', String(visGraf));
+  $('a-vis-graf').textContent = visGraf ? 'Tilbage til energiforklaringen' : 'Vis temperaturkurven';
+  tegn();
+});
+export const afkoeling = { tegn, stop, nulstil, viserGraf: () => visGraf };

@@ -1,5 +1,5 @@
-import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs';
-import { afkoeling } from './afkoeling.js';
+import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke13';
+import { afkoeling } from './afkoeling.js?v=luftpakke13';
 import { bygUndersoegelser } from './opgaver.js';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
@@ -152,11 +152,15 @@ function nulstil() { stop(); z = 0; v = 0; startet = false; afsluttet = false; t
 skyder.addEventListener('input', () => { stop(); z = +skyder.value; v = 0; startet = false; afsluttet = false; tegn(); knap(); });
 function visPanel() {
   const laering = profil === 'afkoeling';
+  $('a-ekstra').hidden = opgavevisning || !laering;
   $('undersoegelser').hidden = !opgavevisning;
   $('simulationsfelt').hidden = opgavevisning;
   document.querySelector('.aarsag').hidden = opgavevisning;
   document.querySelector('.bundlinje').hidden = opgavevisning;
   if (opgavevisning) { $('opgaver').hidden = true; return; }
+  figur.classList.toggle('begrebsvisning', laering && !afkoeling.viserGraf());
+  $('a-begreb').hidden = !laering || afkoeling.viserGraf();
+  svg.toggleAttribute('hidden', laering && !afkoeling.viserGraf());
   $('panel-afkoeling').hidden = !laering; $('opgaver').hidden = !laering;
   $('panel-stabilitet').hidden = laering; $('stabilitet-note').hidden = laering; $('afkoeling-note').hidden = !laering;
 }

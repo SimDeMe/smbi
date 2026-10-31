@@ -13,11 +13,18 @@ Hver fane har en kort intro med begrebets betydning lige over figuren (`tekst` i
 
 ## Fanen Adiabatisk afkøling
 
-`afkoeling.js` er siden åbningsfane og en selvstændig del. Pakken løftes med konstant
-fart og uden opdrift, så kun afkølingen er i fokus. Den standser ved dugpunktet
-og toppen og kan synke igen. Grafen viser temperatur, dugpunkt og den tørre kurve
-uden kondensation; feltet imellem er frigivet latent varme. Fire regneopgaver
-med tjek står under figuren.
+`afkoeling.js` er sidens åbningsfane. Standardvisningen (`begreb.js`) forklarer
+energiens vej med en årsagskæde, en voksende luftpakke og et temperaturregnskab.
+To trin fremhæver først udvidelsens arbejde og afkøling, derefter fortætningens
+frigivelse af latent varme. Trin 1 begynder ved jorden; trin 2 viser den fugtige
+pakke ved 1.000 m: 12 °C uden fortætning mod 15 °C med fortætning.
+Udvidelsen fortsætter, så pakken køler stadig af under opstigning.
+
+Den fugtige pakke er valgt fra start. Pakken løftes med konstant fart uden
+opdrift og standser ved skybasen og toppen. Under synkning vendes forklaringen
+til sammentrykning og fordampning. Størrelsen følger stadig modelvolumen.
+“Tal, fugt og temperaturkurve” åbner fugtvalg, den tidligere temperatur–højde-graf
+og beregninger under arbejdsfeltet. De fire regneopgaver står længere nede.
 
 ## Sidste fane: Opgaver
 

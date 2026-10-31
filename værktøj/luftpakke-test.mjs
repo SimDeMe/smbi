@@ -20,7 +20,7 @@ try {
  await page.goto('http://127.0.0.1:8782/geografi/luftmasser/');
  await page.emulateMedia({reducedMotion:'reduce'});
  // Hver fane forklarer sit begreb over figuren, og figur og kontroller er synlige uden at rulle.
- for(const [profil,begreb] of [['stabil','Stabil luft'],['ustabil','Ustabil luft'],['betinget','Betinget stabil luft'],['inversion','Inversion'],['afkoeling','Adiabatisk afkøling']]) {
+ for(const [profil,begreb] of [['stabil','Stabil luft'],['ustabil','Ustabil luft'],['betinget','Betinget stabil luft'],['inversion','Inversion'],['afkoeling','Hvorfor bliver stigende luft koldere?']]) {
   await page.locator(`[data-profil="${profil}"]`).click();
   assert.equal(await page.locator('#intro strong').textContent(),begreb);
   const id=profil==='afkoeling'?'#a-hoejde':'#hoejde';
@@ -28,6 +28,25 @@ try {
   assert.ok(await page.locator(id).evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: skyder uden for skærmen`);
   assert.ok(await page.locator('#figur').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),`${profil}: figur uden for skærmen`);
  }
+ // Begrebet kommer først; graf og fugtvalg er sekundære.
+ assert.equal(await page.locator('#a-begreb').isVisible(),true);
+ assert.equal(await page.locator('#landskab').isVisible(),false);
+ await page.screenshot({path:join(tmpdir(),'luftpakke-udvidelse.png'),fullPage:true});
+ await page.locator('#a-trin-2').click();
+ assert.equal(await page.locator('#a-hoejde').inputValue(),'1000');
+ assert.match(await page.locator('#a-begreb').textContent(),/12,0 °C/);
+ assert.match(await page.locator('#a-begreb').textContent(),/15,0 °C/);
+ assert.match(await page.locator('#a-begreb').textContent(),/stadig koldere/);
+ assert.ok(await page.locator('#a-begreb').evaluate(el=>el.scrollHeight<=el.clientHeight+1),'Begrebsforklaring klippet');
+ await page.screenshot({path:join(tmpdir(),'luftpakke-fortaetning.png'),fullPage:true});
+ await page.locator('#a-trin-1').click();
+ assert.equal(await page.locator('#a-hoejde').inputValue(),'0');
+ assert.match(await page.locator('#a-begreb').textContent(),/indre energi/);
+ await page.locator('#a-ekstra summary').click();
+ await page.locator('#a-vis-graf').click();
+ assert.equal(await page.locator('#landskab').isVisible(),true);
+ assert.equal(await page.locator('#a-begreb').isVisible(),false);
+ await page.locator('#a-vis-graf').click();
  // Læringsfanen: løft standser ved dugpunktet og toppen, og pakken kan synke igen.
  assert.equal(await page.locator('#a-hoejde').isVisible(),true);
  assert.equal(await page.locator('#hoejde').isVisible(),false);
@@ -35,7 +54,7 @@ try {
   await page.locator(`[data-aluft="${luft}"]`).click();
   await page.locator('#a-afspil').click();
   assert.equal(await page.locator('#a-hoejde').inputValue(),String(base));
-  assert.match(await page.locator('#a-titel').textContent(),/Dugpunktet er nået/);
+  assert.match(await page.locator('#a-titel').textContent(),/Nu begynder fortætningen/);
   await page.locator('#a-afspil').click();
   assert.equal(await page.locator('#a-hoejde').inputValue(),'3000');
   assert.match(await page.locator('#a-maal-titel').textContent(),new RegExp(top));
@@ -43,6 +62,7 @@ try {
   await page.locator('#a-afspil').click();
   assert.equal(await page.locator('#a-hoejde').inputValue(),'0');
  }
+ await page.locator('#a-ekstra summary').click();
  // Opgaverne: rigtigt og forkert svar, komma som decimaltegn.
  await page.locator('#svar-0').fill('14,0');await page.locator('#svar-0').press('Enter');
  assert.match(await page.locator('#svar-tekst-0').textContent(),/^Rigtigt/);
