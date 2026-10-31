@@ -86,5 +86,35 @@ try {
   await page.setViewportSize({width,height:750});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  }
+ // Sidste fane: åben fortolkning, kurvesammenligning og forsøg med bevarede svar.
+ await page.setViewportSize({width:1280,height:577});
+ assert.equal(await page.locator('.situationer button').last().textContent(),'Opgaver');
+ await page.locator('#vaelg-opgaver').click();
+ assert.equal(await page.locator('#simulationsfelt').isVisible(),false);
+ assert.equal(await page.locator('#undersoegelser article').count(),5);
+ await page.locator('#forklar-kurve').fill('Pakken mister opdrift, når temperaturerne mødes.');
+ await page.locator('#tegn-2').fill('400');
+ assert.match(await page.locator('#forudsigelsesgraf').getAttribute('aria-label'),/2 minutter: 400 meter/);
+ await page.locator('#vis-modelkurve').click();
+ assert.equal(await page.locator('#kurve-feedback').isVisible(),true);
+ await page.locator('#vis-modelkurve').click();
+ assert.equal(await page.locator('#kurve-feedback').isVisible(),false);
+ await page.locator('[data-forsoeg="betinget"][data-fugt="toer"]').click();
+ assert.equal(await page.locator('#hoejde').inputValue(),'2000');
+ assert.equal(await page.locator('[data-profil="betinget"]').getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('[data-luft="toer"]').getAttribute('aria-pressed'),'true');
+ await page.locator('#vaelg-opgaver').click();
+ assert.match(await page.locator('#forklar-kurve').inputValue(),/mister opdrift/);
+ assert.equal(await page.locator('#tegn-2').inputValue(),'400');
+ await page.locator('.sparring summary').first().click();
+ assert.equal(await page.locator('.sparring').first().getAttribute('open'),'');
+ for(const width of [380,390,640,1280]) {
+  await page.setViewportSize({width,height:750});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Opgaver: vandret rul ved ${width}`);
+ }
+ await page.screenshot({path:join(tmpdir(),'luftpakke-opgaver.png'),fullPage:true});
+ await page.locator('[data-profil="afkoeling"]').click();
+ assert.equal(await page.locator('#undersoegelser').isVisible(),false);
+ assert.equal(await page.locator('#a-hoejde').isVisible(),true);
  assert.deepEqual(errors,[]);console.log('Fire atmosfærer × tør/fugtig, tvunget løft, pause, tastatur, fokus, reduceret bevægelse og mobil: OK');
 } finally {await browser.close();server.kill();}

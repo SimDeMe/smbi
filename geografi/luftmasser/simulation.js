@@ -1,8 +1,10 @@
 import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs';
 import { afkoeling } from './afkoeling.js';
+import { bygUndersoegelser } from './opgaver.js';
 const $ = id => document.getElementById(id);
 const svg = $('landskab'), figur = $('figur'), skyder = $('hoejde');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
+let opgavevisning = false;
 let profil = 'afkoeling', luft = 'toer', z = 0, v = 0, afspiller = false, frame, sidst, startet = false, afsluttet = false;
 const tal = (v, n = 1) => v.toLocaleString('da-DK', { minimumFractionDigits:n, maximumFractionDigits:n });
 const hundrede = h => tal(Math.round(h / 10) * 10, 0);
@@ -67,6 +69,7 @@ function resultat(s) {
 }
 
 function tegn() {
+  if (opgavevisning) return;
   if (profil === 'afkoeling') return afkoeling.tegn();
   const s = tilstand(profil, luft, z), w = figur.clientWidth, h = figur.clientHeight;
   const smal = w < 560, top = 60, bund = h - 74;
@@ -149,11 +152,18 @@ function nulstil() { stop(); z = 0; v = 0; startet = false; afsluttet = false; t
 skyder.addEventListener('input', () => { stop(); z = +skyder.value; v = 0; startet = false; afsluttet = false; tegn(); knap(); });
 function visPanel() {
   const laering = profil === 'afkoeling';
+  $('undersoegelser').hidden = !opgavevisning;
+  $('simulationsfelt').hidden = opgavevisning;
+  document.querySelector('.aarsag').hidden = opgavevisning;
+  document.querySelector('.bundlinje').hidden = opgavevisning;
+  if (opgavevisning) { $('opgaver').hidden = true; return; }
   $('panel-afkoeling').hidden = !laering; $('opgaver').hidden = !laering;
   $('panel-stabilitet').hidden = laering; $('stabilitet-note').hidden = laering; $('afkoeling-note').hidden = !laering;
 }
 function vaelg(attribut, saet) {
   document.querySelectorAll(`[${attribut}]`).forEach(b => b.addEventListener('click', () => {
+    opgavevisning = false;
+    $('vaelg-opgaver').setAttribute('aria-pressed', 'false');
     saet(b.getAttribute(attribut));
     document.querySelectorAll(`[${attribut}]`).forEach(k => k.setAttribute('aria-pressed', String(k === b)));
     $('intro').innerHTML = PROFILER[profil].tekst;
@@ -163,6 +173,21 @@ function vaelg(attribut, saet) {
 }
 vaelg('data-profil', p => { profil = p; });
 vaelg('data-luft', l => { luft = l; });
+$('vaelg-opgaver').addEventListener('click', () => {
+  stop(); afkoeling.stop(); opgavevisning = true;
+  document.querySelectorAll('[data-profil]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  $('vaelg-opgaver').setAttribute('aria-pressed', 'true');
+  $('intro').textContent = 'Forudsig først, undersøg bagefter. Brug temperaturer og kurver som belæg for din forklaring. Dine svar bliver stående, når du skifter fane, indtil siden genindlæses.';
+  visPanel();
+});
+bygUndersoegelser((p, l, hoejde = 0) => {
+  document.querySelector(`[data-profil="${p}"]`).click();
+  document.querySelector(`[data-luft="${l}"]`).click();
+  skyder.value = hoejde;
+  skyder.dispatchEvent(new Event('input'));
+  document.querySelector('.situationer').scrollIntoView({ block: 'start', behavior: 'instant' });
+  $('afspil').focus({ preventScroll: true });
+});
 $('afspil').addEventListener('click', () => {
   if (afspiller) return stop();
   if (afsluttet) nulstil();

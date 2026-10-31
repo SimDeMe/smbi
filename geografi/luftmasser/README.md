@@ -19,6 +19,17 @@ og toppen og kan synke igen. Grafen viser temperatur, dugpunkt og den tørre kur
 uden kondensation; feltet imellem er frigivet latent varme. Fire regneopgaver
 med tjek står under figuren.
 
+## Sidste fane: Opgaver
+
+`opgaver.js` indeholder fem åbne undersøgelser: forudsig en højde–tid-kurve,
+tolk tre temperaturmålinger, find opdriftens grænsehøjde med forsøg,
+ret en fejlforklaring og lav en vejrmelding med belæg. Kurvens sammenligning
+beregnes med samme bevægelsesmodel som simulationen; tiden er modelminutter.
+Forsøgsknapper vælger profil, fugt og starthøjde uden at starte bevægelsen.
+Animationer pauses ved åbning af opgavefanen. Skriftlige svar og kurvepunkter
+bevares ved faneskift, men ikke ved genindlæsning. Faglig sparring åbnes af
+eleven og bedømmer ikke fritekstsvar automatisk.
+
 ## Faglig model
 
 Bygger på NaturgeografiGrundbogen B, kapitel 10.5, afsnittet «Konvektion
