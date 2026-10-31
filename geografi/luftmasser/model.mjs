@@ -6,6 +6,7 @@ export const PAKKE = 22;     // pakkens starttemperatur: 2 °C varmere end omgiv
 export const TOER = .01;     // tøradiabatisk afkøling, °C/m
 export const FUGTIG = .005;  // fugtadiabatisk afkøling, °C/m (bogen: 0,5–0,9 °C/100 m)
 const DUGFALD = .002;        // dugpunktets fald før mætning, °C/m
+export const USTABILT_LAG = 500; // top af det tynde ustabile lag over solopvarmet jord, m
 
 export const LUFT = {
   toer: { navn: 'Tør pakke', dugpunkt: 10 },
@@ -14,14 +15,15 @@ export const LUFT = {
 export const PROFILER = {
   afkoeling: { navn: 'Adiabatisk afkøling', tekst: '<strong>Adiabatisk afkøling</strong> betyder, at luft bliver koldere uden at afgive varme til omgivelserne. Når en luftpakke stiger, falder trykket, og pakken udvider sig. Umættet luft afkøles tøradiabatisk, mættet luft fugtadiabatisk. Her løftes pakken, så du kun skal følge afkølingen.' },
   stabil: { navn: 'Stabil luft', tekst: '<strong>Stabil luft</strong> modvirker opstigning. Omgivelserne afkøles langsomt med højden (her 0,4 °C pr. 100 m), så en stigende pakke hurtigt bliver lige så kold som dem og mister opdriften. Det gælder både tør og fugtig luft.' },
-  ustabil: { navn: 'Ustabil luft', tekst: '<strong>Ustabil luft</strong> fremmer opstigning. Omgivelserne afkøles hurtigere med højden end pakken (her 1,2 °C pr. 100 m), så pakken forbliver varmere og fortsætter opad. Det gælder både tør og fugtig luft; fugten afgør kun, hvor skyen begynder.' },
+  ustabil: { navn: 'Ustabil luft', tekst: '<strong>Ustabil luft</strong> fremmer opstigning. Lige over solopvarmet jord afkøles omgivelserne hurtigere end pakken (her 1,2 °C pr. 100 m op til 500 m), så opdriften vokser. Det lag er tyndt: derover afkøles de 0,65 °C pr. 100 m, så en tør pakke bremses, mens en mættet kan fortsætte som sky.' },
   betinget: { navn: 'Betinget stabil luft', tekst: '<strong>Betinget stabil luft</strong> er stabil for tør luft og ustabil for mættet luft. Omgivelserne afkøles her 0,7 °C pr. 100 m, altså mellem tør- og fugtadiabatisk afkøling. Om pakken bliver ved med at stige, afhænger derfor af dens fugt.' },
   inversion: { navn: 'Inversion', tekst: '<strong>Inversion</strong> betyder, at temperaturen stiger med højden (her op til 1.000 m), så varm luft ligger over koldere luft. Laget virker som et låg: luften ved jorden mister hurtigt opdriften og kan ikke stige.' }
 };
 
 export function omgivelser(profil, z) {
   if (profil === 'inversion') return JORD + .004 * Math.min(z, 1000) - .006 * Math.max(0, z - 1000);
-  return JORD - { stabil: .004, ustabil: .012, betinget: .007 }[profil] * z;
+  if (profil === 'ustabil') return JORD - .012 * Math.min(z, USTABILT_LAG) - .0065 * Math.max(0, z - USTABILT_LAG);
+  return JORD - { stabil: .004, betinget: .007 }[profil] * z;
 }
 // Højden hvor pakken bliver mættet: temperatur og dugpunkt mødes.
 export function skybase(luft) {

@@ -36,10 +36,19 @@ med Magnus-formlen og vises på pakken.
 | Inversion (+0,4 til 1.000 m, derefter −0,6) | stopper ved 143 m | stopper ved 143 m |
 | Stabil (−0,4) | stopper ved 333 m | stopper ved 333 m |
 | Betinget stabil (−0,7) | stopper ved 667 m | sky fra 400 m, fortsætter op |
-| Ustabil (−1,2) | sky fra 1.500 m, fortsætter op | sky fra 400 m, fortsætter op |
+| Ustabil (−1,2 til 500 m, derefter −0,65) | stopper ved 1.357 m | sky fra 400 m, fortsætter op |
 
 Ligevægtshøjden er 2 / (1,0 − gradient) · 100 m, så længe pakken er umættet.
-Tvinges den tørre pakke over 2.750 m i betinget luft, får den opdrift igen.
+Tvinges den tørre pakke over 2.750 m i betinget luft eller 1.833 m i ustabil luft,
+får den opdrift igen.
+
+Ustabil luft var tidligere −1,2 °C/100 m hele vejen til 3.000 m. Det gav omgivelser
+på −16 °C og et overskud på 15,5–21 °C, langt over det, der ses i virkeligheden.
+Så hurtig afkøling findes kun i et tyndt lag over solopvarmet jord; derover er
+−0,65 °C/100 m nær troposfærens typiske gennemsnit. Overskuddet er nu højst 3,0 °C
+(tør) og 7,3 °C ved 3.000 m (fugtig). Det sidste er stadig i overkanten, fordi
+modellen har fast fugtadiabat og ingen opblanding. Pakken bremses først over
+figuren, senest ved tropopausen.
 Bogen beskriver stabil luft som uden opdrift; de 2 °C ekstra er modellens
 igangsætter, og derfor stiger pakken et kort stykke, før den stopper.
 

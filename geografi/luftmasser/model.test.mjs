@@ -30,7 +30,10 @@ for (const luft of LUFTNAVNE) {
 near(ligevaegt('stabil','toer'),333.33,1);near(ligevaegt('stabil','fugtig'),333.33,1);
 near(ligevaegt('betinget','toer'),666.67,1);
 near(ligevaegt('inversion','toer'),142.86,1);near(ligevaegt('inversion','fugtig'),142.86,1);
-assert.equal(ligevaegt('ustabil','toer'),null);assert.equal(ligevaegt('ustabil','fugtig'),null);
+near(omgivelser('ustabil',500),14);near(omgivelser('ustabil',3000),-2.25);
+near(ligevaegt('ustabil','toer'),1357.14,1);assert.equal(ligevaegt('ustabil','fugtig'),null);
+// Overskuddet må ikke løbe løbsk: tør topper ved 3,0 °C, fugtig er 7,25 °C ved 3.000 m.
+near(tilstand('ustabil','toer',500).forskel,3);near(tilstand('ustabil','fugtig',3000).forskel,7.25);
 assert.equal(ligevaegt('betinget','fugtig'),null);
 // Latent varme: (1,0 − 0,5) °C/100 m over skybasen, intet under den.
 near(latentVarme('fugtig',400),0);near(latentVarme('toer',1000),0);
@@ -48,18 +51,24 @@ function slip(profil, luft, z=0) {
 for (const luft of LUFTNAVNE) {
  near(slip('inversion',luft).z,143,5);
  near(slip('stabil',luft).z,333,5);
- assert.equal(slip('ustabil',luft).z,3000);
 }
+near(slip('ustabil','toer').z,1357,5);assert.equal(slip('ustabil','fugtig').z,3000);
 near(slip('betinget','toer').z,667,5);
 assert.equal(slip('betinget','fugtig').z,3000);
 // Stabil og inversion danner ingen sky, heller ikke med fugtig pakke og overshoot.
 assert.ok(slip('stabil','fugtig').maks<skybase('fugtig'));
 assert.ok(slip('inversion','fugtig').maks<skybase('fugtig'));
+// Ustabil tør: overshoot når ikke skybasen, så der kommer ingen sky.
+assert.ok(slip('ustabil','toer').maks<skybase('toer'));
 // Betinget: den tørre pakke får opdrift igen, hvis den tvinges forbi 2.750 m.
 near(tilstand('betinget','toer',2750).forskel,0);
 assert.equal(slip('betinget','toer',2800).z,3000);
 near(slip('betinget','toer',2600).z,667,5);
+// Ustabil: samme for den tørre pakke, tvunget forbi 1.833 m.
+near(tilstand('ustabil','toer',1833.33).forskel,0,.01);
+assert.equal(slip('ustabil','toer',1900).z,3000);
+near(slip('ustabil','toer',1700).z,1357,5);
 // Tvunget op i stabil luft: pakken vender tilbage til samme ligevægt.
 near(slip('stabil','toer',2800).z,333,5);
 near(slip('inversion','toer',2800).z,143,5);
-console.log('Fri bevægelse: inversion 143 m, stabil 333 m, betinget tør 667 m / fugtig op, ustabil op: OK');
+console.log('Fri bevægelse: inversion 143 m, stabil 333 m, betinget tør 667 m / fugtig op, ustabil tør 1.357 m / fugtig op: OK');

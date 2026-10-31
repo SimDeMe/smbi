@@ -6,7 +6,7 @@ import { join } from 'node:path';
 const server=spawn('python3',['-m','http.server','8782','--bind','127.0.0.1'],{stdio:'ignore'});
 await new Promise(r=>setTimeout(r,600));
 const browser=await chromium.launch();
-const FORVENTET={stabil:[333,333],ustabil:[3000,3000],betinget:[667,3000],inversion:[143,143]};
+const FORVENTET={stabil:[333,333],ustabil:[1357,3000],betinget:[667,3000],inversion:[143,143]};
 const koer=async page=>{
  for(let i=0;i<60;i++){
   if((await page.locator('#afspil').textContent()).includes('ny pakke')) return +(await page.locator('#hoejde').inputValue());
