@@ -1,4 +1,4 @@
-import { PROFILER, LUFT, TOP, USTABILT_LAG, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke13';
+import { PROFILER, LUFT, TOP, tilstand, bevaeg, skybase, ligevaegt, omgivelser, pakketemperatur } from './model.mjs?v=luftpakke18';
 import { afkoeling } from './afkoeling.js?v=luftpakke17';
 import { bygUndersoegelser } from './opgaver.js?v=luftpakke17';
 const $ = id => document.getElementById(id);
@@ -63,8 +63,13 @@ function tegnGraf(s, g, y, text) {
 
 function resultat(s) {
   const base = skybase(luft), lig = ligevaegt(profil, luft);
-  if (z >= TOP) return [`Stadig varmere ved ${tal(TOP, 0)} m`, base < TOP ? `Pakken blev mættet ved ${tal(base, 0)} m, og skyen vokser videre op over figuren. Den bremses først højere oppe, hvor kurverne krydser, og senest ved tropopausen. ${profil !== 'inversion' && luft === 'fugtig' ? 'Prøv nu den tørre pakke i samme luft.' : ''}` : ''];
-  const hint = profil === 'betinget' && luft === 'toer' ? 'Prøv nu den fugtige pakke, eller tving den tørre over 2.750 m.' : profil === 'ustabil' && luft === 'toer' ? 'Prøv nu den fugtige pakke, eller tving den tørre over 1.830 m.' : profil === 'betinget' || profil === 'ustabil' ? '' : 'Skift tør/fugtig: udfaldet er det samme.';
+  if (z >= TOP) {
+    const sammenlign = profil === 'ustabil'
+      ? 'I denne gennemgående ustabile profil fortsætter begge pakker opad. Prøv den anden pakke og sammenlign med betinget stabil luft.'
+      : 'Prøv nu den tørre pakke fra jorden i samme atmosfære: den bremses før skybasen.';
+    return [`Stadig varmere ved ${tal(TOP, 0)} m`, `Skybase ved ${tal(base,0)} m. ${sammenlign} Pakken forlader figurens udsnit; modellen beregner ikke et loft højere oppe.`];
+  }
+  const hint = profil === 'betinget' && luft === 'toer' ? 'Prøv nu den fugtige pakke, eller tving den tørre over 2.750 m.' : profil === 'betinget' ? '' : 'Skift tør/fugtig: udfaldet er det samme.';
   return [`Stopper ved ca. ${hundrede(s.z)} m`, `Her er pakken lige så kold som omgivelserne, så opdriften er væk.${s.z < base ? ` Dugpunktet nås ikke, så der kommer ingen sky.` : ''} ${hint}`.trim()];
 }
 
@@ -109,7 +114,6 @@ function tegn() {
   </defs>
   <rect width="${w}" height="${h}" fill="url(#himmel)"/>
   ${profil === 'inversion' ? `<rect x="46" y="${y(1000)}" width="${delX - 46}" height="${bund - y(1000)}" fill="#edb578" opacity=".3"/><path d="M46 ${y(1000)}H${delX}" stroke="#a9692f" stroke-width="2"/>${text(52, y(1000) - 6, smal ? 'Inversionens top' : 'Inversionens top · varmest her', 'akse')}` : ''}
-  ${profil === 'ustabil' ? `<rect x="46" y="${y(USTABILT_LAG)}" width="${delX - 46}" height="${bund - y(USTABILT_LAG)}" fill="#edb578" opacity=".3"/><path d="M46 ${y(USTABILT_LAG)}H${delX}" stroke="#a9692f" stroke-width="2"/>${text(52, y(USTABILT_LAG) - 6, 'Ustabilt lag', 'akse')}` : ''}
   ${text(10, 26, 'Højde · m', 'lille')}
   ${ticks}
   ${base < TOP ? `<path d="M46 ${y(base)}H${delX}" stroke="#608c99" stroke-dasharray="5 5"/>` : ''}
@@ -117,7 +121,7 @@ function tegn() {
   <path d="M0 ${bund + 22}Q${w * .3} ${bund + 14} ${w * .6} ${bund + 24}T${w} ${bund + 18}V${h}H0Z" fill="#6f8f78"/>
   ${tegnGraf(s, g, y, text)}
   ${skyen}
-  ${base < TOP && !(smal && Math.abs(y(base) - 6 - cy) < r + 8) ? text(delX - 4, profil === 'ustabil' && base < USTABILT_LAG ? y(base) + 14 : y(base) - 6, s.maettet ? `Skybase ${tal(base, 0)} m` : smal ? `Mættes ${tal(base, 0)} m` : `Bliver mættet ved ${tal(base, 0)} m`, 'akse halo', 'end') : ''}
+  ${base < TOP && !(smal && Math.abs(y(base) - 6 - cy) < r + 8) ? text(delX - 4, y(base) - 6, s.maettet ? `Skybase ${tal(base, 0)} m` : smal ? `Mættes ${tal(base, 0)} m` : `Bliver mættet ved ${tal(base, 0)} m`, 'akse halo', 'end') : ''}
   <circle cx="${x}" cy="${cy}" r="${r}" fill="url(#pakke)" stroke="${farve}" stroke-width="1.8"/>
   <circle cx="${x}" cy="${cy}" r="${r0}" fill="none" stroke="#496c7c" stroke-dasharray="3 3" opacity=".55"/>
   ${text(x, cy - 1, `${tal(s.temperatur)} °C`, 'pakketal', 'middle')}${text(x, cy + 13, `RF ${tal(s.fugtighed, 0)} %`, 'pakkefugt', 'middle')}

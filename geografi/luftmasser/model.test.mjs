@@ -30,10 +30,18 @@ for (const luft of LUFTNAVNE) {
 near(ligevaegt('stabil','toer'),333.33,1);near(ligevaegt('stabil','fugtig'),333.33,1);
 near(ligevaegt('betinget','toer'),666.67,1);
 near(ligevaegt('inversion','toer'),142.86,1);near(ligevaegt('inversion','fugtig'),142.86,1);
-near(omgivelser('ustabil',500),14);near(omgivelser('ustabil',3000),-2.25);
-near(ligevaegt('ustabil','toer'),1357.14,1);assert.equal(ligevaegt('ustabil','fugtig'),null);
-// Overskuddet må ikke løbe løbsk: tør topper ved 3,0 °C, fugtig er 7,25 °C ved 3.000 m.
-near(tilstand('ustabil','toer',500).forskel,3);near(tilstand('ustabil','fugtig',3000).forskel,7.25);
+// Absolut ustabil: 20 − 1,1·(z/100). Ingen ligevægt for nogen af pakkerne.
+near(omgivelser('ustabil',500),14.5);near(omgivelser('ustabil',3000),-13);
+assert.equal(ligevaegt('ustabil','toer'),null);assert.equal(ligevaegt('ustabil','fugtig'),null);
+// Håndberegnet ved 1.000 m: tør 12 °C, fugtig 15 °C, omgivelser 9 °C.
+near(tilstand('ustabil','toer',1000).forskel,3);
+near(tilstand('ustabil','fugtig',1000).forskel,6);
+near(tilstand('ustabil','toer',3000).forskel,12.5);
+near(tilstand('ustabil','fugtig',3000).forskel,18);
+// Opdriften er positiv på begge sider af den tidligere laggrænse og begge skybaser.
+for (const z of [0,399,400,401,499,500,501,1499,1500,1501,3000]) {
+ for (const luft of LUFTNAVNE) assert.ok(tilstand('ustabil',luft,z).forskel>0);
+}
 assert.equal(ligevaegt('betinget','fugtig'),null);
 // Latent varme: (1,0 − 0,5) °C/100 m over skybasen, intet under den.
 near(latentVarme('fugtig',400),0);near(latentVarme('toer',1000),0);
@@ -52,23 +60,21 @@ for (const luft of LUFTNAVNE) {
  near(slip('inversion',luft).z,143,5);
  near(slip('stabil',luft).z,333,5);
 }
-near(slip('ustabil','toer').z,1357,5);assert.equal(slip('ustabil','fugtig').z,3000);
+assert.equal(slip('ustabil','toer').z,3000);assert.equal(slip('ustabil','fugtig').z,3000);
 near(slip('betinget','toer').z,667,5);
 assert.equal(slip('betinget','fugtig').z,3000);
 // Stabil og inversion danner ingen sky, heller ikke med fugtig pakke og overshoot.
 assert.ok(slip('stabil','fugtig').maks<skybase('fugtig'));
 assert.ok(slip('inversion','fugtig').maks<skybase('fugtig'));
-// Ustabil tør: overshoot når ikke skybasen, så der kommer ingen sky.
-assert.ok(slip('ustabil','toer').maks<skybase('toer'));
+// Begge ustabile pakker når deres skybase og forlader figurens top.
+for (const luft of LUFTNAVNE) assert.ok(slip('ustabil',luft).maks>skybase(luft));
 // Betinget: den tørre pakke får opdrift igen, hvis den tvinges forbi 2.750 m.
 near(tilstand('betinget','toer',2750).forskel,0);
 assert.equal(slip('betinget','toer',2800).z,3000);
 near(slip('betinget','toer',2600).z,667,5);
-// Ustabil: samme for den tørre pakke, tvunget forbi 1.833 m.
-near(tilstand('ustabil','toer',1833.33).forskel,0,.01);
-assert.equal(slip('ustabil','toer',1900).z,3000);
-near(slip('ustabil','toer',1700).z,1357,5);
+// I absolut ustabil luft er der ingen ekstra tærskel efter et tvunget løft.
+for (const luft of LUFTNAVNE) for (const z of [500,1700,1900]) assert.equal(slip('ustabil',luft,z).z,3000);
 // Tvunget op i stabil luft: pakken vender tilbage til samme ligevægt.
 near(slip('stabil','toer',2800).z,333,5);
 near(slip('inversion','toer',2800).z,143,5);
-console.log('Fri bevægelse: inversion 143 m, stabil 333 m, betinget tør 667 m / fugtig op, ustabil tør 1.357 m / fugtig op: OK');
+console.log('Fri bevægelse: inversion 143 m, stabil 333 m, betinget tør 667 m / fugtig op, absolut ustabil tør og fugtig op: OK');

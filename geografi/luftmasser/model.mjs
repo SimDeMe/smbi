@@ -6,7 +6,8 @@ export const PAKKE = 22;     // pakkens starttemperatur: 2 °C varmere end omgiv
 export const TOER = .01;     // tøradiabatisk afkøling, °C/m
 export const FUGTIG = .005;  // fugtadiabatisk afkøling, °C/m (bogen: 0,5–0,9 °C/100 m)
 const DUGFALD = .002;        // dugpunktets fald før mætning, °C/m
-export const USTABILT_LAG = 500; // top af det tynde ustabile lag over solopvarmet jord, m
+// Gennemgående absolut ustabil sammenligningsprofil, ikke en typisk vejrsituation.
+const USTABIL_GRADIENT = .011; // 1,1 °C/100 m: hurtigere end både tør- og fugtadiabaten.
 
 export const LUFT = {
   toer: { navn: 'Tør pakke', dugpunkt: 10 },
@@ -15,14 +16,14 @@ export const LUFT = {
 export const PROFILER = {
   afkoeling: { navn: 'Adiabatisk afkøling', tekst: '<strong>Adiabatisk afkøling:</strong> Luft bliver koldere, når den stiger. En luftpakke er en klump luft, vi følger på vej op. Den er mættet, når den relative luftfugtighed (RF) er 100 %.' },
   stabil: { navn: 'Stabil luft', tekst: '<strong>Stabil luft</strong> modvirker opstigning. Omgivelserne afkøles langsomt med højden (her 0,4 °C pr. 100 m), så en stigende pakke hurtigt bliver lige så kold som dem og mister opdriften. Det gælder både tør og fugtig luft.' },
-  ustabil: { navn: 'Ustabil luft', tekst: '<strong>Ustabil luft</strong> fremmer opstigning. Lige over solopvarmet jord afkøles omgivelserne hurtigere end pakken (her 1,2 °C pr. 100 m op til 500 m), så opdriften vokser. Det lag er tyndt: derover afkøles de 0,65 °C pr. 100 m, så en tør pakke bremses, mens en mættet kan fortsætte som sky.' },
+  ustabil: { navn: 'Ustabil luft', tekst: '<strong>Ustabil luft</strong> er her absolut ustabil gennem hele figuren. Omgivelserne afkøles 1,1 °C pr. 100 m, hurtigere end både umættet og mættet luft. Derfor bliver begge pakker ved med at være varmere end omgivelserne og stiger videre. Det er en idealiseret sammenligning, ikke en typisk temperaturprofil.' },
   betinget: { navn: 'Betinget stabil luft', tekst: '<strong>Betinget stabil luft</strong> er stabil for tør luft og ustabil for mættet luft. Omgivelserne afkøles her 0,7 °C pr. 100 m, altså mellem tør- og fugtadiabatisk afkøling. Om pakken bliver ved med at stige, afhænger derfor af dens fugt.' },
   inversion: { navn: 'Inversion', tekst: '<strong>Inversion</strong> betyder, at temperaturen stiger med højden (her op til 1.000 m), så varm luft ligger over koldere luft. Laget virker som et låg: luften ved jorden mister hurtigt opdriften og kan ikke stige.' }
 };
 
 export function omgivelser(profil, z) {
   if (profil === 'inversion') return JORD + .004 * Math.min(z, 1000) - .006 * Math.max(0, z - 1000);
-  if (profil === 'ustabil') return JORD - .012 * Math.min(z, USTABILT_LAG) - .0065 * Math.max(0, z - USTABILT_LAG);
+  if (profil === 'ustabil') return JORD - USTABIL_GRADIENT * z;
   return JORD - { stabil: .004, betinget: .007 }[profil] * z;
 }
 // Højden hvor pakken bliver mættet: temperatur og dugpunkt mødes.
