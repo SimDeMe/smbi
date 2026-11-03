@@ -102,6 +102,10 @@ const browser = await chromium.launch();
   ok(Math.abs(nuP[1] - ((+tm[1] || 0) * 60 + (+tm[2] || 0))) <= 1, `normkurvens arbejde ender i den samlede tid: ${nuP[1]}m / ${total}`);
   ok(norm[0][0] === new Date(2026, 5, 1).getTime() && norm[0][1] === 0 && norm[0][2] === 0, 'normkurven begynder i 0');
   ok(norm.at(-1)[0] === new Date(2027, 5, 1).getTime() && Math.abs(norm.at(-1)[2] - 1690 * 60) <= 1 && norm.at(-1)[1] === null, 'normen fortsætter til årets slut og ender i 1690 t');
+  // Midnat i dag er et punkt for sig: intet registreret i dag, så kurven
+  // står stille det sidste stykke i stedet for at vise resten af ugen
+  const midnat = norm.find(p => p[0] === new Date(2026, 9, 2).getTime());
+  ok(midnat && midnat[1] === nuP[1], `punkt ved midnat i dag, uden stigning til nu: ${midnat?.[1]}m / ${nuP[1]}m`);
   const nv = t => norm.find(p => p[0] === t)?.[2];
   ok(nv(ferieStart) === nv(ferieSlut), 'normen står stille i sommerferien');
   const ugeNorm = (nv(new Date(2026, 8, 14).getTime()) - nv(new Date(2026, 8, 7).getTime())) / 60;

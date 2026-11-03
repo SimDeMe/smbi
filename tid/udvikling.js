@@ -27,16 +27,20 @@ import { erPause } from './pauser.js';
 import { forloebIArbejdsdage, arbejdsdageIPerioden, tilDato } from './ferie.js';
 import { aktivitetsAndel } from './aktivitetsperiode.js';
 import { beregnBelastning, REST } from './belastning.js';
-import { addDays, mandag, datoInput, ugeNr, MAANEDER_KORT } from './periode.js';
+import { addDays, mandag, startOfDay, datoInput, ugeNr, MAANEDER_KORT } from './periode.js';
 import { esc } from './format.js';
 
 const tilDate = t => t?.toDate?.() ?? (t instanceof Date ? t : null);
 
-// Ugernes mandage i normperioden, plus slutpunktet (i dag eller årets slut)
+// Ugernes mandage i normperioden, midnat i dag og slutpunktet (i dag eller
+// årets slut). Midnat gør, at det sidste stykke af kurven kun er dagens
+// arbejde — ellers ville resten af ugen se ud, som om det var lavet i dag
 function maalepunkter(start, slut, nu) {
   const til = nu < slut ? nu : slut;
   const pkt = [start];
   for (let d = addDays(mandag(start), 7); d < til; d = addDays(d, 7)) pkt.push(d);
+  const midnat = startOfDay(til);
+  if (midnat > pkt[pkt.length - 1] && midnat < til) pkt.push(midnat);
   if (til > pkt[pkt.length - 1]) pkt.push(til);
   return pkt;
 }
