@@ -32,3 +32,18 @@ assert.equal(energistroemme(med,true,true).solInd,energistroemme(med,true,false)
 assert.equal(energistroemme(med,true,false).modstraaling,0);
 assert.deepEqual(udvikl({...med},0),med);
 console.log('Model: analytiske referenceværdier, energibevarelse, temperaturrespons og sammenligning OK.');
+
+// Referencepunkter og fysisk respons for den forstærkede situation.
+const { SCENARIER, FORSTAERKET_ABSORPTION, temperaturC } = await import('./model.mjs');
+for (const s of SCENARIER) {
+  const slut = udvikl(starttilstand(), 600, true, s.absorption);
+  assert.ok(Math.abs(temperaturC(slut) - s.temperatur) < 1e-7);
+}
+const foer = energistroemme(med, true, ABSORPTION);
+const efter = energistroemme(med, true, FORSTAERKET_ABSORPTION);
+assert.equal(foer.solInd, efter.solInd);
+assert.ok(efter.luftAbsorberet > foer.luftAbsorberet);
+assert.ok(efter.modstraaling > foer.modstraaling);
+assert.ok(efter.jordTilRum < foer.jordTilRum);
+assert.ok(udvikl({...med}, 20, true, FORSTAERKET_ABSORPTION).jord > med.jord);
+console.log('Tre temperaturreferencer og øget absorption/modstråling ved uændret soltilførsel OK.');

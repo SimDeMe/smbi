@@ -1,4 +1,4 @@
-import { starttilstand, energistroemme, udvikl } from './model.mjs';
+import { starttilstand, energistroemme, udvikl, SCENARIER, temperaturC } from './model.mjs';
 
 const $ = id => document.getElementById(id);
 const laerred = $('straaling');
@@ -9,11 +9,13 @@ const trin = [
   { navn: 'Jorden stråler', kaede: 'VARM JORD → VARMESTRÅLING', spoergsmaal: 'Stråler jorden også uden sollys?', tekst: 'Den varme jord udsender langbølget varmestråling i alle retninger over overfladen. Jo varmere den er, desto mere udsender den.', naeste: 'Tilføj drivhusgasser', beskrivelse: 'Jordoverfladen udsender røde, bølgede spor i forskellige udadgående retninger. Udsendelsen fortsætter, når sollyset afskærmes; jorden køler da af og stråler mindre.' },
   { navn: 'Gasser absorberer', kaede: 'JORDENS VARMESTRÅLING → ATMOSFÆREN', spoergsmaal: 'Hvad sker der med jordens varmestråling?', tekst: 'Drivhusgasser absorberer noget af varmestrålingen og overfører energien til luften. Noget af strålingen passerer direkte ud i rummet.', naeste: 'Atmosfæren stråler også', beskrivelse: 'Nogle røde strålingsspor fra jordoverfladen ender ved drivhusgasser i luften. Andre fortsætter ud i rummet. Gasserne er spredt i luften og danner ikke et fast låg.' },
   { navn: 'Atmosfæren stråler', kaede: 'VARM ATMOSFÆRE → STRÅLING I ALLE RETNINGER', spoergsmaal: 'Atmosfæren er også varm. Hvor stråler den hen?', tekst: 'Atmosfæren udsender selv varmestråling i alle retninger. Noget når rummet. Noget når jordoverfladen: atmosfærisk modstråling.', naeste: 'Undersøg drivhuseffekten', beskrivelse: 'Fra hvert drivhusgassymbol vises ny varmestråling både mod jordoverfladen og mod rummet, uafhængigt af den stråling, der absorberes. Nedadgående stråling absorberes ved jordoverfladen.' },
-  { navn: 'Drivhuseffekten', kaede: 'SOLSTRÅLING + MODSTRÅLING → VARMERE JORDOVERFLADE', spoergsmaal: 'Hvorfor gør drivhusgasser jordoverfladen varmere?', tekst: 'Jordoverfladen modtager både solstråling og atmosfærisk modstråling. Derfor bliver den varmere end med samme solstråling uden drivhusgassernes virkning.', naeste: 'Begynd forfra', beskrivelse: 'Alle processer vises samlet. Med drivhusgassernes virkning modtager overfladen også modstråling og bliver varmere. Uden virkningen er solstrålingen den samme, men modstrålingen ophører, og overfladen bliver koldere.' },
+  { navn: 'Drivhuseffekten', kaede: 'SOLSTRÅLING + MODSTRÅLING → VARMERE JORDOVERFLADE', spoergsmaal: 'Hvorfor gør drivhusgasser jordoverfladen varmere?', tekst: 'Jordoverfladen modtager både solstråling og atmosfærisk modstråling. Derfor bliver den varmere end med samme solstråling uden drivhusgassernes virkning.', naeste: 'Forstærket drivhuseffekt', beskrivelse: 'Alle processer vises samlet. Med drivhusgassernes virkning modtager overfladen også modstråling og bliver varmere. Uden virkningen er solstrålingen den samme, men modstrålingen ophører, og overfladen bliver koldere.' },
+  { navn: 'Forstærket drivhuseffekt', kaede: 'FLERE DRIVHUSGASSER → MERE ABSORPTION OG MODSTRÅLING', spoergsmaal: 'Hvad sker der, når der er flere drivhusgasser?', tekst: 'Mere af jordens varmestråling absorberes i atmosfæren. Modstrålingen øges, og jordoverfladen bliver varmere. Solstrålingen er den samme.', naeste: 'Begynd forfra', beskrivelse: 'Flere drivhusgassymboler absorberer jordens varmestråling. Hvert symbol udsender mod både jorden og rummet. Noget af jordens stråling slipper stadig direkte ud. Sammenlign tre situationer med samme solstråling.' },
 ];
 let aktuelt = 0;
 let sol = true;
 let gas = true;
+let scenario = 1;
 let pause = reduceret.matches;
 let forklarSelv = false;
 let tilstand = starttilstand();
@@ -25,7 +27,8 @@ let overgang = 0;
 let bredde = 1200;
 let hoejde = 500;
 // Få faste symboler og baner gør årsagskæden mulig at følge med øjnene.
-const molekyler = [[650,222,-.15],[820,185,.2],[960,240,-.2]];
+const molekyler = [[650,222,-.15],[820,185,.2],[960,240,-.2],[730,140,.15],[1020,135,-.15]];
+function synligeMolekyler() { return scenario === 2 ? molekyler : molekyler.slice(0,3); }
 const svgNS = 'http://www.w3.org/2000/svg';
 for (const [x,y,vinkel] of molekyler) {
   const gruppe = document.createElementNS(svgNS,'g');
@@ -39,6 +42,7 @@ function overflade(x) {
   return 363 + 35 * ((x - 620) / 650) ** 2;
 }
 function gasAktiv() { return aktuelt >= 2 && gas; }
+function absorption() { return gasAktiv() ? SCENARIER[scenario].absorption : 0; }
 function tilpas() {
   const r = laerred.getBoundingClientRect();
   bredde = r.width; hoejde = r.height;
@@ -87,7 +91,12 @@ function forfyld() {
     if (gasAktiv()) {
       baner.push(bane('jord',565,overflade(565),650,222,true,.15));
       baner.push(bane('jord',925,overflade(925),960,240,true,.3));
-      baner.push(bane('jord',1065,overflade(1065),1110,35,false,.45));
+      if (scenario === 2) {
+        baner.push(bane('jord',1110,overflade(1110),1020,135,true,.45));
+        baner.push({...bane('jord',1140,overflade(1140),1165,30,false,.55), direkte:true});
+      } else {
+        baner.push({...bane('jord',1065,overflade(1065),1110,35,false,.45), direkte:true});
+      }
     } else {
       baner.push(bane('jord',565,overflade(565),505,72,false,.15));
       baner.push(bane('jord',745,overflade(745),755,44,false,.3));
@@ -97,7 +106,7 @@ function forfyld() {
   if (aktuelt >= 3 && gasAktiv()) {
     // Hvert symbol udsender selvstændigt mod både jord og rum. De to viste
     // retninger er eksempler; udsendelsen udløses ikke af en ankommende bane.
-    for (const [x,y] of molekyler) {
+    for (const [x,y] of synligeMolekyler()) {
       baner.push(bane('luft',x,y,x-8,30,false,.6));
       baner.push(bane('luft',x,y,x+35,overflade(x+35),true,.6));
     }
@@ -110,7 +119,7 @@ function opdaterUI() {
   $('spoergsmaal').textContent=forklarSelv?'Hvordan virker drivhuseffekten?':t.spoergsmaal;
   $('forklaring').textContent=forklarSelv?'Brug figuren til at forklare hele vejen fra Solens stråling til den varmere jordoverflade.':t.tekst;
   $('figur-beskrivelse').textContent=t.beskrivelse;
-  $('naeste').innerHTML=`${t.naeste} <span aria-hidden="true">${aktuelt===4?'↺':'→'}</span>`;
+  $('naeste').innerHTML=`${t.naeste} <span aria-hidden="true">${aktuelt===5?'↺':'→'}</span>`;
   $('forrige').disabled=aktuelt===0;
   $('sol-knap').hidden=aktuelt!==1;
   $('sol-knap').textContent=sol?'Afskærm sollyset':'Lad sollyset komme ind igen';
@@ -118,7 +127,11 @@ function opdaterUI() {
   $('gas-knap').hidden=aktuelt!==4;
   $('gas-knap').textContent=gas?'Uden drivhusgassernes virkning':'Med drivhusgassernes virkning';
   $('gas-knap').setAttribute('aria-pressed',String(!gas));
-  $('forklar-knap').hidden=aktuelt!==4;
+  $('forklar-knap').hidden=aktuelt<4;
+  $('klima-valg').hidden=aktuelt!==5;
+  $('temperatur-note').hidden=aktuelt<4;
+  document.querySelectorAll('[data-klima]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.klima===scenario)));
+  [...$('molekyler').children].forEach((g,i)=>g.style.display=gasAktiv()&&i<synligeMolekyler().length?'':'none');
   $('forklar-knap').textContent=forklarSelv?'Vis forklaringer':'Forklar selv';
   $('forklar-knap').setAttribute('aria-pressed',String(forklarSelv));
   $('start-hint').hidden=aktuelt!==0;
@@ -128,8 +141,10 @@ function opdaterUI() {
   $('gas-proces').hidden=aktuelt<2||!gas;
   $('mod-proces').hidden=aktuelt<3||!gas;
   $('ud-proces').hidden=aktuelt<3;
+  $('ud-proces').innerHTML=aktuelt===5?'<span>Til rummet</span>':'<span>Varmestråling<br>til rummet</span>';
+  document.querySelector('.scene').classList.toggle('forstaerket-trin',aktuelt===5);
   $('sol-proces').hidden=!sol;
-  $('sammenlign-maerke').hidden=aktuelt!==4||gas;
+  $('sammenlign-maerke').hidden=aktuelt<4||gas;
   $('atmosfaere-tegning').setAttribute('opacity',gasAktiv()?1:0);
   $('molekyler').setAttribute('opacity',gasAktiv()?'.8':0);
   $('solskaerm').setAttribute('opacity',sol?0:1);
@@ -144,20 +159,21 @@ function opdaterVarme() {
   const varme=Math.max(0,Math.min(1,(tilstand.jord-.82)/.35));
   $('overflade-varme').setAttribute('opacity',String(.08+varme*.8));
   $('varmesloer').setAttribute('opacity',String(.06+varme*.6));
-  $('varmetekst').textContent=!sol?'køler af · udsender stadig varmestråling':aktuelt===4?(gas?'bliver varmere med modstråling':'bliver koldere uden modstråling'):'opvarmes af Solen';
+  $('varmetekst').textContent=aktuelt>=4 ? `globalt gennemsnit i modellen: ca. ${Math.round(temperaturC(tilstand)) > 0 ? '+' : ''}${Math.round(temperaturC(tilstand))} °C` : !sol?'køler af · udsender stadig varmestråling':aktuelt===4?(gas?'bliver varmere med modstråling':'bliver koldere uden modstråling'):'opvarmes af Solen';
   let status='';
   if(aktuelt===1)status=sol?'Prøv at afskærme sollyset. Varm jord stråler også uden lys.':'Sollyset er afskærmet. Jorden stråler stadig, men køler af og udsender efterhånden mindre.';
   if(aktuelt===2)status='Atmosfæren udsender også stråling. Det viser vi i næste trin.';
   if(aktuelt===3)status='Følg strålingen fra ét sted i luften: den udsendes i forskellige retninger.';
   if(aktuelt===4)status=gas?'Sammenlign med samme solstråling uden drivhusgassernes virkning.':'Solstrålingen er uændret. Uden modstråling køler overfladen gradvist af.';
+  if(aktuelt===5)status=scenario===2?'Forstærket eksempel: flere gasser, mere absorption og mere modstråling.':scenario===1?'Nuværende reference: sammenlign med det forstærkede eksempel.':'Uden drivhuseffekt: samme solstråling, men ingen atmosfærisk modstråling.';
   if(forklarSelv)status='';
   if(status!==sidsteStatus){$('observation').textContent=status;sidsteStatus=status;}
 }
 function vaelgTrin(n) {
-  aktuelt=n;sol=true;gas=true;forklarSelv=false;tilstand=starttilstand();tid=0;
+  aktuelt=n;sol=true;gas=true;scenario=n===5?2:1;forklarSelv=false;tilstand=starttilstand();tid=0;
   // Start atmosfæretrinnene med en varm overflade, som allerede udsender.
   if(n>=2)tilstand.jord=1;
-  if(n===4)udvikl(tilstand,200,true,true);
+  if(n>=4)udvikl(tilstand,200,true,SCENARIER[1].absorption);
   forfyld();opdaterUI();tegn();
 }
 document.querySelectorAll('[data-trin]').forEach(b=>b.addEventListener('click',()=>vaelgTrin(+b.dataset.trin)));
@@ -166,7 +182,10 @@ $('forrige').addEventListener('click',()=>vaelgTrin(Math.max(0,aktuelt-1)));
 $('nulstil').addEventListener('click',()=>vaelgTrin(aktuelt));
 $('pause').addEventListener('click',()=>{pause=!pause;sidste=null;opdaterUI();});
 $('sol-knap').addEventListener('click',()=>{sol=!sol;forfyld();opdaterUI();tegn();});
-$('gas-knap').addEventListener('click',()=>{gas=!gas;forfyld();opdaterUI();tegn();});
+$('gas-knap').addEventListener('click',()=>{gas=!gas;scenario=gas?1:0;forfyld();opdaterUI();tegn();});
+document.querySelectorAll('[data-klima]').forEach(b=>b.addEventListener('click',()=>{
+  scenario=+b.dataset.klima;gas=scenario!==0;forfyld();opdaterUI();tegn();
+}));
 $('forklar-knap').addEventListener('click',()=>{forklarSelv=!forklarSelv;opdaterUI();});
 $('fokus').addEventListener('click',()=>{
   const aktiv=document.body.classList.toggle('fokus');
@@ -197,7 +216,7 @@ function tegnBane(b, f) {
   const frem = 1-(1-synlig)**3;
   const gul=b.type==='sol';
   const farve=gul?'#ad760b':'#b94737';
-  const styrke=gul?f.solInd:b.type==='jord'?f.jordUd:f.modstraaling;
+  const styrke=gul?f.solInd:b.type==='jord'?(b.direkte?f.jordTilRum:f.jordUd):f.modstraaling;
   const fase=tid*1.7;
   const dx=b.slutX-b.x,dy=b.slutY-b.y;
   const vinkel=Math.atan2(dy,dx);
@@ -243,7 +262,7 @@ function tegnBane(b, f) {
 }
 function tegn() {
   pensel.clearRect(0,0,1200,500);
-  const f=energistroemme(tilstand,sol,gasAktiv());
+  const f=energistroemme(tilstand,sol,absorption());
   for(const b of baner)tegnBane(b,f);
 }
 function billede(nu) {
@@ -251,7 +270,7 @@ function billede(nu) {
   const dt=Math.min((nu-sidste)/1000,.05);sidste=nu;
   if(!pause&&!document.hidden){
     tid+=dt;overgang+=dt;
-    udvikl(tilstand,dt,sol,gasAktiv());
+    udvikl(tilstand,dt,sol,absorption());
     opdaterVarme();tegn();
   }
   requestAnimationFrame(billede);

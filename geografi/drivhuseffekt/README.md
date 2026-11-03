@@ -7,8 +7,9 @@ Ny, selvstændig udgave til NV og naturgeografi C. De ældre simulationer på
 
 Eleven skal kunne forklare solstrålingens absorption, jordens udsendelse af
 varmestråling, drivhusgassernes absorption og atmosfærens egen udsendelse,
-herunder modstråling. Ingen temperaturtal, strømregnskaber eller balanceopgaver.
-Fem trin afslører processer gradvist; de slår ikke kendt fysik fra.
+herunder modstråling og forstærket drivhuseffekt. Seks trin afslører processer
+gradvist; de slår ikke kendt fysik fra. De første fire trin er uden tal. De sidste
+to viser en enkel temperatursammenligning, ingen strømregnskaber eller balanceopgaver.
 
 ## Model og visning
 
@@ -17,7 +18,23 @@ proportional med T⁴ og ens langbølget absorptivitet og emissivitet i atmosfæ
 Overfladen modtager solstråling og modstråling; atmosfæren modtager en del af
 jordens udstråling og udsender lige meget opad og nedad. Intern energi er
 proportional med 5 × jordtemperatur + 2,5 × lufttemperatur. Ændringen svarer
-til solindstråling minus udstråling til rummet. Atmosfærens absorption er 0,78.
+til solindstråling minus udstråling til rummet.
+
+Temperaturskalaen er normaliseret, så 1 svarer til 255,15 K (−18 °C).
+Absorptionen er indstillet ud fra den analytiske ligevægt:
+`absorption = 2 × (1 − (255,15 / (sluttemperatur + 273,15))⁴)`.
+Det giver tre valgte referencepunkter: −18 °C uden drivhuseffekt, +15 °C som
+sædvanlig afrundet reference med drivhuseffekt og +18 °C som forstærket
+undervisningseksempel. De to første følger NASAs gængse oversigtsforklaring;
++15 °C er ikke en aktuel måling af et bestemt år. +18 °C er hverken en prognose
+eller en beregning ud fra en bestemt CO₂-koncentration. Modellen er kalibreret
+til referencepunkterne og forudsiger dem ikke uafhængigt.
+
+Den viste temperatur følger den løbende modeltilstand, mens knappernes tal er
+sluttemperaturer. Forstærket absorption øger modstrålingen og giver gradvis
+opvarmning ved uændret soltilførsel. Fem symbolske gasfigurer erstatter de tre;
+antallet angiver ikke et bestemt koncentrationsforhold. En ekstra absorberet
+jordbane og en tyndere direkte bane viser ændringen i strålingens vej.
 
 `simulation.js` viser få faste, sammenhængende procesbaner. Solstrålingen
 vises med tre parallelle baner; varmestrålingen vises som bølgede baner.
@@ -37,7 +54,7 @@ fotoner eller en beregning af temperatur. Molekylsymboler, geometri og tid er
 illustrative. Landskabet har daghimmel og en stiliseret kyst, ikke en bestemt
 geografisk placering.
 
-Solafskærmningen ændrer kun soltilførsel. Sammenligningen i sidste trin
+Solafskærmningen ændrer kun soltilførsel. Sammenligningerne i de sidste to trin
 ændrer kun drivhusgassernes langbølgede absorption og udsendelse og lader
 soltilførslen være konstant. Temperaturerne udvikler sig løbende og springer
 ikke ved skiftet. Trinskift og nulstilling starter derimod en ny demonstration.

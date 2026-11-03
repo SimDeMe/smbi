@@ -13,7 +13,7 @@ await page.goto(`http://localhost:${process.env.PORT || 8777}/geografi/drivhusef
 await page.evaluate(()=>document.fonts.ready);
 for(const [w,h] of [[1280,577],[1366,625],[1536,730],[740,750],[390,750]]){
  await page.setViewportSize({width:w,height:h});
- for(let i=0;i<5;i++){
+ for(let i=0;i<6;i++){
   await page.locator(`[data-trin="${i}"]`).click();
   await page.waitForTimeout(90);
   const m=await page.evaluate(()=>{
@@ -26,6 +26,22 @@ for(const [w,h] of [[1280,577],[1366,625],[1536,730],[740,750],[390,750]]){
  }
 }
 await page.setViewportSize({width:1366,height:625});
+await page.locator('[data-trin="5"]').click();
+assert.equal(await page.locator('#klima-valg').isVisible(),true);
+assert.equal(await page.locator('[data-klima="2"]').getAttribute('aria-pressed'),'true');
+assert.equal(await page.locator('#molekyler > g:visible').count(),5);
+assert.match(await page.locator('#temperatur-note').innerText(),/valgt forstærket eksempel/);
+for(const [k,n] of [[0,0],[1,3],[2,5]]) {
+ await page.locator(`[data-klima="${k}"]`).click();
+ assert.equal(await page.locator(`[data-klima="${k}"]`).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('#molekyler > g:visible').count(),n);
+ assert.equal(await page.locator('#mod-proces').isVisible(),k!==0);
+}
+await page.locator('[data-trin="5"]').click();
+await page.waitForTimeout(1400);
+await page.evaluate(()=>scrollTo(0,0));
+await page.screenshot({path:fileURLToPath(new URL('drivhuseffekt-forstaerket.png',billeder))});
+
 await page.locator('[data-trin="1"]').click();
 await page.locator('#sol-knap').focus();
 await page.keyboard.press('Enter');
@@ -66,5 +82,5 @@ await page.setViewportSize({width:390,height:750});
 await page.screenshot({path:fileURLToPath(new URL('drivhuseffekt-mobil.png',billeder)),fullPage:true});
 assert.deepEqual(errors,[]);
 await browser.close();
-console.log('Browser: alle fem trin på fem skærmstørrelser, afskærmning, gassammenligning, nulstilling, forklar selv, pause, fokus, reduceret bevægelse og ingen scriptfejl OK.');
+console.log('Browser: alle seks trin på fem skærmstørrelser, afskærmning, gassammenligning, nulstilling, forklar selv, pause, fokus, reduceret bevægelse og ingen scriptfejl OK.');
 })().catch(e=>{console.error(e);process.exit(1)});
