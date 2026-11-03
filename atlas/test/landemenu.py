@@ -70,7 +70,7 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
         menu = side.locator('#landemenu')
         expect(menu).to_be_visible()
         expect(menu.locator('h2')).to_have_text('Algeriet')
-        expect(menu.locator('[data-valg]')).to_have_count(3)
+        expect(menu.locator('[data-valg]')).to_have_count(4)
         expect(menu.locator('[data-valg="demografi"]')).to_be_focused()
         boks = menu.bounding_box()
         assert boks['x'] >= 0 and boks['x'] + boks['width'] <= w and boks['y'] + boks['height'] <= h
@@ -105,6 +105,14 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
           .map(t => t.getBoundingClientRect().height).filter(Boolean))''')
         assert mindst >= 9, mindst
         side.screenshot(path=str(ud / f'demografi-{w}x{h}.png'))
+        # Klimaforandringer kan sammenlignes med fælles akser og enheder.
+        side.locator('[data-fane="klimaforandringer"]').click()
+        expect(side.get_by_role('heading', name='Observeret opvarmning')).to_be_visible()
+        side.get_by_role('button', name='Sammenlign Algeriet med et andet land').click()
+        side.locator('#sammenlignvalg').get_by_role('button', name='Danmark', exact=True).click()
+        side.get_by_label('Vis elproduktion').select_option('andel')
+        expect(side.locator('.landeklima-tabel summary', has_text='Se tal (%)')).to_have_count(2)
+        expect(side.locator('.landeklima-signatur', has_text='Omkring landepunktet')).to_be_visible()
         side.keyboard.press('Escape')
         expect(side.locator('dialog')).to_be_hidden()
         expect(side.locator('#globus')).to_be_focused()

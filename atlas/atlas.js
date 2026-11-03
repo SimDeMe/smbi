@@ -49,7 +49,7 @@ async function visDanmark() {
   }
 }
 
-const BETJENING = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi, klima og fødevarer.';
+const BETJENING = 'Drej med træk eller piletaster · Zoom med to fingre eller +/−. Tryk på et land for demografi, klima, klimaforandringer og fødevarer.';
 
 // Tryk på et land på globussen: lille menu ved trykket. Danmark har også landekort.
 async function vaelgLand(feature, punkt) {
@@ -61,6 +61,7 @@ async function vaelgLand(feature, punkt) {
   const valg = [
     { id: 'demografi', titel: 'Demografi', tekst: 'Befolkningspyramide og nøgletal' },
     { id: 'klima', titel: 'Klima', tekst: 'Hydrotermfigurer fra vejrstationer' },
+    { id: 'klimaforandringer', titel: 'Klimaforandringer', tekst: 'Opvarmning, udledninger og grøn omstilling' },
     { id: 'foedevarer', titel: 'Fødevarer', tekst: 'Sult, kalorier og afgrøder' }
   ];
   if (land.id === '208') valg.push({ id: 'landekort', titel: 'Landekort', tekst: 'Jylland, øerne og Bornholm' });
@@ -103,6 +104,19 @@ function visLandedata(land, fane, fokusEfter) {
         if (nr !== landevisning) return;
         if (par) modul.visDemografiSammenligning(rum, par.map(l => ({ navn: l.navn, data: data.lande[l.id] })), data);
         else modul.visDemografi(rum, data.lande[land.id], data);
+      } else if (id === 'klimaforandringer') {
+        const modul = await import('./landeklima.js');
+        const data = await modul.hentLandeklima();
+        if (nr !== landevisning) return;
+        modul.visLandeklima(rum, par ?? [land], data, lagId => {
+          const knap = document.getElementById(lagId);
+          if (!knap || knap.disabled) return;
+          const gruppe = knap.closest('details');
+          if (gruppe) gruppe.open = true;
+          senesteFokus = canvas;
+          dialog.close();
+          if (knap.getAttribute('aria-pressed') !== 'true') knap.click();
+        });
       } else if (id === 'foedevarer') {
         const modul = await import('./foedevarer.js');
         const data = await modul.hentFoedevarer();
@@ -123,7 +137,7 @@ function visLandedata(land, fane, fokusEfter) {
       if (nr === landevisning) rum.removeAttribute('aria-busy');
     }
   };
-  for (const [id, tekst] of [['demografi', 'Demografi'], ['klima', 'Klima'], ['foedevarer', 'Fødevarer']]) {
+  for (const [id, tekst] of [['demografi', 'Demografi'], ['klima', 'Klima'], ['klimaforandringer', 'Klimaforandringer'], ['foedevarer', 'Fødevarer']]) {
     const knap = element('button', tekst);
     knap.type = 'button'; knap.dataset.fane = id;
     knap.onclick = () => vis(id);

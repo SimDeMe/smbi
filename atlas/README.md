@@ -1123,3 +1123,21 @@ Afprøvning: `test/klimavejr.mjs` kontrollerer temperaturdata, modsatte
 årstider, datolinjen og rasteret. `test/klimavejr.cjs` (Playwright) afprøver
 fem skærmstørrelser, månedsskift, afspilning, de 12 datarækker, samspil med
 nedbør, samtidige vind-/havstrømslag samt hentefejl og nyt forsøg.
+
+## Landefanen Klimaforandringer
+
+Temperaturfiguren genbruger NASA GISTEMP-gitteret fra kortlaget. Kør
+`node atlas/data/landtemperatur.mjs` efter ændringer af gitteret eller
+landegrænserne. Ved færre end tre gittercentre vises gitterets værdi ved atlasets landepunkt.
+Perioder med utilstrækkelig dækning får ingen temperaturværdi. Verdenskurven omfatter både land og hav.
+
+Elproduktionen kommer fra [Embers årsdata](https://ember-energy.org/data/yearly-electricity-data/)
+(CC BY 4.0). Download tabellen med elproduktion og kør
+`python3 atlas/data/elproduktion.py release_generation_yearly_global.csv`.
+Sammenligningen bruger fælles akser, og manglende år er huller i kurverne.
+Primærenergien følger energimiksets 2023-tal.
+
+Havniveautallene følger atlasets eksisterende udvalg af PSMSL-stationer.
+Gem [PSMSL’s stationsliste](https://psmsl.org/data/obtaining/) som HTML og
+kør `python3 atlas/data/landhavniveau.py stationsliste.html` efter ændringer
+af stationsudvalget. IPCC-fremskrivninger og vurderinger åbnes via kildelinks.

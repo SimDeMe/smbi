@@ -352,3 +352,24 @@ body.ressourcelag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75
 .signatur .ressourceklasser{display:grid;grid-template-columns:1fr;gap:3px}
 .ressourceklasser li{display:flex;align-items:center;gap:7px;font-size:12px}
 .ressourceklasser i{width:15px;height:11px;border:1px solid #17211f80;border-radius:2px;flex:none}
+
+.landeklima-afsnit + .landeklima-afsnit{border-top:1px solid #17211f33;margin-top:20px;padding-top:16px}
+.landeklima-afsnit h3,.landeklima-afsnit h4{margin:0 0 6px}
+.landeklima-afsnit p{margin:0 0 10px}
+.landeklima-afsnit details{margin:8px 0}
+.landeklima-afsnit summary{cursor:pointer;font:700 14px var(--display)}
+.landeklima-afsnit button{margin-bottom:6px}
+.landeklima-vaelger{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0;font:700 14px var(--display)}
+.landeklima-vaelger select{font:inherit;color:var(--ink);background:#fffdf7;padding:4px;border:1px solid var(--ink);border-radius:3px}
+.landeklima-graf{margin:0 0 12px;max-width:520px;min-width:0}
+.landeklima-graf svg{display:block;width:100%;height:auto;background:#fffdf7;border-radius:4px}
+.landeklima-graf svg text{font:12px var(--mono);fill:var(--ink)}
+.landeklima-signatur{display:flex;flex-wrap:wrap;gap:4px 12px;list-style:none;margin:8px 0;padding:0;font:600 13px var(--display)}
+.landeklima-signatur li{border-left:4px solid;padding-left:4px}
+.landeklima-tabelrul{max-width:100%;overflow:auto}
+.landeklima-tabel table{border-collapse:collapse;font-size:13px}
+.landeklima-tabel :is(th,td){text-align:right;border-bottom:1px solid #17211f33;padding:4px 8px}
+.landeklima-tabel th:first-child{text-align:left}
+.landeklima-miks{list-style:none;padding:0;margin:0 0 8px;max-width:360px}
+.landeklima-miks li{display:grid;grid-template-columns:minmax(7em,auto) 1fr auto;align-items:center;gap:8px;font-size:13px}
+.landeklima-miks meter{width:100%;min-width:0}
