@@ -1,6 +1,6 @@
 # Forskningsbaseret design og afprøvning af læringssimulationer
 
-Dato: 31. oktober 2026.
+Senest opdateret: 3. november 2026.
 
 Dette dokument samler anbefalinger til nye simulationer og væsentlige ændringer
 på smbi.dk. Det supplerer [design_rules.md](design_rules.md). Principperne skal
@@ -22,7 +22,81 @@ Efter slip skal bevægelsen følge modellen for opdrift, så stabil og ustabil
 atmosfære faktisk giver forskellig respons. Temperaturforskel og bevægelse
 skal kunne forbindes.
 
-## 2. Teoretiske rammer og deres anvendelse
+## 2. Visuel prioritering: gør det tydeligt, hvor eleven skal kigge
+
+Design hver visning omkring et fagligt fokus. Eleven skal hurtigt kunne se,
+hvad der undersøges, hvordan systemet kan påvirkes, og hvor virkningen viser sig.
+Reglerne nedenfor er vores omsætning af forskning og designpraksis til smbi.dk;
+de er ikke en universel opskrift eller hver især dokumenteret i forsøg med vores
+simulationer.
+
+1. **Giv visningen ét tydeligt hovedområde.** Den centrale proces eller
+   sammenligning skal have størst visuel vægt. Flere figurer kan udgøre ét
+   samlet hovedområde, når sammenligningen er læringsmålet. Overskrift,
+   navigation, opgavepanel og indstillinger skal understøtte dette fokus.
+2. **Planlæg forbindelsen mellem handling og respons.** Angiv under designet:
+   Hvad skal eleven først opdage? Hvad kan eleven gøre? Hvor skal eleven
+   derefter se virkningen? Placér kontroller og respons, så forbindelsen kan
+   følges uden gentagen søgning på tværs af skærmen.
+3. **Brug tekst dér, hvor blikket allerede er.** Placér korte etiketter ved de
+   objekter, de forklarer. Afprøv et kort undersøgelsesspørgsmål eller en
+   figurtekst umiddelbart under hovedfiguren, fx: »Hvad sker der med luftpakken,
+   når du slipper den?« Sidens titel kan fortsat stå øverst. Placeringen vælges
+   efter opgaven og afprøves med elever; tekst under figuren er ikke et fast krav.
+4. **Lad få elementer være visuelt fremhævede.** Brug størrelse, afstand og
+   kontrast til at skelne mellem hovedindhold, betjening og supplerende stof.
+   Undgå, at alle paneler får kraftige rammer, farvede overskrifter og fremhævede
+   tal. Brug luft og nærhed til gruppering, før der tilføjes flere bokse.
+   Sekundær tekst skal stadig være let at læse og have tilstrækkelig kontrast.
+5. **Vis en enkel, brugbar starttilstand.** Vis de kontroller og målinger, der
+   er nødvendige for den første meningsfulde undersøgelse. Lad ekstra grafer,
+   teori og avancerede indstillinger kunne åbnes med tydelige navne. Bevar
+   nødvendige sammenligninger synlige samtidig; forenkling må ikke tvinge eleven
+   til at huske tal fra en skjult visning.
+6. **Brug fremhævelse og bevægelse med et fagligt formål.** Fremhæv det objekt,
+   den kurve eller den ændring, eleven aktuelt skal forbinde med sin handling.
+   Lad samme størrelse have genkendelige markeringer i figur og graf. Undgå
+   samtidige, uvedkommende animationer og blink. Brug også tekst eller form,
+   så farve aldrig står alene.
+7. **Giv en tydelig invitation til at begynde.** Brug en kort, konkret handling
+   som »Træk luftpakken op og slip«. Lad den første handling være let at opdage,
+   og gør nulstilling tilgængelig. Støtten skal give adgang til selvstændig
+   undersøgelse og kunne træde i baggrunden efter starten.
+8. **Fjern indhold, før resten gøres mindre.** Når layoutet bliver overfyldt,
+   skal hvert element begrundes ud fra læringsmålet. Fjern gentagelser, saml
+   beslægtede oplysninger, og flyt sekundært stof. Bevar læsbare figurer, tal og
+   kontroller på elevens skærm. Reducér visuel støj med respekt for den nødvendige
+   faglige kompleksitet.
+
+### Grundlag og grænser for overførsel fra reklamedesign
+
+- Ogilvy anbefaler billede → overskrift → brødtekst i trykte annoncer. Det er
+  inspiration til at afprøve figurtekst og spørgsmål under figuren. Passagen
+  giver ikke tilstrækkelige metodeoplysninger til at overføre hans procenttal
+  til simulationer, og vi antager ikke en fast læserækkefølge.
+- Pieters & Wedel (2004) fandt i øjenbevægelsesdata fra 1.363 annoncer, at
+  billeddelen var særlig effektiv til at fange opmærksomhed. Opmærksomhed i en
+  annonce er ikke i sig selv dokumentation for læring.
+- Pieters, Wedel & Batra (2010) skelner mellem tæthed af visuelle detaljer og
+  kompleksitet i kompositionen. Resultaterne støtter ikke, at al kompleksitet
+  skal fjernes; de motiverer os til at skelne mellem støj og meningsfuld struktur.
+- Schneider m.fl. (2018) fandt i en metaanalyse af 103 undersøgelser gavnlige
+  gennemsnitlige effekter af signaler, der fremhæver relevant information eller
+  organisering, på genkaldelse og transfer. Det understøtter fagligt begrundet
+  fremhævelse, men dokumenterer ikke vores konkrete layoutvalg.
+- NN/g beskriver visuelt hierarki og gradvis adgang til ekstra funktioner som
+  principper for brugerflader. Hyppigt nødvendige funktioner skal være synlige,
+  og adgangen til sekundære funktioner skal være tydelig.
+
+Kilder:
+[Ogilvy, *Ogilvy on Advertising*, afsnit om layout](https://ogilvy.relayto.com/e/ogilvy-on-advertising-dq85bunnm5ady/5aIYP19v128),
+[Pieters & Wedel, 2004](https://doi.org/10.1509/jmkg.68.2.36.27794),
+[Pieters, Wedel & Batra, 2010](https://doi.org/10.1509/jmkg.74.5.048),
+[Schneider m.fl., 2018](https://www.sciencedirect.com/science/article/pii/S1747938X17300581),
+[NN/g: visuelt hierarki](https://www.nngroup.com/articles/visual-hierarchy-ux-definition/)
+og [NN/g: gradvis visning af funktioner](https://www.nngroup.com/articles/progressive-disclosure/).
+
+## 3. Teoretiske rammer og deres anvendelse
 
 Rammerne nedenfor er komplementære. Deres konkrete anvendelse her er en
 omsætning til smbi.dk, ikke en universel opskrift bevist i én undersøgelse.
@@ -110,7 +184,7 @@ bredt og dokumenterer ikke en bestemt knap eller opgaveskabelon.
 Kilder: [Pedaste m.fl., 2015](https://doi.org/10.1016/j.edurev.2015.02.003)
 og [Lazonder & Harmsen, 2016](https://doi.org/10.3102/0034654315627366).
 
-## 3. Afprøv med elever og lærere
+## 4. Afprøv med elever og lærere
 
 - Formulér før afprøvningen, hvad der undersøges: betjening, fortolkning af
   visualiseringer, faglige misforståelser eller bestemte læringsmål.
@@ -122,13 +196,18 @@ og [Lazonder & Harmsen, 2016](https://doi.org/10.3102/0034654315627366).
 - Vurder om deltageren opdager kontrollerne, forstår responsen og kan forklare
   eller forudsige et nyt tilfælde. Tilfredshed alene viser ikke læring.
 - Brug afprøvningen til at revidere designet og afprøv de ændrede dele igen.
+- Afprøv også det visuelle hierarki: Vis startskærmen kort, og spørg bagefter,
+  hvad eleven først lagde mærke til, og hvad vedkommende ville gøre. Brug dette
+  som en praktisk kontrol af førsteindtrykket, ikke som en måling af øjenbevægelser
+  eller læring. Lad derefter eleven bruge simulationen uden hjælp, og undersøg,
+  om eleven opdager responsen og kan forklare eller forudsige sammenhængen.
 - Tænke-højt-optagelser kan afdække problemer og forklaringer; de dokumenterer
   ikke alene, at en simulation har en bestemt læringseffekt.
 
 PhETs elevinterviews er en relevant metodeinspiration:
 [Adams m.fl., 2008](https://phet.colorado.edu/publications/PhET_Interviews_I.pdf).
 
-## 4. Ønsket funktion: direkte aflevering af lydfeedback
+## 5. Ønsket funktion: direkte aflevering af lydfeedback
 
 **Status: bygget til `geografi/luftmasser/`, men slukket, indtil modtageren er
 sat op efter `feedback/LYD.md`. Dokumentet er designretningen.**
@@ -213,7 +292,7 @@ ikke det juridiske grundlag.
 - Kontrollér sletning af både lyd, metadata og log samt papirkurven.
 - Afprøv aflevering fra en ekstern skole uden ejerens Google-login.
 
-## 5. Tekniske kilder til aflevering
+## 6. Tekniske kilder til aflevering
 
 Dokumentation kontrolleret 31. oktober 2026; verificér igen ved implementering.
 

@@ -6,6 +6,8 @@ Eksisterende sider behøver ikke omlægges alene for at følge nye principper.
 `index.html`, `forside.css`, `geografi/Stigningsregn.html`,
 `geografi/drivhuseffektenSimpel.html` og `biologi/membran.html` er
 **inspiration, ikke obligatoriske skabeloner**.
+For læringssimulationer konkretiserer [simulationsdesign.md](simulationsdesign.md)
+principperne for visuel prioritering, fagligt design og elevafprøvning.
 
 ## 1. Faglig korrekthed og didaktik
 - Naturvidenskabelige modeller, tal, enheder og årsagssammenhænge skal være
@@ -27,6 +29,16 @@ Eksisterende sider behøver ikke omlægges alene for at følge nye principper.
   IBM Plex Mono, samt blå accent for naturgeografi og pink for biologi.
 - De eksisterende farver og typografitokens er udgangspunkt; konkrete mål,
   rammetykkelser, dekorative markeringer og placeringer er ikke tvungne.
+- Giv hver visning ét tydeligt hovedområde omkring den centrale proces eller
+  sammenligning. Navigation, overskrift og paneler skal understøtte dette fokus.
+  Planlæg, hvad eleven først skal opdage, kunne gøre og derefter se virkningen af.
+- Brug størrelse, afstand og kontrast til et tydeligt visuelt hierarki. Bevar
+  sitets identitet uden at give alle paneler lige kraftige rammer, farver og
+  fremhævelser. Brug luft og nærhed til gruppering; sekundær tekst skal fortsat
+  være læsbar og have tilstrækkelig kontrast.
+- Placér korte etiketter ved det, de forklarer. Et kort undersøgelsesspørgsmål
+  eller en figurtekst under hovedfiguren kan afprøves; det er ikke et krav om
+  en fast læserækkefølge eller om at flytte sidens titel ned under figuren.
 - Brug ikke en fast `.rig`-struktur, bestemt panelbredde, fast sidespalte
   (fx 340 px), et bestemt breakpoint (fx 960 px) eller en bestemt figurhøjde
   som universelle krav. Vælg layout ud fra modellens funktion og plads.
@@ -46,6 +58,10 @@ Eksisterende sider behøver ikke omlægges alene for at følge nye principper.
 - Bevar figurens faglige læsbarhed før du presser den ned i højden. Sekundært
   stof kan ligge i faner, fold-ud-paneler, modaler eller længere nede.
   Sørg for at skjulte værktøjer er synligt tilgængelige og tastaturbetjente.
+- Fjern gentagelser, saml beslægtede oplysninger, og flyt sekundært stof, før
+  figurer, tekst og kontroller gøres mindre. Start med det nødvendige for en
+  meningsfuld undersøgelse, men bevar de visninger, eleven skal sammenligne,
+  synlige samtidig. Nødvendige kontroller må ikke gemmes bag ekstra klik.
 - Responsive løsninger vælges efter det faktiske indhold og både vinduets
   bredde og højde; ingen universel fast minimumshøjde (heller ikke 230 px).
   Mobil må rulle lodret, men undgå unødvendig vandret rulning.
@@ -70,6 +86,10 @@ Eksisterende sider behøver ikke omlægges alene for at følge nye principper.
   faglig tekst eller betjeningsalternativ ved behov.
 - Understøt touch og skærmstørrelsesændringer. Respektér
   `prefers-reduced-motion`; giv pause ved vedvarende animation.
+- Brug fremhævelse og bevægelse til at vise fagligt relevante ændringer og
+  forbindelsen mellem handling og respons. Undgå konkurrerende, uvedkommende
+  animationer og blink. Giv en kort, konkret invitation til den første handling,
+  hvor der er behov for det, og lad støtten træde i baggrunden efter starten.
 - Tilbyd et brugbart alternativ, hvis WebGL eller en ekstern ressource fejler.
 - Sørg for at tekst, figurer og tal kan aflæses; små mono-etiketter er et
   æstetisk valg, ikke et krav, hvis læsbarheden lider.
@@ -99,6 +119,10 @@ Eksisterende sider behøver ikke omlægges alene for at følge nye principper.
 - Test i browser på elevlaptop-størrelser og mobil: figurlæsbarhed,
   primære kontroller, scrollbehov, tastatur, touch, fejltilstande og
   ydeevne. Udvis omtanke med stor grafisk belastning og tung 3D.
+- Afprøv med elever, om startskærmens fokus og første handling er tydelige,
+  og om eleven efter handlingen opdager responsen og kan forklare sammenhængen.
+  Følg metoden i `simulationsdesign.md`; et tydeligt førsteindtryk alene viser
+  ikke læring.
 - Lav små, forståelige commits på `main` efter test, så rollback er enkel.
   Ingen generel PR-/branchpligt. Git er ændringshistorik; synlige
   versionsnumre inde i simulationer er valgfrie.
