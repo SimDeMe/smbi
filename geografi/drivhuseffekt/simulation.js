@@ -53,6 +53,8 @@ function tilpas() {
     const [x,y,vinkel] = molekyler[i];
     gruppe.setAttribute('transform', `translate(${x} ${y}) scale(${forhold} 1) rotate(${vinkel * 55})`);
   });
+  let solIndeks = 0;
+  baner = baner.map(b => b.type === 'sol' ? solBane(solIndeks++) : b);
   tegn();
 }
 new ResizeObserver(tilpas).observe(laerred);
@@ -60,17 +62,26 @@ new ResizeObserver(tilpas).observe(laerred);
 function bane(type, x, y, slutX, slutY, absorberes = false, forsinkelse = 0) {
   return { type, x, y, slutX, slutY, absorberes, forsinkelse };
 }
+function solBane(i) {
+  // Skær den parallelle bane med den synlige solskive, også efter resize.
+  // Start en anelse inden for kanten, så der ikke opstår et lyst mellemrum.
+  const rx = 43 * (hoejde / 500) / (bredde / 1200), ry = 43;
+  const forskydning = (i - 1) * 24;
+  const a = 1 / rx ** 2 + .9 ** 2 / ry ** 2;
+  const b = 2 * forskydning * .9 / ry ** 2;
+  const c = forskydning ** 2 / ry ** 2 - 1;
+  const t = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+  const x = 156 + t, y = 103 + forskydning + .9 * t;
+  let slutX = x + 250;
+  for (let j = 0; j < 4; j++) slutX = x + (overflade(slutX) - y) / .9;
+  return bane('sol', x, y, slutX, overflade(slutX), true, i * .12);
+}
 function forfyld() {
   baner = [];
   overgang = 0;
   if (sol) {
     // Parallelle solstråler; ingen vifte af projektiler fra et enkelt punkt.
-    for (let i = 0; i < 3; i++) {
-      const x = 167 + i * 22, y = 148 - i * 19;
-      let slutX = x + 250;
-      for (let j=0;j<4;j++) slutX = x + (overflade(slutX)-y)/.9;
-      baner.push(bane('sol',x,y,slutX,overflade(slutX),true,i*.12));
-    }
+    for (let i = 0; i < 3; i++) baner.push(solBane(i));
   }
   if (aktuelt >= 1) {
     if (gasAktiv()) {
@@ -169,7 +180,7 @@ reduceret.addEventListener('change',e=>{if(e.matches){pause=true;opdaterUI();}})
 if(new URLSearchParams(location.search).has('projektor'))$('fokus').click();
 
 // Motion design: en vedvarende sammenhængende bane bærer forklaringen.
-// Bølgernes fase og få retningspile bevæger sig langs banen; intet drys af
+// Bølgernes fase og sollysets glans bevæger sig langs banen; intet drys af
 // tilfældige partikler. Nye processer tegnes frem fra deres egen kilde.
 function punktPaaBane(b, p, fase) {
   const dx=b.slutX-b.x, dy=b.slutY-b.y, laengde=Math.hypot(dx,dy);
@@ -193,6 +204,16 @@ function tegnBane(b, f) {
   pensel.save();
   pensel.lineCap='round';pensel.lineJoin='round';
   pensel.strokeStyle=farve;
+  if (gul) {
+    const glans = .18 + (tid * .12 % .64);
+    const lys = pensel.createLinearGradient(b.x,b.y,b.slutX,b.slutY);
+    lys.addColorStop(0,farve);
+    lys.addColorStop(Math.max(0,glans-.18),farve);
+    lys.addColorStop(glans,'#eac15f');
+    lys.addColorStop(Math.min(1,glans+.18),farve);
+    lys.addColorStop(1,farve);
+    pensel.strokeStyle=lys;
+  }
   pensel.globalAlpha=Math.min(.9,.65+styrke*.12);
   pensel.lineWidth=(gul?2.3:1.6)+Math.min(1.8,styrke)*.7;
   pensel.beginPath();
@@ -201,8 +222,9 @@ function tegnBane(b, f) {
     if(p===0)pensel.moveTo(q.x,q.y);else pensel.lineTo(q.x,q.y);
   }
   pensel.stroke();
-  // Én tydelig pilespids ved enden og én glidende retningsmarkering.
-  for(const p of [frem, .12+((tid*.13+b.forsinkelse*.3)%.74)]) {
+  // Kun endepilen viser retning. Ingen løse pile langs banen eller ved labels.
+  pensel.strokeStyle=farve;
+  for(const p of [frem]) {
     if(p>frem)continue;
     const q=punktPaaBane(b,p,fase);
     pensel.save();pensel.translate(q.x,q.y);pensel.rotate(vinkel);

@@ -22,7 +22,8 @@ til solindstråling minus udstråling til rummet. Atmosfærens absorption er 0,7
 `simulation.js` viser få faste, sammenhængende procesbaner. Solstrålingen
 vises med tre parallelle baner; varmestrålingen vises som bølgede baner.
 Motion design består af en rolig optegning af den nye proces, en løbende
-bølgebevægelse og retningspile, som glider langs de faste baner. De eksisterende
+bølgebevægelse og en glans, som glider langs de faste solbaner. Retningen
+vises kun med endepile; der er ingen ekstra pilesymboler ved teksterne. De eksisterende
 processer forbliver synlige ved næste trin. Der bruges ingen tilfældige
 partikler eller retninger.
 

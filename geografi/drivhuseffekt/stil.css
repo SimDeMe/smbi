@@ -190,18 +190,6 @@
                                                                                           left:45%;
                                                                                           top:7%;
                                                                                           font-size:11px}
-                                                                                          .streg{
-                                                                                            display:block;
-                                                                                            width:22px;
-                                                                                            height:32px;
-                                                                                            position:relative;
-                                                                                            flex:none;
-                                                                                            background:no-repeat center/16px 30px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M8 30Q0 26 8 22T8 14T8 6M3 9L8 3l5 6' fill='none' stroke='%23ffad91' stroke-width='2'/%3E%3C/svg%3E")}
-                                                                                            .streg.gul{
-                                                                                              transform:rotate(145deg);
-                                                                                              background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M8 30L8 3M3 9L8 3l5 6' fill='none' stroke='%23ffe09a' stroke-width='2'/%3E%3C/svg%3E")}
-                                                                                              .streg.ned{
-                                                                                                transform:rotate(180deg)}
                                                                                                 .gas-symbol{
                                                                                                   color:#cbe8dd;
                                                                                                   font-size:24px}
@@ -453,8 +441,6 @@
                                                                                                                                                                                                                                             left:50%;
                                                                                                                                                                                                                                             top:4%;
                                                                                                                                                                                                                                             font-size:9px}
-                                                                                                                                                                                                                                            .streg{
-                                                                                                                                                                                                                                              width:17px}
                                                                                                                                                                                                                                               .jord-label{
                                                                                                                                                                                                                                                 font-size:12px;
                                                                                                                                                                                                                                                 bottom:4%}
@@ -534,7 +520,6 @@
   .gas-symbol { display: none; }
   .mod-proces { left: 72%; top: 59%; font-size: 9px; }
   .ud-proces { left: 58%; top: 4%; font-size: 9px; }
-  .proces .streg { display: none; }
   .jord-label { font-size: 11px; }
   .jord-label span { font-size: 10px; }
 }
