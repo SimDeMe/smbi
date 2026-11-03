@@ -95,58 +95,25 @@
         <div class="rig-head">
           <span class="rig-live"><span class="dot"></span><span class="mono">Kører nu</span></span>
           <div class="rig-tabs" role="tablist" aria-label="Vælg simulering">
-            <button class="rig-tab" role="tab" aria-selected="true" data-mode="enzym">Enzym</button>
-            <button class="rig-tab" role="tab" aria-selected="false" data-mode="geo">Stigningsregn</button>
+            <button class="rig-tab" role="tab" aria-selected="true" data-mode="globus">Cirkulation</button>
+            <button class="rig-tab" role="tab" aria-selected="false" data-mode="kaploeb">Jordskælv</button>
           </div>
         </div>
 
-        <div class="rig-svg-wrap">
-          <svg viewBox="0 0 560 320" role="img" aria-label="Levende diagram: enzymhastighed som funktion af temperatur, eller stigningsregn over et bjerg">
-            <!-- ENZYM -->
-            <g id="fig-enzym">
-              <g id="enzym-grid" stroke="#E2EAE8" stroke-width="1"></g>
-              <path id="enzym-area" fill="var(--pink)" opacity="0.14"></path>
-              <path id="enzym-curve" fill="none" stroke="var(--pink)" stroke-width="3.4" stroke-linecap="round"></path>
-              <line id="enzym-scan" y1="40" y2="290" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="4 5" opacity="0.45"></line>
-              <circle id="enzym-dot" r="7" fill="var(--amber)" stroke="var(--ink)" stroke-width="2.2"></circle>
-              <circle id="enzym-halo" r="14" fill="none" stroke="var(--pink)" stroke-width="1.6" opacity="0.45"></circle>
-              <g id="enzym-labels"></g>
-              <text class="ax-t" x="62" y="313">Temperatur °C →</text>
-              <text class="ax-t" x="62" y="30">↑ Omsætningshastighed</text>
-            </g>
-
-            <!-- STIGNINGSREGN -->
-            <g id="fig-geo" opacity="0">
-              <rect x="62" y="40" width="462" height="250" fill="#EAF6FC"></rect>
-              <line x1="62" y1="197" x2="524" y2="197" stroke="var(--grape)" stroke-width="1.6" stroke-dasharray="5 5" opacity="0.7"></line>
-              <text class="ax" x="520" y="188" text-anchor="end" fill="#7A4FD6">KONDENSATION VED 800 M</text>
-              <path id="geo-terrain" fill="var(--lime)" fill-opacity="0.35" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"></path>
-              <g id="geo-cloud" fill="#B8C9D4" opacity="0.85" stroke="var(--ink)" stroke-width="1.4">
-                <ellipse cx="196" cy="179" rx="46" ry="18"></ellipse>
-                <ellipse cx="237" cy="167" rx="30" ry="17"></ellipse>
-                <ellipse cx="156" cy="174" rx="25" ry="13"></ellipse>
-              </g>
-              <g id="geo-rain" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" opacity="0.8"></g>
-              <circle id="geo-parcel" r="7.5" fill="var(--coral)" stroke="var(--ink)" stroke-width="2.2"></circle>
-              <circle id="geo-parcel-halo" r="15" fill="none" stroke="var(--coral)" stroke-width="1.6" opacity="0.5"></circle>
-              <text class="ax" x="90" y="252">VINDSIDE</text>
-              <text class="ax" x="505" y="252" text-anchor="end">LÆSIDE</text>
-              <line x1="62" y1="290" x2="524" y2="290" stroke="var(--ink)" stroke-width="2"></line>
-              <text class="ax-t" x="62" y="313">Afstand →</text>
-              <text class="ax-t" x="62" y="30">↑ Højde over havet</text>
-            </g>
-          </svg>
+        <div class="rig-fig">
+          <canvas id="fig-globus" class="vist" role="img" aria-label="Globus med Jordens vindbælter: passat, vestenvind og polar østenvind, ITK og luftcellerne, mens årstiderne går."></canvas>
+          <canvas id="fig-kaploeb" role="img" aria-label="P-, S- og overfladebølger starter samtidig fra et jordskælv og løber mod en seismograf 300 km væk. P kommer først, så S, så overfladebølgerne."></canvas>
         </div>
 
         <dl class="rig-out">
-          <div><dt id="out1-k">Temperatur</dt><dd id="out1-v">—</dd></div>
-          <div><dt id="out2-k">Hastighed</dt><dd id="out2-v">—</dd></div>
-          <div><dt id="out3-k">Tilstand</dt><dd id="out3-v">—</dd></div>
+          <div><dt id="out1-k">Måned</dt><dd id="out1-v">—</dd></div>
+          <div><dt id="out2-k">Sol i zenit</dt><dd id="out2-v">—</dd></div>
+          <div><dt id="out3-k">ITK</dt><dd id="out3-v">—</dd></div>
         </dl>
 
         <div class="rig-foot">
-          <span class="mono" id="rig-name">Enzymhastighed &amp; temperatur</span>
-          <a href="biologi/enzymhastighed.html" id="rig-link">Åbn simuleringen →</a>
+          <span class="mono" id="rig-name">Global cirkulation</span>
+          <a href="atlas/cirkulation/" id="rig-link">Åbn simuleringen →</a>
         </div>
       </div>
     </div>
@@ -709,6 +676,10 @@
   </div>
 </footer>
 
+<script defer src="atlas/vendor/d3-array.min.js"></script>
+<script defer src="atlas/vendor/d3-geo.min.js"></script>
+<script defer src="atlas/vendor/topojson-client.min.js"></script>
+<script type="module" src="forside-rig.js"></script>
 <script src="forside.js"></script>
 <script src="/feedback.js" defer></script>
 </body>

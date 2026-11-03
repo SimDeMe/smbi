@@ -222,11 +222,16 @@ img{display:block;max-width:100%}
 }
 .rig-tab:hover{transform:translateY(-1px)}
 .rig-tab[aria-selected="true"]{background:var(--accent);color:#fff}
-.rig svg{display:block;width:100%;height:auto}
-.rig-svg-wrap{padding:8px 8px 0;background:
-  radial-gradient(circle at 1px 1px, #E6EDEB 1px, transparent 0) 0 0/16px 16px;}
-.ax{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:0.08em;fill:#6B7C79}
-.ax-t{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;fill:var(--ink)}
+/* Figuren: atlassets cirkulationsglobus eller kapløbet fra jordskælvsbølgerne.
+   Globussen holder selv luft til sol og etiketter; lærredet er derfor højere
+   end feltet og beskåret, så kloden fylder mere. */
+.rig-fig{position:relative;aspect-ratio:560/330;overflow:hidden;background:#0d282b}
+.rig-fig canvas{position:absolute;left:0;width:100%;display:block;opacity:0;transition:opacity .45s}
+.rig-fig canvas.vist{opacity:1}
+#fig-globus{top:-34px;height:calc(100% + 68px)}
+#fig-kaploeb{top:0;height:100%;background:#f6f4e8}
+@media (max-width:560px){.rig-fig{aspect-ratio:1/0.82}}
+@media (prefers-reduced-motion:reduce){.rig-fig canvas{transition:none}}
 
 .rig-out{
   display:grid;grid-template-columns:repeat(3,1fr);
