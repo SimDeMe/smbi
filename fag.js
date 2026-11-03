@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────────────────
    smbi.dk — fagforsider (geografi.html, biologi.html)
-   Søgefelt over kortene, emneknapper over forsøgsvejledningerne
+   Søgefelt over kortene, emneknapper over kortene med data-emne
    + årstal i bunden.
    ───────────────────────────────────────────────────────── */
 (function () {
@@ -59,11 +59,26 @@
       var elementer = boks.querySelectorAll('[data-sog]');
       return {
         boks: boks,
+        // staken med emneknapperne i (geografi.html) må ikke forsvinde
+        medKnapper: !!(emneBoks && boks.contains(emneBoks)),
         note: note,
         titel: note ? note.previousElementSibling : foer,
         kort: kort.filter(function (k) {
           return Array.prototype.indexOf.call(elementer, k.el) !== -1;
         })
+      };
+    }
+  );
+
+  /* En sektion med data-skjul-tom (fx «Byg figuren») forsvinder helt,
+     også fra menuen, når ingen af dens grupper er tilbage. */
+  var sektioner = Array.prototype.map.call(
+    document.querySelectorAll('.sec[data-skjul-tom]'),
+    function (sek) {
+      return {
+        el: sek,
+        links: document.querySelectorAll('a[href="#' + sek.id + '"]'),
+        bokse: sek.querySelectorAll('.sims, .stack')
       };
     }
   );
@@ -143,12 +158,15 @@
       if (!k.el.hidden) synlige++;
     });
 
-    /* En gruppe skjules efter søgningen alene: står man i et emne uden
-       træffere, skal staken — og dermed emneknapperne — blive stående,
-       så man kan vælge et andet. */
+    /* En gruppe skjules, når ingen af dens kort vises. Står emneknapperne
+       inde i en stak, skjules den stak dog efter søgningen alene: står man
+       i et emne uden træffere, skal knapperne blive stående, så man kan
+       vælge et andet. */
     var simuleringer = 0;
     grupper.forEach(function (g) {
-      var nogen = g.kort.some(function (k) { return k.soeg && alfaOk(k); });
+      var nogen = g.medKnapper
+        ? g.kort.some(function (k) { return k.soeg && alfaOk(k); })
+        : g.kort.some(function (k) { return !k.el.hidden; });
       g.boks.hidden = !nogen;
       if (g.note) g.note.hidden = !nogen;
       if (g.titel && g.titel.classList.contains('grp')) g.titel.hidden = !nogen;
@@ -166,6 +184,12 @@
       }
     });
 
+    sektioner.forEach(function (sek) {
+      var tomSek = !Array.prototype.some.call(sek.bokse, function (b) { return !b.hidden; });
+      sek.el.hidden = tomSek;
+      Array.prototype.forEach.call(sek.links, function (a) { a.hidden = tomSek; });
+    });
+
     if (alfaKnap) {
       alfaKnap.setAttribute('aria-pressed', String(visAlfa));
       alfaAntal.textContent = alfaFundne;
@@ -174,7 +198,7 @@
 
     knapper.forEach(function (kn) {
       var n = kort.filter(function (k) {
-        return k.emner.length && k.soeg && (!kn.emne || harEmne(k, kn.emne));
+        return k.emner.length && k.soeg && alfaOk(k) && (!kn.emne || harEmne(k, kn.emne));
       }).length;
       kn.antal.textContent = n;
       kn.el.setAttribute('aria-pressed', String(kn.emne === valgtEmne));
@@ -188,7 +212,7 @@
       });
       emneTom.hidden = !ingenIEmne;
       emneTom.textContent = ingenIEmne
-        ? 'Ingen vejledninger om «' + valgtEmne + '» matcher søgningen.'
+        ? 'Intet om «' + valgtEmne + '» matcher søgningen.'
         : '';
     }
 

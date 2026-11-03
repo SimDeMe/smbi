@@ -58,6 +58,7 @@
       <nav class="top-nav">
         <a href="index.html">Forside</a>
         <a href="#simuleringer">Simuleringer</a>
+        <a href="#byg-figuren">Byg figuren</a>
         <a href="#vejledninger">Vejledninger</a>
         <a href="geografi.html">Geografi</a>
         <a href="contact.html">Kontakt</a>
@@ -84,6 +85,11 @@
         <input type="search" id="soeg" placeholder="Søg efter emne — fx enzym, osmose, transkription…" autocomplete="off">
         <span class="soeg-tal mono" id="soeg-tal" aria-live="polite"></span>
       </div>
+
+      <!-- emneknapperne bygges af fag.js ud fra kortenes data-emne og samler
+           simuleringer, Byg figuren og vejledninger om samme emne -->
+      <div class="filters emne-filter" id="emne-filter" role="group" aria-label="Vis alt om ét emne" hidden></div>
+      <p class="emne-tom" id="emne-tom" hidden></p>
     </div>
   </div>
 
@@ -106,7 +112,7 @@
     <div class="sims">
 
 
-      <article class="sim" data-sog="osmose diffusion cellemembran koncentration hypertonisk hypotonisk celle">
+      <article class="sim" data-emne="Celler" data-sog="osmose diffusion cellemembran koncentration hypertonisk hypotonisk celle">
         <div class="sim-fig"><span class="beta-mark">Beta</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <circle cx="60" cy="32" r="21"/><circle cx="60" cy="32" r="11" stroke-dasharray="4 5"/>
           <path d="M12 32h20m-7-6 7 6-7 6"/><path d="M108 32H88m7-6-7 6 7 6"/>
@@ -118,7 +124,7 @@
         </div>
       </article>
 
-      <article class="sim" data-sog="bio-blocks kulhydrater proteiner fedt makromolekyler byggesten monomer polymer">
+      <article class="sim" data-emne="Celler" data-sog="bio-blocks kulhydrater proteiner fedt makromolekyler byggesten monomer polymer">
         <div class="sim-fig"><span class="beta-mark">Beta</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <rect x="13" y="20" width="25" height="25" rx="7"/>
           <rect x="47" y="20" width="25" height="25" rx="7"/>
@@ -132,7 +138,7 @@
         </div>
       </article>
 
-      <article class="sim" data-sog="enzymhastighed temperatur optimum denaturering enzym reaktionshastighed">
+      <article class="sim" data-emne="Enzymer" data-sog="enzymhastighed temperatur optimum denaturering enzym reaktionshastighed">
         <div class="sim-fig"><span class="beta-mark">Beta</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M12 55h96" opacity=".3"/>
           <path d="M14 53C34 53 40 12 60 12s26 41 46 41"/>
@@ -147,7 +153,7 @@
 
 
 
-      <article class="sim" data-sog="membran transport diffusion osmose aquaporin ionkanal kanal bærerprotein GLUT1 natrium kalium pumpe ATPase symport SGLT1 endocytose exocytose vesikel aktiv passiv cellemembran">
+      <article class="sim" data-emne="Celler" data-sog="membran transport diffusion osmose aquaporin ionkanal kanal bærerprotein GLUT1 natrium kalium pumpe ATPase symport SGLT1 endocytose exocytose vesikel aktiv passiv cellemembran">
         <div class="sim-fig"><span class="wip-mark">Alfa</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M8 26h104M8 38h104"/>
           <circle cx="24" cy="26" r="4"/><circle cx="24" cy="38" r="4"/>
@@ -161,7 +167,7 @@
           <div class="sim-meta"><span class="kind">Celle</span><span class="lvl lvl-C">C</span></div>
         </div>
       </article>
-      <article class="sim" data-sog="cellemembran 3d væskemosaik fosfolipid hydrofil hydrofob kolesterol kanalprotein glykoprotein diffusion tredimensional">
+      <article class="sim" data-emne="Celler" data-sog="cellemembran 3d væskemosaik fosfolipid hydrofil hydrofob kolesterol kanalprotein glykoprotein diffusion tredimensional">
         <div class="sim-fig"><span class="wip-mark">Alfa</span>
           <svg viewBox="0 0 120 64" aria-hidden="true">
           <circle cx="18" cy="22" r="4"/><circle cx="34" cy="22" r="4"/><circle cx="86" cy="22" r="4"/><circle cx="102" cy="22" r="4"/>
@@ -177,19 +183,7 @@
           <div class="sim-meta"><span class="kind">Celle · membran</span><span class="lvl lvl-C">C</span></div>
         </div>
       </article>
-      <article class="sim" data-sog="byg cellen fagord organeller dyrecelle plantecelle bakterie cellekerne mitokondrie ribosom er golgi lysosom vesikel cellevæg kloroplast vakuole plasmid flagel pili kapsel eukaryot prokaryot repetition">
-        <div class="sim-fig"><span class="wip-mark">Alfa</span><svg viewBox="0 0 120 64" aria-hidden="true">
-          <ellipse cx="44" cy="32" rx="30" ry="24"/><ellipse cx="40" cy="32" rx="11" ry="9"/>
-          <path d="M60 22l22-10M58 44l24 8"/>
-          <rect x="84" y="5" width="30" height="13" rx="4"/><rect x="84" y="46" width="30" height="13" rx="4" stroke-dasharray="4 3"/>
-        </svg></div>
-        <div class="sim-body">
-          <h4><a href="biologi/byg-cellen.html">Byg cellen</a></h4>
-          <p>Sæt fagordene på dyrecellen, plantecellen og bakterien — cellen bygges op lag for lag.</p>
-          <div class="sim-meta"><span class="kind">Celle · fagord</span><span class="lvl lvl-C">C</span></div>
-        </div>
-      </article>
-      <article class="sim" data-sog="enzymkinetik bindingssted aktivt sæde lomme substrat produkt reaktionshastighed enzym">
+      <article class="sim" data-emne="Enzymer" data-sog="enzymkinetik bindingssted aktivt sæde lomme substrat produkt reaktionshastighed enzym">
         <div class="sim-fig"><span class="wip-mark">Alfa</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <circle cx="62" cy="32" r="20"/>
           <circle cx="80" cy="18" r="7"/>
@@ -212,7 +206,7 @@
     </div>
     <div class="sims">
 
-      <article class="sim" data-sog="dna bygger nukleotider baseparring komplementær streng genetik">
+      <article class="sim" data-emne="Genetik" data-sog="dna bygger nukleotider baseparring komplementær streng genetik">
         <div class="sim-fig"><span class="beta-mark">Beta</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M10 32C24 8 46 8 60 32s36 24 50 0"/>
           <path d="M10 32C24 56 46 56 60 32s36-24 50 0"/>
@@ -225,7 +219,7 @@
         </div>
       </article>
 
-      <article class="sim" data-sog="transkription translation mrna trna ribosom kodon anticodon aminosyre protein mutation centrale dogme rna-polymerase eukaryot proteinsyntese genetik">
+      <article class="sim" data-emne="Genetik" data-sog="transkription translation mrna trna ribosom kodon anticodon aminosyre protein mutation centrale dogme rna-polymerase eukaryot proteinsyntese genetik">
         <div class="sim-fig"><span class="beta-mark">Beta</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M8 44h104"/>
           <path d="M8 54h104" opacity=".4"/>
@@ -247,7 +241,7 @@
       <span class="n">3 simuleringer</span><span class="rule"></span>
     </div>
     <div class="sims">
-      <article class="sim" data-sog="fotosyntese respiration glukose ilt kuldioxid vand kloroplast mitokondrie npp bpp primærproduktion plante vækst lys">
+      <article class="sim" data-emne="Stofskifte" data-sog="fotosyntese respiration glukose ilt kuldioxid vand kloroplast mitokondrie npp bpp primærproduktion plante vækst lys">
         <div class="sim-fig"><span class="wip-mark">Alfa</span><svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M16 52c0-22 18-36 44-36 0 24-18 36-44 36z"/>
           <path d="M16 52 54 22"/>
@@ -260,7 +254,7 @@
           <div class="sim-meta"><span class="kind">Fotosyntese</span><span class="lvl lvl-C">C</span></div>
         </div>
       </article>
-      <article class="sim" data-sog="gær gæring bobleforsøg gærrør bromthymolblåt btb kuldioxid co2 sukker saccharose temperatur optimumstemperatur enzym virtuelt laboratorium forsøg konisk kolbe varmeplade ph">
+      <article class="sim" data-emne="Stofskifte; Enzymer" data-sog="gær gæring bobleforsøg gærrør bromthymolblåt btb kuldioxid co2 sukker saccharose temperatur optimumstemperatur enzym virtuelt laboratorium forsøg konisk kolbe varmeplade ph">
         <div class="sim-fig"><span class="wip-mark">Alfa</span>
           <svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M25 22h16"/>
@@ -277,7 +271,7 @@
           <div class="sim-meta"><span class="kind">Gæring · virtuelt lab</span><span class="lvl lvl-C">C</span></div>
         </div>
       </article>
-      <article class="sim" data-sog="ølbrygning øl brygning bryg malt mæskning mæsk stivelse amylase alfa-amylase beta-amylase enzym denaturering jodprøve humle kogning bitterhed ibu iso-alfa-syre gær gæring ethanol alkohol kuldioxid co2 vægtfylde hydrometer bioteknologi">
+      <article class="sim" data-emne="Enzymer; Stofskifte; Bioteknologi" data-sog="ølbrygning øl brygning bryg malt mæskning mæsk stivelse amylase alfa-amylase beta-amylase enzym denaturering jodprøve humle kogning bitterhed ibu iso-alfa-syre gær gæring ethanol alkohol kuldioxid co2 vægtfylde hydrometer bioteknologi">
         <div class="sim-fig"><span class="wip-mark">Alfa</span>
           <svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M44 20h28l-3 38H47z"/>
@@ -300,7 +294,7 @@
       <span class="n">1 simulering</span><span class="rule"></span>
     </div>
     <div class="sims">
-      <article class="sim" data-sog="kvindens hormoncyklus menstruationscyklus fsh lh østrogen progesteron ægløsning p-piller graviditet">
+      <article class="sim" data-emne="Krop; Fysiologi" data-sog="kvindens hormoncyklus menstruationscyklus fsh lh østrogen progesteron ægløsning p-piller graviditet">
         <div class="sim-fig"><span class="wip-mark">Alfa</span>
           <svg viewBox="0 0 120 64" aria-hidden="true">
           <path d="M8 54h104" opacity=".35"/>
@@ -319,6 +313,34 @@
     <p class="soeg-tom" id="soeg-tom" hidden>Ingen materialer matcher søgningen.</p>
   </section>
 
+  <!-- BYG FIGUREN: fagordene sættes på en figur. Ikke en simulering. -->
+  <section class="sec wrap" id="byg-figuren" data-skjul-tom>
+    <div class="sec-head">
+      <h2>Byg figuren</h2>
+      <span class="tag t3">Sæt fagordene på</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="grp" id="grp-byg-celle" style="--c:var(--pink);--t:#FFEDF3">
+      <span class="grp-mark"></span><h3>Cellen</h3>
+      <span class="rule"></span>
+    </div>
+    <div class="sims">
+      <article class="sim" data-emne="Celler" data-sog="byg cellen fagord organeller dyrecelle plantecelle bakterie cellekerne mitokondrie ribosom er golgi lysosom vesikel cellevæg kloroplast vakuole plasmid flagel pili kapsel eukaryot prokaryot repetition">
+        <div class="sim-fig"><span class="wip-mark">Alfa</span><svg viewBox="0 0 120 64" aria-hidden="true">
+          <ellipse cx="44" cy="32" rx="30" ry="24"/><ellipse cx="40" cy="32" rx="11" ry="9"/>
+          <path d="M60 22l22-10M58 44l24 8"/>
+          <rect x="84" y="5" width="30" height="13" rx="4"/><rect x="84" y="46" width="30" height="13" rx="4" stroke-dasharray="4 3"/>
+        </svg></div>
+        <div class="sim-body">
+          <h4><a href="biologi/byg-cellen.html">Byg cellen</a></h4>
+          <p>Sæt fagordene på dyrecellen, plantecellen og bakterien — cellen bygges op lag for lag.</p>
+          <div class="sim-meta"><span class="kind">Celle · fagord</span><span class="lvl lvl-C">C</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <!-- FORSØGSVEJLEDNINGER -->
   <section class="other">
     <div class="other-in">
@@ -333,9 +355,6 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6.2L4.8 18a2 2 0 0 0 1.7 3h10.9a2 2 0 0 0 1.7-3L14 9.2V3"/><path d="M7.4 15h9.2"/></svg>
           <h3>Forsøgsvejledninger</h3><span class="n">16</span>
         </div>
-        <!-- emneknapperne bygges af fag.js ud fra kortenes data-emne -->
-        <div class="filters emne-filter" id="emne-filter" role="group" aria-label="Filtrér vejledningerne efter emne" hidden></div>
-        <p class="emne-tom" id="emne-tom" hidden></p>
         <div class="stack-items">
           <div class="item" data-emne="Mikrobiologi; Sundhed" data-sog="bakterier svampe kimfald agar petriskål mikrobiologi luft overflader kolonier pdf word">
             <h4><a href="Øvelser/Biologi/bakterier-og-svampe/bakterier-og-svampe.html">Bakterier og svampe</a></h4>

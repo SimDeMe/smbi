@@ -600,6 +600,9 @@ img{display:block;max-width:100%}
    kortenes data-emne). Mindre end forsidens fagknapper og med antal. */
 .emne-filter{margin-bottom:16px}
 .emne-filter[hidden]{display:none}
+.head .emne-filter{--t:var(--glow);max-width:760px;margin:14px 0 0}  /* på biologi.html: emnet gælder hele siden */
+.head .emne-tom{margin:10px 0 0}
+.top-nav a[hidden]{display:none}
 .emne-filter .chip{font-size:0.76rem;padding:5px 12px;display:inline-flex;align-items:center;gap:7px}
 .emne-filter .chip .antal{
   font-family:var(--mono);font-size:0.6rem;font-weight:600;
