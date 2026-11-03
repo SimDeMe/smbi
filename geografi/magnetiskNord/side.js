@@ -30,7 +30,7 @@ const S = {
   aar: 2025, epoke: null,
   pol: polI(2025), vendt: false, b0: aekvatorFelt(2025),
   kompas: {...STEDER[0]},
-  linjer: true, akser: true, magnet: false, kort: false, drej: false, projektor: false,
+  linjer: false, akser: true, magnet: false, kort: false, drej: false, projektor: false,
 };
 const antipode = p => ({lat: -p.lat, lon: p.lon > 0 ? p.lon-180 : p.lon+180});
 
@@ -336,6 +336,7 @@ function gemTilstand(){
     else d.push(`pol=${S.pol.lat.toFixed(1)},${S.pol.lon.toFixed(1)}`);
     if(S.vendt && S.epoke !== 'vending') d.push('vendt=1');
     d.push('kompas=' + (S.kompas.id || `${S.kompas.lat.toFixed(2)},${S.kompas.lon.toFixed(2)}`));
+    if(S.linjer) d.push('linjer=1');
     if(S.kort) d.push('kort=1');
     history.replaceState(null, '', '#' + d.join('&'));
   }, 250);
@@ -364,6 +365,7 @@ function gemTilstand(){
         lat: Math.max(-90, Math.min(90, la)), lon: Math.max(-180, Math.min(180, lo))};
     }
   }
+  if(hent('linjer') === '1') S.linjer = true;
   if(hent('kort') === '1') S.kort = true;
   if(q.get('projektor') === '1' || q.get('mode') === 'teach'){
     S.projektor = true; document.body.dataset.projektor = '1';
