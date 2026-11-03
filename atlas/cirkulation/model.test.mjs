@@ -26,7 +26,11 @@ for (const lat of [-60, -20, 30, 70]) {
 }
 
 // ITK følger sommerhalvkuglen og flytter sig mest over land.
-assert.ok(itkMiddel(8) > 8 && itkMiddel(2) < 0, 'ITK ca. 10° N i august, syd for ækvator i februar');
+assert.ok(itkMiddel(8, 1) > 8 && itkMiddel(2, 1) < 0, 'virkelig Jord: ITK ca. 10° N i august, syd for ækvator i februar');
+// Uden kontinenter er modellen symmetrisk: ITK når lige langt mod nord og syd.
+const itkAar = [...Array(120)].map((_, i) => itkMiddel(1 + i / 10));
+assert.ok(Math.abs(Math.max(...itkAar) + Math.min(...itkAar)) < 0.05, 'uden kontinenter svinger ITK symmetrisk om ækvator');
+assert.ok(Math.max(...itkAar) > 5, 'uden kontinenter når ITK ca. 6° mod nord og syd');
 assert.ok(itkBredde(7, 82, 1) > 20, 'ITK over Nordindien i juli');
 const udsving = l => itkBredde(7.5, l, 1) - itkBredde(1.5, l, 1);
 assert.ok(udsving(82) > 2 * udsving(-150), 'større udsving over Indien end over Stillehavet');

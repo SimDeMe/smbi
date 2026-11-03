@@ -35,8 +35,8 @@ videre hertil.
   «Luftringe» og «Navne», «Slip en ballon», pause og fokus.
 - Seks korte trin, der bygger op ét fænomen ad gangen; hvert trin drejer
   globussen, sætter måned og kontakter og fremhæver det, der skal ses.
-  Trin 1–4 står ved forårsjævndøgn uden kontinenter, så ITK ligger midt over
-  ækvator, og der er hele tiden tre celler: solvarme og ITK, Hadleycellen,
+  Trin 1–4 står ved forårsjævndøgn uden kontinenter, så solen står over
+  ækvator, ITK ligger tæt ved den, og der er hele tiden tre celler: solvarme og ITK, Hadleycellen,
   Corioliseffektens afbøjning og de tre celler. Trin 5 lader ITK og bælterne
   følge solen, og trin 6 slår kontinenterne til, så ITK trækkes ind over
   Indien, og monsunen opstår.
@@ -70,6 +70,11 @@ Klimalagene genbruger `../middeltemperatur.js` og `../nedboer.js` (hentning,
 geometri og farvning); data og kilder er beskrevet i `../data/*.LICENSE`.
 
 ## Modellen
+
+Uden kontinenter er modellen symmetrisk: ITK svinger ca. 6° til hver side af
+ækvator. Med kontinenter er det den virkelige Jord, hvor ITK i gennemsnit
+ligger ca. 4° nord for ækvator (`NORDFORSKYDNING` i `model.js`), og hvor den
+bugter sig ind over land. Se [../CIRKULATION-MODEL.md](../CIRKULATION-MODEL.md).
 
 Vinden ved jorden regnes i en «modelbredde», hvor ITK er 0°, højtrykkene ±30°
 og polarfronterne ±60°. Corioliseffekten laver vind mod ækvator om til

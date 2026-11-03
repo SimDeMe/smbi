@@ -212,7 +212,7 @@ export function lavGlobus(canvas, land, tilstand) {
 
     // Land: dæmpet grøn; svagt ørkenbånd ved højtrykkene, når Jorden drejer.
     const itk = l => itkBredde(s.maaned, l, s.kontinenter);
-    const b = baelter(s.maaned);
+    const b = baelter(s.maaned, s.kontinenter);
     ctx.beginPath(); sti(land); ctx.fillStyle = '#8c9e7c'; ctx.fill();
     const lag = s.klimalag && KLIMALAG[s.klimalag];
     if (lag?.modul.data()) {

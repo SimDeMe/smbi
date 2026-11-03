@@ -22,7 +22,7 @@ export function lavSnit(canvas, tilstand) {
 
   // Cellernes grænser og navne ud fra rotation og måned.
   function celler(s) {
-    const b = baelter(s.maaned), itk = itkMiddel(s.maaned);
+    const b = baelter(s.maaned, s.kontinenter), itk = itkMiddel(s.maaned, s.kontinenter);
     if (s.rotation < 0.5) return { graenser: [-90, itk, 90], navne: ['Én celle', 'Én celle'], itk };
     return {
       graenser: [-90, b.sydFront, b.sydHoej, itk, b.nordHoej, b.nordFront, 90],

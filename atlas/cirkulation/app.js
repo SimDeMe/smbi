@@ -3,7 +3,7 @@ import { lavGlobus, beskriv, KLIMALAG, datamaaned } from './globus.js';
 import { lavSnit } from './snit.js';
 import { TRIN, JAEVNDOEGN } from './tekst.js';
 import { fremdrift, har, slut } from './koreografi.js';
-import { maanedsnavn, retningsnavn, fraRetning, itkBredde, solbredde } from './model.js';
+import { maanedsnavn, retningsnavn, fraRetning, itkMiddel, solbredde } from './model.js';
 
 const $ = s => document.querySelector(s);
 const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -114,7 +114,7 @@ function saetMaaned(m, annoncer = true) {
   const km = document.getElementById('klimamaaned');
   if (km) km.textContent = navn;
   if (annoncer) {
-    const sol = solbredde(m), itk = itkBredde(m, 0, 0);
+    const sol = solbredde(m), itk = itkMiddel(m, tilstand.maal.kontinenter);
     meddel(`${navn}: solen står lodret over ${Math.abs(sol).toFixed(0)}° ${sol >= 0 ? 'nord' : 'syd'}; ITK ligger i gennemsnit ved ${Math.abs(itk).toFixed(0)}° ${itk >= 0 ? 'nord' : 'syd'}.`);
   }
 }

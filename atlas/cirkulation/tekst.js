@@ -1,6 +1,7 @@
 // Seks korte trin. Forkortet fra elevteksten i CIRKULATION-MODEL.md, afsnit 2.
 // Ejerens ønske 3. november 2026: byg op ét fænomen ad gangen. Trin 1–4
-// står ved jævndøgn uden kontinenter, så ITK ligger midt over ækvator og
+// står ved jævndøgn uden kontinenter, så solen står over ækvator, og ITK
+// ligger tæt ved den (ca. 2° S, fordi ITK halter lidt efter solen), og
 // cellerne er symmetriske; først derefter flytter ITK sig med solen (trin 5),
 // og til sidst trækker kontinenterne ITK ind over land (trin 6).
 // fokus: hvor globussen drejer hen; saet: tilstand, trinet sætter.
@@ -78,7 +79,7 @@ export const TRIN = [
   },
   {
     titel: 'Kontinenterne – monsun',
-    tekst: 'Land bliver varmere end hav om sommeren. Derfor trækkes ITK langt ind over land – over Indien op til ca. 25° N i juli. Sydøstpassaten krydser ækvator og bøjes til fugtig sydvestmonsun. Om vinteren vender vinden: tør nordøstmonsun.',
+    tekst: 'Land bliver varmere end hav om sommeren. Derfor trækkes ITK langt ind over land – over Indien op til ca. 25° N i juli. Sydøstpassaten krydser ækvator og bøjes til fugtig sydvestmonsun. Om vinteren vender vinden: tør nordøstmonsun. På den virkelige Jord ligger ITK desuden i gennemsnit lidt nord for ækvator.',
     proev: 'Slå «Kontinenter» fra og til, eller afspil året, og hold øje med Indien.',
     fokus: [75, 12], fremhaev: 'monsun', saet: { rotation: 1, kontinenter: 1, maaned: 7 },
     // Kontinenterne tones ind: ITK trækkes ind over Indien, og først derefter

@@ -10,8 +10,13 @@ const klem = (x, a, b) => Math.max(a, Math.min(b, x));
 // Årstidsfaktor: +1 sidst i juli, −1 sidst i januar.
 export const aarstid = maaned => Math.cos(2 * Math.PI * (maaned - 7.5) / 12);
 
-// Zonalt gennemsnit: ca. 10° N i august og ca. 2° S i februar.
-export const itkMiddel = maaned => 4 + 6 * aarstid(maaned);
+// Zonalt gennemsnit. Uden kontinenter (den idealiserede, symmetriske model)
+// svinger ITK lige langt til begge sider: ca. 6° N i august og 6° S i
+// februar. Med kontinenter er det den virkelige Jord, hvor ITK i gennemsnit
+// ligger ca. 4° nord for ækvator (havstrømmene fører varme mod nord over
+// ækvator): ca. 10° N i august og ca. 2° S i februar.
+export const NORDFORSKYDNING = 4;
+export const itkMiddel = (maaned, kontinenter = 0) => NORDFORSKYDNING * kontinenter + 6 * aarstid(maaned);
 
 // Kontinenternes ekstra udsving (grader), gaussisk i længde.
 // jul gælder ved aarstid = +1, jan ved aarstid = −1.
@@ -36,19 +41,19 @@ export function itkBredde(maaned, laengde, kontinenter = 0) {
       ekstra += Math.exp(-d * d) * (s > 0 ? o.jul * s : -o.jan * s);
     }
   }
-  return itkMiddel(maaned) + kontinenter * ekstra;
+  return itkMiddel(maaned, kontinenter) + kontinenter * ekstra;
 }
 
 // Højtryk og polarfront flytter sig med halvdelen/en fjerdedel af ITK.
-export function baelter(maaned) {
-  const i = itkMiddel(maaned);
+export function baelter(maaned, kontinenter = 0) {
+  const i = itkMiddel(maaned, kontinenter);
   return { nordHoej: 30 + i / 2, nordFront: 60 + i / 4, sydHoej: -30 + i / 2, sydFront: -60 + i / 4 };
 }
 
 // Omregner bredden til «modelbredde»: ITK → 0°, højtryk → ±30°, front → ±60°.
 export function modelbredde(bredde, maaned, laengde, kontinenter) {
   const itk = itkBredde(maaned, laengde, kontinenter);
-  const b = baelter(maaned);
+  const b = baelter(maaned, kontinenter);
   const nordHoej = Math.max(b.nordHoej, itk + 6), sydHoej = Math.min(b.sydHoej, itk - 6);
   const stk = (x, x0, x1, y0, y1) => y0 + (x - x0) / (x1 - x0) * (y1 - y0);
   if (bredde >= itk) {
@@ -108,8 +113,8 @@ export function vindbaelte(bredde, laengde, maaned, valg = {}) {
 
 // Strømfunktion for snittet (bredde −90…90, højde 0…1 af tropopausen).
 // Positiv værdi = celle, der drejer som Hadleycellen på nordlig halvkugle.
-export function stroemfunktion(bredde, hoejde, maaned, rotation = 1) {
-  const b = baelter(maaned), itk = itkMiddel(maaned);
+export function stroemfunktion(bredde, hoejde, maaned, rotation = 1, kontinenter = 0) {
+  const b = baelter(maaned, kontinenter), itk = itkMiddel(maaned, kontinenter);
   const lodret = Math.sin(Math.PI * klem(hoejde, 0, 1));
   const celle = (x, x0, x1, styrke) => styrke * Math.sin(Math.PI * (x - x0) / (x1 - x0));
   let tre;

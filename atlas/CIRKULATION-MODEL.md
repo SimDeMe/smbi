@@ -140,12 +140,21 @@ se, hvor den passer, og hvor den ikke passer (monsunen, kontinenterne).
 Tallene skal give rigtig retning og omtrentlig størrelse; animationen må
 gerne overdrive dem.
 
-**ITK's breddegrad over året** (zonalt gennemsnit, måned *m* = 1–12):
+**ITK's breddegrad over året** (zonalt gennemsnit, måned *m* = 1–12,
+*k* = kontinenter 0–1):
 
-  φ_ITK(m) ≈ 4° + 6° · cos(2π · (m − 7,5) / 12)
+  φ_ITK(m) ≈ 4° · k + 6° · cos(2π · (m − 7,5) / 12)
 
-Det giver ca. 10° N i august og ca. 2° S i februar. Med **kontinenter tændt**
-lægges en ekstra udsving oven i over land:
+**Uden kontinenter** er modellen idealiseret og symmetrisk: ITK svinger lige
+langt til begge sider, ca. 6° N i august og 6° S i februar, og halter godt en
+måned efter solen. **Med kontinenter** er det den virkelige Jord: ITK ligger i
+gennemsnit ca. 4° nord for ækvator, fordi havstrømmene (især den atlantiske
+omvæltningscirkulation) fører varme fra den sydlige til den nordlige halvkugle,
+så den nordlige halvkugle er lidt varmere. Det giver ca. 10° N i august og
+ca. 2° S i februar. (Rettet 3. november 2026: før lå forskydningen mod nord
+også i den symmetriske model, så ITK nåede længere mod nord end mod syd, uden
+at det fremgik hvorfor.) Med kontinenter lægges desuden et ekstra udsving oven
+i over land:
 
 | Område | Januar | Juli |
 | --- | --- | --- |
