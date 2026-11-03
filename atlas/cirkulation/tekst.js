@@ -30,10 +30,14 @@ export const TRIN = [
     fokus: [-35, 5], fremhaev: 'coriolis',
     // Først en Jord, der står stille (vinden går lige mod ITK), så drejer den,
     // og vinden bøjer af. Navnene kommer, når passaten har fået sin retning.
+    // Roligt tempo: der skal være tid til at læse trinteksten og se billedet.
+    // Koreografien venter, til globussen har drejet på plads, Jorden står
+    // stille i ca. 3 s, og drejningen tager ca. 4 s (simulationsdesign.md:
+    // synkronisér, undgå samtidige bevægelser, elevstyret tempo).
     koreografi: [
-      { el: 'stille', fra: 0, til: 0.8 },
-      { el: 'drej', fra: 1.8, til: 4 },
-      { el: 'navn-passat', fra: 3.8, til: 4.4 },
+      { el: 'stille', fra: 1.2, til: 2.6 },
+      { el: 'drej', fra: 5.6, til: 9.6 },
+      { el: 'navn-passat', fra: 9.4, til: 10.2 },
     ],
   },
   {

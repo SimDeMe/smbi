@@ -39,8 +39,11 @@ videre hertil.
   Hadleycellen i strømmens retning, før højtryk og ørken kommer; trin 3
   standser Jorden og lader den dreje igen, så vinden bøjer af; trin 4 bygger
   cellerne ud fra ækvator; trin 5 flytter solen først og lader ITK følge efter
-  mod juli. Andre spring og reduceret bevægelse viser trinnet færdigt, og en
-  kontakt eller skyderen afbryder koreografien. Slutbilledet er det samme som
+  mod juli. Trin 3 går roligt (ca. 10 s): det venter, til globussen har
+  drejet på plads, og Jorden står stille i et par sekunder med en kort tekst
+  på kloden, så der er tid til både at læse og se. Knappen ↻ ved pilene
+  afspiller trinnet igen. Andre spring og reduceret bevægelse viser trinnet
+  færdigt, og en kontakt eller skyderen afbryder koreografien. Slutbilledet er det samme som
   uden koreografi.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster.
 

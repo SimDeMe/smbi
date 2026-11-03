@@ -74,9 +74,10 @@ function koreoTrin(dt) {
   let styrer = false;
   if (har(tilstand, 'stille') && tilstand.maal.rotation > 0.5) {
     // Jorden standser, står stille et øjeblik og drejer så igen.
-    const drej = fremdrift(tilstand, 'drej');
-    tilstand.rotation = drej > 0 ? drej : 1 - fremdrift(tilstand, 'stille');
-    tilstand.koreoTekst = drej > 0 ? 'Jorden drejer – vinden bøjer af' : 'Hvis Jorden stod stille …';
+    const drej = fremdrift(tilstand, 'drej'), stille = fremdrift(tilstand, 'stille');
+    tilstand.rotation = drej > 0 ? drej : 1 - stille;
+    tilstand.koreoTekst = drej > 0 ? 'Jorden drejer – vinden bøjer af'
+      : stille > 0 ? 'Jorden står stille – vinden går lige mod ITK' : '';
     styrer = true;
   }
   if (har(tilstand, 'maaned') && k.tilMaaned != null) {
@@ -280,13 +281,29 @@ function trinvisning(globus) {
     b.addEventListener('click', () => vis(i));
     prikker.append(b);
   });
+  // Koreografien kan spilles igen fra knappen ↻ (elevstyret tempo og gentagelse).
+  let maanedFoer = 1;
+  function spil(t, igen) {
+    afslutKoreo();
+    if (!t.koreografi || roligt) return;
+    tilstand.koreo = { trin: t, t: 0, slut: slut(t) };
+    if (igen && har(tilstand, 'stille')) saet('rotation', 1);
+    if (t.saet && 'maaned' in t.saet) {
+      if (!igen) maanedFoer = tilstand.maaned;
+      Object.assign(tilstand.koreo, { fraMaaned: maanedFoer, tilMaaned: t.saet.maaned });
+      saetMaaned(maanedFoer, false);
+    }
+  }
+  $('#gentag').addEventListener('click', () => { spil(TRIN[nr], true); meddel(`Trin ${nr + 1} vises igen.`); });
+
   function vis(i) {
     const fra = nr;
     nr = Math.max(0, Math.min(TRIN.length - 1, i));
     const t = TRIN[nr];
     // Ét trin frem spiller koreografien; alle andre spring viser trinnet færdigt.
     afslutKoreo();
-    if (nr === fra + 1 && t.koreografi && !roligt) tilstand.koreo = { trin: t, t: 0, slut: slut(t) };
+    if (nr === fra + 1) spil(t, false);
+    $('#gentag').hidden = !t.koreografi || roligt;
     $('#trin-nr').textContent = `${nr + 1} / ${TRIN.length}`;
     $('#trin-titel').textContent = t.titel;
     $('#trin-tekst').textContent = t.tekst;
@@ -297,10 +314,7 @@ function trinvisning(globus) {
     tilstand.fremhaev = t.fremhaev;
     if (t.saet) {
       for (const navn of ['rotation', 'kontinenter']) if (navn in t.saet) saet(navn, t.saet[navn]);
-      if ('maaned' in t.saet) {
-        if (har(tilstand, 'maaned')) Object.assign(tilstand.koreo, { fraMaaned: tilstand.maaned, tilMaaned: t.saet.maaned });
-        else saetMaaned(t.saet.maaned, false);
-      }
+      if ('maaned' in t.saet && !har(tilstand, 'maaned')) saetMaaned(t.saet.maaned, false);
     }
     globus.flyvTil(...t.fokus);
   }
