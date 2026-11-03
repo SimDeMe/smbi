@@ -41,4 +41,13 @@ assert.equal(vindbaelte(19, 73, 1, k), 'Nordøstmonsun');
 // Snittet: Hadleycellen og Ferrelcellen drejer modsat.
 assert.ok(Math.sign(stroemfunktion(15, 0.5, maaned)) !== Math.sign(stroemfunktion(45, 0.5, maaned)));
 
-console.log('Modellen: passat, vestenvind, polar østenvind, Coriolis, stop Jorden, ITK og monsun består.');
+// Trin 3: uden afbøjning går passaten lige mod ITK (ingen østkomponent), med
+// fuld afbøjning er den den almindelige nordøst-/sydøstpassat.
+for (const lat of [15, -15]) {
+  const lige = vind(lat, -30, maaned, { rotation: 1, afboejning: 0 }), fuld = vind(lat, -30, maaned);
+  assert.equal(Math.abs(lige.u), 0, 'uden afbøjning ingen østenvind');
+  assert.equal(lige.v, fuld.v, 'afbøjningen ændrer ikke den nord-sydlige strøm');
+  assert.ok(fuld.u < 0, 'passaten bøjes mod vest');
+}
+
+console.log('Modellen: passat, vestenvind, polar østenvind, Coriolis, afbøjning, stop Jorden, ITK og monsun består.');

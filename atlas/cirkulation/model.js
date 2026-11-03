@@ -66,13 +66,15 @@ export function modelbredde(bredde, maaned, laengde, kontinenter) {
 // Med rotation: tre celler; vind mod ækvator bøjes til østenvind, vind mod
 // polen til vestenvind (højre i nord, venstre i syd). Coriolis er nul ved
 // ækvator, derfor tanh(bredde).
-export function vind(bredde, laengde, maaned, { rotation = 1, kontinenter = 0 } = {}) {
+// afboejning (0–1) er kun til trin 3's illustration: de tre cellers vind ved
+// jorden uden og med Corioliseffektens afbøjning. Standard er fuld afbøjning.
+export function vind(bredde, laengde, maaned, { rotation = 1, kontinenter = 0, afboejning = 1 } = {}) {
   const m = modelbredde(bredde, maaned, laengde, kontinenter);
   const a = Math.abs(m), fortegn = m >= 0 ? 1 : -1;
   const v1 = -fortegn * 7 * Math.sin(a * 2 * RAD);
   const v3 = -fortegn * 4 * Math.sin(a * 6 * RAD);
   const coriolis = 2.4 * Math.tanh(bredde / 7);
-  const u3 = coriolis * v3;
+  const u3 = afboejning * coriolis * v3;
   return { u: rotation * u3, v: (1 - rotation) * v1 + rotation * v3 };
 }
 

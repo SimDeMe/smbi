@@ -33,18 +33,25 @@ videre hertil.
   målinger – sammenlign fx ITK med det målte regnbælte.
 - Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler»,
   «Luftringe» og «Navne», «Slip en ballon», pause og fokus.
-- Fem korte trin; hvert trin drejer globussen og fremhæver det, der skal ses.
+- Seks korte trin, der bygger op ét fænomen ad gangen; hvert trin drejer
+  globussen, sætter måned og kontakter og fremhæver det, der skal ses.
+  Trin 1–4 står ved forårsjævndøgn uden kontinenter, så ITK ligger midt over
+  ækvator, og der er hele tiden tre celler: solvarme og ITK, Hadleycellen,
+  Corioliseffektens afbøjning og de tre celler. Trin 5 lader ITK og bælterne
+  følge solen, og trin 6 slår kontinenterne til, så ITK trækkes ind over
+  Indien, og monsunen opstår.
 - Motion design: går man ét trin frem, tegnes det nye i den rækkefølge, det
   sker (`koreografi` i `tekst.js`, motoren i `koreografi.js`). Trin 2 tegner
-  Hadleycellen i strømmens retning, før højtryk og ørken kommer; trin 3
-  standser Jorden og lader den dreje igen, så vinden bøjer af; trin 4 bygger
-  cellerne ud fra ækvator; trin 5 flytter solen først og lader ITK følge efter
-  mod juli. Trin 3 går roligt (ca. 10 s): det venter, til globussen har
-  drejet på plads, og Jorden står stille i et par sekunder med en kort tekst
-  på kloden, så der er tid til både at læse og se. Knappen ↻ ved pilene
-  afspiller trinnet igen. Andre spring og reduceret bevægelse viser trinnet
-  færdigt, og en kontakt eller skyderen afbryder koreografien. Slutbilledet er det samme som
-  uden koreografi.
+  Hadleycellen i strømmens retning, før højtryk og ørken kommer. Trin 3
+  ændrer kun vindens afbøjning (modellens `afboejning`; cellerne står fast):
+  vinden rettes ud, så den går lige mod ITK, og bøjes så af, mens to store
+  pile viser «bøjer til højre» og «bøjer til venstre». Det går roligt
+  (ca. 13 s), så der er tid til både at læse og se. Trin 4 bygger cellerne
+  ud fra ækvator; trin 5 flytter solen først og lader ITK følge efter mod
+  juli; trin 6 toner kontinenterne ind. Knappen ↻ ved pilene afspiller
+  trinnet igen. Andre spring og reduceret bevægelse viser trinnet færdigt,
+  og en kontakt eller skyderen afbryder koreografien. Slutbilledet er det
+  samme som uden koreografi.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster.
 
 ## Filer
@@ -54,7 +61,7 @@ videre hertil.
 | `model.js` | ITK's bredde, bælterne, vindfeltet, strømfunktionen, solens bredde |
 | `globus.js` | Globus, vindspor, ITK, etiketter, sol og balloner (D3 på Canvas 2D) |
 | `snit.js` | Snittet med cellerne |
-| `tekst.js` | De fem trin og deres koreografi |
+| `tekst.js` | De seks trin og deres koreografi |
 | `koreografi.js` | Motion design: hvor langt hvert element er tegnet frem |
 | `app.js` | Betjening, trin og animationsløkke |
 

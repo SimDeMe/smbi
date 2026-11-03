@@ -300,4 +300,8 @@ Referencerne kontrolleres i originalen, før de citeres i elevmateriale.
    `/atlas/cirkulation/`: B's funktioner og model, A's grafik. Trinene i
    afsnit 2 forkortes til fem korte trin i `cirkulation/tekst.js` – ejeren
    fandt de syv for lange; trin 6 og 7 er slået sammen.
+   3. november 2026: seks trin i stedet. Trin 1–4 står ved jævndøgn uden
+   kontinenter, trin 3 viser kun Corioliseffektens afbøjning (uden at skifte
+   til én celle), trin 5 lader ITK følge solen, og trin 6 slår kontinenterne
+   og monsunen til – ét fænomen ad gangen (ejerens ønske).
 4. *(Afventer)* Datakilde til milepæl B (NCEP/NCAR og GPCP foreslået).

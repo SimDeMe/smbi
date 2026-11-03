@@ -142,7 +142,7 @@ export function lavGlobus(canvas, land, tilstand) {
       rydSpor();
     }
     proj.rotate([-centrum[0], -centrum[1]]);
-    const valg = { rotation: s.rotation, kontinenter: s.kontinenter };
+    const valg = { rotation: s.rotation, kontinenter: s.kontinenter, afboejning: s.afboejning ?? 1 };
 
     // Vindspor: falm det gamle, tegn nye stykker.
     sctx.globalCompositeOperation = 'destination-out';
@@ -296,7 +296,9 @@ export function lavGlobus(canvas, land, tilstand) {
 
     if (s.etiketter) etiketter(s, b, itk);
 
-    // Kort tekst under koreografien, fx mens Jorden står stille i trin 3.
+    if (s.koreoPile > 0) afboejningspile(s);
+
+    // Kort tekst under koreografien, fx mens vinden går lige mod ITK i trin 3.
     if (s.koreoTekst) {
       ctx.font = "600 12px Archivo, system-ui, sans-serif"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const w = ctx.measureText(s.koreoTekst).width, ty = cy - r + Math.min(34, r * 0.22);
@@ -354,7 +356,7 @@ export function lavGlobus(canvas, land, tilstand) {
 
   // Faste vindpile i et net (kun på pause og ved reduceret bevægelse).
   function pile(s) {
-    const valg = { rotation: s.rotation, kontinenter: s.kontinenter };
+    const valg = { rotation: s.rotation, kontinenter: s.kontinenter, afboejning: s.afboejning ?? 1 };
     for (let lat = -75; lat <= 75; lat += 15) for (let lon = -180; lon < 180; lon += 20) {
       const p = [lon, lat];
       if (!synlig(p)) continue;
@@ -475,6 +477,42 @@ export function lavGlobus(canvas, land, tilstand) {
     ctx.globalAlpha = 1;
   }
 
+  // Trin 3: to store pile i passatbæltet midt på globussen. Den stiplede viser
+  // vinden lige mod ITK, den fyldte vinden, som Corioliseffekten bøjer af.
+  function afboejningspile(s) {
+    const valg = { rotation: s.rotation, kontinenter: s.kontinenter, afboejning: s.afboejning ?? 1 };
+    const tekstAlfa = fremdrift(s, 'boej') * s.koreoPile;
+    ctx.save();
+    for (const lat of [15, -15]) {
+      ctx.globalAlpha = s.koreoPile; // maerke() sætter selv alfa tilbage til 1
+      const lon = centrum[0];
+      if (!indenfor([lon, lat])) continue;
+      const w = vind(lat, lon, s.maaned, valg);
+      const pil = (vv, streg) => {
+        const k = 13 / Math.max(0.3, fart(vv));
+        const d = [vv.u * k / Math.cos(lat * RAD), vv.v * k];
+        const a = proj([lon - d[0] / 2, lat - d[1] / 2]), b = proj([lon + d[0] / 2, lat + d[1] / 2]);
+        const vinkel = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        const hoved = () => {
+          ctx.beginPath(); ctx.moveTo(b[0] + 4 * Math.cos(vinkel), b[1] + 4 * Math.sin(vinkel));
+          ctx.lineTo(b[0] - 11 * Math.cos(vinkel - 0.5), b[1] - 11 * Math.sin(vinkel - 0.5));
+          ctx.lineTo(b[0] - 11 * Math.cos(vinkel + 0.5), b[1] - 11 * Math.sin(vinkel + 0.5)); ctx.closePath();
+        };
+        ctx.setLineDash(streg ? [5, 5] : []); ctx.lineCap = 'round';
+        for (const [farve, bredde] of streg ? [[FARVER.passat + '99', 2]] : [['#102c2a', 8], [FARVER.passat, 4]]) {
+          ctx.strokeStyle = farve; ctx.lineWidth = bredde;
+          ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        if (!streg) { hoved(); ctx.strokeStyle = '#102c2a'; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = FARVER.passat; ctx.fill(); }
+      };
+      pil({ u: 0, v: w.v }, true);
+      pil(w, false);
+      maerke(lon + 15, lat, lat > 0 ? 'BØJER TIL HØJRE' : 'BØJER TIL VENSTRE', FARVER.passat, tekstAlfa);
+    }
+    ctx.restore();
+  }
+
   function glod(syd, nord, alfa = 1) {
     if (alfa <= 0) return;
     ctx.beginPath(); sti(baand(syd, nord));
@@ -499,7 +537,7 @@ export function lavGlobus(canvas, land, tilstand) {
 
   function etiketter(s, b, itk) {
     const l0 = centrum[0];
-    const valg = { rotation: s.rotation, kontinenter: s.kontinenter };
+    const valg = { rotation: s.rotation, kontinenter: s.kontinenter, afboejning: s.afboejning ?? 1 };
     const navn = lat => vindbaelte(lat, l0, s.maaned, valg);
     const midt = (a, c) => (a + c) / 2;
     maerke(l0 - 14, itk(l0 - 14), 'ITK · L', ITK_FARVE);
@@ -539,7 +577,7 @@ export function lavGlobus(canvas, land, tilstand) {
 }
 
 export function beskriv(lon, lat, s) {
-  const valg = { rotation: s.rotation, kontinenter: s.kontinenter };
+  const valg = { rotation: s.rotation, kontinenter: s.kontinenter, afboejning: s.afboejning ?? 1 };
   const w = vind(lat, lon, s.maaned, valg);
   return { navn: vindbaelte(lat, lon, s.maaned, valg), fart: fart(w), w, m: modelbredde(lat, s.maaned, lon, s.kontinenter) };
 }

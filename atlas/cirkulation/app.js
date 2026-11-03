@@ -1,7 +1,7 @@
 // Global cirkulation: betjening, trin og animationsløkke.
 import { lavGlobus, beskriv, KLIMALAG, datamaaned } from './globus.js';
 import { lavSnit } from './snit.js';
-import { TRIN } from './tekst.js';
+import { TRIN, JAEVNDOEGN } from './tekst.js';
 import { fremdrift, har, slut } from './koreografi.js';
 import { maanedsnavn, retningsnavn, fraRetning, itkBredde, solbredde } from './model.js';
 
@@ -10,12 +10,13 @@ const roligt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Tilstanden; rotation og kontinenter glider mod deres mål.
 const tilstand = {
-  maaned: 1, rotation: 1, kontinenter: 1, etiketter: true, celler: true, luftringe: true, klimalag: null, pause: roligt,
+  maaned: JAEVNDOEGN, rotation: 1, kontinenter: 0, etiketter: true, celler: true, luftringe: true, klimalag: null, pause: roligt,
   fremhaev: null, afspil: false, ballon: false,
-  maal: { rotation: 1, kontinenter: 1 },
+  maal: { rotation: 1, kontinenter: 0 },
   // Motion design: trinnets koreografi, mens den spiller ({ trin, t, slut }),
-  // solens måned, når den går foran ITK, og en kort tekst på globussen.
-  koreo: null, solMaaned: null, koreoTekst: '',
+  // solens måned, når den går foran ITK, en kort tekst på globussen,
+  // vindens afbøjning (0–1) og de store afbøjningspile i trin 3 (0–1).
+  koreo: null, solMaaned: null, koreoTekst: '', afboejning: 1, koreoPile: 0,
 };
 const hent = () => tilstand;
 
@@ -52,9 +53,9 @@ async function start() {
     };
     // Koreografien følger uret, også på pause og ved lav billedfrekvens: den
     // viser trinnet, ikke vinden.
-    const styrerRotation = tilstand.koreo && koreoTrin(Math.min(1, raa));
-    if (!styrerRotation) glid('rotation', roligt || tilstand.pause ? 99 : 1.6);
-    glid('kontinenter', roligt || tilstand.pause ? 99 : 2);
+    const styrerKontinenter = tilstand.koreo && koreoTrin(Math.min(1, raa));
+    glid('rotation', roligt || tilstand.pause ? 99 : 1.6);
+    if (!styrerKontinenter) glid('kontinenter', roligt || tilstand.pause ? 99 : 2);
     if (tilstand.afspil && !tilstand.pause && !har(tilstand, 'maaned')) {
       let m = tilstand.maaned + dt * 0.9;
       if (m >= 13) m -= 12;
@@ -67,17 +68,21 @@ async function start() {
   requestAnimationFrame(loekke);
 }
 
-// Ét skridt i koreografien. Svarer true, når den selv styrer rotationen.
+// Ét skridt i koreografien. Svarer true, når den selv styrer kontinenterne.
 function koreoTrin(dt) {
   const k = tilstand.koreo;
   k.t += dt;
   let styrer = false;
-  if (har(tilstand, 'stille') && tilstand.maal.rotation > 0.5) {
-    // Jorden standser, står stille et øjeblik og drejer så igen.
-    const drej = fremdrift(tilstand, 'drej'), stille = fremdrift(tilstand, 'stille');
-    tilstand.rotation = drej > 0 ? drej : 1 - stille;
-    tilstand.koreoTekst = drej > 0 ? 'Jorden drejer – vinden bøjer af'
-      : stille > 0 ? 'Jorden står stille – vinden går lige mod ITK' : '';
+  if (har(tilstand, 'boej')) {
+    // Kun afbøjningen ændrer sig: vinden rettes ud mod ITK og bøjes så af.
+    const boej = fremdrift(tilstand, 'boej'), lige = fremdrift(tilstand, 'lige');
+    tilstand.afboejning = boej > 0 ? boej : 1 - lige;
+    tilstand.koreoTekst = boej > 0 ? 'Jorden drejer – vinden bøjer af'
+      : lige > 0 ? 'Uden Corioliseffekten: lige mod ITK' : '';
+    tilstand.koreoPile = 1 - fremdrift(tilstand, 'pile-ud');
+  }
+  if (har(tilstand, 'kontinenter') && tilstand.maal.kontinenter > 0.5) {
+    tilstand.kontinenter = fremdrift(tilstand, 'kontinenter');
     styrer = true;
   }
   if (har(tilstand, 'maaned') && k.tilMaaned != null) {
@@ -95,6 +100,7 @@ function afslutKoreo(flyt = true) {
   const k = tilstand.koreo;
   if (!k) return;
   tilstand.koreo = null; tilstand.solMaaned = null; tilstand.koreoTekst = '';
+  tilstand.afboejning = 1; tilstand.koreoPile = 0;
   if (flyt && k.tilMaaned != null) saetMaaned(k.tilMaaned, false);
 }
 
@@ -115,9 +121,11 @@ function saetMaaned(m, annoncer = true) {
 
 // Kontakterne «Jorden drejer» og «Kontinenter»: trykket ind = slået til.
 const knapFor = { rotation: '#rotation', kontinenter: '#kontinenter' };
-function saet(navn, v) {
+function saet(navn, v, annoncer = true) {
+  const foer = tilstand.maal[navn];
   tilstand.maal[navn] = v;
   $(knapFor[navn]).setAttribute('aria-pressed', String(!!v));
+  if (!annoncer || foer === v) return;
   if (navn === 'rotation') meddel(v ? 'Jorden drejer: vinden bøjes af, og der er tre celler på hver halvkugle.' : 'Jorden står stille: vinden går lige mod ITK, og der er kun én celle på hver halvkugle.');
   if (navn === 'kontinenter') meddel(v ? 'Kontinenter til: ITK flytter sig langt ind over land.' : 'Kontinenter fra: den symmetriske model.');
 }
@@ -282,13 +290,13 @@ function trinvisning(globus) {
     prikker.append(b);
   });
   // Koreografien kan spilles igen fra knappen ↻ (elevstyret tempo og gentagelse).
-  let maanedFoer = 1;
+  let maanedFoer = JAEVNDOEGN;
   function spil(t, igen) {
     afslutKoreo();
     if (!t.koreografi || roligt) return;
     tilstand.koreo = { trin: t, t: 0, slut: slut(t) };
-    if (igen && har(tilstand, 'stille')) saet('rotation', 1);
-    if (t.saet && 'maaned' in t.saet) {
+    if (igen && t.saet) for (const navn of ['rotation', 'kontinenter']) if (navn in t.saet) saet(navn, t.saet[navn], false);
+    if (har(tilstand, 'maaned')) {
       if (!igen) maanedFoer = tilstand.maaned;
       Object.assign(tilstand.koreo, { fraMaaned: maanedFoer, tilMaaned: t.saet.maaned });
       saetMaaned(maanedFoer, false);
@@ -313,7 +321,7 @@ function trinvisning(globus) {
     $('#naeste').disabled = nr === TRIN.length - 1;
     tilstand.fremhaev = t.fremhaev;
     if (t.saet) {
-      for (const navn of ['rotation', 'kontinenter']) if (navn in t.saet) saet(navn, t.saet[navn]);
+      for (const navn of ['rotation', 'kontinenter']) if (navn in t.saet) saet(navn, t.saet[navn], false);
       if ('maaned' in t.saet && !har(tilstand, 'maaned')) saetMaaned(t.saet.maaned, false);
     }
     globus.flyvTil(...t.fokus);
