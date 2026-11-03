@@ -373,3 +373,9 @@ body.ressourcelag:not(.quiz) .quizsigte{display:block;font-size:22px;opacity:.75
 .landeklima-miks{list-style:none;padding:0;margin:0 0 8px;max-width:360px}
 .landeklima-miks li{display:grid;grid-template-columns:minmax(7em,auto) 1fr auto;align-items:center;gap:8px;font-size:13px}
 .landeklima-miks meter{width:100%;min-width:0}
+.landeklima-elpanel .landeklima-graf{max-width:720px}
+.landeklima-elkilder{display:flex;flex-wrap:wrap;gap:6px 12px;min-inline-size:0;margin:4px 0;padding:6px 9px;border:1px solid #17211f55;border-radius:4px;font:600 14px var(--display)}
+.landeklima-elkilder label{display:inline-flex;align-items:center;gap:4px;min-height:26px;cursor:pointer}
+dialog.landeklima-stor{width:min(1450px,calc(100% - 18px));max-height:calc(100svh - 20px)}
+.landeklima-stor-rum{padding:clamp(10px,2vw,22px)}
+.landeklima-stor .landeklima-graf{max-width:min(1100px,calc((100svh - 155px)*2.36))}

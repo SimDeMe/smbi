@@ -154,6 +154,7 @@ function medVaelger(rum, navn, muligheder, tegn) {
   rum.append(label, figurrum);
   felt.onchange = () => tegn(figurrum, felt.value);
   felt.onchange();
+  return felt.onchange;
 }
 
 export function visLandeklima(rum, lande, [ud, samfund, el, temperatur, hav], visLag) {
@@ -192,10 +193,37 @@ export function visLandeklima(rum, lande, [ud, samfund, el, temperatur, hav], vi
   const energi = afsnit('Energi og grøn omstilling', 'El produceret i landet. Skift mellem mængde og andel for at se, om fossil elproduktion falder, når vind og sol vokser.');
   const sidste = Math.max(2000, ...lande.flatMap(({ id }) => Object.keys(el.lande[id] ?? {}).map(Number)));
   const elaar = Array.from({ length: sidste - 1999 }, (_, i) => 2000 + i);
-  medVaelger(energi, 'Vis elproduktion', [['twh', 'TWh'], ['andel', 'Andel (%)']], (felt, maal) => {
+  const serier = [['fossil', 'Fossil i alt'], ...Object.entries(ELKILDER)];
+  const mulige = serier.filter(([kode]) => lande.some(({ id }) =>
+    elaar.some(aar => Number.isFinite(el.lande[id]?.[aar]?.[kode]))));
+  const viste = new Set(mulige.filter(([kode]) => ['fossil', 'wind', 'solar'].includes(kode)).map(([kode]) => kode));
+  if (!viste.size && mulige.length) viste.add(mulige[0][0]);
+
+  const grafpanel = element('div', '', 'landeklima-elpanel');
+  const kilder = element('fieldset', '', 'landeklima-elkilder');
+  kilder.append(element('legend', 'Energikilder'));
+  const visninger = element('div');
+  for (const [kode, navn] of mulige) {
+    const label = element('label', '');
+    const felt = element('input');
+    felt.type = 'checkbox';
+    felt.checked = viste.has(kode);
+    felt.onchange = () => {
+      if (felt.checked) viste.add(kode);
+      else viste.delete(kode);
+      tegn();
+    };
+    label.append(felt, navn);
+    kilder.append(label);
+  }
+  grafpanel.append(kilder, visninger);
+  const tegn = medVaelger(visninger, 'Vis elproduktion', [['twh', 'TWh'], ['andel', 'Andel (%)']], (felt, maal) => {
     const andel = maal === 'andel';
-    const serier = [['fossil', 'Fossil i alt'], ...Object.entries(ELKILDER)];
-    figurer(felt, lande, elaar, ({ id }) => serier.map(([kode, navn], i) => ({
+    if (mulige.length && !viste.size) {
+      felt.replaceChildren(element('p', 'Vælg en energikilde for at se grafen.', 'metadata'));
+      return;
+    }
+    figurer(felt, lande, elaar, ({ id }) => serier.flatMap(([kode, navn], i) => viste.has(kode) ? [{
       navn, farve: i ? FARVER[i - 1] : '#171c1b', stiplet: !i,
       tal: elaar.map(aar => {
         const raekke = el.lande[id]?.[aar];
@@ -203,8 +231,28 @@ export function visLandeklima(rum, lande, [ud, samfund, el, temperatur, hav], vi
         if (!andel) return tal;
         return Number.isFinite(tal) && raekke.total > 0 ? 100 * tal / raekke.total : null;
       })
-    })), andel ? '%' : 'TWh', andel ? [0, 100] : null);
+    }] : []), andel ? '%' : 'TWh', andel ? [0, 100] : null);
   });
+
+  const stor = element('dialog', '', 'landeklima-stor');
+  const storTitel = element('h2', `Elproduktion · ${lande.map(land => land.navn).join(' og ')}`);
+  storTitel.id = 'landeklima-elgraf-titel';
+  stor.setAttribute('aria-labelledby', storTitel.id);
+  const top = element('div', '', 'dialogtop');
+  top.append(storTitel, knap('Luk forstørret graf', () => stor.close()));
+  const storRum = element('div', '', 'landeklima-stor-rum');
+  stor.append(top, storRum);
+  const forstoer = knap('Forstør elgraf', () => {
+    storRum.append(grafpanel);
+    stor.showModal();
+  });
+  forstoer.setAttribute('aria-haspopup', 'dialog');
+  forstoer.disabled = !mulige.length;
+  stor.addEventListener('close', () => {
+    forstoer.after(grafpanel);
+    forstoer.focus({ preventScroll: true });
+  });
+  energi.append(forstoer, grafpanel, stor);
   const prim = element('details');
   prim.append(element('summary', `Primærenergimiks i ${samfund.energiaar}`),
     element('p', 'Primærenergi dækker også energi til fx transport, varme og industri. Opgjort med substitutionsmetoden, uden traditionel biomasse.', 'metadata'));
