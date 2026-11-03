@@ -7,11 +7,20 @@
    sted, men pilene — og magnetens poler — bytter retning.
    ═══════════════════════════════════════════════════════════ */
 import * as THREE from 'three';
-import {feltlinje} from './felt.js';
+import {feltlinje, feltlinjeStykke, breddeVed} from './felt.js';
 
 /* L er, hvor langt ude over ækvator en linje når, målt i jord-
-   radier. Otte magnetiske meridianer med tre linjer i hver. */
+   radier. Otte magnetiske meridianer med tre lukkede sløjfer i hver;
+   de rammer jorden ved 32°, 45° og 55° magnetisk bredde.
+
+   Linjerne tæt på polerne har så stort L, at de først vender langt
+   ude i rummet (i virkeligheden trækker solvinden dem ud i en lang
+   hale). Af dem vises kun den inderste del, der falmer ud ved R_MAKS.
+   De rammer jorden ved 63°, 73° og 81° — og aksen selv går lige ind
+   i polen — så linjerne samler sig i den magnetiske pol.         */
 const SKALLER = [1.4, 2.0, 3.0];
+const POLLINJER = [5, 12, 40];
+const R_MAKS = 3.4, FALM_FRA = 2.0;
 const MERIDIANER = 8;
 
 export function byggFeltlinjer(jord){
@@ -26,6 +35,25 @@ export function byggFeltlinjer(jord){
   const pilGeo   = new THREE.ConeGeometry(0.03, 0.085, 10);
   const Y = new THREE.Vector3(0, 1, 0);
 
+  /* Polernes linjer falmer ud med afstanden: en alfakanal pr. hjørne. */
+  const falmMat = new THREE.MeshBasicMaterial({color:0x8FD8F4, vertexColors:true, transparent:true, depthWrite:false});
+  function falmendeRør(pkt){
+    const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pkt), 40, 0.0065, 6, false);
+    const pos = geo.attributes.position, farve = new Float32Array(pos.count*4);
+    for(let i=0;i<pos.count;i++){
+      const r = Math.hypot(pos.getX(i), pos.getY(i), pos.getZ(i));
+      farve.set([1, 1, 1, 0.8*Math.max(0, Math.min(1, (R_MAKS-r)/(R_MAKS-FALM_FRA)))], i*4);
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(farve, 4));
+    return new THREE.Mesh(geo, falmMat);
+  }
+  function pilPaa(kurve, u){
+    const pil = new THREE.Mesh(pilGeo, pilMat);
+    pil.position.copy(kurve.getPointAt(u));
+    pil.quaternion.setFromUnitVectors(Y, kurve.getTangentAt(u));
+    linjer.add(pil);
+  }
+
   for(let m=0;m<MERIDIANER;m++){
     const phi = m/MERIDIANER*Math.PI*2;
     for(const L of SKALLER){
@@ -35,13 +63,29 @@ export function byggFeltlinjer(jord){
 
       /* Pile over ækvator og — på de store sløjfer — på vej op og ned. */
       const steder = L > 2.5 ? [0.22, 0.5, 0.78] : [0.5];
-      for(const u of steder){
-        const pil = new THREE.Mesh(pilGeo, pilMat);
-        pil.position.copy(kurve.getPointAt(u));
-        pil.quaternion.setFromUnitVectors(Y, kurve.getTangentAt(u));
-        linjer.add(pil);
+      for(const u of steder) pilPaa(kurve, u);
+    }
+
+    /* Polernes linjer: ét stykke ved hver pol. Punkterne følger
+       feltet — ud af jorden mod syd, ind i jorden mod nord. */
+    for(const L of POLLINJER){
+      const l0 = breddeVed(L, 1), lu = breddeVed(L, R_MAKS);
+      for(const [fra, til] of [[-l0, -lu], [lu, l0]]){
+        const pkt = feltlinjeStykke(L, phi, fra, til).map(p => new THREE.Vector3(...p));
+        linjer.add(falmendeRør(pkt));
+        if(L === POLLINJER[0]) pilPaa(new THREE.CatmullRomCurve3(pkt), 0.55);
       }
     }
+  }
+
+  /* Selve aksen er feltlinjen med uendeligt L. */
+  for(const s of [-1, 1]){
+    const pkt = [];
+    for(let i=0;i<=8;i++){
+      const r = s < 0 ? 1 + (R_MAKS-1)*i/8 : R_MAKS - (R_MAKS-1)*i/8;
+      pkt.push(new THREE.Vector3(0, s*r, 0));
+    }
+    linjer.add(falmendeRør(pkt));
   }
 
   /* ── Stangmagneten ─────────────────────────────────────── *

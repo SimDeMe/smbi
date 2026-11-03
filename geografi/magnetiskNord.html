@@ -102,40 +102,39 @@ a{color:inherit}
 
 /* ── Sidehoved ─────────────────────────────────────────── */
 .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-.head{padding:34px 0 22px;position:relative;overflow:hidden}
+.head{padding:20px 0 4px;position:relative;overflow:hidden}
 .head::before{
   content:'';position:absolute;width:380px;height:380px;border-radius:50%;
   background:#9BE0F5;filter:blur(70px);opacity:.5;top:-200px;right:-120px;z-index:0;
 }
 .head-in{position:relative;z-index:1}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFF6E0;padding:6px 14px;border-radius:20px}
-.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.8s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.8)}}
+.eyebrow .blink{width:8px;height:8px;border-radius:50%;background:var(--blue)}
 h1{
   font-family:var(--display);font-variation-settings:var(--wide);font-weight:800;
-  font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.03;letter-spacing:-0.032em;margin:16px 0 14px;
+  font-size:clamp(1.7rem,3.6vw,2.4rem);line-height:1.05;letter-spacing:-0.032em;margin:12px 0 8px;
 }
 .hi{position:relative;display:inline-block;z-index:0;white-space:nowrap}
 .hi::before{
   content:'';position:absolute;z-index:-1;left:-8px;right:-8px;top:12%;bottom:8%;
   background:var(--hc,var(--amber));border-radius:6px;transform:rotate(-1.3deg);
 }
-.lead{font-size:1.06rem;color:#3E4E4C;max-width:60ch}
+.lead{font-size:1rem;color:#3E4E4C;max-width:78ch}
 
 /* ── Signaturpanel ─────────────────────────────────────── */
 .rig{
   position:relative;background:var(--panel);
   border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;
-  box-shadow:var(--hard-lg);margin-top:26px;
+  box-shadow:var(--hard-lg);margin-top:18px;
 }
 .rig-bar{height:9px;background:var(--accent)}
 .rig-head{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:11px 15px;border-bottom:2px solid var(--ink);background:#E7F4FB;
+  padding:8px 15px;border-bottom:2px solid var(--ink);background:#E7F4FB;
 }
 .rig-live{display:flex;align-items:center;gap:7px}
 .rig-live .mono{color:var(--ink);font-weight:600}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);border:1.5px solid var(--ink);animation:pulse 2s ease-in-out infinite}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);border:1.5px solid var(--ink)}
 .rig-head .spacer{margin-left:auto}
 .btn-mini{
   font-family:var(--display);font-size:0.72rem;font-weight:700;
@@ -148,9 +147,12 @@ h1{
 .btn-mini[aria-pressed="true"]{background:var(--accent);color:#fff;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
 #btn-vend[aria-pressed="true"]{background:var(--pink)}
 
-/* ── Scenen: 3D til venstre, polkort til højre ─────────── */
+/* ── Scenen: 3D til venstre, aflæsninger til højre ─────── *
+ * Rækkens højde bestemmes af figuren alene: sidespalten ligger
+ * absolut i sin celle og må ikke trække panelet ud over skærmen.
+ * Polkortet tager den plads, der bliver tilbage.             */
 .stage{
-  position:relative;display:grid;grid-template-columns:1fr 300px;
+  position:relative;display:grid;grid-template-columns:1fr 340px;
   background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px;
 }
 .view{position:relative;padding:10px;touch-action:none}
@@ -163,21 +165,21 @@ h1{
   position:absolute;left:22px;top:22px;z-index:4;pointer-events:none;
   display:inline-flex;align-items:center;gap:9px;max-width:calc(100% - 44px);
   background:#fff;border:2px solid var(--ink);border-radius:22px;
-  padding:7px 14px 7px 11px;box-shadow:3px 3px 0 var(--ink);
+  padding:6px 13px 6px 10px;box-shadow:3px 3px 0 var(--ink);
 }
 .badge-dot{width:11px;height:11px;border-radius:4px;flex:none;border:1.5px solid var(--ink);background:var(--pc,var(--slate))}
-.badge-txt{font-family:var(--display);font-size:0.82rem;font-weight:700;line-height:1.25}
+.badge-txt{font-family:var(--display);font-size:0.8rem;font-weight:700;line-height:1.25}
 .hint{
   position:absolute;right:22px;bottom:22px;z-index:4;pointer-events:none;
-  font-family:var(--mono);font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--ink);background:rgba(255,249,238,.9);border:1.5px solid var(--ink);
+  font-family:var(--mono);font-size:0.64rem;font-weight:600;letter-spacing:0.06em;
+  color:var(--ink);background:rgba(255,249,238,.92);border:1.5px solid var(--ink);
   border-radius:14px;padding:4px 10px;transition:opacity .3s;
 }
 .hint.gone{opacity:0}
 .scalenote{
   position:absolute;left:22px;bottom:22px;z-index:4;pointer-events:none;
-  font-family:var(--mono);font-size:0.52rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
-  color:#FFF6E0;background:rgba(23,33,31,.72);border-radius:12px;padding:3px 9px;
+  font-family:var(--mono);font-size:0.62rem;font-weight:500;letter-spacing:0.04em;
+  color:#E6EEF2;background:rgba(23,33,31,.72);border-radius:12px;padding:3px 9px;
 }
 /* mærkater på figuren — placeres fra side.js */
 .ovl{
@@ -185,95 +187,103 @@ h1{
   font:700 0.66rem/1.1 var(--display);letter-spacing:0.01em;
   border:2px solid var(--ink);border-radius:13px;padding:2px 8px;
   transform:translate(-50%,-50%);transition:opacity .2s;
+  opacity:0;            /* side.js viser dem, når de har fået en plads */
 }
 .ovl-kompas{transform:translate(-50%,-150%);font-size:0.72rem;box-shadow:2px 2px 0 var(--ink)}
 .ovl-magnet{border-radius:50%;width:22px;height:22px;padding:0;display:grid;place-items:center;font-size:0.78rem}
 
-/* højre spalte: polkort + signaturforklaring */
-.side{border-left:2px solid var(--ink);background:#fff;display:flex;flex-direction:column}
-.side-h{padding:10px 14px 8px;border-bottom:2px solid var(--ink);background:var(--paper-2)}
-.side-h .mono{color:#5A6C69;font-size:0.57rem;display:block}
-.side-h b{font-family:var(--display);font-variation-settings:'wdth' 110;font-weight:800;font-size:1.02rem;line-height:1.15;display:block;margin-top:3px}
-.side-h .koord{font-family:var(--mono);font-size:0.62rem;font-weight:600;color:#5A6C69;margin-top:2px;display:block}
-.kort-box{padding:10px 12px 6px}
-.kort-box > .mono{color:#5A6C69;font-size:0.55rem;display:block;margin-bottom:6px}
-.kort-box canvas{display:block;width:100%;height:auto;margin:0 auto}
-.laes{list-style:none;margin:8px 0 2px;display:flex;flex-direction:column;gap:5px}
-.laes li{
-  display:flex;align-items:center;gap:8px;
-  font-family:var(--mono);font-size:0.55rem;font-weight:500;
-  letter-spacing:0.08em;text-transform:uppercase;color:#5A6C69;line-height:1.35;
+/* farveskalaen til misvisningskortet, nede i figurens hjørne */
+.legend{
+  position:absolute;left:22px;bottom:50px;z-index:4;width:230px;
+  background:rgba(255,255,255,.95);border:2px solid var(--ink);border-radius:12px;
+  padding:8px 10px 9px;box-shadow:3px 3px 0 var(--ink);
 }
-.laes i{width:14px;height:9px;border-radius:3px;border:1.5px solid var(--ink);flex:none}
-.laes i.streg{height:0;border:none;border-top:3px solid var(--c)}
-.laes i.prik{height:0;border:none;border-top:3px dotted var(--c)}
-.laes i.rombe{width:9px;transform:rotate(45deg);border-radius:1px;margin:0 2.5px}
-.legend{border-top:2px solid var(--ink);padding:10px 12px 12px;margin-top:auto;background:#F7FBFA}
-.legend .mono{color:#5A6C69;font-size:0.55rem;margin-bottom:7px;display:block}
-.lg-bar{height:13px;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.lg-tick{display:flex;justify-content:space-between;margin-top:4px}
-.lg-tick span{font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#5A6C69;letter-spacing:.04em}
-.legend.slukket{opacity:.45}
+.legend[hidden]{display:none}
+.legend .mono{color:#4A5C59;font-size:0.62rem;margin-bottom:5px;display:block}
+.lg-bar{height:12px;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
+.lg-tick{display:flex;justify-content:space-between;margin-top:3px}
+.lg-tick span{font-family:var(--mono);font-size:0.62rem;font-weight:600;color:#4A5C59}
+.legend .laes{margin-top:6px}
 
-/* ── Stedvælger ────────────────────────────────────────── */
-.places{
-  border-top:2px solid var(--ink);background:#fff;padding:11px 15px;
-  display:flex;gap:14px 22px;flex-wrap:wrap;align-items:flex-start;
+/* højre spalte: stedet, de fire aflæsninger og polkortet */
+.side{border-left:2px solid var(--ink);background:#fff;position:relative;min-width:0}
+.side-in{position:absolute;inset:0;display:flex;flex-direction:column;overflow:auto}
+.side-h{padding:6px 14px 8px;justify-content:space-between;border-bottom:2px solid var(--ink);background:var(--paper-2);display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px}
+.side-h .mono{color:#4A5C59;font-size:0.62rem}
+.side-h select{
+  font-family:var(--display);font-variation-settings:'wdth' 110;font-weight:800;font-size:1rem;
+  color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:10px;
+  padding:2px 6px;margin-top:3px;max-width:100%;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
 }
-.pl-group{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.pl-group > .mono{color:#5A6C69;font-size:0.55rem;width:100%;margin-bottom:1px}
-.pill{
-  font-family:var(--display);font-size:0.76rem;font-weight:700;
-  background:var(--paper);border:2px solid var(--ink);color:var(--ink);
-  padding:4px 12px;border-radius:20px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
-  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
-}
-.pill:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
-.pill[aria-pressed="true"]{background:var(--ink);color:#FFF6E0;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-.pill.vending{background:#FBD3E1}
-.pill.vending[aria-pressed="true"]{background:var(--ink)}
+.side-h .koord{font-family:var(--mono);font-size:0.68rem;font-weight:600;color:#4A5C59}
+.side-h select{flex:1 1 100%}
 
-/* ── Instrumenter ──────────────────────────────────────── */
-.gauges{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink)}
-.gauge{padding:13px 15px 14px;border-left:2px solid var(--ink);display:flex;flex-direction:column;gap:9px}
-.gauge:first-child{border-left:none}
+/* ── Instrumenter: 2 × 2 ───────────────────────────────── */
+.gauges{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--ink);flex:none}
+.gauge{
+  padding:6px 11px 7px;min-width:0;
+  display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:9px;row-gap:2px;align-items:center;
+}
+.gauge dt{grid-column:1/-1}
+.gauge .g-viz{display:contents}
+.gauge svg{grid-column:1;grid-row:2 / span 2}
+.gauge dd{grid-column:2;grid-row:2}
+.gauge .g-sub{grid-column:2;grid-row:3;align-self:start}
+/* Misvisning og inklination står allerede med retning i tallet. */
+.g-misv .g-sub,.g-inkl .g-sub{display:none}
+.g-felt .col{grid-column:1;grid-row:2 / span 2}
+.gauge:nth-child(2n){border-left:2px solid var(--ink)}
+.gauge:nth-child(n+3){border-top:2px solid var(--ink)}
 .g-misv{background:#FFF1EC}
 .g-inkl{background:#F1ECFC}
 .g-felt{background:#EDF8E4}
 .g-pol{background:#E7F4FB}
-.gauge dt{font-family:var(--mono);font-size:0.57rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5A6C69}
+.gauge dt{font-family:var(--mono);font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A5C59}
 .gauge dd{
   font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;
-  font-size:1.28rem;line-height:1;font-variant-numeric:tabular-nums;
+  font-size:1.25rem;line-height:1.05;font-variant-numeric:tabular-nums;
 }
-.gauge dd small{font-size:0.62em;font-weight:700;color:#5A6C69;margin-left:4px;text-transform:none}
-.g-viz{display:flex;align-items:center;gap:10px;height:46px}
-.g-viz svg{height:46px;width:auto;flex:none;overflow:visible}
-.g-viz .ticks{display:flex;flex-direction:column;justify-content:space-between;height:44px}
-.ticks span{font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#7E8F8C;letter-spacing:.04em}
-.g-sub{font-family:var(--mono);font-size:0.55rem;font-weight:600;color:#5A6C69;letter-spacing:.06em;line-height:1.3}
+.gauge dd small{font-size:0.6em;font-weight:700;color:#4A5C59;margin-left:4px;text-transform:none}
+.gauge svg{height:36px;width:auto;flex:none;overflow:visible}
+.g-sub{font-family:var(--mono);font-size:0.62rem;font-weight:500;color:#4A5C59;line-height:1.3}
 
-/* feltstyrke */
+/* feltstyrke: en lodret søjle fra 20 til 70 µT */
 .col{
-  position:relative;width:100%;max-width:130px;height:30px;flex:1;
-  border:2px solid var(--ink);border-radius:9px;overflow:hidden;
-  background:repeating-linear-gradient(90deg,rgba(23,33,31,.09) 0 1.5px,transparent 1.5px 20%),#fff;
+  position:relative;width:16px;height:36px;margin:0 9px 0 11px;
+  border:2px solid var(--ink);border-radius:6px;overflow:hidden;
+  background:repeating-linear-gradient(0deg,rgba(23,33,31,.12) 0 1.5px,transparent 1.5px 20%),#fff;
 }
-.col i{position:absolute;left:0;bottom:0;top:0;display:block;background:linear-gradient(90deg,#5FB030,#0FA593);width:0%;border-right:2px solid var(--ink);transition:width .2s}
-.col b{position:absolute;right:5px;bottom:2px;font-family:var(--mono);font-size:0.5rem;font-weight:600;color:#5A6C69;letter-spacing:.06em;background:rgba(255,255,255,.82);border-radius:5px;padding:0 3px}
+.col i{position:absolute;left:0;right:0;bottom:0;display:block;background:linear-gradient(0deg,#5FB030,#0FA593);height:0%;border-top:2px solid var(--ink);transition:height .2s}
 
-/* ── Kontrolpanel ──────────────────────────────────────── */
-.knobs{
-  border-top:2px solid var(--ink);background:var(--paper-2);padding:18px 15px 20px;
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 26px;
+/* polkortet fylder resten af spalten */
+.kort-box{flex:1 1 auto;min-height:120px;display:flex;flex-direction:column;padding:8px 12px 8px}
+.kort-box > .mono{color:#4A5C59;font-size:0.62rem;display:block;margin-bottom:4px}
+/* På lave skærme får kortet selv pladsen; signaturerne kan undværes. */
+@media (max-height:640px) and (min-width:821px){ .kort-box .laes{display:none} }
+.kort-flade{flex:1 1 auto;min-height:0;position:relative}
+.kort-flade canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;max-width:100%;max-height:100%}
+.laes{list-style:none;margin:6px 0 0;display:flex;flex-wrap:wrap;gap:4px 12px}
+.laes li{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:0.62rem;font-weight:500;color:#4A5C59;line-height:1.3;
 }
-.knob{display:flex;flex-direction:column;gap:7px}
+.laes i{width:14px;height:9px;border-radius:3px;border:1.5px solid var(--ink);flex:none}
+.laes i.streg{height:0;border:none;border-top:3px solid var(--c)}
+.laes i.rombe{width:9px;transform:rotate(45deg);border-radius:1px;margin:0 2.5px}
+
+/* ── Betjening under figuren ───────────────────────────── */
+.betjening{
+  border-top:2px solid var(--ink);background:var(--paper-2);padding:10px 15px 12px;
+  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:10px 26px;align-items:start;
+}
+.knob{display:flex;flex-direction:column;gap:4px;min-width:0}
+.knob-par{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 18px;min-width:0}
 .knob-top{display:flex;align-items:baseline;gap:10px}
-.knob-top .mono{color:#5A6C69;font-size:0.62rem}
+.knob-top .mono{color:#4A5C59;font-size:0.64rem}
 .knob-val{
   margin-left:auto;font-family:var(--display);font-variation-settings:'wdth' 108;
-  font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;
-  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:1px 11px;white-space:nowrap;
+  font-weight:800;font-size:0.95rem;font-variant-numeric:tabular-nums;
+  background:#fff;border:2px solid var(--ink);border-radius:16px;padding:0 10px;white-space:nowrap;
 }
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer}
 input[type=range]::-webkit-slider-runnable-track{height:10px;border:2px solid var(--ink);border-radius:9px;background:var(--track,#fff)}
@@ -288,15 +298,27 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bor
 #inp-lon{--track:linear-gradient(90deg,#E2D6F8,#FFF,#E2D6F8);--kc:var(--grape)}
 .knob.frit .knob-val{background:#FBD3E1}
 
+.pl-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pill{
+  font-family:var(--display);font-size:0.74rem;font-weight:700;
+  background:var(--paper);border:2px solid var(--ink);color:var(--ink);
+  padding:3px 10px;border-radius:20px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s,background .16s,color .16s;
+}
+.pill:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.pill[aria-pressed="true"]{background:var(--ink);color:#FFF6E0;transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.pill.vending{background:#FBD3E1}
+.pill.vending[aria-pressed="true"]{background:var(--ink)}
+
 /* ── Fakta-fod ─────────────────────────────────────────── */
-.facts{border-top:2px solid var(--ink);background:#fff;padding:12px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.facts{border-top:2px solid var(--ink);background:#fff;padding:10px 15px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
 .fact{
   display:inline-flex;align-items:center;gap:8px;background:var(--paper);
   border:2px solid var(--ink);border-radius:22px;padding:5px 13px;
   font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
 }
 .fact::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--fc,var(--slate));border:1.5px solid var(--ink)}
-.fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0}
+.fact b{font-family:var(--display);font-size:0.84rem;font-weight:800;letter-spacing:0;text-transform:none}
 
 /* ── Bund ──────────────────────────────────────────────── */
 .foot{margin-top:34px;background:var(--ink);color:#FFF6E0;padding:26px 0 32px}
@@ -318,6 +340,7 @@ body[data-projektor="1"] .top,
 body[data-projektor="1"] .head,
 body[data-projektor="1"] .foot{display:none}
 body[data-projektor="1"] .wrap{max-width:none;padding:0 14px}
+body[data-projektor="1"] .stage{grid-template-columns:1fr 380px}
 body[data-projektor="1"] .rig{margin-top:14px;box-shadow:var(--hard)}
 body[data-projektor="1"] .gauge dt{font-size:0.78rem}
 body[data-projektor="1"] .gauge dd{font-size:1.9rem}
@@ -330,23 +353,23 @@ body[data-projektor="1"] .knob-val{font-size:1.05rem}
 body[data-projektor="1"] .pill{font-size:0.92rem}
 body[data-projektor="1"] .fact{font-size:0.74rem}
 body[data-projektor="1"] .fact b{font-size:0.92rem}
-body[data-projektor="1"] .side-h b{font-size:1.2rem}
+body[data-projektor="1"] .side-h select{font-size:1.15rem}
 
 /* ── Responsivt ────────────────────────────────────────── */
-@media (max-width:960px){
-  .stage{grid-template-columns:1fr}
-  .side{border-left:none;border-top:2px solid var(--ink);flex-direction:row;flex-wrap:wrap}
-  .side-h{flex:1 1 100%}
-  .kort-box{flex:1 1 300px;max-width:420px}
-  .legend{flex:1 1 240px;margin-top:0;border-top:none;border-left:2px solid var(--ink)}
-  .knobs{grid-template-columns:1fr 1fr}
-}
-@media (max-width:700px){
-  .gauges{grid-template-columns:1fr 1fr}
-  .gauge:nth-child(3){border-left:none}
-  .gauge:nth-child(n+3){border-top:2px solid var(--ink)}
-  .kort-box{max-width:none}
-  .legend{border-left:none;border-top:2px solid var(--ink)}
+/* Smalt: figuren øverst, aflæsningerne under den i almindeligt flow. */
+@media (max-width:820px){
+  /* Skyderne rykker op lige under figuren; aflæsningerne følger efter. */
+  .rig{display:flex;flex-direction:column}
+  .stage{display:contents}
+  .view{order:1;background:radial-gradient(circle at 1px 1px,#E6EDEB 1px,transparent 0) 0 0/16px 16px}
+  .betjening{order:2}
+  .side{order:3}
+  .facts{order:4}
+  .side{border-left:none;border-top:2px solid var(--ink)}
+  .side-in{position:static;overflow:visible}
+  .kort-box{min-height:0}
+  .kort-flade{flex:none;width:100%;max-width:320px;aspect-ratio:1;margin:0 auto}
+  .legend{width:200px}
 }
 @media (max-width:620px){
   /* Mærkaterne ved polerne skal ikke sejle oven i hinanden på en
@@ -355,20 +378,21 @@ body[data-projektor="1"] .side-h b{font-size:1.2rem}
   .ovl-geo{display:none}
   body{font-size:16px}
   .wrap,.top-in,.foot-in{padding-left:16px;padding-right:16px}
-  .head{padding:24px 0 18px}
   .rig{border-radius:14px;box-shadow:var(--hard)}
-  .knobs{grid-template-columns:1fr;padding:16px}
-  .places,.facts,.rig-head{padding-left:16px;padding-right:16px}
+  .betjening{grid-template-columns:1fr;padding:12px 16px}
+  .knob-par{grid-template-columns:1fr}
+  .facts,.rig-head{padding-left:16px;padding-right:16px}
   .badge{left:16px;top:16px;padding:5px 11px 5px 9px;max-width:calc(100% - 32px)}
   .badge-txt{font-size:0.72rem}
   .hint{display:none}
+  .legend{left:16px;bottom:44px}
   .gauge dd{font-size:1.1rem}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
 @media print{
-  .top,.foot,.knobs,.places,.rig-head .btn-mini,.hint{display:none!important}
+  .top,.foot,.betjening,.rig-head .btn-mini,.hint{display:none!important}
   .rig{box-shadow:none;break-inside:avoid}
 }
 </style>
@@ -480,126 +504,128 @@ body[data-projektor="1"] .side-h b{font-size:1.2rem}
           </div>
           <div class="hint" id="hint">Træk for at dreje · klik for at flytte kompasset</div>
           <div class="scalenote">Model: én stangmagnet i jordens centrum</div>
-        </div>
-
-        <aside class="side">
-          <div class="side-h">
-            <span class="mono">Kompasset står i</span>
-            <b id="sted-navn">København</b>
-            <span class="koord" id="sted-koord">55,7° N · 12,6° Ø</span>
-          </div>
-          <div class="kort-box">
-            <span class="mono">Magnetisk nordpol set fra oven</span>
-            <canvas id="polkort" width="560" height="560" aria-hidden="true"></canvas>
-            <p class="sr" id="polkort-sr"></p>
-            <ul class="laes">
-              <li><i class="streg" style="--c:#FFB300"></i>Polens vej 1831–2025</li>
-              <li><i class="rombe" style="background:#E8336D"></i>Magnetisk nordpol nu</li>
-              <li><i style="background:#FFF6E0;border-radius:50%;width:9px;margin:0 2.5px"></i>Kompasset</li>
-            </ul>
-          </div>
-          <div class="legend slukket" id="legend">
-            <span class="mono">Misvisningskortet</span>
+          <!-- Farveskalaen står ved figuren og kun, når kortet er tændt. -->
+          <div class="legend" id="legend" hidden>
+            <span class="mono">Misvisning</span>
             <div class="lg-bar" id="lg-bar"></div>
             <div class="lg-tick">
               <span>40° V</span><span>20°</span><span>0°</span><span>20°</span><span>40° Ø</span>
             </div>
             <ul class="laes">
-              <li><i class="streg" style="--c:#17211F"></i>Kompasset peger lige mod nord</li>
+              <li><i class="streg" style="--c:#17211F"></i>Peger lige mod nord</li>
               <li><i class="streg" style="--c:#8A9290;border-top-width:1.5px"></i>For hver 10°</li>
               <li><i style="background:#3A2C60"></i>Mørk lilla: nålen peger mod syd</li>
             </ul>
           </div>
+        </div>
+
+        <aside class="side">
+          <div class="side-in">
+            <div class="side-h">
+              <label class="mono" for="sted-vaelg">Kompasset står i</label>
+              <span class="koord" id="sted-koord">55,7° N · 12,6° Ø</span>
+              <select id="sted-vaelg"></select>
+            </div>
+
+            <dl class="gauges">
+              <div class="gauge g-misv">
+                <dt>Misvisning</dt>
+                <dd id="val-misv">5,6°<small>øst</small></dd>
+                <div class="g-viz">
+                  <svg viewBox="-24 -28 48 52" aria-hidden="true">
+                    <circle r="21" fill="#fff" stroke="#17211F" stroke-width="2.5"/>
+                    <path d="M0 -21 L-4 -27 L4 -27 Z" fill="#FFB300" stroke="#17211F" stroke-width="1.5"/>
+                    <g id="rose-naal">
+                      <path d="M0 -17 L4 0 L-4 0 Z" fill="#E8336D" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
+                      <path d="M0 17 L4 0 L-4 0 Z" fill="#E4E0D4" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
+                    </g>
+                    <circle r="2.2" fill="#17211F"/>
+                  </svg>
+                  <span class="g-sub" id="sub-misv">Nålen peger<br>øst for nord</span>
+                </div>
+              </div>
+
+              <div class="gauge g-inkl">
+                <dt>Inklination</dt>
+                <dd id="val-inkl">69°<small>ned</small></dd>
+                <div class="g-viz">
+                  <svg viewBox="-26 -24 52 48" aria-hidden="true">
+                    <path d="M-24 0 H24" stroke="#17211F" stroke-width="2" stroke-dasharray="3 3"/>
+                    <path d="M0 0 L22 0 A22 22 0 0 1 0 22" fill="none" stroke="#C9BDEB" stroke-width="1.5"/>
+                    <g id="inkl-naal">
+                      <path d="M20 0 L0 3.5 L0 -3.5 Z" fill="#E8336D" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
+                      <path d="M-20 0 L0 3.5 L0 -3.5 Z" fill="#E4E0D4" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
+                    </g>
+                    <circle r="2.2" fill="#17211F"/>
+                  </svg>
+                  <span class="g-sub" id="sub-inkl">Nordenden<br>dykker ned</span>
+                </div>
+              </div>
+
+              <div class="gauge g-felt">
+                <dt>Feltstyrke</dt>
+                <dd id="val-felt">51<small>µT</small></dd>
+                <div class="g-viz">
+                  <div class="col"><i id="anim-felt"></i></div>
+                  <span class="g-sub">skala 20–70 µT</span>
+                </div>
+              </div>
+
+              <div class="gauge g-pol">
+                <dt>Magnetisk nordpol</dt>
+                <dd id="val-pol">470<small>km</small></dd>
+                <div class="g-viz">
+                  <svg viewBox="-20 -24 40 48" aria-hidden="true">
+                    <path d="M0 -22 V22" stroke="#17211F" stroke-width="2.5"/>
+                    <g id="akse-mag"><path d="M0 -22 V22" stroke="#E8336D" stroke-width="2.5" stroke-dasharray="4 3"/></g>
+                    <circle r="9" fill="#C7E6F6" stroke="#17211F" stroke-width="2"/>
+                  </svg>
+                  <span class="g-sub" id="sub-pol">fra Nordpolen</span>
+                </div>
+              </div>
+            </dl>
+
+            <div class="kort-box">
+              <span class="mono">Magnetisk nordpol set fra oven</span>
+              <div class="kort-flade">
+                <canvas id="polkort" width="560" height="560" aria-hidden="true"></canvas>
+              </div>
+              <p class="sr" id="polkort-sr"></p>
+              <ul class="laes">
+                <li><i class="streg" style="--c:#FFB300"></i>Polens vej</li>
+                <li><i class="rombe" style="background:#E8336D"></i>Polen nu</li>
+                <li><i style="background:#FFF6E0;border-radius:50%;width:9px;margin:0 2.5px"></i>Kompasset</li>
+              </ul>
+            </div>
+          </div>
         </aside>
       </div>
 
-      <div class="places" id="places">
-        <div class="pl-group" id="grp-kompas">
-          <span class="mono">Sæt kompasset i — eller klik på kloden</span>
-        </div>
-        <div class="pl-group" id="grp-aar">
-          <span class="mono">Magnetisk nordpol i året</span>
-        </div>
-      </div>
-
-      <dl class="gauges">
-        <div class="gauge g-misv">
-          <dt>Misvisning</dt>
-          <div class="g-viz">
-            <svg viewBox="-24 -24 48 48" aria-hidden="true">
-              <circle r="21" fill="#fff" stroke="#17211F" stroke-width="2.5"/>
-              <path d="M0 -21 L-4 -27 L4 -27 Z" fill="#FFB300" stroke="#17211F" stroke-width="1.5"/>
-              <g id="rose-naal">
-                <path d="M0 -17 L4 0 L-4 0 Z" fill="#E8336D" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M0 17 L4 0 L-4 0 Z" fill="#E4E0D4" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
-              </g>
-              <circle r="2.2" fill="#17211F"/>
-            </svg>
-            <span class="g-sub" id="sub-misv">Nålen peger<br>øst for nord</span>
-          </div>
-          <dd id="val-misv">5,6°<small>øst</small></dd>
-        </div>
-
-        <div class="gauge g-inkl">
-          <dt>Inklination</dt>
-          <div class="g-viz">
-            <svg viewBox="-26 -24 52 48" aria-hidden="true">
-              <path d="M-24 0 H24" stroke="#17211F" stroke-width="2" stroke-dasharray="3 3"/>
-              <path d="M0 0 L22 0 A22 22 0 0 1 0 22" fill="none" stroke="#C9BDEB" stroke-width="1.5"/>
-              <g id="inkl-naal">
-                <path d="M20 0 L0 3.5 L0 -3.5 Z" fill="#E8336D" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M-20 0 L0 3.5 L0 -3.5 Z" fill="#E4E0D4" stroke="#17211F" stroke-width="1.5" stroke-linejoin="round"/>
-              </g>
-              <circle r="2.2" fill="#17211F"/>
-            </svg>
-            <span class="g-sub" id="sub-inkl">Nordenden<br>dykker ned</span>
-          </div>
-          <dd id="val-inkl">69°<small>ned</small></dd>
-        </div>
-
-        <div class="gauge g-felt">
-          <dt>Feltstyrke</dt>
-          <div class="g-viz">
-            <div class="col"><i id="anim-felt"></i><b>20–70 <span class="enhed">µT</span></b></div>
-          </div>
-          <dd id="val-felt">51<small>µT</small></dd>
-        </div>
-
-        <div class="gauge g-pol">
-          <dt>Magnetisk nordpol</dt>
-          <div class="g-viz">
-            <svg viewBox="-20 -24 40 48" aria-hidden="true">
-              <path d="M0 -22 V22" stroke="#17211F" stroke-width="2.5"/>
-              <g id="akse-mag"><path d="M0 -22 V22" stroke="#E8336D" stroke-width="2.5" stroke-dasharray="4 3"/></g>
-              <circle r="9" fill="#C7E6F6" stroke="#17211F" stroke-width="2"/>
-            </svg>
-            <span class="g-sub" id="sub-pol">4,2° mellem<br>akserne</span>
-          </div>
-          <dd id="val-pol">470<small>km fra Nordpolen</small></dd>
-        </div>
-      </dl>
-
-      <div class="knobs">
-        <div class="knob" id="knob-aar">
+      <!-- Betjeningen ligger lige under figuren: årstal, polen og kompas. -->
+      <div class="betjening">
+        <div class="knob knob-bred" id="knob-aar">
           <div class="knob-top">
             <label class="mono" for="inp-aar">Årstal</label>
             <span class="knob-val" id="v-aar">2025</span>
           </div>
           <input type="range" id="inp-aar" min="1831" max="2025" step="1" value="2025" aria-describedby="v-aar">
+          <div class="pl-group" id="grp-aar" role="group" aria-label="Magnetisk nordpol i året"></div>
         </div>
-        <div class="knob" id="knob-lat">
-          <div class="knob-top">
-            <label class="mono" for="inp-lat">Polens breddegrad</label>
-            <span class="knob-val" id="v-lat">85,8° N</span>
+        <div class="knob-par">
+          <div class="knob" id="knob-lat">
+            <div class="knob-top">
+              <label class="mono" for="inp-lat">Polens bredde</label>
+              <span class="knob-val" id="v-lat">85,8° N</span>
+            </div>
+            <input type="range" id="inp-lat" min="-90" max="90" step="0.5" value="85.8" aria-describedby="v-lat">
           </div>
-          <input type="range" id="inp-lat" min="-90" max="90" step="0.5" value="85.8" aria-describedby="v-lat">
-        </div>
-        <div class="knob" id="knob-lon">
-          <div class="knob-top">
-            <label class="mono" for="inp-lon">Polens længdegrad</label>
-            <span class="knob-val" id="v-lon">139,3° Ø</span>
+          <div class="knob" id="knob-lon">
+            <div class="knob-top">
+              <label class="mono" for="inp-lon">Polens længde</label>
+              <span class="knob-val" id="v-lon">139,3° Ø</span>
+            </div>
+            <input type="range" id="inp-lon" min="-180" max="180" step="0.5" value="139.3" aria-describedby="v-lon">
           </div>
-          <input type="range" id="inp-lon" min="-180" max="180" step="0.5" value="139.3" aria-describedby="v-lon">
         </div>
       </div>
 
@@ -651,9 +677,10 @@ body[data-projektor="1"] .side-h b{font-size:1.2rem}
 (function(){
   const rig = document.querySelector('.rig');
   const fig = document.querySelector('.view canvas');
-  if(!rig || !fig) return;
+  const bund = document.querySelector('.betjening');
+  if(!rig || !fig || !bund) return;
   const bjaelke = document.querySelector('.top');
-  const MIN = 240, MAKS = 620, LUFT = 16;
+  const MIN = 260, MAKS = 620, LUFT = 12;
   let sidst = 0, panel = 0, ventende = false;
 
   function saet(h){
@@ -669,13 +696,16 @@ body[data-projektor="1"] .side-h b{font-size:1.2rem}
     const krom = bjaelke && getComputedStyle(bjaelke).display !== 'none'
                ? bjaelke.getBoundingClientRect().height : 0;
     const rum  = innerHeight - krom - LUFT;
-    const fast = rig.getBoundingClientRect().height - fig.getBoundingClientRect().height;
+    /* Figur, aflæsninger og betjening skal kunne ses samtidig;
+       faktaboksene under betjeningen må gerne ligge uden for. */
+    const brugt = bund.getBoundingClientRect().bottom - rig.getBoundingClientRect().top;
+    const fast = brugt - fig.getBoundingClientRect().height;
     const h    = Math.round(rum - fast);
     if(h < MAKS){
       saet(Math.max(MIN, h));
-      /* Hjalp det ikke — fx fordi sidespalten er højere end figuren —
-         så får figuren pladsen igen. */
-      if(rig.getBoundingClientRect().height > rum + 24) saet(MAKS);
+      /* Hjalp det ikke — fx på en telefon, hvor aflæsningerne står
+         under figuren — så får figuren pladsen igen. */
+      if(bund.getBoundingClientRect().bottom - rig.getBoundingClientRect().top > rum + 24) saet(MAKS);
     }
     panel = rig.getBoundingClientRect().height;
   }

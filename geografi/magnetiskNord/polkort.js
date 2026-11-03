@@ -5,6 +5,9 @@
    med centrum i den geografiske nordpol) med polens spor siden
    1831, polen lige nu og kompassets plads. Rækker polen længere
    mod syd, end kortet når, vokser kortet med.
+
+   Kortet er kvadratisk og fylder sin boks (lærredets forælder)
+   så godt, det kan — boksens størrelse bestemmes af siden.
    ═══════════════════════════════════════════════════════════ */
 import {RINGE} from './kyst.js';
 import {POLSPOR} from './poler.js';
@@ -14,6 +17,9 @@ const INK = '#17211F';
 
 export function byggPolkort(lærred){
   const g = lærred.getContext('2d');
+  const boks = lærred.parentElement;
+  let sidst = null;
+  new ResizeObserver(() => sidst && tegn(sidst)).observe(boks);
 
   /**
    * @param pol     {lat, lon} — den magnetiske pol på den nordlige halvkugle
@@ -21,12 +27,15 @@ export function byggPolkort(lærred){
    * @param kompas  {lat, lon}
    * @param etiket  årstallet eller en kort tekst til kortets hjørne
    */
-  function tegn({pol, nordpol, kompas, etiket}){
+  function tegn(til){
+    sidst = til;
+    const {pol, nordpol, kompas, etiket} = til;
     const dpr = Math.min(devicePixelRatio || 1, 2);
-    const bw = lærred.clientWidth || 280, bh = bw;
+    const bw = Math.floor(Math.min(boks.clientWidth || 280, boks.clientHeight || 280)), bh = bw;
+    if(bw < 40) return;
     if(lærred.width !== Math.round(bw*dpr)){
       lærred.width = Math.round(bw*dpr); lærred.height = Math.round(bh*dpr);
-      lærred.style.height = bh+'px';
+      lærred.style.width = bw+'px'; lærred.style.height = bh+'px';
     }
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, bw, bh);
@@ -80,7 +89,7 @@ export function byggPolkort(lærred){
       g.beginPath(); g.arc(x, y, 2.6, 0, Math.PI*2);
       g.fillStyle = '#FFB300'; g.fill(); g.strokeStyle = INK; g.lineWidth = 1.2; g.stroke();
     }
-    g.font = '600 9px "IBM Plex Mono", monospace';
+    g.font = '600 10px "IBM Plex Mono", monospace';
     g.textAlign = 'center';
     const FORSKYD = {1831:[-4, 15], 2001:[0, -8], 2025:[14, -8]};
     for(const p of POLSPOR.filter(p => FORSKYD[p.aar])){
@@ -118,7 +127,7 @@ export function byggPolkort(lærred){
     g.strokeStyle = INK; g.lineWidth = 2; g.stroke();
 
     /* kantens breddegrad */
-    g.font = '600 8px "IBM Plex Mono", monospace'; g.textAlign = 'left'; g.fillStyle = '#5A6C69';
+    g.font = '600 10px "IBM Plex Mono", monospace'; g.textAlign = 'left'; g.fillStyle = '#5A6C69';
     g.fillText(Math.round(kantLat)+'° N', 4, bh-4);
     g.textAlign = 'right';
     g.fillText(etiket, bw-4, bh-4);

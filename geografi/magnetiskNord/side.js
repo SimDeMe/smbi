@@ -116,11 +116,14 @@ function pille(tekst, fn, klasse){
   b.addEventListener('click', fn);
   return b;
 }
-for(const s of STEDER){
-  const b = pille(s.navn, () => vaelgSted(s.id, true));
-  b.dataset.sted = s.id;
-  el('grp-kompas').appendChild(b);
-}
+/* Stederne står i en rulleliste; et klik på kloden giver et
+   «valgt sted», som listen så viser. */
+const stedVaelg = el('sted-vaelg');
+for(const s of STEDER) stedVaelg.add(new Option(s.navn, s.id));
+const egetSted = new Option('Valgt sted på kloden', '');
+egetSted.disabled = true;
+stedVaelg.add(egetSted);
+stedVaelg.addEventListener('change', () => { if(stedVaelg.value) vaelgSted(stedVaelg.value, true); });
 for(const aar of AAR_KNAPPER){
   const b = pille(String(aar), () => saetAar(aar));
   b.dataset.aar = aar;
@@ -241,9 +244,8 @@ function tegnTilstand(){
   tryk('btn-linjer', S.linjer); tryk('btn-akser', S.akser); tryk('btn-magnet', S.magnet);
   tryk('btn-kort', S.kort); tryk('btn-vend', S.vendt); tryk('btn-drej', S.drej);
   tryk('btn-projektor', S.projektor);
-  el('legend').classList.toggle('slukket', !S.kort);
-  document.querySelectorAll('.pill[data-sted]').forEach(b =>
-    b.setAttribute('aria-pressed', String(b.dataset.sted === S.kompas.id)));
+  el('legend').hidden = !S.kort;
+  stedVaelg.value = S.kompas.id || '';
   document.querySelectorAll('.pill[data-aar]').forEach(b =>
     b.setAttribute('aria-pressed', String(
       b.dataset.aar === 'vending' ? S.epoke === 'vending' : (+b.dataset.aar === S.aar && !S.vendt))));
@@ -261,7 +263,6 @@ function tegnTilstand(){
 
   /* kompasset */
   const stedNavn = S.kompas.navn || 'Valgt sted';
-  el('sted-navn').textContent = stedNavn;
   el('sted-koord').textContent = bredde(S.kompas.lat) + ' · ' + laengde(S.kompas.lon);
   kompasMærkat.d.textContent = S.kompas.navn || 'Kompas';
 
@@ -279,14 +280,14 @@ function tegnTilstand(){
   el('sub-inkl').innerHTML = I >= 0 ? 'Nordenden<br>dykker ned' : 'Nordenden<br>peger op';
 
   el('val-felt').innerHTML = dec(a.F, 0) + '<small>µT</small>';
-  el('anim-felt').style.width = Math.max(0, Math.min(100, (a.F-20)/50*100)).toFixed(1) + '%';
+  el('anim-felt').style.height = Math.max(0, Math.min(100, (a.F-20)/50*100)).toFixed(1) + '%';
 
   const km = afstandKm(kropPos(mod.lat, mod.lon), [0, 1, 0]);
   const vinkel = 90 - Math.abs(S.pol.lat);
   el('val-pol').innerHTML = String(Math.round(km/10)*10).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-    + '<small>km fra Nordpolen</small>';
+    + '<small>km</small>';
   el('akse-mag').setAttribute('transform', `rotate(${(S.pol.lat >= 0 ? 1 : -1)*vinkel})`);
-  el('sub-pol').innerHTML = dec(vinkel) + '° mellem<br>akserne';
+  el('sub-pol').title = dec(vinkel) + '° mellem omdrejningsaksen og den magnetiske akse';
 
   /* figurens forklaring */
   let tekst, pc = 'var(--pink)';

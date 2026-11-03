@@ -123,10 +123,24 @@ export function storcirkel(a, b, n, r = 1){
     Punkterne går fra den sydlige til den nordlige fodende — samme
     vej som feltet, når det ikke er vendt.                        */
 export function feltlinje(L, phi, n = 72){
-  const l0 = Math.acos(Math.sqrt(1/L));
+  const l0 = breddeVed(L, 1);
+  return feltlinjeStykke(L, phi, -l0, l0, n);
+}
+
+/** Den magnetiske bredde (radianer, ≥ 0), hvor linjen L er i
+    afstanden r fra centrum: r = L·cos²λ. For r = 1 er det linjens
+    fodpunkt på jorden — jo større L, jo tættere på polen.        */
+export function breddeVed(L, r){
+  return Math.acos(Math.sqrt(Math.min(1, r/L)));
+}
+
+/** Stykket af feltlinjen L mellem to magnetiske bredder (radianer),
+    i samme system som feltlinje(). Bruges til linjerne nær polerne,
+    der når så langt ud, at kun den inderste del vises.            */
+export function feltlinjeStykke(L, phi, lamFra, lamTil, n = 40){
   const ud = [];
   for(let i=0;i<=n;i++){
-    const lam = -l0 + 2*l0*i/n, r = L*Math.cos(lam)**2;
+    const lam = lamFra + (lamTil-lamFra)*i/n, r = L*Math.cos(lam)**2;
     ud.push([r*Math.cos(lam)*Math.cos(phi), r*Math.sin(lam), r*Math.cos(lam)*Math.sin(phi)]);
   }
   return ud;
