@@ -28,8 +28,9 @@ processer forbliver synlige ved næste trin. Der bruges ingen tilfældige
 partikler eller retninger.
 
 De få baner viser udvalgte retninger, ikke hele fordelingen af stråling.
-Atmosfærens egne baner udgår fra et repræsentativt sted, som er adskilt fra
-absorptionspunkterne, og vises samtidig mod overfladen, opad og skråt.
+Fra hvert drivhusgassymbol vises én bane mod jordoverfladen og én mod rummet.
+De vises samtidig og uafhængigt af absorptionen, så atmosfæren udsender selv.
+Disse to retninger repræsenterer udsendelse i alle retninger.
 Banernes styrke følger kvalitativt modellens strømme; pilenes hastighed er
 illustrativ og repræsenterer ikke lysets fart. Banerne er ikke individuelle
 fotoner eller en beregning af temperatur. Molekylsymboler, geometri og tid er

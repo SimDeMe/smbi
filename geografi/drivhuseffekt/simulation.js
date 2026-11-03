@@ -8,7 +8,7 @@ const trin = [
   { navn: 'Solens energi', kaede: 'SOLEN → JORDEN', spoergsmaal: 'Hvordan bliver jorden varm?', tekst: 'Solens kortbølgede stråling absorberes ved jordoverfladen. Energien bliver til varme.', naeste: 'Jorden stråler også', beskrivelse: 'Gule strålingsspor bevæger sig fra Solen til jordoverfladen og absorberes. Overfladen opvarmes.' },
   { navn: 'Jorden stråler', kaede: 'VARM JORD → VARMESTRÅLING', spoergsmaal: 'Stråler jorden også uden sollys?', tekst: 'Den varme jord udsender langbølget varmestråling i alle retninger over overfladen. Jo varmere den er, desto mere udsender den.', naeste: 'Tilføj drivhusgasser', beskrivelse: 'Jordoverfladen udsender røde, bølgede spor i forskellige udadgående retninger. Udsendelsen fortsætter, når sollyset afskærmes; jorden køler da af og stråler mindre.' },
   { navn: 'Gasser absorberer', kaede: 'JORDENS VARMESTRÅLING → ATMOSFÆREN', spoergsmaal: 'Hvad sker der med jordens varmestråling?', tekst: 'Drivhusgasser absorberer noget af varmestrålingen og overfører energien til luften. Noget af strålingen passerer direkte ud i rummet.', naeste: 'Atmosfæren stråler også', beskrivelse: 'Nogle røde strålingsspor fra jordoverfladen ender ved drivhusgasser i luften. Andre fortsætter ud i rummet. Gasserne er spredt i luften og danner ikke et fast låg.' },
-  { navn: 'Atmosfæren stråler', kaede: 'VARM ATMOSFÆRE → STRÅLING I ALLE RETNINGER', spoergsmaal: 'Atmosfæren er også varm. Hvor stråler den hen?', tekst: 'Atmosfæren udsender selv varmestråling i alle retninger. Noget når rummet. Noget når jordoverfladen: atmosfærisk modstråling.', naeste: 'Undersøg drivhuseffekten', beskrivelse: 'Atmosfæren udsender nye røde strålingsspor opad, nedad og til siderne, uafhængigt af de spor, der absorberes. Nedadgående stråling absorberes ved jordoverfladen.' },
+  { navn: 'Atmosfæren stråler', kaede: 'VARM ATMOSFÆRE → STRÅLING I ALLE RETNINGER', spoergsmaal: 'Atmosfæren er også varm. Hvor stråler den hen?', tekst: 'Atmosfæren udsender selv varmestråling i alle retninger. Noget når rummet. Noget når jordoverfladen: atmosfærisk modstråling.', naeste: 'Undersøg drivhuseffekten', beskrivelse: 'Fra hvert drivhusgassymbol vises ny varmestråling både mod jordoverfladen og mod rummet, uafhængigt af den stråling, der absorberes. Nedadgående stråling absorberes ved jordoverfladen.' },
   { navn: 'Drivhuseffekten', kaede: 'SOLSTRÅLING + MODSTRÅLING → VARMERE JORDOVERFLADE', spoergsmaal: 'Hvorfor gør drivhusgasser jordoverfladen varmere?', tekst: 'Jordoverfladen modtager både solstråling og atmosfærisk modstråling. Derfor bliver den varmere end med samme solstråling uden drivhusgassernes virkning.', naeste: 'Begynd forfra', beskrivelse: 'Alle processer vises samlet. Med drivhusgassernes virkning modtager overfladen også modstråling og bliver varmere. Uden virkningen er solstrålingen den samme, men modstrålingen ophører, og overfladen bliver koldere.' },
 ];
 let aktuelt = 0;
@@ -95,12 +95,12 @@ function forfyld() {
     }
   }
   if (aktuelt >= 3 && gasAktiv()) {
-    // Atmosfæren udsender fra et andet sted end absorptionspunkterne.
-    // Banerne afsløres samtidig udad fra kilden, ikke som en spejlvending.
-    baner.push(bane('luft',820,185,815,30,false,.6));
-    baner.push(bane('luft',820,185,845,overflade(845),true,.6));
-    baner.push(bane('luft',820,185,730,120,false,.6));
-    baner.push(bane('luft',820,185,910,130,false,.6));
+    // Hvert symbol udsender selvstændigt mod både jord og rum. De to viste
+    // retninger er eksempler; udsendelsen udløses ikke af en ankommende bane.
+    for (const [x,y] of molekyler) {
+      baner.push(bane('luft',x,y,x-8,30,false,.6));
+      baner.push(bane('luft',x,y,x+35,overflade(x+35),true,.6));
+    }
   }
 }
 function opdaterUI() {

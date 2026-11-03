@@ -523,3 +523,10 @@
   .jord-label { font-size: 11px; }
   .jord-label span { font-size: 10px; }
 }
+/* Hold gasetiketten fri af de nye baner fra alle tre symboler. */
+.gas-proces { left: 42%; top: 30%; font-size: 12px; }
+.gas-proces small { font-size: 10px; }
+.gas-symbol { display: none; }
+@media (max-width: 759px) {
+  .gas-proces { left: 35%; top: 27%; font-size: 9px; }
+}
