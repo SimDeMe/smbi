@@ -4,6 +4,7 @@
 // jorden og i højden. Lodret overdrevet, men cellerne er bredere end høje.
 // Bælternes placering kommer fra model.js.
 import { baelter, itkMiddel, solbredde } from './model.js';
+import { fremdrift } from './koreografi.js';
 
 // Mørkere toner af globussens farver, så de kan læses på lys baggrund.
 const CELLEFARVE = { Hadley: '#278b78', Ferrel: '#b77a45', Polar: '#7a91b5', 'Én celle': '#278b78' };
@@ -75,7 +76,7 @@ export function lavSnit(canvas, tilstand) {
       : fh === 'hadley' && graenser.length > 3 ? [[graenser[2], graenser[4]]]
         : fh === 'tre' && graenser.length > 3 ? [[-90, 90]] : [];
     if (fh !== 'tre') {
-      ctx.fillStyle = 'rgba(246,206,90,0.22)';
+      ctx.fillStyle = `rgba(246,206,90,${0.22 * (fh === 'hadley' ? fremdrift(s, 'hadleyspor') : 1)})`;
       for (const [a, c] of felter) ctx.fillRect(x(a), y(18), x(c) - x(a), jord - y(18));
     }
 
@@ -94,6 +95,12 @@ export function lavSnit(canvas, tilstand) {
       const ry = ((tropopause(midt) - 0.8) * km - 3) / 2, cy = jord - 3 - ry;
       if (rx <= 4 || ry <= 2) continue;
       const navn = navne[i], farve = CELLEFARVE[navn];
+      // Motion design: cellen tones frem (trin 4), og Hadleycellen tegnes i
+      // strømmens retning fra ITK ved jorden (trin 2).
+      const frem = fremdrift(s, 'celle-' + (navn === 'Én celle' ? 'Hadley' : navn));
+      const spor = navn === 'Hadley' ? fremdrift(s, 'hadleyspor') : 1;
+      if (frem <= 0) continue;
+      ctx.globalAlpha = frem * spor;
       const p = v => [cx + rx * kant(Math.cos(v), 0.55), cy + ry * kant(Math.sin(v), 0.55)];
       // Ved jorden løber Hadley- og polarcellen mod ækvator, Ferrel mod polen.
       const halvkugle = cx > x(itk) ? 1 : -1;
@@ -122,6 +129,20 @@ export function lavSnit(canvas, tilstand) {
         ctx.font = "600 10px Archivo, system-ui, sans-serif"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillStyle = '#3f5a52'; ctx.fillText(navn, cx, cy);
       }
+      ctx.globalAlpha = 1;
+      if (spor < 1) {
+        // Sporet: op ved ITK, ud i højden, ned ved 30° og tilbage langs jorden.
+        const v0 = Math.PI / 2 + retning * Math.PI / 4, n = Math.max(2, Math.round(64 * spor));
+        ctx.beginPath();
+        for (let j = 0; j <= n; j++) { const q = p(v0 + retning * 2 * Math.PI * spor * j / n); j ? ctx.lineTo(...q) : ctx.moveTo(...q); }
+        ctx.strokeStyle = farve; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.stroke();
+        const v = v0 + retning * 2 * Math.PI * spor, [hx, hy] = p(v), [qx, qy] = p(v + 0.05 * retning);
+        const vinkel = Math.atan2(qy - hy, qx - hx);
+        ctx.fillStyle = farve; ctx.beginPath();
+        ctx.moveTo(hx + 8 * Math.cos(vinkel), hy + 8 * Math.sin(vinkel));
+        ctx.lineTo(hx + 7 * Math.cos(vinkel + 2.4), hy + 7 * Math.sin(vinkel + 2.4));
+        ctx.lineTo(hx + 7 * Math.cos(vinkel - 2.4), hy + 7 * Math.sin(vinkel - 2.4)); ctx.fill();
+      }
     }
 
     // Tryk ved jorden: lavtryk hvor luften stiger, højtryk hvor den synker.
@@ -129,9 +150,12 @@ export function lavSnit(canvas, tilstand) {
     for (let i = 0; i < graenser.length; i++) {
       const stiger = graenser.length === 3 ? i === 1 : [1, 3, 5].includes(i);
       const xx = Math.max(venstre + 10, Math.min(hoejre - 10, x(graenser[i])));
+      // Højtrykket ved 30° kommer først, når luften er sunket (trin 2).
+      ctx.globalAlpha = graenser.length > 3 && (i === 2 || i === 4) ? fremdrift(s, 'hoejtryk') : 1;
       ctx.fillStyle = stiger ? '#2d877c' : '#926936';
       ctx.fillText(stiger ? 'L ↑' : 'H ↓', xx, jord + 22);
     }
+    ctx.globalAlpha = 1;
 
     // Breddeakse.
     ctx.fillStyle = '#536f66'; ctx.font = "9px 'IBM Plex Mono', monospace";
@@ -155,7 +179,7 @@ export function lavSnit(canvas, tilstand) {
     for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(xi + i * 6, ty + 19); ctx.lineTo(xi + i * 6 - 3, ty + 25); ctx.stroke(); }
 
     // Solen over sin bredde.
-    const sx = x(solbredde(s.maaned));
+    const sx = x(solbredde(s.solMaaned ?? s.maaned));
     ctx.fillStyle = '#f4ce72'; ctx.beginPath(); ctx.arc(sx, 9, 5, 0, 7); ctx.fill();
     ctx.strokeStyle = '#d9a93a'; ctx.lineWidth = 1; ctx.stroke();
   }

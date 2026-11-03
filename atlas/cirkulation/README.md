@@ -34,6 +34,14 @@ videre hertil.
 - Måned og «Afspil år», kontakterne «Jorden drejer», «Kontinenter» (til fra start), «Celler»,
   «Luftringe» og «Navne», «Slip en ballon», pause og fokus.
 - Fem korte trin; hvert trin drejer globussen og fremhæver det, der skal ses.
+- Motion design: går man ét trin frem, tegnes det nye i den rækkefølge, det
+  sker (`koreografi` i `tekst.js`, motoren i `koreografi.js`). Trin 2 tegner
+  Hadleycellen i strømmens retning, før højtryk og ørken kommer; trin 3
+  standser Jorden og lader den dreje igen, så vinden bøjer af; trin 4 bygger
+  cellerne ud fra ækvator; trin 5 flytter solen først og lader ITK følge efter
+  mod juli. Andre spring og reduceret bevægelse viser trinnet færdigt, og en
+  kontakt eller skyderen afbryder koreografien. Slutbilledet er det samme som
+  uden koreografi.
 - Aflæsning ved musen, ved klik og midt på globussen med piletaster.
 
 ## Filer
@@ -43,7 +51,8 @@ videre hertil.
 | `model.js` | ITK's bredde, bælterne, vindfeltet, strømfunktionen, solens bredde |
 | `globus.js` | Globus, vindspor, ITK, etiketter, sol og balloner (D3 på Canvas 2D) |
 | `snit.js` | Snittet med cellerne |
-| `tekst.js` | De fem trin |
+| `tekst.js` | De fem trin og deres koreografi |
+| `koreografi.js` | Motion design: hvor langt hvert element er tegnet frem |
 | `app.js` | Betjening, trin og animationsløkke |
 
 D3 og TopoJSON hentes fra `../vendor/`, landene fra `../data/countries-110m.json`.

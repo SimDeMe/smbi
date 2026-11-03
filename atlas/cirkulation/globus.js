@@ -4,6 +4,7 @@
 import { vind, fart, vindbaelte, itkBredde, baelter, solbredde, modelbredde } from './model.js';
 import * as middeltemperatur from '../middeltemperatur.js';
 import * as nedboer from '../nedboer.js';
+import { fremdrift } from './koreografi.js';
 
 const RAD = Math.PI / 180;
 // Lyse farver til den mørke globus; snittet bruger mørkere udgaver af samme tone.
@@ -14,6 +15,9 @@ export const ITK_FARVE = '#f6d977';
 export const CELLEFARVE = { Hadley: '#5fd0b0', Ferrel: '#f0a860', Polar: '#9fb4ee', 'Én celle': '#5fd0b0' };
 
 // Cellernes grænser som funktioner af længden (samme regel som modelbredde).
+// Motion design: hvor langt en celle er tonet frem (koreografi.js).
+const celleFrem = (s, navn) => fremdrift(s, 'celle-' + (navn === 'Én celle' ? 'Hadley' : navn));
+
 function celleBaelter(s, b, itk) {
   if (s.rotation < 0.5) {
     return [{ navn: 'Én celle', syd: itk, nord: () => 89 }, { navn: 'Én celle', syd: () => -89, nord: itk }];
@@ -217,7 +221,7 @@ export function lavGlobus(canvas, land, tilstand) {
     } else if (s.rotation > 0.5) {
       ctx.save(); ctx.beginPath(); sti(land); ctx.clip();
       for (const [syd, nord] of [[b.nordHoej - 8, b.nordHoej + 5], [b.sydHoej - 5, b.sydHoej + 8]]) {
-        ctx.beginPath(); sti(baand(() => syd, () => nord)); ctx.fillStyle = '#c9a76d'; ctx.globalAlpha = 0.55; ctx.fill();
+        ctx.beginPath(); sti(baand(() => syd, () => nord)); ctx.fillStyle = '#c9a76d'; ctx.globalAlpha = 0.55 * fremdrift(s, 'oerken'); ctx.fill();
       }
       ctx.globalAlpha = 1; ctx.restore();
     }
@@ -227,7 +231,7 @@ export function lavGlobus(canvas, land, tilstand) {
     // klimalag, hvor de ville farve de målte værdier om).
     if (s.celler && !lag?.modul.data()) for (const c of celleBaelter(s, b, itk)) {
       ctx.beginPath(); sti(baand(c.syd, c.nord));
-      ctx.fillStyle = CELLEFARVE[c.navn]; ctx.globalAlpha = 0.17; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.fillStyle = CELLEFARVE[c.navn]; ctx.globalAlpha = 0.17 * celleFrem(s, c.navn); ctx.fill(); ctx.globalAlpha = 1;
     }
 
     // Gradnet og bredder ved 0°, ±30° og ±60°.
@@ -241,8 +245,8 @@ export function lavGlobus(canvas, land, tilstand) {
 
     // Fremhævning fra trinene.
     const fh = s.fremhaev;
-    if (fh === 'hadley') { glod(l => b.nordHoej - 5, l => b.nordHoej + 5); glod(l => b.sydHoej - 5, l => b.sydHoej + 5); }
-    if (fh === 'tre') { glod(l => b.nordFront - 4, l => b.nordFront + 4); glod(l => b.sydFront - 4, l => b.sydFront + 4); }
+    if (fh === 'hadley') { const a = fremdrift(s, 'hoejtryk'); glod(l => b.nordHoej - 5, l => b.nordHoej + 5, a); glod(l => b.sydHoej - 5, l => b.sydHoej + 5, a); }
+    if (fh === 'tre') { const a = fremdrift(s, 'front'); glod(l => b.nordFront - 4, l => b.nordFront + 4, a); glod(l => b.sydFront - 4, l => b.sydFront + 4, a); }
 
     // ITK: gyldent, glødende bælte med små skytoppe.
     const itkLinje = linje(itk);
@@ -277,7 +281,7 @@ export function lavGlobus(canvas, land, tilstand) {
     if (s.luftringe) luftringe(s, b, itk, t);
 
     // Solen: lodret over sin bredde, med en stiplet stråle ind mod kloden.
-    const sol = solbredde(s.maaned);
+    const sol = solbredde(s.solMaaned ?? s.maaned);
     const sy = cy - r * Math.sin((sol - centrum[1]) * RAD);
     const sx = Math.max(18, cx - r - 36);
     ctx.strokeStyle = fh === 'itk' ? '#f4ce72aa' : '#f4ce7250'; ctx.lineWidth = 1; ctx.setLineDash([3, 5]);
@@ -291,6 +295,15 @@ export function lavGlobus(canvas, land, tilstand) {
     }
 
     if (s.etiketter) etiketter(s, b, itk);
+
+    // Kort tekst under koreografien, fx mens Jorden står stille i trin 3.
+    if (s.koreoTekst) {
+      ctx.font = "600 12px Archivo, system-ui, sans-serif"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const w = ctx.measureText(s.koreoTekst).width, ty = cy - r + Math.min(34, r * 0.22);
+      ctx.fillStyle = '#102c2ae8'; ctx.fillRect(cx - w / 2 - 9, ty - 11, w + 18, 22);
+      ctx.strokeStyle = '#f6d97790'; ctx.lineWidth = 0.8; ctx.strokeRect(cx - w / 2 - 9, ty - 11, w + 18, 22);
+      ctx.fillStyle = '#fff3d6'; ctx.fillText(s.koreoTekst, cx, ty + 0.5);
+    }
 
     // Balloner.
     for (const bal of balloner) {
@@ -439,18 +452,19 @@ export function lavGlobus(canvas, land, tilstand) {
           hoveder.moveTo(x + 2, y); hoveder.arc(x, y, 2, 0, 2 * Math.PI);
         }
       }
-      tegnet.push({ farve, lag });
+      tegnet.push({ farve, lag, frem: celleFrem(s, c.navn) });
     }
 
     const tegnLag = k => {
-      for (const { farve, lag } of tegnet) {
+      for (const { farve, lag, frem } of tegnet) {
+        if (frem <= 0) continue;
         const L = lag[k];
         ctx.fillStyle = farve; ctx.strokeStyle = farve;
-        L.flader.forEach((sti, i) => { const m = (i + 0.5) / LAGTRIN; ctx.globalAlpha = 0.02 + 0.15 * m; ctx.fill(sti); });
-        ctx.lineWidth = 0.8; ctx.globalAlpha = 0.32; ctx.stroke(L.spanter);
-        ctx.globalAlpha = 0.45; ctx.stroke(L.kam);
-        ctx.lineWidth = 1.5; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5; ctx.stroke(L.haler);
-        ctx.globalAlpha = 1; ctx.fill(L.hoveder);
+        L.flader.forEach((sti, i) => { const m = (i + 0.5) / LAGTRIN; ctx.globalAlpha = (0.02 + 0.15 * m) * frem; ctx.fill(sti); });
+        ctx.lineWidth = 0.8; ctx.globalAlpha = 0.32 * frem; ctx.stroke(L.spanter);
+        ctx.globalAlpha = 0.45 * frem; ctx.stroke(L.kam);
+        ctx.lineWidth = 1.5; ctx.lineCap = 'round'; ctx.globalAlpha = 0.5 * frem; ctx.stroke(L.haler);
+        ctx.globalAlpha = frem; ctx.fill(L.hoveder);
       }
     };
     ctx.save();
@@ -461,16 +475,18 @@ export function lavGlobus(canvas, land, tilstand) {
     ctx.globalAlpha = 1;
   }
 
-  function glod(syd, nord) {
+  function glod(syd, nord, alfa = 1) {
+    if (alfa <= 0) return;
     ctx.beginPath(); sti(baand(syd, nord));
-    ctx.fillStyle = 'rgba(246,217,119,0.14)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(246,217,119,0.55)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = `rgba(246,217,119,${0.14 * alfa})`; ctx.fill();
+    ctx.strokeStyle = `rgba(246,217,119,${0.55 * alfa})`; ctx.lineWidth = 1; ctx.stroke();
   }
 
   // Mørk etiket med farvet skrift, som i et natkort.
   const indenfor = (p, grader = 70) => d3.geoDistance(p, centrum) < grader * RAD;
-  function maerke(lon, lat, tekst, farve) {
-    if (!indenfor([lon, lat])) return;
+  function maerke(lon, lat, tekst, farve, alfa = 1) {
+    if (!indenfor([lon, lat]) || alfa <= 0) return;
+    ctx.globalAlpha = alfa;
     const [x, y] = proj([lon, lat]);
     ctx.font = "500 10px 'IBM Plex Mono', monospace";
     const w = ctx.measureText(tekst).width;
@@ -478,6 +494,7 @@ export function lavGlobus(canvas, land, tilstand) {
     ctx.strokeStyle = farve + '70'; ctx.lineWidth = 0.6; ctx.strokeRect(x - w / 2 - 6, y - 9, w + 12, 18);
     ctx.fillStyle = farve; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(tekst, x, y + 0.5);
+    ctx.globalAlpha = 1;
   }
 
   function etiketter(s, b, itk) {
@@ -489,14 +506,14 @@ export function lavGlobus(canvas, land, tilstand) {
     if (s.rotation > 0.5) {
       for (const lat of [midt(itk(l0), b.nordHoej), midt(itk(l0), b.sydHoej), midt(b.nordHoej, b.nordFront),
         midt(b.sydHoej, b.sydFront), midt(b.nordFront, 90) - 3]) {
-        const n = navn(lat);
-        maerke(l0, lat, n.toUpperCase(), FARVER[farvenoegle(n)]);
+        const n = navn(lat), k = farvenoegle(n);
+        maerke(l0, lat, n.toUpperCase(), FARVER[k], fremdrift(s, 'navn-' + k));
       }
       // Sydvestmonsun lige syd for en ITK, der er trukket ind over land.
       const sydfor = itk(l0) - 7;
-      if (sydfor > 3 && /monsun/i.test(navn(sydfor))) maerke(l0 - 6, sydfor, navn(sydfor).toUpperCase(), FARVER.monsun);
-      maerke(l0 + 34, b.nordHoej, 'H · TØRT', '#e9c58d');
-      maerke(l0 + 34, b.sydHoej, 'H · TØRT', '#e9c58d');
+      if (sydfor > 3 && /monsun/i.test(navn(sydfor))) maerke(l0 - 6, sydfor, navn(sydfor).toUpperCase(), FARVER.monsun, fremdrift(s, 'navn-monsun'));
+      maerke(l0 + 34, b.nordHoej, 'H · TØRT', '#e9c58d', fremdrift(s, 'hoejtryk'));
+      maerke(l0 + 34, b.sydHoej, 'H · TØRT', '#e9c58d', fremdrift(s, 'hoejtryk'));
     } else {
       maerke(l0, midt(itk(l0), 70), 'VIND MOD ITK', FARVER.passat);
       maerke(l0, midt(itk(l0), -70), 'VIND MOD ITK', FARVER.passat);
