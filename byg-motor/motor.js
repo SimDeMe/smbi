@@ -455,9 +455,15 @@ export class Byg {
     return bedst;
   }
 
-  /** Fælles trækkelogik for ord i bakken og ord på en plads. */
-  traek(e, ord, fra, kilde) {
+  /**
+   * Fælles trækkelogik for ord i bakken og ord på en plads.
+   * `klik` køres, hvis musen ikke flyttede sig (ellers vælges ordet).
+   * Lytterne sidder på window, ikke på kilden: kilden kan blive tegnet om, og
+   * pointer-capture kan tabes (fx på SVG), og så må trækket ikke hænge.
+   */
+  traek(e, ord, fra, kilde, klik = () => this.vaelg(ord, fra)) {
     if (e.button !== undefined && e.button !== 0) return;
+    if (this.stopTraek) this.stopTraek();
     const start = { x: e.clientX, y: e.clientY };
     let spoeg = null, over = null;
     const id = e.pointerId;
@@ -482,23 +488,30 @@ export class Byg {
         over = ny;
       }
     };
-    const slip = (ev) => {
-      if (ev.pointerId !== id) return;
-      kilde.removeEventListener('pointermove', flyt);
-      kilde.removeEventListener('pointerup', slip);
-      kilde.removeEventListener('pointercancel', slip);
+    const ryd = () => {
+      window.removeEventListener('pointermove', flyt);
+      window.removeEventListener('pointerup', slip);
+      window.removeEventListener('pointercancel', slip);
       document.body.classList.remove('traekker');
       kilde.classList.remove('traekkes');
-      if (!spoeg) { this.vaelg(ord, fra); return; }
-      spoeg.remove();
+      if (spoeg) spoeg.remove();
+      this.stopTraek = null;
+    };
+    const slip = (ev) => {
+      if (ev.pointerId !== id) return;
+      const trukket = !!spoeg;
+      ryd();
+      if (!trukket) { klik(); return; }
       if (ev.type === 'pointercancel') { this.tegn(); return; }
       if (over != null) this.placer(ord, over, fra);
       else if (typeof fra === 'number') this.tilBakke(fra);
       else this.tegn();
     };
-    kilde.addEventListener('pointermove', flyt);
-    kilde.addEventListener('pointerup', slip);
-    kilde.addEventListener('pointercancel', slip);
+    // et træk, der aldrig fik sit slip, ryddes op, når det næste begynder
+    this.stopTraek = ryd;
+    window.addEventListener('pointermove', flyt);
+    window.addEventListener('pointerup', slip);
+    window.addEventListener('pointercancel', slip);
   }
 
   bindBakke() {
@@ -538,7 +551,8 @@ export class Byg {
       g.addEventListener('pointerdown', (e) => {
         const ord = this.paa.get(i);
         e.preventDefault();
-        if (ord && !this.valgt) { this.traek(e, ord, i, g); return; }
+        // et ord på en plads kan altid trækkes, også mens et andet ord er valgt
+        if (ord) { this.traek(e, ord, i, g, this.valgt ? klik : undefined); return; }
         const op = (ev) => { g.removeEventListener('pointerup', op); if (ev.pointerId === e.pointerId) klik(); };
         g.addEventListener('pointerup', op);
       });
