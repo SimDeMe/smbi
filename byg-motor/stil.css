@@ -160,6 +160,7 @@ body.traekker,body.traekker *{cursor:grabbing!important}
 /* ── Figurens elementer (SVG) ──────────────────────────── */
 .del{transition:filter .6s ease}
 .del.graa{filter:grayscale(1) contrast(.6) brightness(1.22)}
+.let-graa .del.graa{filter:saturate(.7) brightness(1.06)}
 .del.pop{animation:pop .7s ease}
 @keyframes pop{0%{filter:grayscale(1) brightness(1.4)}40%{filter:brightness(1.25) saturate(1.4)}100%{filter:none}}
 .omr > *, .omr g > *{fill:rgba(255,179,0,.15);stroke:none;transition:fill .15s,stroke .15s}

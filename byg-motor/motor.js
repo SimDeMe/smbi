@@ -111,6 +111,8 @@ export class Byg {
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     // på mobil ruller figuren vandret i sin ramme; en bred figur kan bede om mere plads
     svg.style.setProperty('--mobil-b', (this.fig.mobilBredde || 680) + 'px');
+    // graa: 'let' gør de grå dele kun dæmpede, så fx vand stadig er blåt
+    svg.classList.toggle('let-graa', this.fig.graa === 'let');
     svg.innerHTML = '';
 
     const dele = document.createElementNS(NS, 'g');

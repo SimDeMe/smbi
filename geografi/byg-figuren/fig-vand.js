@@ -95,6 +95,7 @@ export default {
   vb: [W, H],
   boks: [256, 42],
   mobilBredde: 940,
+  graa: 'let',   // vand og is skal kunne ses som vand og is, før ordet sidder
   lag: [
     { navn: 'Magasinerne', ord: ['hav', 'atmosfaere', 'is', 'overfladevand', 'grundvand'] },
     { navn: 'Vandet op og ned', ord: ['fordampning', 'transpiration', 'kondensation', 'nedboer'], ekstra: ['vanddamp'],
@@ -123,7 +124,10 @@ export default {
     { ord: 'overfladevand', svg: `<path d="${sti([[640, SOE_Y], ...soebund])}Z" fill="#4BA3D9" stroke="#16609A" stroke-width="2.4"/>
       <path d="${vandloeb}" fill="none" stroke="#4BA3D9" stroke-width="7" stroke-linecap="round"/>` },
     // isen på bjergtoppen
-    { ord: 'is', svg: `<path d="${isKappe}" fill="#F6FBFF" stroke="#8DB7D3" stroke-width="2.4"/>` },
+    { ord: 'is', svg: `<defs><linearGradient id="vk-is" x1="0" y1="0" x2="0.4" y2="1">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#BFE3F7"/></linearGradient></defs>
+      <path d="${isKappe}" fill="url(#vk-is)" stroke="#4F97C7" stroke-width="2.6"/>
+      <path d="M1300 262 l14 -8 M1340 240 l16 -6 M1282 290 l10 -8" stroke="#7DB8DD" stroke-width="2.2" stroke-linecap="round"/>` },
     // træerne ved kysten
     { ord: null, svg: trae(452, 478, 0.9) + trae(486, 474, 1.1) + trae(524, 472, 0.95) + trae(560, 469, 0.85) },
     // lag 2
@@ -140,20 +144,20 @@ export default {
   pladser: [
     // magasinerne
     { ord: 'hav', x: 170, y: 712, maal: [150, 560],
-      omr: `<path d="${sti([[0, HAVNIVEAU], [380, HAVNIVEAU], ...havbund.slice().reverse().slice(1)])}Z"/>`,
+      omr: `<path fill="none" stroke-width="9" stroke-linejoin="round" d="${sti([[0, HAVNIVEAU], [380, HAVNIVEAU], ...havbund.slice().reverse().slice(1)])}Z"/>`,
       fejl: { overfladevand: 'Overfladevand er ferskvand på land i søer og vandløb. Pladsen peger på det store, salte vand.' } },
     { ord: 'atmosfaere', x: 160, y: 46, maal: [110, 150],
-      omr: `<path d="${sti([[0, 0], [W, 0], ...[...kyst, [860, SOE_Y], ...bjerg].reverse(), [0, HAVNIVEAU]])}Z"/>`,
+      omr: `<path fill="none" stroke-width="9" stroke-linejoin="round" d="${sti([[0, 0], [W, 0], ...[...kyst, [860, SOE_Y], ...bjerg].reverse(), [0, HAVNIVEAU]])}Z"/>`,
       fejl: { is: 'Isen ligger på jorden. Pladsen peger op i luften.' } },
     { ord: 'is', x: 1270, y: 298, maal: [1360, 236],
-      omr: `<path d="${isKappe}"/>`,
+      omr: `<path fill="none" stroke-width="9" stroke-linejoin="round" d="${isKappe}"/>`,
       fejl: { overfladevand: 'Vandet her er frosset fast og kan ligge på bjerget i mange år. Overfladevand er flydende.' } },
     { ord: 'overfladevand', x: 760, y: 548, maal: [750, 478],
-      omr: `<path d="${sti([[640, SOE_Y], ...soebund])}Z"/><path d="${vandloeb}" fill="none" stroke-width="22" stroke-linecap="round"/>`,
+      omr: `<path fill="none" stroke-width="9" stroke-linejoin="round" d="${sti([[640, SOE_Y], ...soebund])}Z"/><path d="${vandloeb}" fill="none" stroke-width="22" stroke-linecap="round"/>`,
       fejl: { grundvand: 'Grundvand er vandet nede i jordens porer. Pladsen peger på søen, der ligger frit på land.',
               hav: 'Havet er salt. Søen og vandløbet er ferskvand på land.' } },
     { ord: 'grundvand', x: 1225, y: 740, maal: [1330, 640],
-      omr: `<path d="${GRUNDVAND}"/>`,
+      omr: `<path fill="none" stroke-width="9" stroke-linejoin="round" d="${GRUNDVAND}"/>`,
       fejl: { overfladevand: 'Overfladevand ligger frit i søer og vandløb. Pladsen peger på vandet i jordens porer under det stiplede spejl.' } },
     // op og ned
     { ord: 'fordampning', x: 205, y: 330, maal: null,
