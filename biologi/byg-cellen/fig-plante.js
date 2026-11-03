@@ -1,5 +1,5 @@
 // Plantecellen: en eukaryot celle med cellevæg, stor vakuole og kloroplaster.
-import { glat, mitokondrie, kloroplast } from './tegn.js';
+import { glat, mitokondrie, kloroplast } from '../../byg-motor/tegn.js';
 
 // En rundet firkant med lidt ujævne sider — plantecellernes typiske form
 function firkant(x1, y1, x2, y2, r, uro = 4) {

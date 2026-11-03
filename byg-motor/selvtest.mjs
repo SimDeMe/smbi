@@ -1,6 +1,9 @@
-// Selvtest af «Byg cellen».
+// Selvtest af en «Byg figuren»-side.
 //
-//   node biologi/byg-cellen/selvtest.mjs
+//   node byg-motor/selvtest.mjs biologi/byg-cellen.html
+//   node byg-motor/selvtest.mjs geografi/byg-figuren.html
+//
+// Sidens data ligger i mappen med samme navn som siden: <side>/figurer.js.
 //
 // Kræver Playwright (samme link som tid/test: ln -s "$(npm root -g)" værktøj/node_modules,
 // eller kør fra en mappe, hvor playwright kan findes). Starter selv en server på 8777,
@@ -17,7 +20,9 @@ import net from 'net';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const rod = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const rod = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const sti = process.argv[2] || 'biologi/byg-cellen.html';
+const data = await import(path.join(rod, sti.replace(/\.html$/, ''), 'figurer.js'));
 const require = createRequire(import.meta.url);
 let chromium;
 try { ({ chromium } = require('playwright')); }
@@ -40,16 +45,11 @@ const tjek = (betingelse, tekst) => {
 };
 
 // ── Data ──────────────────────────────────────────────────
-const { ORD } = await import('./ordliste.js');
-const figurer = [
-  (await import('./fig-dyr.js')).default,
-  (await import('./fig-plante.js')).default,
-  (await import('./fig-bakterie.js')).default,
-  (await import('./fig-typer.js')).default,
-];
-const BOKS_B = 186, BOKS_H = 42;
+const { ORD, FIGURER: figurer } = data;
+const { BOKS } = await import('./motor.js');
 for (const f of figurer) {
   const [W, H] = f.vb;
+  const [BOKS_B, BOKS_H] = f.boks || BOKS;
   const lagOrd = f.lag.flatMap((l) => l.ord);
   for (const o of lagOrd) tjek(f.pladser.filter((p) => p.ord === o).length === 1, `${f.id}: ${o} skal have netop én plads`);
   for (const p of f.pladser) tjek(lagOrd.includes(p.ord), `${f.id}: pladsen ${p.ord} hører ikke til et lag`);
@@ -81,10 +81,10 @@ const side = await browser.newPage({ viewport: { width: 1366, height: 625 } });
 const sidefejl = [];
 side.on('pageerror', (e) => sidefejl.push(e.message));
 side.on('console', (m) => { if (m.type() === 'error') sidefejl.push(m.text()); });
-await side.goto(`http://localhost:${PORT}/biologi/byg-cellen.html`);
+await side.goto(`http://localhost:${PORT}/${sti}`);
 await side.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 await side.reload();
-await side.waitForFunction(() => window.bygCellen);
+await side.waitForFunction(() => window.bygFiguren);
 
 const plads = (i) => side.locator(`#figur .plads[data-i="${i}"]`);
 const ordKnap = (o) => side.locator(`#bakke .ord[data-ord="${o}"]`);
@@ -137,42 +137,46 @@ for (const f of figurer) {
     for (const o of lag.ord) tjek(await side.locator(`#figur .plads.laast[data-i="${idx(o)}"]`).count() === 1, `${f.id}: ${o} er ikke låst`);
     const naeste = side.locator('#btn-naeste');
     if (l < f.lag.length - 1) await naeste.click();
-    else tjek(f.id === 'typer' || (await naeste.textContent()).startsWith('Næste figur'), `${f.id}: ingen knap til næste figur`);
+    else tjek(f === figurer[figurer.length - 1] || (await naeste.textContent()).startsWith('Næste figur'), `${f.id}: ingen knap til næste figur`);
   }
   tjek(await side.locator(`#fane-${f.id} .maerke`).count() === 1, `${f.id}: fanen fik ikke et mærke`);
 }
 
 // Svær udgave: alle ord på én gang, løses med tastaturet
-await side.locator('#fane-dyr').click();
+const f0 = figurer[0];
+await side.locator(`#fane-${f0.id}`).click();
 await side.check('#svaer');
-const dyr = figurer[0];
-tjek(await side.locator('#bakke .ord').count() === dyr.lag.reduce((n, l) => n + l.ord.length + (l.ekstra || []).length, 0), 'Svær: ikke alle ord i bakken');
-for (const o of dyr.lag.flatMap((l) => l.ord)) {
+tjek(await side.locator('#bakke .ord').count() === f0.lag.reduce((n, l) => n + l.ord.length + (l.ekstra || []).length, 0), 'Svær: ikke alle ord i bakken');
+for (const o of f0.lag.flatMap((l) => l.ord)) {
   await ordKnap(o).focus();
   await side.keyboard.press('Enter');
-  await plads(dyr.pladser.findIndex((p) => p.ord === o)).focus();
+  await plads(f0.pladser.findIndex((p) => p.ord === o)).focus();
   await side.keyboard.press('Enter');
 }
 await side.locator('#figur').click({ position: { x: 5, y: 5 } });
 await side.keyboard.press('Enter');
-tjek(await side.locator('#faerdig-kort').isVisible(), 'Svær: dyrecellen blev ikke færdig med tastaturet');
+tjek(await side.locator('#faerdig-kort').isVisible(), `Svær: ${f0.id} blev ikke færdig med tastaturet`);
 tjek(await side.locator('#figur .del.graa').count() === 0, 'Svær: der er stadig grå dele');
 
-// Delete sender et ord tilbage, Esc fjerner valget
-await side.locator('#fane-plante').click();
-await ordKnap('vakuole').click();
-await plads(figurer[1].pladser.findIndex((p) => p.ord === "cellekerne")).locator(".boks").click();
-await plads(figurer[1].pladser.findIndex((p) => p.ord === 'cellekerne')).focus();
+// Delete sender et ord tilbage, Esc fjerner valget (sidste figur, stadig i Svær udgave)
+const fs = figurer[figurer.length - 1];
+await side.locator(`#fane-${fs.id}`).click();
+if (fs === f0) await side.click('#btn-forfra');   // kun én figur: den er lige bygget
+const [o1, o2] = fs.lag.flatMap((l) => l.ord);
+const i2 = fs.pladser.findIndex((p) => p.ord === o2);
+await ordKnap(o1).click();
+await plads(i2).locator('.boks').click();
+await plads(i2).focus();
 await side.keyboard.press('Delete');
-tjek(await ordKnap('vakuole').count() === 1, 'Delete sendte ikke ordet tilbage');
-await ordKnap('vakuole').click();
+tjek(await ordKnap(o1).count() === 1, 'Delete sendte ikke ordet tilbage');
+await ordKnap(o1).click();
 await side.keyboard.press('Escape');
 tjek(await side.locator('#bakke .ord.valgt').count() === 0, 'Esc fjernede ikke valget');
 
 // Link til en fane
-await side.goto(`http://localhost:${PORT}/biologi/byg-cellen.html#bakterie`);
-await side.waitForFunction(() => window.bygCellen);
-tjek(await side.locator('#fane-bakterie[aria-selected="true"]').count() === 1, '#bakterie åbner ikke bakterien');
+await side.goto(`http://localhost:${PORT}/${sti}#${fs.id}`);
+await side.waitForFunction(() => window.bygFiguren);
+tjek(await side.locator(`#fane-${fs.id}[aria-selected="true"]`).count() === 1, `#${fs.id} åbner ikke fanen`);
 
 tjek(sidefejl.length === 0, 'fejl i konsollen: ' + sidefejl.join(' | '));
 await browser.close();

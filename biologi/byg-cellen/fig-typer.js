@@ -1,5 +1,5 @@
 // Celletyperne: de tre celler side om side — hvilke er eukaryote, hvilken er prokaryot?
-import { klat, mitokondrie, kloroplast, ribosomer } from './tegn.js';
+import { klat, mitokondrie, kloroplast, ribosomer } from '../../byg-motor/tegn.js';
 
 const kortet = (x, y, w, h, navn) => `
   <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="18" fill="#FFFFFF" stroke="#17211F" stroke-width="2.5"/>

@@ -1,4 +1,4 @@
-// Motoren bag «Byg cellen»: én figur ad gangen.
+// Motoren bag «Byg figuren» (Byg cellen, Byg figuren i geografi): én figur ad gangen.
 //
 // Figuren bygges lag for lag. Lagets dele står grå, senere lag er skjult, og
 // en del får farve, når fagordet sidder rigtigt. Eleven trækker (eller klikker)
@@ -7,10 +7,8 @@
 //
 // Svær udgave: alle lag og alle ord på én gang.
 
-import { ORD, kort } from './ordliste.js';
-
 const NS = 'http://www.w3.org/2000/svg';
-const BOKS_B = 186, BOKS_H = 42;          // alle pladser er lige brede
+export const BOKS = [186, 42];            // alle pladser er lige store; en figur kan vælge sit eget `boks`
 const SNAP = 30;                          // px: slip tæt på en plads rammer den
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -34,9 +32,12 @@ export class Byg {
    * @param {object} fig  figurdata (fig-*.js)
    * @param {object} ui   { svg, bakke, besked, hint, indsend, lagliste, opgTitel, opgTekst, kort, sr }
    * @param {object} hooks { svaer: () => bool, faerdig: (fig) => void, naeste: () => void, naesteTekst: () => string|null }
+   * @param {object} ORD  ordlisten: { id: { ord, tekst } }
    */
-  constructor(fig, ui, hooks) {
+  constructor(fig, ui, hooks, ORD) {
     this.fig = fig;
+    this.ORD = ORD;
+    [this.boksB, this.boksH] = fig.boks || BOKS;
     this.ui = ui;
     this.hooks = hooks;
     this.ordLag = {};
@@ -57,6 +58,13 @@ export class Byg {
     this.lagFaerdig = false;         // det grønne kort vises
     this.nyeFarver = new Set();
     this.blandBakke();
+  }
+
+  /** Første sætning af forklaringen. */
+  kort(id) {
+    const t = this.ORD[id].tekst;
+    const i = t.search(/[.!?](\s|$)/);
+    return i < 0 ? t : t.slice(0, i + 1);
   }
 
   aktiveLag() {
@@ -101,6 +109,8 @@ export class Byg {
     const { svg } = this.ui;
     const [W, H] = this.fig.vb;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    // på mobil ruller figuren vandret i sin ramme; en bred figur kan bede om mere plads
+    svg.style.setProperty('--mobil-b', (this.fig.mobilBredde || 680) + 'px');
     svg.innerHTML = '';
 
     const dele = document.createElementNS(NS, 'g');
@@ -109,9 +119,9 @@ export class Byg {
       const lagNr = this.ordLag[d.ord] ?? 0;
       if (!this.synlig(lagNr)) continue;
       const g = document.createElementNS(NS, 'g');
-      const farvet = this.loest.has(d.ord);
+      const farvet = !d.ord || this.loest.has(d.ord);   // en del uden ord er baggrund og har altid farve
       g.setAttribute('class', 'del ' + (farvet ? 'farvet' : 'graa') + (this.nyeFarver.has(d.ord) ? ' pop' : ''));
-      g.dataset.ord = d.ord;
+      if (d.ord) g.dataset.ord = d.ord;
       g.innerHTML = d.svg;
       dele.appendChild(g);
     }
@@ -147,28 +157,28 @@ export class Byg {
       if (this.valgt && this.valgt.fra === i) cls += ' valgt';
       g.setAttribute('class', cls);
       g.dataset.i = i;
-      const bx = p.x - BOKS_B / 2, by = p.y - BOKS_H / 2;
+      const bx = p.x - this.boksB / 2, by = p.y - this.boksH / 2;
       let inner = '';
       if (p.maal) {
         const [mx, my] = p.maal;
         let sx, sy;
-        if (mx > bx + BOKS_B) { sx = bx + BOKS_B; sy = p.y; }
+        if (mx > bx + this.boksB) { sx = bx + this.boksB; sy = p.y; }
         else if (mx < bx) { sx = bx; sy = p.y; }
-        else { sx = Math.max(bx + 12, Math.min(bx + BOKS_B - 12, mx)); sy = my > p.y ? by + BOKS_H : by; }
+        else { sx = Math.max(bx + 12, Math.min(bx + this.boksB - 12, mx)); sy = my > p.y ? by + this.boksH : by; }
         inner += `<line class="streg" x1="${sx}" y1="${sy}" x2="${mx}" y2="${my}"/>
                   <circle class="prik" cx="${mx}" cy="${my}" r="6.5"/>`;
       }
-      inner += `<rect class="boks" x="${bx}" y="${by}" width="${BOKS_B}" height="${BOKS_H}" rx="11"/>`;
-      inner += `<text class="ordtekst" x="${p.x}" y="${p.y + 7}" text-anchor="middle">${ord ? ORD[ord].ord : ''}</text>`;
-      if (laast) inner += `<title>${ORD[p.ord].ord}: ${ORD[p.ord].tekst}</title>`;
+      inner += `<rect class="boks" x="${bx}" y="${by}" width="${this.boksB}" height="${this.boksH}" rx="11"/>`;
+      inner += `<text class="ordtekst" x="${p.x}" y="${p.y + 7}" text-anchor="middle">${ord ? this.ORD[ord].ord : ''}</text>`;
+      if (laast) inner += `<title>${this.ORD[p.ord].ord}: ${this.ORD[p.ord].tekst}</title>`;
       g.innerHTML = inner;
       if (!laast) {
         g.setAttribute('tabindex', '0');
         g.setAttribute('role', 'button');
-        g.setAttribute('aria-label', `Plads ${i + 1}` + (ord ? `: ${ORD[ord].ord}, ikke indsendt` : ': tom'));
+        g.setAttribute('aria-label', `Plads ${i + 1}` + (ord ? `: ${this.ORD[ord].ord}, ikke indsendt` : ': tom'));
       } else {
         g.setAttribute('tabindex', '0');
-        g.setAttribute('aria-label', `Plads ${i + 1}: ${ORD[p.ord].ord}, rigtigt. ${ORD[p.ord].tekst}`);
+        g.setAttribute('aria-label', `Plads ${i + 1}: ${this.ORD[p.ord].ord}, rigtigt. ${this.ORD[p.ord].tekst}`);
       }
       lagP.appendChild(g);
       this.pladsEl[i] = g;
@@ -203,7 +213,7 @@ export class Byg {
     bakke.innerHTML = '';
     const ordene = this.bakkeOrd();
     for (const o of ordene) {
-      const b = el('button', 'ord', ORD[o].ord);
+      const b = el('button', 'ord', this.ORD[o].ord);
       b.type = 'button';
       b.dataset.ord = o;
       if (this.valgt && this.valgt.ord === o && this.valgt.fra === 'bakke') {
@@ -246,8 +256,8 @@ export class Byg {
     if (!this.svaer && this.stjerner[this.lag]) k.appendChild(el('p', 'ros', '★ Rigtigt i første forsøg uden hint.'));
     const dl = el('dl');
     for (const i of lagene) for (const o of f.lag[i].ord) {
-      dl.appendChild(el('dt', null, ORD[o].ord));
-      dl.appendChild(el('dd', null, kort(o)));
+      dl.appendChild(el('dt', null, this.ORD[o].ord));
+      dl.appendChild(el('dd', null, this.kort(o)));
     }
     k.appendChild(dl);
     let tekst = null, handling = null;
@@ -283,7 +293,7 @@ export class Byg {
       this.besked('');
     } else {
       this.valgt = { ord, fra };
-      this.besked(`«${ORD[ord].ord}» er valgt. Klik på en gul plads.`, 'info');
+      this.besked(`«${this.ORD[ord].ord}» er valgt. Klik på en gul plads.`, 'info');
     }
     this.tegn();
     if (fra === 'bakke') {
@@ -311,7 +321,7 @@ export class Byg {
     this.valgt = null;
     this.besked('');
     this.tegn();
-    this.ui.sr.textContent = `${ORD[ord].ord} sat på plads ${i + 1}.`;
+    this.ui.sr.textContent = `${this.ORD[ord].ord} sat på plads ${i + 1}.`;
   }
 
   tilBakke(i) {
@@ -340,7 +350,7 @@ export class Byg {
         this.forsoeg[this.ordLag[p.ord]].fejl++;
         if (!foersteFejl) {
           foersteFejl = (p.fejl && p.fejl[ord]) || this.ekstraFejl(ord)
-            || `«${ORD[ord].ord}» passer ikke her. ${ORD[ord].ord[0].toUpperCase() + ORD[ord].ord.slice(1)} er: ${kort(ord).replace(/^\w/, (c) => c.toLowerCase())}`;
+            || `«${this.ORD[ord].ord}» passer ikke her. ${this.ORD[ord].ord[0].toUpperCase() + this.ORD[ord].ord.slice(1)} er: ${this.kort(ord).replace(/^\w/, (c) => c.toLowerCase())}`;
         }
       }
     }
@@ -398,7 +408,7 @@ export class Byg {
       this.loest.add(ord);
       this.nyeFarver.add(ord);
       this.hintPlads = null;
-      this.besked(`Svaret er «${ORD[ord].ord}». ${kort(ord)}`, 'info');
+      this.besked(`Svaret er «${this.ORD[ord].ord}». ${this.kort(ord)}`, 'info');
       if (this.lagLoest()) { this.afslutLag(); return; }
       this.tegn();
       return;
@@ -410,7 +420,7 @@ export class Byg {
     if (i == null) return;
     this.hintPlads = i;
     this.forsoeg[this.ordLag[this.fig.pladser[i].ord]].hint++;
-    this.besked(`Hint til den orange plads: ${kort(this.fig.pladser[i].ord)}`, 'hint');
+    this.besked(`Hint til den orange plads: ${this.kort(this.fig.pladser[i].ord)}`, 'hint');
     this.ui.sr.textContent = this.ui.besked.textContent;
     this.tegn();
   }
@@ -454,7 +464,7 @@ export class Byg {
     const flyt = (ev) => {
       if (ev.pointerId !== id) return;
       if (!spoeg && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) > 6) {
-        spoeg = el('div', 'spoeg-ord', ORD[ord].ord);
+        spoeg = el('div', 'spoeg-ord', this.ORD[ord].ord);
         document.body.appendChild(spoeg);
         document.body.classList.add('traekker');
         kilde.classList.add('traekkes');
@@ -507,7 +517,7 @@ export class Byg {
     this.pladsEl.forEach((g, i) => {
       if (!g || this.loest.has(this.fig.pladser[i].ord)) {
         if (g) {
-          const vis = () => this.besked(`${ORD[this.fig.pladser[i].ord].ord}: ${ORD[this.fig.pladser[i].ord].tekst}`, 'info');
+          const vis = () => this.besked(`${this.ORD[this.fig.pladser[i].ord].ord}: ${this.ORD[this.fig.pladser[i].ord].tekst}`, 'info');
           g.addEventListener('pointerenter', vis);
           g.addEventListener('focus', vis);
         }

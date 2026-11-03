@@ -1,0 +1,50 @@
+# Byg figuren (naturgeografi)
+
+`geografi/byg-figuren.html`: eleven sætter fagord på en figur, der bygges lag
+for lag. Første figur er vandets kredsløb. Motoren er den samme som i «Byg
+cellen» og ligger i `/byg-motor/`; hvordan den virker, og hvordan en figur er
+skrevet, står i `biologi/byg-cellen/LÆS-MIG.md`.
+
+Nye geografifigurer bliver flere faner på denne side: en ny `fig-*.js`, ordene
+i `ordliste.js` og figuren i `FIGURER` i `figurer.js`. Idéerne står i
+idélisten i `biologi/byg-cellen/LÆS-MIG.md`.
+
+## Vandets kredsløb `#vand`
+
+1. **Pointen i én sætning.** Vandet ligger i magasiner og flyttes mellem dem af
+   transportmekanismer, og de to slags fagord sidder forskellige steder:
+   magasinerne på et område, transportmekanismerne på en pil.
+2. **Ordene** er dem fra arbejdsarket «Vandets kredsløb» i ng C (Vand og jord,
+   modul 3) og Naturgeografi C s. 119–124. Forlæg for snittet: figur 14.1 i
+   Vores Verden.
+3. **Naboerne.** `geografi/Dugpunkt.html` ejer kondensationen og skydannelsen,
+   `geografi/Stigningsregn.html` den orografiske nedbør, og porøsitet og
+   permeabilitet har `geografi/poroesitetPermeabilitet.html`. Her står kun en sætning om hver.
+
+| Lag | Fagord |
+|:--|:--|
+| Magasinerne | hav, atmosfære, is og sne, overfladevand, grundvand |
+| Vandet op og ned | fordampning, transpiration, kondensation, nedbør (+ vanddamp i overskud) |
+| Vandet på og i jorden | infiltration, overfladeafstrømning, grundvandsstrømning |
+
+- **Fælden:** skyer er dråber, ikke vanddamp. Vanddamp er et ord i overskud, og
+  sættes den eller fordampning på skyen, forklarer pladsens `fejl` det.
+- Stiplede pile er vanddamp, fuldt optrukne pile er flydende vand.
+- Himlen, jorden og træerne er baggrund (`ord: null`) og har farve fra start,
+  så luft og jord kan skelnes. Atmosfæren er tegnet som slør af damp.
+- Figuren er 1400 × 800 med pladser på 256 × 42, fordi
+  »overfladeafstrømning« er langt. På mobil er den 940 px bred og ruller vandret.
+
+## Forenklinger (står også på siden)
+
+- Ikke i målestok: højderne er stærkt overdrevne.
+- Pilene er lige tykke, men mængderne er meget forskellige.
+- Ikke tegnet: vindens transport af vanddamp ind over land, smeltevand,
+  fordampning fra søen og jorden, og grundvand, der strømmer ud i søen og vandløbet.
+
+## Test
+
+```bash
+node byg-motor/selvtest.mjs geografi/byg-figuren.html
+node byg-motor/selvtest.mjs biologi/byg-cellen.html
+```

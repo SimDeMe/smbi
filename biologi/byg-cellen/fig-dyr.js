@@ -1,5 +1,5 @@
 // Dyrecellen: en eukaryot celle set i snit, som i lærebøgerne.
-import { klat, bue, paaEllipse, mitokondrie, ribosomer, ribosomerPaaBue, boelge } from './tegn.js';
+import { klat, bue, paaEllipse, mitokondrie, ribosomer, ribosomerPaaBue, boelge } from '../../byg-motor/tegn.js';
 
 // Cellen og kernen
 const C = { x: 500, y: 300, rx: 300, ry: 250 };

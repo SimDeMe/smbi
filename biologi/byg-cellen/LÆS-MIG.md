@@ -66,16 +66,21 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 
 ## Filerne
 
+Motoren er fælles med «Byg figuren» i naturgeografi og ligger i `/byg-motor/`.
+Her ligger kun figurerne og ordlisten.
+
 | Fil | Indhold |
 |:--|:--|
 | `../byg-cellen.html` | siden: sidehoved, faner, scene, panel, »Om figurerne« |
-| `stil.css` | alt udseende, også den grå udgave af figuren |
+| `figurer.js` | `FIGURER`, `ORD` og nøglen til browserens hukommelse |
+| `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
-| `motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
-| `side.js` | fanerne, Svær udgave, fokus, links, tastatur og konfetti |
-| `tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger |
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js` | figurerne, lagene og pladserne |
-| `selvtest.mjs` | `node biologi/byg-cellen/selvtest.mjs` |
+| `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
+| `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
+| `/byg-motor/side.js` | fanerne, Svær udgave, fokus, links, tastatur og konfetti |
+| `/byg-motor/tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger |
+| `/byg-motor/selvtest.mjs` | `node byg-motor/selvtest.mjs biologi/byg-cellen.html` |
 
 ## En figur
 
@@ -83,13 +88,15 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 {
   id, navn, intro, vb: [bredde, højde],
   lag: [{ navn, ord: [...], ekstra: [...], ekstraFejl: { ord: tekst } }],
-  dele: [{ ord, svg }],          // tegnes i rækkefølge; farves, når `ord` sidder
+  boks: [b, h],                  // valgfri; standard 186 × 42
+  mobilBredde: 680,              // valgfri; figurens bredde i px på mobil, hvor den ruller vandret
+  dele: [{ ord, svg }],          // tegnes i rækkefølge; farves, når `ord` sidder. ord: null = baggrund med farve
   pladser: [{ ord, x, y, maal: [x, y] | null, titel, omr, fejl: { ord: tekst } }],
 }
 ```
 
-- `x, y` er midten af pladsen. Alle pladser er 186 × 42, så længden ikke
-  afslører ordet.
+- `x, y` er midten af pladsen. Alle pladser på en figur er lige store (186 × 42,
+  eller figurens `boks`), så længden ikke afslører ordet.
 - `maal` er prikken. Den sidder ved sit eget gule felt og aldrig på noget, en
   anden plads handler om. `null` giver en titel uden streg (Celletyperne).
 - `omr` er det gule felt om **hele** det, pladsen handler om: hele membranen,
@@ -114,7 +121,8 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 ## Ideer, der ikke er lavet
 
 En ny figur er en ny `fig-*.js`. Ordene lægges i `ordliste.js`, og figuren
-skrives ind i `FIGURER` i `side.js`. Gode figurer er dem, hvor placeringen er
+skrives ind i `FIGURER` i `figurer.js`. Geografifigurer hører hjemme i
+`geografi/byg-figuren/` (se dens LÆS-MIG). Gode figurer er dem, hvor placeringen er
 selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 ### Biologi
@@ -140,7 +148,6 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 | Pladegrænserne | divergent, konvergent, transform → midtoceanisk ryg, dybhavsgrav, subduktion, vulkanbue | nabo: `geografi/pladegraenser.html` |
 | Istidslandskabet i Danmark | is og smeltevand → randmoræne, moræneflade, hedeslette, tunneldal, dødishul, bakkeø | |
 | Bjergartskredsløbet | de tre bjergartsgrupper → processerne på pilene (forvitring, erosion, aflejring, diagenese, metamorfose, smeltning) | nabo: `geografi/stensamling` |
-| Vandets kredsløb | lagrene (hav, atmosfære, is, grundvand, sø og vandløb) → processerne på pilene (fordampning, transpiration, kondensation, nedbør, infiltration, overfladeafstrømning, grundvandsstrømning) | `fejl`: skyer er dråber, ikke vanddamp |
 | Lavtrykket og fronterne | varmfront, koldfront, varm sektor, okklusion → skytyper og nedbør langs snittet | nabo: `geografi/luftmasser` |
 | Den globale cirkulation | Hadley-, Ferrel- og polarcelle → ITCZ, subtropisk højtryk, passat, vestenvind, polarfront | |
 | Orografisk nedbør | luv, læ, regnskygge, kondensationsniveau, føhn | nabo: `geografi/Stigningsregn.html` |
@@ -149,9 +156,7 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 ### Motoren
 
-- Ord på pile (bjergartskredsløbet, vandets kredsløb, hormonaksen): pladsen
-  sidder på pilen, og `omr` er pilen som streg.
-- Geografifigurer på en geografiside: flyt `motor.js`, `tegn.js` og `stil.css`
-  til et fælles sted, før den første laves, så hver side kun har sine figurer
-  og sin ordliste.
 - Udskrift af figuren som noteark, tom og med facit.
+
+Lavet: motoren er flyttet til `/byg-motor/`, og ord på pile er prøvet af i
+vandets kredsløb (pladsen sidder på pilen, og `omr` er pilen som streg).

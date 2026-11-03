@@ -1,5 +1,5 @@
 // Bakteriecellen: en prokaryot stavbakterie set i snit.
-import { glat, boelge, ribosomer } from './tegn.js';
+import { glat, boelge, ribosomer } from '../../byg-motor/tegn.js';
 
 // Stav: rektangel med halvcirkler i enderne
 function stav(x1, x2, cy, r) {
