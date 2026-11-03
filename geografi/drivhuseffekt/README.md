@@ -19,11 +19,21 @@ jordens udstråling og udsender lige meget opad og nedad. Intern energi er
 proportional med 5 × jordtemperatur + 2,5 × lufttemperatur. Ændringen svarer
 til solindstråling minus udstråling til rummet. Atmosfærens absorption er 0,78.
 
-`simulation.js` omsætter strømmenes størrelse til hyppighed af symbolske
-strålingsspor. Sporene er ikke individuelle fotoner eller en Monte Carlo-
-beregning af temperatur. Atmosfærens udsendelse genereres uafhængigt af de
-absorberede spor. Gasplaceringer og spor er symbolske; den fysiske model har ét
-atmosfærelag. De synlige retninger dækker opad, nedad og til siderne.
+`simulation.js` viser få faste, sammenhængende procesbaner. Solstrålingen
+vises med tre parallelle baner; varmestrålingen vises som bølgede baner.
+Motion design består af en rolig optegning af den nye proces, en løbende
+bølgebevægelse og retningspile, som glider langs de faste baner. De eksisterende
+processer forbliver synlige ved næste trin. Der bruges ingen tilfældige
+partikler eller retninger.
+
+De få baner viser udvalgte retninger, ikke hele fordelingen af stråling.
+Atmosfærens egne baner udgår fra et repræsentativt sted, som er adskilt fra
+absorptionspunkterne, og vises samtidig mod overfladen, opad og skråt.
+Banernes styrke følger kvalitativt modellens strømme; pilenes hastighed er
+illustrativ og repræsenterer ikke lysets fart. Banerne er ikke individuelle
+fotoner eller en beregning af temperatur. Molekylsymboler, geometri og tid er
+illustrative. Landskabet har daghimmel og en stiliseret kyst, ikke en bestemt
+geografisk placering.
 
 Solafskærmningen ændrer kun soltilførsel. Sammenligningen i sidste trin
 ændrer kun drivhusgassernes langbølgede absorption og udsendelse og lader

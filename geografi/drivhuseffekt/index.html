@@ -35,32 +35,34 @@
       <div class="landskab">
       <svg id="landskab" viewBox="0 0 1200 500" preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id="himmel" x2="0" y2="1"><stop stop-color="#081c30"/><stop offset=".55" stop-color="#164b65"/><stop offset="1" stop-color="#9ac5bb"/></linearGradient>
-          <radialGradient id="solglod"><stop stop-color="#fff7c4" stop-opacity=".4"/><stop offset=".3" stop-color="#f8c96a" stop-opacity=".15"/><stop offset="1" stop-color="#f8c96a" stop-opacity="0"/></radialGradient>
-          <radialGradient id="solfarve" cx=".35" cy=".3"><stop stop-color="#fffde6"/><stop offset=".65" stop-color="#ffe49a"/><stop offset="1" stop-color="#f2b653"/></radialGradient>
-          <linearGradient id="jord" x2="0" y2="1"><stop stop-color="#51796b"/><stop offset=".08" stop-color="#426557"/><stop offset=".12" stop-color="#344d44"/><stop offset="1" stop-color="#122b2d"/></linearGradient>
-          <linearGradient id="hav" x2="0" y2="1"><stop stop-color="#76b6b0"/><stop offset=".1" stop-color="#438a94"/><stop offset="1" stop-color="#173c50"/></linearGradient>
-          <linearGradient id="atmosfaere" x2="0" y2="1"><stop stop-color="#a6ddd2" stop-opacity="0"/><stop offset=".45" stop-color="#a6ddd2" stop-opacity=".08"/><stop offset="1" stop-color="#a6ddd2" stop-opacity="0"/></linearGradient>
-          <linearGradient id="varme" x2="0" y2="1"><stop stop-color="#ffae70" stop-opacity="0"/><stop offset=".72" stop-color="#ffae70" stop-opacity=".36"/><stop offset="1" stop-color="#ff835f" stop-opacity="0"/></linearGradient>
-          <pattern id="jordlag" width="120" height="26" patternUnits="userSpaceOnUse"><path d="M-10 16 Q25 8 60 17T130 16" fill="none" stroke="#b4c5a0" stroke-opacity=".07"/></pattern>
-          <filter id="blod"><feGaussianBlur stdDeviation="7"/></filter>
+          <linearGradient id="himmel" x2="0" y2="1"><stop stop-color="#b4dce8"/><stop offset=".65" stop-color="#e1eee9"/><stop offset="1" stop-color="#f6f2d9"/></linearGradient>
+          <radialGradient id="solglod"><stop stop-color="#fff5b7" stop-opacity=".85"/><stop offset=".38" stop-color="#fff0ac" stop-opacity=".32"/><stop offset="1" stop-color="#fff6c2" stop-opacity="0"/></radialGradient>
+          <radialGradient id="solfarve" cx=".35" cy=".3"><stop stop-color="#fffbdc"/><stop offset=".65" stop-color="#ffdf82"/><stop offset="1" stop-color="#f4bf51"/></radialGradient>
+          <linearGradient id="jord" x2="0" y2="1"><stop stop-color="#94b77c"/><stop offset=".35" stop-color="#83a56c"/><stop offset="1" stop-color="#517e65"/></linearGradient>
+          <linearGradient id="hav" x2="0" y2="1"><stop stop-color="#78bdbb"/><stop offset=".4" stop-color="#559fae"/><stop offset="1" stop-color="#35798f"/></linearGradient>
+          <linearGradient id="sand" x2="0" y2="1"><stop stop-color="#f0dfad"/><stop offset="1" stop-color="#d5c891"/></linearGradient>
+          <linearGradient id="atmosfaere" x2="0" y2="1"><stop stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+          <linearGradient id="varme" x2="0" y2="1"><stop stop-color="#efad65" stop-opacity="0"/><stop offset=".85" stop-color="#efad65" stop-opacity=".3"/><stop offset="1" stop-color="#efad65" stop-opacity="0"/></linearGradient>
+          <filter id="blod"><feGaussianBlur stdDeviation="8"/></filter>
         </defs>
         <rect width="1200" height="500" fill="url(#himmel)"/>
-        <g fill="#dbe9d4" opacity=".28"><circle cx="382" cy="46" r="1.2"/><circle cx="646" cy="28" r="1"/><circle cx="1015" cy="48" r="1.4"/><circle cx="1108" cy="100" r="1"/><circle cx="866" cy="22" r="1"/><circle cx="501" cy="94" r=".8"/></g>
-        <g id="sol-tegning"><circle cx="156" cy="103" r="156" fill="url(#solglod)"/><circle cx="156" cy="103" r="52" fill="none" stroke="#ffe5a4" stroke-opacity=".12"/><circle cx="156" cy="103" r="43" fill="url(#solfarve)"/><path d="M131 82Q145 67 166 73" fill="none" stroke="#fffde4" stroke-width="3" stroke-linecap="round" opacity=".5"/></g>
-        <g id="solskaerm" opacity="0"><rect x="238" y="131" width="14" height="106" rx="5" transform="rotate(-36 245 184)" fill="#d6e4db" stroke="#091d2d" stroke-width="3"/></g>
-        <g id="atmosfaere-tegning" opacity="0"><path d="M0 119 Q600 12 1200 119 L1200 360 Q600 252 0 360Z" fill="url(#atmosfaere)"/></g>
-        <path d="M0 374Q235 300 470 340T830 352T1200 344V500H0Z" fill="#62958b" opacity=".4"/>
-        <path d="M0 393L83 358 134 374 220 307 284 359 351 344 441 386Z" fill="#4e807b"/>
-        <path d="M170 346L220 307 253 339 232 332 221 338 210 331Z" fill="#c0d6c2" opacity=".6"/>
-        <path d="M0 405Q180 352 400 366Q650 345 845 375Q1030 354 1200 392V500H0Z" fill="url(#jord)"/>
-        <path d="M0 405Q180 352 400 366Q650 345 845 375Q1030 354 1200 392" fill="none" stroke="#a1ba88" stroke-width="3"/>
-        <path d="M0 420Q240 376 460 391T870 399T1200 420V500H0Z" fill="url(#jordlag)"/>
-        <path d="M775 377Q900 363 1200 392V500H940Q914 450 846 428T775 377" fill="url(#hav)"/>
-        <g stroke="#d2e3c6" stroke-linecap="round" opacity=".22"><path d="M893 390h75m24 2h87m-179 17h54m70 5h102m-59 25h79m-212-21h52"/></g>
-        <g fill="#1c443c"><path d="M92 383v-37m-13 18 13-29 14 29zm-5 11 18-35 19 35z"/><path d="M122 378v-27m-12 18 12-27 12 27z"/><path d="M698 367v-30m-13 21 13-30 13 30zm-3 6 16-29 17 29z"/></g>
-        <path id="overflade-varme" d="M0 405Q180 352 400 366Q650 345 845 375Q1030 354 1200 392" fill="none" stroke="#ffc18a" stroke-width="17" filter="url(#blod)" opacity=".15"/>
-        <path id="varmesloer" d="M0 310Q600 237 1200 310V423Q600 353 0 423Z" fill="url(#varme)" opacity=".15"/>
+        <g id="sol-tegning"><circle cx="156" cy="103" r="120" fill="url(#solglod)"/><circle cx="156" cy="103" r="44" fill="url(#solfarve)"/><circle cx="156" cy="103" r="44" fill="none" stroke="#e0ae4c" stroke-opacity=".25" stroke-width="1.5"/></g>
+        <g id="solskaerm" opacity="0"><rect x="258" y="160" width="11" height="101" rx="5" transform="rotate(-42 263 210)" fill="#718d91" stroke="#466c78" stroke-width="2"/></g>
+        <g id="atmosfaere-tegning" opacity="0"><rect x="400" width="800" height="340" fill="url(#atmosfaere)"/></g>
+        <!-- Landskabet er et illustreret kystudsnit; form og farve holder sig i baggrunden. -->
+        <path d="M0 365C100 329 141 308 224 327S355 364 461 341S611 322 740 349S976 326 1200 351V500H0Z" fill="#b8cdb2"/>
+        <path d="M0 383C92 373 134 330 203 340S319 384 430 365S593 336 725 364S993 348 1200 377V500H0Z" fill="#a1be96"/>
+        <path d="M0 401C149 367 296 381 433 370S636 353 773 368S1022 361 1200 395V500H0Z" fill="url(#jord)"/>
+        <path d="M0 425C135 394 215 402 320 392S483 384 537 393C408 403 325 423 252 454S108 480 0 479Z" fill="#adc48a" opacity=".65"/>
+        <path d="M0 479C143 449 181 429 280 420S421 420 466 435C352 443 294 466 238 500H0Z" fill="#729969" opacity=".55"/>
+        <path d="M775 368C908 358 1057 371 1200 395V500H927C911 468 870 450 840 427S804 392 775 368Z" fill="url(#sand)"/>
+        <path d="M796 369C925 362 1066 374 1200 395V500H952C927 465 891 452 860 428S826 393 796 369Z" fill="url(#hav)"/>
+        <path d="M801 374C831 404 844 421 881 443S931 470 952 500" fill="none" stroke="#e0f1da" stroke-width="3" opacity=".6"/>
+        <g fill="none" stroke="#e4f0de" stroke-linecap="round" opacity=".4"><path d="M950 395q47-4 98 1m25 2 66 5M942 417q36-3 71 1m46 5 82 6M997 449q55-3 114 4M1038 477q41-2 86 2" stroke-width="1.5"/></g>
+        <path d="M52 405C137 387 220 399 294 390S397 381 444 380" fill="none" stroke="#d1d3a3" stroke-width="2" opacity=".65"/>
+        <g id="traeer" fill="#4d795c"><path d="M94 383v-22m-3 0h6v24h-6z"/><ellipse cx="94" cy="353" rx="12" ry="18"/><ellipse cx="83" cy="360" rx="9" ry="12"/><ellipse cx="104" cy="359" rx="10" ry="13"/><path d="M132 380v-20" stroke="#536f4c" stroke-width="4"/><ellipse cx="132" cy="351" rx="12" ry="20"/><ellipse cx="141" cy="358" rx="8" ry="11"/></g>
+        <path id="overflade-varme" d="M330 383C460 373 650 367 860 379" fill="none" stroke="#e7a35c" stroke-width="28" filter="url(#blod)" opacity=".15"/>
+        <path id="varmesloer" d="M0 310Q600 260 1200 310V423Q600 353 0 423Z" fill="url(#varme)" opacity=".15"/>
         <g id="molekyler"></g>
       </svg>
       <canvas id="straaling" aria-hidden="true"></canvas>
@@ -69,7 +71,7 @@
       <span id="jord-label" class="jord-label">Jordoverfladen <span id="varmetekst">opvarmes af Solen</span></span>
       <div class="proces sol-proces" id="sol-proces"><span class="streg gul"></span><span>Kortbølget<br>solstråling</span></div>
       <div class="proces jord-proces" id="jord-proces" hidden><span class="streg roed"></span><span>Langbølget<br>varmestråling</span></div>
-      <div class="proces gas-proces" id="gas-proces" hidden><span class="gas-symbol">●</span><span>Drivhusgasser<br><small>absorberer varmestråling</small></span></div>
+      <div class="proces gas-proces" id="gas-proces" hidden><span class="gas-symbol" aria-hidden="true">●–●</span><span>Drivhusgasser<br><small>absorberer varmestråling</small></span></div>
       <div class="proces mod-proces" id="mod-proces" hidden><span class="streg roed ned"></span><span>Atmosfærisk<br>modstråling</span></div>
       <div class="proces ud-proces" id="ud-proces" hidden><span>Varmestråling<br>til rummet</span><span class="streg roed"></span></div>
       <div id="sammenlign-maerke" class="sammenlign-maerke" hidden>Samme solstråling · uden drivhusgassernes virkning</div>
@@ -79,7 +81,7 @@
     <div class="betjening" data-pladstjek="kontrol"><div class="forsoeg"><button id="sol-knap" class="forsoeg-knap" aria-pressed="false" hidden>Afskærm sollyset</button><button id="gas-knap" class="forsoeg-knap" aria-pressed="false" hidden>Uden drivhusgassernes virkning</button><button id="forklar-knap" class="forsoeg-knap" aria-pressed="false" hidden>Forklar selv</button><span id="start-hint">Følg solstrålingen ned til overfladen.</span></div><div class="frem-tilbage"><button id="forrige" class="diskret" aria-label="Forrige trin" disabled>←</button><button id="naeste" class="primaer">Jorden stråler også <span aria-hidden="true">→</span></button></div></div>
     <nav class="trin-nav" aria-label="Vælg trin"><button data-trin="0" aria-current="step"><span class="trin-prik"></span>Solens energi</button><button data-trin="1"><span class="trin-prik"></span>Jorden stråler</button><button data-trin="2"><span class="trin-prik"></span>Gasser absorberer</button><button data-trin="3"><span class="trin-prik"></span>Atmosfæren stråler</button><button data-trin="4"><span class="trin-prik"></span>Drivhuseffekten</button></nav>
   </section>
-  <details class="om"><summary>Om modellen og forslag til samtale</summary><div class="om-indhold"><div><h2>Forklar med dine egne ord</h2><p>Hvor kommer energien fra? Hvad sker der ved jordoverfladen? Hvad absorberer drivhusgasserne? Hvorfor udsender atmosfæren stråling, og hvor bevæger den sig hen?</p><p>Prøv til sidst »Forklar selv«. Brug figuren som støtte, og forbind processerne i én sammenhængende forklaring.</p></div><div><h2>En forenklet model</h2><p>Vi viser processerne lidt ad gangen. Varm jord udsender allerede varmestråling i første trin; vi tegner den først i næste trin. Det samme gælder atmosfærens udsendelse.</p><p>Alt stof over det absolutte nulpunkt udsender varmestråling. For samme materiale og forhold udsendes mere, jo varmere det er. Overfladen stråler ud i alle retninger over overfladen; atmosfæren stråler i alle retninger omkring sig.</p><p>Absorberet stråling overfører energi til stoffet. Atmosfæren udsender selv ny stråling på grund af sin temperatur. Det er ikke en spejling.</p><p>Modellen har én overflade og ét atmosfærelag. Sollyset passerer uhindret gennem atmosfæren. Refleksion, skyer, fordampning, luftbevægelser og forskelle mellem bølgelængder i det infrarøde område er udeladt. Molekyler, strålingsspor, afstande og tid er symbolske. Sammenligningen ændrer kun atmosfærens absorption og udsendelse af varmestråling; den fjerner ikke hele atmosfæren.</p><p>Kilder: <a href="https://www.gml.noaa.gov/infodata/behind_the_scenes/whymeasure.html">NOAA: atmosfærens absorption og udsendelse</a> · <a href="https://science.nasa.gov/earth/earth-observatory/climate-and-earths-energy-budget/">NASA: Jordens energistrømme</a>.</p></div></div></details>
+  <details class="om"><summary>Om modellen og forslag til samtale</summary><div class="om-indhold"><div><h2>Forklar med dine egne ord</h2><p>Hvor kommer energien fra? Hvad sker der ved jordoverfladen? Hvad absorberer drivhusgasserne? Hvorfor udsender atmosfæren stråling, og hvor bevæger den sig hen?</p><p>Prøv til sidst »Forklar selv«. Brug figuren som støtte, og forbind processerne i én sammenhængende forklaring.</p></div><div><h2>En forenklet model</h2><p>Vi viser processerne lidt ad gangen. Varm jord udsender allerede varmestråling i første trin; vi tegner den først i næste trin. Det samme gælder atmosfærens udsendelse.</p><p>Alt stof over det absolutte nulpunkt udsender varmestråling. For samme materiale og forhold udsendes mere, jo varmere det er. Overfladen stråler ud i alle retninger over overfladen; atmosfæren stråler i alle retninger omkring sig.</p><p>Absorberet stråling overfører energi til stoffet. Atmosfæren udsender selv ny stråling på grund af sin temperatur. Det er ikke en spejling.</p><p>Modellen har én overflade og ét atmosfærelag. Sollyset passerer uhindret gennem atmosfæren. Refleksion, skyer, fordampning, luftbevægelser og forskelle mellem bølgelængder i det infrarøde område er udeladt. Molekyler, strålingsbaner, afstande og tid er symbolske. De få faste baner viser udvalgte retninger; udsendelsen er ikke begrænset til dem. Bevægelsens rytme angiver kvalitativt mere eller mindre stråling, ikke bølgernes faktiske fart. Sammenligningen ændrer kun atmosfærens absorption og udsendelse af varmestråling; den fjerner ikke hele atmosfæren.</p><p>Kilder: <a href="https://www.gml.noaa.gov/infodata/behind_the_scenes/whymeasure.html">NOAA: atmosfærens absorption og udsendelse</a> · <a href="https://science.nasa.gov/earth/earth-observatory/climate-and-earths-energy-budget/">NASA: Jordens energistrømme</a>.</p></div></div></details>
 </main>
 <noscript><p class="noscript">Slå JavaScript til for at bruge simulationen. Solstråling opvarmer jordoverfladen, som udsender varmestråling. Drivhusgasser absorberer noget af denne stråling. Atmosfæren udsender selv varmestråling i alle retninger, også mod jordoverfladen. Denne modstråling gør overfladen varmere.</p></noscript>
 </body>

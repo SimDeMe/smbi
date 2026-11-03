@@ -1,7 +1,6 @@
-import { ABSORPTION, starttilstand, energistroemme, udvikl } from './model.mjs';
+import { starttilstand, energistroemme, udvikl } from './model.mjs';
 
 const $ = id => document.getElementById(id);
-const scene = document.querySelector('.scene');
 const laerred = $('straaling');
 const pensel = laerred.getContext('2d');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
@@ -21,30 +20,23 @@ let tilstand = starttilstand();
 let tid = 0;
 let sidste = null;
 let sidsteStatus = '';
-let spor = [];
-let glimt = [];
-let solRest = 0;
-let jordRest = 0;
-let luftRest = 0;
+let baner = [];
+let overgang = 0;
 let bredde = 1200;
 let hoejde = 500;
-const molekyler = [
-  [355,238,-.2],[476,192,.4],[616,248,-.5],[745,172,.2],
-  [879,255,-.3],[1027,211,.6],[520,289,-.6],[818,308,.3],
-  [1088,310,-.2],[319,302,.3],[660,128,.7],[960,142,-.5],
-];
+// Få faste symboler og baner gør årsagskæden mulig at følge med øjnene.
+const molekyler = [[650,222,-.15],[820,185,.2],[960,240,-.2]];
 const svgNS = 'http://www.w3.org/2000/svg';
 for (const [x,y,vinkel] of molekyler) {
   const gruppe = document.createElementNS(svgNS,'g');
   gruppe.setAttribute('transform',`translate(${x} ${y}) rotate(${vinkel * 55})`);
   // Symboler for drivhusgasser, ikke en målfast molekylefordeling.
-  gruppe.innerHTML = '<path d="M-10 0H10" stroke="#a6cecc" stroke-width="3"/><circle cx="-11" r="5" fill="#b9dad1"/><circle r="6.5" fill="#f0f1d8"/><circle cx="11" r="5" fill="#b9dad1"/>';
+  gruppe.innerHTML = '<circle r="22" fill="#fff9ee" fill-opacity=".65"/><path d="M-10 0H10" stroke="#6a9292" stroke-width="3"/><circle cx="-11" r="5" fill="#568887"/><circle r="6.5" fill="#355969"/><circle cx="11" r="5" fill="#568887"/>';
   $('molekyler').append(gruppe);
 }
 
 function overflade(x) {
-  // Visuel tilnærmelse til den tegnede buede overflade.
-  return 365 + 36 * ((x - 520) / 680) ** 2;
+  return 363 + 35 * ((x - 620) / 650) ** 2;
 }
 function gasAktiv() { return aktuelt >= 2 && gas; }
 function tilpas() {
@@ -54,7 +46,7 @@ function tilpas() {
   laerred.width = Math.round(bredde * pixel);
   laerred.height = Math.round(hoejde * pixel);
   pensel.setTransform(laerred.width / 1200, 0, 0, laerred.height / 500, 0, 0);
-  // Kompensér for den brede figur, så Solen og molekylsymbolerne er runde.
+  // Kompensér for det brede lærred: sol og molekylsymboler bevarer formen.
   const forhold = (hoejde / 500) / (bredde / 1200);
   $('sol-tegning').setAttribute('transform', `translate(156 103) scale(${forhold} 1) translate(-156 -103)`);
   [...$('molekyler').children].forEach((gruppe, i) => {
@@ -65,46 +57,40 @@ function tilpas() {
 }
 new ResizeObserver(tilpas).observe(laerred);
 
-function nytSpor(type, x, y, slutX, slutY, absorberes = false, alder = 0) {
-  const afstand = Math.hypot(slutX-x,slutY-y);
-  spor.push({ type,x,y,slutX,slutY,alder,levetid:afstand/(type==='sol'?190:125),absorberes,fase:Math.random()*Math.PI*2 });
-}
-function solSpor(alder=0) {
-  const x = 300 + Math.random()*270;
-  nytSpor('sol',185,128,x,overflade(x),true,alder);
-}
-function jordSpor(alder=0) {
-  const absorberes = gasAktiv() && Math.random()<ABSORPTION;
-  if (absorberes) {
-    const m = molekyler[Math.floor(Math.random()*molekyler.length)];
-    const x = Math.max(30,Math.min(1170,m[0]+(Math.random()-.5)*300));
-    nytSpor('jord',x,overflade(x),m[0],m[1],true,alder);
-  } else {
-    const x = 160+Math.random()*880;
-    const vinkel = -Math.PI/2 + (Math.random()-.5)*2.2;
-    const afstand = 620;
-    nytSpor('jord',x,overflade(x),x+Math.cos(vinkel)*afstand,overflade(x)+Math.sin(vinkel)*afstand,false,alder);
-  }
-}
-function luftSpor(alder=0) {
-  const m = molekyler[Math.floor(Math.random()*molekyler.length)];
-  const vinkel = Math.random()*Math.PI*2;
-  let x=m[0]+Math.cos(vinkel)*700, y=m[1]+Math.sin(vinkel)*700;
-  let absorberes=false;
-  if (Math.sin(vinkel)>.05) {
-    // Find skæringen med overfladen, så modstråling absorberes dér.
-    for(let a=0;a<700;a+=3) {
-      const px=m[0]+Math.cos(vinkel)*a, py=m[1]+Math.sin(vinkel)*a;
-      if(py>=overflade(px)) {x=px;y=py;absorberes=true;break;}
-    }
-  }
-  nytSpor('luft',m[0],m[1],x,y,absorberes,alder);
+function bane(type, x, y, slutX, slutY, absorberes = false, forsinkelse = 0) {
+  return { type, x, y, slutX, slutY, absorberes, forsinkelse };
 }
 function forfyld() {
-  spor=[];glimt=[];solRest=jordRest=luftRest=0;
-  if(sol)for(let i=0;i<9;i++)solSpor(Math.random()*1.4);
-  if(aktuelt>=1)for(let i=0;i<13;i++)jordSpor(Math.random()*2.4);
-  if(aktuelt>=3&&gasAktiv())for(let i=0;i<15;i++)luftSpor(Math.random()*2);
+  baner = [];
+  overgang = 0;
+  if (sol) {
+    // Parallelle solstråler; ingen vifte af projektiler fra et enkelt punkt.
+    for (let i = 0; i < 3; i++) {
+      const x = 167 + i * 22, y = 148 - i * 19;
+      let slutX = x + 250;
+      for (let j=0;j<4;j++) slutX = x + (overflade(slutX)-y)/.9;
+      baner.push(bane('sol',x,y,slutX,overflade(slutX),true,i*.12));
+    }
+  }
+  if (aktuelt >= 1) {
+    if (gasAktiv()) {
+      baner.push(bane('jord',565,overflade(565),650,222,true,.15));
+      baner.push(bane('jord',925,overflade(925),960,240,true,.3));
+      baner.push(bane('jord',1065,overflade(1065),1110,35,false,.45));
+    } else {
+      baner.push(bane('jord',565,overflade(565),505,72,false,.15));
+      baner.push(bane('jord',745,overflade(745),755,44,false,.3));
+      baner.push(bane('jord',1065,overflade(1065),1110,35,false,.45));
+    }
+  }
+  if (aktuelt >= 3 && gasAktiv()) {
+    // Atmosfæren udsender fra et andet sted end absorptionspunkterne.
+    // Banerne afsløres samtidig udad fra kilden, ikke som en spejlvending.
+    baner.push(bane('luft',820,185,815,30,false,.6));
+    baner.push(bane('luft',820,185,845,overflade(845),true,.6));
+    baner.push(bane('luft',820,185,730,120,false,.6));
+    baner.push(bane('luft',820,185,910,130,false,.6));
+  }
 }
 function opdaterUI() {
   const t=trin[aktuelt];
@@ -182,54 +168,68 @@ document.addEventListener('keydown',e=>{
 reduceret.addEventListener('change',e=>{if(e.matches){pause=true;opdaterUI();}});
 if(new URLSearchParams(location.search).has('projektor'))$('fokus').click();
 
-function tegnSpor(s) {
-  const fremskridt=s.alder/s.levetid;
-  if(fremskridt<0||fremskridt>1)return;
-  const dx=s.slutX-s.x,dy=s.slutY-s.y;
+// Motion design: en vedvarende sammenhængende bane bærer forklaringen.
+// Bølgernes fase og få retningspile bevæger sig langs banen; intet drys af
+// tilfældige partikler. Nye processer tegnes frem fra deres egen kilde.
+function punktPaaBane(b, p, fase) {
+  const dx=b.slutX-b.x, dy=b.slutY-b.y, laengde=Math.hypot(dx,dy);
+  const amplitude=b.type==='sol'?0:3.2;
+  const boelge=Math.sin(p*laengde/7-fase)*amplitude*Math.min(1,p*8,(1-p)*8);
+  return {x:b.x+dx*p-dy/laengde*boelge,y:b.y+dy*p+dx/laengde*boelge};
+}
+function tegnBane(b, f) {
+  const nyProces = b.type === 'sol' ? aktuelt === 0
+    : b.type === 'jord' ? aktuelt === 1 || aktuelt === 2
+    : aktuelt === 3;
+  const synlig = pause || !nyProces ? 1 : Math.max(0,Math.min(1,(overgang-b.forsinkelse)/1.1));
+  if (!synlig) return;
+  const frem = 1-(1-synlig)**3;
+  const gul=b.type==='sol';
+  const farve=gul?'#ad760b':'#b94737';
+  const styrke=gul?f.solInd:b.type==='jord'?f.jordUd:f.modstraaling;
+  const fase=tid*1.7;
+  const dx=b.slutX-b.x,dy=b.slutY-b.y;
   const vinkel=Math.atan2(dy,dx);
-  const x=s.x+dx*fremskridt,y=s.y+dy*fremskridt;
-  if(x< -40||x>1240||y< -40||y>530)return;
-  const gul=s.type==='sol';
-  const farve=gul?'#ffe4a0':'#ffad91';
-  const laengde=gul?35:29;
-  pensel.save();pensel.translate(x,y);pensel.rotate(vinkel);
-  pensel.globalAlpha=Math.min(1,fremskridt*9+.15)*.9;
-  pensel.lineWidth=gul?2.1:2; pensel.strokeStyle=farve;
-  pensel.shadowColor=farve;pensel.shadowBlur=7;
+  pensel.save();
+  pensel.lineCap='round';pensel.lineJoin='round';
+  pensel.strokeStyle=farve;
+  pensel.globalAlpha=Math.min(.9,.65+styrke*.12);
+  pensel.lineWidth=(gul?2.3:1.6)+Math.min(1.8,styrke)*.7;
   pensel.beginPath();
-  if(gul){pensel.moveTo(-laengde,0);pensel.lineTo(0,0);}
-  else for(let a=-laengde;a<=0;a+=1){const b=Math.sin(a*.45+s.fase)*3.2;if(a===-laengde)pensel.moveTo(a,b);else pensel.lineTo(a,b);}
-  pensel.stroke();pensel.shadowBlur=0;
-  // En lille pilespids gør retningen læsbar også ved pause.
-  pensel.beginPath();pensel.moveTo(-5,-4);pensel.lineTo(1,0);pensel.lineTo(-5,4);pensel.stroke();
+  for(let p=0;p<=frem+.002;p+=.003){
+    const q=punktPaaBane(b,Math.min(p,frem),fase);
+    if(p===0)pensel.moveTo(q.x,q.y);else pensel.lineTo(q.x,q.y);
+  }
+  pensel.stroke();
+  // Én tydelig pilespids ved enden og én glidende retningsmarkering.
+  for(const p of [frem, .12+((tid*.13+b.forsinkelse*.3)%.74)]) {
+    if(p>frem)continue;
+    const q=punktPaaBane(b,p,fase);
+    pensel.save();pensel.translate(q.x,q.y);pensel.rotate(vinkel);
+    pensel.globalAlpha=.9;pensel.lineWidth=2.2;
+    pensel.beginPath();pensel.moveTo(-8,-5);pensel.lineTo(0,0);pensel.lineTo(-8,5);pensel.stroke();
+    pensel.restore();
+  }
+  if(b.absorberes && synlig===1){
+    const radius=9+Math.sin(tid*1.6+b.forsinkelse)*2;
+    const glod=pensel.createRadialGradient(b.slutX,b.slutY,0,b.slutX,b.slutY,radius*2);
+    glod.addColorStop(0,gul?'#e9b23b66':'#c75d3d55');glod.addColorStop(1,'#ffffff00');
+    pensel.globalAlpha=.8;pensel.fillStyle=glod;
+    pensel.beginPath();pensel.ellipse(b.slutX,b.slutY,radius*2,radius,0,0,Math.PI*2);pensel.fill();
+  }
   pensel.restore();
 }
 function tegn() {
   pensel.clearRect(0,0,1200,500);
-  for(const s of spor)tegnSpor(s);
-  for(const g of glimt){
-    pensel.beginPath();pensel.arc(g.x,g.y,3+g.alder*13,0,Math.PI*2);
-    pensel.strokeStyle=g.type==='sol'?`rgba(255,227,151,${(1-g.alder)*.65})`:`rgba(255,178,148,${(1-g.alder)*.65})`;
-    pensel.lineWidth=1.3;pensel.stroke();
-  }
+  const f=energistroemme(tilstand,sol,gasAktiv());
+  for(const b of baner)tegnBane(b,f);
 }
 function billede(nu) {
   if(sidste===null)sidste=nu;
   const dt=Math.min((nu-sidste)/1000,.05);sidste=nu;
   if(!pause&&!document.hidden){
-    tid+=dt;
+    tid+=dt;overgang+=dt;
     udvikl(tilstand,dt,sol,gasAktiv());
-    const f=energistroemme(tilstand,sol,gasAktiv());
-    solRest+=dt*(sol?5:0);jordRest+=dt*(aktuelt>=1?f.jordUd*5.5:0);luftRest+=dt*(aktuelt>=3?f.modstraaling*14:0);
-    while(solRest>=1){solSpor();solRest--;}
-    while(jordRest>=1){jordSpor();jordRest--;}
-    while(luftRest>=1){luftSpor();luftRest--;}
-    spor=spor.filter(s=>{
-      s.alder+=dt;
-      if(s.alder>=s.levetid){if(s.absorberes)glimt.push({x:s.slutX,y:s.slutY,type:s.type,alder:0});return false;}
-      return s.x+(s.slutX-s.x)*s.alder/s.levetid>-80&&s.x+(s.slutX-s.x)*s.alder/s.levetid<1280&&s.y+(s.slutY-s.y)*s.alder/s.levetid>-80;
-    });
-    glimt=glimt.filter(g=>(g.alder+=dt*1.9)<1);
     opdaterVarme();tegn();
   }
   requestAnimationFrame(billede);
