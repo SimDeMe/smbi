@@ -113,8 +113,45 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 
 ## Ideer, der ikke er lavet
 
-- Flere figurer med samme motor: kloroplasten, mitokondrien, nefronet,
-  hjertet, og i geografi fx pladegrænser og frontsystemer. En ny figur er en ny
-  `fig-*.js`. Ordene lægges i `ordliste.js`, og figuren skrives ind i `FIGURER`
-  i `side.js`.
+En ny figur er en ny `fig-*.js`. Ordene lægges i `ordliste.js`, og figuren
+skrives ind i `FIGURER` i `side.js`. Gode figurer er dem, hvor placeringen er
+selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
+
+### Biologi
+
+| Figur | Lag | Ord i overskud / fælder |
+|:--|:--|:--|
+| Mitokondrien | opbygning (ydre og indre membran, cristae, matrix, intermembranrum) → hvor det sker (citronsyrecyklus, elektrontransportkæde, ATP-syntase) | thylakoid; glykolyse (sker i cytoplasmaet) |
+| Kloroplasten | opbygning (membraner, thylakoid, granum, stroma) → lysreaktion og Calvin-cyklus | cristae |
+| Bladets tværsnit | vævene (overhud, palisadevæv, svampevæv, ledningsstreng) → spalteåbning, læbeceller, CO₂ ind og H₂O ud | kloroplast i overhuden |
+| Nefronet | delene (glomerulus, Bowmans kapsel, tubuli, Henles slynge, samlerør) → processerne (filtration, reabsorption, sekretion, ADH) | blære |
+| Hjertet og kredsløbet | kamre og kar → iltrigt/iltfattigt blod og klapperne | `fejl`: lungevene/lungearterie, venstre/højre set fra eleven |
+| Alveolen og kapillæren | gasudvekslingen: diffusionsvej og partialtryk | |
+| Synapsen | præ- og postsynaptisk celle, vesikel, transmitter, receptor, synapsekløft → signalets retning | |
+| DNA og nukleotidet | nukleotidet (fosfat, deoxyribose, base) → dobbeltstrengen (basepar, hydrogenbinding, 5′/3′) | uracil, ribose |
+| Enzymet | aktivt center, substrat, produkt → konkurrerende og ikke-konkurrerende hæmmer | |
+| Hormonaksen | hypothalamus → hypofyse → kirtel → målorgan, negativ feedback som lag 2 | |
+
+### Naturgeografi
+
+| Figur | Lag | Ord i overskud / naboer |
+|:--|:--|:--|
+| Jordens indre | kemisk inddeling (skorpe, kappe, kerne) → mekanisk (litosfære, astenosfære, flydende ydre kerne) | magmahav i kappen |
+| Pladegrænserne | divergent, konvergent, transform → midtoceanisk ryg, dybhavsgrav, subduktion, vulkanbue | nabo: `geografi/pladegraenser.html` |
+| Istidslandskabet i Danmark | is og smeltevand → randmoræne, moræneflade, hedeslette, tunneldal, dødishul, bakkeø | |
+| Bjergartskredsløbet | de tre bjergartsgrupper → processerne på pilene (forvitring, erosion, aflejring, diagenese, metamorfose, smeltning) | nabo: `geografi/stensamling` |
+| Vandets kredsløb | lagrene (hav, atmosfære, is, grundvand, sø og vandløb) → processerne på pilene (fordampning, transpiration, kondensation, nedbør, infiltration, overfladeafstrømning, grundvandsstrømning) | `fejl`: skyer er dråber, ikke vanddamp |
+| Lavtrykket og fronterne | varmfront, koldfront, varm sektor, okklusion → skytyper og nedbør langs snittet | nabo: `geografi/luftmasser` |
+| Den globale cirkulation | Hadley-, Ferrel- og polarcelle → ITCZ, subtropisk højtryk, passat, vestenvind, polarfront | |
+| Orografisk nedbør | luv, læ, regnskygge, kondensationsniveau, føhn | nabo: `geografi/Stigningsregn.html` |
+| Grundvandet | umættet zone, grundvandsspejl, magasin, lerlag, boring, kilde → nitratens vej | |
+| Jordbundsprofilen | horisonterne → podsol over for brunjord | |
+
+### Motoren
+
+- Ord på pile (bjergartskredsløbet, vandets kredsløb, hormonaksen): pladsen
+  sidder på pilen, og `omr` er pilen som streg.
+- Geografifigurer på en geografiside: flyt `motor.js`, `tegn.js` og `stil.css`
+  til et fælles sted, før den første laves, så hver side kun har sine figurer
+  og sin ordliste.
 - Udskrift af figuren som noteark, tom og med facit.
