@@ -3,7 +3,9 @@ import dyr from './fig-dyr.js';
 import plante from './fig-plante.js';
 import bakterie from './fig-bakterie.js';
 import typer from './fig-typer.js';
+import mitokondrie from './fig-mitokondrie.js';
+import kloroplast from './fig-kloroplast.js';
 export { ORD } from './ordliste.js';
 
-export const FIGURER = [dyr, plante, bakterie, typer];
+export const FIGURER = [dyr, plante, bakterie, typer, mitokondrie, kloroplast];
 export const NOEGLE = 'byg-cellen.v1';

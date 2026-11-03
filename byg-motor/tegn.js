@@ -1,4 +1,4 @@
-// Tegnehjælp til figurerne i «Byg cellen». Alt returnerer SVG som tekst.
+// Tegnehjælp til figurerne i «Byg figuren». Alt returnerer SVG som tekst.
 // Farverne er de færdige farver; motoren laver selv den grå udgave.
 
 const r1 = (v) => Math.round(v * 10) / 10;
@@ -104,4 +104,20 @@ export function boelge(x1, y1, x2, y2, amp, perioder, trin = 40) {
     d += (i ? ' L' : 'M') + r1(x) + ' ' + r1(y);
   }
   return d;
+}
+
+/** En pil, der løber rundt i en cirkel fra vinkel `fra` til `til` (grader, med uret) — en cyklus. */
+export function kredsPil(cx, cy, r, farve, bredde = 7, fra = -60, til = 240) {
+  const [x1, y1] = paaEllipse(cx, cy, r, r, fra);
+  const [x2, y2] = paaEllipse(cx, cy, r, r, til);
+  const v = (til * Math.PI) / 180;
+  const ux = -Math.sin(v), uy = Math.cos(v), s = bredde * 2.6;
+  const spids = [[x2 + ux * s * 0.35, y2 + uy * s * 0.35], [x2 - ux * s + uy * s * 0.7, y2 - uy * s - ux * s * 0.7], [x2 - ux * s - uy * s * 0.7, y2 - uy * s + ux * s * 0.7]];
+  return `<path d="M${r1(x1)} ${r1(y1)} A${r} ${r} 0 ${til - fra > 180 ? 1 : 0} 1 ${r1(x2)} ${r1(y2)}" fill="none" stroke="${farve}" stroke-width="${bredde}" stroke-linecap="round"/>
+    <polygon points="${spids.map((p) => p.map(r1).join(',')).join(' ')}" fill="${farve}"/>`;
+}
+
+/** En ellipse som sti, så den kan stå i en sti med flere dele (fx en ring med fill-rule="evenodd"). */
+export function ellipseSti(cx, cy, rx, ry) {
+  return `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${2 * rx} 0 a${rx} ${ry} 0 1 0 ${-2 * rx} 0Z`;
 }

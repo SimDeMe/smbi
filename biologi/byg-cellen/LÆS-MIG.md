@@ -1,7 +1,7 @@
 # Byg cellen
 
 `biologi/byg-cellen.html`: eleven sætter fagord på dyrecellen, plantecellen og
-bakterien. Figuren bygges lag for lag. Lagets dele står grå, de senere lag er
+bakterien og inde i mitokondrien og kloroplasten. Figuren bygges lag for lag. Lagets dele står grå, de senere lag er
 skjult, og en del får farve, når ordet sidder rigtigt.
 
 Idéen er Niels Kræmmers »Byg figuren« fra kemiformler.dk
@@ -16,9 +16,10 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
 2. **Hvad den afløser.** Intet.
 3. **Naboerne.** `membran.html` og `membran2d.html` ejer membranens opbygning
    og transporten. `transkription.html` ejer proteinsyntesen. `fotosyntese.html`
-   ejer processerne. Her står kun en sætning om funktionen.
-4. **Loftet.** 4 faner med én figur hver og 1–3 lag med 2–5 ord hvert. 30
-   pladser i alt og ét ord i overskud på tre af fanerne.
+   ejer processerne. På mitokondrien og kloroplasten står kun, *hvor* respirationens
+   og fotosyntesens trin foregår. Her står kun en sætning om funktionen.
+4. **Loftet.** 6 faner med én figur hver og 1–3 lag med 2–5 ord hvert. 45
+   pladser i alt og ord i overskud på fem af fanerne.
 5. **Layoutet.** Stor figur plus panel: opgaven, bakken med ord, beskeden,
    Giv et hint og Indsend svar, lagene og Byg forfra. På smal skærm ligger
    panelet over figuren og klæber under topbjælken.
@@ -33,10 +34,15 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
 | Bakterien `#bakterie` | Grundplanen | cellevæg, cellemembran, cytoplasma, kromosom (+ cellekerne i overskud) |
 | | Ekstraudstyret | plasmid, ribosom, flagel, pili, kapsel |
 | Celletyperne `#typer` | To slags celler | eukaryot, prokaryot (+ virus i overskud) |
+| Mitokondrien `#mitokondrie` | Opbygningen | ydre membran, intermembranrum, indre membran, matrix, cristae (+ thylakoid i overskud) |
+| | Hvor respirationen sker | citronsyrecyklus, elektrontransportkæde, ATP-syntase (+ glykolyse i overskud) |
+| Kloroplasten `#kloroplast` | Opbygningen | ydre membran, indre membran, thylakoid, granum, stroma (+ cristae i overskud) |
+| | Hvor fotosyntesen sker | lysreaktion, Calvin-cyklus (+ citronsyrecyklus i overskud) |
 
 Et ord i overskud er en typisk elevfejl, der aldrig kan forsvares som rigtig:
 dyreceller har ingen cellevæg, bakterier ingen cellekerne, og en virus er ikke
-en celle. Det samme ord kan stå på flere figurer (cellemembran, ribosom …).
+en celle. Mitokondrien og kloroplasten bruger hinandens fagord som fælder:
+thylakoid og cristae, og citronsyrecyklussen over for Calvin-cyklussen. Det samme ord kan stå på flere figurer (cellemembran, ribosom …).
 Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder på.
 
 ## Sådan virker den
@@ -60,7 +66,7 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 - **Fokus** skjuler sidehovedet, topbjælken og bunden.
 - Tastatur: Tab til ordet og Enter, Tab til pladsen og Enter. Delete sender
   ordet tilbage, Esc fjerner valget, og Enter uden for en knap indsender. Tasterne
-  1–4 skifter fane, og piletasterne virker på fanerne.
+  1–6 skifter fane, og piletasterne virker på fanerne.
 - Browseren husker, hvilke figurer der er bygget (✓ og ★ på fanerne), under
   nøglen `byg-cellen.v1`. Siden virker også uden.
 
@@ -75,11 +81,11 @@ Her ligger kun figurerne og ordlisten.
 | `figurer.js` | `FIGURER`, `ORD` og nøglen til browserens hukommelse |
 | `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
-| `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js` | figurerne, lagene og pladserne |
+| `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
 | `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
 | `/byg-motor/side.js` | fanerne, Svær udgave, fokus, links, tastatur og konfetti |
-| `/byg-motor/tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger |
+| `/byg-motor/tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger, cyklus-pile |
 | `/byg-motor/selvtest.mjs` | `node byg-motor/selvtest.mjs biologi/byg-cellen.html` |
 
 ## En figur
@@ -117,6 +123,10 @@ Her ligger kun figurerne og ordlisten.
 - I plantecellen ligger cellemembranen et stykke fra cellevæggen, så de kan
   skelnes.
 - Udeladt: kernelegeme, cytoskelet, peroxisomer og centrioler.
+- Mitokondrien (1–2 µm) og kloroplasten (3–10 µm) er tegnet langt større end cellerne.
+  Cristae er fire lige folder, kloroplasten har kun fire grana.
+- Elektrontransportkæden og ATP-syntasen sidder i hele den indre membran; her er
+  der nogle få, hver på sin fold. Thylakoidernes ATP-syntaser er ikke tegnet.
 
 ## Ideer, der ikke er lavet
 
@@ -129,8 +139,6 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 | Figur | Lag | Ord i overskud / fælder |
 |:--|:--|:--|
-| Mitokondrien | opbygning (ydre og indre membran, cristae, matrix, intermembranrum) → hvor det sker (citronsyrecyklus, elektrontransportkæde, ATP-syntase) | thylakoid; glykolyse (sker i cytoplasmaet) |
-| Kloroplasten | opbygning (membraner, thylakoid, granum, stroma) → lysreaktion og Calvin-cyklus | cristae |
 | Bladets tværsnit | vævene (overhud, palisadevæv, svampevæv, ledningsstreng) → spalteåbning, læbeceller, CO₂ ind og H₂O ud | kloroplast i overhuden |
 | Nefronet | delene (glomerulus, Bowmans kapsel, tubuli, Henles slynge, samlerør) → processerne (filtration, reabsorption, sekretion, ADH) | blære |
 | Hjertet og kredsløbet | kamre og kar → iltrigt/iltfattigt blod og klapperne | `fejl`: lungevene/lungearterie, venstre/højre set fra eleven |
@@ -158,5 +166,5 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 - Udskrift af figuren som noteark, tom og med facit.
 
-Lavet: motoren er flyttet til `/byg-motor/`, og ord på pile er prøvet af i
+Lavet: mitokondrien og kloroplasten er faner i Byg cellen. Motoren er flyttet til `/byg-motor/`, og ord på pile er prøvet af i
 vandets kredsløb (pladsen sidder på pilen, og `omr` er pilen som streg).

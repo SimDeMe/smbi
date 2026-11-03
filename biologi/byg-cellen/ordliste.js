@@ -90,6 +90,63 @@ export const ORD = {
     ord: 'prokaryot',
     tekst: 'En celle uden cellekerne og uden organeller med membran. Bakterier er prokaryote.',
   },
+  // Mitokondrien og kloroplasten set indefra
+  ydreMembran: {
+    ord: 'ydre membran',
+    tekst: 'Den yderste af de to membraner om mitokondrien og kloroplasten. Den er glat og lader små molekyler slippe igennem.',
+  },
+  indreMembran: {
+    ord: 'indre membran',
+    tekst: 'Den inderste af de to membraner om mitokondrien og kloroplasten. Den er tæt, og transportproteiner i den bestemmer, hvad der kommer ind.',
+  },
+  intermembranrum: {
+    ord: 'intermembranrum',
+    tekst: 'Det smalle rum mellem mitokondriens ydre og indre membran. Elektrontransportkæden pumper H⁺ herud, så koncentrationen af H⁺ bliver høj.',
+  },
+  cristae: {
+    ord: 'cristae',
+    tekst: 'Folderne i mitokondriens indre membran. De gør membranen stor, så der er plads til mange elektrontransportkæder og ATP-syntaser.',
+  },
+  matrix: {
+    ord: 'matrix',
+    tekst: 'Væsken inden for mitokondriens indre membran. Her bliver pyruvat nedbrudt, og citronsyrecyklussen kører.',
+  },
+  glykolyse: {
+    ord: 'glykolyse',
+    tekst: 'Første trin i respirationen: glukose spaltes til to pyruvat, og der dannes lidt ATP. Det sker i cytoplasmaet, ikke i mitokondrien.',
+  },
+  citronsyrecyklus: {
+    ord: 'citronsyrecyklus',
+    tekst: 'En kreds af reaktioner i mitokondriens matrix, hvor resten af glukosen nedbrydes til CO₂. Elektronerne afleveres til NADH og FADH₂.',
+  },
+  elektrontransportkaede: {
+    ord: 'elektrontransportkæde',
+    tekst: 'En række proteiner i den indre membran, der sender elektroner fra NADH videre til ilt, så der dannes vand. Energien pumper H⁺ ud i intermembranrummet.',
+  },
+  atpSyntase: {
+    ord: 'ATP-syntase',
+    tekst: 'Et protein i membranen, som H⁺ strømmer tilbage igennem. Strømmen driver dannelsen af ATP ud fra ADP og fosfat.',
+  },
+  thylakoid: {
+    ord: 'thylakoid',
+    tekst: 'En flad sæk af membran inde i kloroplasten. I membranen sidder klorofyllet, og her foregår lysreaktionen.',
+  },
+  granum: {
+    ord: 'granum',
+    tekst: 'En stak af thylakoider (flertal: grana). Stakkene er forbundet af enkelte lange thylakoider.',
+  },
+  stroma: {
+    ord: 'stroma',
+    tekst: 'Væsken inden for kloroplastens indre membran, uden om thylakoiderne. Her kører Calvin-cyklussen.',
+  },
+  lysreaktion: {
+    ord: 'lysreaktion',
+    tekst: 'Den del af fotosyntesen, der sker i thylakoidmembranen. Lysenergi spalter vand, så der frigives O₂, og der dannes ATP og NADPH.',
+  },
+  calvin: {
+    ord: 'Calvin-cyklus',
+    tekst: 'Den del af fotosyntesen, der sker i stroma. CO₂ bliver bundet og bygget om til sukker med energi fra ATP og NADPH fra lysreaktionen.',
+  },
   virus: {
     ord: 'virus',
     tekst: 'Ikke en celle: arvemateriale i en kappe af protein, uden eget stofskifte. En virus kan kun formere sig inde i en værtscelle.',
