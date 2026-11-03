@@ -150,8 +150,8 @@
 
     kort.forEach(function (k) {
       k.soeg = ord.every(function (o) { return k.tekst.indexOf(o) !== -1; });
-      // emnet gælder kun de kort, der har et
-      var emneOk = !valgtEmne || !k.emner.length || harEmne(k, valgtEmne);
+      // kort uden emne (fx Atlas) hører ikke til noget emne
+      var emneOk = !valgtEmne || harEmne(k, valgtEmne);
       k.el.hidden = !(k.soeg && emneOk && alfaOk(k));
       if (k.soeg && alfaOk(k)) fundne++;
       if (k.soeg && k.alfa) alfaFundne++;
