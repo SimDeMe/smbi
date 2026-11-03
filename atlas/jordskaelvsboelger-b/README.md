@@ -1,4 +1,4 @@
-# Jordskælvsbølger model B
+# Jordskælv
 
 Selvstændig side på `/atlas/jordskaelvsboelger-b/` med modelkort i atlasset
 (emne «Seismiske bølger», også under «Undersøg jordskælv og vulkaner»).

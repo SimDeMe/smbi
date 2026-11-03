@@ -1,4 +1,4 @@
-// Browsertest for Jordskælvsbølger model B. Kræver en lokal server og Playwright:
+// Browsertest for Jordskælv. Kræver en lokal server og Playwright:
 //   NODE_PATH=værktøj/node_modules node atlas/test/jordskaelvsboelger-b.cjs
 // Modellens tal testes for sig i atlas/jordskaelvsboelger-b/model.test.mjs.
 const { chromium } = require('playwright');
@@ -157,10 +157,10 @@ fs.mkdirSync(ud, { recursive: true });
   const side = await browser.newPage();
   await side.goto(base + '/atlas/');
   await side.getByRole('button', { name: 'Processer', exact: true }).click();
-  assert.ok(await side.getByRole('heading', { name: 'Jordskælvsbølger model B', exact: true }).isVisible());
+  assert.ok(await side.getByRole('heading', { name: 'Jordskælv', exact: true }).isVisible());
   await side.getByRole('button', { name: 'Undersøg jordskælv og vulkaner', exact: true }).click();
-  assert.equal(await side.getByRole('link', { name: 'Åbn simulation: Jordskælvsbølger model B' }).getAttribute('href'), '/atlas/jordskaelvsboelger-b/');
+  assert.equal(await side.getByRole('link', { name: 'Åbn simulation: Jordskælv' }).getAttribute('href'), '/atlas/jordskaelvsboelger-b/');
   assert.deepEqual(fejl, []);
   await browser.close();
-  console.log('Alle browsertest for model B bestået.');
+  console.log('Alle browsertest for Jordskælv bestået.');
 })().catch(e => { console.error(e); process.exit(1); });

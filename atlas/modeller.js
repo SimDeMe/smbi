@@ -47,14 +47,10 @@ export const steder = [
 ];
 
 export const modeller = [
-  { id: 'jordskaelvsboelger-a', titel: 'Jordskælvsbølger model A', emne: 'Seismiske bølger', niveau: 'Naturgeografi C / B', steder: [],
-    beskrivelse: 'Se hvordan P- og S-bølger bevæger sig. Aflæs tre seismogrammer, justér afstandscirklerne, og find et skjult epicenter.',
-    modelnote: 'Idealiseret lokalt område · syntetiske seismogrammer',
-    sti: '/atlas/jordskaelvsboelger-a/', soegeord: 'jordskælv seismik lokalisering epicenter hypocenter fokus p-bølger s-bølger trilateration bølgefart' },
-  { id: 'jordskaelvsboelger-b', titel: 'Jordskælvsbølger model B', emne: 'Seismiske bølger', niveau: 'Naturgeografi C / B', steder: [],
+  { id: 'jordskaelvsboelger-b', titel: 'Jordskælv', emne: 'Seismiske bølger', niveau: 'Naturgeografi C / B', steder: [],
     beskrivelse: 'Se P-, S- og overfladebølger ryste klippen, find et skjult skælv med S−P-metoden og tre cirkler, og følg bølgerne gennem Jordens kerne.',
     modelnote: 'Modelområde og beregnet strålegang gennem Jorden (ak135)',
-    sti: '/atlas/jordskaelvsboelger-b/', soegeord: 'jordskælv seismik seismogram seismograf epicenter lokalisering richter magnitude skyggezone kerne lehmann p-bølger s-bølger overfladebølger' },
+    sti: '/atlas/jordskaelvsboelger-b/', soegeord: 'jordskælv jordskælvsbølger seismik trilateration hypocenter seismogram seismograf epicenter lokalisering richter magnitude skyggezone kerne lehmann p-bølger s-bølger overfladebølger' },
   { id: 'termisk-lavtryk', titel: 'Termiske tryk', emne: 'Vejr og klima', niveau: 'NV / Naturgeografi C', steder: [],
     beskrivelse: 'Tre luftsøjler, den midterste opvarmes eller afkøles. Se trykfladerne løfte sig eller synke, luften strømme i højden og et lavtryk eller højtryk opstå ved jorden.',
     modelnote: 'Hydrostatisk principmodel med illustrative tal',
