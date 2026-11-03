@@ -46,7 +46,8 @@ const tjek = (betingelse, tekst) => {
 
 // ── Data ──────────────────────────────────────────────────
 const { ORD, FIGURER: figurer } = data;
-const { BOKS } = await import('./motor.js');
+const { BOKS, foersteSaetning } = await import('./motor.js');
+tjek(foersteSaetning('Laget er ca. 100 km tykt. Mere her.') === 'Laget er ca. 100 km tykt.', 'første sætning stopper ved en forkortelse');
 for (const f of figurer) {
   const [W, H] = f.vb;
   const [BOKS_B, BOKS_H] = f.boks || BOKS;

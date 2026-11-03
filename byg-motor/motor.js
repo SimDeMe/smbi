@@ -9,6 +9,16 @@
 
 const NS = 'http://www.w3.org/2000/svg';
 export const BOKS = [186, 42];            // alle pladser er lige store; en figur kan vælge sit eget `boks`
+
+// Sætningsslut: punktum efter en forkortelse tæller ikke (»ca. 100 km«, »4 mia. år«).
+const SAETNINGSSLUT = /(?<!\b(?:ca|fx|mio|mia|dvs|evt|pga|jf|bl\.a|f\.eks))[.!?](?=\s|$)/;
+
+/** Første sætning af en forklaring: til det grønne kort og hintet. */
+export function foersteSaetning(t) {
+  const i = t.search(SAETNINGSSLUT);
+  return i < 0 ? t : t.slice(0, i + 1);
+}
+
 const SNAP = 30;                          // px: slip tæt på en plads rammer den
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -61,11 +71,7 @@ export class Byg {
   }
 
   /** Første sætning af forklaringen. */
-  kort(id) {
-    const t = this.ORD[id].tekst;
-    const i = t.search(/[.!?](\s|$)/);
-    return i < 0 ? t : t.slice(0, i + 1);
-  }
+  kort(id) { return foersteSaetning(this.ORD[id].tekst); }
 
   aktiveLag() {
     return this.svaer ? this.fig.lag.map((_, i) => i) : [this.lag];
