@@ -52,7 +52,7 @@ og ret `name`, `description`, `url`, `about` og `learningResourceType`
 
 ## Sider, der ikke skal i søgeresultaterne
 
-Interne sider (`admin.html`, `censorUr.html`, arbejdstidskalenderen, `tid/`,
+Interne sider (`censorUr.html`, arbejdstidskalenderen, `tid/`,
 `navneApp/`, `studiekort/`, `smbi-design/`, `backup-gammelt-design/` og
 lærerløsningerne) har `<meta name="robots" content="noindex, follow">` i stedet
 for delingsblokken. De er med vilje **ikke** spærret i `robots.txt` — en

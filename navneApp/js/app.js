@@ -18,7 +18,7 @@ import { db } from "./firebase-config.js";
 // Tælles op sammen med CACHE i service-worker.js, hver gang der lægges en ny
 // udgave op. Mærket sættes herfra og ikke i HTML, så det følger koden: viser
 // topbjælken intet, er det gammel JavaScript, der stadig er i gang.
-export const UDGAVE = 8;
+export const UDGAVE = 9;
 
 const udgaveMaerke = document.getElementById('udgave');
 if (udgaveMaerke) udgaveMaerke.textContent = `v${UDGAVE}`;
