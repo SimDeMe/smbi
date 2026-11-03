@@ -15,8 +15,10 @@ const FARVE = { membran: '#2C7A30', stroma: '#E3F2CF', rum: '#C9E6AE', thyl: '#3
 const DISK = { b: 74, h: 11, trin: 13.5 };
 const GRANA = [[350, 300, 5], [470, 215, 5], [480, 410, 6], [610, 320, 5]];
 const diskY = ([, y, n], i) => y + (i - (n - 1) / 2) * DISK.trin;
-const disk = (x, y) => `<rect x="${x - DISK.b / 2}" y="${r1(y - DISK.h / 2)}" width="${DISK.b}" height="${DISK.h}" rx="${DISK.h / 2}" fill="${FARVE.thyl}" stroke="${FARVE.kant}" stroke-width="1.6"/>`;
-const stak = (g) => Array.from({ length: g[2] }, (_, i) => disk(g[0], diskY(g, i))).join('');
+// en thylakoid er en flad sæk: membran uden om et lyst hulrum
+const disk = (x, y) => `<rect x="${x - DISK.b / 2}" y="${r1(y - DISK.h / 2)}" width="${DISK.b}" height="${DISK.h}" rx="${DISK.h / 2}" fill="${FARVE.thyl}" stroke="${FARVE.kant}" stroke-width="1.6"/>
+  <path d="M${x - DISK.b / 2 + 6} ${r1(y)} H${x + DISK.b / 2 - 6}" stroke="#A8DC96" stroke-width="2.4" stroke-linecap="round"/>`;
+const stak = (g, uden = -1) => Array.from({ length: g[2] }, (_, i) => (i === uden ? '' : disk(g[0], diskY(g, i)))).join('');
 /** Rammen om en stak (til de gule felter). */
 const stakRamme = ([x, y, n], luft = 8) => {
   const h = (n - 1) * DISK.trin + DISK.h + 2 * luft;
@@ -31,8 +33,16 @@ const lameller = [[0, 1], [0, 2], [1, 3], [2, 3]].map(([a, b]) => {
     <path d="${d}" fill="none" stroke="${FARVE.thyl}" stroke-width="3.6" stroke-linecap="round"/>`;
 }).join('');
 
-// Den thylakoid, pladsen peger på: den nederste i den tredje stak
-const ENKELT = [GRANA[2][0], diskY(GRANA[2], GRANA[2][2] - 1)];
+// Den thylakoid, pladsen peger på: den nederste i den tredje stak, trukket et
+// stykke ud til siden, så den står som én sæk for sig
+const ENKELT = [GRANA[2][0] + 30, diskY(GRANA[2], GRANA[2][2] - 1) + 7];
+
+// Granum: en klamme langs hele den anden stak viser, at pladsen gælder stakken
+const G2 = GRANA[1];
+const G2_TOP = diskY(G2, 0) - DISK.h / 2, G2_BUND = diskY(G2, G2[2] - 1) + DISK.h / 2;
+const KLAMME_X = G2[0] - DISK.b / 2 - 10;
+const klamme = `<path d="M${KLAMME_X} ${r1(G2_TOP)} q-9 0 -9 9 V${r1(G2[1] - 7)} q0 7 -8 7 q8 0 8 7 V${r1(G2_BUND - 9)} q0 9 9 9"
+  fill="none" stroke="${FARVE.kant}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
 
 // Lyset: bølgede pile ude fra, der rammer stakkene
 function lysPil(x1, y1, x2, y2) {
@@ -62,7 +72,7 @@ export default {
     { ord: 'indreMembran', svg: `<path d="${indre}" fill="none" stroke="${FARVE.membran}" stroke-width="5"/>` },
     { ord: 'ydreMembran', svg: `<path d="${ydre}" fill="none" stroke="${FARVE.membran}" stroke-width="6"/>` },
     { ord: 'thylakoid', svg: lameller },
-    { ord: 'granum', svg: GRANA.map(stak).join('') },
+    { ord: 'granum', svg: GRANA.map((g, i) => stak(g, i === 2 ? g[2] - 1 : -1)).join('') + klamme },
     { ord: 'thylakoid', svg: disk(...ENKELT) },          // den ene sæk oven på stakken, så den får farve for sig
     { ord: 'calvin', svg: kredsPil(KREDS.x, KREDS.y, KREDS.r, '#0E86C8', 7) },
     { ord: 'lysreaktion', svg: lys },
@@ -78,12 +88,12 @@ export default {
       omr: `<path d="${indre}"/>`,
       fejl: { thylakoid: 'De flade sække er membran. Prikken sidder i væsken uden om dem.',
               indreMembran: 'Pladsen peger på væsken inden for membranerne, ikke på en hinde.' } },
-    { ord: 'granum', x: 470, y: 40, maal: [470, r1(diskY(GRANA[1], 0) - DISK.h / 2)],
-      omr: stakRamme(GRANA[1]),
-      fejl: { thylakoid: 'Pladsen spørger om hele stakken, ikke om én af de flade sække i den.' } },
-    { ord: 'thylakoid', x: 480, y: 612, maal: [ENKELT[0], r1(ENKELT[1] + DISK.h / 2)],
+    { ord: 'granum', x: 330, y: 70, maal: [KLAMME_X - 17, G2[1]],
+      omr: stakRamme(G2, 8) + `<rect x="${KLAMME_X - 26}" y="${r1(G2_TOP - 8)}" width="36" height="${r1(G2_BUND - G2_TOP + 16)}" rx="10"/>`,
+      fejl: { thylakoid: 'Klammen samler hele stakken. Pladsen spørger om stakken, ikke om én af de flade sække i den.' } },
+    { ord: 'thylakoid', x: 640, y: 600, maal: [ENKELT[0] + DISK.b / 2, ENKELT[1]],
       omr: `<rect x="${ENKELT[0] - DISK.b / 2 - 5}" y="${r1(ENKELT[1] - DISK.h / 2 - 5)}" width="${DISK.b + 10}" height="${DISK.h + 10}" rx="8"/>`,
-      fejl: { granum: 'Pladsen peger på én enkelt flad sæk, ikke på hele stakken.',
+      fejl: { granum: 'Pladsen peger på den ene flade sæk, der stikker ud af stakken, ikke på hele stakken.',
               stroma: 'Væsken ligger uden om. Pladsen peger på en flad sæk af membran.' } },
     { ord: 'calvin', x: 900, y: 190, maal: [KREDS.x + KREDS.r, KREDS.y],
       omr: `<circle cx="${KREDS.x}" cy="${KREDS.y}" r="${KREDS.r + 16}"/>`,
