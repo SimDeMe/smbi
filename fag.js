@@ -14,6 +14,15 @@
   var tom = document.getElementById('soeg-tom');
   var emneBoks = document.getElementById('emne-filter');
   var emneTom = document.getElementById('emne-tom');
+  var tomTekst = tom ? tom.textContent : '';
+
+  /* Alfaknappen: på sider med #alfa-knap står kun betaversionerne fremme,
+     og simuleringer med alfamærke vises først, når knappen er trykket ned.
+     Sider uden knappen viser alle kort som før. */
+  var alfaKnap = document.getElementById('alfa-knap');
+  var alfaAntal = alfaKnap && alfaKnap.querySelector('.antal');
+  var simAntal = document.getElementById('sim-antal');
+  var visAlfa = !alfaKnap;
 
   /* Hvert kort bærer sine søgeord i data-sog. Overskrift og brødtekst tages
      med automatisk, så nøgleordene kun skal dække det, der IKKE står på
@@ -30,6 +39,7 @@
                  .filter(function (e) { return e; }),
         tekst: (el.getAttribute('data-sog') + ' ' + el.textContent)
                  .toLowerCase().replace(/\s+/g, ' '),
+        alfa: !!el.querySelector('.wip-mark'),
         soeg: true
       };
     }
@@ -118,27 +128,49 @@
   }
 
   /* ── Vis og skjul ─────────────────────────────────────── */
+  function alfaOk(k) { return visAlfa || !k.alfa; }
+
   function vis() {
-    var synlige = 0, fundne = 0;
+    var synlige = 0, fundne = 0, alfaFundne = 0;
 
     kort.forEach(function (k) {
       k.soeg = ord.every(function (o) { return k.tekst.indexOf(o) !== -1; });
       // emnet gælder kun de kort, der har et
       var emneOk = !valgtEmne || !k.emner.length || harEmne(k, valgtEmne);
-      k.el.hidden = !(k.soeg && emneOk);
-      if (k.soeg) fundne++;
+      k.el.hidden = !(k.soeg && emneOk && alfaOk(k));
+      if (k.soeg && alfaOk(k)) fundne++;
+      if (k.soeg && k.alfa) alfaFundne++;
       if (!k.el.hidden) synlige++;
     });
 
     /* En gruppe skjules efter søgningen alene: står man i et emne uden
        træffere, skal staken — og dermed emneknapperne — blive stående,
        så man kan vælge et andet. */
+    var simuleringer = 0;
     grupper.forEach(function (g) {
-      var nogen = g.kort.some(function (k) { return k.soeg; });
+      var nogen = g.kort.some(function (k) { return k.soeg && alfaOk(k); });
       g.boks.hidden = !nogen;
       if (g.note) g.note.hidden = !nogen;
       if (g.titel && g.titel.classList.contains('grp')) g.titel.hidden = !nogen;
+      // gruppens tæller følger alfaknappen, så den passer med kortene
+      var n = alfaKnap && g.titel && g.titel.querySelector('.n');
+      if (n) {
+        var antal = g.kort.filter(alfaOk).length;
+        // grupper som «Opslag» tæller værktøjer, ikke simuleringer
+        if (/simulering/.test(n.textContent)) {
+          simuleringer += antal;
+          n.textContent = antal + (antal === 1 ? ' simulering' : ' simuleringer');
+        } else {
+          n.textContent = n.textContent.replace(/^\d+/, antal);
+        }
+      }
     });
+
+    if (alfaKnap) {
+      alfaKnap.setAttribute('aria-pressed', String(visAlfa));
+      alfaAntal.textContent = alfaFundne;
+      if (simAntal) simAntal.textContent = simuleringer + ' stk';
+    }
 
     knapper.forEach(function (kn) {
       var n = kort.filter(function (k) {
@@ -160,7 +192,12 @@
         : '';
     }
 
-    if (tom) tom.hidden = fundne !== 0;
+    if (tom) {
+      tom.hidden = fundne !== 0;
+      tom.textContent = !visAlfa && alfaFundne
+        ? 'Kun alfaversioner matcher søgningen — tryk på «Alfa-versioner» for at se dem.'
+        : tomTekst;
+    }
     if (tal) {
       tal.textContent = ord.length === 0
         ? ''
@@ -187,9 +224,23 @@
     });
   }
 
-  /* Deling: ?soeg=grundvand åbner siden med søgningen slået til, og
-     ?emne=krop-og-fysiologi med emnet valgt */
+  if (alfaKnap) {
+    alfaKnap.addEventListener('click', function () {
+      visAlfa = !visAlfa;
+      vis();
+      if (!window.history.replaceState) return;
+      var url = new URL(location.href);
+      if (visAlfa) url.searchParams.set('alfa', '1');
+      else url.searchParams.delete('alfa');
+      history.replaceState(null, '', url);
+    });
+  }
+
+  /* Deling: ?soeg=grundvand åbner siden med søgningen slået til,
+     ?emne=krop-og-fysiologi med emnet valgt og ?alfa=1 med alfaversionerne
+     fremme */
   var params = new URLSearchParams(location.search);
+  if (alfaKnap && params.get('alfa') === '1') visAlfa = true;
   var fraUrl = params.get('soeg');
   var emneFraUrl = params.get('emne');
   if (emneFraUrl && knapper.length) {

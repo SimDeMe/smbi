@@ -512,6 +512,19 @@ img{display:block;max-width:100%}
   background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 8px;
 }
 
+/* Alfaknappen på fagsiderne: kun betaversionerne står fremme, og
+   alfaversionerne kommer frem, når knappen trykkes ned (fag.js). */
+.alfa-linje{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;margin:-6px 0 18px}
+.alfa-linje .grp-note{margin:0;flex:1 1 32ch}
+.alfa-knap{--c:var(--slate);display:inline-flex;align-items:center;gap:8px;border-style:dashed}
+.alfa-knap .antal{
+  font-family:var(--mono);font-size:0.7rem;font-weight:600;
+  background:var(--t,#E9EDEC);border:1.5px solid var(--ink);border-radius:10px;padding:0 6px;
+}
+.alfa-knap[aria-pressed="true"]{border-style:solid}
+.alfa-knap[aria-pressed="true"] .antal{background:#fff;color:var(--ink)}
+.alfa-knap:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
 /* ── Øvrigt materiale: hver type sin stak ──────────────── */
 .other{
   margin-top:56px;background:var(--paper-2);

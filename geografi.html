@@ -93,10 +93,13 @@
   <section class="sec wrap" id="simuleringer">
     <div class="sec-head">
       <h2>Simuleringer</h2>
-      <span class="tag t1">23 stk</span>
+      <span class="tag t1" id="sim-antal">23 stk</span>
       <span class="rule"></span>
     </div>
-    <p class="grp-note">Mærket på hvert kort viser, hvor langt simuleringen er: <b>beta</b> er gennemarbejdet og klar til undervisning, men kan stadig blive rettet. <b>Alfa</b> virker og kan bruges, men mangler endnu et gennemsyn af fagligt indhold, forklaringer eller layout.</p>
+    <div class="alfa-linje">
+      <p class="grp-note">Her står betaversionerne: gennemarbejdede og klar til undervisning, men de kan stadig blive rettet. Alfaversionerne virker og kan bruges, men mangler endnu et gennemsyn af fagligt indhold, forklaringer eller layout.</p>
+      <button type="button" class="chip alfa-knap" id="alfa-knap" aria-pressed="false" aria-controls="simuleringer">Alfa-versioner <span class="antal">9</span></button>
+    </div>
 
     <div class="grp" id="grp-klima" style="--c:var(--blue);--t:#E7F4FB">
       <span class="grp-mark"></span><h3>Klima &amp; energibalance</h3>
