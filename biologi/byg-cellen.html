@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Byg cellen — sæt fagordene på — smbi.dk</title>
+<meta name="description" content="Træk fagordene hen på dyrecellen, plantecellen og bakterien. Cellen bygges lag for lag, og forklaringen kommer frem, når ordet sidder rigtigt.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/biologi/byg-cellen.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/byg-cellen.html">
+<meta property="og:title" content="Byg cellen — sæt fagordene på">
+<meta property="og:description" content="Træk fagordene hen på dyrecellen, plantecellen og bakterien. Cellen bygges lag for lag, og forklaringen kommer frem, når ordet sidder rigtigt.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="byg-cellen/stil.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Byg cellen — sæt fagordene på",
+      "url": "https://smbi.dk/biologi/byg-cellen.html",
+      "inLanguage": "da-DK",
+      "description": "Træk fagordene hen på dyrecellen, plantecellen og bakterien. Cellen bygges lag for lag, og forklaringen kommer frem, når ordet sidder rigtigt.",
+      "learningResourceType": "interaktiv øvelse",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Person", "name": "Simon Messell" },
+      "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": { "@id": "https://smbi.dk/#website" },
+      "about": { "@type": "Thing", "name": "Cellens opbygning" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/" },
+        { "@type": "ListItem", "position": 2, "name": "Biologi", "item": "https://smbi.dk/biologi.html" },
+        { "@type": "ListItem", "position": 3, "name": "Byg cellen", "item": "https://smbi.dk/biologi/byg-cellen.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Biologi · cellen · fagord</span>
+      <h1>Byg <span class="hi" style="--hc:#FBD3E1">cellen</span></h1>
+      <p class="lead">Sæt fagordene på cellens dele. Cellen bygges op lag for lag: en del får farve, når ordet sidder rigtigt, og forklaringen kommer frem.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <section class="rig" id="byg" aria-label="Byg cellen">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <div class="faner" id="faner" role="tablist" aria-label="Figurer"></div>
+        <span class="spacer"></span>
+        <label class="kontakt" title="Alle fagord på én gang"><input type="checkbox" id="svaer"> Svær udgave</label>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul overskrift og sidens menu">Fokus</button>
+      </div>
+      <div class="rig-body">
+        <div class="scene" id="scene" role="tabpanel" aria-labelledby="faner">
+          <p class="fig-intro" id="fig-intro"></p>
+          <div class="fig-ramme">
+            <svg id="figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Figuren med pladser til fagordene"></svg>
+          </div>
+        </div>
+        <aside class="side" aria-label="Opgaven">
+          <div class="opg">
+            <h2 id="opg-titel"></h2>
+            <p id="opg-tekst"></p>
+          </div>
+          <div class="bakke" id="bakke" aria-label="Fagord" data-pladstjek="kontrol"></div>
+          <p class="besked" id="besked" aria-live="polite"></p>
+          <div class="faerdig-kort" id="faerdig-kort" hidden></div>
+          <div class="knapper">
+            <button type="button" class="btn-stor lys" id="btn-hint">Giv et hint</button>
+            <button type="button" class="btn-stor" id="btn-indsend" data-pladstjek="kontrol">Indsend svar</button>
+          </div>
+          <div class="lag">
+            <h3>Lagene</h3>
+            <ol id="lagliste"></ol>
+          </div>
+          <div class="side-bund">
+            <button type="button" class="btn-mini" id="btn-forfra">Byg forfra</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+
+    <details class="om">
+      <summary>Om figurerne og forenklingerne</summary>
+      <div>
+        <p>Figurerne er tegnede modeller af celler set i snit, ikke billeder fra et mikroskop. De er forenklet, så hver plads peger på én tydelig ting:</p>
+        <ul>
+          <li><b>Størrelser:</b> cellerne er ikke tegnet i samme målestok. En bakterie er typisk 1–5 µm lang, en dyrecelle 10–30 µm og en plantecelle 10–100 µm. På fanen Celletyperne er bakterien tegnet alt for stor.</li>
+          <li><b>Antal:</b> en rigtig celle har hundredvis af mitokondrier og millioner af ribosomer. Her er der kun nogle få af hver.</li>
+          <li><b>ER og Golgi:</b> det endoplasmatiske retikulum er et sammenhængende net, der hænger sammen med kernemembranen. Her er det tegnet som buer og rør.</li>
+          <li><b>Plantecellen:</b> cellemembranen ligger i virkeligheden tæt op ad cellevæggen. Her er der et mellemrum, så de to kan skelnes.</li>
+          <li><b>Udeladt:</b> fx kernelegeme, cytoskelet, peroxisomer og centrioler.</li>
+        </ul>
+        <p><b>Sådan virker det:</b> træk et ord hen på en gul plads, eller klik på ordet og så på pladsen. Med tastaturet: Tab til ordet, Enter, Tab til pladsen, Enter. Delete sender et ord tilbage. Enter indsender svaret. Tasterne 1–4 skifter figur. Peg på et ord, der sidder rigtigt, for at se hele forklaringen. En stjerne betyder, at laget blev bygget uden fejl og uden hint.</p>
+        <p>Idéen er lånt med tilladelse fra Niels Kræmmers »Byg figuren« på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
+      </div>
+    </details>
+  </div>
+</main>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Byg cellen</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+<script type="module" src="byg-cellen/side.js"></script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
