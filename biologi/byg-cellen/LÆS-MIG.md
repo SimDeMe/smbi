@@ -152,7 +152,6 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 | Figur | Lag | Ord i overskud / naboer |
 |:--|:--|:--|
-| Jordens indre | kemisk inddeling (skorpe, kappe, kerne) → mekanisk (litosfære, astenosfære, flydende ydre kerne) | magmahav i kappen |
 | Pladegrænserne | divergent, konvergent, transform → midtoceanisk ryg, dybhavsgrav, subduktion, vulkanbue | nabo: `geografi/pladegraenser.html` |
 | Istidslandskabet i Danmark | is og smeltevand → randmoræne, moræneflade, hedeslette, tunneldal, dødishul, bakkeø | |
 | Bjergartskredsløbet | de tre bjergartsgrupper → processerne på pilene (forvitring, erosion, aflejring, diagenese, metamorfose, smeltning) | nabo: `geografi/stensamling` |
@@ -168,3 +167,4 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
 Lavet: mitokondrien og kloroplasten er faner i Byg cellen. Motoren er flyttet til `/byg-motor/`, og ord på pile er prøvet af i
 vandets kredsløb (pladsen sidder på pilen, og `omr` er pilen som streg).
+Jordens indre er lavet som anden geografifigur.
