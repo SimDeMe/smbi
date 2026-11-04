@@ -90,6 +90,7 @@ export default {
   vb: [W, H],
   boks: [232, 42],
   mobilBredde: 940,
+  graa: 'let',   // kernen skal gløde og havet være blåt, også før ordet sidder
   lag: [
     { navn: 'Hvad Jorden er lavet af', ord: ['skorpe', 'kappe', 'kerne'] },
     { navn: 'To slags skorpe', ord: ['oceanbundsskorpe', 'kontinentalskorpe'] },
