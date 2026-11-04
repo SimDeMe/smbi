@@ -91,9 +91,13 @@ const plads = (i) => side.locator(`#figur .plads[data-i="${i}"]`);
 const ordKnap = (o) => side.locator(`#bakke .ord[data-ord="${o}"]`);
 const klikSaet = async (o, i) => { await ordKnap(o).click(); await plads(i).locator(".boks").click(); };
 const farvet = (o) => side.locator(`#figur .del.farvet[data-ord="${o}"]`).count();
+// en side med én figur har ingen faner
+const ene = figurer.length === 1;
+const vaelg = async (f) => { if (!ene) await side.locator(`#fane-${f.id}`).click(); };
+if (ene) tjek(await side.locator('#faner').isHidden(), 'én figur: fanerne vises');
 
 for (const f of figurer) {
-  await side.locator(`#fane-${f.id}`).click();
+  await vaelg(f);
   for (let l = 0; l < f.lag.length; l++) {
     const lag = f.lag[l];
     const idx = (o) => f.pladser.findIndex((p) => p.ord === o);
@@ -138,14 +142,17 @@ for (const f of figurer) {
     for (const o of lag.ord) tjek(await side.locator(`#figur .plads.laast[data-i="${idx(o)}"]`).count() === 1, `${f.id}: ${o} er ikke låst`);
     const naeste = side.locator('#btn-naeste');
     if (l < f.lag.length - 1) await naeste.click();
-    else tjek(f === figurer[figurer.length - 1] || (await naeste.textContent()).startsWith('Næste figur'), `${f.id}: ingen knap til næste figur`);
+    else if (ene) {
+      tjek(await naeste.count() === 0, `${f.id}: én figur, men der er en knap til en næste figur`);
+      tjek((await side.locator('#faerdig-kort .slut').textContent()).startsWith('Figuren er bygget'), `${f.id}: forkert sluttekst`);
+    } else tjek(f === figurer[figurer.length - 1] || (await naeste.textContent()).startsWith('Næste figur'), `${f.id}: ingen knap til næste figur`);
   }
-  tjek(await side.locator(`#fane-${f.id} .maerke`).count() === 1, `${f.id}: fanen fik ikke et mærke`);
+  if (!ene) tjek(await side.locator(`#fane-${f.id} .maerke`).count() === 1, `${f.id}: fanen fik ikke et mærke`);
 }
 
 // Svær udgave: alle ord på én gang, løses med tastaturet
 const f0 = figurer[0];
-await side.locator(`#fane-${f0.id}`).click();
+await vaelg(f0);
 await side.check('#svaer');
 tjek(await side.locator('#bakke .ord').count() === f0.lag.reduce((n, l) => n + l.ord.length + (l.ekstra || []).length, 0), 'Svær: ikke alle ord i bakken');
 for (const o of f0.lag.flatMap((l) => l.ord)) {
@@ -161,7 +168,7 @@ tjek(await side.locator('#figur .del.graa').count() === 0, 'Svær: der er stadig
 
 // Delete sender et ord tilbage, Esc fjerner valget (sidste figur, stadig i Svær udgave)
 const fs = figurer[figurer.length - 1];
-await side.locator(`#fane-${fs.id}`).click();
+await vaelg(fs);
 if (fs === f0) await side.click('#btn-forfra');   // kun én figur: den er lige bygget
 const [o1, o2] = fs.lag.flatMap((l) => l.ord);
 const i2 = fs.pladser.findIndex((p) => p.ord === o2);
@@ -177,7 +184,7 @@ tjek(await side.locator('#bakke .ord.valgt').count() === 0, 'Esc fjernede ikke v
 // Link til en fane
 await side.goto(`http://localhost:${PORT}/${sti}#${fs.id}`);
 await side.waitForFunction(() => window.bygFiguren);
-tjek(await side.locator(`#fane-${fs.id}[aria-selected="true"]`).count() === 1, `#${fs.id} åbner ikke fanen`);
+if (!ene) tjek(await side.locator(`#fane-${fs.id}[aria-selected="true"]`).count() === 1, `#${fs.id} åbner ikke fanen`);
 
 tjek(sidefejl.length === 0, 'fejl i konsollen: ' + sidefejl.join(' | '));
 await browser.close();

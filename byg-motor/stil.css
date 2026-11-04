@@ -74,6 +74,7 @@ h1{font-family:var(--display);font-variation-settings:var(--wide);font-weight:80
 .rig-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 13px;
   border-bottom:2px solid var(--ink);background:var(--accent-lys)}
 .faner{display:flex;gap:6px;flex-wrap:wrap}
+.faner[hidden]{display:none}
 .fane{font-family:var(--display);font-size:0.82rem;font-weight:700;background:#fff;border:2px solid var(--ink);
   color:var(--ink);padding:5px 12px;border-radius:18px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
   display:inline-flex;align-items:center;gap:5px;transition:transform .12s,box-shadow .12s,background .16s}

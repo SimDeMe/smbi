@@ -39,7 +39,7 @@ export function start({ FIGURER, ORD, NOEGLE }) {
 
   function naesteFigur() {
     const i = FIGURER.findIndex((f) => f.id === aktiv.fig.id);
-    for (let k = 1; k <= FIGURER.length; k++) {
+    for (let k = 1; k < FIGURER.length; k++) {   // aldrig figuren selv
       const f = FIGURER[(i + k) % FIGURER.length];
       if (!(f.id in husk.bygget[udgave()])) return f;
     }
@@ -48,6 +48,7 @@ export function start({ FIGURER, ORD, NOEGLE }) {
 
   const hooks = {
     svaer: () => husk.svaer,
+    eneFigur: () => FIGURER.length === 1,
     faerdig(fig, alleStjerner) {
       husk.bygget[udgave()][fig.id] = alleStjerner || !!husk.bygget[udgave()][fig.id];
       gem(husk);
@@ -71,6 +72,9 @@ export function start({ FIGURER, ORD, NOEGLE }) {
 
   function tegnFaner() {
     faneliste.innerHTML = '';
+    // en side med én figur har ingen faner: figuren står for sig selv
+    faneliste.hidden = FIGURER.length < 2;
+    if (faneliste.hidden) return;
     FIGURER.forEach((f, i) => {
       const b = document.createElement('button');
       b.type = 'button';

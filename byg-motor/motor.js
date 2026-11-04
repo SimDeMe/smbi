@@ -41,7 +41,7 @@ export class Byg {
   /**
    * @param {object} fig  figurdata (fig-*.js)
    * @param {object} ui   { svg, bakke, besked, hint, indsend, lagliste, opgTitel, opgTekst, kort, sr }
-   * @param {object} hooks { svaer: () => bool, faerdig: (fig) => void, naeste: () => void, naesteTekst: () => string|null }
+   * @param {object} hooks { svaer: () => bool, faerdig: (fig) => void, naeste: () => void, naesteTekst: () => string|null, eneFigur?: () => bool }
    * @param {object} ORD  ordlisten: { id: { ord, tekst } }
    */
   constructor(fig, ui, hooks, ORD) {
@@ -282,9 +282,10 @@ export class Byg {
       k.appendChild(b);
       requestAnimationFrame(() => b.focus({ preventScroll: true }));
     } else {
+      const hvad = this.hooks.eneFigur?.() ? 'Figuren er bygget' : 'Alle figurerne er bygget';
       k.appendChild(el('p', 'slut', this.svaer
-        ? 'Alle figurerne er bygget i den svære udgave. Flot!'
-        : 'Alle figurerne er bygget. Prøv Svær udgave øverst: alle ord på én gang.'));
+        ? `${hvad} i den svære udgave. Flot!`
+        : `${hvad}. Prøv Svær udgave øverst: alle ord på én gang.`));
     }
   }
 
