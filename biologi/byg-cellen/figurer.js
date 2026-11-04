@@ -5,7 +5,12 @@ import bakterie from './fig-bakterie.js';
 import typer from './fig-typer.js';
 import mitokondrie from './fig-mitokondrie.js';
 import kloroplast from './fig-kloroplast.js';
-export { ORD } from './ordliste.js';
+import { ORD as CELLEORD } from './ordliste.js';
+import { hent, flet } from '../byg-biologi/figurer.js';
 
-export const FIGURER = [dyr, plante, bakterie, typer, mitokondrie, kloroplast];
+// Bladet står lige før kloroplasten: fra organ til organel.
+const blad = hent('blad');
+export const ORD = flet(CELLEORD, blad.ord);
+
+export const FIGURER = [dyr, plante, bakterie, typer, mitokondrie, blad.figur, kloroplast];
 export const NOEGLE = 'byg-cellen.v1';

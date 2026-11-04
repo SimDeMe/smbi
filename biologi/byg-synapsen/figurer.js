@@ -1,3 +1,4 @@
+import { hent, flet } from '../byg-biologi/figurer.js';
 // Ét skematisk snit gennem en stimulerende kemisk synapse.
 const blaek = '#334155';
 const lilla = '#9063b6';
@@ -64,7 +65,8 @@ const lag = [
 ];
 
 const dele = lag.flatMap(trin => trin.dele);
-export const ORD = Object.fromEntries(dele.map(([ord, tekst]) => [ord, { ord, tekst }]));
+const hormon = hent('hormon');
+export const ORD = flet(Object.fromEntries(dele.map(([ord, tekst]) => [ord, { ord, tekst }])), hormon.ord);
 export const NOEGLE = 'byg-synapsen.v1';
 export const FIGURER = [{
   id: 'kemisk', navn: 'Kemisk synapse',
@@ -79,4 +81,4 @@ export const FIGURER = [{
   pladser: dele.map(([ord, , maal, [side, y], svg]) => ({
     ord, maal, x: 440 + side * 300, y, omr: svg,
   })),
-}];
+}, hormon.figur];

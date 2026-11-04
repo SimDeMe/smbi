@@ -1,3 +1,4 @@
+import { hent, flet } from '../byg-biologi/figurer.js';
 // Skematiske forfrafigurer. Kroppens højre side er til venstre på tegningen.
 const flade = (d, farve) => `<path d="${d}" fill="${farve}" stroke="#334155" stroke-width="2"/>`;
 const streg = (d, farve, bredde = 8) =>
@@ -177,10 +178,11 @@ const systemer = [
 ];
 
 export const NOEGLE = 'byg-organsystemerne.v1';
-export const ORD = Object.fromEntries(systemer.flatMap(({ dele }) =>
-  dele.map(([ord, tekst]) => [ord, { ord, tekst }])));
+const nefron = hent('nefron');
+export const ORD = flet(Object.fromEntries(systemer.flatMap(({ dele }) =>
+  dele.map(([ord, tekst]) => [ord, { ord, tekst }]))), nefron.ord);
 
-export const FIGURER = systemer.map(({ id, navn, intro, lag, dele, baggrund = krop, foersteLag = Math.ceil(dele.length / 2) }) => ({
+const oversigter = systemer.map(({ id, navn, intro, lag, dele, baggrund = krop, foersteLag = Math.ceil(dele.length / 2) }) => ({
   id, navn, intro,
   vb: [860, 446],
   boks: [232, 42],
@@ -195,3 +197,7 @@ export const FIGURER = systemer.map(({ id, navn, intro, lag, dele, baggrund = kr
     ord, maal, x: 430 + side * 292, y, omr: svg,
   })),
 }));
+
+// Nefronet er en lup på urinsystemet og står lige efter det.
+const i = oversigter.findIndex((f) => f.id === 'urinveje') + 1;
+export const FIGURER = [...oversigter.slice(0, i), nefron.figur, ...oversigter.slice(i)];

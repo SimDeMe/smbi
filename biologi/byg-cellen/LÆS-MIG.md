@@ -159,6 +159,21 @@ Jordens indre er lavet som anden geografifigur.
 DNA og nukleotidet er lavet i [Byg DNA og proteinsyntesen](../byg-dna.html)
 sammen med transkription, RNA-bearbejdning, translation og mutation.
 
-[Byg synapsen](../byg-synapsen.html) viser en kemisk synapse i tre trin.
+## Pakkerne
 
-De øvrige seks biologiidéer er lavet i [Byg figurer i biologi](../byg-biologi.html).
+Byg figuren i biologi er samlet i pakker, der følger undervisningen fra celle
+til krop til gen. Hver pakke er én side med faner:
+
+| Pakke | Figurer |
+|:--|:--|
+| [Byg cellen](../byg-cellen.html) (beta) | dyrecellen, plantecellen, bakterien, celletyperne, mitokondrien, **bladet**, kloroplasten |
+| [Byg organsystemerne](../byg-organsystemerne.html) | ti organsystemer som oversigt + **nefronet** som lup på urinsystemet |
+| [Byg hjertet og kredsløbet](../byg-hjertet.html) (beta) | hjertet i snit, det dobbelte kredsløb, alveolen (se `byg-hjertet/LÆS-MIG.md`) |
+| [Byg nerver og hormoner](../byg-synapsen.html) | den kemiske synapse + **hormonaksen** |
+| [Byg DNA og proteinsyntesen](../byg-dna.html) | nukleotid, dobbeltstreng, transkription, RNA-bearbejdning, translation, mutation + **enzymet** |
+
+De fire fede figurer kommer fra `byg-biologi/` (bladet, nefronet, enzymet og
+hormonaksen). Mappen er nu et lille bibliotek: `hent(id)` giver figuren og dens
+fagord, og `flet()` lægger ordlisterne sammen og stopper ved dobbelte
+forklaringer. `byg-biologi.html` sender gamle links videre (`#hjerte` →
+`byg-hjertet.html#hjerte` osv.).

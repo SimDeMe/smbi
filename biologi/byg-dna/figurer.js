@@ -1,3 +1,4 @@
+import { hent, flet } from '../byg-biologi/figurer.js';
 // Skematiske molekyler. Placeringerne er valgt for at fremhæve relationerne.
 const blaa = '#8bbce0';
 const lilla = '#b6a0dc';
@@ -169,12 +170,13 @@ const figurer = [
 ];
 
 export const NOEGLE = 'byg-dna.v1';
-export const ORD = Object.fromEntries(figurer.flatMap(({ lag }) => lag.flatMap(({ dele, ekstra = {} }) => [
+const enzym = hent('enzym');
+export const ORD = flet(Object.fromEntries(figurer.flatMap(({ lag }) => lag.flatMap(({ dele, ekstra = {} }) => [
   ...dele.map(([ord, tekst]) => [ord, { ord, tekst }]),
   ...Object.entries(ekstra).map(([ord, [tekst]]) => [ord, { ord, tekst }]),
-])));
+]))), enzym.ord);
 
-export const FIGURER = figurer.map(({ id, navn, intro, lag, baggrund }) => {
+export const FIGURER = [...figurer.map(({ id, navn, intro, lag, baggrund }) => {
   const dele = lag.flatMap(l => l.dele);
   return {
     id, navn, intro, vb: [860, 400], boks: [226, 42], mobilBredde: 650,
@@ -187,4 +189,4 @@ export const FIGURER = figurer.map(({ id, navn, intro, lag, baggrund }) => {
       ord, maal, x: 430 + side * 296, y, omr: svg,
     })),
   };
-});
+}), enzym.figur];

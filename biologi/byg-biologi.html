@@ -3,156 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Byg figurer i biologi — sæt fagordene på — smbi.dk</title>
-<meta name="description" content="Byg seks fagfigurer om bladet, nefronet, hjertet, alveolen, enzymet og hormonaksen.">
-<!-- Deling, ikoner og kanonisk adresse -->
-<link rel="canonical" href="https://smbi.dk/biologi/byg-biologi.html">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="smbi.dk">
-<meta property="og:locale" content="da_DK">
-<meta property="og:url" content="https://smbi.dk/biologi/byg-biologi.html">
-<meta property="og:title" content="Byg figurer i biologi — sæt fagordene på">
-<meta property="og:description" content="Byg seks fagfigurer om bladet, nefronet, hjertet, alveolen, enzymet og hormonaksen.">
-<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#FFF9EE">
+<title>Byg figurer i biologi er flyttet — smbi.dk</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://smbi.dk/biologi.html#byg-figuren">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../byg-motor/stil.css">
-<link rel="stylesheet" href="byg-biologi/stil.css">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "LearningResource",
-      "name": "Byg figurer i biologi — sæt fagordene på",
-      "url": "https://smbi.dk/biologi/byg-biologi.html",
-      "inLanguage": "da-DK",
-      "description": "Byg seks fagfigurer om bladet, nefronet, hjertet, alveolen, enzymet og hormonaksen.",
-      "learningResourceType": "interaktiv øvelse",
-      "educationalLevel": "Gymnasialt niveau (stx, hf)",
-      "isAccessibleForFree": true,
-      "author": { "@type": "Person", "name": "Simon Messell" },
-      "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
-      "image": "https://smbi.dk/img/og-biologi.png",
-      "isPartOf": { "@id": "https://smbi.dk/#website" },
-      "about": { "@type": "Thing", "name": "Biologiske strukturer og processer" }
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/" },
-        { "@type": "ListItem", "position": 2, "name": "Biologi", "item": "https://smbi.dk/biologi.html" },
-        { "@type": "ListItem", "position": 3, "name": "Byg figurer i biologi", "item": "https://smbi.dk/biologi/byg-biologi.html" }
-      ]
-    }
-  ]
-}
+<script>
+/* Figurerne er flyttet ud i de pakker, de hører til. Gamle links med #figur sendes videre. */
+(function () {
+  var nye = {
+    blad: '/biologi/byg-cellen.html#blad',
+    nefron: '/biologi/byg-organsystemerne.html#nefron',
+    hjerte: '/biologi/byg-hjertet.html#hjerte',
+    alveole: '/biologi/byg-hjertet.html#alveole',
+    enzym: '/biologi/byg-dna.html#enzym',
+    hormon: '/biologi/byg-synapsen.html#hormon'
+  };
+  location.replace(nye[location.hash.slice(1)] || '/biologi.html#byg-figuren');
+})();
 </script>
+<style>body{font:17px/1.5 Georgia,serif;background:#FFF9EE;color:#1d2433;max-width:36rem;margin:3rem auto;padding:0 1rem}</style>
 </head>
 <body>
-<header class="top" id="site-top">
-  <div class="rainbow"></div>
-  <div class="top-bar">
-    <div class="top-in">
-      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
-      <nav class="top-nav">
-        <a href="/biologi.html">Biologi</a>
-        <a href="/">Forside</a>
-      </nav>
-    </div>
-  </div>
-</header>
-<main>
-  <div class="wrap head">
-    <div class="head-in">
-      <span class="eyebrow mono"><span class="blink"></span>Biologi · strukturer og processer</span>
-      <h1>Byg <span class="hi" style="--hc:#FBD3E1">figurer</span> i biologi</h1>
-      <p class="lead">Vælg en figur, og placér fagordene. Byg først de vigtigste dele, og følg derefter en transportvej, en reaktion eller et signal.</p>
-    </div>
-  </div>
-  <div class="wrap">
-    <section class="rig" id="byg" aria-label="Byg figurer i biologi">
-      <div class="rig-bar"></div>
-      <div class="rig-head">
-        <div class="faner" id="faner" role="tablist" aria-label="Figurer"></div>
-        <span class="spacer"></span>
-        <label class="kontakt" title="Alle fagord på én gang"><input type="checkbox" id="svaer"> Svær udgave</label>
-        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul overskrift og sidens menu">Fokus</button>
-      </div>
-      <div class="rig-body">
-        <div class="scene" id="scene" role="tabpanel" aria-labelledby="faner">
-          <p class="fig-intro" id="fig-intro"></p>
-          <div class="fig-ramme">
-            <svg id="figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Figuren med pladser til fagordene"></svg>
-          </div>
-        </div>
-        <aside class="side" aria-label="Opgaven">
-          <div class="opg">
-            <h2 id="opg-titel"></h2>
-            <p id="opg-tekst"></p>
-          </div>
-          <div class="bakke" id="bakke" aria-label="Fagord" data-pladstjek="kontrol"></div>
-          <p class="besked" id="besked" aria-live="polite"></p>
-          <div class="faerdig-kort" id="faerdig-kort" hidden></div>
-          <div class="knapper">
-            <button type="button" class="btn-stor lys" id="btn-hint">Giv et hint</button>
-            <button type="button" class="btn-stor" id="btn-indsend" data-pladstjek="kontrol">Indsend svar</button>
-          </div>
-          <div class="lag">
-            <h3>Lagene</h3>
-            <ol id="lagliste"></ol>
-          </div>
-          <div class="side-bund">
-            <button type="button" class="btn-mini" id="btn-forfra">Byg forfra</button>
-          </div>
-        </aside>
-      </div>
-    </section>
-    <p class="sr" id="sr-status" aria-live="polite"></p>
-
-    <details class="om">
-      <summary>Om figurerne og forenklingerne</summary>
-      <div>
-        <p>Figurerne er skematiske og ikke i målestok. Bladet er et typisk eksempel med spalteåbninger på undersiden. I nefronet viser pilene udvalgte steder for transport. Hjertet er en oversigt over blodets vej, hvor kar og klapper er forenklet. Blåt og rødt skelner mellem relativt iltfattigt og iltrigt blod. Gasudvekslingen viser retningen for nettodiffusion.</p>
-        <p>Enzymets former viser, hvor stofferne binder. Figuren om ikke-konkurrerende hæmning viser binding uden for det aktive center, mens substratet sidder i enzymet. Hormonaksens pile viser stimulering, og de flade ender viser hæmning.</p>
-        <p><b>Sådan virker det:</b> træk et ord hen på en gul plads, eller klik på ordet og så på pladsen. Med tastaturet: Tab til ordet, Enter, Tab til pladsen, Enter. Delete sender et ord tilbage. Enter indsender svaret.  Peg på et ord, der sidder rigtigt, for at se hele forklaringen. En stjerne betyder, at laget blev bygget uden fejl og uden hint.</p>
-        <p>Idéen er lånt med tilladelse fra Niels Kræmmers »Byg figuren« på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
-      </div>
-    </details>
-  </div>
-</main>
-<footer class="foot">
-  <div class="foot-in">
-    <div>
-      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
-      <div class="mono">Byg figurer i biologi</div>
-    </div>
-    <nav class="foot-links">
-      <a href="/biologi.html">Biologi</a>
-      <a href="/">Alle simuleringer</a>
-      <a href="/contact.html">Kontakt</a>
-    </nav>
-  </div>
-</footer>
-
-<script>
-/* skjul side-krom, når siden vises i en iframe */
-(function(){try{if(window.top!==window.self){
-  document.getElementById('site-top').style.display='none';
-  document.querySelector('.foot').style.display='none';
-  document.querySelector('.head').style.display='none';
-}}catch(x){}})();
-</script>
-<script type="module" src="byg-biologi/side.js"></script>
-<script src="/feedback.js" defer></script>
+<h1>Figurerne er flyttet</h1>
+<p>Figurerne fra «Byg figurer i biologi» ligger nu i de pakker, de hører til:</p>
+<ul>
+  <li><a href="/biologi/byg-hjertet.html">Byg hjertet og kredsløbet</a> — hjertet og alveolen, tegnet forfra</li>
+  <li><a href="/biologi/byg-synapsen.html#hormon">Byg nerver og hormoner</a> — hormonaksen</li>
+  <li><a href="/biologi/byg-dna.html#enzym">Byg DNA og proteinsyntesen</a> — enzymet</li>
+  <li><a href="/biologi/byg-organsystemerne.html#nefron">Byg organsystemerne</a> — nefronet</li>
+  <li><a href="/biologi/byg-cellen.html#blad">Byg cellen</a> — bladets tværsnit</li>
+</ul>
 </body>
 </html>
