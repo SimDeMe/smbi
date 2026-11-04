@@ -45,6 +45,51 @@ const storeKredsloeb = arterie(aortaSti, 26) + vene(veneSti, 26)
   + navn(500, 642, 'Kroppens væv', 19) + lille(500, 659, 'O₂ afgives · CO₂ optages', '#6B5132')
   + stroemPil(660, 404, 0) + stroemPil(740, 500, 90) + stroemPil(260, 470, -90) + stroemPil(360, 290, 0);
 
+// ── Sidste lag: træk et blodlegeme hele vejen rundt ────────
+// Iltmætningen er typiske hvileværdier: ca. 75 % i iltfattigt og ca. 98 % i iltrigt blod.
+const skillevaegFejl = 'Skillevæggen holder hjertets to sider adskilt. Der er ingen åbning, så iltfattigt og iltrigt blod blandes ikke.';
+const rejse = {
+  opgave: 'Træk blodlegemet med musen eller fingeren hele vejen rundt i den rigtige retning. Eller vælg vejen her:',
+  start: 'krop', slut: 'rundt', ilt: 75,
+  knuder: {
+    krop: { x: 348, y: 594, navn: 'kroppens væv', tekst: 'Blodlegemet har afleveret ilt i kroppens væv. Træk det hjem mod hjertet.' },
+    hfk: { x: 441, y: 290, navn: 'højre forkammer', tekst: 'Højre forkammer: blodet fra kroppen samles her.' },
+    hk: { x: 441, y: 392, navn: 'højre hjertekammer', tekst: 'Højre hjertekammer: herfra pumpes blodet ud i lungekredsløbet.' },
+    lungeInd: { x: 396, y: 100, navn: 'lungerne', tekst: 'Lungerne: træk blodlegemet gennem kapillærerne og se, hvad der sker med ilten.' },
+    lungeUd: { x: 604, y: 100, navn: 'lungerne', tekst: 'Blodlegemet har afgivet CO₂ og optaget O₂. Nu er det iltrigt og på vej tilbage til hjertet.' },
+    vfk: { x: 559, y: 290, navn: 'venstre forkammer', tekst: 'Venstre forkammer: det iltrige blod fra lungerne kommer ind her.' },
+    vk: { x: 559, y: 392, navn: 'venstre hjertekammer', tekst: 'Venstre hjertekammer: den tykkeste væg, for herfra pumpes blodet ud i hele kroppen.' },
+    kropInd: { x: 652, y: 594, navn: 'kroppens væv', tekst: 'Kroppens væv: træk blodlegemet gennem kapillærerne og se, hvad der sker med ilten.' },
+    rundt: { x: 348, y: 594, navn: 'kroppens væv', tekst: 'Blodlegemet har afleveret ilt til vævet og er tilbage, hvor det startede.' },
+  },
+  veje: [
+    { fra: 'krop', sti: 'M348 594 H440', valg: 'tilbage ind i kapillærerne',
+      fejl: 'Blodet i kapillærerne strømmer hele tiden fra arterierne mod venerne. Det løber ikke tilbage.' },
+    { fra: 'krop', til: 'hfk', sti: veneSti + ' H441', valg: 'op gennem venen til hjertet',
+      baglaens: { valg: 'tilbage ned i venen', fejl: 'Venerne fører blodet mod hjertet. Klapper i venerne og trykket bagfra holder retningen.' } },
+    { fra: 'hfk', sti: 'M441 290 H540', valg: 'over i venstre forkammer', fejl: skillevaegFejl },
+    { fra: 'hfk', til: 'hk', sti: 'M441 290 V392', valg: 'ned i højre hjertekammer',
+      baglaens: { valg: 'tilbage op i højre forkammer', fejl: 'Klappen mellem forkammer og kammer lukker, når kammeret trækker sig sammen. Blodet kan ikke løbe tilbage.' } },
+    { fra: 'hk', sti: 'M441 392 L540 404', valg: 'over i venstre hjertekammer', fejl: skillevaegFejl },
+    { fra: 'hk', til: 'lungeInd', sti: 'M441 392 Q441 404 466 404 ' + lungearterieSti.slice('M466 404 '.length), valg: 'ud i lungearterien',
+      baglaens: { valg: 'tilbage ned gennem lungearterien', fejl: 'Højre kammer skubber blodet ud mod lungerne, og klappen ved kammerets udgang lukker, så blodet ikke løber tilbage.' } },
+    { fra: 'lungeInd', til: 'lungeUd', sti: 'M396 100 C440 86 460 114 500 100 S560 86 604 100', valg: 'gennem kapillærerne i lungerne',
+      ilt: [75, 98], side: -1,
+      baglaens: { valg: 'tilbage gennem kapillærerne', fejl: 'Blodet strømmer hele tiden videre fra arterien mod venerne, skubbet af hjertets pumpe.' } },
+    { fra: 'lungeUd', til: 'vfk', sti: lungevenerSti.replace(/H590$/, 'H559'), valg: 'ned gennem lungevenerne',
+      baglaens: { valg: 'tilbage op i lungevenerne', fejl: 'Lungevenerne fører blodet mod hjertet. Forkammeret fyldes fra venerne, og blodet løber videre ned i kammeret.' } },
+    { fra: 'vfk', sti: 'M559 290 H460', valg: 'over i højre forkammer', fejl: skillevaegFejl },
+    { fra: 'vfk', til: 'vk', sti: 'M559 290 V392', valg: 'ned i venstre hjertekammer',
+      baglaens: { valg: 'tilbage op i venstre forkammer', fejl: 'Klappen mellem forkammer og kammer lukker, når kammeret trækker sig sammen. Blodet kan ikke løbe tilbage.' } },
+    { fra: 'vk', sti: 'M559 392 L460 404', valg: 'over i højre hjertekammer', fejl: skillevaegFejl },
+    { fra: 'vk', til: 'kropInd', sti: 'M559 392 Q559 404 582 404 ' + aortaSti.slice('M582 404 '.length), valg: 'ud i aorta',
+      baglaens: { valg: 'tilbage op gennem aorta', fejl: 'Venstre kammer skubber blodet ud i kroppen, og klappen ved kammerets udgang lukker, så blodet ikke løber tilbage.' } },
+    { fra: 'kropInd', til: 'rundt', sti: 'M652 594 C610 580 580 608 540 594 S460 580 420 594 S370 606 348 594', valg: 'gennem kapillærerne i kroppen',
+      ilt: [98, 75], side: 1 },
+  ],
+  opsummering: 'Blodlegemet kom gennem hjertet to gange på én tur: højre side sendte det til lungerne, venstre side ud i kroppen. Iltmætningen steg fra ca. 75 % til ca. 98 % i lungerne og faldt igen i kroppens væv (tal i hvile).',
+};
+
 export default {
   id: 'kredsloeb',
   navn: 'Det dobbelte kredsløb',
@@ -57,6 +102,7 @@ export default {
     { navn: 'Tre slags kar', ord: ['arterie', 'kapillaernet', 'vene'], ekstra: ['lymfekar'],
       ekstraFejl: { lymfekar: 'Lymfekarrene er ikke tegnet. De fører vævsvæske, ikke blod, og de går kun én vej: tilbage mod hjertet.' } },
     { navn: 'Hvor er ilten?', ord: ['iltfattigt', 'iltrigt'] },
+    { navn: 'Følg et blodlegeme', ord: [], rejse },
   ],
   dele: [
     { ord: null, svg: defs + ekstraDefs + hjertet + navn(500, 498, 'Hjertet', 19)

@@ -84,6 +84,7 @@ Her ligger kun figurerne og ordlisten.
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
 | `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
+| `/byg-motor/rejse.js` | rejse-lag: træk noget (fx et blodlegeme) gennem den færdige figur ad den rigtige vej |
 | `/byg-motor/side.js` | fanerne, Svær udgave, fokus, links, tastatur og konfetti |
 | `/byg-motor/tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger, cyklus-pile |
 | `/byg-motor/selvtest.mjs` | `node byg-motor/selvtest.mjs biologi/byg-cellen.html` |
@@ -109,6 +110,11 @@ Her ligger kun figurerne og ordlisten.
   alle ribosomerne i klyngen og så videre. En figur med `fill="none"` tegnes
   som en streg (ringe og bånd).
 - `fejl` er højst 160 tegn og må ikke indeholde svaret. Selvtesten tjekker det.
+- Et lag kan i stedet være en **rejse** (`{ navn, ord: [], rejse: {…} }`, se
+  kommentaren øverst i `/byg-motor/rejse.js`): knuder og veje som SVG-stier;
+  eleven trækker en celle ad vejene, og forkerte veje stopper halvvejs med en
+  forklaring. Knapper i bakken gør det samme uden mus. Rejsen springes over i
+  Svær udgave. Første brug: hjertet og kredsløbet i `byg-hjertet.html`.
 - Tegn kun det, pladserne bruger, og tegn aldrig to ting, der ligner hinanden,
   ved hver sin plads. Golgi-apparatet har derfor ingen små blærer i enderne,
   for de ville ligne vesiklerne.

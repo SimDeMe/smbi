@@ -73,6 +73,25 @@ for (const f of figurer) {
     });
   });
 }
+// rejse-lag: alle veje hænger sammen, og den rigtige vej når frem
+for (const f of figurer) for (const l of f.lag.filter((l) => l.rejse)) {
+  const r = l.rejse, K = r.knuder, slut = [].concat(r.slut);
+  tjek(!l.ord.length, `${f.id}: et rejse-lag har ingen fagord`);
+  tjek(!!K[r.start] && slut.every((k) => K[k]), `${f.id}: rejsens start eller slut mangler`);
+  for (const v of r.veje) {
+    tjek(!!K[v.fra] && (v.fejl || !!K[v.til]), `${f.id}: vejen ${v.fra}→${v.til} har en ukendt knude`);
+    tjek(v.spring || (!!v.valg && !!v.sti), `${f.id}: vejen ${v.fra}→${v.til || 'blindvej'} mangler sti eller valg`);
+    for (const t of [v.fejl, v.baglaens && v.baglaens.fejl].filter(Boolean)) tjek(t.length <= 170, `${f.id}: fejlteksten «${t.slice(0, 30)}…» er for lang`);
+  }
+  const set = new Set([r.start]), koe = [r.start];
+  while (koe.length) {
+    const k = koe.shift();
+    const ud = r.veje.filter((v) => v.fra === k && !v.fejl);
+    if (!slut.includes(k)) tjek(ud.length > 0, `${f.id}: rejsen går i stå i ${k}`);
+    for (const v of ud) if (!set.has(v.til)) { set.add(v.til); koe.push(v.til); }
+  }
+  tjek(slut.some((k) => set.has(k)), `${f.id}: rejsen når ikke frem`);
+}
 for (const [id, o] of Object.entries(ORD)) tjek(o.tekst.length <= 200, `forklaringen til ${id} er for lang`);
 console.log(`Data: ${ok} OK, ${fejl} fejl`);
 
@@ -80,7 +99,7 @@ console.log(`Data: ${ok} OK, ${fejl} fejl`);
 const browser = await chromium.launch();
 const side = await browser.newPage({ viewport: { width: 1366, height: 625 } });
 const sidefejl = [];
-side.on('pageerror', (e) => sidefejl.push(e.message));
+side.on('pageerror', (e) => sidefejl.push(e.stack));
 side.on('console', (m) => { if (m.type() === 'error') sidefejl.push(m.text()); });
 await side.goto(`http://localhost:${PORT}/${sti}`);
 await side.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
@@ -96,10 +115,71 @@ const ene = figurer.length === 1;
 const vaelg = async (f) => { if (!ene) await side.locator(`#fane-${f.id}`).click(); };
 if (ene) tjek(await side.locator('#faner').isHidden(), 'én figur: fanerne vises');
 
+/** Rejse-laget: træk med musen ad en forkert og en rigtig vej, hint, og resten med knapperne. */
+async function testRejse(f, l) {
+  const r = f.lag[l].rejse;
+  const tilstand = () => side.evaluate(() => { const x = window.bygFiguren.aktiv().rejseNu(); return x && { knude: x.knude, ilt: x.ilt, travlt: x.travlt }; });
+  tjek((await side.locator('#opg-titel').textContent()).includes(f.lag[l].navn), `${f.id}: rejse-laget vises ikke`);
+  tjek(await side.locator('#btn-indsend').isHidden(), `${f.id}: Indsend vises i rejse-laget`);
+  tjek(await side.locator('#figur .rejse .celle').count() === 1, `${f.id}: ingen celle at trække`);
+  tjek(await side.locator('#bakke .vej-valg').count() === r.veje.filter((v) => v.fra === r.start && !v.spring).length
+    + r.veje.filter((v) => v.til === r.start && v.baglaens).length, `${f.id}: forkert antal veje i bakken`);
+  await side.evaluate(() => window.scrollTo(0, document.querySelector('#byg').offsetTop - 68));
+  // træk ad prøvepunkterne på en vej (nr i rejsens vejliste)
+  const traek = async (nr, andel = 1) => {
+    const pkt = await side.evaluate(([nr, andel]) => {
+      const x = window.bygFiguren.aktiv().rejseNu();
+      const p = x.pkt(x.veje[nr]);
+      const M = document.querySelector('#figur').getScreenCTM();
+      return p.slice(0, Math.round((p.length - 1) * andel) + 1).filter((_, i, a) => i % 3 === 0 || i === a.length - 1)
+        .map(([a, b]) => [M.a * a + M.e, M.d * b + M.f]);
+    }, [nr, andel]);
+    await side.mouse.move(pkt[0][0], pkt[0][1]);
+    await side.mouse.down();
+    for (const [x, y] of pkt.slice(1)) { await side.mouse.move(x, y); await side.waitForTimeout(16); }
+    await side.waitForTimeout(120);
+    await side.mouse.up();
+    await side.waitForTimeout(500);
+  };
+  const veje = await side.evaluate(() => window.bygFiguren.aktiv().rejseNu().veje.map((v) => ({ fra: v.fra, rigtig: v.rigtig, spring: !!v.spring })));
+  const forkert = veje.findIndex((v) => v.fra === r.start && !v.rigtig);
+  if (forkert >= 0) {
+    await traek(forkert, 0.9);
+    tjek((await tilstand()).knude === r.start, `${f.id}: en forkert vej flyttede cellen`);
+    tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: ingen forklaring ved en forkert vej`);
+  }
+  await traek(veje.findIndex((v) => v.fra === r.start && v.rigtig));
+  tjek((await tilstand()).knude !== r.start, `${f.id}: træk med musen flyttede ikke cellen`);
+  // resten med knapperne og med reduceret bevægelse, så det går hurtigt
+  await side.emulateMedia({ reducedMotion: 'reduce' });
+  await side.click('#btn-hint');
+  tjek((await side.locator('#btn-hint').textContent()) === 'Vis vejen', `${f.id}: hintknappen skiftede ikke i rejsen`);
+  tjek(await side.locator('#figur .vej-hint').count() > 0, `${f.id}: hintet viser ikke vejen`);
+  await side.click('#btn-hint');
+  let fejlKlik = false;
+  for (let n = 0; n < 40 && await side.locator('#faerdig-kort').isHidden(); n++) {
+    const t = await tilstand();
+    if (!fejlKlik && await side.locator('#bakke .vej-valg:not([data-rigtig])').count()) {
+      await side.locator('#bakke .vej-valg:not([data-rigtig])').first().click();
+      await side.waitForTimeout(800);
+      tjek((await tilstand()).knude === t.knude, `${f.id}: en forkert knap flyttede cellen`);
+      fejlKlik = true;
+    }
+    await side.locator('#bakke .vej-valg[data-rigtig]').first().click();
+    await side.waitForTimeout(80);
+  }
+  tjek(await side.locator('#faerdig-kort').isVisible(), `${f.id}: rejsen blev ikke færdig`);
+  if (r.ilt != null) tjek(Math.round((await tilstand()).ilt) !== undefined, `${f.id}: ingen iltmætning`);
+  await side.emulateMedia({ reducedMotion: null });
+  const naeste = side.locator('#btn-naeste');
+  if (l < f.lag.length - 1) await naeste.click();
+}
+
 for (const f of figurer) {
   await vaelg(f);
   for (let l = 0; l < f.lag.length; l++) {
     const lag = f.lag[l];
+    if (lag.rejse) { await testRejse(f, l); continue; }
     const idx = (o) => f.pladser.findIndex((p) => p.ord === o);
     tjek(await side.locator('#bakke .ord').count() === lag.ord.length + (lag.ekstra || []).length, `${f.id} lag ${l + 1}: forkert antal ord i bakken`);
 

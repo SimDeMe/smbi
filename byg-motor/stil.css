@@ -187,6 +187,39 @@ body.traekker,body.traekker *{cursor:grabbing!important}
 .ordtekst{font-family:var(--display);font-weight:700;font-size:22px;fill:var(--ink);pointer-events:none}
 .fig-navn{font-family:var(--display);font-weight:800;font-size:22px;fill:var(--ink)}
 
+/* ── Rejse-lag: træk noget gennem figuren (rejse.js) ───── */
+#figur.rejser .pladser{opacity:.5;pointer-events:none}
+#figur.rejser .omraader{display:none}
+.rejse .spor{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:1 8;stroke-linecap:round;opacity:.55}
+.rejse .vej-hint-bund{fill:none;stroke:#fff;stroke-width:12;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.rejse .vej-hint{fill:none;stroke:var(--coral);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:4 14;animation:vejhint 1s linear infinite}
+@keyframes vejhint{to{stroke-dashoffset:-18}}
+.rejse .celle{cursor:grab;touch-action:none;outline:none}
+.rejse .celle.holdt{cursor:grabbing}
+.rejse .celle .greb{fill:transparent}
+.rejse .celle .ring{fill:rgba(255,255,255,.55);stroke:var(--ink);stroke-width:2.5}
+.rejse .celle.kald .ring{animation:kald 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes kald{0%{stroke-width:2.5}50%{stroke-width:7;stroke:var(--amber)}100%{stroke-width:2.5}}
+.rejse .celle:focus-visible .ring{stroke:var(--grape);stroke-width:5}
+.rejse .celle .yder{stroke-width:2.2}
+.rejse .celle .maerke rect{fill:var(--ink)}
+.rejse .celle .maerke text{font-family:var(--mono);font-size:14px;font-weight:600;fill:#fff}
+.rejse .celle.vaek{transition:opacity .4s;opacity:.25}
+.rejse .celle.stop .skive{animation:ryst .35s ease}
+@keyframes ryst{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.rejse .lukket circle{fill:#fff;stroke:var(--coral);stroke-width:3}
+.rejse .lukket path{stroke:var(--coral);stroke-width:4;stroke-linecap:round}
+.rejse .lukket .ny{animation:pop .5s ease}
+.rejse .klap-aaben{fill:none;stroke:#2E7D32;stroke-width:4;animation:aaben .8s ease-out forwards;transform-box:fill-box;transform-origin:center}
+@keyframes aaben{from{opacity:1;transform:scale(.6)}to{opacity:0;transform:scale(2.2)}}
+.rejse .partikel{font-family:var(--mono);font-size:13px;font-weight:700;pointer-events:none}
+.rejse .partikel.o2{fill:#B3141F}
+.rejse .partikel.co2{fill:#4E5B59}
+.bakke.vejvalg .vej-valg{cursor:pointer;touch-action:auto;font-weight:600;text-align:left}
+.bakke.vejvalg .vej-valg:disabled{opacity:.45;cursor:default}
+.faerdig-kort .opsum{font-size:0.86rem;line-height:1.4;margin:6px 0 10px}
+
 /* Konfetti */
 .konfetti{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;z-index:5;pointer-events:none;
   animation:fald 1.8s ease-in forwards}

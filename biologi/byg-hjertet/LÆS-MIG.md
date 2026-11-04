@@ -13,16 +13,18 @@ Siden bruger den fælles motor i `/byg-motor/` (se `byg-cellen/LÆS-MIG.md`).
    (`byg-biologi.html`, som nu kun sender gamle links videre).
 3. **Naboerne.** `byg-organsystemerne.html` har kredsløbet og åndedrættet som
    oversigt på hele kroppen. Her går vi i dybden.
-4. **Figurerne.** Tre faner, 2–3 lag hver, 26 pladser i alt.
+4. **Figurerne.** Tre faner, 2–4 lag hver, 26 pladser i alt. Hjertet og kredsløbet slutter med en rejse.
 
 | Fane | Lag | Fagord | Ord i overskud |
 |:--|:--|:--|:--|
 | Hjertet `#hjerte` | Fire hulrum og en væg | højre/venstre forkammer, højre/venstre hjertekammer, skillevæg | |
 | | Karrene ind og ud | hulvener, lungearterie, lungevener, aorta | kranspulsåre |
 | | Klapperne holder retningen | sejlklapper, lommeklapper, senetråde | |
+| | Send blodet gennem hjertet | rejse: træk et blodlegeme fra hulvenen ud i aorta | |
 | Kredsløbet `#kredsloeb` | To kredsløb | lungekredsløbet, det store kredsløb | |
 | | Tre slags kar | arterie, kapillærnet, vene | lymfekar |
 | | Hvor er ilten? | iltfattigt blod (på lungearterien), iltrigt blod (på lungevenerne) | |
+| | Følg et blodlegeme | rejse: træk et blodlegeme én tur rundt | |
 | Alveolen `#alveole` | Luften møder blodet | bronkiole, alveole, kapillær | |
 | | Gasudvekslingen | O₂ til blodet, CO₂ til luften, rødt blodlegeme, tynd væg | hvidt blodlegeme |
 
@@ -35,6 +37,25 @@ De typiske elevfejl, som fejlteksterne tager fat i:
   om retningen i forhold til hjertet.
 - **Sejlklap og lommeklap.** Placeringen (mellem forkammer og kammer / ved
   udgangen til en arterie) er selve pointen.
+
+## Rejserne (sidste lag)
+
+Det sidste lag i hjertet og i kredsløbet er en rejse (`/byg-motor/rejse.js`):
+eleven trækker et blodlegeme ad karrene. Forkerte veje stopper med en
+forklaring, og cellen glider tilbage:
+
+- **gennem skillevæggen** (begge figurer): de to sider er adskilt;
+- **baglæns gennem en klap** (hjertet): sejl- eller lommeklappen lukker og
+  vises som et rødt kryds; i kredsløbet, hvor klapperne ikke er tegnet,
+  forklares det med ord;
+- **ud ad en hulvene** og **tilbage i kapillærerne**.
+
+Cellen viser iltmætningen (ca. 75 % i iltfattigt og ca. 98 % i iltrigt blod, i hvile) og
+skifter farve fra blå til rød. I kredsløbet sker det, mens eleven trækker
+cellen gennem lungekapillærerne, med små O₂ og CO₂, der går ind og ud; i
+kroppens væv omvendt. I hjertet er lungen ikke tegnet: cellen forsvinder ud
+ad lungearterien (begge grene er rigtige) og kommer igen i lungevenen.
+Pointen er, at mætningen ikke ændrer sig inde i hjertet.
 
 ## Filerne
 

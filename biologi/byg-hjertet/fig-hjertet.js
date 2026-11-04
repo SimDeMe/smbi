@@ -133,6 +133,59 @@ const lomme = (x, y) => `<path transform="translate(${x} ${y})" d="M-20 0 Q-10 -
   fill="${F.klap}" stroke="${F.klapKant}" stroke-width="2" stroke-linejoin="round"/>`;
 const lommeklapper = lomme(494, 276) + lomme(551, 348);
 
+// ── Sidste lag: træk et blodlegeme gennem hjertet ──────────
+// Blodet kommer gennem hjertet to gange. Turen gennem lungen er ikke tegnet: cellen
+// forsvinder ud ad lungearterien og kommer ind igen gennem lungevenerne.
+const vaegFejl = 'Skillevæggen holder hjertets to sider adskilt. Der er ingen åbning, så iltfattigt og iltrigt blod blandes ikke.';
+const sejlFejl = 'Sejlklappen lukker, når kammeret trækker sig sammen. Senetrådene holder den, så den ikke slår op i forkammeret.';
+const lommeFejl = 'Lommeklappen lukker, når kammeret slapper af. Lommerne fyldes med blod og presses sammen, så blodet ikke løber tilbage.';
+const rejse = {
+  opgave: 'Træk blodlegemet gennem hjertet i den rigtige retning, hele vejen ud i kroppen. Eller vælg vejen her:',
+  start: 'hulvene', slut: ['hoved', 'underkrop'], ilt: 75,
+  knuder: {
+    hulvene: { x: 395, y: 44, navn: 'den øvre hulvene', tekst: 'Blodlegemet kommer fra hoved og arme, hvor det har afleveret ilt. Træk det ind i hjertet.' },
+    hfk: { x: 398, y: 372, navn: 'højre forkammer', tekst: 'Højre forkammer: blodet fra kroppen samles her.' },
+    hk: { x: 468, y: 532, navn: 'højre hjertekammer', tekst: 'Højre hjertekammer: når det trækker sig sammen, lukker sejlklappen, og blodet presses op.' },
+    stamme: { x: 614, y: 181, navn: 'lungearterien', tekst: 'Lungearterien deler sig: én gren til hver lunge.' },
+    lungeV: { x: 762, y: 178, navn: 'venstre lunge' },
+    lungeH: { x: 276, y: 192, navn: 'højre lunge' },
+    lungevene: { x: 766, y: 270, navn: 'lungevenen', tekst: 'Nu er blodlegemet iltrigt. Træk det ind i hjertet igen.' },
+    vfk: { x: 642, y: 302, navn: 'venstre forkammer', tekst: 'Venstre forkammer: det iltrige blod fra lungerne kommer ind her.' },
+    vk: { x: 615, y: 500, navn: 'venstre hjertekammer', tekst: 'Venstre hjertekammer: den tykkeste væg, for herfra pumpes blodet ud i hele kroppen.' },
+    aorta: { x: 551, y: 232, navn: 'aorta', tekst: 'Aorta: herfra fordeles blodet til hele kroppen.' },
+    hoved: { x: 581, y: 40, navn: 'en arterie til hoved og arme', tekst: 'Blodlegemet er på vej op til hoved og arme med ilt.' },
+    underkrop: { x: 684, y: 296, navn: 'aorta bag hjertet', tekst: 'Blodlegemet er på vej ned til resten af kroppen med ilt.' },
+  },
+  veje: [
+    { fra: 'hulvene', til: 'hfk', sti: 'M395 44 V320 Q395 350 398 372', valg: 'ned gennem hulvenen',
+      baglaens: { valg: 'tilbage op i hulvenen', fejl: 'Hulvenerne fører blodet ind i hjertet. Trykket bagfra holder hele tiden blodet på vej mod hjertet.' } },
+    { fra: 'hfk', sti: 'M398 372 Q370 440 362 540', valg: 'ned i den nedre hulvene',
+      fejl: 'Den nedre hulvene fører også blod ind i hjertet, nedefra. Blodet kan ikke løbe den vej ud.' },
+    { fra: 'hfk', sti: 'M398 372 L600 320', valg: 'over i venstre forkammer', fejl: vaegFejl },
+    { fra: 'hfk', til: 'hk', sti: 'M398 372 Q426 420 434 452 Q444 502 468 532', valg: 'ned gennem sejlklappen', klap: [434, 450],
+      baglaens: { valg: 'tilbage op i højre forkammer', fejl: sejlFejl } },
+    { fra: 'hk', sti: 'M468 532 L620 520', valg: 'over i venstre hjertekammer', fejl: vaegFejl },
+    { fra: 'hk', til: 'stamme', sti: 'M468 532 Q492 480 494 400 V240 C494 205 540 186 614 181', valg: 'op gennem lommeklappen', klap: [494, 274],
+      baglaens: { valg: 'tilbage ned i højre kammer', fejl: lommeFejl } },
+    { fra: 'stamme', til: 'lungeV', sti: 'M614 181 C660 176 712 176 762 178', valg: 'ud til venstre lunge' },
+    { fra: 'stamme', til: 'lungeH', sti: 'M614 181 C540 184 420 188 276 192', valg: 'ud til højre lunge' },
+    { fra: 'lungeV', til: 'lungevene', spring: true, ilt: [75, 98], undervejs: 'Blodlegemet er ude i lungen og løber gennem kapillærerne om alveolerne …',
+      tekst: 'I lungen har blodlegemet afgivet CO₂ og optaget O₂.' },
+    { fra: 'lungeH', til: 'lungevene', spring: true, ilt: [75, 98], undervejs: 'Blodlegemet er ude i lungen og løber gennem kapillærerne om alveolerne …',
+      tekst: 'I lungen har blodlegemet afgivet CO₂ og optaget O₂. (Lungevenerne fra højre lunge er ikke tegnet, så det kommer ind her.)' },
+    { fra: 'lungevene', til: 'vfk', sti: 'M766 270 C744 270 734 280 712 280 H662 Q642 280 642 302', valg: 'ind gennem lungevenen' },
+    { fra: 'vfk', sti: 'M642 302 L440 340', valg: 'over i højre forkammer', fejl: vaegFejl },
+    { fra: 'vfk', til: 'vk', sti: 'M642 302 Q634 334 632 368 Q627 440 615 500', valg: 'ned gennem sejlklappen', klap: [632, 368],
+      baglaens: { valg: 'tilbage op i venstre forkammer', fejl: sejlFejl } },
+    { fra: 'vk', sti: 'M615 500 L460 520', valg: 'over i højre hjertekammer', fejl: vaegFejl },
+    { fra: 'vk', til: 'aorta', sti: 'M615 500 Q580 450 562 404 Q551 380 551 340 V232', valg: 'op gennem lommeklappen', klap: [551, 348],
+      baglaens: { valg: 'tilbage ned i venstre kammer', fejl: lommeFejl } },
+    { fra: 'aorta', til: 'hoved', sti: 'M551 232 V150 C551 118 562 102 586 96 L581 40', valg: 'op mod hoved og arme' },
+    { fra: 'aorta', til: 'underkrop', sti: 'M551 232 V150 C551 92 584 74 622 74 C664 74 684 104 684 150 V296', valg: 'over buen og ned i kroppen' },
+  ],
+  opsummering: 'Blodet løb gennem højre side til lungerne og gennem venstre side ud i kroppen. Klapperne åbnede sig fremad og lukkede bagud, og skillevæggen holdt de to sider adskilt. Inde i hjertet ændrede iltmætningen sig ikke; den steg i lungerne.',
+};
+
 export default {
   id: 'hjerte',
   navn: 'Hjertet',
@@ -145,6 +198,7 @@ export default {
     { navn: 'Karrene ind og ud', ord: ['hulvener', 'lungearterie', 'lungevener', 'aorta'], ekstra: ['kranspulsaare'],
       ekstraFejl: { kranspulsaare: 'Kranspulsårerne ligger uden på hjertet og forsyner selve hjertemusklen. De ses ikke i et snit gennem hulrummene.' } },
     { navn: 'Klapperne holder retningen', ord: ['sejlklapper', 'lommeklapper', 'senetraade'] },
+    { navn: 'Send blodet gennem hjertet', ord: [], rejse },
   ],
   // Rækkefølgen er dybden: karrene bag hjertet først, så væggen, hulrummene med deres kanaler og klapperne.
   dele: [
