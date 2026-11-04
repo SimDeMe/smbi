@@ -1135,7 +1135,11 @@ Elproduktionen kommer fra [Embers årsdata](https://ember-energy.org/data/yearly
 (CC BY 4.0). Download tabellen med elproduktion og kør
 `python3 atlas/data/elproduktion.py release_generation_yearly_global.csv`.
 Sammenligningen bruger fælles akser, og manglende år er huller i kurverne.
-Primærenergien følger energimiksets 2023-tal.
+Primærenergiforbruget vises i en særskilt graf med årstal fra 2000 og frem.
+Download CSV-filen fra [OWID Energy Data](https://github.com/owid/energy-data)
+og kør `python3 atlas/data/primaerenergi.py owid-energy-data.csv`.
+Andele har hele primærenergiforbruget som nævner, uanset hvilke kurver
+eleven vælger.
 
 Havniveautallene følger atlasets eksisterende udvalg af PSMSL-stationer.
 Gem [PSMSL’s stationsliste](https://psmsl.org/data/obtaining/) som HTML og

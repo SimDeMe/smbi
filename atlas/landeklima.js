@@ -1,11 +1,18 @@
 import { hent as hentUdledning } from './udledning.js';
-import { hent as hentSamfund, ENERGIKILDER } from './samfund.js';
 
 const ELKILDER = {
   coal: 'Kul', gas: 'Gas', other_fossil: 'Øvrig fossil', nuclear: 'Atomkraft',
   hydro: 'Vandkraft', wind: 'Vind', solar: 'Sol', biofuel: 'Bioenergi', other_renewables: 'Øvrig vedvarende'
 };
-const FARVER = ['#3b3a37', '#aa501a', '#78644d', '#823aa2', '#1f638c', '#087669', '#966800', '#58732c', '#7c4767'];
+const PRIMAERKILDER = {
+  total: 'Energi i alt', oil: 'Olie', coal: 'Kul', gas: 'Gas', nuclear: 'Atomkraft',
+  renewables: 'Vedvarende i alt', hydro: 'Vandkraft', wind: 'Vind', solar: 'Sol', biofuel: 'Biobrændstoffer'
+};
+const FARVER = {
+  total: '#1c314c', fossil: '#171c1b', coal: '#3b3a37', gas: '#aa501a', oil: '#ad3265',
+  other_fossil: '#78644d', nuclear: '#823aa2', hydro: '#1f638c', wind: '#087669',
+  solar: '#966800', biofuel: '#58732c', other_renewables: '#7c4767', renewables: '#3d7719'
+};
 const TAL = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 2 });
 const format = n => Number.isFinite(n) ? TAL.format(n) : '–';
 const hentFil = async navn => {
@@ -16,7 +23,7 @@ const hentFil = async navn => {
 
 let henter;
 export function hentLandeklima() {
-  henter ??= Promise.all([hentUdledning(), hentSamfund(), hentFil('elproduktion'), hentFil('landtemperatur'), hentFil('landhavniveau')])
+  henter ??= Promise.all([hentUdledning(), hentFil('primaerenergi'), hentFil('elproduktion'), hentFil('landtemperatur'), hentFil('landhavniveau')])
     .catch(fejl => { henter = null; throw fejl; });
   return henter;
 }
@@ -157,7 +164,72 @@ function medVaelger(rum, navn, muligheder, tegn) {
   return felt.onchange;
 }
 
-export function visLandeklima(rum, lande, [ud, samfund, el, temperatur, hav], visLag) {
+function energigraf(rum, lande, data, { id, titel, forstoerTekst, kildenavne, startkilder }) {
+  const sidste = Math.max(2000, ...lande.flatMap(({ id }) => Object.keys(data.lande[id] ?? {}).map(Number)));
+  const aarListe = Array.from({ length: sidste - 1999 }, (_, i) => 2000 + i);
+  const serier = Object.entries(kildenavne);
+  const mulige = serier.filter(([kode]) => lande.some(({ id }) =>
+    aarListe.some(aar => Number.isFinite(data.lande[id]?.[aar]?.[kode]))));
+  const viste = new Set(mulige.filter(([kode]) => startkilder.includes(kode)).map(([kode]) => kode));
+  if (!viste.size && mulige.length) viste.add(mulige[0][0]);
+
+  const grafpanel = element('div', '', 'landeklima-elpanel');
+  const kilder = element('fieldset', '', 'landeklima-elkilder');
+  kilder.append(element('legend', 'Energikilder'));
+  const visninger = element('div');
+  for (const [kode, navn] of mulige) {
+    const label = element('label', '');
+    const felt = element('input');
+    felt.type = 'checkbox';
+    felt.checked = viste.has(kode);
+    felt.onchange = () => {
+      if (felt.checked) viste.add(kode);
+      else viste.delete(kode);
+      tegn();
+    };
+    label.append(felt, navn);
+    kilder.append(label);
+  }
+  grafpanel.append(kilder, visninger);
+  const tegn = medVaelger(visninger, `Vis ${titel.toLowerCase()}`, [['twh', 'TWh'], ['andel', 'Andel (%)']], (felt, maal) => {
+    const andel = maal === 'andel';
+    if (mulige.length && !viste.size) {
+      felt.replaceChildren(element('p', 'Vælg en energikilde for at se grafen.', 'metadata'));
+      return;
+    }
+    figurer(felt, lande, aarListe, ({ id }) => serier.flatMap(([kode, navn]) => viste.has(kode) ? [{
+      navn, farve: FARVER[kode], stiplet: ['fossil', 'total', 'renewables'].includes(kode),
+      tal: aarListe.map(aar => {
+        const raekke = data.lande[id]?.[aar];
+        const tal = raekke?.[kode];
+        if (!andel) return tal;
+        return Number.isFinite(tal) && raekke.total > 0 ? 100 * tal / raekke.total : null;
+      })
+    }] : []), andel ? '%' : 'TWh', andel ? [0, 100] : null);
+  });
+
+  const stor = element('dialog', '', 'landeklima-stor');
+  const storTitel = element('h2', `${titel} · ${lande.map(land => land.navn).join(' og ')}`);
+  storTitel.id = `landeklima-${id}-titel`;
+  stor.setAttribute('aria-labelledby', storTitel.id);
+  const top = element('div', '', 'dialogtop');
+  top.append(storTitel, knap('Luk forstørret graf', () => stor.close()));
+  const storRum = element('div', '', 'landeklima-stor-rum');
+  stor.append(top, storRum);
+  const forstoer = knap(forstoerTekst, () => {
+    storRum.append(grafpanel);
+    stor.showModal();
+  });
+  forstoer.setAttribute('aria-haspopup', 'dialog');
+  forstoer.disabled = !mulige.length;
+  stor.addEventListener('close', () => {
+    forstoer.after(grafpanel);
+    forstoer.focus({ preventScroll: true });
+  });
+  rum.append(forstoer, grafpanel, stor);
+}
+
+export function visLandeklima(rum, lande, [ud, primaer, el, temperatur, hav], visLag) {
   const temperaturAar = temperatur.perioder.map(([fra]) => fra);
   const periode = temperatur.perioder.at(-1).join('–');
   const opvarmning = afsnit('Observeret opvarmning', `Temperaturafvigelse fra ${temperatur.grundlag}. Hvert punkt viser en periode. Den sidste dækker ${periode}.`);
@@ -191,98 +263,23 @@ export function visLandeklima(rum, lande, [ud, samfund, el, temperatur, hav], vi
   udledning.append(kildeafsnit(kilde(ud.kilde, 'https://github.com/owid/co2-data')));
 
   const energi = afsnit('Energi og grøn omstilling', 'El produceret i landet. Skift mellem mængde og andel for at se, om fossil elproduktion falder, når vind og sol vokser.');
-  const sidste = Math.max(2000, ...lande.flatMap(({ id }) => Object.keys(el.lande[id] ?? {}).map(Number)));
-  const elaar = Array.from({ length: sidste - 1999 }, (_, i) => 2000 + i);
-  const serier = [['fossil', 'Fossil i alt'], ...Object.entries(ELKILDER)];
-  const mulige = serier.filter(([kode]) => lande.some(({ id }) =>
-    elaar.some(aar => Number.isFinite(el.lande[id]?.[aar]?.[kode]))));
-  const viste = new Set(mulige.filter(([kode]) => ['fossil', 'wind', 'solar'].includes(kode)).map(([kode]) => kode));
-  if (!viste.size && mulige.length) viste.add(mulige[0][0]);
+  energi.append(element('h4', 'Elproduktion'));
+  energigraf(energi, lande, el, {
+    id: 'elgraf', titel: 'Elproduktion', forstoerTekst: 'Forstør elgraf',
+    kildenavne: { fossil: 'Fossil i alt', ...ELKILDER }, startkilder: ['fossil', 'wind', 'solar']
+  });
+  energi.append(kildeafsnit(kilde('Ember · elproduktion (CC BY 4.0)', 'https://ember-energy.org/data/yearly-electricity-data/')));
 
-  const grafpanel = element('div', '', 'landeklima-elpanel');
-  const kilder = element('fieldset', '', 'landeklima-elkilder');
-  kilder.append(element('legend', 'Energikilder'));
-  const visninger = element('div');
-  for (const [kode, navn] of mulige) {
-    const label = element('label', '');
-    const felt = element('input');
-    felt.type = 'checkbox';
-    felt.checked = viste.has(kode);
-    felt.onchange = () => {
-      if (felt.checked) viste.add(kode);
-      else viste.delete(kode);
-      tegn();
-    };
-    label.append(felt, navn);
-    kilder.append(label);
-  }
-  grafpanel.append(kilder, visninger);
-  const tegn = medVaelger(visninger, 'Vis elproduktion', [['twh', 'TWh'], ['andel', 'Andel (%)']], (felt, maal) => {
-    const andel = maal === 'andel';
-    if (mulige.length && !viste.size) {
-      felt.replaceChildren(element('p', 'Vælg en energikilde for at se grafen.', 'metadata'));
-      return;
-    }
-    figurer(felt, lande, elaar, ({ id }) => serier.flatMap(([kode, navn], i) => viste.has(kode) ? [{
-      navn, farve: i ? FARVER[i - 1] : '#171c1b', stiplet: !i,
-      tal: elaar.map(aar => {
-        const raekke = el.lande[id]?.[aar];
-        const tal = raekke?.[kode];
-        if (!andel) return tal;
-        return Number.isFinite(tal) && raekke.total > 0 ? 100 * tal / raekke.total : null;
-      })
-    }] : []), andel ? '%' : 'TWh', andel ? [0, 100] : null);
+  const forbrug = element('div', '', 'landeklima-prim');
+  forbrug.append(element('h4', 'Samlet primærenergiforbrug'),
+    element('p', 'Energi til hele samfundet, herunder elproduktion, transport, opvarmning og industri. Grafen viser energikilder som olie og gas.'),
+    element('p', 'Opgjort med substitutionsmetoden, uden traditionel biomasse. Andele beregnes af hele primærenergiforbruget i hvert år.', 'metadata'));
+  energigraf(forbrug, lande, primaer, {
+    id: 'primaergraf', titel: 'Primærenergiforbrug', forstoerTekst: 'Forstør primærenergigraf',
+    kildenavne: { ...PRIMAERKILDER, fossil: 'Fossil i alt' }, startkilder: ['total', 'oil', 'gas']
   });
-
-  const stor = element('dialog', '', 'landeklima-stor');
-  const storTitel = element('h2', `Elproduktion · ${lande.map(land => land.navn).join(' og ')}`);
-  storTitel.id = 'landeklima-elgraf-titel';
-  stor.setAttribute('aria-labelledby', storTitel.id);
-  const top = element('div', '', 'dialogtop');
-  top.append(storTitel, knap('Luk forstørret graf', () => stor.close()));
-  const storRum = element('div', '', 'landeklima-stor-rum');
-  stor.append(top, storRum);
-  const forstoer = knap('Forstør elgraf', () => {
-    storRum.append(grafpanel);
-    stor.showModal();
-  });
-  forstoer.setAttribute('aria-haspopup', 'dialog');
-  forstoer.disabled = !mulige.length;
-  stor.addEventListener('close', () => {
-    forstoer.after(grafpanel);
-    forstoer.focus({ preventScroll: true });
-  });
-  energi.append(forstoer, grafpanel, stor);
-  const prim = element('details');
-  prim.append(element('summary', `Primærenergimiks i ${samfund.energiaar}`),
-    element('p', 'Primærenergi dækker også energi til fx transport, varme og industri. Opgjort med substitutionsmetoden, uden traditionel biomasse.', 'metadata'));
-  const miksGrid = element('div', '', lande.length > 1 ? 'sammenligning-par' : '');
-  for (const { id, navn } of lande) {
-    const kolonne = element('div');
-    const miks = samfund.lande[id]?.energi;
-    if (lande.length > 1) kolonne.append(element('h4', navn));
-    const hovedgrupper = ['coal', 'oil', 'gas', 'nuclear', 'renewables']
-      .filter(k => Number.isFinite(miks?.[k]));
-    if (hovedgrupper.length) {
-      const liste = element('ul', '', 'landeklima-miks');
-      for (const k of hovedgrupper) {
-        const punkt = element('li');
-        const bar = element('meter');
-        bar.min = 0; bar.max = 100; bar.value = miks[k];
-        bar.setAttribute('aria-hidden', 'true');
-        punkt.append(element('span', ENERGIKILDER[k]), bar, element('span', `${format(miks[k])} %`));
-        liste.append(punkt);
-      }
-      kolonne.append(liste);
-    } else {
-      kolonne.append(element('p', 'Ingen primærenergidata.', 'metadata'));
-    }
-    miksGrid.append(kolonne);
-  }
-  prim.append(miksGrid);
-  energi.append(prim, knap('Vis sol og vindpotentiale på globussen', () => visLag('potentialelag')),
-    kildeafsnit(kilde('Ember · elproduktion (CC BY 4.0)', 'https://ember-energy.org/data/yearly-electricity-data/'),
-      kilde('Our World in Data · primærenergi', 'https://github.com/owid/energy-data')));
+  forbrug.append(kildeafsnit(kilde('Our World in Data · primærenergi (CC BY 4.0)', 'https://github.com/owid/energy-data')));
+  energi.append(forbrug, knap('Vis sol og vindpotentiale på globussen', () => visLag('potentialelag')));
 
   const risiko = afsnit('Klimafarer og konsekvenser', 'Undersøg, hvor mere ekstrem varme, kraftig nedbør og stigende havniveau kan ramme befolkning og landbrug. Brug IPCC’s regionale fremskrivninger sammen med atlasets kort.');
   const kyst = element('details');
