@@ -19,10 +19,10 @@
 <body>
   <header class="site-header"><a class="brand" href="/">smbi<span>.dk</span></a><a href="/geografi.html">← Naturgeografi</a><span class="header-note">ET INTERAKTIVT KLIMALABORATORIUM</span><div data-feedback-vaert></div><button id="fokus" aria-pressed="false">Fokusvisning ↗</button></header>
   <main>
-    <div class="intro"><div><p class="eyebrow">HAV + ATMOSFÆRE <span>01 / ENSO</span></p><h1>Et hav, der ændrer vejret.</h1></div><p>Skru på vinden. Flyt varmen.<br>Opdag El Niño og La Niña.</p></div>
+    <div class="intro"><div><p class="eyebrow">HAV + ATMOSFÆRE <span>01 / ENSO</span></p><h1>Et hav, der ændrer vejret.</h1></div></div>
     <section class="laboratorium" aria-label="ENSO-simulering">
       <div class="havpanel">
-        <div class="figur-top"><span><span class="live-dot"></span> STILLEHAVET · VED ÆKVATOR</span><div class="visningsvalg" aria-label="Farveskala"><button class="valgt" id="temperatur" aria-pressed="true">Temperatur</button><button id="anomali" aria-pressed="false">Afvigelse</button></div></div>
+        <div class="figur-top"><span>STILLEHAVET VED ÆKVATOR <span class="forenkling">· idealiseret tværsnit, dybden er overdrevet</span></span><div class="farvevalg"><div class="visningsvalg" aria-label="Farveskala"><button class="valgt" id="temperatur" aria-pressed="true">Temperatur</button><button id="anomali" aria-pressed="false">Afvigelse</button></div><div class="skala"><span id="skala-kold">16 °C</span><i></i><span id="skala-varm">30 °C</span></div></div></div>
         <div class="havfigur" data-pladstjek="figur">
           <canvas id="hav" role="img" aria-label="Tværsnit af det tropiske Stillehav. Varmt overfladevand over koldt dybvand. Se den løbende tekstforklaring under figuren."></canvas>
           <div class="steder"><span>VEST <strong>Indonesien</strong></span><span class="midt">← 15.000 km →</span><span>ØST <strong>Sydamerika</strong></span></div>
@@ -31,21 +31,19 @@
           <button class="begreb opvelling" data-begreb="opvelling">Opvelling <span>?</span></button>
           <span class="dybde">300 m</span>
         </div>
-        <div class="figur-bund"><span>Idealiseret tværsnit · dybden er overdrevet</span><div class="skala"><span id="skala-kold">16 °C</span><i></i><span id="skala-varm">30 °C</span></div></div>
+        <div class="figurtekst"><p id="forklaring" aria-live="polite"><strong>Prøv:</strong> Træk passatvinden ned til ca. 45 %, og følg termoklinen ved Sydamerika. Hvad sker der med opvellingen?</p><button id="guide">Guidet tur →</button></div>
         <div class="afspilning" data-pladstjek="kontrol"><button id="afspil" class="primaer">Ⅱ Pause</button><button id="frem" title="Beregn én måned frem">+1 måned</button><button id="nulstil" title="Nulstil forsøget">↺ Nulstil</button><span class="tid" id="tid">Måned 0</span><label class="hastighed">Tempo <select id="tempo"><option value="1">1×</option><option value="3">3×</option><option value="6">6×</option></select></label></div>
       </div>
       <aside class="kontrolpanel">
         <div class="panel-overskrift"><h2>Du styrer vinden</h2><button class="info-rund" data-begreb="enso" aria-label="Hvad er ENSO?">?</button></div>
-        <div class="scenarier" aria-label="Vælg startforsøg"><button data-scenarie="varm">El Niño</button><button data-scenarie="neutral" class="valgt">Neutral</button><button data-scenarie="kold">La Niña</button></div>
         <div class="vindkontrol" data-pladstjek="kontrol"><label for="vind">Passatvindens grundstyrke <output id="vindtal" for="vind">100 %</output></label><input type="range" id="vind" min="0" max="180" value="100" step="5"><div class="slider-ender"><span>Svagere</span><span>Normal</span><span>Stærkere</span></div></div>
         <button id="vindpust" class="vindpust" data-pladstjek="kontrol">↝ Tilføj et vestenvindspust</button>
         <p class="lille" id="puststatus" role="status">Et kort skub mod øst — modsat passatvinden.</p>
-        <div class="tilstand"><div><span class="eyebrow">MODELLENS TILSTAND</span><button id="fase" data-begreb="enso">Neutral ↗</button></div><div class="anomalital"><strong id="anomalital">0,00</strong><span>°C</span><button data-begreb="anomali" aria-label="Hvad betyder temperaturafvigelsen?">?</button></div><p>Temperaturafvigelse i det centrale Stillehav</p><div class="fasebar"><span>La Niña</span><span>Neutral</span><span>El Niño</span><i id="fasemarkør"></i></div></div>
-        <p id="forklaring" class="proces" aria-live="polite">Passatvinden skubber varmt vand mod vest. Koldt vand stiger op ved Sydamerika.</p>
+        <div class="forfra"><span class="lille" id="forfra-titel">Start forfra fra et neutralt hav med</span><div class="scenarier" role="group" aria-labelledby="forfra-titel"><button data-scenarie="varm" title="Grundvind 45 %">Svag passat</button><button data-scenarie="neutral" class="valgt" title="Grundvind 100 %">Normal</button><button data-scenarie="kold" title="Grundvind 155 %">Stærk passat</button></div></div>
+        <div class="tilstand"><p class="eyebrow">HAVETS RESPONS</p><div class="anomalital"><strong id="anomalital">0,00</strong><span>°C</span><button data-begreb="anomali" aria-label="Hvad betyder temperaturafvigelsen?">?</button><b id="fasenavn">Neutral</b></div><p>Temperaturafvigelse i det centrale Stillehav · kurven viser de seneste 36 måneder</p><svg id="minigraf" viewBox="0 0 260 74" role="img" aria-label="Temperaturafvigelsen de seneste 36 måneder"></svg></div>
         <details class="modelvalg"><summary>Samspil og modelvalg</summary><label><input id="feedback" type="checkbox" checked> Havet påvirker også vinden</label><p>Slå Bjerknes-feedback fra for at sammenligne. Den viste vind reagerer ellers på havets temperatur.</p><button data-begreb="feedback">Forklar Bjerknes-feedback ↗</button><p id="effektivvind"></p></details>
       </aside>
     </section>
-    <p class="starttip"><strong>Prøv selv:</strong> Vælg El Niño, og følg den stiplede termoklin. Hvorfor bliver opvellingen svagere? <button id="guide">Tag en guidet tur →</button></p>
     <section class="fordybelse">
       <div class="faner" role="tablist" aria-label="Undersøg mere"><button role="tab" id="tab-forloeb" aria-controls="forloeb" aria-selected="true" tabindex="0">01 <span>Følg udviklingen</span></button><button role="tab" id="tab-verden" aria-controls="verden" aria-selected="false" tabindex="-1">02 <span>Verden reagerer</span></button><button role="tab" id="tab-begreber" aria-controls="begreber" aria-selected="false" tabindex="-1">03 <span>Forstå begreberne</span></button><button role="tab" id="tab-opgaver" aria-controls="opgaver" aria-selected="false" tabindex="-1">04 <span>Undersøg selv</span></button></div>
       <div id="forloeb" class="fanepanel" role="tabpanel" aria-labelledby="tab-forloeb"><div class="graf-intro"><div><h2>Havet husker vinden.</h2><p>Temperaturen reagerer gradvist. Kurven viser dit forsøg fra start.</p></div><button id="eksport">↓ Hent målinger (CSV)</button></div><svg id="graf" viewBox="0 0 1000 180" role="img" aria-label="Graf over temperaturafvigelse i grader Celsius som funktion af måneder"><title>Temperaturafvigelse over tid</title></svg><p class="lille">Blå kurve: dit forsøg · stiplet linje: neutral reference (0 °C) · baggrundsbånd: ±0,5 °C. Seneste <span id="grafmaaneder">60</span> måneder vises. Modelværdier, ikke observationer.</p></div>

@@ -12,12 +12,14 @@ let sidsteBillede = null;
 let sidsteGraf = 0;
 let sidsteFase = '';
 let valgtScenarie = 'neutral';
+let startet = false; // Invitationen under figuren viger, når eleven har grebet ind.
+let visteTekst = '';
 const format = (tal, decimaler=2) => (tal > .004 ? '+' : '') + (Math.abs(tal) < .004 ? 0 : tal).toLocaleString('da-DK', {minimumFractionDigits:decimaler, maximumFractionDigits:decimaler});
 
 const begreber = {
-  enso: {navn:'ENSO', kort:'Det koblede system: hav + atmosfære.', tekst:'ENSO står for El Niño–Southern Oscillation. Det er samspillet mellem havet og atmosfæren i det tropiske Stillehav. El Niño, La Niña og neutral er systemets tre faser. En ENSO-hændelse udvikler sig over måneder og kan påvirke vejret langt uden for Stillehavet.', tip:'Vælg en fase som startforsøg. Knapperne ændrer vinden; havet skal selv nå at reagere. Fasemærket følger temperaturen, ikke den knap, du vælger.'},
-  elnino: {navn:'El Niño', kort:'Varmere overfladevand mod øst og i det centrale hav.', tekst:'Under El Niño er overfladevandet i det centrale og østlige tropiske Stillehav varmere end normalt. Passatvinden er typisk svækket, termoklinen ligger dybere i øst, og opvellingen af koldt vand er mindre effektiv. Området med kraftig tropisk regn flytter typisk østpå.', tip:'Vælg El Niño. Se det varme vand brede sig mod øst, termoklinen flade ud og regnområdet flytte sig.'},
-  lanina: {navn:'La Niña', kort:'Koldere overfladevand mod øst og i det centrale hav.', tekst:'Under La Niña er overfladevandet i det centrale og østlige tropiske Stillehav koldere end normalt. Passatvinden er typisk stærkere. Mere varmt vand samles mod vest, mens opvelling og en mere overfladenær termoklin i øst gør det lettere for koldt vand at nå overfladen.', tip:'Vælg La Niña. Sammenlign termoklinens hældning og de opadgående pile med neutral tilstand.'},
+  enso: {navn:'ENSO', kort:'Det koblede system: hav + atmosfære.', tekst:'ENSO står for El Niño–Southern Oscillation. Det er samspillet mellem havet og atmosfæren i det tropiske Stillehav. El Niño, La Niña og neutral er systemets tre faser. En ENSO-hændelse udvikler sig over måneder og kan påvirke vejret langt uden for Stillehavet.', tip:'Du styrer kun vinden. Havet skal selv nå at reagere, og fasen under Havets respons følger temperaturen — ikke den knap, du vælger.'},
+  elnino: {navn:'El Niño', kort:'Varmere overfladevand mod øst og i det centrale hav.', tekst:'Under El Niño er overfladevandet i det centrale og østlige tropiske Stillehav varmere end normalt. Passatvinden er typisk svækket, termoklinen ligger dybere i øst, og opvellingen af koldt vand er mindre effektiv. Området med kraftig tropisk regn flytter typisk østpå.', tip:'Start forfra med Svag passat. Se det varme vand brede sig mod øst, termoklinen flade ud og regnområdet flytte sig, før temperaturen når over +0,5 °C.'},
+  lanina: {navn:'La Niña', kort:'Koldere overfladevand mod øst og i det centrale hav.', tekst:'Under La Niña er overfladevandet i det centrale og østlige tropiske Stillehav koldere end normalt. Passatvinden er typisk stærkere. Mere varmt vand samles mod vest, mens opvelling og en mere overfladenær termoklin i øst gør det lettere for koldt vand at nå overfladen.', tip:'Start forfra med Stærk passat. Sammenlign termoklinens hældning og de opadgående pile med neutral tilstand.'},
   passat: {navn:'Passatvinde', kort:'Vinden skubber varmt overfladevand mod vest.', tekst:'Over det tropiske Stillehav blæser passatvindene normalt fra øst mod vest: fra Sydamerika mod Indonesien. Vinden driver overfladestrømme og er med til at samle varmt vand i den vestlige del af havet.', tip:'Træk vindskyderen ned. Svagere passatvind gør det lettere for varmt vand at flytte mod øst. Pile i luften viser den effektive vind; 100 % er modellens normale grundvind.'},
   opvelling: {navn:'Opvelling', kort:'Koldt, næringsrigt dybvand når overfladen.', tekst:'Opvelling er opstigning af vand fra dybet til overfladen. Langs Perus og Ecuadors kyst hjælper vinddrevet transport overfladevand væk, så koldt, næringsrigt vand kan stige op. Der findes også opvelling langs ækvator. Næringsstofferne understøtter plankton og fiskeri.', tip:'Følg de opadgående pile ved Sydamerika. Når termoklinen bliver dybere under El Niño, når mindre koldt, næringsrigt vand overfladen. Pilenes antal og længde viser den relative styrke.'},
   termoklin: {navn:'Termoklin', kort:'Overgangslaget mellem varmt og koldt vand.', tekst:'Termoklinen er det lag i havet, hvor temperaturen falder hurtigt med dybden. Normalt ligger den dybt i det vestlige tropiske Stillehav og tættere på overfladen i øst. Under El Niño bliver den typisk mindre skrå og dybere i øst.', tip:'Den lyse, stiplede linje markerer overgangslaget. Når den synker i øst, ligger det kolde vand længere fra overfladen. Figuren viser laget som en linje for at gøre bevægelsen tydelig.'},
@@ -52,30 +54,33 @@ $('guide').onclick = () => {guideTrin=0;forklar(guide[0],true);};
 $('guide-naeste').onclick = () => {if(++guideTrin >= guide.length) $('begrebsdialog').close();else forklar(guide[guideTrin],true);};
 
 function afspilningsknap() { $('afspil').textContent = kører ? 'Ⅱ Pause' : '▶ Start'; }
-function vælgScenarie(navn) {
+function vælgScenarie(navn, indgreb=true) {
   valgtScenarie = navn;
+  if(indgreb) startet = true;
   const vind = {varm:.45,neutral:1,kold:1.55}[navn];
   model = nyModel(vind,$('feedback').checked);
   historik = [{tid:0,temperatur:0,vind}];
   næsteMåling = 1;
   sidsteFase = '';
+  visteTekst = '';
   $('vind').value = vind * 100;
   $('vindpust').disabled = false;
   document.querySelectorAll('[data-scenarie]').forEach(b => {const aktiv=b.dataset.scenarie===navn;b.classList.toggle('valgt',aktiv);b.setAttribute('aria-pressed',String(aktiv));});
-  opdater();tegnGraf();
+  opdater();tegnGraf();tegnMinigraf();
 }
 document.querySelectorAll('[data-scenarie]').forEach(b => b.onclick = () => vælgScenarie(b.dataset.scenarie));
 $('afspil').onclick = () => {kører=!kører;afspilningsknap();};
-$('frem').onclick = () => {kører=false;afspilningsknap();frem(1);opdater();tegnGraf();};
+$('frem').onclick = () => {kører=false;afspilningsknap();frem(1);opdater();tegnGraf();tegnMinigraf();};
 $('nulstil').onclick = () => { $('feedback').checked=true;vælgScenarie('neutral');};
 $('vind').addEventListener('input', () => {
   model.grundvind=Number($('vind').value)/100;
   valgtScenarie=null;
+  startet=true;
   document.querySelectorAll('[data-scenarie]').forEach(b=>{b.classList.remove('valgt');b.setAttribute('aria-pressed','false');});
   opdater();
 });
 $('feedback').onchange = () => {model.feedback=$('feedback').checked;opdater();};
-$('vindpust').onclick = () => {model.pustTil=model.tid+2;opdater();};
+$('vindpust').onclick = () => {model.pustTil=model.tid+2;startet=true;opdater();};
 for(const [id,tilstand] of [['temperatur',false],['anomali',true]]) $(id).onclick = () => {
   afvigelse=tilstand;
   for(const [knap,aktiv] of [['temperatur',!tilstand],['anomali',tilstand]]) {$(knap).classList.toggle('valgt',aktiv);$(knap).setAttribute('aria-pressed',String(aktiv));}
@@ -96,20 +101,24 @@ function opdater() {
   $('anomalital').textContent=format(model.temperatur);
   $('anomalital').style.color = model.temperatur>.5?'#b34524':model.temperatur<-.5?'#08699c':'#172d38';
   const nuværende=fase(model);
-  $('fase').textContent=nuværende+' ↗';
-  $('fasemarkør').style.left=`${begræns(50+model.temperatur*20,2,98)}%`;
+  $('fasenavn').textContent=nuværende;
+  $('fasenavn').dataset.fase={'El Niño':'varm','La Niña':'kold','Neutral':'neutral'}[nuværende];
   $('effektivvind').textContent=`Effektiv vind lige nu: ${Math.round(effektivVind(model)*100)} % af normal. Negative værdier betyder vind mod øst.`;
   $('vindpust').disabled=model.tid<model.pustTil;
   $('puststatus').textContent=model.tid<model.pustTil?`Vindpust aktivt: ${(model.pustTil-model.tid).toLocaleString('da-DK',{maximumFractionDigits:1})} modelmåneder tilbage.`:'Et kort skub mod øst — modsat passatvinden.';
-  // Skærmlæserens procestekst opdateres kun ved faseskift.
-  if(nuværende!==sidsteFase) {
-    sidsteFase=nuværende;
-    $('forklaring').textContent={
-      'El Niño':'Varmen breder sig mod øst. Termoklinen ligger dybere ved Sydamerika, og mindre koldt vand når overfladen.',
-      'La Niña':'Varmen samles mod vest. Termoklinen ligger tættere på overfladen i øst, og mere koldt vand stiger op.',
-      'Neutral':'Passatvinden samler normalt varmt vand mod vest. Ved Sydamerika stiger koldt vand op. Dine indgreb kan ændre balancen.'
-    }[nuværende];
-    opdaterVerden();
+  if(nuværende!==sidsteFase){sidsteFase=nuværende;opdaterVerden();}
+  // Figurteksten skifter kun ved nyt trin, så skærmlæseren ikke får en strøm af meldinger.
+  const trin=!startet?'invitation':nuværende!=='Neutral'?nuværende:model.temperatur>.15?'mod-varm':model.temperatur<-.15?'mod-kold':'Neutral';
+  if(trin!==visteTekst) {
+    visteTekst=trin;
+    $('forklaring').innerHTML={
+      'invitation':'<strong>Prøv:</strong> Træk passatvinden ned til ca. 45 %, og følg termoklinen ved Sydamerika. Hvad sker der med opvellingen?',
+      'mod-varm':'<strong>Havet varmes op mod øst.</strong> Termoklinen synker ved Sydamerika, men afvigelsen er under +0,5 °C — modellen kalder det stadig neutral.',
+      'mod-kold':'<strong>Havet køles af mod øst.</strong> Termoklinen hæver sig ved Sydamerika, men afvigelsen er over −0,5 °C — modellen kalder det stadig neutral.',
+      'El Niño':'<strong>El Niño:</strong> Varmen breder sig mod øst. Termoklinen ligger dybere ved Sydamerika, så mindre koldt vand når overfladen, og regnen flytter østpå.',
+      'La Niña':'<strong>La Niña:</strong> Varmen samles mod vest. Termoklinen ligger tættere på overfladen i øst, og mere koldt vand stiger op.',
+      'Neutral':'<strong>Neutral:</strong> Passatvinden samler varmt vand mod vest, og ved Sydamerika stiger koldt vand op. Prøv en anden vindstyrke eller et vindpust.'
+    }[trin];
   }
 }
 
@@ -212,6 +221,21 @@ function tegnGraf() {
   $('graf').innerHTML=svg;
   $('graf').setAttribute('aria-label',`Temperaturafvigelse fra måned ${Math.round(start)} til ${Math.round(slut)}. Aktuel afvigelse: ${format(model.temperatur)} °C.`);
 }
+// Minikurven bruger samme farve og ±0,5 °C-bånd som den store graf, så de kan genkendes.
+function tegnMinigraf() {
+  const nu={tid:model.tid,temperatur:model.temperatur};
+  const start=Math.max(0,model.tid-36),slut=Math.max(12,model.tid);
+  const målinger=historik.filter(p=>p.tid>=start).concat([nu]);
+  const venstre=50,højre=254,top=4,bund=70,grænse=2.5;
+  const x=t=>venstre+(t-start)/(slut-start)*(højre-venstre);
+  const y=t=>top+(grænse-begræns(t,-grænse,grænse))/(2*grænse)*(bund-top);
+  const bånd=(fra,til,farve,tekst)=>`<rect x="${venstre}" y="${y(til)}" width="${højre-venstre}" height="${y(fra)-y(til)}" fill="${farve}"/><text x="${venstre-5}" y="${(y(fra)+y(til))/2+3.5}" text-anchor="end">${tekst}</text>`;
+  let svg=bånd(.5,grænse,'#f8d9c6','El Niño')+bånd(-.5,.5,'#e7e6d6','Neutral')+bånd(-grænse,-.5,'#cfe4ec','La Niña');
+  svg+=`<line x1="${venstre}" x2="${højre}" y1="${y(0)}" y2="${y(0)}" stroke="#718481" stroke-dasharray="3 3"/>`;
+  svg+=`<path d="${målinger.map((p,i)=>`${i?'L':'M'}${x(p.tid).toFixed(1)},${y(p.temperatur).toFixed(1)}`).join(' ')}" fill="none" stroke="#087bb4" stroke-width="2"/><circle cx="${x(nu.tid).toFixed(1)}" cy="${y(nu.temperatur).toFixed(1)}" r="3.5" fill="#087bb4"/>`;
+  $('minigraf').innerHTML=svg;
+  $('minigraf').setAttribute('aria-label',`Temperaturafvigelsen fra måned ${Math.round(start)} til ${Math.round(model.tid)}. Nu ${format(model.temperatur)} °C: ${fase(model)}.`);
+}
 function opdaterVerden() {
   const tilstand=fase(model);
   const tekster=tilstand==='El Niño'?[
@@ -258,8 +282,8 @@ function billede(nu) {
   if(!document.hidden) {
     if(kører){frem(dt*.75*Number($('tempo').value));if(!reduceret.matches)visuelTid+=dt;opdater();}
     tegnHav();
-    if(nu-sidsteGraf>250){if(!$('forloeb').hidden)tegnGraf();sidsteGraf=nu;}
+    if(nu-sidsteGraf>250){if(!$('forloeb').hidden)tegnGraf();tegnMinigraf();sidsteGraf=nu;}
   }
   requestAnimationFrame(billede);
 }
-afspilningsknap();vælgScenarie('neutral');requestAnimationFrame(billede);
+afspilningsknap();vælgScenarie('neutral',false);requestAnimationFrame(billede);

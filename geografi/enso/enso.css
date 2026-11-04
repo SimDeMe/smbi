@@ -136,11 +136,6 @@ h1 {
   margin:0;
   font-variation-settings:'wdth' 94;
 }
-.intro>p {
-  margin:0;
-  font-family:var(--serif);
-  font-size:17px;
-}
 .laboratorium {
   display:grid;
   grid-template-columns:minmax(0,1fr) 290px;
@@ -165,14 +160,6 @@ h1 {
   font:10px var(--mono);
   letter-spacing:1px;
 }
-.live-dot {
-  display:inline-block;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#138c86;
-  margin-right:5px;
-}
 .visningsvalg {
   display:flex;
   border:1px solid var(--line);
@@ -190,9 +177,10 @@ h1 {
 }
 .havfigur {
   position:relative;
-  flex:1;
+  /* Figuren følger sin egen højderegel og krymper ikke til panelets højde. */
+  flex:1 0 auto;
   min-height:245px;
-  height:clamp(245px,calc(100svh - 285px),390px);
+  height:clamp(245px,calc(100svh - 305px),400px);
   background:#e9f2ef;
   overflow:hidden;
 }
@@ -258,15 +246,6 @@ h1 {
   left:9px;
   font:9px var(--mono);
   color:#d2e6e8;
-}
-.figur-bund {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:9px 14px;
-  font:9px var(--mono);
-  gap:12px;
-  border-top:1px solid var(--ink);
 }
 .skala {
   display:flex;
@@ -391,21 +370,10 @@ input[type=range] {
   border-top:1px solid var(--line);
   padding-top:12px;
 }
-.tilstand>div:first-child {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
 .tilstand .eyebrow {
   font-size:8px;
   margin:0;
   letter-spacing:.7px;
-}
-#fase {
-  border:0;
-  font-size:11px;
-  padding:2px 0;
-  color:var(--blue);
 }
 .anomalital {
   display:flex;
@@ -432,29 +400,6 @@ input[type=range] {
   color:var(--muted);
   margin:1px 0 11px;
 }
-.fasebar {
-  display:flex;
-  position:relative;
-  background:linear-gradient(90deg,#bddce6 0 40%,#e4e4d2 40% 60%,#f4c3a8 60%);
-  padding:7px 5px;
-  justify-content:space-between;
-  font:9px var(--mono);
-}
-.fasebar i {
-  position:absolute;
-  width:2px;
-  height:9px;
-  background:var(--ink);
-  left:50%;
-  bottom:-5px;
-  transition:left .2s;
-}
-.proces {
-  font-family:var(--serif);
-  font-size:13px;
-  line-height:1.5;
-  margin:13px 0 9px;
-}
 .modelvalg {
   border-top:1px solid var(--line);
   padding-top:8px;
@@ -474,20 +419,6 @@ input[type=range] {
 .modelvalg button {
   font-size:10px;
   padding:5px;
-}
-.starttip {
-  margin:17px 0 24px;
-  font-size:12px;
-  color:var(--muted);
-}
-.starttip strong {
-  color:var(--ink);
-}
-.starttip button {
-  border:0;
-  color:var(--blue);
-  font-size:12px;
-  padding:0 0 0 7px;
 }
 .faner {
   display:flex;
@@ -705,6 +636,72 @@ body.fokus #fokus-retur {
   color:white;
   z-index:5;
 }
+.forenkling {
+  color:var(--muted);
+}
+.farvevalg {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.figurtekst {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:9px 16px;
+  border-top:1px solid var(--ink);
+  background:#fffdf7;
+}
+.figurtekst p {
+  margin:0;
+  font-family:var(--serif);
+  font-size:14px;
+  line-height:1.4;
+  flex:1;
+}
+.figurtekst p strong {
+  font-family:var(--display);
+  font-weight:600;
+}
+#guide {
+  border:0;
+  background:none;
+  color:var(--blue);
+  font-size:12px;
+  padding:4px 0;
+  white-space:nowrap;
+}
+.forfra {
+  margin:0 0 14px;
+}
+.forfra>.lille {
+  display:block;
+  font-size:10px;
+  margin-bottom:5px;
+}
+#fasenavn {
+  margin-left:auto;
+  font:600 13px var(--display);
+  padding:3px 8px;
+  border:1px solid var(--line);
+  background:#e7e6d6;
+}
+#fasenavn[data-fase=varm] {
+  background:#f8d9c6;
+  border-color:#b34524;
+}
+#fasenavn[data-fase=kold] {
+  background:#cfe4ec;
+  border-color:#08699c;
+}
+#minigraf {
+  display:block;
+  width:100%;
+  height:auto;
+  margin-bottom:10px;
+  font:9px var(--mono);
+  fill:#52676e;
+}
 [hidden] {
   display:none!important;
 }
@@ -717,9 +714,6 @@ body.fokus #fokus-retur {
   }
   h1 {
     font-size:35px;
-  }
-  .intro>p {
-    font-size:14px;
   }
   .kontrolpanel {
     padding:12px 15px;
@@ -739,16 +733,17 @@ body.fokus #fokus-retur {
   .anomalital strong {
     font-size:33px;
   }
-  .proces {
-    font-size:12px;
-    line-height:1.4;
-    margin:8px 0 7px;
+  .figurtekst {
+    padding:7px 14px;
+  }
+  .figurtekst p {
+    font-size:13px;
+  }
+  #minigraf {
+    margin-bottom:6px;
   }
   .havfigur {
-    height:calc(100svh - 255px);
-  }
-  .starttip {
-    margin:14px 0 20px;
+    height:calc(100svh - 275px);
   }
 }
 @media(max-width:1000px) {
@@ -776,6 +771,12 @@ body.fokus #fokus-retur {
   .figur-top>span {
     font-size:8px;
   }
+  .forenkling {
+    display:none;
+  }
+  .figurtekst {
+    padding:8px 10px;
+  }
   .visningsvalg button {
     font-size:10px;
     padding:5px;
@@ -789,9 +790,6 @@ body.fokus #fokus-retur {
   }
   .hastighed {
     margin-left:0;
-  }
-  .figur-bund {
-    font-size:8px;
   }
   .skala i {
     width:50px;
@@ -818,9 +816,6 @@ body.fokus #fokus-retur {
   .intro {
     padding:20px 0 17px;
     align-items:flex-start;
-  }
-  .intro>p {
-    display:none;
   }
   h1 {
     font-size:33px;
@@ -856,11 +851,6 @@ body.fokus #fokus-retur {
   .opvelling {
     right:2%;
     top:81%;
-  }
-  .figur-bund {
-    padding:9px;
-    gap:5px;
-    font-size:7px;
   }
   .skala {
     gap:4px;
@@ -910,19 +900,25 @@ body.fokus #fokus-retur {
   .tilstand>p {
     font-size:11px;
   }
-  .proces {
+  .figur-top {
+    flex-wrap:wrap;
+  }
+  .figurtekst {
+    flex-wrap:wrap;
+    gap:4px 12px;
+  }
+  .figurtekst p {
     font-size:15px;
+    flex-basis:100%;
+  }
+  .forfra>.lille {
+    font-size:12px;
+  }
+  #minigraf {
+    max-width:420px;
   }
   .modelvalg {
     font-size:12px;
-  }
-  .starttip {
-    font-size:12px;
-    margin:17px 0 22px;
-  }
-  .starttip button {
-    display:block;
-    padding:8px 0;
   }
   .faner {
     gap:0;
