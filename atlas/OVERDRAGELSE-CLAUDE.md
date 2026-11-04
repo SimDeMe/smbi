@@ -78,9 +78,7 @@ omfang; modelrettelser skal have egen begrundelse og relevant test.
 - **AMOC/Golfstrøm:** skeln vinddrevet strøm og omvæltningscirkulation.
   Grønlandspumpens simulerede tærskel/tid er ikke et observeret prognoseår.
   Kontroller Ø7, journalspørgsmål 10, om ekstra 0,5–1 m havniveau i
-  Nordatlanten. Brobygningsmaterialets klimaforskel København/Goose Bay
-  kræver flere forklaringer og kildebelæg; det har også to ark under
-  `temp/havets-motor/` med tankanalogi og densitetstal.
+  Nordatlanten.
 - **Tidevand og magnetfelt:** efterspor stedamplituder og polhistorikkens
   kilder/årgange. Dipolmodellens lokale misvisning må ikke præsenteres som
   fuld IGRF/WMM-beregning; tidevand er ikke en lokal farvandsprognose.
