@@ -33,6 +33,17 @@ const stroemme = [[-160, -95, 92], [-60, 10, 118], [30, 110, 140], [140, 205, 10
     return `<path d="M${x1} ${y1} A${r} ${r} 0 0 1 ${x2} ${y2}"/>`;
   }).join('');
 
+// kontinenterne langs kuglens rand (grønne buer på det blå hav)
+const LAND = [[-150, -112], [-84, -58], [-4, 38], [64, 96], [128, 168], [204, 236]].map(([a, b]) => {
+  const [x1, y1] = paaKugle(a, R - 2.3), [x2, y2] = paaKugle(b, R - 2.3);
+  return `<path d="M${x1} ${y1} A${R - 2.3} ${R - 2.3} 0 0 1 ${x2} ${y2}"/>`;
+}).join('');
+
+// gløden om kernen og en svag stenstruktur i kappen
+const FILTRE = `<filter id="ji-gloed" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter>
+  <filter id="ji-sten" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="7"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.6 -.75"/><feComposite in2="SourceGraphic" operator="in"/></filter>`;
+
 // ── Udsnittet: de øverste 400 km, havniveau i y = 200 ────
 const UX0 = 920, UX1 = 1390, UY0 = 100, UY1 = H;
 const HAVNIVEAU = 200;
@@ -86,49 +97,84 @@ export default {
       ekstraFejl: { magma: 'Magma er smeltet sten og findes kun i små lommer. Kappen er fast sten, og det flydende i kernen er jern.' } },
   ],
   dele: [
-    // baggrund: himmel, hav og den stiplede forbindelse fra kuglen til udsnittet
-    { ord: null, svg: `<defs>${KLIP}<linearGradient id="ji-himmel" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#BFE0F6"/><stop offset="1" stop-color="#EAF6FD"/></linearGradient></defs>
+    // baggrund: atmosfærens blå skær om kloden, himmel, hav og den stiplede forbindelse
+    { ord: null, svg: `<defs>${KLIP}${FILTRE}<linearGradient id="ji-himmel" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9FD0F2"/><stop offset="1" stop-color="#EAF6FD"/></linearGradient>
+      <linearGradient id="ji-hav" x1="0" y1="${HAVNIVEAU}" x2="0" y2="224" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#3FA3DA"/><stop offset="1" stop-color="#1A5F96"/></linearGradient>
+      <radialGradient id="ji-atmosfaere" cx="${CX}" cy="${CY}" r="${R + 26}" gradientUnits="userSpaceOnUse">
+        <stop offset="${r1(R / (R + 26))}" stop-color="#7EC4F0" stop-opacity=".75"/><stop offset="1" stop-color="#BFE3FA" stop-opacity="0"/></radialGradient></defs>
+      ${cirkel(R + 26, 'fill="url(#ji-atmosfaere)"')}
       ${iUdsnit(`<rect x="${UX0}" y="${UY0}" width="${UX1 - UX0}" height="${130}" fill="url(#ji-himmel)"/>
-        <path d="${HAV}" fill="#2F8FCB"/>`)}
+        <path d="${HAV}" fill="url(#ji-hav)"/>`)}
       <g fill="none" stroke="#6B5A4A" stroke-width="2" stroke-dasharray="7 6">
         <path d="M${CX + R + 4} ${CY - 16} L${UX0} ${UY0}"/><path d="M${CX + R + 4} ${CY + 16} L${UX0} ${UY1}"/>
       </g>` },
 
     // ── lag 1: kuglen og udsnittet ──
-    { ord: 'skorpe', svg: cirkel(R, 'fill="#8C6A4A" stroke="#4A3524" stroke-width="2.6"') },
+    { ord: 'skorpe', svg: `<defs><radialGradient id="ji-skorpe" cx="${CX}" cy="${CY}" r="${R}" gradientUnits="userSpaceOnUse">
+        <stop offset="${r1(R_SKORPE / R)}" stop-color="#5A4434"/><stop offset="1" stop-color="#7A6150"/></radialGradient></defs>
+      ${cirkel(R, 'fill="url(#ji-skorpe)" stroke="#2E2018" stroke-width="2.4"')}
+      ${cirkel(R - 2.2, 'fill="none" stroke="#2470B3" stroke-width="4.4"')}
+      <g fill="none" stroke="#5E9A3C" stroke-width="4.6">${LAND}</g>` },
     { ord: 'kappe', svg: `<defs><radialGradient id="ji-kappe" cx="${CX}" cy="${CY}" r="${R_SKORPE}" gradientUnits="userSpaceOnUse">
-        <stop offset="${r1(R_KERNE / R_SKORPE)}" stop-color="#C8452B"/><stop offset="1" stop-color="#EE9248"/></radialGradient></defs>
-      ${cirkel(R_SKORPE, 'fill="url(#ji-kappe)" stroke="#4A3524" stroke-width="1.6"')}` },
-    { ord: 'kerne', svg: cirkel(R_KERNE, 'fill="#F2B33D" stroke="#8A4A12" stroke-width="2.2"') },
+        <stop offset="${r1(R_KERNE / R_SKORPE)}" stop-color="#FF9A2E"/>
+        <stop offset=".7" stop-color="#EE5A1F"/>
+        <stop offset=".86" stop-color="#C2321A"/>
+        <stop offset="1" stop-color="#8A2216"/></radialGradient></defs>
+      ${cirkel(R_SKORPE, 'fill="url(#ji-kappe)" stroke="#3A1A10" stroke-width="1.6"')}
+      ${cirkel(R_SKORPE - 1, 'fill="#2A0A04" filter="url(#ji-sten)" opacity=".28"')}` },
+    { ord: 'kerne', svg: `<defs><radialGradient id="ji-kerne" cx="${CX}" cy="${CY}" r="${R_KERNE}" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFFBE2"/><stop offset=".35" stop-color="#FFE27A"/>
+        <stop offset=".7" stop-color="#FFB333"/><stop offset="1" stop-color="#F9801C"/></radialGradient></defs>
+      ${cirkel(R_KERNE + 10, 'fill="#FFB347" opacity=".75" filter="url(#ji-gloed)"')}
+      ${cirkel(R_KERNE, 'fill="url(#ji-kerne)" stroke="#9A4A0E" stroke-width="2"')}` },
     { ord: 'kappe', svg: `<defs><linearGradient id="ji-kappe-u" x1="0" y1="${km(0)}" x2="0" y2="${UY1}" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#EE9248"/><stop offset="1" stop-color="#DC6A36"/></linearGradient></defs>
-      ${iUdsnit(`<path d="${KAPPE_UDSNIT}" fill="url(#ji-kappe-u)"/>`)}` },
-    { ord: 'skorpe', svg: iUdsnit(`<path d="${SKORPE_UDSNIT}" fill="#8C6A4A" stroke="#4A3524" stroke-width="1.6"/>`) },
+        <stop offset="0" stop-color="#9A2A18"/><stop offset="1" stop-color="#C9401E"/></linearGradient></defs>
+      ${iUdsnit(`<path d="${KAPPE_UDSNIT}" fill="url(#ji-kappe-u)"/>
+        <path d="${KAPPE_UDSNIT}" fill="#2A0A04" filter="url(#ji-sten)" opacity=".25"/>`)}` },
+    { ord: 'skorpe', svg: iUdsnit(`<path d="${SKORPE_UDSNIT}" fill="#7A6150" stroke="#2E2018" stroke-width="1.6"/>`) },
 
     // ── lag 2: de to slags skorpe ──
-    { ord: 'oceanbundsskorpe', svg: iUdsnit(`<path d="${OCEANSKORPE}" fill="#4E5A66" stroke="#2A3138" stroke-width="1.6"/>`) },
-    { ord: 'kontinentalskorpe', svg: iUdsnit(`<path d="${KONTINENTSKORPE}" fill="#D3A585" stroke="#6E4A30" stroke-width="1.6"/>
-      <g fill="#9C6F52">${[[1170, 222], [1205, 236], [1245, 216], [1262, 242], [1300, 226], [1318, 256], [1350, 214], [1372, 238], [1222, 208], [1290, 202]]
-        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6"/>`).join('')}</g>`) },
+    { ord: 'oceanbundsskorpe', svg: `<defs><linearGradient id="ji-basalt" x1="0" y1="214" x2="0" y2="244" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#4C5866"/><stop offset="1" stop-color="#262D36"/></linearGradient></defs>
+      ${iUdsnit(`<path d="${OCEANSKORPE}" fill="url(#ji-basalt)" stroke="#1C2128" stroke-width="1.6"/>`)}` },
+    { ord: 'kontinentalskorpe', svg: `<defs><linearGradient id="ji-granit" x1="0" y1="176" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#E4B999"/><stop offset="1" stop-color="#B98564"/></linearGradient></defs>
+      ${iUdsnit(`<path d="${KONTINENTSKORPE}" fill="url(#ji-granit)" stroke="#6E4A30" stroke-width="1.6"/>
+      <g fill="#8E5E44">${[[1170, 222], [1205, 236], [1245, 216], [1262, 242], [1300, 226], [1318, 256], [1350, 214], [1372, 238], [1222, 208], [1290, 202]]
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6"/>`).join('')}</g>
+      <g fill="#F4ECE6">${[[1192, 228], [1236, 238], [1280, 214], [1338, 232], [1362, 252]]
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2"/>`).join('')}</g>
+      <path d="${sti(flade.slice(3))}" fill="none" stroke="#5E9A3C" stroke-width="4" stroke-linecap="round"/>
+      <path d="M1300 180.3 L1315 176 L1331 179 L1322 182 L1314 180 L1306 183Z" fill="#FFFFFF" stroke="#C9D3DB" stroke-width="1"/>`)}` },
 
     // ── lag 3: stift, blødt og flydende ──
-    { ord: 'astenosfaere', svg: iUdsnit(`<path d="${ASTENOSFAERE}" fill="#E5482A" opacity=".42"/>
+    { ord: 'astenosfaere', svg: `<defs><linearGradient id="ji-asteno" x1="0" y1="${km(80)}" x2="0" y2="${km(350)}" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FF8A2A" stop-opacity=".2"/><stop offset=".45" stop-color="#FF8A2A" stop-opacity=".62"/>
+        <stop offset="1" stop-color="#FF8A2A" stop-opacity=".25"/></linearGradient></defs>
+      ${iUdsnit(`<path d="${ASTENOSFAERE}" fill="url(#ji-asteno)"/>
       <g stroke="#FFF1E0" stroke-width="3.4" stroke-linecap="round" fill="#FFF1E0" opacity=".9">
-        ${flydPil(960, 455, 120)}${flydPil(1150, 520, 130)}${flydPil(1000, 640, 110)}${flydPil(1230, 640, 110)}</g>`) },
+        ${flydPil(960, 455, 120)}${flydPil(1150, 520, 130)}${flydPil(1000, 640, 110)}${flydPil(1230, 640, 110)}</g>`)}` },
     { ord: 'litosfaere', svg: `<defs><pattern id="ji-stiv" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <path d="M0 0V14" stroke="#4A2A18" stroke-width="2.4" opacity=".45"/></pattern></defs>
-      ${iUdsnit(`<path d="${LITO_KAPPE}" fill="url(#ji-stiv)"/>
-        <path d="${sti(litoBund)}" fill="none" stroke="#3A2214" stroke-width="3.4"/>`)}` },
-    { ord: 'ydrekerne', svg: `<path d="${ring(R_INDRE, R_KERNE)}" fill="#F59A2A" fill-rule="evenodd" stroke="#8A4A12" stroke-width="2.2"/>
-      <g fill="none" stroke="#FFE7A8" stroke-width="3" stroke-linecap="round" opacity=".85">${stroemme}</g>` },
-    { ord: 'indrekerne', svg: cirkel(R_INDRE, 'fill="#FFF0B0" stroke="#B57A10" stroke-width="2.4"') },
+        <path d="M0 0V14" stroke="#1E0C06" stroke-width="2.4" opacity=".5"/></pattern></defs>
+      ${iUdsnit(`<path d="${LITO_KAPPE}" fill="#3A140A" opacity=".25"/><path d="${LITO_KAPPE}" fill="url(#ji-stiv)"/>
+        <path d="${sti(litoBund)}" fill="none" stroke="#1E0C06" stroke-width="3.4"/>`)}` },
+    { ord: 'ydrekerne', svg: `<defs><radialGradient id="ji-ydre" cx="${CX}" cy="${CY}" r="${R_KERNE}" gradientUnits="userSpaceOnUse">
+        <stop offset="${r1(R_INDRE / R_KERNE)}" stop-color="#FFC94A"/><stop offset=".7" stop-color="#FFA42E"/>
+        <stop offset="1" stop-color="#F57518"/></radialGradient></defs>
+      <path d="${ring(R_INDRE, R_KERNE)}" fill="url(#ji-ydre)" fill-rule="evenodd" stroke="#9A4A0E" stroke-width="2"/>
+      <g fill="none" stroke="#FFF2C2" stroke-width="3" stroke-linecap="round" opacity=".8">${stroemme}</g>` },
+    { ord: 'indrekerne', svg: `<defs><radialGradient id="ji-indre" cx="${CX}" cy="${CY}" r="${R_INDRE}" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFFFF4"/><stop offset=".6" stop-color="#FFF4B8"/><stop offset="1" stop-color="#FFDF6E"/></radialGradient></defs>
+      ${cirkel(R_INDRE + 8, 'fill="#FFF6C8" opacity=".9" filter="url(#ji-gloed)"')}
+      ${cirkel(R_INDRE, 'fill="url(#ji-indre)" stroke="#C08A1A" stroke-width="2"')}` },
 
     // rammen og dybdeskalaen ovenpå det hele
     { ord: null, svg: `<rect x="${CX + R - 20}" y="${CY - 16}" width="24" height="32" fill="none" stroke="#2A1D14" stroke-width="2.4"/>
       <rect x="${UX0}" y="${UY0}" width="${UX1 - UX0}" height="${UY1 - UY0 - 1.5}" fill="none" stroke="#2A1D14" stroke-width="2.6"/>
-      <g stroke="#2A1D14" stroke-width="2" font-family="IBM Plex Mono, monospace" font-size="15" fill="#2A1D14">${skala}</g>
-      <text x="${(UX0 + UX1) / 2}" y="${UY1 - 22}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" fill="#2A1D14">de øverste 400 km · dybden i målestok</text>` },
+      <g stroke="#FFF4E8" stroke-width="2" font-family="IBM Plex Mono, monospace" font-size="15" fill="#FFF4E8">${skala}</g>
+      <text x="${(UX0 + UX1) / 2}" y="${UY1 - 22}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" fill="#FFF4E8">de øverste 400 km · dybden i målestok</text>` },
   ],
   pladser: [
     // lag 1

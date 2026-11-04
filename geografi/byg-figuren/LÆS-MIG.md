@@ -61,6 +61,10 @@ idélisten i `biologi/byg-cellen/LÆS-MIG.md`.
 - Skorpen og kappen er tegnet både på kuglen og i udsnittet, og pladsens gule
   felt dækker begge steder.
 - Pladserne er 232 × 42 for »kontinental skorpe«.
+- Farverne følger temperaturen: kappen går fra mørkerød under skorpen til
+  orange ved kernen, kernen gløder gul-orange og den indre kerne næsten hvid.
+  Kuglens rand har hav og kontinenter og et blåt skær af atmosfære.
+  Litosfæren er mørkere (kold og stiv) end den glødende astenosfære.
 
 ## Forenklinger (står også på siden)
 
