@@ -1,0 +1,43 @@
+/* Læsbar figurflade og afdæmpede ledelinjer omkring illustrationerne. */
+.scene {
+  background: radial-gradient(ellipse at 50% 44%, #fff 20%, #f7f1e8 100%);
+}
+
+#figur .del.graa {
+  filter: saturate(.4) brightness(1.05);
+}
+
+#figur .plads .streg {
+  stroke: #67768a;
+  stroke-width: 1.6;
+}
+
+#figur .plads.tom .boks {
+  fill: #fffae8;
+  stroke: #b9883c;
+  stroke-width: 2;
+}
+
+#figur .plads.tom.over .boks {
+  fill: #ffe5a1;
+}
+
+#figur .plads.tom.hint .boks {
+  stroke: var(--coral);
+  stroke-width: 4;
+}
+
+#figur .plads.tom:focus-visible .boks,
+#figur .plads.tom.valgt .boks {
+  stroke: var(--grape);
+  stroke-width: 4;
+}
+
+#figur .fig-navn {
+  fill: #31445b;
+  font-size: 19px;
+  paint-order: stroke fill;
+  stroke: #fffaf0;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}

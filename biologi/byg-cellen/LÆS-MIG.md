@@ -135,19 +135,6 @@ skrives ind i `FIGURER` i `figurer.js`. Geografifigurer hører hjemme i
 `geografi/byg-figuren/` (se dens LÆS-MIG). Gode figurer er dem, hvor placeringen er
 selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 
-### Biologi
-
-| Figur | Lag | Ord i overskud / fælder |
-|:--|:--|:--|
-| Bladets tværsnit | vævene (overhud, palisadevæv, svampevæv, ledningsstreng) → spalteåbning, læbeceller, CO₂ ind og H₂O ud | kloroplast i overhuden |
-| Nefronet | delene (glomerulus, Bowmans kapsel, tubuli, Henles slynge, samlerør) → processerne (filtration, reabsorption, sekretion, ADH) | blære |
-| Hjertet og kredsløbet | kamre og kar → iltrigt/iltfattigt blod og klapperne | `fejl`: lungevene/lungearterie, venstre/højre set fra eleven |
-| Alveolen og kapillæren | gasudvekslingen: diffusionsvej og partialtryk | |
-| Synapsen | præ- og postsynaptisk celle, vesikel, transmitter, receptor, synapsekløft → signalets retning | |
-| DNA og nukleotidet | nukleotidet (fosfat, deoxyribose, base) → dobbeltstrengen (basepar, hydrogenbinding, 5′/3′) | uracil, ribose |
-| Enzymet | aktivt center, substrat, produkt → konkurrerende og ikke-konkurrerende hæmmer | |
-| Hormonaksen | hypothalamus → hypofyse → kirtel → målorgan, negativ feedback som lag 2 | |
-
 ### Naturgeografi
 
 | Figur | Lag | Ord i overskud / naboer |
@@ -168,3 +155,10 @@ selve pointen, og hvor en typisk forveksling kan stå som ord i overskud.
 Lavet: mitokondrien og kloroplasten er faner i Byg cellen. Motoren er flyttet til `/byg-motor/`, og ord på pile er prøvet af i
 vandets kredsløb (pladsen sidder på pilen, og `omr` er pilen som streg).
 Jordens indre er lavet som anden geografifigur.
+
+DNA og nukleotidet er lavet i [Byg DNA og proteinsyntesen](../byg-dna.html)
+sammen med transkription, RNA-bearbejdning, translation og mutation.
+
+[Byg synapsen](../byg-synapsen.html) viser en kemisk synapse i tre trin.
+
+De øvrige seks biologiidéer er lavet i [Byg figurer i biologi](../byg-biologi.html).

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Byg organsystemerne — sæt fagordene på — smbi.dk</title>
+<meta name="description" content="Sæt fagord på ti af menneskets organsystemer. Byg figurerne lag for lag, og se, hvad de enkelte dele gør.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/biologi/byg-organsystemerne.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/byg-organsystemerne.html">
+<meta property="og:title" content="Byg organsystemerne — sæt fagordene på">
+<meta property="og:description" content="Sæt fagord på ti af menneskets organsystemer. Byg figurerne lag for lag, og se, hvad de enkelte dele gør.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../byg-motor/stil.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Byg organsystemerne — sæt fagordene på",
+      "url": "https://smbi.dk/biologi/byg-organsystemerne.html",
+      "inLanguage": "da-DK",
+      "description": "Sæt fagord på ti af menneskets organsystemer. Byg figurerne lag for lag, og se, hvad de enkelte dele gør.",
+      "learningResourceType": "interaktiv øvelse",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Person", "name": "Simon Messell" },
+      "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": { "@id": "https://smbi.dk/#website" },
+      "about": { "@type": "Thing", "name": "Menneskets organsystemer" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/" },
+        { "@type": "ListItem", "position": 2, "name": "Biologi", "item": "https://smbi.dk/biologi.html" },
+        { "@type": "ListItem", "position": 3, "name": "Byg organsystemerne", "item": "https://smbi.dk/biologi/byg-organsystemerne.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Biologi · menneskekroppen · fagord</span>
+      <h1>Byg <span class="hi" style="--hc:#FBD3E1">organsystemerne</span></h1>
+      <p class="lead">Vælg et af menneskets ti organsystemer, og sæt fagord på figuren. Når et ord sidder rigtigt, får delen farve, og du kan læse, hvad den gør.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <section class="rig" id="byg" aria-label="Byg organsystemerne">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <div class="faner" id="faner" role="tablist" aria-label="Figurer"></div>
+        <span class="spacer"></span>
+        <label class="kontakt" title="Alle fagord på én gang"><input type="checkbox" id="svaer"> Svær udgave</label>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul overskrift og sidens menu">Fokus</button>
+      </div>
+      <div class="rig-body">
+        <div class="scene" id="scene" role="tabpanel" aria-labelledby="faner">
+          <p class="fig-intro" id="fig-intro"></p>
+          <div class="fig-ramme">
+            <svg id="figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Figuren med pladser til fagordene"></svg>
+          </div>
+        </div>
+        <aside class="side" aria-label="Opgaven">
+          <div class="opg">
+            <h2 id="opg-titel"></h2>
+            <p id="opg-tekst"></p>
+          </div>
+          <div class="bakke" id="bakke" aria-label="Fagord" data-pladstjek="kontrol"></div>
+          <p class="besked" id="besked" aria-live="polite"></p>
+          <div class="faerdig-kort" id="faerdig-kort" hidden></div>
+          <div class="knapper">
+            <button type="button" class="btn-stor lys" id="btn-hint">Giv et hint</button>
+            <button type="button" class="btn-stor" id="btn-indsend" data-pladstjek="kontrol">Indsend svar</button>
+          </div>
+          <div class="lag">
+            <h3>Lagene</h3>
+            <ol id="lagliste"></ol>
+          </div>
+          <div class="side-bund">
+            <button type="button" class="btn-mini" id="btn-forfra">Byg forfra</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+
+    <details class="om">
+      <summary>Om figurerne og forenklingerne</summary>
+      <div>
+        <p>Vi samler skelet og muskler i bevægeapparatet og viser lymfesystemet sammen med immunforsvaret. Nogle organer hører til flere systemer. Bugspytkirtlen danner fx både hormoner og fordøjelsesenzymer.</p>
+        <p>Figurerne viser udvalgte dele i forenklet form. De er ikke i målestok, og tegningerne af kroppen ses forfra, så kroppens højre side er til venstre i figuren. Kredsløbet viser kun udvalgte kar. Rød og blå bruges til at skelne kar, og blodets farve varierer fra lysere til mørkere rød.</p>
+        <p>Inddelingen bygger på <a href="https://openstax.org/books/anatomy-and-physiology/pages/1-2-structural-organization-of-the-human-body">OpenStax Anatomy and Physiology, afsnit 1.2</a>.</p>
+        <p><b>Sådan virker det:</b> træk et ord hen på en gul plads, eller klik på ordet og så på pladsen. Med tastaturet: Tab til ordet, Enter, Tab til pladsen, Enter. Delete sender et ord tilbage. Enter indsender svaret.  Peg på et ord, der sidder rigtigt, for at se hele forklaringen. En stjerne betyder, at laget blev bygget uden fejl og uden hint.</p>
+        <p>Idéen er lånt med tilladelse fra Niels Kræmmers »Byg figuren« på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
+      </div>
+    </details>
+  </div>
+</main>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Byg organsystemerne</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+<script type="module" src="byg-organsystemerne/side.js"></script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
