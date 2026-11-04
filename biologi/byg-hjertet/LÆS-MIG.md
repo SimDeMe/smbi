@@ -52,10 +52,15 @@ Selvtest: `node byg-motor/selvtest.mjs biologi/byg-hjertet.html`.
 
 ## Tegningen
 
-- Farverne er faste: blå for iltfattigt og rød for iltrigt blod, en varm
-  muskelfarve til hjertevæggen og cremefarvede klapper.
-- Karrene er rør med mørk kant og butte ender, så de kan munde ud i et hulrum
-  uden en streg på tværs. Hulrummene har ingen kant af samme grund.
+- Farverne er faste: klar rød for iltrigt og klar blå for iltfattigt blod (kar
+  og hulrum i samme flade farve), en lys rosa hjertevæg og cremefarvede klapper.
+  Ingen kar må blive brunlige.
+- Hjertet (`fig-hjertet.js`) er bygget, så rør og kamre hænger sammen:
+  karrene tegnes *bag* hjertevæggen og kommer frem under dens kant; hvert kar
+  har en «munding» i blodets farve gennem væggen ind til hulrummet, som dækker
+  kantstregen. Forkammer og kammer på samme side er ét hulrum, klippet i to ved
+  klapringen (stiplet linje). Rækkefølgen i `dele` er dybden, og et ord kan have
+  flere dele (fx lungearteriens gren bag aorta og stammen foran den).
 - I lag 2 og 3 af kredsløbet tegner dele oven i det, der allerede står (fx
   aortas lodrette stykke), så netop det stykke står gråt, til ordet sidder.
 - Hvert kar har små pile i strømretningen. De står på karrets egen del, så de

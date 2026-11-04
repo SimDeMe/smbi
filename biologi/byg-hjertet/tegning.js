@@ -3,9 +3,9 @@
 
 export const F = {
   blaek: '#3A2430',
-  muskel: '#C8655F', muskelLys: '#E08C80', muskelMoerk: '#8E3640',
-  iltfattig: '#7FAEE3', iltfattigLys: '#B9D6F5', iltfattigMoerk: '#2F5E9E',
-  iltrig: '#EE7B7B', iltrigLys: '#F8B5AE', iltrigMoerk: '#A1262F',
+  muskel: '#E5A196', muskelLys: '#F5CBC1', muskelMoerk: '#9A4A50',
+  iltfattig: '#5C93DE', iltfattigLys: '#A8CBF3', iltfattigMoerk: '#1F4D8F',
+  iltrig: '#E2414A', iltrigLys: '#F59C9C', iltrigMoerk: '#93171F',
   klap: '#F7EDD2', klapKant: '#8C7449',
   fedt: '#F6D98A',
 };
@@ -15,7 +15,7 @@ const r1 = (v) => Math.round(v * 10) / 10;
 /** Gradienter, der bruges af flere figurer. Lægges i baggrunden. */
 export const defs = `<defs>
   <radialGradient id="hj-muskel" cx="38%" cy="32%" r="78%">
-    <stop offset="0" stop-color="${F.muskelLys}"/><stop offset=".55" stop-color="${F.muskel}"/><stop offset="1" stop-color="#A9474C"/>
+    <stop offset="0" stop-color="${F.muskelLys}"/><stop offset=".55" stop-color="${F.muskel}"/><stop offset="1" stop-color="#CF8579"/>
   </radialGradient>
   <linearGradient id="hj-fattig" x1="0" y1="0" x2="1" y2="1">
     <stop offset="0" stop-color="${F.iltfattigLys}"/><stop offset="1" stop-color="${F.iltfattig}"/>
@@ -24,7 +24,7 @@ export const defs = `<defs>
     <stop offset="0" stop-color="${F.iltrigLys}"/><stop offset="1" stop-color="${F.iltrig}"/>
   </linearGradient>
   <pattern id="hj-fibre" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-62)">
-    <rect width="10" height="10" fill="#B4505A"/><path d="M0 5H10" stroke="#9A3B47" stroke-width="2.4"/>
+    <rect width="10" height="10" fill="#D88B80"/><path d="M0 5H10" stroke="#C2716A" stroke-width="2.4"/>
   </pattern>
 </defs>`;
 
