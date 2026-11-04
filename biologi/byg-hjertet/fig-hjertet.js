@@ -2,10 +2,12 @@
 // ligger derfor til venstre i billedet.
 //
 // Sådan hænger rør og kamre sammen:
-// - Karrene tegnes BAG hjertevæggen, så de kommer frem under hjertets kant.
-// - Hvert kar har en «munding»: en kanal i blodets farve gennem væggen fra
-//   hulrummet ud til karret. Den tegnes oven på væggen og dækker kantstregen,
-//   så blodet løber uden afbrydelse fra rør til hulrum.
+// - Hvert hulrum har kanaler gennem væggen ud til hjertets kant, præcis lige så
+//   brede og placeret som karret udenfor. Karrene tegnes BAG væggen, så røret
+//   fortsætter ud fra kanalen uden spring.
+// - Hulrum, kanaler og rør får samme indre skygge (filteret hj-indre), der følger
+//   den samlede form. Derfor ses ingen kant, hvor kanal og rør eller kanal og
+//   hulrum mødes.
 // - Forkammer og kammer på samme side er ét sammenhængende hulrum, klippet i
 //   to ved klapringen. Så er der ingen søm, hvor blodet løber igennem.
 // - Rør og hulrum har samme flade farve: rød for iltrigt, blå for iltfattigt blod.
@@ -16,18 +18,12 @@ const r1 = (v) => Math.round(v * 10) / 10;
 const BLAA = { farve: F.iltfattig, kant: F.iltfattigMoerk, lys: F.iltfattigLys };
 const ROED = { farve: F.iltrig, kant: F.iltrigMoerk, lys: F.iltrigLys };
 
-/** Blodkar som rør: mørk kant, blodets farve og en lys glans langs midten. Flere stykker
- *  tegnes lag for lag (alle kanter, så al farve, så al glans), så grenene flyder sammen uden søm. */
-const kar = (stykker, t) => {
-  const lag = (f) => stykker.map(([d, b]) => f(d, b)).join('');
-  return lag((d, b) => `<path d="${d}" fill="none" stroke="${t.kant}" stroke-width="${b + 6}"/>`)
-    + lag((d, b) => `<path d="${d}" fill="none" stroke="${t.farve}" stroke-width="${b}"/>`)
-    + lag((d, b) => `<path d="${d}" fill="none" stroke="${t.lys}" stroke-width="${r1(b * 0.34)}" opacity=".55"/>`);
-};
-/** Karrets munding gennem hjertevæggen: blodets farve med samme bløde skygge langs siderne som hulrummene. */
-const munding = (d, b, t) => `<g clip-path="url(#hj-k-hjerte)"><path d="${d}" fill="none" stroke="${t.farve}" stroke-width="${b}"/>
-  <path d="${d}" fill="none" stroke="#000" stroke-opacity=".14" stroke-width="${b}"/>
-  <path d="${d}" fill="none" stroke="${t.farve}" stroke-width="${b - 10}"/></g>`;
+/** Blodets bane som flade striber (uden kant). Bruges både i rør og i hulrummenes kanaler. */
+const bane = (stykker, farve) => stykker.map(([d, b]) => `<path d="${d}" fill="none" stroke="${farve}" stroke-width="${b}"/>`).join('');
+/** Blodkar som rør: mørk kant og blodets farve med samme indre skygge som hulrummene.
+ *  Alle kanter tegnes før al farve, så grenene flyder sammen uden søm. */
+const kar = (stykker, t) => stykker.map(([d, b]) => `<path d="${d}" fill="none" stroke="${t.kant}" stroke-width="${b + 6}"/>`).join('')
+  + `<g filter="url(#hj-indre)">${bane(stykker, t.farve)}</g>`;
 /** Et overskåret kar set på skrå: en flad ellipse for enden. v er karrets retning i grader. */
 const ende = (x, y, b, v, t) => `<g transform="translate(${x} ${y}) rotate(${v - 90})">
   <ellipse rx="${(b + 6) / 2}" ry="${r1(b * 0.2 + 3)}" fill="${t.farve}" stroke="${t.kant}" stroke-width="3"/>
@@ -52,23 +48,32 @@ const venstre = glat([[612, 256], [660, 252], [688, 270], [696, 304], [690, 336]
 
 // klip langs klapringene: forkammer ovenfor, kammer nedenfor
 const klip = `<defs>
-  <clipPath id="hj-k-hfk"><path d="M300 200 H470 V446 L404 454 V540 H300Z"/></clipPath>
-  <clipPath id="hj-k-hk"><path d="M300 540 H404 V454 L470 446 V200 H560 V700 H300Z"/></clipPath>
-  <clipPath id="hj-k-vfk"><rect x="586" y="200" width="180" height="168"/></clipPath>
-  <clipPath id="hj-k-vk"><path d="M520 200 H586 V368 H766 V700 H520Z"/></clipPath>
+  <clipPath id="hj-k-hfk"><path d="M300 140 H470 V446 L404 454 V640 H300Z"/></clipPath>
+  <clipPath id="hj-k-hk"><path d="M300 640 H404 V454 L470 446 V140 H560 V700 H300Z"/></clipPath>
+  <clipPath id="hj-k-vfk"><rect x="586" y="140" width="200" height="228"/></clipPath>
+  <clipPath id="hj-k-vk"><path d="M520 140 H586 V368 H786 V700 H520Z"/></clipPath>
   <clipPath id="hj-k-h"><path d="${hoejre}"/></clipPath>
   <clipPath id="hj-k-hjerte"><path d="${omrids}" transform="translate(518 450) scale(1.012) translate(-518 -450)"/></clipPath>
   <clipPath id="hj-k-v"><path d="${venstre}"/></clipPath>
+  <filter id="hj-indre" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="700">
+    <feComponentTransfer in="SourceAlpha" result="ude"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>
+    <feGaussianBlur in="ude" stdDeviation="5.5"/>
+    <feComposite in2="SourceAlpha" operator="in" result="kant"/>
+    <feFlood flood-color="#000" flood-opacity=".5"/><feComposite in2="kant" operator="in" result="skygge"/>
+    <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="skygge"/></feMerge>
+  </filter>
   <radialGradient id="hj-muskel-u" gradientUnits="userSpaceOnUse" cx="460" cy="340" r="430">
     <stop offset="0" stop-color="${F.muskelLys}"/><stop offset=".55" stop-color="${F.muskel}"/><stop offset="1" stop-color="#CF8579"/>
   </radialGradient>
 </defs>`;
 
-// Et hulrum: flad blodfarve med en blød skygge inden for kanten, så rummet får dybde.
-const hulrum = (d, side, del, t) => `<g clip-path="url(#hj-k-${del})">
-  <path d="${d}" fill="${t.farve}"/>
-  <path d="${d}" fill="none" stroke="#000" stroke-opacity=".16" stroke-width="14" clip-path="url(#hj-k-${side})"/>
-  <path d="${d}" fill="none" stroke="#000" stroke-opacity=".12" stroke-width="5" clip-path="url(#hj-k-${side})"/></g>`;
+// Kanalerne gennem væggen: samme midterlinje og bredde som karret udenfor. De stikker
+// ud over hjertets kant og klippes af den, så de ender præcis ved kanten.
+const kanalerH = [['M395 270 V196', 42], ['M360 470 V610', 40], ['M494 280 V206', 38]];
+const kanalerV = [['M551 354 V206', 42], ['M676 280 H746', 22], ['M676 322 H746', 22]];
+// Et hulrum med sine kanaler: flad blodfarve og en blød skygge inden for kanten af den samlede form.
+const hulrum = (d, kanaler, del, t) => `<g clip-path="url(#hj-k-${del})"><g clip-path="url(#hj-k-hjerte)">
+  <g filter="url(#hj-indre)"><path d="${d}" fill="${t.farve}"/>${bane(kanaler, t.farve)}</g></g></g>`;
 // klapringen: en svag stiplet linje, der skiller forkammer fra kammer, før klapperne er sat på
 const ring = (d, t) => `<path d="${d}" fill="none" stroke="${t.kant}" stroke-width="2.5" stroke-dasharray="5 5" stroke-linecap="round" opacity=".55"/>`;
 
@@ -88,7 +93,6 @@ const lungearterieBag = kar([[laHoejreGren, 34]], BLAA) + ende(264, 192, 34, 180
 const lungearterieForan = kar([[laTrunk + laVenstreGren.replace('M614 180', ''), 38]], BLAA) + ende(772, 178, 38, 0, BLAA)
   + stroemPil(522, 208, -42) + stroemPil(740, 177, 0)
   + lille(714, 152, 'til lungen', F.iltfattigMoerk, 'start');
-const lungearterieMund = munding('M494 274 V236', 38, BLAA);
 
 // Aorta: op fra venstre kammer, buen over og ned bag hjertet.
 const aortaSti = 'M551 262 V150 C551 92 584 74 622 74 C664 74 684 104 684 150 V300';
@@ -96,21 +100,18 @@ const aorta = kar([['M588 96 L580 26', 20], ['M624 90 V22', 18], ['M660 98 L676 
   + ende(580, 26, 20, -96, ROED) + ende(624, 22, 18, -90, ROED) + ende(676, 28, 18, -77, ROED)
   + stroemPil(612, 74, 0) + stroemPil(684, 236, 90)
   + lille(694, 30, 'til hoved og arme', F.iltrigMoerk, 'start');
-const aortaMund = munding('M551 352 V236', 40, ROED);
 
 // Hulvenerne: øvre fra hoved og arme, nedre fra underkroppen.
-const hulvener = kar([['M395 24 V250', 42], ['M360 690 V500', 40]], BLAA) + ende(395, 24, 42, 90, BLAA)
+const hulvener = kar([['M395 24 V250', 42], ['M360 690 V520', 40]], BLAA) + ende(395, 24, 42, 90, BLAA)
   + stroemPil(395, 130, 90) + stroemPil(360, 626, -90)
   + lille(426, 34, 'fra hoved og arme', F.iltfattigMoerk, 'start') + lille(392, 668, 'fra underkroppen', F.iltfattigMoerk, 'start');
-const hulveneMund = munding('M395 264 V222', 42, BLAA) + munding('M360 470 V556', 40, BLAA);
 
 // Lungevenerne: to fra venstre lunge; dem fra højre lunge går bag hjertet og ses ikke.
-const lvOver = 'M772 276 C746 276 726 280 700 285';
-const lvUnder = 'M772 330 C746 330 726 322 702 313';
-const lungevener = kar([[lvOver, 22], [lvUnder, 22]], ROED) + ende(772, 276, 22, 180, ROED) + ende(772, 330, 22, 180, ROED)
-  + stroemPil(738, 277, 180) + stroemPil(738, 328, 176)
+const lvOver = 'M772 270 C744 270 734 280 712 280 H680';
+const lvUnder = 'M772 334 C744 334 734 322 712 322 H680';
+const lungevener = kar([[lvOver, 22], [lvUnder, 22]], ROED) + ende(772, 270, 22, 180, ROED) + ende(772, 334, 22, 180, ROED)
+  + stroemPil(746, 271, 180) + stroemPil(746, 333, 180)
   + lille(726, 366, 'fra lungen', F.iltrigMoerk, 'start');
-const lungeveneMund = munding('M680 288 L714 284', 22, ROED) + munding('M680 309 L720 315', 22, ROED);
 
 // ── Klapperne ───────────────────────────────────────────────
 const sejl = (x, y, v) => `<path d="M${x} ${y} q${v * 6} 22 ${v * 2} 46 q${v * 8} -4 ${v * 18} -34 q${-v * 4} -8 ${-v * 20} -12Z"
@@ -145,7 +146,7 @@ export default {
       ekstraFejl: { kranspulsaare: 'Kranspulsårerne ligger uden på hjertet og forsyner selve hjertemusklen. De ses ikke i et snit gennem hulrummene.' } },
     { navn: 'Klapperne holder retningen', ord: ['sejlklapper', 'lommeklapper', 'senetraade'] },
   ],
-  // Rækkefølgen er dybden: karrene bag hjertet først, så væggen, hulrummene, mundingerne og klapperne.
+  // Rækkefølgen er dybden: karrene bag hjertet først, så væggen, hulrummene med deres kanaler og klapperne.
   dele: [
     { ord: 'lungearterie', svg: lungearterieBag },
     { ord: 'aorta', svg: aorta },
@@ -154,14 +155,10 @@ export default {
     { ord: 'lungearterie', svg: lungearterieForan },
     { ord: null, svg: defs + klip + `<path d="${omrids}" fill="url(#hj-muskel-u)" stroke="${F.muskelMoerk}" stroke-width="3"/>` },
     { ord: 'skillevaeg', svg: skillevaeg },
-    { ord: 'hoejreForkammer', svg: hulrum(hoejre, 'h', 'hfk', BLAA) + ring('M403 455 L464 445', BLAA) + stroemPil(412, 330, 90, F.iltfattigLys) },
-    { ord: 'hoejreKammer', svg: hulrum(hoejre, 'h', 'hk', BLAA) + stroemPil(497, 380, -90, F.iltfattigLys) },
-    { ord: 'venstreForkammer', svg: hulrum(venstre, 'v', 'vfk', ROED) + ring('M603 368 L662 368', ROED) + stroemPil(640, 330, 95, F.iltrigLys) },
-    { ord: 'venstreKammer', svg: hulrum(venstre, 'v', 'vk', ROED) + stroemPil(554, 420, -98, F.iltrigLys) },
-    { ord: 'hulvener', svg: hulveneMund },
-    { ord: 'lungearterie', svg: lungearterieMund },
-    { ord: 'aorta', svg: aortaMund },
-    { ord: 'lungevener', svg: lungeveneMund },
+    { ord: 'hoejreForkammer', svg: hulrum(hoejre, kanalerH, 'hfk', BLAA) + ring('M403 455 L464 445', BLAA) + stroemPil(412, 330, 90, F.iltfattigLys) },
+    { ord: 'hoejreKammer', svg: hulrum(hoejre, kanalerH, 'hk', BLAA) + stroemPil(497, 380, -90, F.iltfattigLys) },
+    { ord: 'venstreForkammer', svg: hulrum(venstre, kanalerV, 'vfk', ROED) + ring('M603 368 L662 368', ROED) + stroemPil(640, 330, 95, F.iltrigLys) },
+    { ord: 'venstreKammer', svg: hulrum(venstre, kanalerV, 'vk', ROED) + stroemPil(554, 420, -98, F.iltrigLys) },
     { ord: 'senetraade', svg: senetraade },
     { ord: 'sejlklapper', svg: sejlklapper },
     { ord: 'lommeklapper', svg: lommeklapper },

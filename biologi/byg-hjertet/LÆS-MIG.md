@@ -56,11 +56,16 @@ Selvtest: `node byg-motor/selvtest.mjs biologi/byg-hjertet.html`.
   og hulrum i samme flade farve), en lys rosa hjertevæg og cremefarvede klapper.
   Ingen kar må blive brunlige.
 - Hjertet (`fig-hjertet.js`) er bygget, så rør og kamre hænger sammen:
-  karrene tegnes *bag* hjertevæggen og kommer frem under dens kant; hvert kar
-  har en «munding» i blodets farve gennem væggen ind til hulrummet, som dækker
-  kantstregen. Forkammer og kammer på samme side er ét hulrum, klippet i to ved
-  klapringen (stiplet linje). Rækkefølgen i `dele` er dybden, og et ord kan have
-  flere dele (fx lungearteriens gren bag aorta og stammen foran den).
+  hvert hulrum har kanaler gennem væggen med præcis samme midterlinje og
+  bredde som karret udenfor; kanalerne klippes af hjertets kant, og karrene
+  tegnes *bag* væggen. Hulrum, kanaler og rør deler én indre skygge
+  (SVG-filteret `hj-indre`), som følger den samlede form, så der ingen kant
+  er, hvor de mødes. Forkammer og kammer på samme side er ét hulrum, klippet i
+  to ved klapringen (stiplet linje). Rækkefølgen i `dele` er dybden, og et ord
+  kan have flere dele (fx lungearteriens gren bag aorta og stammen foran den).
+- Fagordene i lag 3 er de danske lærebogsord (lex.dk, sundhed.dk):
+  sejlklapper (AV-klapper), lommeklapper (semilunærklapper), senetråde.
+  Synonymerne står i forklaringerne.
 - I lag 2 og 3 af kredsløbet tegner dele oven i det, der allerede står (fx
   aortas lodrette stykke), så netop det stykke står gråt, til ordet sidder.
 - Hvert kar har små pile i strømretningen. De står på karrets egen del, så de
