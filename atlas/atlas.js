@@ -2,6 +2,7 @@ import { startRessourcer } from './ressourcestyring.js';
 import { steder, modeller, oevelser } from './modeller.js';
 import { lavInformation, lukInformation } from './information.js';
 import { verdensdele } from './quizmodel.js';
+import { visDatagrundlag } from './datagrundlag.js';
 import { hentIndeks, landFraKort, visLandemenu, lukLandemenu } from './landemenu.js';
 import { lavLag } from './lagknap.js';
 import { startLagmenu } from './lagmenu.js';
@@ -634,6 +635,10 @@ document.addEventListener('keydown', event => {
     event.preventDefault(); tilbageTilGlobus();
   } else if (!dialog.open && document.body.classList.contains('fokus')) document.querySelector('#fokus').click();
 });
+document.querySelector('#datagrundlag').onclick = () => {
+  aabn('Datagrundlag');
+  visDatagrundlag(indhold);
+};
 document.querySelector('#hjaelp').onclick = () => {
   aabn('Sådan bruger du atlasset');
   indhold.append(element('p', 'Quiz → vælg verdensdel: find landet på globussen. Rigtigt svar giver næste land efter et øjeblik; Vis landet viser placeringen og tæller som hjælp. Ved hjælp vælger du selv Næste land. Små lande har ringe. Med tastatur bruges piletaster, Shift+pil til finjustering og Enter i sigtekornet. Knappen med verdensdelens navn (eller Home) viser hele området igen uden at starte quizzen forfra. Afslut quiz eller Escape vender tilbage til atlasset.'));

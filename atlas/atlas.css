@@ -378,3 +378,9 @@ dialog.landeklima-stor{width:min(1450px,calc(100% - 18px));max-height:calc(100sv
 .landeklima-stor .landeklima-graf{max-width:min(1100px,calc((100svh - 155px)*2.36))}
 
 .landeklima-prim{border-top:1px solid #17211f33;margin-top:16px;padding-top:12px}
+
+/* Datagrundlag (ⓘ ved Hjælp) */
+#datagrundlag{width:44px;padding:4px;font-size:20px;line-height:1;border-radius:50%}
+.datagrundlag h3{margin:18px 0 6px;font:700 15px var(--display)}
+.datagrundlag ul{margin:0;padding-left:18px}.datagrundlag li{margin:0 0 7px;line-height:1.4}
+.datagrundlag-licens{display:block;font:12.5px var(--mono);color:var(--ink)}
