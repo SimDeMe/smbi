@@ -139,12 +139,3 @@ $$m_\text{mangler} = (\text{maksimal} - \text{absolut luftfugtighed}) \cdot V$$
 5. Hvor kommer vanddampen i klasselokalet fra? Hvad ville der ske med jeres resultat, hvis I målte sidst i et modul med 28 elever og lukkede vinduer?
 6. Forklar, hvordan luft bliver kølet ned til dugpunktet, når den stiger op i atmosfæren, og hvordan der derved dannes skyer og nedbør. Inddrag begreberne tøradiabatisk og fugtadiabatisk temperaturændring.
 7. Vurdér fejlkilderne: aflæsningsnøjagtighed på termometrene, om strømpen var våd nok, om psykrometeret hang i sol eller træk, og hvor længe I ventede.
-
-## Om denne udgave
-
-Bygger på beskrivelsen «Måling af luftfugtighed» på Geolink (naturgeografi C, *Vand og jord*, modulet om nedbørsdannelse, 2025/26) og NF-udgaven fra *Mad til milliarder* 2025/26 med aflæsningsvejledningen. Der fandtes ingen egentlig øvelsesvejledning, kun en kort beskrivelse og en liste over spørgsmål. Ændret og nyt i forhold til originalen:
-
-- Fremgangsmåden er skrevet ud trin for trin, med placering af psykrometrene og opmåling af lokalet.
-- Ny tabel over maksimal luftfugtighed (@tbl-1), beregnet med Magnus-formlen for mættet damptryk over vand (WMO) og idealgasloven, så dugpunktet og den absolutte luftfugtighed kan findes uden dugpunktskurven. Tabellen på psykrometeret er kontrolleret med psykrometerformlen: dens værdier passer med et ikke-ventileret psykrometer.
-- Originalens spørgsmål (relativ og absolut luftfugtighed, dugpunkt, vanddamp i lokalet) er samlet i databehandlingen. Nyt: hvor meget vanddamp der mangler, før luften er mættet, og journalspørgsmål om indeklima, dug og skydannelse.
-- Lærerens eget foto af psykrometeret.
