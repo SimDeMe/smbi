@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Byg en globus — verdensdele, gradnet og klimazoner — smbi.dk</title>
+  <meta name="description" content="Drej globussen og sæt navn på verdensdele, verdenshave, poler, breddekredse og Vahls klimazoner. Øv også geografiske koordinater.">
+  <link rel="canonical" href="https://smbi.dk/geografi/byg-globus.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="smbi.dk">
+  <meta property="og:locale" content="da_DK">
+  <meta property="og:url" content="https://smbi.dk/geografi/byg-globus.html">
+  <meta property="og:title" content="Byg en globus">
+  <meta property="og:description" content="Find verdensdelene, byg gradnettet, og placér Vahls fire klimazoner på en drejelig globus.">
+  <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#FFF9EE">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="../atlas/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="../forside.css">
+  <link rel="stylesheet" href="byg-globus/stil.css">
+  <script defer src="../atlas/vendor/d3-array.min.js"></script>
+  <script defer src="../atlas/vendor/d3-geo.min.js"></script>
+  <script defer src="../atlas/vendor/topojson-client.min.js"></script>
+  <script type="module" src="byg-globus/side.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"LearningResource","name":"Byg en globus","url":"https://smbi.dk/geografi/byg-globus.html","inLanguage":"da-DK","learningResourceType":"interaktiv øvelse","educationalLevel":"Gymnasialt niveau (stx, hf)","isAccessibleForFree":true,"author":{"@type":"Person","name":"Simon Messell"},"publisher":{"@type":"Organization","name":"smbi.dk","url":"https://smbi.dk/"}}
+  </script>
+</head>
+<body>
+  <a class="spring" href="#oevelse">Spring til øvelsen</a>
+  <header class="top" id="site-top">
+    <div class="rainbow"></div>
+    <div class="top-bar"><div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav" aria-label="Hovedmenu"><a href="/geografi.html#byg-figuren">Naturgeografi</a><a href="/">Forside</a></nav>
+    </div></div>
+  </header>
+  <main class="globus-wrap">
+    <div class="globus-head">
+      <div><p class="eyebrow">Naturgeografi · Byg figuren <span class="beta">Beta</span></p><h1>Byg en <span>globus</span></h1></div>
+      <p>Find stederne. Sæt fagordene på. Drej verden rundt.</p>
+    </div>
+    <section id="oevelse" class="globus-oevelse" aria-label="Byg en globus">
+      <div class="afsnit-bar"><div id="afsnit" role="tablist" aria-label="Afsnit"></div><div data-feedback-vaert></div><button id="fokus" type="button" aria-pressed="false">Fokus</button></div>
+      <div class="arbejde" role="tabpanel" id="arbejde" aria-labelledby="tab-verdensdele">
+        <div class="visning">
+          <div class="scene-top"><span id="lag-navn"></span><span id="taeller" aria-live="polite"></span></div>
+          <div id="globusrum">
+            <canvas id="globus" tabindex="0" aria-label="Drejelig globus. Brug piletasterne til at dreje og Home til startvisningen." aria-describedby="betjening" data-pladstjek="figur"></canvas>
+            <div id="pladser" aria-label="Pladser på globussen"></div>
+            <div id="sigtekorn" aria-hidden="true" hidden>+</div>
+            <p id="indlaesning" role="status">Henter globussen …</p>
+          </div>
+          <div class="globus-vaerktoej" aria-label="Drej globussen">
+            <button type="button" data-drej="vest" aria-label="Drej mod vest">←</button>
+            <button type="button" data-drej="nord" aria-label="Drej mod nord">↑</button>
+            <button type="button" data-drej="syd" aria-label="Drej mod syd">↓</button>
+            <button type="button" data-drej="oest" aria-label="Drej mod øst">→</button>
+            <button type="button" id="hjem" title="Vis afsnittets startvinkel">Startvinkel</button>
+            <label id="hjaelpelinjer-label" hidden><input type="checkbox" id="hjaelpelinjer"> Breddekredse</label>
+          </div>
+          <p id="betjening">Træk for at dreje · eller brug pilene. Vælg et fagord og derefter en gul plads.</p>
+          <div id="find-plads" class="find-plads" aria-label="Drej til en plads"></div>
+          <p id="centrum" class="centrum" hidden></p>
+        </div>
+        <aside class="opgave" aria-label="Fagord og svar">
+          <p class="trin" id="trin"></p>
+          <h2 id="titel"></h2>
+          <p id="intro"></p>
+          <div id="ord" class="ord" aria-label="Vælg et fagord" data-pladstjek="kontrol"></div>
+          <div id="punkt-opgave" hidden><h3 id="punkt-maal"></h3><p id="punkt-valg">Intet punkt sat endnu.</p><button type="button" id="saet-punkt" disabled>Sæt punkt i sigtekornet</button></div>
+          <p id="besked" class="besked" role="status" aria-live="polite"></p>
+          <div class="svar-knapper"><button type="button" id="hint" disabled>Giv et hint</button><button type="button" id="indsend" class="primaer" data-pladstjek="kontrol" disabled>Indsend svar</button></div>
+          <div id="faerdig" class="faerdig" hidden><h3>Laget er bygget!</h3><p id="refleksion"></p><button type="button" id="naeste" class="primaer">Næste lag →</button></div>
+          <details id="forklaringer"><summary>Fagord og forklaringer</summary><dl id="ordliste"></dl></details>
+          <div class="opgave-bund"><span id="lag-status"></span><button type="button" id="forfra">Byg laget forfra</button></div>
+        </aside>
+      </div>
+    </section>
+    <details class="om-globussen"><summary>Om globussen, kilder og forenklinger</summary><div>
+      <p>Øvelsen bruger syv verdensdele og fem verdenshave. Oceanien omfatter Australien, New Zealand og øgrupper i Stillehavet. Grønland hører geografisk til Nordamerika. Grænser mellem verdensdele og verdenshave er konventioner; de gule pladser markerer eksempler inde i områderne. Sydhavet afgrænses her ved 60° syd.</p>
+      <p><b>Vahls klimazoner:</b> Kortet viser kun tropisk, subtropisk, tempereret og polar zone. Grænserne følger temperaturforhold og er ikke identiske med vende- og polarcirklerne. Højland kan tilhøre en koldere zone end det omgivende lavland. Klimazonerne vises kun på land.</p>
+      <p>Klimakortet genbruger atlassets rekonstruktion af skoleversionen af Vahls system ud fra månedsnormaler for 1991–2020 fra <a href="https://doi.org/10.1038/s41597-023-02549-6">Beck m.fl. (2023)</a>, CC BY 4.0. Plantebælternes polygoner er samlet i de fire temperaturzoner. Kortet er udglattet og er ikke Vahls originale kort. Se <a href="../atlas/data/klimazoner.LICENSE">kriterier og databehandling</a> og <a href="https://img.kb.dk/tidsskriftdk/pdf/gto/gto_0048-PDF/gto_0048_69879.pdf">Reumerts redegørelse for Vahls system</a>.</p>
+      <p>Kystlinjer: Natural Earth via <a href="https://github.com/topojson/world-atlas">world-atlas</a>. Globussen bruger samme ortografiske projektion som <a href="../atlas/">atlasset</a>, med lokale D3- og TopoJSON-biblioteker. Det er en kugle uden terrænhøjder; de to poler og bagsiden kan ses ved at dreje.</p>
+      <p><b>Betjening:</b> Vælg et fagord og derefter en gul plads. Du kan også trække fagordet til pladsen. Indsend svar låser rigtige ord og sender forkerte tilbage. Tryk på en besat plads for at tage ordet tilbage. Knapperne »Vis plads« drejer den pågældende plads frem uden at vise svaret. Med tastatur: Tab og Enter til ord og pladser; piletaster på globussen drejer, Shift + pil finjusterer. Koordinatopgaver har en tolerance på 5° målt som vinkelafstand på kuglen.</p>
+      <p>Fremskridt gemmes kun i din browser. »Byg laget forfra« nulstiller det aktuelle lag. Fokus skjuler sidens overskrift og menu. Idéen til »Byg figuren« er lånt med tilladelse fra Niels Kræmmer på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
+    </div></details>
+  </main>
+  <footer class="globus-foot"><a href="/geografi.html#byg-figuren">← Flere Byg figuren-øvelser</a><a href="/contact.html">Kontakt</a></footer>
+  <noscript><p class="globus-wrap">Slå JavaScript til for at bygge globussen.</p></noscript>
+  <script src="/feedback.js" defer></script>
+</body>
+</html>

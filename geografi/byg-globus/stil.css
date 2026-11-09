@@ -1,0 +1,183 @@
+body{font-family:var(--display);font-size:16px}
+
+button,input{font:inherit}
+button{cursor:pointer;color:var(--ink);background:var(--paper);border:1.5px solid var(--ink);border-radius:5px;padding:8px 12px;font-weight:600}
+button:hover{background:#e1eef1}
+button:disabled{cursor:default;opacity:.55}
+button:focus-visible,a:focus-visible,canvas:focus-visible,summary:focus-visible{outline:3px solid #0e86c8;outline-offset:3px}
+
+.spring{position:absolute;left:16px;top:-100px;z-index:30;background:white;padding:10px}
+.spring:focus{top:10px}
+
+.globus-wrap{max-width:1400px;margin:0 auto;padding:0 24px}
+.globus-head{display:flex;justify-content:space-between;align-items:end;gap:20px;padding:20px 0 18px}
+.globus-head .eyebrow{font:500 11px var(--mono);letter-spacing:.8px;margin-bottom:6px}
+.globus-head h1{font-size:clamp(28px,3vw,42px);line-height:1.1;font-weight:800}
+.globus-head h1 span{background:#c9e8f5;padding:0 6px}
+.globus-head>p{font:18px var(--body);max-width:330px}
+.beta{background:#ffdf8a;border:1px solid var(--ink);padding:2px 5px;margin-left:5px;letter-spacing:0}
+
+.globus-oevelse{border:2px solid var(--ink);background:#fffdf8;box-shadow:4px 4px 0 var(--ink);border-radius:8px;overflow:hidden;scroll-margin-top:10px}
+.afsnit-bar{display:flex;gap:10px;padding:10px;background:#f1eadc;border-bottom:1.5px solid var(--ink);align-items:center}
+.afsnit-bar #afsnit{display:flex;gap:5px;flex:1;flex-wrap:wrap}
+.afsnit-bar button{font-size:13px;padding:8px 10px}
+.afsnit-bar [role=tab]{border-color:transparent;background:transparent}
+.afsnit-bar [aria-selected=true]{background:#fffdf8;border-color:var(--ink);box-shadow:0 2px 0 var(--ink)}
+.afsnit-bar .nummer{font:500 11px var(--mono);margin-right:5px}
+
+.arbejde{display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.visning{min-width:0;padding:14px 16px 10px;position:relative;background:radial-gradient(ellipse at center,#edf3ef 0%,#fffdf8 68%)}
+.scene-top{display:flex;justify-content:space-between;gap:10px;font:500 11px var(--mono);color:#455b57;min-height:20px}
+.scene-top #taeller{white-space:nowrap}
+#globusrum{position:relative;height:clamp(330px,calc(100dvh - 290px),490px);min-height:330px}
+#globus{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#globus:active{cursor:grabbing}
+#indlaesning{position:absolute;inset:35% 10% auto;text-align:center;background:var(--paper);border:1px solid var(--ink);padding:18px;z-index:10}
+#indlaesning button{display:block;margin:12px auto 0}
+
+#pladser{position:absolute;inset:0;pointer-events:none}
+.plads{position:absolute;pointer-events:auto;transform:translate(-50%,-50%);width:34px;height:34px;padding:0;display:grid;place-items:center;background:#ffe19b;border:2px solid var(--ink);border-radius:50%;box-shadow:1px 2px 0 #17211f33;font:600 12px var(--mono);touch-action:none}
+.plads.besat{background:#d4eafa;border-style:dashed}
+.plads.rigtig{background:#bde1ae;border-style:solid}
+.plads.hint{outline:4px solid #ed9c66;outline-offset:2px}
+.plads:hover,.plads:focus-visible{z-index:3;background:#f3c95f}
+.plads.rigtig:hover{background:#a7d790}
+.plads .etiket{display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:var(--ink);color:white;padding:6px 8px;border-radius:4px;font:12px var(--display);width:max-content;max-width:170px;white-space:normal;pointer-events:none}
+.plads:hover .etiket,.plads:focus-visible .etiket{display:block}
+#sigtekorn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:32px var(--mono);pointer-events:none;color:#17211f;text-shadow:0 0 3px white}
+
+.globus-vaerktoej{display:flex;justify-content:center;flex-wrap:wrap;gap:5px;align-items:center}
+.globus-vaerktoej button{padding:5px 11px;min-height:34px}
+.globus-vaerktoej label{font-size:12px;display:flex;gap:5px;align-items:center;margin-left:6px}
+#betjening{font:12px var(--body);text-align:center;color:#465b56;margin:8px 0}
+.find-plads{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:5px;min-height:30px}
+.find-plads span{font-size:11px;color:#465b56}
+.find-plads button{padding:3px;min-width:30px;min-height:30px;font:500 11px var(--mono)}
+.find-plads .rigtig{background:#d2e6c7}
+.centrum{font:500 12px var(--mono);text-align:center;margin:6px 0}
+
+.opgave{padding:20px;border-left:1px solid #bac9c3;background:#fffdf8;min-width:0}
+.trin{font:500 10px var(--mono);letter-spacing:1px;color:#4a625a;text-transform:uppercase;margin-bottom:8px}
+.opgave h2{font-size:22px;line-height:1.14;margin-bottom:10px}
+.opgave #intro{font:16px/1.4 var(--body)}
+.ord{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.ord button{font-size:13px;line-height:1.2;padding:9px 10px;min-height:36px;text-align:left;background:#f5efdf}
+.ord [aria-pressed=true]{background:#cce8fa;outline:2px solid #0879b6;outline-offset:1px}
+.ord button.rigtig{background:#d6e9cd;border-color:#6b8c65}
+.ord button.place{background:#e1ebef;border-style:dashed}
+.ord button:disabled{opacity:1}
+.besked{font:14px/1.4 var(--body);min-height:40px;margin:16px 0 8px}
+.besked.fejl{color:#a32b24}
+.svar-knapper{display:flex;gap:8px}
+.svar-knapper button{flex:1;font-size:13px;padding:10px 8px}
+.primaer{background:var(--ink);color:#fffdf8}
+.primaer:hover{background:#205d76}
+.opgave details{margin-top:18px;border-top:1px solid #d1d9cf;padding-top:12px;font:13px/1.4 var(--body)}
+.opgave summary{cursor:pointer;font:600 12px var(--display)}
+.opgave dt{font-weight:700;margin-top:10px}
+.opgave dd{margin:3px 0 10px}
+.opgave-bund{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:18px;color:#4a625a;font:11px var(--mono)}
+.opgave-bund button{font:11px var(--display);padding:5px 7px}
+.faerdig{background:#e8f2e0;padding:14px;margin-top:12px;border-left:4px solid #629453}
+.faerdig h3{font-size:17px;margin-bottom:8px}
+.faerdig p{font:16px/1.4 var(--body);margin-bottom:12px}
+.faerdig button{font-size:13px}
+#punkt-opgave{background:#edf3f5;margin-top:14px;padding:12px}
+#punkt-opgave h3{font:600 21px var(--mono);margin-bottom:8px}
+#punkt-opgave p{font:13px var(--mono);margin-bottom:10px}
+#punkt-opgave button{font-size:12px}
+
+.om-globussen{margin:22px 0;font:16px/1.5 var(--body)}
+.om-globussen summary{font:600 13px var(--display);cursor:pointer}
+.om-globussen>div{max-width:850px;padding:10px 0}
+.om-globussen p{margin:10px 0}
+.om-globussen a{text-decoration:underline}
+.globus-foot{max-width:1400px;margin:0 auto;padding:12px 24px 28px;display:flex;justify-content:space-between;font-size:13px}
+
+body.fokus #site-top,body.fokus .globus-head,body.fokus .globus-foot,body.fokus .om-globussen{display:none}
+body.fokus .globus-wrap{padding:8px;max-width:1600px}
+body.fokus #globusrum{height:clamp(300px,calc(100dvh - 210px),720px)}
+
+@media(min-width:850px) and (max-height:650px){.globus-head{padding:12px 0}
+.globus-head h1{font-size:30px}
+.globus-head>p{font-size:16px}
+.top-bar{padding-top:8px;padding-bottom:8px}
+.opgave{padding:14px 18px}
+.opgave h2{font-size:20px}
+.opgave #intro{font-size:15px}
+.ord{margin-top:12px;gap:5px}
+.ord button{padding:7px 9px}
+.besked{margin-top:10px;min-height:32px}
+.opgave details{margin-top:12px}
+.opgave-bund{margin-top:12px}
+#globusrum{height:330px;min-height:330px}
+.visning{padding:10px 14px}
+.globus-head .eyebrow{margin:0}
+.afsnit-bar{padding:8px}
+}
+
+@media(max-width:849px){.globus-wrap{padding:0 12px}
+.globus-head{padding:15px 0}
+.globus-head>p{display:none}
+.arbejde{grid-template-columns:minmax(0,1fr) 290px}
+.opgave{padding:16px}
+.afsnit-bar{align-items:start}
+.afsnit-bar button{font-size:12px;padding:7px}
+.afsnit-bar .nummer{display:none}
+.visning{padding:10px}
+#globusrum{height:310px}
+.opgave h2{font-size:20px}
+}
+
+@media(max-width:639px){.arbejde{display:flex;flex-direction:column}
+.opgave{border-left:0;border-top:1px solid #bac9c3;padding:18px}
+.scene-top{font-size:10px}
+.globus-wrap{padding:0 8px}
+.globus-head h1{font-size:30px}
+.afsnit-bar{gap:4px;padding:7px}
+.afsnit-bar #afsnit{gap:3px}
+.afsnit-bar button{padding:6px;font-size:11px}
+.visning{padding:10px 8px}
+#globusrum{height:300px;min-height:260px}
+.globus-vaerktoej button{padding:5px 9px}
+.opgave #intro{font-size:16px}
+.ord{margin-top:12px}
+.ord button{min-height:40px}
+.besked{min-height:20px}
+.opgave-bund{margin-top:12px}
+.globus-foot{padding:8px 12px 24px;gap:20px;font-size:12px}
+body.fokus #globusrum{height:310px;min-height:260px}
+.om-globussen{padding:0 8px}
+}
+
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}
+}
+
+/* På telefon bliver ordbakken hos eleven, mens globussen drejes. */
+@media(max-width:639px){
+  .arbejde{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"trin" "titel" "intro" "ord" "punkt" "visning" "besked" "svar" "faerdig" "forklaringer" "bund"}
+
+  .opgave{display:contents}
+.visning{grid-area:visning;border-top:1px solid #d1d9cf;border-bottom:1px solid #d1d9cf}
+
+  .opgave .trin{grid-area:trin;margin:14px 14px 6px}
+.opgave h2{grid-area:titel;margin:0 14px 8px}
+.opgave #intro{grid-area:intro;padding:0 14px 10px}
+
+  .opgave .ord{grid-area:ord;position:sticky;top:70px;z-index:20;padding:10px 12px;margin:0;background:var(--paper);box-shadow:0 1px 0 #bccbc3}
+
+  .opgave #punkt-opgave{grid-area:punkt;position:sticky;top:70px;z-index:20;margin:0;padding:12px 14px}
+
+  .opgave .besked{grid-area:besked;padding:0 14px;margin:12px 0 6px}
+.opgave .svar-knapper{grid-area:svar;margin:0 14px 12px}
+
+  .opgave .faerdig{grid-area:faerdig;margin:8px 14px}
+.opgave #forklaringer{grid-area:forklaringer;margin:8px 14px}
+.opgave .opgave-bund{grid-area:bund;margin:14px}
+
+  body.fokus .opgave .ord,body.fokus .opgave #punkt-opgave{top:0}
+
+}
+.opgave-bund{flex-direction:column;align-items:flex-start;gap:6px}
+.globus-oevelse{overflow:clip}
+@media(min-width:850px) and (max-height:650px){.top-bar{padding:0}.top-in{height:46px}}
