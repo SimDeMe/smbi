@@ -21,15 +21,6 @@ export async function startGlobus({ vaelg, punkt, flyttet }) {
   const sti = d3.geoPath(projektion, ctx), net = d3.geoGraticule().step([30, 30])();
   let centrum = [15, 20], bredde = 0, hoejde = 0, ramme = 0;
   let lag, tilstand, markoerer = [], fremhaevet = null, klima, hjaelpelinjer = false, valgtPunkt = null;
-  const moenstre = Object.keys(ZONER).map((_, n) => {
-    const c = document.createElement('canvas'); c.width = c.height = 9;
-    const g = c.getContext('2d'); g.fillStyle = '#e4e7df'; g.fillRect(0, 0, 9, 9);
-    g.strokeStyle = '#82978b'; g.fillStyle = '#82978b'; g.lineWidth = 1;
-    if (n === 0) { g.beginPath(); g.arc(4, 4, 1.2, 0, Math.PI * 2); g.fill(); }
-    if (n === 1 || n === 3) { g.beginPath(); g.moveTo(0, 9); g.lineTo(9, 0); g.stroke(); }
-    if (n === 2 || n === 3) { g.beginPath(); g.moveTo(0, 4); g.lineTo(9, 4); g.stroke(); }
-    return ctx.createPattern(c, 'repeat');
-  });
   const synlig = p => d3.geoDistance(centrum, p) < Math.PI / 2 - .015;
   const linjePunkt = o => lag?.type === 'linjer' && Math.abs(o.punkt[1]) < 89 ? [centrum[0], o.punkt[1]] : o.punkt;
   function tegnGeometri(geo, farve, tykkelse = 1.5, stiplet = false) {
@@ -52,19 +43,14 @@ export async function startGlobus({ vaelg, punkt, flyttet }) {
         grupper.get(zoneForKlasse(del.nr)).push(del.polygon.coordinates);
       }
       ctx.save(); ctx.clip(landsti);
-      let n = 0;
       for (const [id, polygoner] of grupper) {
         ctx.beginPath(); sti({ type: 'MultiPolygon', coordinates: polygoner });
-        ctx.fillStyle = tilstand.rigtige.has(id) ? ZONER[id].farve : moenstre[n]; ctx.fill(); n++;
+        ctx.fillStyle = ZONER[id].farve; ctx.fill();
       }
       tegnGeometri(klima.zonegraenser, '#405b51', 1.2);
       ctx.restore();
     }
     ctx.strokeStyle = '#536f62'; ctx.lineWidth = 1; ctx.stroke(landsti);
-    if (lag.type === 'halvkugler' && fremhaevet) {
-      const midte = { nordlig: [0, 90], sydlig: [0, -90], oestlig: [90, 0], vestlig: [-90, 0] }[fremhaevet];
-      if (midte) { ctx.beginPath(); sti(d3.geoCircle().center(midte).radius(90)()); ctx.fillStyle = '#ffb3004d'; ctx.fill(); }
-    }
     if (['gradnet', 'punkter'].includes(lag.type)) tegnGeometri(net, '#5a8e9e', .7);
     if (lag.type !== 'steder' && lag.type !== 'klima') tegnGeometri(parallel(0), '#547a83', 1);
     if (lag.type === 'linjer' || hjaelpelinjer && lag.type === 'klima') {
@@ -79,7 +65,7 @@ export async function startGlobus({ vaelg, punkt, flyttet }) {
         tegnGeometri(geo, tilstand.rigtige.has(id) ? '#397749' : '#293f4b', id === fremhaevet ? 4 : 2.5, id === 'nul');
       }
     }
-    if ((lag.type === 'halvkugler' && lag.ord[0].id === 'oestlig') || lag.type === 'punkter') {
+    if (lag.type === 'punkter') {
       tegnGeometri(meridian(0), '#2c555e', 1.5, true); tegnGeometri(meridian(180), '#2c555e', 1, true);
     }
     if (lag.type === 'punkter') {

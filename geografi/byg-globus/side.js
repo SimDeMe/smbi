@@ -137,6 +137,7 @@ function opdater() {
   $('saet-punkt').disabled = afventer;
   $('faerdig').hidden = !klar;
   $('indsend').parentElement.hidden = klar;
+  $('indsend').hidden = erPunkt;
   $('indsend').disabled = $('hint').disabled = afventer;
   $('hint').textContent = hintTrin ? 'Vis svaret' : 'Giv et hint';
   const alleLag = AFSNIT.flatMap(a => a.lag), sidst = alleLag.indexOf(lagId) === alleLag.length - 1;
@@ -160,7 +161,7 @@ function placer(plads, ordId = valgt) {
 }
 function saetPunkt(p) {
   if (afventer || lag().type !== 'punkter' || faerdigt(lagId)) return;
-  valgtPunkt = p; globe.saetPunkt(p); opdater(); besked('Punktet er sat. Indsend dit svar.');
+  valgtPunkt = p; globe.saetPunkt(p); indsend();
 }
 function indsend() {
   if (afventer || faerdigt(lagId)) return;

@@ -9,15 +9,13 @@ placering og kunne bruge gradnettet til at finde nye punkter.
 1. Syv verdensdele. Oceanien omfatter også Australien og New Zealand;
    Grønland regnes geografisk med til Nordamerika.
 2. Fem verdenshave. Sydhavet afgrænses her ved 60° syd.
-3. Poler, ækvator, vendekredse og polarcirkler; derefter nordlig/sydlig og
-   østlig/vestlig halvkugle i to ekstra lag.
+3. Poler, ækvator, vendekredse og polarcirkler.
 4. Breddekreds, længdekreds og nulmeridian; derefter tre koordinatopgaver.
 5. Vahls fire klimazoner på land. Ingen plantebælter i elevopgaven.
 
-De gule pladser er repræsentative punkter, ikke områdegrænser. De to
-halvkugler fremhæves i deres fulde udstrækning ved fokus/pegning. I
-klimaafsnittet vises zonerne med forskellige mønstre; en korrekt besvarelse
-farver hele zonens udbredelse. Breddekredse kan slås til for at sammenligne
+De gule pladser er repræsentative punkter, ikke områdegrænser. I
+klimaafsnittet vises alle fire zoner i farver fra starten. Den polare
+svarplads ligger på Grønland. Breddekredse kan slås til for at sammenligne
 de astronomiske linjer med de temperaturbestemte zonegrænser.
 
 ## Genbrug og afgrænsning
@@ -55,11 +53,13 @@ node geografi/byg-globus/browser-test.mjs
 
 Browsertesten bruger repoets eksisterende Playwright-installation i
 `værktøj/node_modules`. Den kontrollerer svar, genindlæsning, tastatur,
-poler, halvkugler, koordinater, placering af klimamarkører i data,
+poler, øjeblikkelig koordinatfeedback, placering af klimamarkører i data,
 ekstern netblokering, blokeret lagring, netfejl/genforsøg og touch. Layout
 afprøves ved 1280×577, 1366×625, 1536×730, 740×750 og 390×750.
 
 Koordinatopgaver godkender højst 5° vinkelafstand langs en storcirkel.
+Punktet bedømmes straks ved klik på globussen, Enter eller »Sæt punkt i
+sigtekornet«; der er ingen separat indsend-knap i koordinatlaget.
 Et punkt lige på den anden side af datolinjen skal derfor kunne godkendes.
 
 ## Elevafprøvning (endnu ikke gennemført)

@@ -11,7 +11,7 @@ const browser = await chromium.launch({headless:true});
 try {
   const page = await browser.newPage({viewport:{width:1366,height:625}}), fejl = [];
   page.on('pageerror', e => fejl.push(e.message));
-  const klar = async () => { await page.locator('#indsend:not([disabled])').waitFor(); await page.evaluate(() => document.fonts.ready); };
+  const klar = async () => { await page.locator('#hint:not([disabled])').waitFor(); await page.evaluate(() => document.fonts.ready); };
   await page.goto(url); await klar();
   // Forkert svar skal sendes tilbage, og rigtige skal låses uden at flytte kloden.
   await page.locator('[data-ord="asien"]').click();
@@ -64,27 +64,31 @@ try {
       await page.screenshot({path:fileURLToPath(new URL('byg-globus-klima.png',ud))});
     }
   }
-  // Halvkuglerne er selvstændige lag i afsnit 3.
-  await page.locator('#tab-breddekredse').click(); await klar();
-  for (const id of ['nordsyd','oestvest']) {
-    assert.match(await page.locator('#titel').innerText(),/halvkugle/);
-    for (const o of LAG[id].ord) {
-      await page.locator(`[data-ord="${o.id}"]`).click();
-      await page.locator(`[data-find="${o.id}"]`).click(); await page.locator(`[data-plads="${o.id}"]`).click();
-    }
-    await page.locator('#indsend').click(); await page.locator('#naeste').click();
-  }
+  // Poler og breddekredse går nu direkte videre til bredde og længde.
+  await page.locator('#tab-breddekredse').click();
+  assert.match(await page.locator('#titel').innerText(),/Poler/);
+  await page.locator('#naeste').click();
+  assert.match(await page.locator('#titel').innerText(),/gradnettets/);
+  await page.locator('#naeste').click();
+  assert.equal(await page.locator('#punkt-opgave').isVisible(),true);
   // Gradnet var færdigt, så fanen går videre til koordinatopgaverne.
   await page.locator('#tab-koordinater').click(); await klar();
   assert.equal(await page.locator('#punkt-opgave').isVisible(),true);
-  await page.locator('#saet-punkt').click(); await page.locator('#indsend').click();
+  await page.locator('#saet-punkt').click();
+  assert.equal(await page.locator('#indsend').isVisible(),false);
   assert.match(await page.locator('#besked').innerText(),/for langt/);
   // Tastatur: Home til [10,15], øst 20°, nord 15° → første mål [30,30].
   await page.locator('#globus').focus(); await page.keyboard.press('Home');
   await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight');
   await page.keyboard.press('ArrowUp');
   for (let n=0;n<5;n++) await page.keyboard.press('Shift+ArrowUp');
-  await page.keyboard.press('Enter'); await page.locator('#indsend').click();
+  await page.locator('#saet-punkt').click();
+  assert.match(await page.locator('#besked').innerText(),/Korrekt!/);
+  // Enter på globussen og direkte klik skal også bedømmes med det samme.
+  await page.locator('#globus').focus(); await page.keyboard.press('Enter');
+  assert.match(await page.locator('#besked').innerText(),/for langt/);
+  await page.locator('#globus').click();
+  assert.match(await page.locator('#besked').innerText(),/for langt/);
   assert.match(await page.locator('#punkt-maal').innerText(),/30° S/);
   for(let n=0;n<2;n++){await page.locator('#hint').click(); await page.locator('#hint').click();}
   assert.equal(await page.locator('#faerdig').isVisible(),true);
@@ -144,5 +148,5 @@ try {
   const tray = await mobil.locator('#ord').boundingBox();
   await mobil.screenshot({path:fileURLToPath(new URL('byg-globus-touch.png',ud))});
   assert(tray.y>=0 && tray.y<150,'Ordbakken følger ikke med på telefonen');
-  console.log('Globusbrowser: svar, gemt fremskridt, tastatur, poler, halvkugler, koordinater, Vahl-data, skærmstørrelser, offline og fejltilstand OK.');
+  console.log('Globusbrowser: svar, gemt fremskridt, tastatur, poler, øjeblikkelig koordinatfeedback, Vahl-data, skærmstørrelser, offline og fejltilstand OK.');
 } finally { await browser.close(); }

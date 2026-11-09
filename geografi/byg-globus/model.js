@@ -11,7 +11,7 @@ export const zoneForKlasse = nr => !Number.isInteger(nr) || nr < 1 || nr > 16 ? 
 export const AFSNIT = [
   { id: 'verdensdele', navn: 'Verdensdele', lag: ['dele'] },
   { id: 'verdenshave', navn: 'Verdenshave', lag: ['have'] },
-  { id: 'breddekredse', navn: 'Poler og breddekredse', lag: ['linjer', 'nordsyd', 'oestvest'] },
+  { id: 'breddekredse', navn: 'Poler og breddekredse', lag: ['linjer'] },
   { id: 'koordinater', navn: 'Bredde og længde', lag: ['gradnet', 'punkter'] },
   { id: 'klimazoner', navn: 'Vahls klimazoner', lag: ['klima'] }
 ];
@@ -56,24 +56,6 @@ export const LAG = {
       sted('sydpol', 'Sydpolen', [0, -90], 'Sydpolen er 90° syd og ligger på Antarktis.', 'Find enden af rotationsaksen på den sydlige halvkugle.')
     ]
   },
-  nordsyd: {
-    navn: 'Den nordlige og sydlige halvkugle', type: 'halvkugler', centrum: [10, 0],
-    intro: 'De to pladser tilhører hver sin halvkugle. Ækvator er grænsen. Peg på en plads for at se hele dens halvkugle.',
-    refleksion: 'Hvilke verdensdele ligger på begge sider af ækvator?',
-    ord: [
-      sted('nordlig', 'Den nordlige halvkugle', [10, 45], 'Den nordlige halvkugle er hele den halvdel af Jorden, der ligger nord for ækvator.', 'Se nord for ækvator.'),
-      sted('sydlig', 'Den sydlige halvkugle', [10, -45], 'Den sydlige halvkugle er hele den halvdel af Jorden, der ligger syd for ækvator.', 'Se syd for ækvator.')
-    ]
-  },
-  oestvest: {
-    navn: 'Den østlige og vestlige halvkugle', type: 'halvkugler', centrum: [0, 10],
-    intro: 'Nulmeridianen og 180°-meridianen deler Jorden i en østlig og en vestlig halvkugle. Peg på en plads for at se halvkuglen.',
-    refleksion: 'Hvorfor ligger noget af Europa på den vestlige halvkugle?',
-    ord: [
-      sted('oestlig', 'Den østlige halvkugle', [70, 15], 'Den østlige halvkugle ligger fra nulmeridianen mod øst til 180°-meridianen.', 'Se øst for nulmeridianen gennem Greenwich.'),
-      sted('vestlig', 'Den vestlige halvkugle', [-70, 15], 'Den vestlige halvkugle ligger fra nulmeridianen mod vest til 180°-meridianen.', 'Se vest for nulmeridianen gennem Greenwich.')
-    ]
-  },
   gradnet: {
     navn: 'Læs gradnettets linjer', type: 'gradnet', centrum: [25, 15],
     intro: 'Sæt navn på de tre fremhævede linjer. Bredde måles fra ækvator; længde måles fra nulmeridianen.',
@@ -86,7 +68,7 @@ export const LAG = {
   },
   punkter: {
     navn: 'Find steder med koordinater', type: 'punkter', centrum: [10, 15],
-    intro: 'Drej globussen, og sæt punktet ved de angivne koordinater. Tryk på globussen, eller brug sigtekornet og knappen. Svaret må være op til 5° fra målet.',
+    intro: 'Drej globussen, og sæt punktet ved de angivne koordinater. Tryk på globussen, eller brug sigtekornet og knappen. Du får straks at vide, om punktet er korrekt. Svaret må være op til 5° fra målet.',
     refleksion: 'Forklar for en makker, hvordan du finder et sted ud fra dets breddegrad og længdegrad.',
     ord: [
       sted('punkt1', '30° N, 30° Ø', [30, 30], '30° nord for ækvator og 30° øst for nulmeridianen. Punktet ligger i Egypten.', 'Find først 30° nord og følg breddekredsen til 30° øst.'),
@@ -96,13 +78,13 @@ export const LAG = {
   },
   klima: {
     navn: 'Vahls fire klimazoner', type: 'klima', centrum: [20, 20],
-    intro: 'De fire mønstre viser klimazonernes udbredelse på land. Sæt navn på zonen ved hver plads. Når svaret er rigtigt, får hele den pågældende zone farve.',
+    intro: 'De fire farver viser klimazonernes udbredelse på land. Sæt navn på zonen ved hver plads. Den polare plads sidder på Grønland.',
     refleksion: 'Slå breddekredsene til. Hvor kan du se, at klimazonernes grænser ikke følger vende- og polarcirklerne?',
     ord: [
       sted('tropisk', 'Tropisk zone', [23, 0], ZONER.tropisk.kriterium + ' Zonen findes omkring ækvator, men højland kan have et køligere klima.', 'Find zonen med høje temperaturer hele året.'),
       sted('subtropisk', 'Subtropisk zone', [15, 27], ZONER.subtropisk.kriterium, 'Find zonen med varme somre og milde vintre, uden for den tropiske zone.'),
       sted('tempereret', 'Tempereret zone', [15, 52], ZONER.tempereret.kriterium + ' Danmark ligger i tempereret zone.', 'Find den zone, som Danmark ligger i.'),
-      sted('polar', 'Polar zone', [0, -80], ZONER.polar.kriterium + ' Zonen findes også i højtliggende bjergområder.', 'Find zonen, hvor selv den varmeste måned er kold.')
+      sted('polar', 'Polar zone', [-42, 75], ZONER.polar.kriterium + ' Zonen findes også i højtliggende bjergområder.', 'Find zonen, hvor selv den varmeste måned er kold.')
     ]
   }
 };
