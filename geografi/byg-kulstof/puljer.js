@@ -1,14 +1,20 @@
 // Alle tre lag bruger samme motor og komponenter som vandets kredsløb.
 import {Byg} from '../../byg-motor/motor.js';
-import {PULJER,PROCESSER,LAG,ALLE} from './model.js';
+import {PULJER,PROCESSER,LAG,ALLE,FORBINDELSER} from './model.js';
 import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
-const pil=p=>p.stier.map(sti=>`<path class="kulstof-pil" d="${sti}" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
+import {forbindBokse} from './pile.js';
 export const KULSTOFFIGUR={
  id:'kulstof',navn:'Kulstofkredsløbet',vb:[BREDDE,HOEJDE],boks:[340,48],mobilBredde:1000,
  lag:LAG,
- dele:[{ord:null,svg:LANDSKAB},...PROCESSER.map(p=>({ord:p.id,svg:pil(p)}))],
- pladser:[...PULJER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.punkt})),...PROCESSER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.maal}))]
+ dele:[{ord:null,svg:LANDSKAB},...PROCESSER.map(p=>({ord:p.id,svg:''}))],
+ pladser:[...PULJER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.punkt})),...PROCESSER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1]}))]
 };
+const ruter=new Map();
+function rute(a,b,bokse){
+ const key=bokse.map(p=>p.ord).join(',')+':'+a.ord+':'+b.ord;
+ if(!ruter.has(key))ruter.set(key,forbindBokse(a,b,bokse,a.ord==='pumpe'&&b.ord==='hav'?[1,1]:[]));
+ return ruter.get(key);
+}
 const ORD=Object.fromEntries(ALLE.map(p=>[p.id,{ord:p.navn,tekst:p.tekst}]));
 
 export function opretKredslob(t,gem){
@@ -19,7 +25,7 @@ export function opretKredslob(t,gem){
    super.tegnFigur();
    this.ui.svg.setAttribute('data-lag',this.lag);
    this.ui.svg.querySelectorAll('.plads').forEach(g=>{
-    g.classList.toggle('tidligere-navn',this.ordLag[this.fig.pladser[+g.dataset.i].ord]<this.lag);
+    g.classList.toggle('tidligere-navn',this.ordLag[this.fig.pladser[+g.dataset.i].ord]>0&&this.ordLag[this.fig.pladser[+g.dataset.i].ord]<this.lag);
     const tekst=g.querySelector('.ordtekst');if(tekst.textContent.length>24)tekst.style.fontSize='23px';
    });
    this.ui.svg.querySelectorAll('.del[data-ord]').forEach(g=>{g.classList.toggle('tidligere-pil',this.ordLag[g.dataset.ord]<this.lag);});
@@ -28,23 +34,19 @@ export function opretKredslob(t,gem){
    $('tidligere-kontrol').hidden=this.lag===0;
   }
   opdaterPile(){
-   // En frizone følger de faktisk synlige bokse, også efter et lag- eller
-   // visningsskift. Kun procespile og pilespidser klippes; figuren bevares.
-   const ns='http://www.w3.org/2000/svg',svg=this.ui.svg,padding=16;
-   svg.querySelector('#pil-frizoner')?.remove();
-   const mask=document.createElementNS(ns,'mask');mask.id='pil-frizoner';
-   for(const [k,v]of Object.entries({maskUnits:'userSpaceOnUse',maskContentUnits:'userSpaceOnUse',x:0,y:0,width:BREDDE,height:HOEJDE}))mask.setAttribute(k,v);
-   const baggrund=document.createElementNS(ns,'rect');
-   for(const [k,v]of Object.entries({width:BREDDE,height:HOEJDE,fill:'white'}))baggrund.setAttribute(k,v);mask.append(baggrund);
-   svg.querySelectorAll('.plads').forEach(g=>{
-    if(getComputedStyle(g).display==='none')return;
-    const b=g.querySelector('.boks'),hul=document.createElementNS(ns,'rect');
-    for(const [k,v]of Object.entries({x:+b.getAttribute('x')-padding,y:+b.getAttribute('y')-padding,width:+b.getAttribute('width')+2*padding,height:+b.getAttribute('height')+2*padding,fill:'black'}))hul.setAttribute(k,v);
-    hul.dataset.plads=g.dataset.i;mask.append(hul);
+   const svg=this.ui.svg;
+   const bokse=this.fig.pladser.filter((p,i)=>{const g=this.pladsEl[i];return g&&getComputedStyle(g).display!=='none';});
+   const find=id=>bokse.find(p=>p.ord===id);
+   svg.querySelectorAll('.del[data-ord]').forEach(g=>{
+    const id=g.dataset.ord,p=PROCESSER.find(p=>p.id===id);
+    const synlig=p.lag===this.lag||document.body.classList.contains('vis-tidligere');
+    g.style.display=synlig?'':'none';
+    if(!synlig){g.innerHTML='';return;}
+    g.innerHTML=FORBINDELSER[id].filter(([a,b])=>find(a)&&find(b)).map(([a,b])=>
+     `<path class="kulstof-pil" data-fra="${a}" data-til="${b}" d="${rute(find(a),find(b),bokse)}" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
    });
-   svg.querySelector('defs').append(mask);
-   svg.querySelectorAll('.del[data-ord]').forEach(g=>g.setAttribute('mask','url(#pil-frizoner)'));
   }
+
   tegnPanel(){
    super.tegnPanel();
    const ord=LAG[this.lag].ord;

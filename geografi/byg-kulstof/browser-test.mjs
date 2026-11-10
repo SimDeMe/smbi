@@ -2,7 +2,7 @@ import {chromium} from '../../værktøj/node_modules/playwright/index.mjs';
 import assert from 'node:assert/strict';
 import {mkdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {LAG} from './model.js';
+import {LAG,FORBINDELSER} from './model.js';
 import {KULSTOFFIGUR} from './puljer.js';
 const ud=new URL('../../værktøj/ud/',import.meta.url);mkdirSync(ud,{recursive:true});
 const url=`http://localhost:${process.env.PORT||8777}/geografi/byg-kulstof.html`;
@@ -17,6 +17,7 @@ try{
  assert.equal(await p.locator('#figur .kulstof-pil').count(),0);assert.equal(await p.locator('[data-form],#trin-former,[data-niveau]').count(),0);
  await saet(p,'hav','skov');await p.locator('#indsend').click();assert.match(await p.locator('#besked').innerText(),/passer ikke/);assert.equal(await p.locator('#bakke .ord').count(),10);
  // Faktisk musetræk fra den fælles ordbakke.
+ await felt(p,'hav').locator('.boks').scrollIntoViewIfNeeded();
  const fra=await p.locator('#bakke [data-ord="hav"]').boundingBox(),til=await felt(p,'hav').locator('.boks').boundingBox();
  await p.mouse.move(fra.x+fra.width/2,fra.y+fra.height/2);await p.mouse.down();await p.mouse.move(til.x+til.width/2,til.y+til.height/2,{steps:12});await p.mouse.up();
  assert.equal(await felt(p,'hav').evaluate(e=>e.classList.contains('fyldt')),true);
@@ -29,17 +30,24 @@ try{
   await p.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
   await p.screenshot({path:fileURLToPath(new URL(`kulstof-lag-${lag+1}-bygget.png`,ud)),fullPage:true});
   if(lag<2){await p.locator('#btn-naeste').click();assert.equal(await p.locator('#bakke .ord').count(),LAG[lag+1].ord.length);
-   assert.equal(await p.locator('#figur .plads:not(.tidligere-navn)').count(),LAG[lag+1].ord.length);
-   assert.equal(await felt(p,'hav').isVisible(),false);
-   const frizoner=await p.locator('#figur').evaluate(svg=>{const bokse=[...svg.querySelectorAll('.plads')].filter(g=>getComputedStyle(g).display!=='none');const mask=svg.querySelector('#pil-frizoner');return {antal:mask.querySelectorAll('[data-plads]').length,korrekte:bokse.every(g=>{const b=g.querySelector('.boks'),hul=mask.querySelector(`[data-plads="${g.dataset.i}"]`);return hul&&+hul.getAttribute('x')<=+b.getAttribute('x')-16&&+hul.getAttribute('y')<=+b.getAttribute('y')-16&&+hul.getAttribute('width')>=+b.getAttribute('width')+32&&+hul.getAttribute('height')>=+b.getAttribute('height')+32;}),pile:[...svg.querySelectorAll('.del[data-ord]')].every(g=>g.getAttribute('mask')==='url(#pil-frizoner)'&&getComputedStyle(g).filter==='none'),sorte:[...svg.querySelectorAll('.kulstof-pil')].every(p=>getComputedStyle(p).stroke==='rgb(0, 0, 0)'&&+p.getAttribute('stroke-width')===10)};});
-   assert.equal(frizoner.antal,LAG[lag+1].ord.length);assert(frizoner.korrekte&&frizoner.pile&&frizoner.sorte,'Sorte pile skal have frizoner om alle synlige tekstbokse');
-   const kollisioner=await p.locator('#figur').evaluate(svg=>{const bokse=[...svg.querySelectorAll('.plads:not(.tidligere-navn) .boks')].map(b=>({x:+b.getAttribute('x')-24,y:+b.getAttribute('y')-24,w:+b.getAttribute('width')+48,h:+b.getAttribute('height')+48}));return [...svg.querySelectorAll('.del:not(.tidligere-pil) .kulstof-pil')].filter(p=>{for(let l=0;l<=p.getTotalLength();l+=3){const pt=p.getPointAtLength(l);if(bokse.some(r=>pt.x>r.x&&pt.x<r.x+r.w&&pt.y>r.y&&pt.y<r.y+r.h))return true;}return false;}).length;});
-   assert.equal(kollisioner,0,'Det aktuelle lags pile skal forløbe uden om tekstfelterne, også før maskering');
-   await p.locator('#tidligere').check();assert.equal(await felt(p,'hav').isVisible(),true);assert.equal(await p.locator('#pil-frizoner [data-plads]').count(),LAG.slice(0,lag+2).flatMap(l=>l.ord).length);await p.locator('#tidligere').uncheck();
+   assert.equal(await p.locator('#figur .plads:not(.tidligere-navn)').count(),10+LAG[lag+1].ord.length);
+   assert.equal(await felt(p,'hav').isVisible(),true);
+   const forbindelser=await p.locator('#figur .del:not([style*="display: none"]) .kulstof-pil').evaluateAll((pile,pladser)=>pile.map(p=>{
+    const kantafstand=(id,pt)=>{const b=pladser.find(b=>b.ord===id);return Math.hypot(Math.max(Math.abs(pt.x-b.x)-170,0),Math.max(Math.abs(pt.y-b.y)-24,0));};
+    return {fra:p.dataset.fra,til:p.dataset.til,start:kantafstand(p.dataset.fra,p.getPointAtLength(0)),slut:kantafstand(p.dataset.til,p.getPointAtLength(p.getTotalLength()))};
+   }),KULSTOFFIGUR.pladser);
+   assert.equal(forbindelser.length,LAG[lag+1].ord.flatMap(id=>FORBINDELSER[id]).length);
+   assert(forbindelser.every(p=>p.fra&&p.til&&Math.abs(p.start-7)<.1&&Math.abs(p.slut-7)<.1),'Pile skal forbinde navngivne tekstbokse');
+   const kollisioner=await p.locator('#figur').evaluate(svg=>{
+    const bokse=[...svg.querySelectorAll('.plads')].filter(g=>getComputedStyle(g).display!=='none').map(g=>g.querySelector('.boks').getBBox());
+    return [...svg.querySelectorAll('.kulstof-pil')].filter(p=>{for(let l=0;l<=p.getTotalLength();l+=3){const pt=p.getPointAtLength(l);if(bokse.some(r=>pt.x>r.x&&pt.x<r.x+r.width&&pt.y>r.y&&pt.y<r.y+r.height))return true;}return false;}).length;
+   });
+   assert.equal(kollisioner,0,'Pile må ikke krydse nogen synlig tekstboks');
+   await p.locator('#tidligere').check();assert.equal(await felt(p,'hav').isVisible(),true);await p.locator('#tidligere').uncheck();
    await p.reload();await p.locator('#bakke .ord').first().waitFor();
   }
  }
- assert.equal(await p.locator('#figur .kulstof-pil').count(),13);
+ assert.equal(await p.locator('#figur .kulstof-pil').count(),LAG[2].ord.flatMap(id=>FORBINDELSER[id]).length);
  assert.equal(await p.locator('#btn-naeste').count(),0);assert.match(await p.locator('#faerdig-kort').innerText(),/Forklar kulstoffets vej/);
  await p.reload();await p.locator('#faerdig-kort').waitFor();assert.equal(await p.locator('#figur .plads.laast').count(),21);
  // Hvert lag på fem skærmstørrelser: kun 5 eller 6 nye procesord ad gangen.

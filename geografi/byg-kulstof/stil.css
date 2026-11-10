@@ -9,7 +9,7 @@
 .landskab-model{margin-top:12px}
 .rig-body{grid-template-columns:minmax(0,1fr) 330px}
 .fremskridt{font:500 11px var(--mono);color:var(--slate)}
-#figur{max-height:calc(100dvh - 230px);min-height:0}
+#figur{max-height:calc(100dvh - 100px);min-height:0}
 #figur .ordtekst{font-size:25px}
 #figur .kulstof-pil{paint-order:stroke;pointer-events:none}
 #figur .del[data-ord]{filter:none!important}
@@ -24,7 +24,7 @@ body:not(.vis-tidligere) .tidligere-navn{display:none}
 body.figur-visning .side,body.figur-visning #figur-ramme,body.figur-visning #fig-intro,body.figur-visning #tidligere-kontrol{display:none!important}
 body.figur-visning .rig-body{grid-template-columns:1fr}
 body.figur-visning .ren-figur{display:block;width:100%;height:auto;max-height:calc(100dvh - 180px);object-fit:contain}
-body.fokus #figur{max-height:calc(100dvh - 145px)}
+body.fokus #figur{max-height:calc(100dvh - 95px)}
 body.fokus .kulstof-foot{display:none}
 @media(min-width:861px) and (max-height:700px){
  .top-in{height:44px}.kulstof-head{padding-top:10px}.kulstof-head h1{font-size:29px;margin:8px 0 5px}#intro{font-size:15px}
@@ -42,3 +42,6 @@ body.fokus .kulstof-foot{display:none}
  .kontakt{font-size:12px}.ord{font-size:12px;padding:4px 7px}.bakke{gap:6px;padding:7px}.side{padding:9px}
  body.figur-visning .ren-figur{max-height:none}
 }
+
+@media(min-width:861px){.side{position:sticky;top:67px;max-height:calc(100dvh - 80px);overflow:auto;align-self:start}body.fokus .side{top:8px}}
+@media(min-width:861px) and (max-height:700px){.side{top:53px}}

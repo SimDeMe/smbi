@@ -14,3 +14,18 @@ Geology: 5–7 clearly separated continuous sedimentary beds in muted ochre, tan
 Use the whole frame. One physically coherent land-sea cutaway, continuous terrain, continuous layers, level sea surface, no floating isolated panels. The same composition and coastline as the reference, so existing interactive targets still align. Flat very pale blue sky, white simple cloud silhouettes if needed, no dramatic lighting, no atmospheric photographic haze. Muted forest greens, teal water, warm beige/ochre strata and off-white limestone. Even restrained line weight throughout. Everything recognisable at thumbnail size.
 Absolutely NO text, labels, arrows, molecular symbols, letters, numbers, frames, legend or UI. No miniature decorative vegetation, no bark or photographic rock texture, no sun rays, no realistic waves. This is the clean base illustration for a drag-and-drop teaching figure; all labels will be added separately in code.
 ```
+
+
+## Udvidelse af atmosfæren
+
+Den højere figur er redigeret med den indbyggede imagegen-funktion. Den
+foregående lærebogsfigur bruges som reference; den nye asset er
+`landskab-atmosfaere.webp` (1362 × 1155 px).
+
+```text
+Use case: scientific-educational, precise canvas extension.
+Input image: edit target, the approved geography textbook landscape.
+Make ONLY the canvas taller by adding a generous band of OPEN SKY ABOVE the existing picture. The input is approximately 1568 pixels wide and 1003 high. The result should have the SAME WIDTH and be approximately 1568 by 1328 high: about 325 additional pixels at the TOP. Do not squeeze, shrink or vertically stretch the original landscape. Preserve the existing lower landscape as closely as possible, shifted down as one unchanged block: original forest, factory, mountains, volcano, river, sea, shells, cutaway strata, coal, oil and gas, limestone. Keep their sizes, horizontal positions and relationships, and retain the exact same calm textbook line drawing style and colour palette.
+The newly added top band must be predominantly plain pale blue sky with plenty of clear space in the centre and right for later arrows and labels. Complete the upper edge of the big tree canopy naturally on the LEFT, but let it finish well below the new top edge: do not fill the new upper band with leaves. There must be a substantial clear sky area above even the tallest trees and mountains. Seamlessly continue the existing pale blue sky, without any horizontal seam. Preserve the existing small clouds lower down; leave the new sky mostly empty.
+No text, labels, arrows, molecules, numbers or UI. Do not add any new landscape objects. Do not change any geological feature or restyle the image. This is outpainting to make room for later black carbon-cycle arrows in the atmosphere, particularly an upward respiration arrow whose tip must be visibly in open air above the treetops.
+```

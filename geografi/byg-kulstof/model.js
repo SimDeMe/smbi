@@ -1,15 +1,15 @@
 // Puljer og overførsler i et skematisk kulstofkredsløb.
 const PULJEPUNKTER = {
-  luft:{punkt:[1430, 95],boks:[1390, 65]},
-  skov:{punkt:[225, 270],boks:[230, 190]},
-  jord:{punkt:[195, 470],boks:[250, 570]},
-  hav:{punkt:[1370, 515],boks:[1360, 470]},
-  plankton:{punkt:[1115, 600],boks:[1100, 565]},
-  skaller:{punkt:[1445, 680],boks:[1390, 630]},
-  kul:{punkt:[190, 800],boks:[200, 850]},
-  gas:{punkt:[655, 750],boks:[640, 660]},
-  olie:{punkt:[650, 805],boks:[700, 940]},
-  kalksten:{punkt:[1170, 800],boks:[1240, 895]},
+  luft:{punkt:[1430,180],boks:[1390,360]},
+  skov:{punkt:[225,670],boks:[230,590]},
+  jord:{punkt:[195,870],boks:[250,970]},
+  hav:{punkt:[1370,915],boks:[1360,870]},
+  plankton:{punkt:[1115,1000],boks:[1100,965]},
+  skaller:{punkt:[1445,1080],boks:[1330,1030]},
+  kul:{punkt:[190,1200],boks:[200,1250]},
+  gas:{punkt:[655,1150],boks:[640,1060]},
+  olie:{punkt:[650,1205],boks:[700,1260]},
+  kalksten:{punkt:[1170,1200],boks:[1240,1295]},
 };
 export const PULJER = [
   ['hav','Havvand','Det åbne vand i havet.'],
@@ -24,19 +24,33 @@ export const PULJER = [
   ['plankton','Havets organismer','Tang og andre levende organismer i havet.']
 ].map(([id,navn,tekst])=>({id,navn,tekst,...PULJEPUNKTER[id]}));
 
-// Hver proces har én navneplads. Flere stier kan vise samme proces.
+// Pilene går mellem tekstbokse med procesnavnet som mellemstation.
+// Landhævning forbindes med næste proces, fordi blotlægning ikke frigiver CO₂.
+export const FORBINDELSER = {
+ foto:[['luft','foto'],['foto','skov'],['hav','plankton']],
+ resp:[['jord','resp'],['skov','resp'],['resp','luft']],
+ udveksling:[['luft','udveksling'],['udveksling','hav']],
+ pumpe:[['plankton','pumpe'],['pumpe','hav']],
+ brand:[['kul','brand'],['olie','brand'],['gas','brand'],['brand','luft']],
+ forvitring:[['luft','forvitring'],['forvitring','hav']],
+ kalk:[['skaller','kalk'],['kalk','kalksten']],
+ dybet:[['kalksten','dybet'],['dybet','luft']],
+ haevning:[['kalksten','haevning'],['haevning','forvitring']],
+ fossil:[['jord','fossil'],['plankton','fossil'],['fossil','kul'],['fossil','olie'],['fossil','gas']],
+ cement:[['kalksten','cement'],['cement','luft']]
+};
 export const PROCESSER = [
- {id:'foto',navn:'Fotosyntese',lag:1,boks:[820, 250],maal:[618,91],stier:['M1020 75 C800 25 510 80 300 260','M1370 550 Q1260 510 1140 590'],tekst:'Planter og planteplankton optager CO₂ og bygger organisk stof ved hjælp af lysenergi. På land kommer kulstoffet fra luften; i havet fra vandet.'},
- {id:'resp',navn:'Respiration og nedbrydning',lag:1,boks:[260, 510],maal:[257,455],stier:['M230 455 C420 465 445 250 420 100'],tekst:'Planter, dyr og nedbrydere omsætter organisk stof og afgiver CO₂ ved respiration. Også levende planter har respiration. Nedbrydning kan flytte kulstof fra jordens organiske stof tilbage til atmosfæren.'},
- {id:'udveksling',navn:'Hav–luft-udveksling',lag:1,boks:[1260, 310],maal:[1473,388],stier:['M1460 210 Q1510 360 1430 505'],dobbelt:true,tekst:'CO₂ udveksles begge veje mellem havoverfladen og atmosfæren. Nettoretningen afhænger blandt andet af temperatur og forskellen i CO₂-partialtryk.'},
- {id:'pumpe',navn:'Biologisk pumpe',lag:1,boks:[1260, 750],maal:[1300,672],stier:['M1130 605 Q1200 660 1400 695'],tekst:'Dødt plankton og andre organiske partikler synker mod dybhav og havbund. Det meste nedbrydes; en lille del aflejres og begraves. Den biologiske pumpe flytter kulstof ned fra havets øvre lag.'},
- {id:'brand',navn:'Forbrænding',lag:1,boks:[940, 410],maal:[736,449],stier:['M650 805 C840 700 850 475 590 325 Q540 220 710 150'],tekst:'Forbrænding af kul, olie og naturgas flytter kulstof fra geologiske lagre til atmosfæren som CO₂. Det sker langt hurtigere, end de fossile brændsler dannes.'},
- {id:'forvitring',navn:'Forvitring og flodtransport',lag:2,boks:[1040, 510],maal:[1138,434],stier:['M760 160 C850 210 855 290 965 360 Q1035 420 1200 445'],tekst:'CO₂ opløst i vand reagerer med silikatmineraler under kemisk forvitring. Floder fører opløste stoffer videre til havet. Mekanisk sønderdeling af sten optager ikke i sig selv CO₂.'},
- {id:'kalk',navn:'Aflejring af kalk',lag:2,boks:[1320, 630],maal:[1460,695],stier:['M1450 685 Q1510 735 1400 810'],tekst:'Kalkskaller kan aflejres på havbunden, begraves og med tiden blive til kalksten. Kulstoffet lagres i bjergarten. Selve dannelsen af kalk frigiver også CO₂; sammen med silikatforvitring kan forløbet give netto lagring.'},
- {id:'dybet',navn:'Vulkansk afgasning',lag:2,boks:[1320, 70],maal:[1180,130],stier:['M1230 870 C1300 990 1530 940 1530 780 L1530 530 C1530 250 1120 300 1180 130'],tekst:'Kulstofholdige bjergarter kan føres i dybet. Ved opvarmning og reaktioner kan CO₂ frigives og senere afgasses gennem vulkaner. Den samlede pil forenkler transporten i dybet; fuldstændig opsmeltning er ikke en forudsætning.'},
- {id:'haevning',navn:'Landhævning og erosion',lag:2,boks:[640, 90],maal:[764,307],stier:['M1040 820 C920 720 810 580 755 260'],tekst:'Landhævning og erosion blotlægger bjergarter, så de igen kan udsættes for forvitring. Hævningen flytter kulstofholdige bjergarter, men optager ikke i sig selv CO₂.'},
- {id:'fossil',navn:'Fossildannelse',lag:2,boks:[380, 710],maal:[164,697],stier:['M200 480 Q125 640 190 785','M1130 695 C1050 970 810 965 670 815'],tekst:'En lille del af det organiske stof undgår fuldstændig nedbrydning og begraves. Over millioner af år kan landplanter under særlige forhold danne kul; især marint organisk stof kan danne olie og naturgas. Pilene samler begravelse og senere omdannelse.'},
- {id:'cement',navn:'Cementproduktion',lag:2,boks:[580, 590],maal:[800,551],stier:['M1170 800 C1040 720 790 620 650 350 Q650 220 760 150'],tekst:'Når kalksten opvarmes ved cementproduktion, kan CO₂ frigives fra selve kalken. Brændslet til ovnen giver desuden udledning, som hører til forbrænding.'}
+ {id:'foto',navn:'Fotosyntese',lag:1,boks:[850,220],tekst:'Planter og planteplankton optager CO₂ og bygger organisk stof ved hjælp af lysenergi. På land kommer kulstoffet fra luften; i havet fra vandet.'},
+ {id:'resp',navn:'Respiration og nedbrydning',lag:1,boks:[600,400],tekst:'Pilene forbinder planter og jordens organiske stof med atmosfæren. Planter, dyr og nedbrydere omsætter organisk stof og afgiver CO₂ ved respiration. Også levende planter har respiration. Nedbrydning kan flytte kulstof fra jordens organiske stof tilbage til atmosfæren.'},
+ {id:'udveksling',navn:'Hav–luft-udveksling',lag:1,boks:[1330,620],dobbelt:true,tekst:'CO₂ udveksles begge veje mellem havoverfladen og atmosfæren. Nettoretningen afhænger blandt andet af temperatur og forskellen i CO₂-partialtryk.'},
+ {id:'pumpe',navn:'Biologisk pumpe',lag:1,boks:[1330,1195],tekst:'Dødt plankton og andre organiske partikler synker mod dybhav og havbund. Det meste nedbrydes; en lille del aflejres og begraves. Den biologiske pumpe flytter kulstof ned fra havets øvre lag.'},
+ {id:'brand',navn:'Forbrænding',lag:1,boks:[600,730],tekst:'Forbrænding af kul, olie og naturgas flytter kulstof fra geologiske lagre til atmosfæren som CO₂. Det sker langt hurtigere, end de fossile brændsler dannes.'},
+ {id:'forvitring',navn:'Forvitring og flodtransport',lag:2,boks:[840,610],tekst:'CO₂ opløst i vand reagerer med silikatmineraler under kemisk forvitring. Floder fører opløste stoffer videre til havet. Mekanisk sønderdeling af sten optager ikke i sig selv CO₂.'},
+ {id:'kalk',navn:'Aflejring af kalk',lag:2,boks:[1030,1130],tekst:'Kalkskaller kan aflejres på havbunden, begraves og med tiden blive til kalksten. Kulstoffet lagres i bjergarten. Selve dannelsen af kalk frigiver også CO₂; sammen med silikatforvitring kan forløbet give netto lagring.'},
+ {id:'dybet',navn:'Vulkansk afgasning',lag:2,boks:[1330,100],tekst:'Kulstofholdige bjergarter kan føres i dybet. Ved opvarmning og reaktioner kan CO₂ frigives og senere afgasses gennem vulkaner. Den samlede pil forenkler transporten i dybet; fuldstændig opsmeltning er ikke en forudsætning.'},
+ {id:'haevning',navn:'Landhævning og erosion',lag:2,boks:[640,490],tekst:'Landhævning og erosion blotlægger bjergarter, så de igen kan udsættes for forvitring. Hævningen flytter kulstofholdige bjergarter, men optager ikke i sig selv CO₂.'},
+ {id:'fossil',navn:'Fossildannelse',lag:2,boks:[380,1110],tekst:'En lille del af det organiske stof undgår fuldstændig nedbrydning og begraves. Over millioner af år kan landplanter under særlige forhold danne kul; især marint organisk stof kan danne olie og naturgas. Pilene samler begravelse og senere omdannelse.'},
+ {id:'cement',navn:'Cementproduktion',lag:2,boks:[720,820],tekst:'Når kalksten opvarmes ved cementproduktion, kan CO₂ frigives fra selve kalken. Brændslet til ovnen giver desuden udledning, som hører til forbrænding.'}
 ];
 export const LAG = [
  {navn:'Puljerne',ord:PULJER.map(p=>p.id),intro:'En pulje er et lager for kulstof. Sæt navnene på puljerne i landskabet.'},

@@ -1,7 +1,6 @@
 # Byg kulstofkredsløbet – puljer og processer
 
-`geografi/byg-kulstof.html` er **alfa**. Den godkendte lærebogsfigur er
-uændret. Opgaven bruger samme fælles motor og komponenter som vandets
+`geografi/byg-kulstof.html` er **alfa**. Lærebogsfiguren er udvidet opad med et åbent himmelfelt. Opgaven bruger samme fælles motor og komponenter som vandets
 kredsløb: ordbakke, gule svarfelter, træk/klik/tastatur, Indsend svar,
 hints, grønne låste navne og Næste lag.
 
@@ -19,14 +18,22 @@ hints, grønne låste navne og Næste lag.
 Det tidligere lag med kulstoffets former og dets C/B-kort er fjernet efter
 brugerens ønske. Der er ingen placering af CO₂, organisk kulstof eller ionkort.
 
-Procespilene kommer frem i det relevante lag og er sorte med tydelige
-pilespidser. Tekstfelterne er placeret med afstand til det aktuelle lags
-pile. En SVG-maske giver desuden en frizone på 16 figurenheder omkring
-alle synlige tekstbokse, inklusive tidligere navne, når de slås til.
-Masken påvirker kun procespile og pilespidser; landskabet er uændret.
+Procespilene forbinder tekstboksenes kanter med rette stræk og tydelige
+pilespidser: fra pulje til proces og videre til næste pulje. Ruterne findes
+mellem de synlige bokse med fri afstand til teksten. Procesfelterne har
+ikke længere separate henvisningsstreger ud i landskabet.
+Den biologiske pumpe forbindes med havvand, ikke med kalkskaller; dens
+retur til havpuljen repræsenterer transport til dybere vand. Forvitring
+forbindes med atmosfære og hav. Landhævning fører fra kalksten videre mod
+forvitring og betyder ikke en direkte frigivelse af CO₂.
 
-Tidligere navne skjules under nye lag og kan vises med »Vis tidligere
-navne«. Der er fem eller seks nye procesnavne at arbejde med. »Vis kun
+Puljernes navne bliver stående i proceslagene. Tidligere procesnavne og
+pile kan vises med »Vis tidligere procesnavne«; som udgangspunkt vises
+kun det aktuelle lags pile. Figuren vises højere, så landskabets elementer
+bevarer deres læsbarhed; på computer følger opgavepanelet med, når man
+ruller ned gennem figuren.
+
+Der er fem eller seks nye procesnavne at arbejde med. »Vis kun
 figuren« giver adgang til det rene landskab. En færdig forklaring kan
 aflæses ved at pege på et korrekt ord eller fokusere det med tastaturet.
 
@@ -61,13 +68,15 @@ forvitring, havudveksling, fossildannelse og cementproduktion.
 
 ## Filer og lagring
 
-- `model.js`: puljer, procesnavne, pilegeometri, lag og validering af gemte svar.
+- `model.js`: puljer, procesnavne, forbindelser, lag og validering af gemte svar.
+- `pile.js`: retvinklede ruter mellem bokse uden at krydse tekst.
 - `puljer.js`: figurdata og lokal integration med `byg-motor/motor.js`.
 - `side.js`: lagring, fokus, ren figurvisning og tastaturgenveje.
 - `stil.css`: lokale tilpasninger oven på `byg-motor/stil.css`.
-- `landskab.js` og `landskab-laerebog.webp`: godkendt lærebogsfigur,
-  1568 × 1003 px, ca. 256 KiB.
-- `illustration-prompt.md`: imagegen-prompt til den uændrede figur.
+- `landskab.js` og `landskab-atmosfaere.webp`: højere lærebogsfigur,
+  1362 × 1155 px, ca. 221 KiB; SVG-koordinatsystem 1568 × 1330.
+- `landskab-laerebog.webp`: den foregående figur, bevaret som billedreference.
+- `illustration-prompt.md`: imagegen-prompts til grundfiguren og den nye himmel.
 
 Kontrollerede svar, aktivt lag, forsøg og stjerner gemmes under
 `byg-kulstof.v2` med dataformat version 4. Godkendte puljenavne fra den
