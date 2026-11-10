@@ -1,92 +1,44 @@
-/* Fælles Byg figuren-komponenter kommer fra byg-motor/stil.css.
-   Her tilpasses kun landskabet og trin 2 med genbrugelige formkort. */
+/* Fælles layout, kort, svarfelter og betjening fra byg-motor/stil.css. */
 .kulstof-wrap{--max:1500px}
 .kulstof-head{padding:18px 0 8px}
 .kulstof-head::before{display:none}
 .overlinje{font:500 11px var(--mono);color:var(--slate);letter-spacing:.8px}
 .overlinje span{background:#ffe198;border:1px solid #c29d4d;border-radius:3px;padding:1px 5px;letter-spacing:0}
+.hi{margin-left:5px}
 #intro{font:17px/1.4 var(--body);color:#3e4e4c;max-width:80ch}
 .landskab-model{margin-top:12px}
 .rig-body{grid-template-columns:minmax(0,1fr) 330px}
-.fane:disabled{opacity:.5;cursor:default}
-.niveauer{display:flex;gap:5px}
-.niveauer [aria-pressed=true]{background:var(--accent);color:white}
-#pulje-panel,#kort-bar{display:flex;flex-direction:column;gap:11px}
 .fremskridt{font:500 11px var(--mono);color:var(--slate)}
-#pulje-figur,#landskab{display:block;width:100%;height:auto;max-height:calc(100dvh - 180px);min-height:0;user-select:none;-webkit-user-select:none}
-#pulje-figur .ordtekst{font-size:25px}
-.landskabsrum{width:100%;overflow:auto;background:#fffdf8;overscroll-behavior-x:contain}
-.landskabsrum.overblik #landskab{height:calc(100dvh - 185px);width:100%}
-#former{justify-content:flex-start}
-.form-kort{font:700 15px var(--display);background:var(--formfarve);border:2px solid var(--ink);border-radius:10px;box-shadow:2px 2px 0 var(--ink);padding:7px 11px;text-align:left;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;max-width:100%}
-.form-kort strong{display:block;font-size:16px}
-.form-kort span{font-size:10px;line-height:1.3;display:block;margin-top:3px;font-weight:500}
-.form-kort[aria-pressed=true]{outline:3px solid var(--amber);outline-offset:2px;background:#fff6d6}
-#besked.fejl{background:#ffe9e3;border:2px solid var(--coral);border-radius:10px;padding:8px 10px}
-#besked.korrekt{background:#e6f5dc;border:2px solid var(--lime);border-radius:10px;padding:8px 10px}
-.sted{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
-.sted-flade{fill:transparent;stroke:transparent;stroke-width:5}
-.sted.over .sted-flade,.sted:focus-visible .sted-flade{fill:#fff8ab2b;stroke:var(--accent);stroke-dasharray:12 8}
-.sted.hint .sted-flade{fill:#ffe09344;stroke:var(--coral);stroke-width:7;stroke-dasharray:12 8}
-.navnefelt{fill:#fffdf2ed;stroke:var(--ink);stroke-width:2;rx:11}
-.stednavn{font-family:var(--display);font-size:27px;font-weight:700;fill:var(--ink)}
-.svar-tomt{fill:#fff3c8;stroke:#d99400;stroke-width:2.6;stroke-dasharray:7 5}
-.svar-rigtigt{stroke:#2e7d32;stroke-width:2.6}
-.svartekst{font-family:var(--display);font-size:23px;font-weight:700;fill:var(--ink)}
-.sted.faerdigt .navnefelt{fill:#ddf2cf;stroke:#2e7d32}
-.pile{pointer-events:none}
-.pile g{opacity:.65;transition:opacity .12s}
-.pile .aktiv{opacity:1}
-.pile .aktiv path{stroke:#bf613a;stroke-width:11}
-.pile .daempet{opacity:.12}
-.visning-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 13px;border-top:2px solid var(--ink);background:var(--accent-lys);font:12px var(--display)}
-.visning-bar label{display:flex;align-items:center;gap:6px}
-.visning-bar input{width:16px;height:16px;accent-color:var(--accent)}
-.visning-bar select{max-width:280px;padding:5px;border:1px solid var(--ink);border-radius:5px;background:white;font:12px var(--display)}
-.visning-bar .spacer{flex:1}
-.figur-link{font-size:12px;text-underline-offset:3px}
+#figur{max-height:calc(100dvh - 230px);min-height:0}
+#figur .ordtekst{font-size:25px}
+#figur .kulstof-pil{paint-order:stroke;pointer-events:none}
+#figur .del.tidligere-pil{opacity:.2;filter:none}
+body:not(.vis-tidligere) .tidligere-navn{display:none}
+body.vis-tidligere #figur .tidligere-pil{opacity:.55}
 .figur-note{padding:6px 4px;font:11px var(--body);color:var(--slate)}
-.find-element{padding:8px 14px;font:11px var(--display)}
-#steder{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
-#steder button{font:500 11px var(--display);padding:4px 7px;border:1px solid #c2cdbb;background:white;border-radius:5px;cursor:pointer}
-.proces-forklaring{margin:0 14px 15px;padding:12px 15px;background:#fff3dc;border-left:4px solid #b87a47;font:15px/1.4 var(--body)}
-.proces-forklaring h2{font:700 17px var(--display);margin-bottom:5px}
-#faerdig h2{font:700 18px var(--display)}
-#faerdig p{font:15px/1.4 var(--body);margin:7px 0}
-#traek-kort{position:fixed;z-index:200;pointer-events:none;transform:translate(-50%,-120%);padding:8px 14px;border:2px solid var(--ink);border-radius:10px;box-shadow:3px 3px 0 #17211f55;font:700 17px var(--display)}
-.reaktion{font:14px/1.5 var(--mono);overflow-wrap:anywhere}
+.visning-bar{display:flex;justify-content:flex-end;padding:8px 13px;border-top:2px solid var(--ink);background:var(--accent-lys)}
+.figur-link{font:12px var(--display);text-underline-offset:3px}
+.ren-figur{display:none}
 .kulstof-foot{max-width:1500px;padding:24px;margin:auto;display:flex;justify-content:space-between;font:13px var(--display)}
-body.pulje-trin #kort-bar,body.pulje-trin #landskabsrum,body.pulje-trin .niveauer,body.pulje-trin #pile-kontrol,body.pulje-trin .find-element{display:none}
-body:not(.pulje-trin) #pulje-panel,body:not(.pulje-trin) #pulje-ramme{display:none}
-body.figur-visning .side,body.figur-visning #pulje-ramme,body.figur-visning .trin-nav,body.figur-visning .niveauer,body.figur-visning .find-element,body.figur-visning #sted-lag,body.figur-visning #forfra,body.figur-visning #fig-intro{display:none!important}
-body.figur-visning #landskabsrum{display:block}
+[hidden]{display:none!important}
+body.figur-visning .side,body.figur-visning #figur-ramme,body.figur-visning #fig-intro,body.figur-visning #tidligere-kontrol{display:none!important}
 body.figur-visning .rig-body{grid-template-columns:1fr}
-body.figur-visning #landskab{max-height:calc(100dvh - 180px)}
-body.fokus #pulje-figur,body.fokus #landskab{max-height:calc(100dvh - 145px)}
+body.figur-visning .ren-figur{display:block;width:100%;height:auto;max-height:calc(100dvh - 180px);object-fit:contain}
+body.fokus #figur{max-height:calc(100dvh - 145px)}
 body.fokus .kulstof-foot{display:none}
 @media(min-width:861px) and (max-height:700px){
  .top-in{height:44px}.kulstof-head{padding-top:10px}.kulstof-head h1{font-size:29px;margin:8px 0 5px}#intro{font-size:15px}
- .side{padding:10px;gap:8px}.ord{font-size:13px;padding:4px 9px}.bakke{gap:6px;padding:7px}.opg p{font-size:13px}#pulje-panel,#kort-bar{gap:8px}
+ .side{padding:10px;gap:8px}.ord{font-size:13px;padding:4px 9px}.bakke{gap:6px;padding:7px}.opg p{font-size:13px}
  .rig-head{padding:7px 10px}.landskab-model{scroll-margin-top:54px}
 }
 @media(max-width:1100px) and (min-width:861px){.rig-body{grid-template-columns:minmax(0,1fr) 290px}}
 @media(max-width:860px){
  .rig-body{grid-template-columns:1fr}.side{max-height:45vh}.kulstof-wrap{padding:0 16px}.kulstof-head h1{font-size:28px}.hi{white-space:normal}
- #pulje-figur,#landskab{max-height:none}.landskab-model{scroll-margin-top:70px}
- #pulje-panel,#kort-bar{gap:8px}.opg p{font-size:13px}.ord{font-size:13px;padding:4px 8px}
- .find-element{font-size:11px}
+ #figur{max-height:none}.landskab-model{scroll-margin-top:70px}.opg p{font-size:13px}.ord{font-size:13px;padding:4px 8px}
 }
 @media(max-width:620px){
  .overlinje{font-size:10px}.kulstof-head{padding-top:12px}#intro{font-size:15px}.kulstof-head h1{font-size:25px}
- #pulje-figur,#landskab{width:1000px;max-width:none}.landskab-model .side{max-height:43vh}
- .niveau-bar .spacer{display:none}.niveau-bar [data-feedback-vaert]{margin-left:auto}
- .trin-nav .fane{font-size:12px;padding:4px 9px}.visning-bar{gap:8px}.visning-bar .spacer{display:none}
- .ord{font-size:12px;padding:4px 7px}.bakke{gap:6px;padding:7px}.side{padding:9px}.form-kort{padding:5px 9px}.form-kort strong{font-size:14px}
- body.figur-visning #landskab{width:100%;height:auto;max-height:none}.landskabsrum.overblik #landskab{width:100%;height:auto}
- #pulje-panel .opg p{display:none}
+ .landskab-model .side{max-height:43vh}.rig-head .spacer{display:none}.rig-head [data-feedback-vaert]{margin-left:auto}
+ .kontakt{font-size:12px}.ord{font-size:12px;padding:4px 7px}.bakke{gap:6px;padding:7px}.side{padding:9px}
+ body.figur-visning .ren-figur{max-height:none}
 }
-[hidden]{display:none!important}
-.hi{margin-left:5px}
-@media(min-width:861px){#pulje-figur,#landskab{max-height:calc(100dvh - 230px)}}
-/* Som vandets kredsløb bruger puljetrinnet den almindelige figurvisning. */
-body.pulje-trin:not(.figur-visning) #zoom{display:none}

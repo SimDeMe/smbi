@@ -1,32 +1,15 @@
 import assert from 'node:assert/strict';
-import {STEDER,PULJER,FORMER,krav,placer,fremskridt,hentData,gemData} from './model.js';
-const t=hentData(null);
-assert.equal(t.trin,'puljer');assert.equal(t.puljer.size,0);
-assert.equal(hentData({trin:'former',puljer:['hav','ukendt']}).trin,'puljer','Trin 2 kræver alle puljer');
-const delvis=hentData({puljer:['hav','kul','ukendt'],loest:['skov:organisk'],niveau:'B'});
-assert.deepEqual([...delvis.puljer],['hav','kul']);
-const gendannet=hentData(gemData(delvis));assert.equal(gendannet.puljer.size,2);assert.equal(gendannet.loest.size,1);
-const allePuljer=hentData({trin:'former',puljer:PULJER.map(p=>p.id)});assert.equal(allePuljer.trin,'former');
-assert(PULJER.every(p=>STEDER.some(s=>s.id===p.id)));assert(!PULJER.some(p=>['roeg','vulkan','flod'].includes(p.id)));
-assert.deepEqual(fremskridt(t),{antal:0,total:12,faerdig:false});
-assert.equal(placer(t,'skov','co2').status,'forkert');
-assert.equal(fremskridt(t).antal,0);
-// Genbrug er afgørende: samme form skal kunne sættes på mange elementer.
-for(const s of STEDER)for(const f of krav(s,'C'))assert.equal(placer(t,s.id,f).status,'rigtig');
-assert.deepEqual(fremskridt(t),{antal:12,total:12,faerdig:true});
-assert.equal(placer(t,'skov','organisk').status,'allerede');
-assert.equal(fremskridt(t).antal,12);
-assert.equal(placer(t,'hav','hco3').status,'ukendt','C må ikke godkende B-former');
-t.niveau='B';
-assert.deepEqual(fremskridt(t),{antal:12,total:15,faerdig:false});
-assert.equal(placer(t,'hav','hco3').status,'rigtig');
-assert.equal(placer(t,'flod','hco3').status,'rigtig');
-assert.equal(placer(t,'hav','co3').status,'rigtig');
-assert.deepEqual(fremskridt(t),{antal:15,total:15,faerdig:true});
-assert.equal(placer(t,'kalksten','co3').status,'forkert','Fast kalk må ikke sidestilles med en opløst ion');
-t.niveau='C';assert.equal(fremskridt(t).total,12);assert(fremskridt(t).faerdig);
-t.niveau='B';const gen=hentData(JSON.parse(JSON.stringify(gemData(t))));assert.equal(gen.loest.size,15);assert(fremskridt(gen).faerdig);
-assert.equal(hentData({loest:['ukendt:co2','skov:co2','skov:organisk'],niveau:'A'}).loest.size,1);
-assert.equal(hentData({loest:'forkert'}).loest.size,0);
-for(const s of STEDER){for(const f of krav(s,'B'))assert(FORMER[f]);assert(s.punkt[0]>=0&&s.punkt[0]<=1600&&s.punkt[1]>=0&&s.punkt[1]<=960);}
-console.log('Kulstofmodel: genbrugelige former, C/B-krav, overgang med bevaret fremskridt, vand/mineral og lagring OK.');
+import {LAG,PULJER,PROCESSER,hentData,gemData} from './model.js';
+import {KULSTOFFIGUR} from './puljer.js';
+assert.deepEqual(LAG.map(l=>l.ord.length),[10,5,6]);
+assert.equal(new Set(LAG.flatMap(l=>l.ord)).size,21);
+assert(LAG[2].ord.includes('forvitring'));assert(LAG[2].ord.includes('fossil'));
+assert.deepEqual([...hentData({version:3,puljer:['hav','kul','ukendt'],loest:['skov:organisk']}).loest],['hav','kul']);
+const ugyldig=hentData({version:4,lag:2,loest:['hav','fossil','ukendt']});assert.equal(ugyldig.lag,0);assert.deepEqual([...ugyldig.loest],['hav']);
+const delvis=hentData({version:4,lag:1,loest:[...LAG[0].ord,'foto']});assert.equal(delvis.lag,1);assert.equal(delvis.loest.size,11);
+const igen=hentData(gemData(delvis));assert.deepEqual([...igen.loest],[...delvis.loest]);assert.equal(igen.lag,1);
+assert.equal(hentData({version:4,loest:'forkert'}).loest.size,0);
+for(const p of KULSTOFFIGUR.pladser){assert(p.x>=170&&p.x<=1568-170);assert(p.y>=24&&p.y<=1003-24);}
+for(const p of PROCESSER){assert(p.stier.length);assert(p.tekst.length>60);assert(LAG[p.lag].ord.includes(p.id));}
+assert.equal(KULSTOFFIGUR.pladser.length,PULJER.length+PROCESSER.length);
+console.log('Kulstofmodel: tre lag, 10/5/6 ord, procesdata, migration og gyldig lagvis lagring OK.');

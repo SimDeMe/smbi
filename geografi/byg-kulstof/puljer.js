@@ -1,33 +1,45 @@
-// Første trin bruger præcis samme motor og komponenter som vandets kredsløb.
+// Alle tre lag bruger samme motor og komponenter som vandets kredsløb.
 import {Byg} from '../../byg-motor/motor.js';
-import {PULJER,STEDER} from './model.js';
+import {PULJER,PROCESSER,LAG,ALLE} from './model.js';
 import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
-
-const bokse={luft:[1390,65],skov:[230,190],jord:[250,570],hav:[1360,470],plankton:[1100,565],skaller:[1390,630],kul:[200,850],gas:[640,660],olie:[700,940],kalksten:[1240,895]};
-export const PULJEFIGUR={
-  id:'puljer',navn:'Kulstofpuljerne',vb:[BREDDE,HOEJDE],boks:[310,48],mobilBredde:1000,
-  lag:[{navn:'Puljerne',ord:PULJER.map(p=>p.id)}],
-  dele:[{ord:null,svg:LANDSKAB.replace('id="landskabsbillede"','id="puljebillede"')}],
-  pladser:PULJER.map(p=>{
-    const s=STEDER.find(s=>s.id===p.id),[x,y]=bokse[p.id];
-    return {ord:p.id,x,y,maal:s.punkt};
-  })
+const pil=p=>p.stier.map(sti=>`<path class="kulstof-pil" d="${sti}" fill="none" stroke="${p.lag===1?'#087cae':'#a64d22'}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
+export const KULSTOFFIGUR={
+ id:'kulstof',navn:'Kulstofkredsløbet',vb:[BREDDE,HOEJDE],boks:[340,48],mobilBredde:1000,
+ lag:LAG,
+ dele:[{ord:null,svg:LANDSKAB},...PROCESSER.map(p=>({ord:p.id,svg:pil(p)}))],
+ pladser:[...PULJER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.punkt})),...PROCESSER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.maal}))]
 };
-const ORD=Object.fromEntries(PULJER.map(p=>[p.id,{ord:p.navn,tekst:`${p.hint} Her lagres kulstof. ${STEDER.find(s=>s.id===p.id).tekst}`} ]));
+const ORD=Object.fromEntries(ALLE.map(p=>[p.id,{ord:p.navn,tekst:p.tekst}]));
 
-export function opretPuljer(t,gem,fortsaet){
-  const $=id=>document.getElementById(id);
-  // De fælles handlinger gemmes også ved delvist gennemførte puljer.
-  class PuljeByg extends Byg{
-    indsend(){super.indsend();husk();}
-    hint(){super.hint();husk();}
-    tegnPanel(){super.tegnPanel();$('pulje-fremskridt').textContent=`${this.loest.size} af ${PULJER.length} puljer navngivet`;}
+export function opretKredslob(t,gem){
+ const $=id=>document.getElementById(id);
+ class KulstofByg extends Byg{
+  tegn(){super.tegn();if(this.gem)this.gem(this);}
+  tegnFigur(){
+   super.tegnFigur();
+   this.ui.svg.setAttribute('data-lag',this.lag);
+   this.ui.svg.querySelectorAll('.plads').forEach(g=>{
+    g.classList.toggle('tidligere-navn',this.ordLag[this.fig.pladser[+g.dataset.i].ord]<this.lag);
+    const tekst=g.querySelector('.ordtekst');if(tekst.textContent.length>24)tekst.style.fontSize='23px';
+   });
+   this.ui.svg.querySelectorAll('.del[data-ord]').forEach(g=>{g.classList.toggle('tidligere-pil',this.ordLag[g.dataset.ord]<this.lag);});
+   $('fig-intro').textContent=LAG[this.lag].intro;
+   $('tidligere-kontrol').hidden=this.lag===0;
   }
-  const m=new PuljeByg(PULJEFIGUR,{
-    svg:$('pulje-figur'),bakke:$('bakke'),besked:$('pulje-besked'),hint:$('pulje-hint'),indsend:$('pulje-indsend'),lagliste:$('pulje-lagliste'),opgTitel:$('pulje-titel'),opgTekst:$('pulje-opgave'),kort:$('pulje-faerdig'),sr:$('sr-status')
-  },{svaer:()=>false,eneFigur:()=>true,faerdig:()=>{},naesteTekst:()=> 'Fortsæt til kulstoffets former',naeste:fortsaet},ORD);
-  const husk=()=>{t.puljer=new Set(m.loest);gem();$('trin-former').disabled=m.loest.size!==PULJER.length;};
-  m.loest=new Set(t.puljer);m.lagFaerdig=m.faerdig();
-  $('pulje-hint').onclick=()=>m.hint();$('pulje-indsend').onclick=()=>m.indsend();
-  return m;
+  tegnPanel(){
+   super.tegnPanel();
+   const ord=LAG[this.lag].ord;
+   $('fremskridt').textContent=`${ord.filter(id=>this.loest.has(id)).length} af ${ord.length} på plads i laget`;
+   if(this.faerdig()){
+    const slut=document.createElement('p');slut.className='slut';slut.textContent='Forklar kulstoffets vej fra atmosfæren gennem en levende organisme og videre til en geologisk pulje. Brug pilenes retning.';
+    this.ui.kort.querySelector('.slut')?.replaceWith(slut);
+   }
+  }
+ }
+ const m=new KulstofByg(KULSTOFFIGUR,{
+  svg:$('figur'),bakke:$('bakke'),besked:$('besked'),hint:$('hint'),indsend:$('indsend'),lagliste:$('lagliste'),opgTitel:$('opg-titel'),opgTekst:$('opg-tekst'),kort:$('faerdig-kort'),sr:$('sr-status')
+ },{svaer:()=>false,eneFigur:()=>true,faerdig:()=>{},naesteTekst:()=>null,naeste:()=>{}},ORD);
+ Object.assign(m,t);m.lagFaerdig=m.lagLoest();m.blandBakke();m.gem=gem;
+ $('hint').onclick=()=>m.hint();$('indsend').onclick=()=>m.indsend();
+ return m;
 }

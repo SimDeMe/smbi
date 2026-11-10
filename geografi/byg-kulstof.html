@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Byg kulstofkredsløbet — kulstoffets former i landskabet — smbi.dk</title>
-<meta name="description" content="Identificér først kulstofpuljerne i landskabet. Placér derefter kulstoffets former på C-niveau, og fortsæt til B med havets opløste ioner.">
+<title>Byg kulstofkredsløbet — puljer og processer — smbi.dk</title>
+<meta name="description" content="Byg kulstofkredsløbet i tre lag: puljerne, de hurtige processer og de geologiske processer. Sæt navnene på puljer og pile i et sammenhængende landskab.">
 <!-- Deling, ikoner og kanonisk adresse -->
 <link rel="canonical" href="https://smbi.dk/geografi/byg-kulstof.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="smbi.dk">
 <meta property="og:locale" content="da_DK">
 <meta property="og:url" content="https://smbi.dk/geografi/byg-kulstof.html">
-<meta property="og:title" content="Byg kulstofkredsløbet — kulstoffets former i landskabet">
-<meta property="og:description" content="Identificér først kulstofpuljerne i landskabet. Placér derefter kulstoffets former på C-niveau, og fortsæt til B med havets opløste ioner.">
+<meta property="og:title" content="Byg kulstofkredsløbet — puljer og processer">
+<meta property="og:description" content="Byg kulstofkredsløbet i tre lag: puljerne, de hurtige processer og de geologiske processer. Sæt navnene på puljer og pile i et sammenhængende landskab.">
 <meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -31,10 +31,10 @@
   "@graph": [
     {
       "@type": "LearningResource",
-      "name": "Byg kulstofkredsløbet — kulstoffets former i landskabet",
+      "name": "Byg kulstofkredsløbet — puljer og processer",
       "url": "https://smbi.dk/geografi/byg-kulstof.html",
       "inLanguage": "da-DK",
-      "description": "Identificér først kulstofpuljerne i landskabet. Placér derefter kulstoffets former på C-niveau, og fortsæt til B med havets opløste ioner.",
+      "description": "Byg kulstofkredsløbet i tre lag: puljerne, de hurtige processer og de geologiske processer. Sæt navnene på puljer og pile i et sammenhængende landskab.",
       "learningResourceType": "interaktiv øvelse",
       "educationalLevel": "Gymnasialt niveau (stx, hf)",
       "isAccessibleForFree": true,
@@ -56,7 +56,7 @@
 }
 </script>
 </head>
-<body class="geo pulje-trin">
+<body class="geo">
 <header class="top" id="site-top">
   <div class="rainbow"></div>
   <div class="top-bar">
@@ -73,61 +73,44 @@
   <div class="head kulstof-head">
     <p class="overlinje">Naturgeografi · Byg figuren <span>Alfa</span></p>
     <h1>Byg <span class="hi" style="--hc:#CBE7F8">kulstofkredsløbet</span></h1>
-    <p id="intro">Identificér kulstofpuljerne, og undersøg derefter kulstoffets former.</p>
+    <p id="intro">Sæt navn på puljerne, og byg derefter kredsløbets pile i to proceslag.</p>
   </div>
   <section id="byg" class="rig landskab-model" aria-label="Byg kulstofkredsløbet">
     <div class="rig-bar"></div>
-    <div class="rig-head niveau-bar">
-      <div class="faner trin-nav" role="tablist" aria-label="Opgavens trin"><button type="button" class="fane" id="trin-puljer" role="tab" aria-controls="kulstof-scene" data-trin="puljer" aria-pressed="true" aria-selected="true">1 · Puljer</button><button type="button" class="fane" id="trin-former" role="tab" aria-controls="kulstof-scene" data-trin="former" aria-pressed="false" aria-selected="false" disabled>2 · Kulstoffets former</button></div>
-      <div class="niveauer" role="group" aria-label="Vælg niveau"><button type="button" class="btn-mini" data-niveau="C" aria-pressed="true">C-niveau</button><button type="button" class="btn-mini" data-niveau="B" aria-pressed="false">B-niveau</button></div>
-      <span class="spacer"></span><div data-feedback-vaert></div><button type="button" class="btn-mini" id="vis-opgave" aria-pressed="true">Vis kun figuren</button><button type="button" class="btn-mini" id="fokus" aria-pressed="false">Fokus</button>
+    <div class="rig-head">
+      <span class="mono">Byg figuren · tre lag</span>
+      <span class="spacer"></span>
+      <label id="tidligere-kontrol" class="kontakt" hidden><input id="tidligere" type="checkbox"> Vis tidligere navne</label>
+      <div data-feedback-vaert></div><button type="button" class="btn-mini" id="vis-opgave" aria-pressed="true">Vis kun figuren</button><button type="button" class="btn-mini" id="fokus" aria-pressed="false">Fokus</button>
     </div>
     <div class="rig-body">
-      <div class="scene" id="kulstof-scene" role="tabpanel" aria-labelledby="trin-puljer">
+      <div class="scene">
         <p class="fig-intro" id="fig-intro">En pulje er et lager for kulstof. Sæt navnene på puljerne i landskabet.</p>
-        <div class="fig-ramme" id="pulje-ramme"><svg id="pulje-figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Kulstofpuljerne med pladser til fagordene"></svg></div>
-        <div id="landskabsrum" class="landskabsrum"><svg id="landskab" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1568 1003" role="group" aria-label="Et landskab i snit med kulstofpuljer" data-pladstjek="figur"></svg></div>
-        <p class="figur-note">Skematisk tværsnit. Lag, dybder og afstande er ikke i målestok.</p>
+        <div class="fig-ramme" id="figur-ramme"><svg id="figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Kulstofkredsløbet med pladser til puljer og processer"></svg></div>
+        <img class="ren-figur" src="byg-kulstof/landskab-laerebog.webp" width="1568" height="1003" alt="Et sammenhængende kystlandskab i snit med skov, jord, bjergflod, hav og geologiske lagre.">
+        <p class="figur-note">Skematisk tværsnit uden målestok. Pilene viser udvalgte veje for kulstof og kulstofholdige materialer.</p>
       </div>
       <aside class="side" aria-label="Opgaven">
-        <div id="pulje-panel">
-          <div class="opg"><h2 id="pulje-titel"></h2><p id="pulje-opgave"></p></div>
-          <div class="bakke" id="bakke" aria-label="Puljernes navne" data-pladstjek="kontrol"></div>
-          <p class="besked" id="pulje-besked" aria-live="polite"></p>
-          <div class="faerdig-kort" id="pulje-faerdig" hidden></div>
-          <div class="knapper"><button type="button" class="btn-stor lys" id="pulje-hint">Giv et hint</button><button type="button" class="btn-stor" id="pulje-indsend">Indsend svar</button></div>
-          <p id="pulje-fremskridt" class="fremskridt" aria-live="polite"></p>
-          <div class="lag"><h3>Lagene</h3><ol id="pulje-lagliste"></ol></div>
-        </div>
-        <div class="kort-bar" id="kort-bar">
-          <div class="opg"><h2>Kulstoffets former</h2><p>Træk en kulstofform til en pulje. Samme kort kan bruges flere gange. Du får feedback straks.</p></div>
-          <div id="former" class="bakke" role="group" aria-label="Kulstoffets former" data-pladstjek="kontrol"></div>
-          <p id="besked" class="besked" role="status" aria-live="polite"></p>
-          <button type="button" class="btn-stor lys" id="hint">Giv et hint</button>
-          <p id="fremskridt" class="fremskridt" aria-live="polite"></p>
-          <div id="faerdig" class="faerdig-kort" hidden><h2 id="faerdig-titel"></h2><p id="faerdig-tekst"></p><button type="button" id="fortsaet-b" class="btn-stor">Fortsæt til B-niveau →</button></div>
-        </div>
+        <div class="opg"><h2 id="opg-titel"></h2><p id="opg-tekst"></p></div>
+        <div class="bakke" id="bakke" aria-label="Fagord" data-pladstjek="kontrol"></div>
+        <p class="besked" id="besked" aria-live="polite"></p>
+        <div class="faerdig-kort" id="faerdig-kort" hidden></div>
+        <div class="knapper"><button type="button" class="btn-stor lys" id="hint">Giv et hint</button><button type="button" class="btn-stor" id="indsend">Indsend svar</button></div>
+        <p id="fremskridt" class="fremskridt" aria-live="polite"></p>
+        <div class="lag"><h3>Lagene</h3><ol id="lagliste"></ol></div>
+        <div class="side-bund"><button type="button" class="btn-mini" id="forfra">Byg forfra</button></div>
       </aside>
     </div>
-    <div class="visning-bar">
-      <label id="pile-kontrol"><input type="checkbox" id="vis-processer"> Vis kredsløbets pile</label>
-      <label id="proces-valg-label" hidden><span class="sr">Vælg en proces</span><select id="proces-valg"><option value="">Følg en proces …</option></select></label>
-      <span class="spacer"></span><a class="figur-link" href="byg-kulstof/landskab-laerebog.webp" target="_blank" rel="noopener">Åbn figuren</a><button type="button" class="btn-mini" id="zoom" aria-pressed="false">Vis overblik</button><button type="button" class="btn-mini" id="forfra">Byg forfra</button>
-    </div>
-    <div class="find-element"><span>Find et element:</span><div id="steder" aria-label="Gå til elementer i landskabet"></div></div>
-    <div id="proces-forklaring" class="proces-forklaring" hidden><h2 id="proces-titel"></h2><p id="proces-tekst"></p></div>
+    <div class="visning-bar"><a class="figur-link" href="byg-kulstof/landskab-laerebog.webp" target="_blank" rel="noopener">Åbn figuren</a></div>
   </section>
   <p class="sr" id="sr-status" aria-live="polite"></p>
-  <details class="om om-model"><summary>Om C- og B-niveau, landskabet og kilderne</summary><div>
-    <p><b>Trin 1 – puljerne:</b> En pulje er et lager for kulstof. Alle navnene ligger i ordbakken. Træk dem til de gule pladser, og tryk Indsend svar. Korrekte navne låses; forkerte returneres til bakken. Figuren viser delpuljer, som kan samles til større puljer i andre modeller.</p>
-    <p><b>C-niveau:</b> Placér CO₂, organisk kulstof og kulstof bundet i kalk. Organisk kulstof er en bred kategori, som her omfatter både levende organismer, døde rester og fossile brændsler. Olie består især af kulbrinter, og naturgas især af metan. »Kulstof i kalk« betegner det faste mineralbundne kulstof i skaller og kalksten.</p>
-    <p><b>Fortsæt til B:</b> De korrekte C-placeringer bliver stående. B udvider det samme landskab med yderligere opløste kulstofformer i hav og flod. Du kan også vælge B fra starten. Når du skifter tilbage til C, er dine B-svar gemt.</p>
-    <div data-kun-b hidden><p><b>B-niveau:</b> Havvandet skal have både CO₂, hydrogenkarbonat (HCO₃⁻) og karbonat (CO₃²⁻). De findes i det samme vand; HCO₃⁻ udgør den største del af det opløste uorganiske kulstof. Floden fører blandt andet HCO₃⁻ fra forvitring til havet. Kalkskaller og kalksten indeholder fast calciumkarbonat, CaCO₃.</p>
-      <p>Et idealiseret eksempel med et calciumsilikat:</p><p class="reaktion">CaSiO₃ + 2 CO₂ + H₂O → Ca²⁺ + 2 HCO₃⁻ + SiO₂</p><p>Kalkdannelse:</p><p class="reaktion">Ca²⁺ + 2 HCO₃⁻ → CaCO₃ + CO₂ + H₂O</p><p>Samlet: <b>CaSiO₃ + CO₂ → CaCO₃ + SiO₂</b>. Kalkdannelse frigiver altså også CO₂. Sammen med silikatforvitring giver den netto lagring; opløsning af gammel kalk og ny kalkdannelse alene giver ikke det samme langsigtede nettooptag.</p>
-    </div>
-    <p><b>Forvitring og den langsomme vej:</b> Slå pilene til, og vælg en proces. CO₂ opløst i vand reagerer med silikatmineraler, og floder fører opløste stoffer til havet. Kalkskaller kan aflejres og danne kalksten. Kulstofholdige bjergarter kan føres i dybet, hvor opvarmning og reaktioner kan frigive CO₂, som senere afgasses gennem vulkaner. Det kræver ikke fuldstændig opsmeltning. Mekanisk sønderdeling af sten alene optager ikke CO₂.</p>
-    <p><b>Forenklinger:</b> Landskabet er et skematisk snit, uden målestok for afstande, lagre eller tid. Kul, olie, gas og kalk er vist nær hinanden for at kunne sammenlignes. CO₂ er usynlig; røg og vulkanskyer markerer steder med udledning. Et felt spørger til et bestemt materiale – fx planternes væv eller humus – og viser ikke alle kulstofforbindelser i hele omgivelserne. Havet indeholder også organisk stof, men feltet »Havvand« undersøger opløst uorganisk kulstof. Pilene udvælger nogle veje; de er ikke en fuldstændig massebalance.</p>
-    <p><b>Betjening:</b> Træk et ord til en gul plads, eller vælg ordet og klik på pladsen. I trin 1 kontrolleres navnene med Indsend svar. I trin 2 får du feedback straks, og formkortene kan bruges igen. Tastatur: Tab til et kort, Enter, Tab til et element, Enter. »Find et element« flytter visningen og fokus til elementet. På telefonen kan du forstørre landskabet og rulle det. »Byg forfra« rydder placeringerne på begge niveauer. Fremskridt gemmes kun i din browser.</p>
+  <details class="om om-model"><summary>Om lagene, landskabet og kilderne</summary><div>
+    <p><b>Lag 1 – puljerne:</b> En pulje er et lager for kulstof. Alle navnene ligger i ordbakken. Figuren viser konkrete delpuljer, som kan samles i større puljer i andre modeller.</p>
+    <p><b>Lag 2 – de hurtige processer:</b> Fotosyntese, respiration og nedbrydning, hav–luft-udveksling, biologisk pumpe og forbrænding. Den biologiske pumpe flytter kulstof ned i havet; efterfølgende geologisk lagring kan vare meget længere. Forbrænding flytter kulstof hurtigt ud af langsomt dannede lagre.</p>
+    <p><b>Lag 3 – de geologiske processer:</b> Forvitring og flodtransport, aflejring af kalk, fossildannelse, landhævning og erosion, vulkansk afgasning og cementproduktion. Processerne samles efter deres forbindelse til bjergarter og geologiske lagre. Cementproduktion er en industriel frigivelse af geologisk kulstof og foregår hurtigt.</p>
+    <p><b>Den langsomme vej:</b> CO₂ opløst i vand reagerer med silikatmineraler. Floder fører opløste stoffer til havet, hvor kalkskaller kan dannes, aflejres og blive til kalksten. Kalkdannelse frigiver også CO₂; sammen med silikatforvitring kan forløbet give netto lagring. Mekanisk sønderdeling af sten alene optager ikke CO₂. I dybet kan opvarmning og reaktioner frigive CO₂, som senere afgasses gennem vulkaner. Det kræver ikke fuldstændig opsmeltning.</p>
+    <p><b>Forenklinger:</b> Afstande, dybder, lagre og tidsrum er ikke i målestok. Pilene udvælger nogle veje og er ikke en fuldstændig massebalance. En samlet pil kan repræsentere flere trin; to pile kan dele ét procesnavn. Fossildannelse viser særskilte veje fra landplanter mod kul og fra marint organisk stof mod olie og naturgas. Landhævning viser blotlægning af bjergarter, ikke en selvstændig CO₂-optagelse. CO₂ er usynlig; røg og vulkanskyer markerer steder med udledning.</p>
+    <p><b>Betjening:</b> Træk et fagord til en gul plads, eller vælg ordet og klik på pladsen. Tryk Indsend svar: korrekte ord låses, og forkerte vender tilbage til bakken. Tab og Enter kan bruges i stedet for musen; Delete sender et ikke indsendt ord tilbage. Efter et lag fortsætter du med Næste lag. Tidligere navne kan slås til, mens du arbejder med de nye pile. På telefonen kan figuren rulles vandret. Byg forfra rydder alle tre lag. Fremskridt gemmes kun i din browser.</p>
     <p><b>Kildegrundlag:</b> NaturgeografiGrundbogen C, afsnit 7.3, figur 7.3.4, og NaturgeografiGrundbogen B, afsnit 11.7, suppleret med <a href="https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/">NASA: The Carbon Cycle</a> og <a href="https://gml.noaa.gov/education/carbon_toolkit/">NOAA: Basics of the Carbon Cycle</a>. Figuren er en AI-genereret undervisningsillustration. Terræn og undergrund er skematiske og ikke i målestok. Idéen til Byg figuren er lånt med tilladelse fra Niels Kræmmer på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
   </div></details>
 </main>

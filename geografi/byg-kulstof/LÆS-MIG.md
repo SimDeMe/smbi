@@ -1,107 +1,79 @@
-# Byg kulstofkredsløbet – kulstoffets former i landskabet
+# Byg kulstofkredsløbet – puljer og processer
 
-`geografi/byg-kulstof.html` er **alfa**. Den åbner med første trin:
-identificér kulstofpuljerne i den godkendte lærebogsfigur.
+`geografi/byg-kulstof.html` er **alfa**. Den godkendte lærebogsfigur er
+uændret. Opgaven bruger samme fælles motor og komponenter som vandets
+kredsløb: ordbakke, gule svarfelter, træk/klik/tastatur, Indsend svar,
+hints, grønne låste navne og Næste lag.
 
-## Trin 1: puljerne – samme motor som vandets kredsløb
+## Tre lag
 
-`puljer.js` bruger `Byg` fra `byg-motor/motor.js`, og siden bruger
-`byg-motor/stil.css`: samme ordbakke, gule felter med henvisningsstreger,
-træk/klik/tastatur, Indsend svar, fejlforklaringer, hints og grønne låste navne
-som ved vandets kredsløb. Alle ti puljenavne er til rådighed fra starten,
-og eleven vælger selv rækkefølgen. Korrekte svar bliver stående; forkerte
-vender tilbage til bakken ved indsendelse. Figuren bevarer sine farver.
+1. **Puljerne:** atmosfæren, planter på land, jordens organiske stof,
+   havvand, havets organismer, aflejrede kalkskaller, kul, olie, naturgas
+   og kalksten. Alle ti navne er til rådighed i ordbakken.
+2. **De hurtige processer – fem ord:** fotosyntese, respiration og
+   nedbrydning, hav–luft-udveksling, biologisk pumpe og forbrænding.
+3. **De geologiske processer – seks ord:** forvitring og flodtransport,
+   aflejring af kalk, fossildannelse, landhævning og erosion,
+   vulkansk afgasning og cementproduktion.
 
-Puljerne er atmosfæren, planter på land, jordens organiske stof, havvand,
-havets organismer, aflejrede kalkskaller, kul, olie, naturgas og kalksten.
-Det er konkrete delpuljer, som kan samles til større puljer i andre modeller.
-Røggas og vulkansk afgasning er ikke selvstændige puljer i dette trin.
+Det tidligere lag med kulstoffets former og dets C/B-kort er fjernet efter
+brugerens ønske. Der er ingen placering af CO₂, organisk kulstof eller ionkort.
 
-Når navnene er på plads, åbnes trin 2: kulstoffets former. Man kan vende
-tilbage til puljerne, og delvist gennemførte, kontrollerede navne gemmes
-sammen med svarene fra C/B. »Vis kun figuren« skjuler opgaven.
+Nye procespile kommer frem i det relevante lag og står grå, indtil navnet
+sidder korrekt. Tidligere navne skjules under nye lag; de kan vises med
+»Vis tidligere navne«. Tidligere procespile er nedtonede, så der kun er
+fem eller seks nye procesnavne at arbejde med. »Vis kun figuren« giver
+adgang til det rene landskab. En færdig forklaring kan aflæses ved at
+pege på et korrekt ord eller fokusere det med tastaturet.
 
-Trin 2 beholder genbrugelige kulstofkort: eleven trækker et kort til et
-element eller vælger kortet og trykker på elementet. Et kort kan bruges
-mange gange, og havet kan rumme flere kort. Der gives feedback straks
-ved placering. Den fælles motor ændres ikke for at håndtere dette.
+## Faglige valg og forenklinger
 
-## C og B i samme landskab
+- Lagene organiserer opgaven. De betyder ikke, at alle processer i et lag
+  foregår lige hurtigt. Cementproduktion er en hurtig industriel
+  frigivelse fra et geologisk lager; den ligger sammen med bjergartsvejene.
+- Den biologiske pumpe flytter kulstof ned i havet. Efterfølgende
+  nedbrydning og lagring kan foregå på andre tidsskalaer.
+- Fotosyntesen har to pile med ét navn: fra luft til planter på land og
+  fra havvand til havets organismer.
+- Fossildannelsen har særskilte pile fra landplanter mod kul og fra
+  marint organisk stof mod olie/gas. Kalksten bliver ikke til olie.
+- Forvitringspilen samler kemisk forvitring og flodtransport af opløste
+  stoffer. Mekanisk sønderdeling alene optager ikke CO₂.
+- Kalkaflejring omfatter begravelse og senere stendannelse. Selve
+  kalkdannelsen frigiver også CO₂; sammen med silikatforvitring kan
+  forløbet give netto lagring.
+- Den dybe vej frem mod vulkansk afgasning er en samlet pil gennem flere
+  processer. Reaktioner ved opvarmning kan frigive CO₂ uden fuldstændig
+  opsmeltning. Figuren viser ikke en egentlig subduktionszone.
+- Landhævning blotlægger bjergarter, men optager ikke selv CO₂.
+- Puljer, pilebredder, afstande, lag og tidsrum er ikke proportionale.
+  Det er udvalgte veje, ikke en fuldstændig massebalance.
+- Røg og vulkanskyer markerer udledningssteder; CO₂ er usynlig.
 
-- **C:** 12 placeringer med tre brede kategorier: CO₂, organisk kulstof og
-  kulstof i fast kalk. Organisk kulstof omfatter både levende og dødt
-  organisk stof og fossile brændsler. Olie og gas behandles derfor som
-  organisk bundet kulstof, ikke som nye korttyper.
-- **B:** 15 placeringer. C-svar bevares; havet tilføjes HCO₃⁻ og CO₃²⁻,
-  og floden tilføjes HCO₃⁻. B kan vælges direkte, eller eleven kan vælge
-  »Fortsæt til B-niveau« efter C. Skift tilbage til C skjuler ionkort og
-  B-forklaringer, men bevarer svarene.
-- Flodens svarplads er kun aktiv på B. I C fremgår flodtransporten af de
-  valgfrie processer, uden at de to ionbegreber introduceres.
-- »Kulstof i kalk« er et fast mineral; B-ionkortene er udtrykkeligt
-  opløste former i vand. Kul og kalksten er forskellige lagre.
+Processernes faglige indhold er videreført og kontrolleret mod
+[NASA: The Carbon Cycle](https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/)
+den 10. november 2026, herunder forskellen på hurtige og langsomme veje,
+forvitring, havudveksling, fossildannelse og cementproduktion.
 
-Det erstatter den første udgaves tre separate figurer. Gamle URL-fragmenter
-`#hurtig`, `#geologi` og `#mennesker` fører til det fælles landskab.
-Den fælles motor i `byg-motor/` er uændret: genbrugelige kort og flere svar
-på samme element styres lokalt, så der ikke findes skjulte, enslydende kort,
-som kun accepteres på hver sin plads.
+## Filer og lagring
 
-## Filer og tilstand
+- `model.js`: puljer, procesnavne, pilegeometri, lag og validering af gemte svar.
+- `puljer.js`: figurdata og lokal integration med `byg-motor/motor.js`.
+- `side.js`: lagring, fokus, ren figurvisning og tastaturgenveje.
+- `stil.css`: lokale tilpasninger oven på `byg-motor/stil.css`.
+- `landskab.js` og `landskab-laerebog.webp`: godkendt lærebogsfigur,
+  1568 × 1003 px, ca. 256 KiB.
+- `illustration-prompt.md`: imagegen-prompt til den uændrede figur.
 
-- `landskab.js`: SVG-billedlag med den genererede illustration.
-- `landskab-laerebog.webp`: færdig illustration, 1568 × 1003 px, ca. 256 KiB.
-- `illustration-prompt.md`: den fulde prompt til den indbyggede imagegen-funktion.
-- `model.js`: former, elementer, C/B-krav, svarregler og processer.
-- `puljer.js`: figurdata og integration med den fælles Byg-motor til trin 1.
-- `side.js`: trinvalg, C/B-betjening, feedback og lagring.
-- `stil.css`: landskabet, klæbende kortbakke, stor visning, overblik og fokus.
-- `model.test.mjs` og `browser-test.mjs`: faglig svarstruktur og betjening.
+Kontrollerede svar, aktivt lag, forsøg og stjerner gemmes under
+`byg-kulstof.v2` med dataformat version 4. Godkendte puljenavne fra den
+foregående udgave bevares; gamle kemi-/formsvar overføres ikke til
+procesnavne. Ugyldige id'er fjernes, og senere lag kræver gennemførte
+forudgående lag. Ikke indsendte placeringer gemmes ikke. Byg forfra
+rydder alle tre lag. Siden virker også uden localStorage.
 
-Figuren er omtegnet med den indbyggede imagegen-funktion fra den første,
-naturtro illustration til en skematisk lærebogsfigur med tydelige konturer,
-rolige farveflader og sparsomme geologiske signaturer. Den er
-gemt i projektet som WebP (cwebp, kvalitet 92). Den viser en sammenhængende
-kyst, naturligt faldende bjergflod, skov og rødder, industri, vulkan, hav
-og sammenhængende sedimentære lag. Kul, den porøse olie/gas-fælde og
-kalklaget er adskilte. Den første illustration er bevaret i Git-historikken.
-Svarområderne er tilpasset lærebogsfigurens faktiske elementer. Billedet er skematisk, ikke et bestemt sted eller et
-geologisk profil i målestok. Opgavens svarregler og gemte svar er bevaret.
-
-»Se detaljer« viser den store figur; »Vis overblik« tilpasser hele motivet.
-Den valgfrie rene figurvisning skjuler kort og svarfelter. Højopløselig figur kan
-åbnes direkte fra sidens værktøjslinje.
-
-Korrekte formsvar gemmes som `element:form`, og puljenavne som id, under
-`byg-kulstof.v2` i browseren (dataformat version 3). Eksisterende C/B-svar
-bevares ved udvidelsen. Kun gyldige kombinationer og puljer læses ind.
-Trin 2 kan først genåbnes, når alle puljer er navngivet. Den tidligere v1-øvelses afslutningsmærker
-kan ikke oversættes til disse placeringer og importeres ikke. »Byg forfra«
-rydder puljer og svar på begge niveauer. Modellen virker uden adgang til localStorage.
-
-## Processerne er bevaret
-
-»Vis kredsløbets pile« og procesvælgeren viser fotosyntese, respiration,
-havudveksling, kemisk forvitring og flodtransport, biologisk pumpe,
-sedimentation, kalkdannelse/diagenese, subduktion/metamorfose/afgasning,
-landhævning, fossildannelse, forbrænding og cementproduktion i det samme
-landskab. Den valgte proces fremhæves og forklares. C-tekster bruger ikke
-hydrogenkarbonat eller karbonationer; B udvider den kemiske forklaring.
-
-## Faglige forenklinger
-
-Landskabet er et kvalitativt snit uden målestok. Lagre og tidsrum er ikke
-proportionale. Røg og vulkanskyer markerer kilder; CO₂ er usynlig. Felterne
-spørger til bestemte materialer: væv, humus, olie osv., ikke til alle stoffer
-i deres omgivelser. Havvandets felt handler om opløst uorganisk kulstof;
-organisk kulstof er vist på plankton og tang. De tre B-former findes i det
-samme havvand og er ikke fordelt på adskilte havlag.
-
-Silikatforvitring forbruger CO₂. Kalkdannelse frigiver også CO₂; kombinationen
-giver netto lagring. Kalkopløsning og genudfældning alene er ikke samme
-langsigtede nettooptag. CO₂ kan frigives under metamorfose uden fuldstændig
-opsmeltning. Ikke alt subduceret kulstof returneres straks. Disse forhold
-uddybes under modellen, med reaktionsligninger i B-visningen.
+Gamle fragmenter `#hurtig`, `#geologi` og `#mennesker` fører fortsat til
+landskabet. Den fælles motor og andre Byg figuren-opgaver er uændrede.
 
 ## Kildeundersøgelse, 10. november 2026
 
@@ -131,34 +103,20 @@ uddybes under modellen, med reaktionsligninger i B-visningen.
 ## Test
 
 ```sh
-python3 -m http.server 8777
 node geografi/byg-kulstof/model.test.mjs
 node geografi/byg-kulstof/browser-test.mjs
 ```
 
-Modeltesten kontrollerer gentagen brug af samme kort, C/B-krav, udvidelse af
-det samme havfelt, bevarelse af placeringer og validering af gemt tilstand.
-Browsertesten kontrollerer alle puljenavne i bakken, fejl og godkendelse ved
-Indsend svar, delvis lagring og overgang til trin 2. Den kontrollerer også
-ren figurvisning og billedindlæsning og udfører faktiske træk, klik og tastaturvalg, bygger C og
-fortsætter til B, genindlæser og afprøver fem skærmstørrelser samt touch.
-Skærmbilleder ligger i `værktøj/ud/` og er ikke med i git. Den tidligere
-standardtest fra `byg-motor/` suppleres her med en samlet test af
-puljetrinnet og den lokale svarstruktur i trin 2.
+Modeltesten kontrollerer migration, lagvis validering, pulje-/proces-id'er
+og placeringernes geometri. Browsertesten bygger alle tre lag med mus og
+tastatur, kontrollerer fejl, lagring og hints og afprøver touch samt fem
+skærmstørrelser. Billeder gemmes i den ignorerede mappe `værktøj/ud/`.
 
 ## Elevafprøvning – endnu ikke gennemført
 
-Undersøg ved tænke-højt-afprøvning, om eleven:
-
-1. genkender puljerne, placerer deres navne og skelner et lager fra en transport;
-2. opdager, at samme formkort kan bruges flere steder;
-3. forbinder organisk kulstof med planter, humus og fossile brændsler;
-4. skelner kul fra kalk og et fast mineral fra en opløst ion;
-5. kan fortsætte fra C til B og forklare, hvad der er nyt;
-6. forstår, at havets tre B-former findes i det samme vand;
-7. kan følge forvitring og begravelse gennem landskabet med pilene;
-8. kan bruge kortene og finde elementerne på telefonen.
-
-Spørg efterfølgende til et nyt tilfælde, fx hvorfor forbrænding af naturgas
-flytter kulstof til atmosfæren. Automatisk test dokumenterer funktion,
-ikke læringsudbytte.
+Undersøg ved tænke-højt-afprøvning, om eleven kan skelne puljer og
+processer, aflæse pilenes retning, forbinde forvitring med transport til
+havet og forklare forskellen på hurtig frigivelse og langsom lagring.
+Undersøg også, om fem/seks procesord giver en overskuelig opgave, og om
+»Vis tidligere navne« hjælper eleven med at forbinde de tre lag.
+Automatiske test dokumenterer funktion og layout, ikke læringsudbytte.
