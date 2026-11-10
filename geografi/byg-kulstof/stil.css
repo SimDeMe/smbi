@@ -1,0 +1,34 @@
+/* Fælles Byg figuren-motor, med lidt mere plads til de geologiske fagord. */
+.wrap{max-width:1500px}
+.head{padding-top:18px;padding-bottom:10px}
+.head h1{font-size:clamp(1.8rem,3vw,2.45rem)}
+.lead{max-width:90ch}
+.rig{margin-top:8px}
+.rig-body{grid-template-columns:minmax(0,1fr) 320px}
+.fig-intro{font-size:.9rem;line-height:1.4;min-height:2.8em}
+#figur .ordtekst{font-size:21px}
+#figur{min-height:330px;max-height:calc(100dvh - 165px)}
+.side{gap:9px}
+.side .ord{font-size:.85rem;padding:5px 9px}
+.reaktion{font-family:var(--mono);font-size:.9rem;overflow-wrap:anywhere;margin:8px 0}
+.om details{padding:8px 0}
+@media(min-width:861px) and (max-height:650px){
+  .top-in{height:44px}
+  .head{padding-top:10px;padding-bottom:4px}
+  .head h1{margin:7px 0}
+  .rig{margin-top:4px}
+  .fig-intro{font-size:.82rem}
+  #figur{max-height:420px;min-height:300px}
+  .lag-knap{font-size:.75rem}
+  .side{padding:10px 12px}
+}
+@media(max-width:1100px){.rig-body{grid-template-columns:minmax(0,1fr) 290px}}
+@media(max-width:860px){
+  .rig-body{display:flex;flex-direction:column}
+  .side{order:-1}
+}
+@media(max-width:620px){
+  .head{padding-top:14px}
+  #figur{max-height:none;min-height:0}
+  .fig-intro{min-height:0}
+}

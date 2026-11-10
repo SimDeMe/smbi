@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Byg kulstofkredsløbet — sæt fagordene på — smbi.dk</title>
+<meta name="description" content="Byg kulstofkredsløbet mellem land, hav og undergrund. Sæt navn på forvitring, sedimentation, vulkaner og menneskets påvirkning – lag for lag.">
+<!-- Deling, ikoner og kanonisk adresse -->
+<link rel="canonical" href="https://smbi.dk/geografi/byg-kulstof.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/geografi/byg-kulstof.html">
+<meta property="og:title" content="Byg kulstofkredsløbet — sæt fagordene på">
+<meta property="og:description" content="Byg kulstofkredsløbet mellem land, hav og undergrund. Sæt navn på forvitring, sedimentation, vulkaner og menneskets påvirkning – lag for lag.">
+<meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — naturgeografi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="../atlas/vendor/fonts/fonts.css">
+<link rel="stylesheet" href="../byg-motor/stil.css">
+<link rel="stylesheet" href="byg-kulstof/stil.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Byg kulstofkredsløbet — sæt fagordene på",
+      "url": "https://smbi.dk/geografi/byg-kulstof.html",
+      "inLanguage": "da-DK",
+      "description": "Byg kulstofkredsløbet mellem land, hav og undergrund. Sæt navn på forvitring, sedimentation, vulkaner og menneskets påvirkning – lag for lag.",
+      "learningResourceType": "interaktiv øvelse",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Person", "name": "Simon Messell" },
+      "publisher": { "@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/" },
+      "image": "https://smbi.dk/img/og-geografi.png",
+      "isPartOf": { "@id": "https://smbi.dk/#website" },
+      "about": { "@type": "Thing", "name": "Kulstofkredsløbet" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/" },
+        { "@type": "ListItem", "position": 2, "name": "Naturgeografi", "item": "https://smbi.dk/geografi.html" },
+        { "@type": "ListItem", "position": 3, "name": "Byg kulstofkredsløbet", "item": "https://smbi.dk/geografi/byg-kulstof.html" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body class="geo">
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/geografi.html">Naturgeografi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap head">
+    <div class="head-in">
+      <span class="eyebrow mono"><span class="blink"></span>Naturgeografi · kulstof · fagord</span>
+      <h1>Byg <span class="hi" style="--hc:#FFD9C2">kulstofkredsløbet</span></h1>
+      <p class="lead">Fra fotosyntese til forvitring og vulkaner: sæt navn på kulstoflagrene og processerne mellem dem. Byg figurerne lag for lag.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <section class="rig" id="byg" aria-label="Byg kulstofkredsløbet">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <div class="faner" id="faner" role="tablist" aria-label="Figurer"></div>
+        <span class="spacer"></span>
+        <label class="kontakt" title="Alle fagord på én gang"><input type="checkbox" id="svaer"> Svær udgave</label>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul overskrift og sidens menu">Fokus</button>
+      </div>
+      <div class="rig-body">
+        <div class="scene" id="scene" role="tabpanel" aria-labelledby="faner">
+          <p class="fig-intro" id="fig-intro"></p>
+          <div class="fig-ramme">
+            <svg id="figur" data-pladstjek="figur" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Figuren med pladser til fagordene"></svg>
+          </div>
+        </div>
+        <aside class="side" aria-label="Opgaven">
+          <div class="opg">
+            <h2 id="opg-titel"></h2>
+            <p id="opg-tekst"></p>
+          </div>
+          <div class="bakke" id="bakke" aria-label="Fagord" data-pladstjek="kontrol"></div>
+          <p class="besked" id="besked" aria-live="polite"></p>
+          <div class="faerdig-kort" id="faerdig-kort" hidden></div>
+          <div class="knapper">
+            <button type="button" class="btn-stor lys" id="btn-hint">Giv et hint</button>
+            <button type="button" class="btn-stor" id="btn-indsend" data-pladstjek="kontrol">Indsend svar</button>
+          </div>
+          <div class="lag">
+            <h3>Lagene</h3>
+            <ol id="lagliste"></ol>
+          </div>
+          <div class="side-bund">
+            <button type="button" class="btn-mini" id="btn-forfra">Byg forfra</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <p class="sr" id="sr-status" aria-live="polite"></p>
+
+    <details class="om">
+      <summary>Om figuren og forenklingerne</summary>
+      <div>
+        <p><b>Tre figurer, ét kredsløb:</b> Byg først lagrene og processerne mellem land, atmosfære og hav. Følg derefter den langsomme vej gennem bjergarter, og forbind til sidst de geologiske lagre med menneskets påvirkning. Alle pile viser flytning af <b>kulstof</b>, også når det skifter kemisk form.</p>
+        <ul>
+          <li><b>Lagre og processer:</b> et lager er et sted, hvor kulstof findes. En proces flytter kulstof mellem lagre. Silikatbjergarterne er en reaktionspartner; de må ikke forveksles med kalkstenens kulstoflager.</li>
+          <li><b>Kemisk forvitring:</b> den langsomme figur følger silikatforvitring. CO₂ reagerer med vand og mineraler, og floder fører opløst kulstof og ioner til havet. Mekanisk forvitring alene optager ikke CO₂.</li>
+          <li><b>Kalk og CO₂:</b> kalkdannelse frigiver også CO₂. Kombinationen af silikatforvitring og kalkdannelse giver netto lagring af kulstof. Opløsning af gammel kalksten efterfulgt af ny kalkdannelse er derimod ikke den samme langsigtede CO₂-sænke. Kemien er uddybet nedenfor.</li>
+          <li><b>Varme i dybet:</b> karbonater kan frigive CO₂ ved reaktioner under metamorfose. Figuren betyder ikke, at alle sedimenter smelter til magma, eller at alt subduceret kulstof straks kommer ud af en vulkan.</li>
+          <li><b>To geologiske lagre:</b> fossile brændsler kommer fra organisk stof; kalksten indeholder uorganisk karbonatkulstof. Kalksten bliver ikke til olie. Cementproduktion kan frigive CO₂ fra kalken, også uden at tælle ovnens brændsel med.</li>
+          <li><b>Forenklinger:</b> figurerne er kvalitative. Pilenes bredde viser ikke mængde eller hastighed, og lagrene er ikke tegnet i størrelsesforhold. Bjergarter rummer langt mere kulstof end atmosfæren og havet. Ikke alle veje er vist: fx metan, jordens rodrespiration som selvstændig pil, fødekæder, genopløsning af kalk og tilbageførsel af kulstof under nedbrydning i havet. Havcirkulationens dobbeltpil samler ned- og opadgående transport forskellige steder i havet.</li>
+        </ul>
+        <details><summary>Kemien bag den langsomme vej</summary>
+          <p>Forenklet med et calciumsilikat som eksempel:</p>
+          <p class="reaktion">CaSiO₃ + 2 CO₂ + H₂O → Ca²⁺ + 2 HCO₃⁻ + SiO₂</p>
+          <p>Kalkdannelse:</p>
+          <p class="reaktion">Ca²⁺ + 2 HCO₃⁻ → CaCO₃ + CO₂ + H₂O</p>
+          <p>Samlet bindes ét CO₂-molekyle pr. dannet CaCO₃ i dette idealiserede eksempel: <b>CaSiO₃ + CO₂ → CaCO₃ + SiO₂</b>. Virkelige bjergarter indeholder mange forskellige mineraler.</p>
+        </details>
+        <p><b>Forklar den færdige figur:</b> Hvorfor kan skov både optage og afgive CO₂? Hvorfor er mekanisk forvitring ikke nok til at fjerne CO₂? Hvorfor kan det langsomme kredsløb ikke hurtigt udligne vores forbrænding af fossile brændsler?</p>
+        <p><b>Kildegrundlag:</b> NaturgeografiGrundbogen C, afsnit 7.3, figur 7.3.4 (fire sfærer, aflejringer, pladebevægelse, vulkaner og forbrænding), og NaturgeografiGrundbogen B, afsnit 11.7 (jordens organiske stof og respiration). De selvtegnede figurer udvider dette med den kemiske og geologiske vej, fagligt kontrolleret mod <a href="https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/">NASA: The Carbon Cycle</a> og <a href="https://gml.noaa.gov/education/carbon_toolkit/">NOAA: Basics of the Carbon Cycle</a>.</p>
+        <p><b>Sådan virker det:</b> træk et ord til en gul plads, eller vælg ordet og derefter pladsen. Indsend svar låser de rigtige ord og sender de forkerte tilbage. Tab og Enter giver samme muligheder med tastaturet. Giv et hint viser en forklaring; Vis svaret hjælper med én plads. På telefonen kan den store figur rulles vandret. Fokus skjuler sidens menu og overskrift.</p>
+        <p>Idéen til Byg figuren er lånt med tilladelse fra Niels Kræmmer på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
+      </div>
+    </details>
+  </div>
+</main>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Byg kulstofkredsløbet</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/geografi.html">Naturgeografi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){
+  document.getElementById('site-top').style.display='none';
+  document.querySelector('.foot').style.display='none';
+  document.querySelector('.head').style.display='none';
+}}catch(x){}})();
+</script>
+<script type="module" src="byg-kulstof/side.js"></script>
+<script src="/feedback.js" defer></script>
+</body>
+</html>
