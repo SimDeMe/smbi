@@ -1,11 +1,68 @@
-# Byg kulstofkredsløbet
+# Byg kulstofkredsløbet – kulstoffets former i landskabet
 
-`geografi/byg-kulstof.html` bruger den fælles motor i `byg-motor/`.
-Figurer og ordliste er selvstændigt formuleret og tegnet i SVG.
+`geografi/byg-kulstof.html` viser ét stort, selvtegnet landskab i snit med
+skov, humus, industri, vulkan, flod, hav, plankton, skaller og geologiske lagre.
+Eleven trækker genbrugelige kulstofkort til elementerne eller vælger et kort
+og klikker på elementet. Et kort kan bruges mange gange, og havet kan rumme
+flere kort. Der gives feedback straks ved placering.
 
-Læringsmål: Skeln mellem lagre og processer, forbind det biologiske,
-oceaniske og geologiske kredsløb, og forklar menneskets hurtige overførsel
-fra geologiske lagre til atmosfæren.
+## C og B i samme landskab
+
+- **C:** 12 placeringer med tre brede kategorier: CO₂, organisk kulstof og
+  kulstof i fast kalk. Organisk kulstof omfatter både levende og dødt
+  organisk stof og fossile brændsler. Olie og gas behandles derfor som
+  organisk bundet kulstof, ikke som nye korttyper.
+- **B:** 15 placeringer. C-svar bevares; havet tilføjes HCO₃⁻ og CO₃²⁻,
+  og floden tilføjes HCO₃⁻. B kan vælges direkte, eller eleven kan vælge
+  »Fortsæt til B-niveau« efter C. Skift tilbage til C skjuler ionkort og
+  B-forklaringer, men bevarer svarene.
+- Flodens svarplads er kun aktiv på B. I C fremgår flodtransporten af de
+  valgfrie processer, uden at de to ionbegreber introduceres.
+- »Kulstof i kalk« er et fast mineral; B-ionkortene er udtrykkeligt
+  opløste former i vand. Kul og kalksten er forskellige lagre.
+
+Det erstatter den første udgaves tre separate figurer. Gamle URL-fragmenter
+`#hurtig`, `#geologi` og `#mennesker` fører til det fælles landskab.
+Den fælles motor i `byg-motor/` er uændret: genbrugelige kort og flere svar
+på samme element styres lokalt, så der ikke findes skjulte, enslydende kort,
+som kun accepteres på hver sin plads.
+
+## Filer og tilstand
+
+- `landskab.js`: statisk SVG-landskab med stor, farvet illustration fra start.
+- `model.js`: former, elementer, C/B-krav, svarregler og processer.
+- `side.js`: træk med mus/pen/touch, klik, tastatur, feedback og lagring.
+- `stil.css`: landskabet, klæbende kortbakke, stor visning, overblik og fokus.
+- `model.test.mjs` og `browser-test.mjs`: faglig svarstruktur og betjening.
+
+Korrekte svar gemmes som `element:form` under `byg-kulstof.v2` i browseren.
+Kun gyldige kombinationer læses ind. Den tidligere v1-øvelses afslutningsmærker
+kan ikke oversættes til disse placeringer og importeres ikke. »Byg forfra«
+rydder svar på begge niveauer. Modellen virker uden adgang til localStorage.
+
+## Processerne er bevaret
+
+»Vis kredsløbets pile« og procesvælgeren viser fotosyntese, respiration,
+havudveksling, kemisk forvitring og flodtransport, biologisk pumpe,
+sedimentation, kalkdannelse/diagenese, subduktion/metamorfose/afgasning,
+landhævning, fossildannelse, forbrænding og cementproduktion i det samme
+landskab. Den valgte proces fremhæves og forklares. C-tekster bruger ikke
+hydrogenkarbonat eller karbonationer; B udvider den kemiske forklaring.
+
+## Faglige forenklinger
+
+Landskabet er et kvalitativt snit uden målestok. Lagre og tidsrum er ikke
+proportionale. Røg og vulkanskyer markerer kilder; CO₂ er usynlig. Felterne
+spørger til bestemte materialer: væv, humus, olie osv., ikke til alle stoffer
+i deres omgivelser. Havvandets felt handler om opløst uorganisk kulstof;
+organisk kulstof er vist på plankton og tang. De tre B-former findes i det
+samme havvand og er ikke fordelt på adskilte havlag.
+
+Silikatforvitring forbruger CO₂. Kalkdannelse frigiver også CO₂; kombinationen
+giver netto lagring. Kalkopløsning og genudfældning alene er ikke samme
+langsigtede nettooptag. CO₂ kan frigives under metamorfose uden fuldstændig
+opsmeltning. Ikke alt subduceret kulstof returneres straks. Disse forhold
+uddybes under modellen, med reaktionsligninger i B-visningen.
 
 ## Kildeundersøgelse, 10. november 2026
 
@@ -32,65 +89,33 @@ fra geologiske lagre til atmosfæren.
   er kontrolleret som primære fagkilder for langsom/hurtig omsætning,
   forvitring, havudveksling, karbonater og menneskets påvirkning.
 
-## De tre figurer
-
-| Figur | Lag | Antal pladser |
-|---|---|---|
-| Land og hav | fem lagre; planter og jord; havudveksling, cirkulation og biologisk pumpe | 12 |
-| Det langsomme kredsløb | steder/materialer; forvitring til havbund; begravelse og vejen tilbage | 13 |
-| Fossilt kulstof og mennesker | luft og to geologiske lagre; fossil dannelse og forbrænding; afskovning og cement | 8 |
-
-Mekanisk forvitring er et ord i overskud i den kemiske del. Forkert placering
-forklares med forskellen mellem fysisk sønderdeling og kemisk CO₂-forbrug.
-
-## Faglige afgrænsninger
-
-- Silikatforvitring er den viste langsomme CO₂-sænke. Silikatbjergarter er
-  reaktionspartner, ikke et fiktivt stort karbonatlager. CO₂ føres videre i
-  vand, især som hydrogenkarbonat.
-- Kalkdannelse frigiver også CO₂. Nettoreaktionen med silikatforvitring er
-  vist under »Om figuren«. Opløsning af kalk og genudfældning alene giver
-  ikke samme langsigtede nettooptag. Mekanisk forvitring er ikke et kemisk optag.
-- Den subducerede strøm fortsætter til metamorfose og vulkansk afgasning.
-  Reaktioner kan frigive CO₂ uden fuldstændig opsmeltning. Ikke alt kulstof
-  returneres straks til atmosfæren.
-- Kalksten er uorganisk karbonatkulstof; fossile brændsler er dannet af
-  organisk stof. Der er ingen pil fra kalksten til olie.
-- Havets dobbelte pile samler transport, der foregår forskellige steder.
-  Organiske partikler på den biologiske pil synker; det meste nedbrydes
-  inden begravelse. En nedadrettet pil er ikke lig med permanent lagring.
-- Jordrespirationspilen illustrerer mikrobiel omsætning af jordens organiske
-  stof. Røddernes respiration omtales, men har ikke egen pil fra vegetation.
-- Pilbredder, lagerstørrelser og illustrationernes højder er kvalitative.
-  Ingen daterede strømstørrelser, prognoser eller balanceberegninger indgår.
-- Metan, fødekæder, havets genopløsning af kalk og mange returstrømme er
-  udeladt. Figurens første to faner supplerer hinanden; de er ikke to
-  uafhængige, lukkede systemer.
-
 ## Test
 
 ```sh
-node byg-motor/selvtest.mjs geografi/byg-kulstof.html
+python3 -m http.server 8777
+node geografi/byg-kulstof/model.test.mjs
 node geografi/byg-kulstof/browser-test.mjs
 ```
 
-Den fælles selvtest kontrollerer data, ord i overskud, forkert placering,
-træk, klik, hints, svær udgave og tastatur. Sidens browsertest kontrollerer
-prikkernes afstand til pile, tekstbredde, tre faner ved fem skærmstørrelser
-og touch. Den forudsætter en lokal server på port 8777. Skærmbilleder
-gemmes i `værktøj/ud/`, der ikke er med i git.
+Modeltesten kontrollerer gentagen brug af samme kort, C/B-krav, udvidelse af
+det samme havfelt, bevarelse af placeringer og validering af gemt tilstand.
+Browsertesten udfører faktiske træk, klik og tastaturvalg, bygger C og
+fortsætter til B, genindlæser og afprøver fem skærmstørrelser samt touch.
+Skærmbilleder ligger i `værktøj/ud/` og er ikke med i git. Den tidligere
+standardtest fra `byg-motor/` gælder ikke for denne svarstruktur.
 
 ## Elevafprøvning – endnu ikke gennemført
 
-Lad en elev tænke højt uden løbende instruktion. Undersøg, om eleven:
+Undersøg ved tænke-højt-afprøvning, om eleven:
 
-1. kan skelne lageret »Jordens kulstof« fra processen »Jordrespiration«;
-2. følger pilene og kan forklare forskellen på havcirkulation og biologisk pumpe;
-3. forklarer, hvorfor mekanisk forvitring ikke er det søgte CO₂-optag;
-4. følger den langsomme vej fra atmosfære til kalk og tilbage;
-5. kan forklare forskellen på fossil forbrænding og CO₂ fra cementens kalk;
-6. finder den gule plads og kan rulle figuren på telefonen.
+1. opdager, at samme kort kan bruges flere steder;
+2. forbinder organisk kulstof med planter, humus og fossile brændsler;
+3. skelner kul fra kalk og et fast mineral fra en opløst ion;
+4. kan fortsætte fra C til B og forklare, hvad der er nyt;
+5. forstår, at havets tre B-former findes i det samme vand;
+6. kan følge forvitring og begravelse gennem landskabet med pilene;
+7. kan bruge kortene og finde elementerne på telefonen.
 
-Spørg til et nyt tilfælde efter opgaven, fx hvorfor mere nedbrydning af jord
-kan øge CO₂-indholdet, og hvorfor langsom forvitring ikke hurtigt udligner
-fossil forbrænding. Automatisk test dokumenterer funktion, ikke læringsudbytte.
+Spørg efterfølgende til et nyt tilfælde, fx hvorfor forbrænding af naturgas
+flytter kulstof til atmosfæren. Automatisk test dokumenterer funktion,
+ikke læringsudbytte.
