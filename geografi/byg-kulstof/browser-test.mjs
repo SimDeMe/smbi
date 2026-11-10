@@ -31,7 +31,11 @@ try{
   if(lag<2){await p.locator('#btn-naeste').click();assert.equal(await p.locator('#bakke .ord').count(),LAG[lag+1].ord.length);
    assert.equal(await p.locator('#figur .plads:not(.tidligere-navn)').count(),LAG[lag+1].ord.length);
    assert.equal(await felt(p,'hav').isVisible(),false);
-   await p.locator('#tidligere').check();assert.equal(await felt(p,'hav').isVisible(),true);await p.locator('#tidligere').uncheck();
+   const frizoner=await p.locator('#figur').evaluate(svg=>{const bokse=[...svg.querySelectorAll('.plads')].filter(g=>getComputedStyle(g).display!=='none');const mask=svg.querySelector('#pil-frizoner');return {antal:mask.querySelectorAll('[data-plads]').length,korrekte:bokse.every(g=>{const b=g.querySelector('.boks'),hul=mask.querySelector(`[data-plads="${g.dataset.i}"]`);return hul&&+hul.getAttribute('x')<=+b.getAttribute('x')-16&&+hul.getAttribute('y')<=+b.getAttribute('y')-16&&+hul.getAttribute('width')>=+b.getAttribute('width')+32&&+hul.getAttribute('height')>=+b.getAttribute('height')+32;}),pile:[...svg.querySelectorAll('.del[data-ord]')].every(g=>g.getAttribute('mask')==='url(#pil-frizoner)'&&getComputedStyle(g).filter==='none'),sorte:[...svg.querySelectorAll('.kulstof-pil')].every(p=>getComputedStyle(p).stroke==='rgb(0, 0, 0)'&&+p.getAttribute('stroke-width')===10)};});
+   assert.equal(frizoner.antal,LAG[lag+1].ord.length);assert(frizoner.korrekte&&frizoner.pile&&frizoner.sorte,'Sorte pile skal have frizoner om alle synlige tekstbokse');
+   const kollisioner=await p.locator('#figur').evaluate(svg=>{const bokse=[...svg.querySelectorAll('.plads:not(.tidligere-navn) .boks')].map(b=>({x:+b.getAttribute('x')-24,y:+b.getAttribute('y')-24,w:+b.getAttribute('width')+48,h:+b.getAttribute('height')+48}));return [...svg.querySelectorAll('.del:not(.tidligere-pil) .kulstof-pil')].filter(p=>{for(let l=0;l<=p.getTotalLength();l+=3){const pt=p.getPointAtLength(l);if(bokse.some(r=>pt.x>r.x&&pt.x<r.x+r.w&&pt.y>r.y&&pt.y<r.y+r.h))return true;}return false;}).length;});
+   assert.equal(kollisioner,0,'Det aktuelle lags pile skal forløbe uden om tekstfelterne, også før maskering');
+   await p.locator('#tidligere').check();assert.equal(await felt(p,'hav').isVisible(),true);assert.equal(await p.locator('#pil-frizoner [data-plads]').count(),LAG.slice(0,lag+2).flatMap(l=>l.ord).length);await p.locator('#tidligere').uncheck();
    await p.reload();await p.locator('#bakke .ord').first().waitFor();
   }
  }

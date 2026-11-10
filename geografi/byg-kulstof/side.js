@@ -6,7 +6,7 @@ const gem=m=>{try{localStorage.setItem(LAGRING,JSON.stringify(gemData(m)));}catc
 const m=opretKredslob(t,gem);m.tegn();
 $('forfra').onclick=()=>{m.stopTraek?.();m.nulstil();m.besked('Figuren bygges forfra.','info');m.tegn();};
 $('fokus').onclick=()=>{const v=document.body.classList.toggle('fokus');$('fokus').setAttribute('aria-pressed',v);$('fokus').textContent=v?'Afslut fokus':'Fokus';};
-$('tidligere').onchange=()=>document.body.classList.toggle('vis-tidligere',$('tidligere').checked);
+$('tidligere').onchange=()=>{document.body.classList.toggle('vis-tidligere',$('tidligere').checked);m.opdaterPile();};
 $('vis-opgave').onclick=()=>{
  m.stopTraek?.();m.annuller();const ren=document.body.classList.toggle('figur-visning');
  $('vis-opgave').setAttribute('aria-pressed',!ren);$('vis-opgave').textContent=ren?'Afprøv opgaven':'Vis kun figuren';

@@ -2,7 +2,7 @@
 import {Byg} from '../../byg-motor/motor.js';
 import {PULJER,PROCESSER,LAG,ALLE} from './model.js';
 import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
-const pil=p=>p.stier.map(sti=>`<path class="kulstof-pil" d="${sti}" fill="none" stroke="${p.lag===1?'#087cae':'#a64d22'}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
+const pil=p=>p.stier.map(sti=>`<path class="kulstof-pil" d="${sti}" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
 export const KULSTOFFIGUR={
  id:'kulstof',navn:'Kulstofkredsløbet',vb:[BREDDE,HOEJDE],boks:[340,48],mobilBredde:1000,
  lag:LAG,
@@ -23,8 +23,27 @@ export function opretKredslob(t,gem){
     const tekst=g.querySelector('.ordtekst');if(tekst.textContent.length>24)tekst.style.fontSize='23px';
    });
    this.ui.svg.querySelectorAll('.del[data-ord]').forEach(g=>{g.classList.toggle('tidligere-pil',this.ordLag[g.dataset.ord]<this.lag);});
+   this.opdaterPile();
    $('fig-intro').textContent=LAG[this.lag].intro;
    $('tidligere-kontrol').hidden=this.lag===0;
+  }
+  opdaterPile(){
+   // En frizone følger de faktisk synlige bokse, også efter et lag- eller
+   // visningsskift. Kun procespile og pilespidser klippes; figuren bevares.
+   const ns='http://www.w3.org/2000/svg',svg=this.ui.svg,padding=16;
+   svg.querySelector('#pil-frizoner')?.remove();
+   const mask=document.createElementNS(ns,'mask');mask.id='pil-frizoner';
+   for(const [k,v]of Object.entries({maskUnits:'userSpaceOnUse',maskContentUnits:'userSpaceOnUse',x:0,y:0,width:BREDDE,height:HOEJDE}))mask.setAttribute(k,v);
+   const baggrund=document.createElementNS(ns,'rect');
+   for(const [k,v]of Object.entries({width:BREDDE,height:HOEJDE,fill:'white'}))baggrund.setAttribute(k,v);mask.append(baggrund);
+   svg.querySelectorAll('.plads').forEach(g=>{
+    if(getComputedStyle(g).display==='none')return;
+    const b=g.querySelector('.boks'),hul=document.createElementNS(ns,'rect');
+    for(const [k,v]of Object.entries({x:+b.getAttribute('x')-padding,y:+b.getAttribute('y')-padding,width:+b.getAttribute('width')+2*padding,height:+b.getAttribute('height')+2*padding,fill:'black'}))hul.setAttribute(k,v);
+    hul.dataset.plads=g.dataset.i;mask.append(hul);
+   });
+   svg.querySelector('defs').append(mask);
+   svg.querySelectorAll('.del[data-ord]').forEach(g=>g.setAttribute('mask','url(#pil-frizoner)'));
   }
   tegnPanel(){
    super.tegnPanel();

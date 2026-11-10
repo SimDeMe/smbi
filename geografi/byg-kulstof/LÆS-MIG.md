@@ -19,12 +19,16 @@ hints, grønne låste navne og Næste lag.
 Det tidligere lag med kulstoffets former og dets C/B-kort er fjernet efter
 brugerens ønske. Der er ingen placering af CO₂, organisk kulstof eller ionkort.
 
-Nye procespile kommer frem i det relevante lag og står grå, indtil navnet
-sidder korrekt. Tidligere navne skjules under nye lag; de kan vises med
-»Vis tidligere navne«. Tidligere procespile er nedtonede, så der kun er
-fem eller seks nye procesnavne at arbejde med. »Vis kun figuren« giver
-adgang til det rene landskab. En færdig forklaring kan aflæses ved at
-pege på et korrekt ord eller fokusere det med tastaturet.
+Procespilene kommer frem i det relevante lag og er sorte med tydelige
+pilespidser. Tekstfelterne er placeret med afstand til det aktuelle lags
+pile. En SVG-maske giver desuden en frizone på 16 figurenheder omkring
+alle synlige tekstbokse, inklusive tidligere navne, når de slås til.
+Masken påvirker kun procespile og pilespidser; landskabet er uændret.
+
+Tidligere navne skjules under nye lag og kan vises med »Vis tidligere
+navne«. Der er fem eller seks nye procesnavne at arbejde med. »Vis kun
+figuren« giver adgang til det rene landskab. En færdig forklaring kan
+aflæses ved at pege på et korrekt ord eller fokusere det med tastaturet.
 
 ## Faglige valg og forenklinger
 

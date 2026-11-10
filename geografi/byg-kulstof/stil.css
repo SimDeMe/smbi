@@ -12,9 +12,9 @@
 #figur{max-height:calc(100dvh - 230px);min-height:0}
 #figur .ordtekst{font-size:25px}
 #figur .kulstof-pil{paint-order:stroke;pointer-events:none}
-#figur .del.tidligere-pil{opacity:.2;filter:none}
+#figur .del[data-ord]{filter:none!important}
+#figur .del.tidligere-pil{opacity:1}
 body:not(.vis-tidligere) .tidligere-navn{display:none}
-body.vis-tidligere #figur .tidligere-pil{opacity:.55}
 .figur-note{padding:6px 4px;font:11px var(--body);color:var(--slate)}
 .visning-bar{display:flex;justify-content:flex-end;padding:8px 13px;border-top:2px solid var(--ink);background:var(--accent-lys)}
 .figur-link{font:12px var(--display);text-underline-offset:3px}
