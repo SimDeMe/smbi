@@ -33,19 +33,21 @@ som kun accepteres på hver sin plads.
 ## Filer og tilstand
 
 - `landskab.js`: SVG-billedlag med den genererede illustration.
-- `landskab-alfa.webp`: færdig illustration, 1568 × 1003 px, ca. 698 KiB.
+- `landskab-laerebog.webp`: færdig illustration, 1568 × 1003 px, ca. 256 KiB.
 - `illustration-prompt.md`: den fulde prompt til den indbyggede imagegen-funktion.
 - `model.js`: former, elementer, C/B-krav, svarregler og processer.
 - `side.js`: træk med mus/pen/touch, klik, tastatur, feedback og lagring.
 - `stil.css`: landskabet, klæbende kortbakke, stor visning, overblik og fokus.
 - `model.test.mjs` og `browser-test.mjs`: faglig svarstruktur og betjening.
 
-Figuren er genereret fra bunden med den indbyggede imagegen-funktion og
+Figuren er omtegnet med den indbyggede imagegen-funktion fra den første,
+naturtro illustration til en skematisk lærebogsfigur med tydelige konturer,
+rolige farveflader og sparsomme geologiske signaturer. Den er
 gemt i projektet som WebP (cwebp, kvalitet 92). Den viser en sammenhængende
 kyst, naturligt faldende bjergflod, skov og rødder, industri, vulkan, hav
 og sammenhængende sedimentære lag. Kul, den porøse olie/gas-fælde og
-kalklaget er adskilte. Svarområder og procespile er flyttet til motivets
-faktiske elementer. Billedet er skematisk, ikke et bestemt sted eller et
+kalklaget er adskilte. Den første illustration er bevaret i Git-historikken.
+Svarområderne er tilpasset lærebogsfigurens faktiske elementer. Billedet er skematisk, ikke et bestemt sted eller et
 geologisk profil i målestok. Opgavens svarregler og gemte svar er bevaret.
 
 »Se detaljer« viser den store figur; »Vis overblik« tilpasser hele motivet.
