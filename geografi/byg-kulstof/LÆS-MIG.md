@@ -1,9 +1,12 @@
 # Byg kulstofkredsløbet – kulstoffets former i landskabet
 
-`geografi/byg-kulstof.html` viser ét stort, selvtegnet landskab i snit med
+`geografi/byg-kulstof.html` er **alfa**. Den åbner med en ren figurvisning af
+en illustreret landskabsplade i snit med
 skov, humus, industri, vulkan, flod, hav, plankton, skaller og geologiske lagre.
-Eleven trækker genbrugelige kulstofkort til elementerne eller vælger et kort
-og klikker på elementet. Et kort kan bruges mange gange, og havet kan rumme
+»Afprøv opgaven« åbner den eksisterende C/B-opgave. Opgavens videre
+didaktiske revision er udsat efter brugerens ønske. Eleven kan fortsat
+trække genbrugelige kulstofkort til elementerne eller vælge et kort
+og klikke på elementet. Et kort kan bruges mange gange, og havet kan rumme
 flere kort. Der gives feedback straks ved placering.
 
 ## C og B i samme landskab
@@ -29,11 +32,25 @@ som kun accepteres på hver sin plads.
 
 ## Filer og tilstand
 
-- `landskab.js`: statisk SVG-landskab med stor, farvet illustration fra start.
+- `landskab.js`: SVG-billedlag med den genererede illustration.
+- `landskab-alfa.webp`: færdig illustration, 1568 × 1003 px, ca. 698 KiB.
+- `illustration-prompt.md`: den fulde prompt til den indbyggede imagegen-funktion.
 - `model.js`: former, elementer, C/B-krav, svarregler og processer.
 - `side.js`: træk med mus/pen/touch, klik, tastatur, feedback og lagring.
 - `stil.css`: landskabet, klæbende kortbakke, stor visning, overblik og fokus.
 - `model.test.mjs` og `browser-test.mjs`: faglig svarstruktur og betjening.
+
+Figuren er genereret fra bunden med den indbyggede imagegen-funktion og
+gemt i projektet som WebP (cwebp, kvalitet 92). Den viser en sammenhængende
+kyst, naturligt faldende bjergflod, skov og rødder, industri, vulkan, hav
+og sammenhængende sedimentære lag. Kul, den porøse olie/gas-fælde og
+kalklaget er adskilte. Svarområder og procespile er flyttet til motivets
+faktiske elementer. Billedet er skematisk, ikke et bestemt sted eller et
+geologisk profil i målestok. Opgavens svarregler og gemte svar er bevaret.
+
+»Se detaljer« viser den store figur; »Vis overblik« tilpasser hele motivet.
+Den rene figurvisning skjuler kort og svarfelter. Højopløselig figur kan
+åbnes direkte fra sidens værktøjslinje.
 
 Korrekte svar gemmes som `element:form` under `byg-kulstof.v2` i browseren.
 Kun gyldige kombinationer læses ind. Den tidligere v1-øvelses afslutningsmærker
@@ -99,7 +116,7 @@ node geografi/byg-kulstof/browser-test.mjs
 
 Modeltesten kontrollerer gentagen brug af samme kort, C/B-krav, udvidelse af
 det samme havfelt, bevarelse af placeringer og validering af gemt tilstand.
-Browsertesten udfører faktiske træk, klik og tastaturvalg, bygger C og
+Browsertesten kontrollerer ren figurvisning og billedindlæsning og udfører faktiske træk, klik og tastaturvalg, bygger C og
 fortsætter til B, genindlæser og afprøver fem skærmstørrelser samt touch.
 Skærmbilleder ligger i `værktøj/ud/` og er ikke med i git. Den tidligere
 standardtest fra `byg-motor/` gælder ikke for denne svarstruktur.

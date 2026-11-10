@@ -56,7 +56,7 @@
 }
 </script>
 </head>
-<body class="geo">
+<body class="geo figur-visning">
 <header class="top" id="site-top">
   <div class="rainbow"></div>
   <div class="top-bar">
@@ -71,12 +71,13 @@
 </header>
 <main class="kulstof-wrap">
   <div class="kulstof-head">
-    <p class="overlinje">Naturgeografi · Byg figuren <span>Beta</span></p>
+    <p class="overlinje">Naturgeografi · Byg figuren <span>Alfa</span></p>
     <h1>Byg <span>kulstofkredsløbet</span></h1>
-    <p>Træk kulstoffets form hen på landskabets elementer. Samme kort kan bruges flere steder.</p>
+    <p id="intro">Et landskab i snit: fra skov og bjergflod til kyst, hav og geologiske lagre.</p>
   </div>
   <section id="byg" class="landskab-model" aria-label="Kulstoffets former i landskabet">
     <div class="niveau-bar">
+      <button type="button" id="vis-opgave" aria-pressed="false">Afprøv opgaven</button>
       <div class="niveauer" role="group" aria-label="Vælg niveau"><button type="button" data-niveau="C" aria-pressed="true">C-niveau</button><button type="button" data-niveau="B" aria-pressed="false">B-niveau</button></div>
       <p id="fremskridt" aria-live="polite"></p>
       <span class="spacer"></span><div data-feedback-vaert></div><button type="button" id="fokus" aria-pressed="false">Fokus</button>
@@ -85,13 +86,14 @@
       <div id="former" role="group" aria-label="Kulstoffets former" data-pladstjek="kontrol"></div>
       <div class="statuslinje"><p id="besked" role="status" aria-live="polite">Vælg eller træk en form, og placér den på et element.</p><button type="button" id="hint">Giv et hint</button></div>
     </div>
-    <div id="landskabsrum" class="landskabsrum">
-      <svg id="landskab" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" role="group" aria-label="Et landskab i snit med atmosfære, skov, jord, industri, vulkan, flod, hav og geologiske lagre" data-pladstjek="figur"></svg>
+    <div id="landskabsrum" class="landskabsrum overblik">
+      <svg id="landskab" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1568 1003" role="group" aria-label="Et landskab i snit med atmosfære, skov, jord, industri, vulkan, flod, hav og geologiske lagre" data-pladstjek="figur"></svg>
     </div>
+    <p class="figur-note">Skematisk tværsnit. Lag, dybder og afstande er ikke i målestok.</p>
     <div class="visning-bar">
       <label><input type="checkbox" id="vis-processer"> Vis kredsløbets pile</label>
       <label id="proces-valg-label" hidden><span class="sr">Vælg en proces</span><select id="proces-valg"><option value="">Følg en proces …</option></select></label>
-      <span class="spacer"></span><button type="button" id="zoom" aria-pressed="false">Vis overblik</button><button type="button" id="forfra">Byg forfra</button>
+      <span class="spacer"></span><a class="figur-link" href="byg-kulstof/landskab-alfa.webp" target="_blank" rel="noopener">Åbn figuren</a><button type="button" id="zoom" aria-pressed="true">Se detaljer</button><button type="button" id="forfra">Byg forfra</button>
     </div>
     <div class="find-element"><span>Find et element:</span><div id="steder" aria-label="Gå til elementer i landskabet"></div></div>
     <div id="faerdig" class="faerdig" hidden><h2 id="faerdig-titel"></h2><p id="faerdig-tekst"></p><button type="button" id="fortsaet-b" class="primaer">Fortsæt til B-niveau →</button></div>
@@ -106,7 +108,7 @@
     <p><b>Forvitring og den langsomme vej:</b> Slå pilene til, og vælg en proces. CO₂ opløst i vand reagerer med silikatmineraler, og floder fører opløste stoffer til havet. Kalkskaller kan aflejres og danne kalksten. Kulstofholdige bjergarter kan føres i dybet, hvor opvarmning og reaktioner kan frigive CO₂, som senere afgasses gennem vulkaner. Det kræver ikke fuldstændig opsmeltning. Mekanisk sønderdeling af sten alene optager ikke CO₂.</p>
     <p><b>Forenklinger:</b> Landskabet er et skematisk snit, uden målestok for afstande, lagre eller tid. Kul, olie, gas og kalk er vist nær hinanden for at kunne sammenlignes. CO₂ er usynlig; røg og vulkanskyer markerer steder med udledning. Et felt spørger til et bestemt materiale – fx planternes væv eller humus – og viser ikke alle kulstofforbindelser i hele omgivelserne. Havet indeholder også organisk stof, men feltet »Havvand« undersøger opløst uorganisk kulstof. Pilene udvælger nogle veje; de er ikke en fuldstændig massebalance.</p>
     <p><b>Betjening:</b> Træk et kort til et element, eller vælg kortet og klik på elementet. Du får feedback med det samme, og kortene kan bruges igen. Tastatur: Tab til et kort, Enter, Tab til et element, Enter. »Find et element« flytter visningen og fokus til elementet. På telefonen kan du forstørre landskabet og rulle det. »Byg forfra« rydder placeringerne på begge niveauer. Fremskridt gemmes kun i din browser.</p>
-    <p><b>Kildegrundlag:</b> NaturgeografiGrundbogen C, afsnit 7.3, figur 7.3.4, og NaturgeografiGrundbogen B, afsnit 11.7, suppleret med <a href="https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/">NASA: The Carbon Cycle</a> og <a href="https://gml.noaa.gov/education/carbon_toolkit/">NOAA: Basics of the Carbon Cycle</a>. Landskabet er selvtegnet. Idéen til Byg figuren er lånt med tilladelse fra Niels Kræmmer på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
+    <p><b>Kildegrundlag:</b> NaturgeografiGrundbogen C, afsnit 7.3, figur 7.3.4, og NaturgeografiGrundbogen B, afsnit 11.7, suppleret med <a href="https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/">NASA: The Carbon Cycle</a> og <a href="https://gml.noaa.gov/education/carbon_toolkit/">NOAA: Basics of the Carbon Cycle</a>. Figuren er en AI-genereret undervisningsillustration. Terræn og undergrund er skematiske og ikke i målestok. Idéen til Byg figuren er lånt med tilladelse fra Niels Kræmmer på <a href="https://kemiformler.dk">kemiformler.dk</a>.</p>
   </div></details>
 </main>
 <footer class="kulstof-foot"><a href="/geografi.html#byg-figuren">← Flere Byg figuren-modeller</a><a href="/contact.html">Kontakt</a></footer>

@@ -3,6 +3,9 @@
 - Læs [CLAUDE.md](CLAUDE.md) for repoets struktur, arbejdsgange og relevante
   instruktioner om test, versionering og undervisningsmaterialer.
 - Følg [design_rules.md](design_rules.md) ved nye sider og væsentlige ændringer.
+- Nye simuleringer og opgaver starter som **alfa**. Skift kun til **beta**,
+  når ejeren udtrykkeligt beder om det; beståede test gør dem ikke automatisk
+  til beta.
 - Ved nye eller væsentligt ændrede læringssimulationer skal
   [simulationsdesign.md](simulationsdesign.md) læses og anvendes som grundlag
   for fagligt og didaktisk design samt elevafprøvning. Brug principperne med

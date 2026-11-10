@@ -8,7 +8,13 @@ const url=`http://localhost:${process.env.PORT||8777}/geografi/byg-kulstof.html`
 const browser=await chromium.launch({headless:true});
 try{
  const p=await browser.newPage({viewport:{width:1366,height:625}}),fejl=[];p.on('pageerror',e=>fejl.push(e.message));
- await p.goto(url+'#mennesker');await p.locator('[data-form="co2"]').waitFor();await p.evaluate(()=>document.fonts.ready);
+ await p.goto(url+'#mennesker');await p.locator('#vis-opgave').waitFor();
+ assert.equal(await p.locator('#kort-bar').isVisible(),false);
+ await p.waitForFunction(()=>document.querySelector('#landskabsbillede')?.getAttribute('href'));
+ const billedstatus=await p.evaluate(async()=>{const i=new Image();i.src=document.querySelector('#landskabsbillede').getAttribute('href');await i.decode();return [i.naturalWidth,i.naturalHeight];});
+ assert.deepEqual(billedstatus,[1568,1003]);
+ await p.screenshot({path:fileURLToPath(new URL('kulstof-ny-figur-1366.png',ud))});
+ await p.locator('#vis-opgave').click();await p.locator('[data-form="co2"]').waitFor();await p.evaluate(()=>document.fonts.ready);
  await p.screenshot({path:fileURLToPath(new URL('kulstof-landskab-start.png',ud))});
  assert.equal(new URL(p.url()).hash,'#landskab');
  assert.equal(await p.locator('.form-kort').count(),3);assert.equal(await p.locator('[data-sted="flod"]').isVisible(),false);
@@ -35,7 +41,7 @@ try{
  assert.match(await p.locator('#fremskridt').innerText(),/15 af 15/);
  await p.screenshot({path:fileURLToPath(new URL('kulstof-landskab-B-hele.png',ud)),fullPage:true});
  await p.locator('[data-niveau="C"]').click();assert.match(await p.locator('#fremskridt').innerText(),/12 af 12/);assert.equal(await p.locator('[data-form="hco3"]').count(),0);
- await p.locator('[data-niveau="B"]').click();await p.reload();await p.locator('[data-form="hco3"]').waitFor();assert.match(await p.locator('#fremskridt').innerText(),/15 af 15/);
+ await p.locator('[data-niveau="B"]').click();await p.reload();await p.locator('#vis-opgave').click();await p.locator('[data-form="hco3"]').waitFor();assert.match(await p.locator('#fremskridt').innerText(),/15 af 15/);
  await p.locator('#vis-processer').check();await p.locator('#proces-valg').selectOption('forvitring');assert.match(await p.locator('#proces-tekst').innerText(),/HCO₃/);
  await p.locator('[data-niveau="C"]').click();assert(!/HCO₃|hydrogenkarbonat|CO₃²/.test(await p.locator('#proces-tekst').innerText()));
  await p.locator('#vis-processer').uncheck();
@@ -55,7 +61,7 @@ try{
  assert.deepEqual(fejl,[]);
  // Touch har samme genbrugelige kort og store områder som musebetjening.
  const m=await browser.newPage({viewport:{width:390,height:750},hasTouch:true,isMobile:true});
- await m.goto(url);await m.locator('[data-form="organisk"]').tap();await m.locator('[data-find="skov"]').tap();await m.locator('[data-sted="skov"]').focus();await m.keyboard.press('Enter');
+ await m.goto(url);await m.locator('#vis-opgave').tap();await m.locator('[data-form="organisk"]').tap();await m.locator('[data-find="skov"]').tap();await m.locator('[data-sted="skov"]').focus();await m.keyboard.press('Enter');
  assert.match(await m.locator('#fremskridt').innerText(),/1 af 12/);
  // Ren touch: klik på det synlige element efter valg af kortet.
  await m.locator('[data-form="organisk"]').tap();await m.locator('[data-find="jord"]').tap();
@@ -70,5 +76,23 @@ try{
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  assert.match(await m.locator('#fremskridt').innerText(),/3 af 12/);
  await m.screenshot({path:fileURLToPath(new URL('kulstof-landskab-touch.png',ud))});
+ // Den rene figur er standard på alle skærmstørrelser, også efter tidligere B-svar.
+ const v=await browser.newPage({viewport:{width:1366,height:625}});
+ await v.goto(url);await v.locator('#vis-opgave').waitFor();
+ await v.evaluate(async()=>{await document.fonts.ready;const i=new Image();i.src=document.querySelector('#landskabsbillede').getAttribute('href');await i.decode();});
+ for(const [w,h]of [[1280,577],[1366,625],[1536,730],[740,750],[390,750]]){
+  await v.setViewportSize({width:w,height:h});await v.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+  assert.equal(await v.locator('#kort-bar').isVisible(),false);assert.equal(await v.locator('#sted-lag').isVisible(),false);
+  assert.equal(await v.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await v.screenshot({path:fileURLToPath(new URL(`kulstof-ren-figur-${w}.png`,ud))});
+ }
+ await v.locator('#fokus').click();await v.screenshot({path:fileURLToPath(new URL('kulstof-ren-figur-fokus.png',ud))});
+ // Alfa er synlig på selve siden og følger bibliotekets eksisterende alfafilter.
+ assert.match(await v.locator('.overlinje').textContent(),/Alfa/);
+ const bibliotek=await browser.newPage();await bibliotek.goto(`http://localhost:${process.env.PORT||8777}/geografi.html`);
+ const kort=bibliotek.locator('article:has(a[href="geografi/byg-kulstof.html"])');
+ await bibliotek.locator('#alfa-knap').waitFor();assert.equal(await kort.isVisible(),false);
+ await bibliotek.locator('#alfa-knap').click();assert.equal(await kort.isVisible(),true);
+ assert.equal(await kort.locator('.beta-mark').count(),0);assert.equal(await kort.locator('.wip-mark').textContent(),'Alfa');
  console.log('Kulstoflandskab: rigtige/forkerte svar, genbrugt træk, C→B, lagring, tastatur, processer, fem skærmstørrelser og touch OK.');
 }finally{await browser.close();}

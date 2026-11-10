@@ -77,3 +77,26 @@ body.fokus .landskabsrum.overblik{height:calc(100dvh - 190px);min-height:330px}
 @media(max-width:799px){.kulstof-wrap{padding:0 10px}.kulstof-head h1{font-size:28px}.kulstof-head>p:last-child{font-size:16px}.niveau-bar{gap:7px;padding:8px}.niveau-bar .spacer{display:none}.niveau-bar [data-feedback-vaert]{margin-left:auto}.niveau-bar button{font-size:12px}#fremskridt{font-size:10px}#former{gap:7px}.form-kort{min-width:0;padding:7px 9px;flex:1 0 28%}.form-kort strong{font-size:15px}.form-kort span{font-size:9px}.kort-bar{padding:10px 9px 7px}#besked{font-size:13px}.landskabsrum.overblik{height:440px}.visning-bar{gap:7px}.visning-bar select{max-width:270px}.kulstof-foot{padding:0 12px 24px}}
 @media(max-width:480px){.overlinje{font-size:10px}.kulstof-head{padding:13px 0}.kulstof-head h1{font-size:25px}.kulstof-head>p:last-child{font-size:15px}.niveau-bar{gap:5px}#fremskridt{order:3;width:100%;margin-top:2px}.form-kort{flex-basis:28%;padding:7px}.form-kort strong{font-size:14px}.form-kort span{font-size:9px}.statuslinje{align-items:start;gap:8px}#hint{padding:5px 7px;font-size:11px}.landskabsrum.overblik{height:390px}#landskab{width:1000px;max-width:none}.landskabsrum.overblik #landskab{width:100%;height:100%}.visning-bar .spacer{display:none}.visning-bar select{max-width:300px}body.fokus .landskabsrum.overblik{height:400px;min-height:0}.kort-bar{top:70px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* Ren figurvisning er udgangspunktet, mens opgaven fortsat er alfa. */
+body.figur-visning #kort-bar,
+body.figur-visning #sted-lag,
+body.figur-visning .find-element,
+body.figur-visning #faerdig,
+body.figur-visning .niveauer,
+body.figur-visning #fremskridt,
+body.figur-visning #forfra{display:none!important}
+body.figur-visning .landskab-model{box-shadow:3px 3px 0 #58715e}
+body.figur-visning .niveau-bar{background:#f5f0e4}
+body.figur-visning .landskabsrum{background:#e9e5d9}
+body.figur-visning .landskabsrum.overblik{height:clamp(350px,calc(100dvh - 205px),900px)}
+.figur-link{font-size:12px;text-underline-offset:3px;margin-right:4px}
+.figur-note{padding:7px 14px;font:12px var(--body);color:#4f6558;background:#fffdf5}
+#vis-opgave{background:#e6ebdc}
+#vis-opgave[aria-pressed=true]{background:#274c3d;color:#fff}
+@media(max-width:799px){body.figur-visning .landskabsrum.overblik{height:clamp(300px,calc(100dvh - 255px),650px)}}
+body.figur-visning.fokus .landskabsrum.overblik{height:calc(100dvh - 115px);min-height:0}
+@media(max-width:480px){
+ body.figur-visning .landskabsrum.overblik,
+ body.figur-visning.fokus .landskabsrum.overblik{height:auto}
+ body.figur-visning .landskabsrum.overblik #landskab{height:auto}
+}

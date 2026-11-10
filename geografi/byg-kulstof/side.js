@@ -1,11 +1,12 @@
 import {FORMER,STEDER,PROCESSER,krav,noegle,fremskridt,placer,hentData,gemData} from './model.js';
-import {LANDSKAB} from './landskab.js';
+import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
 const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',LAGRING='byg-kulstof.v2';
 let t=hentData(null),valgt=null,hintTrin=0,hintSted=null,traek=null,ignorerKlik=null;
 try{t=hentData(JSON.parse(localStorage.getItem(LAGRING)));}catch{}
 const gem=()=>{try{localStorage.setItem(LAGRING,JSON.stringify(gemData(t)));}catch{}};
 function besked(tekst,status=''){ $('besked').textContent=tekst;$('besked').className=status; }
 function svgEl(navn,attrs={},tekst){const e=document.createElementNS(NS,navn);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(tekst!==undefined)e.textContent=tekst;return e;}
+$('landskab').setAttribute('viewBox',`0 0 ${BREDDE} ${HOEJDE}`);
 $('landskab').innerHTML=LANDSKAB;
 const pile=svgEl('g',{id:'pile',class:'pile'}),stedLag=svgEl('g',{id:'sted-lag'});$('landskab').append(pile,stedLag);
 for(const p of PROCESSER){
@@ -123,7 +124,14 @@ $('fortsaet-b').onclick=()=>{skiftNiveau('B');$('byg').scrollIntoView({block:'st
 $('vis-processer').onchange=visProces;$('proces-valg').onchange=visProces;
 $('forfra').onclick=()=>{t.loest.clear();skiftNiveau(t.niveau);besked('Alle placeringer er ryddet. Byg landskabet igen.');};
 $('fokus').onclick=()=>{const v=document.body.classList.toggle('fokus');$('fokus').setAttribute('aria-pressed',v);$('fokus').textContent=v?'Afslut fokus':'Fokus';};
-$('zoom').onclick=()=>{const v=$('landskabsrum').classList.toggle('overblik');$('zoom').setAttribute('aria-pressed',v);$('zoom').textContent=v?'Vis stort landskab':'Vis overblik';};
+$('vis-opgave').onclick=()=>{
+ const ren=document.body.classList.toggle('figur-visning');
+ $('vis-opgave').setAttribute('aria-pressed',!ren);$('vis-opgave').textContent=ren?'Afprøv opgaven':'Vis kun figuren';
+ $('intro').textContent=ren?'Et landskab i snit: fra skov og bjergflod til kyst, hav og geologiske lagre.':'Træk kulstoffets form hen på landskabets elementer. Samme kort kan bruges flere steder.';
+ $('landskabsrum').classList.toggle('overblik',ren);$('zoom').setAttribute('aria-pressed',ren);$('zoom').textContent=ren?'Se detaljer':'Vis overblik';
+ $('byg').scrollIntoView({block:'start',behavior:'instant'});
+};
+$('zoom').onclick=()=>{const v=$('landskabsrum').classList.toggle('overblik');$('zoom').setAttribute('aria-pressed',v);$('zoom').textContent=v?'Se detaljer':'Vis overblik';};
 if(window.top!==window.self){document.body.classList.add('fokus');$('fokus').setAttribute('aria-pressed','true');$('fokus').textContent='Afslut fokus';}
 // De tidligere tre faners links viser nu det fælles landskab.
 if(['#hurtig','#geologi','#mennesker'].includes(location.hash))history.replaceState(null,'','#landskab');
