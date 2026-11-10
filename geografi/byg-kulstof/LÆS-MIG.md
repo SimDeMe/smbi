@@ -1,13 +1,30 @@
 # Byg kulstofkredsløbet – kulstoffets former i landskabet
 
-`geografi/byg-kulstof.html` er **alfa**. Den åbner med en ren figurvisning af
-en illustreret landskabsplade i snit med
-skov, humus, industri, vulkan, flod, hav, plankton, skaller og geologiske lagre.
-»Afprøv opgaven« åbner den eksisterende C/B-opgave. Opgavens videre
-didaktiske revision er udsat efter brugerens ønske. Eleven kan fortsat
-trække genbrugelige kulstofkort til elementerne eller vælge et kort
-og klikke på elementet. Et kort kan bruges mange gange, og havet kan rumme
-flere kort. Der gives feedback straks ved placering.
+`geografi/byg-kulstof.html` er **alfa**. Den åbner med første trin:
+identificér kulstofpuljerne i den godkendte lærebogsfigur.
+
+## Trin 1: puljerne – samme motor som vandets kredsløb
+
+`puljer.js` bruger `Byg` fra `byg-motor/motor.js`, og siden bruger
+`byg-motor/stil.css`: samme ordbakke, gule felter med henvisningsstreger,
+træk/klik/tastatur, Indsend svar, fejlforklaringer, hints og grønne låste navne
+som ved vandets kredsløb. Alle ti puljenavne er til rådighed fra starten,
+og eleven vælger selv rækkefølgen. Korrekte svar bliver stående; forkerte
+vender tilbage til bakken ved indsendelse. Figuren bevarer sine farver.
+
+Puljerne er atmosfæren, planter på land, jordens organiske stof, havvand,
+havets organismer, aflejrede kalkskaller, kul, olie, naturgas og kalksten.
+Det er konkrete delpuljer, som kan samles til større puljer i andre modeller.
+Røggas og vulkansk afgasning er ikke selvstændige puljer i dette trin.
+
+Når navnene er på plads, åbnes trin 2: kulstoffets former. Man kan vende
+tilbage til puljerne, og delvist gennemførte, kontrollerede navne gemmes
+sammen med svarene fra C/B. »Vis kun figuren« skjuler opgaven.
+
+Trin 2 beholder genbrugelige kulstofkort: eleven trækker et kort til et
+element eller vælger kortet og trykker på elementet. Et kort kan bruges
+mange gange, og havet kan rumme flere kort. Der gives feedback straks
+ved placering. Den fælles motor ændres ikke for at håndtere dette.
 
 ## C og B i samme landskab
 
@@ -36,7 +53,8 @@ som kun accepteres på hver sin plads.
 - `landskab-laerebog.webp`: færdig illustration, 1568 × 1003 px, ca. 256 KiB.
 - `illustration-prompt.md`: den fulde prompt til den indbyggede imagegen-funktion.
 - `model.js`: former, elementer, C/B-krav, svarregler og processer.
-- `side.js`: træk med mus/pen/touch, klik, tastatur, feedback og lagring.
+- `puljer.js`: figurdata og integration med den fælles Byg-motor til trin 1.
+- `side.js`: trinvalg, C/B-betjening, feedback og lagring.
 - `stil.css`: landskabet, klæbende kortbakke, stor visning, overblik og fokus.
 - `model.test.mjs` og `browser-test.mjs`: faglig svarstruktur og betjening.
 
@@ -51,13 +69,15 @@ Svarområderne er tilpasset lærebogsfigurens faktiske elementer. Billedet er sk
 geologisk profil i målestok. Opgavens svarregler og gemte svar er bevaret.
 
 »Se detaljer« viser den store figur; »Vis overblik« tilpasser hele motivet.
-Den rene figurvisning skjuler kort og svarfelter. Højopløselig figur kan
+Den valgfrie rene figurvisning skjuler kort og svarfelter. Højopløselig figur kan
 åbnes direkte fra sidens værktøjslinje.
 
-Korrekte svar gemmes som `element:form` under `byg-kulstof.v2` i browseren.
-Kun gyldige kombinationer læses ind. Den tidligere v1-øvelses afslutningsmærker
+Korrekte formsvar gemmes som `element:form`, og puljenavne som id, under
+`byg-kulstof.v2` i browseren (dataformat version 3). Eksisterende C/B-svar
+bevares ved udvidelsen. Kun gyldige kombinationer og puljer læses ind.
+Trin 2 kan først genåbnes, når alle puljer er navngivet. Den tidligere v1-øvelses afslutningsmærker
 kan ikke oversættes til disse placeringer og importeres ikke. »Byg forfra«
-rydder svar på begge niveauer. Modellen virker uden adgang til localStorage.
+rydder puljer og svar på begge niveauer. Modellen virker uden adgang til localStorage.
 
 ## Processerne er bevaret
 
@@ -118,22 +138,26 @@ node geografi/byg-kulstof/browser-test.mjs
 
 Modeltesten kontrollerer gentagen brug af samme kort, C/B-krav, udvidelse af
 det samme havfelt, bevarelse af placeringer og validering af gemt tilstand.
-Browsertesten kontrollerer ren figurvisning og billedindlæsning og udfører faktiske træk, klik og tastaturvalg, bygger C og
+Browsertesten kontrollerer alle puljenavne i bakken, fejl og godkendelse ved
+Indsend svar, delvis lagring og overgang til trin 2. Den kontrollerer også
+ren figurvisning og billedindlæsning og udfører faktiske træk, klik og tastaturvalg, bygger C og
 fortsætter til B, genindlæser og afprøver fem skærmstørrelser samt touch.
 Skærmbilleder ligger i `værktøj/ud/` og er ikke med i git. Den tidligere
-standardtest fra `byg-motor/` gælder ikke for denne svarstruktur.
+standardtest fra `byg-motor/` suppleres her med en samlet test af
+puljetrinnet og den lokale svarstruktur i trin 2.
 
 ## Elevafprøvning – endnu ikke gennemført
 
 Undersøg ved tænke-højt-afprøvning, om eleven:
 
-1. opdager, at samme kort kan bruges flere steder;
-2. forbinder organisk kulstof med planter, humus og fossile brændsler;
-3. skelner kul fra kalk og et fast mineral fra en opløst ion;
-4. kan fortsætte fra C til B og forklare, hvad der er nyt;
-5. forstår, at havets tre B-former findes i det samme vand;
-6. kan følge forvitring og begravelse gennem landskabet med pilene;
-7. kan bruge kortene og finde elementerne på telefonen.
+1. genkender puljerne, placerer deres navne og skelner et lager fra en transport;
+2. opdager, at samme formkort kan bruges flere steder;
+3. forbinder organisk kulstof med planter, humus og fossile brændsler;
+4. skelner kul fra kalk og et fast mineral fra en opløst ion;
+5. kan fortsætte fra C til B og forklare, hvad der er nyt;
+6. forstår, at havets tre B-former findes i det samme vand;
+7. kan følge forvitring og begravelse gennem landskabet med pilene;
+8. kan bruge kortene og finde elementerne på telefonen.
 
 Spørg efterfølgende til et nyt tilfælde, fx hvorfor forbrænding af naturgas
 flytter kulstof til atmosfæren. Automatisk test dokumenterer funktion,

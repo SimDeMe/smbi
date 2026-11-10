@@ -29,6 +29,20 @@ export function krav(sted,niveau) {
   return sted.former;
 }
 export const noegle = (sted,form) => `${sted}:${form}`;
+// Puljer er lagre. Røggas, vulkansk afgasning og flodtransport er ikke
+// særskilte lagre i dette første trin.
+export const PULJER = [
+  ['hav','Havvand','Det åbne vand i havet.'],
+  ['kul','Kul','Det mørke, faste lag i undergrunden.'],
+  ['skov','Planter på land','De levende træer og deres rødder.'],
+  ['luft','Atmosfæren','Luften over landskabet.'],
+  ['kalksten','Kalksten','Det lyse bjergartslag med fossiler under havet.'],
+  ['jord','Jordens organiske stof','Døde blade, humus og rester i det øverste jordlag.'],
+  ['gas','Naturgas','Den øverste del af olie- og gasfælden.'],
+  ['skaller','Kalkskaller','De aflejrede skaller på havbunden.'],
+  ['olie','Olie','Den mørke del af fælden under naturgassen.'],
+  ['plankton','Havets organismer','Tang og andre levende organismer i havet.']
+].map(([id,navn,hint])=>({id,navn,hint}));
 export function fremskridt(t) {
   const alle=STEDER.flatMap(s=>krav(s,t.niveau).map(f=>noegle(s.id,f)));
   const antal=alle.filter(k=>t.loest.has(k)).length;
@@ -49,10 +63,11 @@ export function placer(t,stedId,formId) {
   else tekst+=t.niveau==='B'&&s.tekstB?s.tekstB:s.tekst;
   return {status:'forkert',tekst};
 }
-export function gemData(t) {return {version:2,niveau:t.niveau,loest:[...t.loest]};}
+export function gemData(t) {return {version:3,niveau:t.niveau,trin:t.trin,puljer:[...t.puljer],loest:[...t.loest]};}
 export function hentData(d) {
   const gyldige=new Set(STEDER.flatMap(s=>krav(s,'B').map(f=>noegle(s.id,f))));
-  return {niveau:d?.niveau==='B'?'B':'C',loest:new Set(Array.isArray(d?.loest)?d.loest.filter(k=>gyldige.has(k)):[])};
+  const puljer=new Set(Array.isArray(d?.puljer)?d.puljer.filter(id=>PULJER.some(p=>p.id===id)):[]);
+  return {niveau:d?.niveau==='B'?'B':'C',trin:d?.trin==='former'&&puljer.size===PULJER.length?'former':'puljer',puljer,loest:new Set(Array.isArray(d?.loest)?d.loest.filter(k=>gyldige.has(k)):[])};
 }
 export const PROCESSER = [
   {id:'foto',navn:'Fotosyntese',sti:'M780 90Q490 110 300 235',tekst:'Planter og planteplankton bruger CO₂ til at danne organisk stof ved hjælp af lysenergi.'},

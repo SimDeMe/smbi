@@ -1,5 +1,6 @@
-import {FORMER,STEDER,PROCESSER,krav,noegle,fremskridt,placer,hentData,gemData} from './model.js';
+import {FORMER,STEDER,PULJER,PROCESSER,krav,noegle,fremskridt,placer,hentData,gemData} from './model.js';
 import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
+import {opretPuljer} from './puljer.js';
 const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',LAGRING='byg-kulstof.v2';
 let t=hentData(null),valgt=null,hintTrin=0,hintSted=null,traek=null,ignorerKlik=null;
 try{t=hentData(JSON.parse(localStorage.getItem(LAGRING)));}catch{}
@@ -61,10 +62,20 @@ function vaelg(id){
   besked(`${FORMER[id].navn} er valgt. Placér kortet på et element; du kan bruge det flere gange.`);
 }
 function status(){
+  document.body.classList.toggle('pulje-trin',t.trin==='puljer');
+  for(const b of document.querySelectorAll('[data-trin]')){b.setAttribute('aria-pressed',b.dataset.trin===t.trin);b.setAttribute('aria-selected',b.dataset.trin===t.trin);b.tabIndex=b.dataset.trin===t.trin?0:-1;}
+  $('trin-former').disabled=t.puljer.size!==PULJER.length;
+  $('kulstof-scene').setAttribute('aria-labelledby',t.trin==='puljer'?'trin-puljer':'trin-former');
+  $('fig-intro').textContent=t.trin==='puljer'?'En pulje er et lager for kulstof. Sæt navnene på puljerne i landskabet.':'Undersøg, hvilken form kulstoffet har i de forskellige puljer.';
   const p=fremskridt(t);$('fremskridt').textContent=`${t.niveau}-niveau · ${p.antal} af ${p.total} på plads`;
   $('faerdig').hidden=!p.faerdig;$('faerdig-titel').textContent=`${t.niveau}-modellen er bygget!`;
   $('faerdig-tekst').textContent=t.niveau==='C'?'Forklar, hvordan organisk kulstof bliver til CO₂. Fortsæt derefter til B-niveau, og undersøg flere opløste former i det samme havvand.':'Forklar forskellen på kulstoffet i havvand, organismer og fast kalk. Følg derefter kulstoffets vej med pilene.';
   $('fortsaet-b').hidden=t.niveau!=='C';$('hint').disabled=p.faerdig;
+}
+function skiftTrin(trin){
+  if(trin==='former'&&t.puljer.size!==PULJER.length)return;
+  rydTraek();valgt=null;t.trin=trin;status();visProces();gem();
+  if(trin==='puljer')puljeMotor.tegn();
 }
 function skiftNiveau(n){
   t.niveau=n;if(valgt&&n==='C'&&FORMER[valgt].niveau==='B')valgt=null;
@@ -84,7 +95,8 @@ function visSted(id){
   const g=grupper.get(id);g.focus({preventScroll:true});
   const r=g.querySelector('.navnefelt').getBoundingClientRect(),rum=$('landskabsrum').getBoundingClientRect();
   if(r.left<rum.left||r.right>rum.right)$('landskabsrum').scrollBy({left:(r.left+r.right-rum.left-rum.right)/2,behavior:'instant'});
-  const toolbar=$('kort-bar').getBoundingClientRect();if(r.top<toolbar.bottom+8||r.bottom>innerHeight-20)window.scrollBy({top:r.top-toolbar.bottom-20,behavior:'instant'});
+  const top=innerWidth<=860?document.querySelector('.side').getBoundingClientRect().bottom:$('site-top').getBoundingClientRect().bottom;
+  if(r.top<top+8||r.bottom>innerHeight-20)window.scrollBy({top:r.top-top-20,behavior:'instant'});
 }
 function startTraek(e,form,b){if(!e.isPrimary||e.button!==0)return;ignorerKlik=null;traek={form,x:e.clientX,y:e.clientY,id:e.pointerId,knap:b,aktiv:false};b.setPointerCapture(e.pointerId);}
 function rydTraek(){$('traek-kort')?.remove();for(const g of grupper.values())g.classList.remove('over');traek=null;}
@@ -115,19 +127,23 @@ $('hint').onclick=()=>{
   hintSted=s.id;hintTrin=1;$('hint').textContent='Vis svaret';grupper.get(s.id).classList.add('hint');visSted(s.id);besked(`Se på ${s.navn.toLowerCase()}. ${t.niveau==='B'&&s.tekstB?s.tekstB:s.tekst}`);
 };
 function visProces(){
-  const vis=$('vis-processer').checked,id=$('proces-valg').value,p=PROCESSER.find(p=>p.id===id);pile.style.display=vis?'':'none';$('proces-valg-label').hidden=!vis;$('proces-forklaring').hidden=!vis||!p;
+  const vis=t.trin==='former'&&$('vis-processer').checked,id=$('proces-valg').value,p=PROCESSER.find(p=>p.id===id);pile.style.display=vis?'':'none';$('proces-valg-label').hidden=!vis;$('proces-forklaring').hidden=!vis||!p;
   for(const g of pile.children){g.classList.toggle('aktiv',g.dataset.proces===id);g.classList.toggle('daempet',Boolean(id)&&g.dataset.proces!==id);}
   if(p){$('proces-titel').textContent=p.navn;$('proces-tekst').textContent=t.niveau==='B'&&p.tekstB?p.tekstB:p.tekst;}
 }
 for(const b of document.querySelectorAll('[data-niveau]'))b.onclick=()=>skiftNiveau(b.dataset.niveau);
+for(const b of document.querySelectorAll('[data-trin]')){
+  b.onclick=()=>skiftTrin(b.dataset.trin);
+  b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const id=e.key==='Home'?'puljer':e.key==='End'?'former':t.trin==='puljer'?'former':'puljer';const next=document.querySelector(`[data-trin="${id}"]`);if(!next.disabled){skiftTrin(id);requestAnimationFrame(()=>next.focus());}};
+}
 $('fortsaet-b').onclick=()=>{skiftNiveau('B');$('byg').scrollIntoView({block:'start',behavior:'instant'});};
 $('vis-processer').onchange=visProces;$('proces-valg').onchange=visProces;
-$('forfra').onclick=()=>{t.loest.clear();skiftNiveau(t.niveau);besked('Alle placeringer er ryddet. Byg landskabet igen.');};
+$('forfra').onclick=()=>{t.loest.clear();t.puljer.clear();puljeMotor.nulstil();puljeMotor.tegn();puljeMotor.besked('Figuren bygges forfra.','info');skiftTrin('puljer');skiftNiveau(t.niveau);};
 $('fokus').onclick=()=>{const v=document.body.classList.toggle('fokus');$('fokus').setAttribute('aria-pressed',v);$('fokus').textContent=v?'Afslut fokus':'Fokus';};
 $('vis-opgave').onclick=()=>{
  const ren=document.body.classList.toggle('figur-visning');
  $('vis-opgave').setAttribute('aria-pressed',!ren);$('vis-opgave').textContent=ren?'Afprøv opgaven':'Vis kun figuren';
- $('intro').textContent=ren?'Et landskab i snit: fra skov og bjergflod til kyst, hav og geologiske lagre.':'Træk kulstoffets form hen på landskabets elementer. Samme kort kan bruges flere steder.';
+ $('intro').textContent=ren?'Et landskab i snit: fra skov og bjergflod til kyst, hav og geologiske lagre.':'Identificér kulstofpuljerne, og undersøg derefter kulstoffets former.';
  $('landskabsrum').classList.toggle('overblik',ren);$('zoom').setAttribute('aria-pressed',ren);$('zoom').textContent=ren?'Se detaljer':'Vis overblik';
  $('byg').scrollIntoView({block:'start',behavior:'instant'});
 };
@@ -135,4 +151,11 @@ $('zoom').onclick=()=>{const v=$('landskabsrum').classList.toggle('overblik');$(
 if(window.top!==window.self){document.body.classList.add('fokus');$('fokus').setAttribute('aria-pressed','true');$('fokus').textContent='Afslut fokus';}
 // De tidligere tre faners links viser nu det fælles landskab.
 if(['#hurtig','#geologi','#mennesker'].includes(location.hash))history.replaceState(null,'','#landskab');
+const puljeMotor=opretPuljer(t,gem,()=>{skiftTrin('former');$('byg').scrollIntoView({block:'start',behavior:'instant'});});
+puljeMotor.tegn();
+document.addEventListener('keydown',e=>{
+  if(t.trin!=='puljer'||document.body.classList.contains('figur-visning')||e.altKey||e.ctrlKey||e.metaKey)return;
+  if(e.key==='Escape'){if(puljeMotor.annuller())e.preventDefault();}
+  if(e.key==='Enter'&&(e.target===document.body||!e.target.closest('button,a,[role="button"],summary,select,input'))){e.preventDefault();puljeMotor.indsend();}
+});
 skiftNiveau(t.niveau);

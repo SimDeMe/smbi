@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
-import {STEDER,FORMER,krav,placer,fremskridt,hentData,gemData} from './model.js';
+import {STEDER,PULJER,FORMER,krav,placer,fremskridt,hentData,gemData} from './model.js';
 const t=hentData(null);
+assert.equal(t.trin,'puljer');assert.equal(t.puljer.size,0);
+assert.equal(hentData({trin:'former',puljer:['hav','ukendt']}).trin,'puljer','Trin 2 kræver alle puljer');
+const delvis=hentData({puljer:['hav','kul','ukendt'],loest:['skov:organisk'],niveau:'B'});
+assert.deepEqual([...delvis.puljer],['hav','kul']);
+const gendannet=hentData(gemData(delvis));assert.equal(gendannet.puljer.size,2);assert.equal(gendannet.loest.size,1);
+const allePuljer=hentData({trin:'former',puljer:PULJER.map(p=>p.id)});assert.equal(allePuljer.trin,'former');
+assert(PULJER.every(p=>STEDER.some(s=>s.id===p.id)));assert(!PULJER.some(p=>['roeg','vulkan','flod'].includes(p.id)));
 assert.deepEqual(fremskridt(t),{antal:0,total:12,faerdig:false});
 assert.equal(placer(t,'skov','co2').status,'forkert');
 assert.equal(fremskridt(t).antal,0);
