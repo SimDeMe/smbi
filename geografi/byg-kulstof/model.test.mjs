@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {LAG,PULJER,PROCESSER,FORBINDELSER,hentData,gemData} from './model.js';
+import {LAG,PULJER,PROCESSER,FORBINDELSER,STEDER,PILE,hentData,gemData} from './model.js';
 import {KULSTOFFIGUR} from './puljer.js';
 import {HOEJDE} from './landskab.js';
 assert.deepEqual(LAG.map(l=>l.ord.length),[10,5,6]);
@@ -11,6 +11,9 @@ const delvis=hentData({version:4,lag:1,loest:[...LAG[0].ord,'foto']});assert.equ
 const igen=hentData(gemData(delvis));assert.deepEqual([...igen.loest],[...delvis.loest]);assert.equal(igen.lag,1);
 assert.equal(hentData({version:4,loest:'forkert'}).loest.size,0);
 for(const p of KULSTOFFIGUR.pladser){assert(p.x>=170&&p.x<=1568-170);assert(p.y>=24&&p.y<=HOEJDE-24);}
-for(const p of PROCESSER){assert(FORBINDELSER[p.id].length);assert(p.tekst.length>60);assert(LAG[p.lag].ord.includes(p.id));}
+for(const p of PROCESSER){assert.equal(FORBINDELSER[p.id].length,1,'Hver proces har én pil');
+ for(const id of FORBINDELSER[p.id][0])assert([...PULJER,...STEDER].some(p=>p.id===id),'Pile forbinder puljer, aldrig procesnavne');
+ assert.equal((PILE[p.id].match(/M/g)||[]).length,1,'En pil er ubrudt');assert(p.tekst.length>60);assert(LAG[p.lag].ord.includes(p.id));}
+assert.match(PILE.udveksling,/^M(\d+) (\d+) L\1 (\d+)$/,'Hav–luft er én ret lodret pil');
 assert.equal(KULSTOFFIGUR.pladser.length,PULJER.length+PROCESSER.length);
 console.log('Kulstofmodel: tre lag, 10/5/6 ord, procesdata, migration og gyldig lagvis lagring OK.');

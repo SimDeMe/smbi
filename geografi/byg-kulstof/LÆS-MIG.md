@@ -18,14 +18,18 @@ hints, grønne låste navne og Næste lag.
 Det tidligere lag med kulstoffets former og dets C/B-kort er fjernet efter
 brugerens ønske. Der er ingen placering af CO₂, organisk kulstof eller ionkort.
 
-Procespilene forbinder tekstboksenes kanter med rette stræk og tydelige
-pilespidser: fra pulje til proces og videre til næste pulje. Ruterne findes
-mellem de synlige bokse med fri afstand til teksten. Procesfelterne har
-ikke længere separate henvisningsstreger ud i landskabet.
-Den biologiske pumpe forbindes med havvand, ikke med kalkskaller; dens
-retur til havpuljen repræsenterer transport til dybere vand. Forvitring
-forbindes med atmosfære og hav. Landhævning fører fra kalksten videre mod
-forvitring og betyder ikke en direkte frigivelse af CO₂.
+Hver proces er én ubrudt pil direkte fra en pulje til en anden. Procesnavnet
+placeres ved siden af pilen og er aldrig et knudepunkt. Pilene deler ikke
+strækninger og forgrener sig ikke. Hav–luft-udvekslingen er én lodret
+pil med spidser i begge ender mellem de lodret justerede puljebokse.
+Ved krydsninger har den øverste pil en smal lys kontur, så forbindelserne
+kan skelnes. Godkendte procesnavne vises som etiketter med kursiv skrift.
+
+Dybhav og blotlagte bjergarter har faste stednavne, så den biologiske pumpe
+og landhævning har fagligt meningsfulde mål. De er ikke nye opgaveord.
+For overskuelighed vises kun ét eksempel pr. proces: fotosyntese på land,
+respiration fra jord, forbrænding fra olie og fossildannelse fra jord til kul.
+De øvrige veje omtales i forklaringerne.
 
 Puljernes navne bliver stående i proceslagene. Tidligere procesnavne og
 pile kan vises med »Vis tidligere procesnavne«; som udgangspunkt vises
@@ -44,10 +48,10 @@ aflæses ved at pege på et korrekt ord eller fokusere det med tastaturet.
   frigivelse fra et geologisk lager; den ligger sammen med bjergartsvejene.
 - Den biologiske pumpe flytter kulstof ned i havet. Efterfølgende
   nedbrydning og lagring kan foregå på andre tidsskalaer.
-- Fotosyntesen har to pile med ét navn: fra luft til planter på land og
-  fra havvand til havets organismer.
-- Fossildannelsen har særskilte pile fra landplanter mod kul og fra
-  marint organisk stof mod olie/gas. Kalksten bliver ikke til olie.
+- Fotosyntesepilen viser luft til planter på land. Fotosyntese i havet
+  omtales i forklaringen, men har ikke en ekstra pil.
+- Fossildannelsespilen viser jordens organiske stof til kul. Dannelsen
+  af olie og gas fra især marint organisk stof omtales, men er ikke tegnet.
 - Forvitringspilen samler kemisk forvitring og flodtransport af opløste
   stoffer. Mekanisk sønderdeling alene optager ikke CO₂.
 - Kalkaflejring omfatter begravelse og senere stendannelse. Selve
@@ -68,8 +72,7 @@ forvitring, havudveksling, fossildannelse og cementproduktion.
 
 ## Filer og lagring
 
-- `model.js`: puljer, procesnavne, forbindelser, lag og validering af gemte svar.
-- `pile.js`: retvinklede ruter mellem bokse uden at krydse tekst.
+- `model.js`: puljer, procesnavne, faste ubrudte pile, forbindelser, lag og validering af gemte svar.
 - `puljer.js`: figurdata og lokal integration med `byg-motor/motor.js`.
 - `side.js`: lagring, fokus, ren figurvisning og tastaturgenveje.
 - `stil.css`: lokale tilpasninger oven på `byg-motor/stil.css`.

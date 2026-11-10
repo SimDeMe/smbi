@@ -45,3 +45,9 @@ body.fokus .kulstof-foot{display:none}
 
 @media(min-width:861px){.side{position:sticky;top:67px;max-height:calc(100dvh - 80px);overflow:auto;align-self:start}body.fokus .side{top:8px}}
 @media(min-width:861px) and (max-height:700px){.side{top:53px}}
+
+#figur .sted-boks{fill:#e4eedc;stroke:#527744;stroke-width:2}
+
+#figur .procesnavn.laast .boks{fill:#fff9ee;stroke:none}
+#figur .procesnavn .ordtekst{font-style:italic}
+#figur .pil-underlag{pointer-events:none}

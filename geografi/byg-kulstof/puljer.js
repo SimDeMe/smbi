@@ -1,20 +1,13 @@
 // Alle tre lag bruger samme motor og komponenter som vandets kredsløb.
 import {Byg} from '../../byg-motor/motor.js';
-import {PULJER,PROCESSER,LAG,ALLE,FORBINDELSER} from './model.js';
+import {PULJER,PROCESSER,LAG,ALLE,FORBINDELSER,PILE,STEDER} from './model.js';
 import {LANDSKAB,BREDDE,HOEJDE} from './landskab.js';
-import {forbindBokse} from './pile.js';
 export const KULSTOFFIGUR={
  id:'kulstof',navn:'Kulstofkredsløbet',vb:[BREDDE,HOEJDE],boks:[340,48],mobilBredde:1000,
  lag:LAG,
  dele:[{ord:null,svg:LANDSKAB},...PROCESSER.map(p=>({ord:p.id,svg:''}))],
  pladser:[...PULJER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1],maal:p.punkt})),...PROCESSER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1]}))]
 };
-const ruter=new Map();
-function rute(a,b,bokse){
- const key=bokse.map(p=>p.ord).join(',')+':'+a.ord+':'+b.ord;
- if(!ruter.has(key))ruter.set(key,forbindBokse(a,b,bokse,a.ord==='pumpe'&&b.ord==='hav'?[1,1]:[]));
- return ruter.get(key);
-}
 const ORD=Object.fromEntries(ALLE.map(p=>[p.id,{ord:p.navn,tekst:p.tekst}]));
 
 export function opretKredslob(t,gem){
@@ -26,6 +19,7 @@ export function opretKredslob(t,gem){
    this.ui.svg.setAttribute('data-lag',this.lag);
    this.ui.svg.querySelectorAll('.plads').forEach(g=>{
     g.classList.toggle('tidligere-navn',this.ordLag[this.fig.pladser[+g.dataset.i].ord]>0&&this.ordLag[this.fig.pladser[+g.dataset.i].ord]<this.lag);
+    g.classList.toggle('procesnavn',this.ordLag[this.fig.pladser[+g.dataset.i].ord]>0);
     const tekst=g.querySelector('.ordtekst');if(tekst.textContent.length>24)tekst.style.fontSize='23px';
    });
    this.ui.svg.querySelectorAll('.del[data-ord]').forEach(g=>{g.classList.toggle('tidligere-pil',this.ordLag[g.dataset.ord]<this.lag);});
@@ -35,15 +29,18 @@ export function opretKredslob(t,gem){
   }
   opdaterPile(){
    const svg=this.ui.svg;
-   const bokse=this.fig.pladser.filter((p,i)=>{const g=this.pladsEl[i];return g&&getComputedStyle(g).display!=='none';});
-   const find=id=>bokse.find(p=>p.ord===id);
+   svg.querySelectorAll('.stednavne').forEach(g=>g.remove());
+   const ns='http://www.w3.org/2000/svg',steder=document.createElementNS(ns,'g');steder.setAttribute('class','stednavne');
+   for(const p of STEDER.filter(p=>p.lag===this.lag||p.lag<this.lag&&document.body.classList.contains('vis-tidligere'))){
+    const [x,y]=p.boks;steder.innerHTML+=`<g data-sted="${p.id}"><rect class="sted-boks" x="${x-170}" y="${y-24}" width="340" height="48" rx="11"/><text class="ordtekst" x="${x}" y="${y+7}" text-anchor="middle">${p.navn}</text></g>`;
+   }
+   svg.append(steder);
    svg.querySelectorAll('.del[data-ord]').forEach(g=>{
     const id=g.dataset.ord,p=PROCESSER.find(p=>p.id===id);
     const synlig=p.lag===this.lag||document.body.classList.contains('vis-tidligere');
     g.style.display=synlig?'':'none';
-    if(!synlig){g.innerHTML='';return;}
-    g.innerHTML=FORBINDELSER[id].filter(([a,b])=>find(a)&&find(b)).map(([a,b])=>
-     `<path class="kulstof-pil" data-fra="${a}" data-til="${b}" d="${rute(find(a),find(b),bokse)}" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`).join('');
+    const [fra,til]=FORBINDELSER[id][0];
+    g.innerHTML=synlig?`<path class="pil-underlag" d="${PILE[id]}" fill="none" stroke="#fff9ee" stroke-width="12" stroke-linejoin="round"/><path class="kulstof-pil" data-fra="${fra}" data-til="${til}" d="${PILE[id]}" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round" marker-end="url(#pilspids)"${p.dobbelt?' marker-start="url(#pilspids)"':''}/>`:'';
    });
   }
 

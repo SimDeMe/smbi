@@ -2,7 +2,7 @@ import {chromium} from '../../værktøj/node_modules/playwright/index.mjs';
 import assert from 'node:assert/strict';
 import {mkdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {LAG,FORBINDELSER} from './model.js';
+import {LAG,FORBINDELSER,STEDER} from './model.js';
 import {KULSTOFFIGUR} from './puljer.js';
 const ud=new URL('../../værktøj/ud/',import.meta.url);mkdirSync(ud,{recursive:true});
 const url=`http://localhost:${process.env.PORT||8777}/geografi/byg-kulstof.html`;
@@ -29,17 +29,18 @@ try{
   assert.deepEqual(await p.locator('#figur .plads').evaluateAll(gs=>gs.filter(g=>g.querySelector('.ordtekst').getBBox().width>+g.querySelector('.boks').getAttribute('width')-12).map(g=>g.textContent)),[],'Navne skal passe i felterne');
   await p.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
   await p.screenshot({path:fileURLToPath(new URL(`kulstof-lag-${lag+1}-bygget.png`,ud)),fullPage:true});
+  await p.locator('#figur').screenshot({path:fileURLToPath(new URL(`kulstof-figur-${lag+1}.png`,ud))});
   if(lag<2){await p.locator('#btn-naeste').click();assert.equal(await p.locator('#bakke .ord').count(),LAG[lag+1].ord.length);
    assert.equal(await p.locator('#figur .plads:not(.tidligere-navn)').count(),10+LAG[lag+1].ord.length);
    assert.equal(await felt(p,'hav').isVisible(),true);
    const forbindelser=await p.locator('#figur .del:not([style*="display: none"]) .kulstof-pil').evaluateAll((pile,pladser)=>pile.map(p=>{
     const kantafstand=(id,pt)=>{const b=pladser.find(b=>b.ord===id);return Math.hypot(Math.max(Math.abs(pt.x-b.x)-170,0),Math.max(Math.abs(pt.y-b.y)-24,0));};
     return {fra:p.dataset.fra,til:p.dataset.til,start:kantafstand(p.dataset.fra,p.getPointAtLength(0)),slut:kantafstand(p.dataset.til,p.getPointAtLength(p.getTotalLength()))};
-   }),KULSTOFFIGUR.pladser);
+   }),[...KULSTOFFIGUR.pladser,...STEDER.map(p=>({ord:p.id,x:p.boks[0],y:p.boks[1]}))]);
    assert.equal(forbindelser.length,LAG[lag+1].ord.flatMap(id=>FORBINDELSER[id]).length);
    assert(forbindelser.every(p=>p.fra&&p.til&&Math.abs(p.start-7)<.1&&Math.abs(p.slut-7)<.1),'Pile skal forbinde navngivne tekstbokse');
    const kollisioner=await p.locator('#figur').evaluate(svg=>{
-    const bokse=[...svg.querySelectorAll('.plads')].filter(g=>getComputedStyle(g).display!=='none').map(g=>g.querySelector('.boks').getBBox());
+    const bokse=[...svg.querySelectorAll('.plads,.stednavne > g')].filter(g=>getComputedStyle(g).display!=='none').map(g=>g.querySelector('rect').getBBox());
     return [...svg.querySelectorAll('.kulstof-pil')].filter(p=>{for(let l=0;l<=p.getTotalLength();l+=3){const pt=p.getPointAtLength(l);if(bokse.some(r=>pt.x>r.x&&pt.x<r.x+r.width&&pt.y>r.y&&pt.y<r.y+r.height))return true;}return false;}).length;
    });
    assert.equal(kollisioner,0,'Pile må ikke krydse nogen synlig tekstboks');
