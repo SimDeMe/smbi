@@ -8,7 +8,7 @@
 // sammen med UDGAVE i js/app.js, som viser nummeret i topbjælken. Ellers
 // bliver telefonen siddende med den udgave, den allerede har; sådan blev en
 // rettelse af quizzen hængende i flere uger.
-const CACHE = 'navne-app-v10';
+const CACHE = 'navne-app-v11';
 const SHELL = [
   '/navneApp/',
   '/navneApp/index.html',

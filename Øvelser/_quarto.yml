@@ -1,6 +1,8 @@
 project:
   type: default
-  post-render: fix-docx-tables.py
+  post-render:
+    - fix-docx-tables.py
+    - ../værktøj/analytics.py
 
 lang: da
 

@@ -15,3 +15,20 @@
   fælles modtager, ejeren af smbi.dk, også når elever og lærere fra andre
   skoler deltager. Modtageren er et Apps Script, der gemmer i ejerens Google
   Drive; opsætning og tjekliste står i `feedback/LYD.md`.
+
+## Besøgsstatistik med Cloudflare Web Analytics
+
+- Offentlige HTML-sider skal indeholde Cloudflare-snippet'en én gang, lige
+  før `</body>`. Den fælles kilde med sitets token er [analytics.html](analytics.html).
+  Cloudflare bruges som DNS only, så koden skal være i siderne; den indsættes
+  ikke automatisk hos Cloudflare.
+- Kør `python3 værktøj/analytics.py` efter oprettelse af nye HTML-sider og
+  `python3 værktøj/analytics.py --check` før udgivelse. Scriptet genbruger
+  den fælles snippet og udelader HTML-fragmenter, designudkast, interne
+  øvelsesdokumenter og det lokale Lectio-program.
+- Øvelsesvejledninger får automatisk koden fra `værktøj/analytics.py` som
+  `post-render` i `Øvelser/_quarto.yml`. Bevar dette: koden skal indsættes
+  efter Quarto har indlejret ressourcer, da Quarto ellers forsøger at
+  indlæse det eksterne `type="module"`-script som en lokal fil.
+- Statistikken bruges til besøg og sidevisninger pr. underside. Tilføj ikke
+  elevnavne, e-mailadresser eller elevsvar til analytics-data.
