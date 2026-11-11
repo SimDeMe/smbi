@@ -261,8 +261,12 @@ for (const [id, figurer] of efterId) {
 }
 const kbh = klima['208']?.find(s => s.wmo === '06186');
 if (!kbh || kbh.t[6] !== 18.3) throw new Error('Kontrol af København fejlede');
+// Bevar FAO-supplementet ved genimport af DWD-data. Brug kun til lande uden DWD-serier.
+const fao = JSON.parse(readFileSync(`${her}fao-klima.json`, 'utf8'));
+for (const [id, stationer] of Object.entries(fao.lande)) if (!klima[id]?.length) klima[id] = stationer;
 writeFileSync(`${her}klima.json`, JSON.stringify({
   kilde: 'Deutscher Wetterdienst (DWD), Climate Data Center: CLIMAT multi_annual, klimanormaler fra WMO-medlemslandenes vejrtjenester, CC BY 4.0',
+  supplement: fao.kilde,
   lande: klima
 }));
 

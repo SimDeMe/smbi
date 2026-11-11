@@ -139,7 +139,7 @@ def afproev_landemenu(browser, adresse, ud, skaerme=SKAERME):
         side.get_by_role('searchbox').fill('monaco')
         side.locator('.landeknapper button', has_text='Monaco').click()
         side.locator('[data-fane="klima"]').click()
-        expect(side.locator('#landedata')).to_contain_text('ingen klimanormal')
+        expect(side.locator('#landedata')).to_contain_text('ingen stationsserie')
         side.locator('#luk').click()
         # Escape lukker kun menuen, ikke fokustilstanden.
         side.locator('#fokus').click()
@@ -255,7 +255,7 @@ def afproev_sammenligning(browser, adresse, ud, skaerme=SKAERME):
         # Skift land og fjern sammenligningen igen.
         sammenlign_med(side, 'monac', 'Monaco')
         expect(side.locator('#dialogtitel')).to_have_text('Algeriet og Monaco')
-        expect(side.locator('.sammenligning-kolonne').nth(1)).to_contain_text('ingen klimanormal')
+        expect(side.locator('.sammenligning-kolonne').nth(1)).to_contain_text('ingen stationsserie')
         side.locator('.stopsammenligning').click()
         expect(side.locator('#dialogtitel')).to_have_text('Algeriet')
         expect(side.locator('.sammenligning-kolonne')).to_have_count(0)

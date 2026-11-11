@@ -1,0 +1,48 @@
+FAO CLIMWAT 2.0: stationssupplement til klima.json
+================================================
+Giovanni Muñoz og Jürgen Grieser (2006), CLIMWAT 2.0 for CROPWAT, FAO.
+Hentet 11. november 2026 fra FAO's officielle arkiv:
+https://www.fao.org/fileadmin/user_upload/faowater/Applications/CLIMWAT2.zip
+Produktbeskrivelse:
+https://www.fao.org/land-water/land/land-governance-and-planning/land-resources-planning-toolbox/detail/climwat---climatic-database-to-be-used-with-cropwat/en
+
+© FAO 2006. Den medfølgende CLIMWAT_2.pdf tillader gengivelse og spredning
+til undervisning og andre ikke-kommercielle formål med fuld kildeangivelse.
+Dette supplement er ikke omfattet af DWD's CC BY 4.0-licens.
+
+Grundlag og begrænsninger
+-------------------------
+FAO beskriver variable (undtagen potentiel evapotranspiration) som direkte
+observationer eller omregninger af observationer. Her anvendes kun månedlig
+nedbør samt middel af daglige minimums- og maksimumtemperaturer fra konkrete
+stationer. Temperaturkurven beregnes som (Tmin + Tmax) / 2; den er ikke en
+selvstændigt målt månedsmiddeltemperatur. Originale Tmin og Tmax bevares i JSON.
+Ingen gitterdata, satellitestimater, interpolation eller udfyldning af manglende
+værdier er tilføjet af atlasset.
+
+FAO tilstræbte perioden 1971–2000, men medtog også andre serier, herunder
+afbrudte serier, med mindst 15 års data, der slutter efter 1975. De præcise
+årstal og observationsantal pr. station findes ikke i CLIMWAT2_data.raw.
+Derfor angives perioden som ukendt, og data kaldes langtidsgennemsnit,
+ikke en dokumenteret WMO-normal for 1991–2020 eller 1961–1990.
+
+SWALIMs W-01 Climate of Somalia (2007) er ikke talgrundlaget: den rapport
+oplyser, at nogle huller er udfyldt. Nyere SWALIM/ClimSeries-stationer blev
+undersøgt, men de hentede Mogadishu-serier var tomme. CLIMWAT er en separat,
+historisk stationsdatabase. FAO garanterer ikke fejlfri observationer.
+
+Reproduktion
+-------------
+Pak ZIP ud uden at køre EXE. Kør:
+node atlas/data/fao-klima.mjs /sti/CLIMWAT_2.0_for_CROPWAT_Setup.EXE
+
+Scriptet kontrollerer EXE-filens SHA-256, udpakker de to zlib-lag i GkWare-
+arkivet og læser faste stationsposter fra CLIMWAT2_data.raw. Den medfølgende
+manuals Rome-tabel (koordinater, januar-Tmin, juli-Tmax og årsnedbør) bruges
+som uafhængig kontrol af feltplacering, skala og månedsrækkefølge.
+Der udvælges Mogadiscio, Lug-Ganane, Khismaio og Hargeisa for at vise
+kyst, indland og højland i Somalia. Originale stationsnavne og FAO-koder
+bevares; koderne fremstilles ikke som WMO-numre.
+
+fao-klima.json er det reproducerbare supplement. lande.mjs anvender det
+kun, hvor DWD ikke har stationer, så næste DWD-import ikke fjerner Somalia.

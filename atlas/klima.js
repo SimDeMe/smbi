@@ -1,5 +1,5 @@
 // Hydrotermfigurer for udvalgte klimastationer i et land.
-// Data: WMO-klimanormaler via Deutscher Wetterdienst (CLIMAT multi_annual).
+// Data: WMO-klimanormaler via DWD, suppleret med FAO CLIMWAT-stationer.
 // Dannes af data/lande.mjs; hentes først, når fanen åbnes.
 import { lavInformation } from './information.js';
 import { klasse } from './klimalag.js';
@@ -43,6 +43,8 @@ function element(type, tekst, klasse) {
 }
 const fmt = (v, d = 1) => v.toLocaleString('da-DK', { minimumFractionDigits: d, maximumFractionDigits: d });
 const grader = (v, pos, neg) => `${fmt(Math.abs(v), 2)}° ${v < 0 ? neg : pos}`;
+const erFAO = station => station.kilde === 'FAO CLIMWAT 2.0';
+const FAONOTE = 'FAO CLIMWAT 2.0: langtidsgennemsnit fra stationsobservationer. Temperaturkurven er beregnet som (middelminimum + middelmaksimum) / 2. Den præcise måleperiode er ikke oplyst pr. station i datafilen; figuren er derfor ikke en dokumenteret 1991–2020-normal. FAO tilstræbte 1971–2000, men medtog også andre og afbrudte serier med mindst 15 års data, som slutter efter 1975. Der er ikke indsat gitterdata eller udfyldt huller i atlasset.';
 
 // Hydrotermfigur med den gængse skala 10 °C ≙ 20 mm: hvor temperaturkurven
 // ligger over nedbørssøjlen, er måneden tør (fordampningen kan overstige nedbøren).
@@ -90,13 +92,18 @@ function stationskort(station, land, skala, niveau = 'h3') {
   const [lon, lat] = station.punkt;
   const sted = [grader(lat, 'N', 'S'), grader(lon, 'Ø', 'V'), `${station.hoejde.toLocaleString('da-DK')} m o.h.`];
   if (station.omraade && station.omraade !== land) sted.unshift(station.omraade);
-  kort.append(element('p', `${sted.join(' · ')} · WMO ${station.wmo}`, 'metadata'));
-  if (station.periode !== '1991–2020') kort.append(element('p', `Normalperiode ${station.periode}. Nyere normal findes ikke i datasættet for stationen.`, 'periodeadvarsel'));
+  kort.append(element('p', `${sted.join(' · ')} · ${erFAO(station) ? `FAO ${station.kode}` : `WMO ${station.wmo}`}`, 'metadata'));
   kort.append(lavHydrotermfigur(station, skala));
+  if (erFAO(station)) {
+    kort.append(element('p', 'FAO-stationsdata · måleperiode ikke oplyst. Temperatur beregnet fra middelminimum og middelmaksimum.', 'periodeadvarsel'));
+    const kilde = element('a', 'Kilde: FAO CLIMWAT 2.0', 'metadata');
+    kilde.href = station.kildeurl;
+    kort.append(kilde);
+  } else if (station.periode !== '1991–2020') kort.append(element('p', `Normalperiode ${station.periode}. Nyere normal findes ikke i datasættet for stationen.`, 'periodeadvarsel'));
   const aarsmiddel = station.t.reduce((s, v) => s + v, 0) / 12;
   const aarsnedboer = station.n.reduce((s, v) => s + v, 0);
   const amplitude = Math.max(...station.t) - Math.min(...station.t);
-  kort.append(element('p', `Årsmiddel ${fmt(aarsmiddel)} °C · årsnedbør ${Math.round(aarsnedboer).toLocaleString('da-DK')} mm · temperaturamplitude ${fmt(amplitude)} °C · ${station.periode}`, 'stationstal'));
+  kort.append(element('p', `${erFAO(station) ? 'Beregnet årsmiddel' : 'Årsmiddel'} ${fmt(aarsmiddel)} °C · årsnedbør ${Math.round(aarsnedboer).toLocaleString('da-DK')} mm · temperaturamplitude ${fmt(amplitude)} °C · ${station.periode}`, 'stationstal'));
   const toerre = station.t.map((tv, i) => 2 * tv > station.n[i]);
   const antalToerre = toerre.filter(Boolean).length;
   kort.append(element('p', antalToerre === 12 ? 'Alle tolv måneder er tørre (temperaturkurven over søjlen).'
@@ -105,9 +112,9 @@ function stationskort(station, land, skala, niveau = 'h3') {
   const detaljer = element('details', null, 'datatabel');
   detaljer.append(element('summary', 'Tal i tabel'));
   const t = element('table', null, 'pladetabel klimatabel');
-  t.append(element('caption', `${station.navn}${station.omraade && station.omraade !== land ? ` (${station.omraade})` : ''}: klimanormal ${station.periode}`));
+  t.append(element('caption', `${station.navn}${station.omraade && station.omraade !== land ? ` (${station.omraade})` : ''}: ${erFAO(station) ? 'FAO-langtidsgennemsnit; måleperiode ikke oplyst' : `klimanormal ${station.periode}`}`));
   const hoved = element('tr');
-  for (const tekst of ['Måned', 'Temperatur (°C)', 'Nedbør (mm)']) { const th = element('th', tekst); th.scope = 'col'; hoved.append(th); }
+  for (const tekst of ['Måned', erFAO(station) ? 'Beregnet temperatur (°C)' : 'Temperatur (°C)', 'Nedbør (mm)']) { const th = element('th', tekst); th.scope = 'col'; hoved.append(th); }
   const thead = element('thead'); thead.append(hoved); t.append(thead);
   const krop = element('tbody');
   MAANEDNAVNE.forEach((m, i) => {
@@ -157,7 +164,7 @@ export function lavKlimaandele(land, landenavn, niveau = 'h3') {
 export function visKlima(rod, stationer, landenavn, andele) {
   rod.replaceChildren();
   if (!stationer?.length) {
-    rod.append(element('p', `Datasættet har ingen klimanormal fra en station i ${landenavn}. Det gælder især små ø- og bystater. Prøv et naboland.`));
+    rod.append(element('p', `Atlassets datasæt har endnu ingen stationsserie med både temperatur og nedbør for ${landenavn}. Det betyder ikke, at der ikke findes målinger andre steder.`));
   } else {
     const forklaring = element('div', null, 'klimaforklaring');
     forklaring.append(
@@ -184,8 +191,8 @@ export function visKlima(rod, stationer, landenavn, andele) {
   undersoeg.append(liste);
   rod.append(undersoeg, lavInformation({
     navn: `klimadata for ${landenavn}`, overskrift: 'Om data',
-    introduktion: 'Klimanormaler: gennemsnit for 30 år målt på vejrstationen – ikke aktuelt vejr.',
-    tekst: 'Månedsmiddeltemperatur og månedsnedbør er WMO-klimanormaler, som landenes vejrtjenester har indberettet (CLIMAT-meldinger og WMO’s normalpublikationer). Data: Deutscher Wetterdienst (DWD), Climate Data Center, CLIMAT multi_annual, CC BY 4.0. Normalperioden er 1991–2020. Hvor en nyere normal mangler for alle landets stationer, vises 1961–1990, og det står ved figuren. Stationerne er valgt automatisk: først den station, der ligger nærmest hovedstaden, og for større lande op til tre ekstra stationer med mest forskelligt klima. Det er altså eksempler, ikke et gennemsnit for hele landet. Figuren bruger den gængse skala 10 °C ≙ 20 mm nedbør. Ligger temperaturkurven over nedbørssøjlen, regnes måneden som tør, fordi fordampningen kan være større end nedbøren. Stationsnavne er gengivet som i kilden.'
+    introduktion: 'Langtidsgennemsnit fra vejrstationer – ikke aktuelt vejr. Kilde og periode står ved figuren.',
+    tekst: (stationer?.some(erFAO) ? FAONOTE + ' De fire stationer er valgt for at vise kyst, indland og højland. ' : 'Månedsmiddeltemperatur og månedsnedbør er WMO-klimanormaler, som landenes vejrtjenester har indberettet (CLIMAT-meldinger og WMO’s normalpublikationer). Data: Deutscher Wetterdienst (DWD), Climate Data Center, CLIMAT multi_annual, CC BY 4.0. Normalperioden er 1991–2020. Hvor en nyere normal mangler for alle landets stationer, vises 1961–1990, og det står ved figuren. Stationerne er valgt automatisk: først den station, der ligger nærmest hovedstaden, og for større lande op til tre ekstra stationer med mest forskelligt klima. ') + 'Stationerne er eksempler, ikke et gennemsnit for hele landet. Figuren bruger den gængse skala 10 °C ≙ 20 mm nedbør. Ligger temperaturkurven over nedbørssøjlen, regnes måneden som tør, fordi fordampningen kan være større end nedbøren. Stationsnavne er gengivet som i kilden.'
   }));
 }
 
@@ -210,7 +217,7 @@ export function visKlimaSammenligning(rod, lande) {
     const overskrift = element('h3', l.navn, 'landenavn'); overskrift.id = `klimaland${i}`;
     kolonne.setAttribute('aria-labelledby', overskrift.id);
     kolonne.append(overskrift);
-    if (!l.stationer?.length) kolonne.append(element('p', `Datasættet har ingen klimanormal fra en station i ${l.navn}.`));
+    if (!l.stationer?.length) kolonne.append(element('p', `Atlassets datasæt har endnu ingen stationsserie med både temperatur og nedbør for ${l.navn}.`));
     else {
       const stak = element('div', null, 'stationsstak');
       for (const s of l.stationer) stak.append(stationskort(s, l.stationer[0].omraade, skala, 'h4'));
@@ -233,7 +240,7 @@ export function visKlimaSammenligning(rod, lande) {
   undersoeg.append(liste);
   rod.append(undersoeg, lavInformation({
     navn: `klimadata for ${lande.map(l => l.navn).join(' og ')}`, overskrift: 'Om data',
-    introduktion: 'Klimanormaler: gennemsnit for 30 år målt på vejrstationen – ikke aktuelt vejr.',
-    tekst: 'Samme data som for ét land: WMO-klimanormaler via Deutscher Wetterdienst (DWD), CLIMAT multi_annual, CC BY 4.0, normalperiode 1991–2020 (ellers står perioden ved figuren). Ved sammenligning har alle figurer samme akser, så en høj søjle betyder det samme i begge lande. Figurer for tørre stationer kan derfor blive lave, når den anden station er meget våd. Stationerne er eksempler, ikke gennemsnit for landet.'
+    introduktion: 'Langtidsgennemsnit fra vejrstationer – ikke aktuelt vejr. Kilde og periode står ved figuren.',
+    tekst: 'Samme data som for ét land: WMO-klimanormaler via Deutscher Wetterdienst (DWD), CLIMAT multi_annual, CC BY 4.0, normalperiode 1991–2020 (ellers står perioden ved figuren). ' + (alle.some(erFAO) ? FAONOTE + ' Forskellige og ukendte måleperioder begrænser sammenligningen. ' : '') + 'Ved sammenligning har alle figurer samme akser, så en høj søjle betyder det samme i begge lande. Figurer for tørre stationer kan derfor blive lave, når den anden station er meget våd. Stationerne er eksempler, ikke gennemsnit for landet.'
   }));
 }

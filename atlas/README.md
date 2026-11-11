@@ -409,6 +409,12 @@ globussens detaljerede 1:50 mio.-kort, så også mange små lande kan vælges.
   temperaturkurven ligger over søjlen) for 1–4 stationer pr. land med
   WMO-normaler 1991–2020. Hvor nyere normal mangler for hele landet, vises
   1961–1990 med tydelig advarsel. Tabel med tal til hver figur.
+  **Somalia (v483):** fire stationsserier fra FAO CLIMWAT 2.0
+  (Mogadiscio, Lug-Ganane, Khismaio og Hargeisa). Nedbør og målte
+  middelminimum/-maksimum; temperaturkurven er (Tmin + Tmax) / 2.
+  Den præcise måleperiode er ukendt i kildefilen og angives som sådan,
+  også ved sammenligning. Disse figurer betegnes ikke 30-årsnormaler.
+  Se `data/fao-klima.LICENSE`; reproducerbar import i `data/fao-klima.mjs`.
   **Klimazoner i landet** (v429) under figurerne: Vahl- og Köppen-klassernes
   andel af landets areal i klimazonelaget, med lagets farver (klasser under
   3 % udeladt; `data/klimaandele.json`, 13 kB, dannes af

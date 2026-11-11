@@ -30,6 +30,9 @@ suppleret med danske navne for otte områder uden FN-kode.
 
 Klima (klima.json)
 ------------------
+Somalia suppleres med FAO CLIMWAT 2.0; separat kilde og undervisningslicens
+står i fao-klima.LICENSE. DWD-licensen nedenfor gælder de øvrige stationsdata.
+
 Deutscher Wetterdienst (DWD), Climate Data Center (CDC):
 CLIMAT multi_annual, air_temperature_mean og precipitation_total,
 normalperioderne 1991_2020 og 1961_1990, samt stationslisten
