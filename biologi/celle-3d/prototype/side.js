@@ -1,13 +1,14 @@
 const $=id=>document.getElementById(id);
 const beskrivelser={
- hele:'Drej cellen og se, hvordan organellerne fortsætter ned i cellelegemet. Åbn derefter cellekernen eller mitokondrierne.',
- kerne:'Cellekernen ligger delvist nede i cytoplasmaet. Åbn snittet for at se rumligt kromatin og kernelegemet inde i kernen.',
- mito:'Mitokondrierne er bøjede, lukkede organeller. Åbn snittet for at se den indre membrans foldede cristae.',
- ruER:'Ru ER har bugtede, foldede membraner med ribosomer på den side, der vender mod cytoplasmaet.',
- glatER:'Glat ER bruger samme membranudtryk som ru ER. Her er overfladen uden ribosomer.',
- golgi:'Golgiapparatets afrundede membransække varierer i form og ligger delvist nede i cellelegemet.',
- lysosom:'Lysosomerne er små, membranomsluttede organeller inde i cellen.',
- vesikel:'Vesiklerne er små blærer med membran, som ligger i cytoplasmaet.'
+ hele:'Drej cellen, og kig ind gennem cellemembranen. Vælg en organel, eller åbn cellekernen og mitokondrierne for at se ind i dem.',
+ kerne:'Cellekernen ligger midt i cellen, omgivet af ru ER. Kernehylsteret har porer. Åbn kernen for at se kromatin og kernelegemet.',
+ mito:'Mitokondrierne er aflange organeller med to membraner. Åbn dem for at se den indre membrans folder, cristae.',
+ ruER:'Ru ER ligger i foldede lag rundt om cellekernen og har ribosomer på ydersiden. Kernehylsteret og ER hænger sammen.',
+ glatER:'Glat ER vises som et forgrenet netværk af membranrør uden ribosomer. ER danner i virkeligheden et sammenhængende membransystem.',
+ golgi:'Golgiapparatet er stakke af flade, let skålformede membransække. Små vesikler afsnøres fra randen.',
+ lysosom:'Lysosomerne er små membranblærer med fordøjelsesenzymer. De er spredt i cytoplasmaet.',
+ vesikel:'Vesiklerne er små membranblærer, der transporterer stoffer, fx fra golgiapparatet til cellemembranen.',
+ ribosom:'Frie ribosomer ligger i cytoplasmaet og danner proteiner, som bruges inde i cellen.'
 };
 let model;
 try{
@@ -21,14 +22,15 @@ if(model){
   const mål=(id==='kerne'?kerne:mito)===1?0:1;if(id==='kerne')kerne=mål;else mito=mål;
   const b=$(id),navn=id==='kerne'?'cellekernen':'mitokondrierne';b.setAttribute('aria-pressed',String(mål===1));b.textContent=(mål?'Luk ':'Åbn ')+navn;
   const start=model.målData().åbning[id],startTid=performance.now();if(animationer.has(id))cancelAnimationFrame(animationer.get(id));
-  $('status').textContent=mål?(id==='kerne'?'Snittet blotlægger kromatin og kernelegeme.':'Snittet blotlægger de foldede indre membraner.'):'Membranen er lukket igen.';
+  $('status').textContent=mål?(id==='kerne'?'Kernen er åbnet: kromatin og kernelegeme ses.':'Mitokondrierne er åbnet: de foldede indre membraner ses.'):'Membranen er lukket igen.';
   function trin(nu){const t=rolig.matches?1:Math.min(1,(nu-startTid)/600),p=t*t*(3-2*t);model.åbn(id,start+(mål-start)*p);if(t<1)animationer.set(id,requestAnimationFrame(trin));else animationer.delete(id);}
   animationer.set(id,requestAnimationFrame(trin));
  }
+ document.querySelectorAll('[data-vis]').forEach(el=>el.addEventListener('change',()=>model.vis(el.dataset.vis,el.checked)));
  $('organel').addEventListener('change',e=>vælg(e.target.value));$('taet').addEventListener('click',()=>model.fokuser(valgt));
  $('kerne').addEventListener('click',()=>åbn('kerne'));$('mito').addEventListener('click',()=>åbn('mito'));
  $('gel').addEventListener('input',e=>model.gennemsigtighed(Number(e.target.value)));
- function nulstil(){for(const a of animationer.values())cancelAnimationFrame(a);animationer.clear();kerne=mito=0;model.nulstil();$('gel').value='45';for(const id of['kerne','mito']){$(id).setAttribute('aria-pressed','false');$(id).textContent=id==='kerne'?'Åbn cellekernen':'Åbn mitokondrierne';}vælg('hele');$('status').textContent='Udgangspunkt gendannet.';}
+ function nulstil(){for(const a of animationer.values())cancelAnimationFrame(a);animationer.clear();kerne=mito=0;model.nulstil();document.querySelectorAll('[data-vis]').forEach(el=>el.checked=true);$('gel').value='45';for(const id of['kerne','mito']){$(id).setAttribute('aria-pressed','false');$(id).textContent=id==='kerne'?'Åbn cellekernen':'Åbn mitokondrierne';}vælg('hele');$('status').textContent='Udgangspunkt gendannet.';}
  $('nulstil').addEventListener('click',nulstil);document.querySelectorAll('[data-drej]').forEach(b=>b.addEventListener('click',()=>model.drej(Number(b.dataset.drej))));
  const c=$('celle');let træk=null;
  c.addEventListener('pointerdown',e=>{træk={x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};c.setPointerCapture(e.pointerId);});

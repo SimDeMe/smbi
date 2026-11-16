@@ -10,19 +10,25 @@ await page.route(/https:\/\/(static\.)?cloudflareinsights\.com\//,r=>r.fulfill({
 await page.goto(rod);await page.locator('body[data-grafik=webgl]').waitFor();await page.evaluate(()=>document.fonts.ready);
 const billede=()=>page.locator('canvas').evaluate(c=>c.toDataURL());
 const data=await page.evaluate(()=>window.cellePrototype.tilstand());
-// Mål faktiske world-bounding boxes: organeller skal krydse snitfladen.
-assert.ok(data.cellelegeme.dybde>3,'Cellelegemet skal have mærkbar volumen under snittet');
-for(const [navn,b]of[['kerne',data.kerne],...data.mitokondrier.map((v,i)=>['mitokondrie '+i,v])]){
- assert.ok(b.bund<data.snithøjde&&b.top>data.snithøjde,`${navn} skal gå igennem snitfladen`);
- const andel=(data.snithøjde-b.bund)/(b.top-b.bund);assert.ok(andel>.3&&andel<.75,`${navn} skal være delvist indlejret, fundet ${andel}`);
-}
+// Mål faktiske world-bounding boxes: en hel celle med organellerne inde i membranen.
+assert.ok(data.celle.min>3.9&&data.celle.max<5.6,`Cellen skal være en hel, bulet kugle (${data.celle.min}–${data.celle.max})`);
+assert.ok(Math.hypot(...data.kerne.midte)<.4,'Cellekernen skal ligge midt i cellen');
+assert.ok(data.ruER.størrelse[0]>data.kerne.størrelse[0]+1,'Ru ER skal omgive kernen');
+assert.ok(data.mitokondrier.length>=10&&data.golgi.length>=3,'Der skal være mange mitokondrier og flere golgistakke');
+for(const [navn,forhold]of Object.entries(data.indenfor))assert.ok(forhold<.97,`${navn} skal ligge inde i cellemembranen (${forhold.toFixed(3)})`);
 const lukket=await billede();
+for(const el of await page.locator('[data-vis]').all()){
+ await el.uncheck();assert.notEqual(await billede(),lukket,`Skjul ${await el.getAttribute('data-vis')} skal ændre billedet`);
+ await el.check();assert.equal(await billede(),lukket,'Vis skal genskabe billedet');
+}
+await page.locator('[data-vis="golgi"]').uncheck();await page.click('#nulstil');assert.equal(await page.locator('[data-vis="golgi"]').isChecked(),true);
+
 await page.click('#kerne');await page.waitForFunction(()=>window.cellePrototype.tilstand().åbning.kerne===1);
 assert.notEqual(await billede(),lukket);assert.equal((await page.evaluate(()=>window.cellePrototype.tilstand())).åbning.mito,0);
 await page.click('#mito');await page.waitForFunction(()=>window.cellePrototype.tilstand().åbning.mito===1);
 await page.screenshot({path:'/tmp/celle-prototype-qa/aaben.png'});
 await page.click('#kerne');await page.waitForFunction(()=>window.cellePrototype.tilstand().åbning.kerne===0);
-assert.equal((await page.evaluate(()=>window.cellePrototype.tilstand())).åbning.mito,1,'Snit skal kunne lukkes uafhængigt');
+assert.equal((await page.evaluate(()=>window.cellePrototype.tilstand())).åbning.mito,1,'Organellerne skal kunne lukkes uafhængigt');
 await page.click('#nulstil');assert.equal(await billede(),lukket,'Nulstil skal genskabe den lukkede celle');
 await page.locator('canvas').focus();await page.keyboard.press('ArrowLeft');assert.notEqual(await billede(),lukket);
 await page.click('#nulstil');await page.selectOption('#organel','kerne');await page.click('#taet');assert.notEqual(await billede(),lukket);
@@ -44,4 +50,4 @@ await page.click('#nulstil');
 if(!process.env.CELLE_PROTOTYPE_URL){await page.setViewportSize({width:1440,height:850});await page.waitForTimeout(100);await page.locator('canvas').screenshot({path:new URL('forhaandsvisning.png',import.meta.url).pathname});}
 assert.deepEqual(fejl,[]);await browser.close();
 const uden=await chromium.launch({args:['--disable-webgl']});const p=await uden.newPage();await p.goto(rod);await p.locator('body[data-grafik=fallback]').waitFor();assert.equal(await p.locator('#fallback').isVisible(),true);await p.waitForFunction(()=>document.querySelector('#fallback img').naturalWidth>0);assert.equal(await p.locator('#kerne').isDisabled(),true);await uden.close();
-console.log('OK: rumlig indlejring, uafhængige snit, nulstil, fokus, zoom, drejning, 5 vinduesstørrelser og reservebillede uden WebGL.');
+console.log('OK: hel celle med organeller indeni, uafhængig åbning, nulstil, fokus, zoom, drejning, 5 vinduesstørrelser og reservebillede uden WebGL.');

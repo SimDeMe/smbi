@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dyrecelle · 3D-værksted — smbi.dk</title>
-<meta name="description" content="Arbejdsmodel af en rumlig dyrecelle med organeller inde i cytoplasmaet og cellekerne og mitokondrier, der kan åbnes i snit."><meta name="robots" content="noindex">
+<meta name="description" content="Arbejdsmodel af en hel dyrecelle i 3D med gennemsigtig cellemembran, organeller i cytoplasmaet og cellekerne og mitokondrier, der kan åbnes."><meta name="robots" content="noindex">
 <meta name="theme-color" content="#fff9ee"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../../atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css">
 <script type="module" src="side.js"></script>
@@ -12,23 +12,25 @@
 <header><a href="/">smbi.dk</a><div><h1>Dyrecelle <span>3D-værksted</span></h1><p>Selvstændig arbejdsmodel <b>Alfa</b></p></div><button id="fokus" aria-pressed="false">Fokusvisning</button></header>
 <main>
 <section class="figur" aria-label="Drejelig 3D-dyrecelle">
-<canvas id="celle" tabindex="0" aria-label="Dyrecelle i snit. Organellerne er delvist nede i cytoplasmaet. Brug piletaster til at dreje og plus eller minus til at zoome." aria-describedby="forklaring">3D-visningen kræver WebGL. Beskrivelserne og forhåndsvisningen kan stadig læses.</canvas>
+<canvas id="celle" tabindex="0" aria-label="Hel dyrecelle set gennem en gennemsigtig cellemembran. Cellekernen med ru ER ligger i midten, og mitokondrier, golgiapparater, lysosomer og vesikler ligger rundt i cytoplasmaet. Brug piletaster til at dreje og plus eller minus til at zoome." aria-describedby="forklaring">3D-visningen kræver WebGL. Beskrivelserne og forhåndsvisningen kan stadig læses.</canvas>
 <p id="indlaesning" role="status">Bygger 3D-cellen …</p>
-<div class="figur-top"><span>CELLEN I SNIT</span><span>Træk for at dreje · rul for at zoome</span><button id="slut-fokus" hidden>Afslut fokus</button></div>
+<div class="figur-top"><span>HELE CELLEN</span><span>Træk for at dreje · rul for at zoome</span><button id="slut-fokus" hidden>Afslut fokus</button></div>
 <div class="figur-bund"><span>Illustrativ model · ikke målfast</span><div class="vinkler"><button type="button" data-drej="-.18" aria-label="Drej mod venstre">↶</button><button type="button" data-drej=".18" aria-label="Drej mod højre">↷</button><button type="button" id="nulstil">Nulstil</button></div></div>
-<div id="fallback" hidden><img src="forhaandsvisning.png" alt="Forhåndsvisning af 3D-cellen med delvist indlejrede organeller"><p>3D kunne ikke starte i denne browser. Her ses et billede af arbejdsmodellen.</p></div>
+<div id="fallback" hidden><img src="forhaandsvisning.png" alt="Forhåndsvisning af den hele 3D-celle med gennemsigtig membran og organeller"><p>3D kunne ikke starte i denne browser. Her ses et billede af arbejdsmodellen.</p></div>
 </section>
 <aside>
 <p class="overlinje">UNDERSØG FORM OG DYBDE</p>
-<label for="organel">Se på</label><select id="organel"><option value="hele">Hele cellen</option><option value="kerne">Cellekernen</option><option value="mito">Mitokondrierne</option><option value="ruER">Ru ER</option><option value="glatER">Glat ER</option><option value="golgi">Golgiapparatet</option><option value="lysosom">Lysosomerne</option><option value="vesikel">Vesiklerne</option></select>
+<label for="organel">Se på</label><select id="organel"><option value="hele">Hele cellen</option><option value="kerne">Cellekernen</option><option value="mito">Mitokondrierne</option><option value="ruER">Ru ER</option><option value="glatER">Glat ER</option><option value="golgi">Golgiapparatet</option><option value="lysosom">Lysosomerne</option><option value="vesikel">Vesiklerne</option><option value="ribosom">Frie ribosomer</option></select>
 <button id="taet" class="taet">Se tæt på</button>
 <div class="snit"><h2>Åbn organellerne</h2><button id="kerne" aria-pressed="false">Åbn cellekernen</button><button id="mito" aria-pressed="false">Åbn mitokondrierne</button></div>
-<label for="gel">Cytoplasmaets gennemsigtighed</label><input id="gel" type="range" min="10" max="85" value="45"><div class="skala"><span>Mere dækkende</span><span>Mere gennemsigtigt</span></div>
-<p id="forklaring">Drej cellen og se, hvordan organellerne fortsætter ned i cellelegemet. Åbn derefter cellekernen eller mitokondrierne.</p>
+
+<label for="gel">Cellemembranens gennemsigtighed</label><input id="gel" type="range" min="10" max="85" value="45"><div class="skala"><span>Mere dækkende</span><span>Mere gennemsigtigt</span></div>
+<fieldset class="synlighed"><legend>Vis organeller</legend><div class="organelliste"><label><input type="checkbox" data-vis="kerne" checked> Cellekerne</label><label><input type="checkbox" data-vis="mito" checked> Mitokondrier</label><label><input type="checkbox" data-vis="ruER" checked> Ru ER</label><label><input type="checkbox" data-vis="glatER" checked> Glat ER</label><label><input type="checkbox" data-vis="golgi" checked> Golgiapparat</label><label><input type="checkbox" data-vis="lysosom" checked> Lysosomer</label><label><input type="checkbox" data-vis="vesikel" checked> Vesikler</label><label><input type="checkbox" data-vis="ribosom" checked> Frie ribosomer</label></div></fieldset>
+<p id="forklaring">Drej cellen, og kig ind gennem cellemembranen. Vælg en organel, eller åbn cellekernen og mitokondrierne for at se ind i dem.</p>
 <p id="status" role="status" aria-live="polite"></p>
 </aside>
 </main>
-<details><summary>Om arbejdsmodellen</summary><p>Formålet er at udvikle selve 3D-cellen før integration i »Byg cellen« og membrantransport. Cellelegemet er vist i snit, og cytoplasmaet er delvist gennemsigtigt, så placeringen inde i cellen kan ses. Der er ingen væskeoverflade i en rigtig celle; den plane grænse i modellen er en illustrativ snitflade.</p><p>At »åbne« en organel betyder her at fjerne en del af dens membran for at se ind. Det er en visningsfunktion. Cellekernen viser rumligt kromatin og kernelegeme. Mitokondrierne viser indre membranfolder, cristae. Størrelser, membrantykkelser, antal og farver er forenklede. Åbningsanimationer og formgivning er endnu ikke elevafprøvet.</p></details>
+<details><summary>Om arbejdsmodellen</summary><p>Formålet er at udvikle selve 3D-cellen før integration i »Byg cellen« og membrantransport. Cellen er vist hel, og cellemembranen er gjort delvist gennemsigtig, så organellerne inde i cytoplasmaet kan ses. En rigtig cellemembran er ikke farvet og kan ikke ses på den måde; det er en illustrativ fremstilling.</p><p>At »åbne« en organel betyder her at fjerne en del af dens membran for at se ind. Det er en visningsfunktion. Cellekernen viser rumligt kromatin og kernelegeme. Mitokondrierne viser indre membranfolder, cristae. Størrelser, membrantykkelser og antal er forenklede. Farverne følger en almindelig konvention i lærebogsanimationer (violet kerne, rødt ER og røde mitokondrier, orange golgi, blå lysosomer); de viser ikke organellernes naturlige farver. I en rigtig celle er cytoplasmaet langt tættere pakket, og der er også cytoskelet, centrosom og meget mere. Åbningsanimationer og formgivning er endnu ikke elevafprøvet.</p></details>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

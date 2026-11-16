@@ -3,3 +3,11 @@
 #slut-fokus{pointer-events:auto;font-size:11px;padding:5px 8px}
 
 @media(max-width:800px){.figur-top span:nth-child(2){display:none}header p{display:block;font-size:0;line-height:1.1}header b{font-size:9px;margin-left:0}}
+
+.synlighed{border:0;border-bottom:1px solid var(--linje);padding:15px 0;margin:0}.synlighed legend{font:650 17px var(--sans);padding:0}.organelliste{display:grid;grid-template-columns:1fr 1fr;gap:7px 6px;margin-top:8px}.organelliste label{font:12px var(--sans);margin:0;display:flex;align-items:center;gap:5px}.organelliste input{accent-color:var(--pink);margin:0}@media(max-width:800px){aside>.synlighed{grid-column:1/-1}}
+
+/* Figuren: turkis dybde med bløde lysprikker, som i lærebogsanimationer af celler. */
+.figur{background:radial-gradient(circle at 12% 22%,#ffffff2e 0 6px,#ffffff00 16px),radial-gradient(circle at 84% 14%,#ffffff26 0 10px,#ffffff00 26px),radial-gradient(circle at 76% 78%,#ffffff1f 0 8px,#ffffff00 22px),radial-gradient(circle at 20% 82%,#ffffff22 0 5px,#ffffff00 15px),radial-gradient(circle at 92% 52%,#ffffff1a 0 14px,#ffffff00 32px),radial-gradient(circle at 6% 55%,#ffffff1c 0 9px,#ffffff00 24px),radial-gradient(ellipse at 46% 32%,#9ee6dc 0%,#4fb0b0 38%,#26727c 75%,#184f5a 100%);border-color:#1f5f68}
+.figur-top,.figur-bund{color:#e9f8f5;text-shadow:0 1px 2px #0b3b4280}
+#indlaesning{color:#f2fbf9}
+.vinkler button,#slut-fokus{color:var(--blaek);text-shadow:none}

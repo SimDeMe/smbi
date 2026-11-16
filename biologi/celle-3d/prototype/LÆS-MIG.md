@@ -6,20 +6,27 @@ Siden er delbar, men har `noindex` og står ikke i elevbiblioteket.
 
 ## Designmålet
 
-- Et reelt, afrundet cellelegeme med synlig volumen under snitfladen.
-- Cellekerne og mitokondrier går igennem snitfladen med omtrent halvdelen på
-  hver side. Det delvist gennemsigtige cytoplasma viser den indlejrede del.
-- Uregelmæssige, blødt afrundede organeller; cisterners forløb og form varierer.
-- Glat og ru ER deler membranform og materialer. Ru ER har ribosomer.
-- Cellekernens og mitokondriernes øvre membransnit kan fjernes og genskabes
-  uafhængigt. Det er en visningsfunktion, ikke en biologisk åbneproces.
+Udtrykket følger lærebogsanimationer af en dyrecelle (visuel reference:
+Nucleus Medical Media, »Biology: Cell Structure«, YouTube URUJD5NEXC8). Videoen
+er kun inspiration; ingen billeder eller modeller derfra indgår.
+
+- En hel, bulet celle set udefra gennem en gennemsigtig, let iriserende,
+  rosa cellemembran med lys randkontur, på turkis baggrund med lysprikker.
+- Cellekernen (violet, med kerneporer) ligger i midten, omgivet af ru ER som
+  en tromle af koncentriske, foldede cisterner med ribosomer.
+- Røde, aflange mitokondrier, hvor cristae ses som striber gennem den
+  ydre membran; orange golgistakke af skålformede sække; blå lysosomer,
+  små vesikler og frie ribosomer spredt i cytoplasmaet.
+- Glat ER er et forgrenet rørnetværk koblet til den yderste ru ER-cisterne.
+- Cellekernen og mitokondrierne kan åbnes uafhængigt (den øvre halvdel løftes
+  væk). Det er en visningsfunktion, ikke en biologisk proces.
 
 ## Filer
 
-- `geometri.js`: organisk cellekontur, hele legemer, ER-cisterner og mitokondrier.
-- `organeller.js`: placering, membraner, kromatin, kernelegeme og cristae.
-- `model.js`: lys, kamera, gennemsigtigt cellelegeme og betjenings-API.
-- `side.js`: udvælgelse, individuelle snit, fri drejning, zoom og fokus.
+- `geometri.js`: støj, bulet cellemembran, ER-cisterner, mitokondrier, cristae og golgisække.
+- `organeller.js`: farver, reproducerbar placering uden overlap, kerne, ER, golgi, mitokondrier m.m.
+- `model.js`: lys, tåge, kamera, membranmaterialer (fresnel-rand) og betjenings-API.
+- `side.js`: udvælgelse, åbning, fri drejning, zoom og fokus.
 - `forhaandsvisning.png`: rendering af den aktuelle model til WebGL-fallback.
 - `browser-test.mjs`: faktiske 3D-bounding boxes og interaktioner.
 
@@ -35,16 +42,18 @@ Med en server på port 8777:
 node biologi/celle-3d/prototype/browser-test.mjs
 ```
 
-Testen kontrollerer, at organellernes faktiske geometri krydser snittet og at
-cellelegemet har dybde. Den afprøver uafhængig åbning/lukning, nulstilling,
+Testen kontrollerer, at cellen er hel, at kernen ligger i midten omgivet af ru ER,
+og at organellerne ligger inde i membranen. Den afprøver uafhængig åbning/lukning, nulstilling,
 drejning, zoom, tastatur, mobil/laptop og fallback. Den opdaterer reservebilledet.
 Livekontrol kan køres med `CELLE_PROTOTYPE_URL` sat til prototypeadressen;
 så ændres reservebilledet ikke.
 
 ## Kendte forenklinger og næste vurdering
 
-Cytoplasmaet er gjort gennemsigtigt, og snittet er plant for at kunne se ind.
-Det er ikke en væskeoverflade. Størrelser, farver, membrantykkelser og antal er
-illustrative. Kromatin og cristae er skematiske rumlige gengivelser.
-Vurder især organellernes former, deres indlejring og de åbne snit, før der
-arbejdes med læringsopgaver og integration. Modellen er endnu ikke elevafprøvet.
+Membranen er farvet og gjort gennemsigtig for at kunne se ind; en rigtig
+cellemembran ses ikke sådan. Farverne følger lærebogskonventionen og er ikke
+naturlige. Cytoplasmaet er langt mindre tætpakket end i en rigtig celle, og
+cytoskelet og centrosom er udeladt. Størrelser og antal er illustrative.
+
+Fagligt grundlag: [ER-struktur](https://pmc.ncbi.nlm.nih.gov/articles/PMC4700099/), [Golgiapparatet](https://www.ncbi.nlm.nih.gov/books/NBK6268/) og [OpenStax om eukaryote celler](https://openstax.org/books/biology-2e/pages/4-3-eukaryotic-cells).
+Modellen er endnu ikke elevafprøvet.
