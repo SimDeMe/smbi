@@ -3,3 +3,6 @@ import { start } from '../../byg-motor/side.js';
 import * as figurer from './figurer.js';
 
 start(figurer);
+
+import {tilføj3D} from '../celle-3d/byg-visning.js';
+tilføj3D();

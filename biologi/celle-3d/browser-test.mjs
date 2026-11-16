@@ -1,0 +1,37 @@
+import {chromium} from '../../værktøj/node_modules/playwright/index.mjs';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch();
+const page=await browser.newPage({viewport:{width:1366,height:730},reducedMotion:'reduce'});
+const fejl=[];page.on('pageerror',e=>fejl.push(e.message));
+await page.route(/https:\/\/(static\.)?cloudflareinsights\.com\//,r=>r.fulfill({status:200,contentType:'text/javascript',body:''}));
+await page.goto('http://localhost:8777/biologi/celletransport/');
+await page.locator('canvas[data-grafik="webgl"]').waitFor();
+const før=await page.locator('canvas').evaluate(c=>c.toDataURL());
+await page.locator('[data-celle-drej=".15"]').click();
+assert.notEqual(await page.locator('canvas').evaluate(c=>c.toDataURL()),før,'Drejning skal ændre 3D-billedet');
+await page.locator('[data-celle-drej="0"]').click();
+assert.equal(await page.locator('canvas').evaluate(c=>c.toDataURL()),før,'Nulstil skal genskabe kameravinklen');
+await page.goto('http://localhost:8777/biologi/byg-cellen.html#plante');
+await page.waitForFunction(()=>window.bygFiguren);
+await page.locator('#fane-dyr').click();await page.locator('#figur[data-celle3d="klar"]').waitFor();
+const første=await page.locator('.celle-3d-billede').getAttribute('href');
+const anker=await page.locator('#figur .prik').first().getAttribute('cx');
+await page.locator('[data-drej=".15"]').focus();await page.keyboard.press('Enter');
+assert.notEqual(await page.locator('.celle-3d-billede').getAttribute('href'),første);
+assert.notEqual(await page.locator('#figur .prik').first().getAttribute('cx'),anker,'Fagordsanker skal følge rotationen');
+await page.locator('[data-drej="0"]').click();
+assert.equal(await page.locator('.celle-3d-billede').getAttribute('href'),første);
+// Afslut figuren for at kontrollere, at alle 3D-organeller og farver kan vises.
+await page.evaluate(()=>{const m=window.bygFiguren.aktiv();for(const l of m.fig.lag)for(const o of l.ord)m.loest.add(o);m.lag=2;m.tegn();});
+assert.notEqual(await page.locator('.celle-3d-billede').getAttribute('href'),første);
+assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),11);
+await page.screenshot({path:'/tmp/celletransport-qa/byg-3d.png'});
+await page.locator('#fane-plante').click();assert.equal(await page.locator('.celle-vinkler').isVisible(),false);
+await page.locator('#fane-dyr').click();assert.equal(await page.locator('.celle-3d-billede').count(),1);
+assert.deepEqual(fejl,[]);await browser.close();
+// Uden WebGL bevares SVG, fagord og transportknapper.
+const uden=await chromium.launch({args:['--disable-webgl']});const p=await uden.newPage();
+await p.route(/https:\/\/(static\.)?cloudflareinsights\.com\//,r=>r.fulfill({status:200,contentType:'text/javascript',body:''}));
+await p.goto('http://localhost:8777/biologi/celletransport/');await p.locator('canvas[data-grafik="svg"]').waitFor();assert.equal(await p.locator('#celle-drej').isVisible(),false);await p.locator('#naeste').click();
+await p.goto('http://localhost:8777/biologi/byg-cellen.html#dyr');await p.waitForFunction(()=>window.bygFiguren);await p.waitForTimeout(300);assert.equal(await p.locator('.celle-3d-billede').count(),0);assert.equal(await p.locator('#figur .plads').count(),3);await uden.close();
+console.log('OK: rigtig WebGL, rotation, nulstilling, ankre, lag, faneskift og fallback uden WebGL.');

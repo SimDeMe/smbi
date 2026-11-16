@@ -1,0 +1,2 @@
+.celle-i-3d>.dele,.celle-i-3d>.omraader{visibility:hidden}.celle-vinkler{display:flex;align-items:center;gap:6px;padding:3px 8px 8px;justify-content:flex-end;font:12px Archivo,system-ui,sans-serif}.celle-vinkler span{margin-right:auto;color:#466c73}.celle-vinkler button{font:500 12px Archivo,system-ui,sans-serif;border:1px solid #638d92;background:#fffdf8;color:#25463f;border-radius:5px;min-width:34px;padding:6px 8px;cursor:pointer}.celle-vinkler button:focus-visible{outline:3px solid #7a4fd6;outline-offset:2px}
+.celle-vinkler[hidden]{display:none}

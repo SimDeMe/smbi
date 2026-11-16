@@ -5,3 +5,5 @@
 
 /* Animation og nødvendige valg forbliver samlet; refleksion ligger nedenunder. */
 aside{padding:20px}body[data-visning="5"] #forklaring{display:none}body[data-visning="5"] h2{font-size:22px;margin-bottom:10px}body[data-visning="5"] aside{padding:16px}body[data-visning="5"] label{margin-top:9px}.efterfigur{display:flex;gap:24px;justify-content:space-between;margin-top:14px}.efterfigur>p{flex:1;margin:0!important;font-size:15px}.efterfigur .spoergsmaal{border:0;padding:0}.efterfigur #status{font-size:13px}.om{margin-top:14px}@media(max-width:849px){.billede{aspect-ratio:6/5}.efterfigur{display:block}.efterfigur>p{margin-bottom:12px!important}}
+
+.celle-drej{position:absolute;right:12px;bottom:10px;display:flex;align-items:center;gap:5px}.celle-drej span{font:11px var(--sans);color:#365b61}.celle-drej button{padding:5px 8px;font-size:11px;background:#fffdf8}body[data-visning="0"] canvas{cursor:grab;touch-action:pan-y}@media(max-width:600px){.celle-drej{bottom:27px;right:8px}.celle-drej span{display:none}}

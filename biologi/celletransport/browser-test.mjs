@@ -7,7 +7,7 @@ const page=await browser.newPage({viewport:{width:1366,height:625},reducedMotion
 const fejl=[];page.on('pageerror',e=>fejl.push(e.message));
 mkdirSync('/tmp/celletransport-qa',{recursive:true});
 await page.goto('http://localhost:8777/biologi/celletransport/');
-await page.locator('canvas[data-celle-kilde="byg-cellen/fig-dyr.js"]').waitFor();
+await page.locator('canvas[data-celle-kilde]').waitFor();
 await page.evaluate(()=>document.fonts.ready);
 await page.screenshot({path:'/tmp/celletransport-qa/celle.png'});
 for(const [w,h] of [[1280,577],[1366,625],[1536,730],[740,750],[390,750]]){

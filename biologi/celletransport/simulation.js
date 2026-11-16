@@ -2,13 +2,15 @@ import {former, trin} from './indhold.js';
 import cellefigur from '../byg-cellen/fig-dyr.js';
 import {ankre, udsnit} from '../byg-cellen/dyrecelle-tegning.js';
 
-// Genbrug den færdige dyrecelles SVG direkte fra «Byg cellen».
-// Ingen kopi af organellerne: de to sider følger samme figurkilde.
+// Fælles 3D-model med den lagdelte SVG som reserve uden WebGL.
+// Ingen kopi af organellerne i transport-simulatoren.
 const cellebillede = new Image();
 const [cellebredde, cellehøjde] = cellefigur.vb;
 const celleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cellebredde}" height="${cellehøjde}" viewBox="0 0 ${cellebredde} ${cellehøjde}">${cellefigur.dele.map(del => del.svg).join('')}</svg>`;
 cellebillede.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(celleSvg);
 await cellebillede.decode();
+let cellemodel=null,celleVinkel=0;
+try{const {skabDyrecelle}=await import('../celle-3d/model.js');cellemodel=skabDyrecelle();}catch(e){console.warn('3D utilgængelig; viser SVG.',e);}
 const $ = id => document.getElementById(id);
 const lærred = $('scene'), ctx = lærred.getContext('2d');
 const mindreBevægelse = matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,21 +41,22 @@ function dyrecelle(zoom=0) {
  const punkt=(x,y)=>[cx+(x-500)*målestok,250+(y-300)*målestok];
  // Zoom om det markerede udsnit og før det ind mod membranvisningens midte.
  ctx.save();
- const zoomY=250+(udsnit.y-300)*målestok;
- ctx.translate(cx,bland(zoomY,250,zoom));
+ const [zx,zy]=cellemodel?cellemodel.projektion():[udsnit.x,udsnit.y];
+ const [zoomX,zoomY]=punkt(zx,zy);
+ ctx.translate(bland(zoomX,cx,zoom),bland(zoomY,250,zoom));
  ctx.scale(1+zoom*5,1+zoom*5);
- ctx.translate(-cx,-zoomY);
- ctx.drawImage(cellebillede,cx-500*målestok,250-300*målestok,cellebredde*målestok,cellehøjde*målestok);
+ ctx.translate(-zoomX,-zoomY);
+ ctx.drawImage(cellemodel?.lærred||cellebillede,cx-500*målestok,250-300*målestok,cellebredde*målestok,cellehøjde*målestok);
  ctx.restore();
  if(zoom===0){
-  etiket('Cellekerne',cx-280,190,...punkt(...ankre.cellekerne));
-  etiket('Mitokondrie',cx-265,395,...punkt(...ankre.mitokondrie));
-  etiket('Golgiapparat',cx+150,420,...punkt(...ankre.golgi));
-  if(W>=700)etiket('Ru ER',cx+245,160,...punkt(...ankre.ruER));
+  etiket('Cellekerne',cx-280,190,...punkt(...(cellemodel?cellemodel.projektion('cellekerne'):ankre.cellekerne)));
+  etiket('Mitokondrie',cx-265,395,...punkt(...(cellemodel?cellemodel.projektion('mitokondrie'):ankre.mitokondrie)));
+  etiket('Golgiapparat',cx+120,390,...punkt(...(cellemodel?cellemodel.projektion('golgi'):ankre.golgi)));
+  if(W>=700)etiket('Ru ER',cx+245,160,...punkt(...(cellemodel?cellemodel.projektion('ruER'):ankre.ruER)));
   ctx.setLineDash([6,5]);ctx.strokeStyle=farve.pink;ctx.lineWidth=2;
-  ctx.strokeRect(cx-36,zoomY-20,72,40);ctx.setLineDash([]);
-  tekst('Cellemembran',cx+70,zoomY-15,22);
-  linje([[cx+66,zoomY-10],[cx+36,zoomY]],farve.pink,2);
+  ctx.strokeRect(zoomX-36,zoomY-20,72,40);ctx.setLineDash([]);
+  tekst('Cellemembran',cx+60,100,22);
+  linje([[cx+75,110],[zoomX+36,zoomY]],farve.pink,2);
   tekst('DYRECELLE',24,35,18,'#6a7771');
  }
 }
@@ -127,7 +130,7 @@ function faseTekst(){const t=type();if(aktueltTrin===0)return 'Vælg “Zoom ind
 }
 function status(){const s=faseTekst();if($('status').textContent!==s)$('status').textContent=s;$('afspil').textContent=kører?'Pause':tid>=varighed()?'Afspil igen':'Afspil';}
 function indstilIndhold(){document.body.dataset.visning=String(aktueltTrin);const data=aktueltTrin===5?former[type()]:trin[aktueltTrin];$('kategori').textContent=data.kategori;$('overskrift').textContent=data.titel;$('forklaring').textContent=data.tekst;$('spoergsmaal').textContent=data.spoerg;
- $('teori-tekst').textContent=data.tekst;$('transport-teori').hidden=aktueltTrin!==5;$('valg').hidden=aktueltTrin!==5;const aktiv=['pumpe','exo','endo'].includes(type());$('gradient-felt').hidden=aktiv;$('energi-felt').hidden=!aktiv;$('protein-felt').hidden=!['kanal','baerer'].includes(type());$('protein-navn').textContent=type()==='baerer'?'Bærerprotein til stede':'Ionkanal åben';$('stof').textContent=data.stof||'O₂';
+ $('teori-tekst').textContent=data.tekst;$('transport-teori').hidden=aktueltTrin!==5;$('celle-drej').hidden=aktueltTrin!==0||!cellemodel;$('valg').hidden=aktueltTrin!==5;const aktiv=['pumpe','exo','endo'].includes(type());$('gradient-felt').hidden=aktiv;$('energi-felt').hidden=!aktiv;$('protein-felt').hidden=!['kanal','baerer'].includes(type());$('protein-navn').textContent=type()==='baerer'?'Bærerprotein til stede':'Ionkanal åben';$('stof').textContent=data.stof||'O₂';
  lærred.setAttribute('aria-label',aktueltTrin===0?'Dyrecelle med cellekerne og organeller':data.titel+'. '+data.tekst);
  document.querySelectorAll('[data-trin]').forEach(b=>{if(Number(b.dataset.trin)===aktueltTrin)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
  $('forrige').disabled=aktueltTrin===0;$('naeste').disabled=aktueltTrin===5;$('naeste').textContent=aktueltTrin===0?'Zoom ind på membranen →':aktueltTrin===4?'Undersøg selv →':'Næste →';$('afspil').disabled=aktueltTrin===0;$('deltrin').disabled=aktueltTrin===0;status();tegn();}
@@ -141,4 +144,11 @@ function frame(nu){const dt=sidst?Math.min((nu-sidst)/1000,.08):0;sidst=nu;if(k�
  $('afspil').addEventListener('click',()=>{if(tid>=varighed())tid=0;kører=!kører;status();tegn();});$('gentag').addEventListener('click',()=>{tid=0;kører=aktueltTrin>0&&!mindreBevægelse.matches;status();tegn();});$('deltrin').addEventListener('click',()=>{kører=false;if(energi())tid=Math.min(tid+varighed()/8,varighed());status();tegn();});
  function fokus(til){document.body.classList.toggle('fokus',til);$('fokus').setAttribute('aria-pressed',String(til));requestAnimationFrame(tegn);} $('fokus').addEventListener('click',()=>fokus(!document.body.classList.contains('fokus')));document.addEventListener('keydown',e=>{if(e.key==='Escape')fokus(false);});
  mindreBevægelse.addEventListener('change',()=>{if(mindreBevægelse.matches){kører=false;status();}});
- new ResizeObserver(tegn).observe(lærred);document.fonts.ready.then(tegn);indstilIndhold();lærred.dataset.celleKilde='byg-cellen/fig-dyr.js';requestAnimationFrame(frame);
+ new ResizeObserver(tegn).observe(lærred);document.fonts.ready.then(tegn);indstilIndhold();lærred.dataset.celleKilde=cellemodel?'celle-3d/model.js':'byg-cellen/fig-dyr.js';requestAnimationFrame(frame);
+
+function drejCelle(vinkel){if(!cellemodel)return;celleVinkel=Math.max(-.5,Math.min(.5,vinkel));cellemodel.tegn({rotation:celleVinkel});tegn();}
+document.querySelectorAll('[data-celle-drej]').forEach(b=>b.addEventListener('click',()=>drejCelle(b.dataset.celleDrej==='0'?0:celleVinkel+Number(b.dataset.celleDrej))));
+let træk=null;lærred.addEventListener('pointerdown',e=>{if(aktueltTrin!==0||!cellemodel)return;træk={x:e.clientX,v: celleVinkel};lærred.setPointerCapture(e.pointerId);});
+lærred.addEventListener('pointermove',e=>{if(træk)drejCelle(træk.v+(e.clientX-træk.x)*.006);});
+for(const hændelse of['pointerup','pointercancel'])lærred.addEventListener(hændelse,()=>træk=null);
+lærred.dataset.grafik=cellemodel?'webgl':'svg';
