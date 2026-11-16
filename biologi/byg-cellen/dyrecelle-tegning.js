@@ -23,10 +23,20 @@ const cyto=`<path d="${cellekontur}" transform="translate(0 25)" fill="#0b728a"/
  <path d="M236 302C258 204 341 145 414 123" fill="none" stroke="#effffc" stroke-width="15" opacity=".35"/>`;
 function sæk(d,type='er',dy=22){return `<path d="${d}" transform="translate(0 ${dy})" fill="url(#dyr-${type}-side)" stroke="${type==='er'?'#096c83':'#a65d16'}" stroke-width="2"/>
  <path d="${d}" fill="url(#dyr-${type})" stroke="${type==='er'?'#5cdee0':'#ffda75'}" stroke-width="2.5" stroke-linejoin="round"/>`;}
-const ruER=Array.from({length:6},(_,i)=>{const x=i*13,y=i*22;return sæk(`M${463+x} ${128+y}C${549+x} ${97+y} ${633+x} ${121+y} ${647+x} ${165+y}C${674+x} ${210+y} ${649+x} ${251+y} ${603+x} ${266+y}L${582+x} ${250+y}C${633+x} ${230+y} ${642+x} ${204+y} ${619+x} ${173+y}C${601+x} ${145+y} ${536+x} ${129+y} ${480+x} ${145+y}Z`,'er',17);}).join('')+
- Array.from({length:27},(_,i)=>{const col=i%3,row=Math.floor(i/3),x=660+col*17+Math.sin(row)*9,y=159+row*21;return `<circle cx="${x}" cy="${y+2}" r="3.8" fill="#375a66" opacity=".5"/><circle cx="${x}" cy="${y}" r="3.7" fill="url(#dyr-gul)"/>`;}).join('');
-const glatER=Array.from({length:5},(_,i)=>{const x=i*11,y=i*22;return sæk(`M${317+x} ${213+y}C${287+x} ${237+y} ${300+x} ${262+y} ${345+x} ${270+y}C${411+x} ${284+y} ${429+x} ${302+y} ${412+x} ${316+y}C${399+x} ${326+y} ${367+x} ${304+y} ${343+x} ${311+y}L${345+x} ${326+y}C${382+x} ${319+y} ${411+x} ${348+y} ${437+x} ${329+y}C${476+x} ${303+y} ${431+x} ${277+y} ${368+x} ${259+y}C${333+x} ${249+y} ${316+x} ${239+y} ${334+x} ${226+y}Z`,'er',21);}).join('')+
- `<path d="M328 219C316 187 341 164 374 164M351 255C359 222 389 205 401 188M428 340C468 363 496 358 507 342" fill="none" stroke="#08768e" stroke-width="17" stroke-linecap="round"/><path d="M328 216C316 184 341 161 374 161M351 252C359 219 389 202 401 185M428 337C468 360 496 355 507 339" fill="none" stroke="#3ec7d0" stroke-width="11" stroke-linecap="round"/>`;
+// Samme foldede membranform, farver og dybde for begge ER-områder.
+// På ru ER tilføjes ribosomer på membranens synlige overflade.
+function erNet(medRibosomer=false) {
+ const folder=Array.from({length:5},(_,i)=>{
+  const x=i*11,y=i*22;
+  const membran=sæk(`M${317+x} ${213+y}C${287+x} ${237+y} ${300+x} ${262+y} ${345+x} ${270+y}C${411+x} ${284+y} ${429+x} ${302+y} ${412+x} ${316+y}C${399+x} ${326+y} ${367+x} ${304+y} ${343+x} ${311+y}L${345+x} ${326+y}C${382+x} ${319+y} ${411+x} ${348+y} ${437+x} ${329+y}C${476+x} ${303+y} ${431+x} ${277+y} ${368+x} ${259+y}C${333+x} ${249+y} ${316+x} ${239+y} ${334+x} ${226+y}Z`,'er',21);
+  const prikker=medRibosomer?[[320,240],[340,259],[371,274],[407,290],[424,310]].map(([px,py])=>
+   `<circle cx="${px+x}" cy="${py+y+2}" r="4.2" fill="#375a66" opacity=".5"/><circle cx="${px+x}" cy="${py+y}" r="4" fill="url(#dyr-gul)"/>`).join(''):'';
+  return membran+prikker;
+ }).join('');
+ return medRibosomer?`<g transform="translate(1040 -60) scale(-1 1)">${folder}</g>`:folder;
+}
+const ruER=erNet(true);
+const glatER=erNet();
 const golgi=Array.from({length:5},(_,i)=>{const x=i*8,y=i*17;return sæk(`M${591+x} ${319+y}C${624+x} ${340+y} ${699+x} ${327+y} ${718+x} ${299+y}C${742+x} ${287+y} ${750+x} ${301+y} ${729+x} ${322+y}C${692+x} ${357+y} ${615+x} ${369+y} ${578+x} ${344+y}C${561+x} ${330+y} ${572+x} ${314+y} ${591+x} ${319+y}Z`,'golgi',26);}).join('');
 function mitochondrie(x,y,angle,l=116,h=51){const rx=l/2,ry=h/2;const crêtes=Array.from({length:7},(_,i)=>{const xx=-rx+14+i*(l-28)/6;return `<path d="M${xx} ${-ry+8}C${xx-9} ${-ry+20} ${xx+11} ${ry-20} ${xx} ${ry-8}" fill="none" stroke="#60c8d8" stroke-width="3"/>`;}).join('');return `<g transform="translate(${x} ${y}) rotate(${angle})"><ellipse cy="9" rx="${rx}" ry="${ry}" fill="#0a536e"/><ellipse rx="${rx}" ry="${ry}" fill="url(#dyr-mito)" stroke="#08718d" stroke-width="2.5"/><ellipse rx="${rx-6}" ry="${ry-6}" fill="url(#dyr-mito-indre)" stroke="#66d4dc" stroke-width="2"/>${crêtes}<path d="M${-rx+15} -4q15-15 27 3t29 1t25-1" fill="none" stroke="#b177a6" stroke-width="1.5" opacity=".7"/></g>`;}
 const mitokondrier=mitochondrie(287,365,65,125,53)+mitochondrie(353,415,38,126,54)+mitochondrie(546,471,-9,152,58);
