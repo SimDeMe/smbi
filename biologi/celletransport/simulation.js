@@ -1,4 +1,14 @@
 import {former, trin} from './indhold.js';
+import cellefigur from '../byg-cellen/fig-dyr.js';
+import {ankre, udsnit} from '../byg-cellen/dyrecelle-tegning.js';
+
+// Genbrug den færdige dyrecelles SVG direkte fra «Byg cellen».
+// Ingen kopi af organellerne: de to sider følger samme figurkilde.
+const cellebillede = new Image();
+const [cellebredde, cellehøjde] = cellefigur.vb;
+const celleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cellebredde}" height="${cellehøjde}" viewBox="0 0 ${cellebredde} ${cellehøjde}">${cellefigur.dele.map(del => del.svg).join('')}</svg>`;
+cellebillede.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(celleSvg);
+await cellebillede.decode();
 const $ = id => document.getElementById(id);
 const lærred = $('scene'), ctx = lærred.getContext('2d');
 const mindreBevægelse = matchMedia('(prefers-reduced-motion: reduce)');
@@ -24,19 +34,28 @@ function molekyle(x,y,art='o2',størrelse=1){ctx.save();ctx.translate(x,y);ctx.s
  else if(art==='vand'){cirkel(-6,5,4,'#fff',farve.blaa,1);cirkel(6,5,4,'#fff',farve.blaa,1);cirkel(0,0,7,'#70bfd0',farve.blaa,1);}
  else if(art==='co2'){cirkel(-10,0,6,'#e6a16e');cirkel(0,0,6,'#6f817b');cirkel(10,0,6,'#e6a16e');}
  else{cirkel(-5,0,7,'#63b7c6',farve.blaa,1.5);cirkel(5,0,7,'#63b7c6',farve.blaa,1.5);}ctx.restore();}
-function mitochondrie(x,y,rotation){ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.beginPath();ctx.ellipse(0,0,45,23,0,0,Math.PI*2);ctx.fillStyle='#eabe77';ctx.fill();ctx.strokeStyle='#a16d31';ctx.lineWidth=3;ctx.stroke();linje([[-31,0],[-23,-12],[-12,12],[0,-12],[12,12],[23,-10],[32,2]],'#a16d31',3);ctx.restore();}
-function dyrecelle(zoom=0){const cx=W/2,cy=250;ctx.save();ctx.translate(cx,85);ctx.scale(1+zoom*5,1+zoom*5);ctx.translate(-cx,-85);
- ctx.beginPath();ctx.ellipse(cx,cy,215,173,-.07,0,Math.PI*2);ctx.fillStyle=farve.cyto;ctx.fill();ctx.strokeStyle='#cb628a';ctx.lineWidth=11;ctx.stroke();ctx.strokeStyle='#f4b8c9';ctx.lineWidth=4;ctx.stroke();
- cirkel(cx-30,245,62,'#bdacd5','#796394',4);cirkel(cx-13,249,23,'#8e72ac','#796394',2);cirkel(cx-49,218,6,'#d7c7e6',null);
- // Endoplasmatisk retikulum omkring kernen, med ribosomer.
- for(let j=0;j<4;j++){ctx.beginPath();ctx.moveTo(cx-118-j*6,190+j*26);ctx.bezierCurveTo(cx-95,163+j*29,cx-105,322+j*13,cx+12,332+j*9);ctx.strokeStyle='#a793c1';ctx.lineWidth=8;ctx.stroke();for(let i=0;i<4;i++)cirkel(cx-116+j*14+i*11,196+j*27+i*13,2.5,farve.ink,null);}
- mitochondrie(cx+115,197,.4);mitochondrie(cx+93,335,-.3);mitochondrie(cx-122,327,.5);
- for(let j=0;j<4;j++){ctx.beginPath();ctx.ellipse(cx+103+j*4,260,30+j*5,10+j*6,.2,0,Math.PI);ctx.strokeStyle='#db8e6c';ctx.lineWidth=6;ctx.stroke();}
- [[155,280],[139,300],[-110,160],[32,140]].forEach(([x,y],i)=>cirkel(cx+x,y,10+i*2,'#e6c3a3','#b28a67',2));
- for(let i=0;i<20;i++){const a=i*2.4;cirkel(cx+Math.cos(a)*(135+25*tilfældig(i)),cy+Math.sin(a)*125,2.7,'#8e6b84',null);}
+function dyrecelle(zoom=0) {
+ const cx=W/2, målestok=.86;
+ const punkt=(x,y)=>[cx+(x-500)*målestok,250+(y-300)*målestok];
+ // Zoom om det markerede udsnit og før det ind mod membranvisningens midte.
+ ctx.save();
+ const zoomY=250+(udsnit.y-300)*målestok;
+ ctx.translate(cx,bland(zoomY,250,zoom));
+ ctx.scale(1+zoom*5,1+zoom*5);
+ ctx.translate(-cx,-zoomY);
+ ctx.drawImage(cellebillede,cx-500*målestok,250-300*målestok,cellebredde*målestok,cellehøjde*målestok);
  ctx.restore();
- if(zoom===0){const petit=W<700;etiket('Cellekerne',cx-245,240,cx-60,237);etiket('Mitokondrie',cx+75,122,cx+115,182);etiket('Golgiapparat',cx+115,382,cx+115,286);if(!petit)etiket('Ru ER',cx-310,350,cx-115,291);
- ctx.setLineDash([6,5]);ctx.strokeStyle=farve.pink;ctx.lineWidth=2;ctx.strokeRect(cx-40,58,85,49);ctx.setLineDash([]);tekst('Cellemembran',cx+70,58,22);linje([[cx+66,64],[cx+43,78]],farve.pink,2);tekst('DYRECELLE',32,42,18,'#6a7771');}
+ if(zoom===0){
+  etiket('Cellekerne',cx-280,190,...punkt(...ankre.cellekerne));
+  etiket('Mitokondrie',cx-265,395,...punkt(...ankre.mitokondrie));
+  etiket('Golgiapparat',cx+150,420,...punkt(...ankre.golgi));
+  if(W>=700)etiket('Ru ER',cx+245,160,...punkt(...ankre.ruER));
+  ctx.setLineDash([6,5]);ctx.strokeStyle=farve.pink;ctx.lineWidth=2;
+  ctx.strokeRect(cx-36,zoomY-20,72,40);ctx.setLineDash([]);
+  tekst('Cellemembran',cx+70,zoomY-15,22);
+  linje([[cx+66,zoomY-10],[cx+36,zoomY]],farve.pink,2);
+  tekst('DYRECELLE',24,35,18,'#6a7771');
+ }
 }
 // To rækker fosfolipider langs samme midterkurve. Haler vender ind mod midten.
 function lipid(x,y,nx,ny,side){const hx=x+nx*side*16,hy=y+ny*side*16,tx=-ny,ty=nx;for(const d of [-2.8,2.8])linje([[hx+tx*d-nx*side*4,hy+ty*d-ny*side*4],[x+tx*(d+2)+nx*side*4,y+ty*(d+2)+ny*side*4],[x+tx*d+nx*side*1,y+ty*d+ny*side*1]],farve.hale,2);cirkel(hx,hy,5.8,farve.hoved,'#a95172',1);}
@@ -122,4 +141,4 @@ function frame(nu){const dt=sidst?Math.min((nu-sidst)/1000,.08):0;sidst=nu;if(k�
  $('afspil').addEventListener('click',()=>{if(tid>=varighed())tid=0;kører=!kører;status();tegn();});$('gentag').addEventListener('click',()=>{tid=0;kører=aktueltTrin>0&&!mindreBevægelse.matches;status();tegn();});$('deltrin').addEventListener('click',()=>{kører=false;if(energi())tid=Math.min(tid+varighed()/8,varighed());status();tegn();});
  function fokus(til){document.body.classList.toggle('fokus',til);$('fokus').setAttribute('aria-pressed',String(til));requestAnimationFrame(tegn);} $('fokus').addEventListener('click',()=>fokus(!document.body.classList.contains('fokus')));document.addEventListener('keydown',e=>{if(e.key==='Escape')fokus(false);});
  mindreBevægelse.addEventListener('change',()=>{if(mindreBevægelse.matches){kører=false;status();}});
- new ResizeObserver(tegn).observe(lærred);document.fonts.ready.then(tegn);indstilIndhold();requestAnimationFrame(frame);
+ new ResizeObserver(tegn).observe(lærred);document.fonts.ready.then(tegn);indstilIndhold();lærred.dataset.celleKilde='byg-cellen/fig-dyr.js';requestAnimationFrame(frame);

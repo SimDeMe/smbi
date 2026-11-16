@@ -81,6 +81,7 @@ Her ligger kun figurerne og ordlisten.
 | `figurer.js` | `FIGURER`, `ORD` og nøglen til browserens hukommelse |
 | `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
+| `dyrecelle-tegning.js` | fælles lagdelt perspektivillustration til dyrecellen og celletransport-simulatoren; ankre og zoomudsnit følger figuren |
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
 | `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
