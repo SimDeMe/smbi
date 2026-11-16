@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Byg cellen 3D — find organellerne — smbi.dk</title>
+<meta name="description" content="Drej en dyrecelle i 3D og find selv organellerne: cellekerne, ER, golgiapparat, mitokondrier og ribosomer. Med quiz på to niveauer.">
+<link rel="canonical" href="https://smbi.dk/biologi/byg-cellen-3d/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/byg-cellen-3d/">
+<meta property="og:title" content="Byg cellen 3D — find organellerne">
+<meta property="og:description" content="Drej en dyrecelle i 3D og find selv organellerne: cellekerne, ER, golgiapparat, mitokondrier og ribosomer. Med quiz på to niveauer.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<style>
+/* Dyrecellen i 3D – smbi.dk-udtryk (papir, blækrammer, hårde skygger, pink biologi-accent).
+   Layout: én stor 3D-figur med et smalt opgavepanel ved siden af; stables på smalle skærme.
+   three.js + three-mesh-bvh hentes fra jsDelivr (fastlåste versioner). */
+:root{
+  --paper:#FFF9EE; --paper-2:#FFF3DC; --panel:#FFFFFF;
+  --ink:#17211F;   --slate:#566B68;
+  --pink:#E8336D;  --blue:#0E86C8; --lime:#5FB030; --amber:#FFB300;
+  --grape:#7A4FD6; --coral:#FF6A3D; --teal:#0FA593;
+  --accent:var(--pink);
+  --ok:#2E8B2E; --bad:#C8432B;
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --max:1240px;
+  --hard:4px 4px 0 var(--ink);
+  --hard-lg:7px 7px 0 var(--ink);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper)}
+body{color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:0.68rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Topbjælke */
+.rainbow{height:7px;background:linear-gradient(90deg,var(--pink) 0 14.3%,var(--coral) 14.3% 28.6%,var(--amber) 28.6% 42.9%,var(--lime) 42.9% 57.2%,var(--teal) 57.2% 71.5%,var(--blue) 71.5% 85.8%,var(--grape) 85.8% 100%)}
+.top-bar{background:rgba(255,249,238,0.95);border-bottom:2px solid var(--ink)}
+.top-in{max-width:var(--max);margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;height:56px}
+.brand{font-family:var(--display);font-variation-settings:'wdth' 125;font-weight:800;font-size:1.1rem;letter-spacing:-0.02em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.brand-mark{width:24px;height:24px;border-radius:9px;border:2px solid var(--ink);background:conic-gradient(var(--pink),var(--amber),var(--lime),var(--blue),var(--grape),var(--pink));flex-shrink:0}
+.brand em{font-family:var(--mono);font-size:0.7rem;font-weight:500;font-style:normal;color:var(--slate)}
+.top-nav{margin-left:auto;display:flex;gap:6px}
+.top-nav a{font-family:var(--display);font-size:0.84rem;font-weight:600;text-decoration:none;padding:6px 13px;border-radius:20px;border:2px solid transparent}
+.top-nav a:hover{background:#FBD3E1;border-color:var(--ink)}
+
+/* Sidehoved */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+.head{padding:26px 0 6px;position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFF6E0;padding:5px 13px;border-radius:20px}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+h1{font-family:var(--display);font-variation-settings:'wdth' 118;font-weight:800;font-size:clamp(1.9rem,4.2vw,2.7rem);line-height:1.04;letter-spacing:-0.03em;margin:12px 0 10px;text-wrap:balance}
+.hi{position:relative;display:inline-block;z-index:0}
+.hi::before{content:'';position:absolute;z-index:-1;left:-7px;right:-7px;top:14%;bottom:8%;background:#F7B9D2;border-radius:6px;transform:rotate(-1.3deg)}
+.lead{font-size:1.04rem;color:#3E4E4C;max-width:62ch}
+
+/* Hovedpanel */
+.rig{position:relative;background:var(--panel);border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:var(--hard-lg);margin:20px 0 28px}
+.rig-bar{height:8px;background:var(--accent)}
+.rig-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:2px solid var(--ink);background:#FDEAF1}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:20px;overflow:hidden;background:#fff;box-shadow:2px 2px 0 var(--ink)}
+.seg button{font-family:var(--display);font-weight:700;font-size:0.8rem;border:0;background:transparent;padding:6px 13px;cursor:pointer;border-left:2px solid var(--ink)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#FFF6E0}
+.seg button:hover:not([aria-pressed="true"]){background:#FBD3E1}
+.rig-head .spacer{margin-left:auto}
+.btn{font-family:var(--display);font-size:0.78rem;font-weight:700;background:#fff;border:2px solid var(--ink);padding:6px 13px;border-radius:18px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn[hidden]{display:none}
+.lbl{font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--slate)}
+
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 330px}
+.view{position:relative;height:clamp(420px,70vh,760px);background:#FFFFFF;touch-action:none;cursor:grab}
+.view.dragging{cursor:grabbing}
+.view.pointing{cursor:pointer}
+.view canvas{display:block;width:100%;height:100%}
+.hint{position:absolute;left:14px;bottom:14px;pointer-events:none;font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:rgba(255,249,238,.92);border:1.5px solid var(--ink);border-radius:14px;padding:4px 10px;transition:opacity .4s}
+.hint.gone{opacity:0}
+.loading{position:absolute;inset:0;display:grid;place-items:center;background:#fff;z-index:3;text-align:center;padding:20px}
+.loading b{font-family:var(--display);font-weight:800;font-size:1.1rem;display:block}
+.bar{width:220px;height:10px;border:2px solid var(--ink);border-radius:8px;margin:12px auto 0;overflow:hidden;background:var(--paper)}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.loading.fejl b{color:var(--bad)}
+
+.side{border-left:2px solid var(--ink);display:flex;flex-direction:column;background:#fff;min-height:0}
+.side-h{padding:11px 15px 10px;border-bottom:2px solid var(--ink);background:var(--paper-2)}
+.side-h b{font-family:var(--display);font-variation-settings:'wdth' 110;font-weight:800;font-size:1.02rem;line-height:1.2;display:block;margin-top:2px}
+.side-body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.opgave{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:800;font-size:1.5rem;line-height:1.12;letter-spacing:-0.02em;text-wrap:balance}
+.opgave small{display:block;font-family:var(--body);font-weight:400;font-size:0.92rem;letter-spacing:0;color:#3E4E4C;margin-top:6px;line-height:1.45}
+.feedback{border:2px solid var(--ink);border-radius:12px;padding:9px 12px;font-size:0.95rem;line-height:1.45;background:var(--paper)}
+.feedback.ok{background:#E8F5DF;border-color:var(--ok)}
+.feedback.bad{background:#FCE7E1;border-color:var(--bad)}
+.feedback b{font-family:var(--display);font-weight:800}
+.feedback:empty{display:none}
+.knapper{display:flex;flex-wrap:wrap;gap:8px}
+.svar{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.svar button{font-family:var(--display);font-weight:650;font-size:0.82rem;text-align:left;line-height:1.2;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 9px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+.svar button:hover:not(:disabled){background:#FBD3E1}
+.svar button:disabled{cursor:default;opacity:.55}
+.svar button.ret{background:#E8F5DF;border-color:var(--ok);opacity:1}
+.svar button.forkert{background:#FCE7E1;border-color:var(--bad);opacity:1}
+.score{margin-top:auto;border-top:2px solid var(--ink);padding:10px 15px;display:flex;align-items:center;gap:12px;background:#F7FBFA}
+.score .tal{font-family:var(--display);font-weight:800;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.prik{display:flex;gap:4px;flex-wrap:wrap}
+.prik i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink);background:#fff}
+.prik i.ret{background:var(--lime)}
+.prik i.mist{background:var(--coral)}
+.prik i.nu{background:var(--amber)}
+.beskriv{font-size:0.95rem;line-height:1.55;color:#2A3735}
+
+/* Under panelet */
+.info{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px}
+.info section{border:2px solid var(--ink);border-radius:14px;background:#fff;padding:14px 16px}
+.info h2{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:800;font-size:1.05rem;margin-bottom:6px}
+.info p,.info li{font-size:0.95rem;line-height:1.55;color:#2A3735;max-width:62ch}
+.info ul{padding-left:1.1em;display:grid;gap:3px}
+
+/* Fokus: skjul sidehoved og topbjælke */
+body.fokus .top-bar,body.fokus .head,body.fokus .info,body.fokus .rainbow{display:none}
+body.fokus .rig{margin-top:10px}
+body.fokus .view{height:calc(100vh - 92px)}
+
+@media (max-width:880px){
+  .stage{grid-template-columns:1fr}
+  .side{border-left:0;border-top:2px solid var(--ink)}
+  .view{height:clamp(340px,58vh,620px)}
+  .info{grid-template-columns:1fr}
+  .top-nav{display:none}
+}
+@media (max-width:440px){
+  .rig-head{gap:7px}
+  .seg button{padding:6px 9px;font-size:0.74rem}
+  .svar{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="rainbow"></div>
+<header class="top-bar">
+  <div class="top-in">
+    <a class="brand" href="/"><span class="brand-mark"></span>smbi.dk <em>/ biologi</em></a>
+    <nav class="top-nav" aria-label="Sitet"><a href="/biologi/byg-cellen.html">Byg cellen (2D)</a><a href="/biologi.html">Biologi</a><a href="/">Forside</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="head">
+    <span class="eyebrow mono"><i></i>Biologi · Cellen</span>
+    <h1>Byg cellen i <span class="hi">3D</span></h1>
+    <p class="lead">Drej cellen, zoom ind og find organellerne. Der står ingen navne på modellen. Du skal selv kunne udpege strukturerne.</p>
+  </div>
+
+  <div class="rig" id="rig">
+    <div class="rig-bar"></div>
+    <div class="rig-head">
+      <div class="seg" role="group" aria-label="Tilstand">
+        <button id="m-find" aria-pressed="true">Find strukturen</button>
+        <button id="m-navn" aria-pressed="false">Hvad hedder den?</button>
+        <button id="m-udforsk" aria-pressed="false">Udforsk</button>
+      </div>
+      <div class="seg" role="group" aria-label="Niveau">
+        <button id="n-grund" aria-pressed="true">Grundniveau</button>
+        <button id="n-udv" aria-pressed="false">Udvidet</button>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn" id="b-reset">Nulstil visning</button>
+      <button class="btn" id="b-fokus" aria-pressed="false">Fokus</button>
+    </div>
+
+    <div class="stage">
+      <div class="view" id="view">
+        <div class="loading" id="loading"><div><b>Henter cellen …</b><span class="lbl" id="load-txt">0 %</span><div class="bar"><i id="load-bar"></i></div></div></div>
+        <span class="hint" id="hint">Træk for at dreje · scroll/knib for at zoome · højreklik-træk for at flytte</span>
+      </div>
+      <aside class="side" aria-live="polite">
+        <div class="side-h"><span class="lbl" id="side-lbl">Find strukturen</span><b id="side-titel">Klik på strukturen i modellen</b></div>
+        <div class="side-body" id="side-body"></div>
+        <div class="score" id="score"></div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="info">
+    <section>
+      <h2>Sådan bruger du modellen</h2>
+      <ul>
+        <li><b>Find strukturen:</b> Du får et navn og skal klikke på strukturen i cellen. Efter to forkerte forsøg kan du få den vist.</li>
+        <li><b>Hvad hedder den?</b> En struktur lyser op, og du vælger navnet. Kan også bruges uden mus.</li>
+        <li><b>Udforsk:</b> Klik på en struktur, gæt navnet, og tjek dit svar.</li>
+        <li><b>Udvidet niveau</b> tilføjer kernemembran, kerneporer, kromatin, mitokondriens membraner, matrix, mtDNA og vesikler.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Om modellen</h2>
+      <p>Modellen er en forenklet dyrecelle, skåret over på midten, så man kan se ind. Størrelsesforholdene passer ikke: ribosomer og kerneporer er gjort meget større, end de er i forhold til cellen, og en rigtig celle har langt flere mitokondrier og meget mere ER. Cytoplasmaet og kernens indre er gennemsigtige, så du kan se det, der ligger under overfladen.</p>
+    </section>
+  </div>
+</main>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.8.3/build/index.module.js"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
+
+THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
+/* ── Strukturer ───────────────────────────────────────────
+   Hver mesh i modellen har userData.struktur (grov) og userData.del (fin).
+   Et "mål" er noget, eleven kan blive spurgt om.                       */
+const MAAL = [
+  {id:'membran', navn:'Cellemembran', find:'Find cellemembranen', niv:1, hit:(s,d)=>s==='Cellemembran',
+   tekst:'Et dobbelt lag af fosfolipider med proteiner. Afgrænser cellen og styrer, hvilke stoffer der kommer ind og ud.'},
+  {id:'cyto', navn:'Cytoplasma', find:'Find cytoplasmaet', niv:1, hit:(s,d)=>s==='Cytoplasma',
+   tekst:'Den geléagtige væske mellem cellemembranen og kernen. Organellerne ligger i den, og mange af cellens reaktioner foregår her.'},
+  {id:'kerne', navn:'Cellekerne', find:'Find cellekernen', niv:1, hit:(s,d)=>s==='Cellekerne',
+   tekst:'Indeholder cellens DNA og styrer, hvilke proteiner cellen danner. Kernen er omgivet af en dobbelt membran med porer.'},
+  {id:'ruER', navn:'Ru ER', find:'Find det ru ER', niv:1, hit:(s,d)=>s==='Ru ER'||d==='Ribosom på ru ER', vis:(s,d)=>s==='Ru ER'||d==='Ribosom på ru ER',
+   tekst:'Ru endoplasmatisk reticulum: membransække besat med ribosomer. Her dannes proteiner, der skal ud af cellen eller sidde i membraner.'},
+  {id:'glatER', navn:'Glat ER', find:'Find det glatte ER', niv:1, hit:(s,d)=>s==='Glat ER',
+   tekst:'Glat endoplasmatisk reticulum: membranrør uden ribosomer. Danner lipider, fx fosfolipider og steroidhormoner, og afgifter stoffer.'},
+  {id:'golgi', navn:'Golgiapparat', find:'Find golgiapparatet', niv:1, hit:(s,d)=>s==='Golgiapparat',
+   tekst:'Stakke af flade membransække. Proteiner fra ru ER bliver her ændret, sorteret og pakket i vesikler.'},
+  {id:'mito', navn:'Mitokondrie', find:'Find en mitokondrie', niv:1, hit:(s,d)=>s==='Mitokondrie',
+   tekst:'Her foregår den aerobe respiration, som danner det meste af cellens ATP. Mitokondrien har to membraner og sit eget DNA.'},
+  {id:'ribo', navn:'Ribosom', find:'Find et frit ribosom', niv:1, hit:(s,d)=>s==='Ribosom', vis:(s,d)=>d==='Frit ribosom',
+   tekst:'Små partikler af rRNA og protein, der oversætter mRNA til protein (translation). De findes frit i cytoplasmaet og på ru ER.'},
+
+  {id:'kmembran', navn:'Kernemembran', find:'Find kernemembranen', niv:2, hit:(s,d)=>d==='Kernemembran',
+   tekst:'Den dobbelte membran omkring kernen. Den ydre membran hænger sammen med ER.'},
+  {id:'kpore', navn:'Kernepore', find:'Find en kernepore', niv:2, hit:(s,d)=>d==='Kernepore',
+   tekst:'Åbninger i kernemembranen. Gennem dem kommer mRNA ud af kernen, og proteiner kommer ind.'},
+  {id:'kromatin', navn:'Kromatin (DNA)', find:'Find kromatinet (DNA i kernen)', niv:2, hit:(s,d)=>d==='Kromatin (DNA)',
+   tekst:'DNA viklet om histonproteiner. Når cellen deler sig, pakkes kromatinet tæt sammen til kromosomer.'},
+  {id:'ydre', navn:'Ydre mitokondriemembran', find:'Find mitokondriens ydre membran', niv:2, hit:(s,d)=>d==='Ydre membran',
+   tekst:'Den glatte membran, der omgiver hele mitokondrien.'},
+  {id:'indre', navn:'Indre mitokondriemembran', find:'Find mitokondriens indre membran (cristae)', niv:2, hit:(s,d)=>d==='Indre membran',
+   tekst:'Foldet ind i cristae, der giver en stor overflade til elektrontransportkæden og ATP-syntase.'},
+  {id:'matrix', navn:'Matrix', find:'Find matrix i en mitokondrie', niv:2, hit:(s,d)=>d==='Matrix',
+   tekst:'Rummet inden for den indre membran. Her foregår citronsyrecyklussen, og her ligger mtDNA og mitokondriens egne ribosomer.'},
+  {id:'mtdna', navn:'mtDNA', find:'Find mitokondriernes DNA (mtDNA)', niv:2, hit:(s,d)=>d==='mtDNA',
+   tekst:'Mitokondriens eget, ringformede DNA. Det nedarves næsten altid kun fra moderen.'},
+  {id:'vesikel', navn:'Vesikel', find:'Find en vesikel ved golgiapparatet', niv:2, hit:(s,d)=>d==='Vesikel',
+   tekst:'Små membranblærer, der transporterer stoffer, fx fra golgiapparatet ud til cellemembranen.'},
+];
+const NUKLEO = {id:'nukleo', navn:'Nukleoplasma (kernens indre)', tekst:'Væsken inde i cellekernen, som kromatinet ligger i.'};
+
+/* Farver: modellen er eksporteret fra Blender; et par materialer havde procedurale farver, som sættes her. */
+const FARVE = {
+  'C3D Cellemembran':[0.26,0.56,0.88],
+  'C3D Mitokondrie matrix v2':[0.42,0.74,0.71],
+};
+
+/* ── Tilstand ─────────────────────────────────────────── */
+const st = { mode:'find', niv:1, meshes:[], hover:null, valgt:null, runde:null, flash:null };
+
+/* ── Three.js-scene ───────────────────────────────────── */
+const view = document.getElementById('view');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
+} catch(e) {
+  visFejl('Din browser kan ikke vise 3D (WebGL er slået fra eller ikke understøttet). Prøv en anden browser eller computer.');
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.setClearColor(0xffffff, 1);
+view.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.35;
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d4de, 0.95));
+const sol = new THREE.DirectionalLight(0xffffff, 1.7);
+sol.position.set(-9, 20, 11);
+scene.add(sol);
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
+const START = { pos:new THREE.Vector3(0.1, 10.4, 13.2), mål:new THREE.Vector3(0.1, -1.8, 0.2) };
+camera.position.copy(START.pos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(START.mål);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 2.5;
+controls.maxDistance = 45;
+controls.update();
+
+function resize(){
+  const w = view.clientWidth, h = view.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  // smal skærm: træk lidt tilbage, så hele cellen er med
+  camera.fov = w / h < 0.9 ? 50 : 38;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(view);
+resize();
+
+/* ── Indlæs modellen ──────────────────────────────────── */
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
+hentModel(gltf => {
+  const root = gltf.scene;
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    // extras ligger på noden (Blender-objektet)
+    const ex = o.userData.struktur ? o.userData : (o.parent && o.parent.userData) || {};
+    o.userData.struktur = ex.struktur; o.userData.del = ex.del;
+    const m = o.material.clone();
+    if (FARVE[m.name]) m.color.setRGB(...FARVE[m.name]);
+    m.metalness = 0;
+    if (m.transparent) { m.depthWrite = false; m.side = THREE.DoubleSide; }
+    m.emissive = new THREE.Color(0x000000);
+    o.material = m;
+    o.userData.orig = { opacity:m.opacity, transparent:m.transparent, depthWrite:m.depthWrite };
+    o.geometry.computeBoundsTree();
+    st.meshes.push(o);
+  });
+  scene.add(root);
+  document.getElementById('loading').remove();
+  startRunde();
+}, ev => {
+  if (ev.total) {
+    const p = Math.round(ev.loaded / ev.total * 100);
+    document.getElementById('load-bar').style.width = p + '%';
+    document.getElementById('load-txt').textContent = p + ' %';
+  }
+}, err => {
+  console.error(err);
+  visFejl('Modellen kunne ikke hentes. Tjek internetforbindelsen, og genindlæs siden.');
+});
+
+function hentModel(onLoad, onProgress, onError){
+  // Modellen ligger som almindelig glTF-binærfil (meshopt-komprimeret) ved siden af siden.
+  loader.load('model.glb', onLoad, onProgress, onError);
+}
+function visFejl(t){
+  const l = document.getElementById('loading');
+  l.classList.add('fejl');
+  l.innerHTML = '<div><b>Noget gik galt</b><p style="max-width:40ch;margin-top:6px">' + t + '</p></div>';
+}
+
+/* ── Udvælgelse med musen ─────────────────────────────── */
+const ray = new THREE.Raycaster();
+ray.firstHitOnly = false;
+const ptr = new THREE.Vector2();
+const GENNEMSIGTIG = new Set(['Cytoplasma','Nukleoplasma']);
+const BARRIERE = { 'Cytoplasma':new Set(['Cellemembran']), 'Nukleoplasma':new Set(['Kernemembran','Cellemembran']) };
+
+function pick(cx, cy){
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hits = ray.intersectObjects(st.meshes, false);
+  if (!hits.length) return null;
+  const first = hits[0].object;
+  if (!GENNEMSIGTIG.has(first.userData.del)) return first;
+  // klik gennem gennemsigtigt stof: tag det, der ligger bag, medmindre det er en "væg"
+  const bag = hits.find(h => !GENNEMSIGTIG.has(h.object.userData.del));
+  if (bag && !BARRIERE[first.userData.del].has(bag.object.userData.del)) return bag.object;
+  return first;
+}
+
+let down = null;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', e => { down = {x:e.clientX, y:e.clientY, t:performance.now()}; view.classList.add('dragging'); skjulHint(); });
+el.addEventListener('pointerup', e => {
+  view.classList.remove('dragging');
+  if (!down) return;
+  const flyt = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+  if (flyt < 6 && e.button === 0) klik(pick(e.clientX, e.clientY));
+  down = null;
+});
+let hoverReq = false, sidst = null;
+el.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || e.buttons) return;
+  sidst = e;
+  if (hoverReq) return;
+  hoverReq = true;
+  requestAnimationFrame(() => {
+    hoverReq = false;
+    if (st.mode === 'navn') { sætHover(null); return; }
+    sætHover(pick(sidst.clientX, sidst.clientY));
+  });
+});
+el.addEventListener('pointerleave', () => sætHover(null));
+const hint = document.getElementById('hint');
+function skjulHint(){ hint.classList.add('gone'); }
+
+/* Hvilket mål (på aktuelt niveau) hører en mesh til? */
+function maalFor(mesh){
+  if (!mesh) return null;
+  const s = mesh.userData.struktur, d = mesh.userData.del;
+  if (st.niv === 2) {
+    const fin = MAAL.find(m => m.niv === 2 && m.hit(s, d));
+    if (fin) return fin;
+    if (d === 'Nukleoplasma') return NUKLEO;
+  }
+  return MAAL.find(m => m.niv === 1 && m.hit(s, d) && !(m.id === 'ruER' && d === 'Ribosom på ru ER'))
+      || MAAL.find(m => m.niv === 1 && m.hit(s, d));
+}
+function meshesFor(maal, synlig=false){
+  const f = synlig && maal.vis ? maal.vis : maal.hit;
+  if (maal === NUKLEO) return st.meshes.filter(m => m.userData.del === 'Nukleoplasma');
+  return st.meshes.filter(m => f(m.userData.struktur, m.userData.del));
+}
+
+/* ── Fremhævning ──────────────────────────────────────── */
+const C = { hover:new THREE.Color(0x3a3a3a), valgt:new THREE.Color(0xffb300), ok:new THREE.Color(0x5fb030), bad:new THREE.Color(0xff3b1f), spm:new THREE.Color(0xe8336d) };
+function nulstilGlød(){ st.meshes.forEach(m => { m.material.emissive.setRGB(0,0,0); m.material.emissiveIntensity = 1; }); }
+function glød(meshes, farve, styrke){ meshes.forEach(m => { m.material.emissive.copy(farve); m.material.emissiveIntensity = styrke; }); }
+function genmal(){
+  nulstilGlød();
+  if (st.mode === 'navn' && st.runde && st.runde.aktiv) glød(st.runde.aktivMeshes, C.spm, st.runde.puls);
+  if (st.valgt) glød(st.valgt.meshes, st.valgt.farve || C.valgt, 0.55);
+  if (st.flash) glød(st.flash.meshes, st.flash.farve, 0.6);
+  if (st.hover && (!st.valgt || !st.valgt.meshes.includes(st.hover[0]))) glød(st.hover, C.hover, 1);
+}
+function sætHover(mesh){
+  const m = maalFor(mesh);
+  const nye = m ? meshesFor(m) : null;
+  st.hover = nye;
+  view.classList.toggle('pointing', !!nye);
+  genmal();
+}
+function spøgelse(behold){
+  st.meshes.forEach(m => {
+    const o = m.userData.orig, mat = m.material;
+    if (!behold || behold.includes(m)) { mat.opacity = (behold && o.transparent) ? Math.max(o.opacity, 0.6) : o.opacity; mat.transparent = o.transparent; mat.depthWrite = o.depthWrite; }
+    else { mat.transparent = true; mat.opacity = o.opacity * 0.16; mat.depthWrite = false; }
+    mat.needsUpdate = true;
+  });
+}
+
+/* ── Kamera-tur ───────────────────────────────────────── */
+let tur = null;
+const reducer = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function flyvTil(pos, mål){
+  if (reducer) { camera.position.copy(pos); controls.target.copy(mål); controls.update(); return; }
+  tur = { p0:camera.position.clone(), m0:controls.target.clone(), p1:pos.clone(), m1:mål.clone(), t0:performance.now(), d:750 };
+}
+function fokusér(meshes){
+  const box = new THREE.Box3();
+  meshes.forEach(m => box.expandByObject(m));
+  const c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()).length();
+  const dist = THREE.MathUtils.clamp(s * 1.25, 6, 24);
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  if (dir.y < 0.45) { dir.y = 0.45; dir.normalize(); }
+  flyvTil(c.clone().add(dir.multiplyScalar(dist)), c);
+}
+document.getElementById('b-reset').onclick = () => flyvTil(START.pos, START.mål);
+const bFokus = document.getElementById('b-fokus');
+bFokus.onclick = () => {
+  const på = !document.body.classList.contains('fokus');
+  document.body.classList.toggle('fokus', på);
+  bFokus.setAttribute('aria-pressed', på);
+  bFokus.textContent = på ? 'Afslut fokus' : 'Fokus';
+  requestAnimationFrame(resize);
+};
+
+/* ── Sidepanel ────────────────────────────────────────── */
+const sLbl = document.getElementById('side-lbl'), sTit = document.getElementById('side-titel');
+const sBody = document.getElementById('side-body'), sScore = document.getElementById('score');
+function h(tag, attrs={}, ...kids){
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) { if (k === 'on') e.onclick = v; else if (k === 'html') e.innerHTML = v; else e.setAttribute(k, v); }
+  kids.forEach(k => e.append(k));
+  return e;
+}
+function aktuelle(){ return MAAL.filter(m => m.niv <= st.niv); }
+function bland(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function visScore(){
+  sScore.innerHTML = '';
+  if (st.mode === 'udforsk' || !st.runde) { sScore.style.display = 'none'; return; }
+  sScore.style.display = '';
+  const r = st.runde;
+  const prik = h('div', {class:'prik', 'aria-hidden':'true'});
+  r.liste.forEach((m, i) => prik.append(h('i', {class: r.res[i] === true ? 'ret' : r.res[i] === false ? 'mist' : i === r.i ? 'nu' : ''})));
+  const ret = r.res.filter(x => x === true).length;
+  sScore.append(h('span', {class:'tal'}, `${ret} / ${r.liste.length}`), prik);
+  sScore.append(h('span', {class:'sr'}, `${ret} rigtige i første forsøg ud af ${r.liste.length}`));
+}
+
+function startRunde(){
+  st.valgt = null; st.flash = null; spøgelse(null);
+  if (st.mode !== 'navn') flyvTil(START.pos, START.mål);
+  if (st.mode === 'udforsk') { st.runde = null; tegnUdforsk(); visScore(); genmal(); return; }
+  st.runde = { liste: bland(aktuelle()), i:0, res:[], forsøg:0, prøvet:[], aktiv:null, puls:0.5 };
+  næste(false);
+}
+function næste(flyt=true){
+  const r = st.runde;
+  st.valgt = null; st.flash = null; r.forsøg = 0; r.prøvet = [];
+  if (r.i >= r.liste.length) { slut(); return; }
+  r.aktiv = r.liste[r.i];
+  if (st.mode === 'find') { spøgelse(null); tegnFind(); }
+  else {
+    r.aktivMeshes = meshesFor(r.aktiv, true);
+    spøgelse(r.aktivMeshes);
+    fokusér(r.aktivMeshes);
+    tegnNavn();
+  }
+  visScore(); genmal();
+}
+function slut(){
+  const r = st.runde, ret = r.res.filter(x => x === true).length;
+  r.aktiv = null; spøgelse(null);
+  sLbl.textContent = 'Færdig';
+  sTit.textContent = `Du fik ${ret} af ${r.liste.length} rigtige i første forsøg`;
+  sBody.innerHTML = '';
+  const forkerte = r.liste.filter((m, i) => r.res[i] === false);
+  if (forkerte.length) sBody.append(h('p', {class:'beskriv'}, 'Øv dig på: ' + forkerte.map(m => m.navn).join(', ') + '.'));
+  else sBody.append(h('p', {class:'beskriv'}, 'Alle rigtige. Prøv det udvidede niveau, eller skift tilstand.'));
+  sBody.append(h('div', {class:'knapper'}, h('button', {class:'btn primary', on:startRunde}, 'Prøv igen')));
+  visScore(); genmal();
+}
+
+/* Find strukturen */
+function tegnFind(fb){
+  const r = st.runde;
+  sLbl.textContent = `Find strukturen · ${r.i + 1} af ${r.liste.length}`;
+  sTit.textContent = 'Klik på strukturen i modellen';
+  sBody.innerHTML = '';
+  sBody.append(h('div', {class:'opgave'}, r.aktiv.find));
+  const f = h('div', {class:'feedback' + (fb ? ' ' + fb.k : ''), html: fb ? fb.t : ''});
+  sBody.append(f);
+  const k = h('div', {class:'knapper'});
+  if (fb && fb.k === 'ok') k.append(h('button', {class:'btn primary', id:'b-videre', on:() => { r.i++; næste(); }}, r.i + 1 < r.liste.length ? 'Næste' : 'Se resultat'));
+  else {
+    if (r.forsøg >= 2) k.append(h('button', {class:'btn', on:visMig}, 'Vis mig'));
+    k.append(h('button', {class:'btn', on:() => { r.res[r.i] = false; r.i++; næste(); }}, 'Spring over'));
+  }
+  sBody.append(k);
+  const b = document.getElementById('b-videre'); if (b) b.focus();
+}
+function visMig(){
+  const r = st.runde, ms = meshesFor(r.aktiv, true);
+  r.res[r.i] = false;
+  st.valgt = { meshes: ms, farve: C.ok };
+  fokusér(ms);
+  tegnFind({k:'ok', t:`Her er den: <b>${r.aktiv.navn}</b>. ${r.aktiv.tekst}`});
+  visScore(); genmal();
+}
+
+/* Hvad hedder den? */
+function tegnNavn(fb){
+  const r = st.runde, færdig = fb && (fb.k === 'ok' || fb.slut);
+  sLbl.textContent = `Hvad hedder den? · ${r.i + 1} af ${r.liste.length}`;
+  sTit.textContent = 'Den lysende struktur er …';
+  sBody.innerHTML = '';
+  const svar = h('div', {class:'svar', role:'group', 'aria-label':'Vælg navnet'});
+  aktuelle().forEach(m => {
+    const b = h('button', {}, m.navn), prøvet = r.prøvet.includes(m);
+    if (færdig) { b.disabled = true; if (m === r.aktiv) b.classList.add('ret'); if (prøvet) b.classList.add('forkert'); }
+    else if (prøvet) { b.disabled = true; b.classList.add('forkert'); }
+    b.onclick = () => svarNavn(m);
+    svar.append(b);
+  });
+  if (fb) sBody.append(h('div', {class:'feedback ' + fb.k, html: fb.t}));
+  sBody.append(svar);
+  if (færdig) {
+    sBody.append(h('div', {class:'knapper'}, h('button', {class:'btn primary', id:'b-videre', on:() => { r.i++; næste(); }}, r.i + 1 < r.liste.length ? 'Næste' : 'Se resultat')));
+    document.getElementById('b-videre').focus();
+  }
+}
+function svarNavn(m){
+  const r = st.runde;
+  if (m === r.aktiv) {
+    if (r.res[r.i] === undefined) r.res[r.i] = r.forsøg === 0;
+    tegnNavn({k:'ok', t:`<b>Rigtigt: ${m.navn}.</b> ${m.tekst}`});
+  } else {
+    r.forsøg++; r.res[r.i] = false; r.prøvet.push(m);
+    if (r.forsøg >= 2) tegnNavn({k:'bad', slut:true, t:`Det er <b>${r.aktiv.navn}</b>. ${r.aktiv.tekst}`});
+    else tegnNavn({k:'bad', t:'Ikke rigtigt. Prøv igen.'});
+  }
+  visScore();
+}
+
+/* Udforsk */
+function tegnUdforsk(){
+  sLbl.textContent = 'Udforsk';
+  sBody.innerHTML = '';
+  if (!st.valgt) {
+    sTit.textContent = 'Klik på en struktur';
+    sBody.append(h('p', {class:'beskriv'}, 'Klik på noget i cellen, og gæt, hvad det hedder, før du tjekker. Den valgte struktur lyser gult.'));
+    return;
+  }
+  const m = st.valgt.maal;
+  sTit.textContent = st.valgt.vist ? m.navn : 'Hvad hedder den?';
+  if (st.valgt.vist) sBody.append(h('p', {class:'beskriv'}, m.tekst));
+  else sBody.append(h('div', {class:'knapper'}, h('button', {class:'btn primary', id:'b-vis', on:() => { st.valgt.vist = true; tegnUdforsk(); }}, 'Vis navnet')));
+}
+
+/* ── Klik ─────────────────────────────────────────────── */
+function klik(mesh){
+  const m = maalFor(mesh);
+  if (st.mode === 'udforsk') {
+    st.valgt = m ? { maal:m, meshes:meshesFor(m), vist:false } : null;
+    tegnUdforsk(); genmal(); return;
+  }
+  if (st.mode !== 'find' || !st.runde || !st.runde.aktiv || !mesh) return;
+  const r = st.runde, a = r.aktiv;
+  if (st.valgt && st.valgt.farve === C.ok) return; // allerede løst
+  const ret = a.hit(mesh.userData.struktur, mesh.userData.del);
+  if (ret) {
+    if (r.res[r.i] === undefined) r.res[r.i] = r.forsøg === 0;
+    st.valgt = { meshes: meshesFor(a, true), farve: C.ok };
+    tegnFind({k:'ok', t:`<b>Rigtigt.</b> ${a.tekst}`});
+  } else {
+    r.forsøg++; r.res[r.i] = false;
+    const ms = m ? meshesFor(m) : [mesh];
+    st.flash = { meshes: ms, farve: C.bad };
+    setTimeout(() => { if (st.flash && st.flash.meshes === ms) { st.flash = null; genmal(); } }, 700);
+    tegnFind({k:'bad', t: r.forsøg >= 2 ? 'Ikke rigtigt. Prøv igen, eller tryk på «Vis mig».' : 'Ikke rigtigt. Prøv igen.'});
+  }
+  visScore(); genmal();
+}
+
+/* ── Tilstand og niveau ───────────────────────────────── */
+const modeKnap = { find:'m-find', navn:'m-navn', udforsk:'m-udforsk' };
+Object.entries(modeKnap).forEach(([mode, id]) => document.getElementById(id).onclick = () => {
+  st.mode = mode;
+  Object.entries(modeKnap).forEach(([m2, id2]) => document.getElementById(id2).setAttribute('aria-pressed', m2 === mode));
+  if (st.meshes.length) startRunde();
+});
+[['n-grund',1],['n-udv',2]].forEach(([id, n]) => document.getElementById(id).onclick = () => {
+  st.niv = n;
+  document.getElementById('n-grund').setAttribute('aria-pressed', n === 1);
+  document.getElementById('n-udv').setAttribute('aria-pressed', n === 2);
+  if (st.meshes.length) startRunde();
+});
+
+/* ── Løkke ────────────────────────────────────────────── */
+function loop(t){
+  requestAnimationFrame(loop);
+  if (tur) {
+    const k = Math.min(1, (t - tur.t0) / tur.d), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2) / 2;
+    camera.position.lerpVectors(tur.p0, tur.p1, e);
+    controls.target.lerpVectors(tur.m0, tur.m1, e);
+    if (k >= 1) tur = null;
+  }
+  if (st.mode === 'navn' && st.runde && st.runde.aktiv && !reducer) {
+    st.runde.puls = 0.35 + 0.25 * (0.5 + 0.5 * Math.sin(t / 380));
+    genmal();
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
