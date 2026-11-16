@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dyrecellen i 3D — smbi.dk</title>
+<meta name="description" content="Drejelig 3D-model af en dyrecelle med cellekerne, mitokondrier, ru og glat ER, golgiapparat, lysosomer, vesikler, centrioler og cytoskelet. Organellerne kan vises hver for sig, og kernen og mitokondrierne kan åbnes.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#fff9ee"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../atlas/vendor/fonts/fonts.css"><link rel="stylesheet" href="stil.css">
+<script type="module" src="side.js"></script>
+</head>
+<body>
+<header><a href="/">smbi.dk</a><div><h1>Dyrecellen <span>i 3D</span></h1><p>Biologi · celler <b>Alfa</b></p></div><button id="fokus" type="button" aria-pressed="false">Fokusvisning</button></header>
+<main>
+<section class="figur" aria-label="Drejelig 3D-model af en dyrecelle">
+<canvas id="celle" tabindex="0" aria-label="Dyrecelle skåret op, så organellerne ses i cytoplasmaet. Brug piletaster til at dreje, plus og minus til at zoome og Home til at nulstille." aria-describedby="forklaring">3D-visningen kræver WebGL. Forklaringerne og billedet kan stadig læses.</canvas>
+<div id="navne" aria-hidden="true"><svg></svg></div>
+<p id="indlaesning" role="status">Bygger cellen …</p>
+<div class="figur-top"><span>DYRECELLE · SNIT</span><span>Træk for at dreje · rul for at zoome · klik på en organel</span><button id="slut-fokus" type="button" hidden>Afslut fokus</button></div>
+<div class="figur-bund"><span>Illustrativ model · ikke målfast</span><div class="vinkler"><button type="button" data-drej="-.2" aria-label="Drej mod venstre">↶</button><button type="button" data-drej=".2" aria-label="Drej mod højre">↷</button><button type="button" id="hele">Hele cellen</button><button type="button" id="nulstil">Nulstil</button></div></div>
+<div id="fallback" hidden><img src="forhaandsvisning.png" alt="Dyrecelle i 3D skåret op med cellekerne, ru og glat ER, golgiapparat, mitokondrier, lysosomer og vesikler i cytoplasmaet"><p>3D kunne ikke starte i denne browser. Her ses et billede af modellen.</p></div>
+</section>
+<aside>
+<p class="overlinje">UNDERSØG CELLEN</p>
+<h2 id="overskrift">Dyrecellen</h2>
+<p id="forklaring"></p>
+<div class="valg"><label for="organel">Se på</label><select id="organel"><option value="hele">Hele cellen</option><option value="kerne">Cellekerne</option><option value="mito">Mitokondrier</option><option value="ruER">Ru ER</option><option value="glatER">Glat ER</option><option value="golgi">Golgiapparat</option><option value="lysosom">Lysosomer</option><option value="vesikel">Vesikler</option><option value="ribosom">Frie ribosomer</option><option value="centriol">Centrioler</option><option value="cytoskelet">Mikrotubuli</option><option value="cellemembran">Cellemembran</option><option value="cytoplasma">Cytoplasma</option></select><button id="taet" type="button" disabled>Se tæt på</button></div>
+<div class="snit"><h3>Åbn og se ind</h3><button id="aabn-kerne" type="button" aria-pressed="false">Åbn cellekernen</button><button id="aabn-mito" type="button" aria-pressed="false">Åbn mitokondrierne</button></div>
+<fieldset class="synlighed"><legend>Vis</legend><div class="organelliste">
+<label><input type="checkbox" data-vis="cellemembran" checked> Cellemembran</label>
+<label><input type="checkbox" data-vis="cytoplasma" checked> Cytoplasma</label>
+<label><input type="checkbox" data-vis="kerne" checked> Cellekerne</label>
+<label><input type="checkbox" data-vis="mito" checked> Mitokondrier</label>
+<label><input type="checkbox" data-vis="ruER" checked> Ru ER</label>
+<label><input type="checkbox" data-vis="glatER" checked> Glat ER</label>
+<label><input type="checkbox" data-vis="golgi" checked> Golgiapparat</label>
+<label><input type="checkbox" data-vis="lysosom" checked> Lysosomer</label>
+<label><input type="checkbox" data-vis="vesikel" checked> Vesikler</label>
+<label><input type="checkbox" data-vis="ribosom" checked> Frie ribosomer</label>
+<label><input type="checkbox" data-vis="centriol" checked> Centrioler</label>
+<label><input type="checkbox" data-vis="cytoskelet" checked> Mikrotubuli</label>
+</div><label class="navneknap"><input type="checkbox" id="vis-navne" checked> Navne på figuren</label></fieldset>
+<p id="status" role="status" aria-live="polite"></p>
+</aside>
+</main>
+<details><summary>Om modellen</summary><p>Cellen er vist som et solidt legeme, hvor en kile er skåret væk, så organellerne ses i cytoplasmaet. Snitfladerne er en illustrativ hjælp; en rigtig celle har ingen flade overflader indeni. Størrelser, antal og farver er valgt for at gøre delene tydelige og er ikke målfaste – organellerne er langt mindre i forhold til cellen, og ribosomerne er mange tusinde.</p><p>Membranerne er tegnet som sammenhængende flader: mitokondriernes indre membran folder sig ind som cristae, golgiapparatets sække er lukkede cisterner, og kernehylsteret er to membraner med porer. At »åbne« en organel betyder her, at et stykke af membranen løftes af for at se ind; det er en visningsfunktion, ikke en biologisk proces. Three.js 0.169.0 (MIT) bruges lokalt til 3D.</p></details>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -1,0 +1,62 @@
+:root{--papir:#fff9ee;--blaek:#243732;--pink:#ba3e6d;--linje:#d5d7cc;--sans:Archivo,system-ui,sans-serif;--serif:'Source Serif 4',Georgia,serif;--mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;color:var(--blaek);background:var(--papir);font-family:var(--serif)}
+button,select,input{font:500 14px var(--sans);color:inherit}
+button{border:1px solid #9daaa1;background:#fffdf8;border-radius:5px;padding:9px 12px;cursor:pointer}
+button:hover{background:#f6e4e9}button:disabled{opacity:.5;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible,canvas:focus-visible,summary:focus-visible{outline:3px solid #8b63a7;outline-offset:3px}
+button[aria-pressed=true]{background:#f3dce5;border-color:var(--pink)}
+header{height:86px;display:flex;align-items:center;gap:30px;padding:12px 28px;border-top:5px solid transparent;border-image:linear-gradient(90deg,#e8336d,#ff6a3d,#ffb300,#5fb030,#0fa593,#0e86c8,#7a4fd6) 1}
+header>a{font:800 24px var(--sans);color:inherit;text-decoration:none}
+h1{font:750 25px var(--sans);letter-spacing:-.03em;margin:0}h1 span{font-size:16px;font-weight:450;margin-left:8px;color:#627368}
+header p{font:11px var(--mono);margin:5px 0 0;color:#627368}
+header b{font-weight:400;color:var(--pink);border:1px solid #c28097;border-radius:3px;padding:1px 5px;margin-left:5px}
+header>button{margin-left:auto;font-size:12px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 290px;max-width:1700px;margin:0 auto;padding:0 20px;gap:14px}
+.figur{position:relative;background:radial-gradient(ellipse at 40% 30%,#fdfcf6,#eef0e8 70%,#e5eae3);border:1px solid #b1b9ae;border-radius:12px;overflow:hidden;height:calc(100dvh - 126px);min-height:360px}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
+#navne{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#navne svg{position:absolute;inset:0;width:100%;height:100%}
+#navne line{stroke:#3e4a42;stroke-width:1.1}#navne circle{fill:#3e4a42}
+#navne.skjult{display:none}
+.etiket{position:absolute;left:0;top:0;margin:-11px 0 0 -6px;padding:3px 7px;font:500 12px var(--sans);background:#fffdf8e6;border:1px solid #9daaa1;border-radius:4px;pointer-events:auto;white-space:nowrap;line-height:1.2}
+.etiket.valgt{border-color:var(--pink);background:#f8e3ea}
+.figur-top,.figur-bund{position:absolute;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.figur-top{top:16px;font:10px var(--mono);color:#566b60}.figur-top span:last-child{font:12px var(--sans)}
+.figur-bund{bottom:14px;font:10px var(--mono);color:#566b60}
+.vinkler{display:flex;gap:5px;pointer-events:auto}.vinkler button{padding:6px 10px;font-size:12px;background:#fffdf8dd;white-space:nowrap}
+#slut-fokus{pointer-events:auto;font-size:11px;padding:5px 8px}
+aside{padding:16px 8px;max-height:calc(100dvh - 126px);overflow:auto}
+.overlinje{font:10px var(--mono);letter-spacing:.06em;color:#79536a;margin:0}
+h2{font:700 22px var(--sans);letter-spacing:-.02em;margin:4px 0 8px}
+h3{font:650 15px var(--sans);margin:0 0 8px}
+#forklaring{font-size:15px;line-height:1.5;margin:0 0 14px;min-height:4.5em}
+.valg{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;border-top:1px solid var(--linje);padding-top:14px}
+.valg label{grid-column:1/-1;font:500 12px var(--sans)}
+select{width:100%;padding:9px;border:1px solid #a5b3a8;background:#fffdf8;border-radius:5px}
+#taet{font-size:12px;padding:9px 10px}
+.snit{padding:16px 0;border-bottom:1px solid var(--linje);margin-top:12px;border-top:1px solid var(--linje)}
+.snit button{display:block;width:100%;text-align:left;margin-top:7px}
+.snit button::after{content:'＋';float:right}.snit button[aria-pressed=true]::after{content:'−'}
+.synlighed{border:0;padding:14px 0 6px;margin:0}.synlighed legend{font:650 15px var(--sans);padding:0}
+.organelliste{display:grid;grid-template-columns:1fr 1fr;gap:7px 6px;margin-top:8px}
+.organelliste label,.navneknap{font:12px var(--sans);margin:0;display:flex;align-items:center;gap:5px}
+.navneknap{margin-top:12px;padding-top:10px;border-top:1px dashed var(--linje)}
+input[type=checkbox]{accent-color:var(--pink);margin:0}
+#status{font:12px/1.5 var(--sans);color:#66516d;min-height:1.5em}
+details{margin:12px 24px 20px;max-width:1000px;font-size:15px;line-height:1.6}summary{font:12px var(--sans);cursor:pointer}
+#indlaesning{position:absolute;top:46%;width:100%;text-align:center;font:16px var(--sans)}
+#fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:20px;background:#eef1e8}
+#fallback img{max-width:100%;max-height:80%;object-fit:contain}#fallback p{font:14px var(--sans);text-align:center}
+[hidden]{display:none!important}
+.fokus header,.fokus details{display:none}.fokus main{padding-top:10px}.fokus .figur{height:calc(100dvh - 20px)}.fokus aside{max-height:calc(100dvh - 20px)}
+@media(max-width:860px){
+ header{height:80px;padding:10px 15px;gap:16px}header>a{font-size:20px}h1{font-size:21px}h1 span{display:block;margin:2px 0;font-size:12px}
+ header p{font-size:0;line-height:1.1}header b{font-size:9px;margin-left:0}
+ main{grid-template-columns:1fr;padding:0 10px;gap:0}
+ .figur{height:62dvh;min-height:360px}.figur-top{left:12px;right:12px}.figur-top span:nth-child(2){display:none}
+ .figur-bund{left:12px;right:12px}.figur-bund>span{font-size:8px}
+ aside{max-height:none;padding:16px 6px}
+ .snit{display:grid;grid-template-columns:1fr 1fr;gap:7px}.snit h3{grid-column:1/-1}.snit button{padding:10px 8px;font-size:12px;margin:0}
+ .fokus .figur{height:72dvh}.fokus aside{max-height:none}
+}
