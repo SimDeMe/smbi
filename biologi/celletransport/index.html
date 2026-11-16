@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cellens transportveje — smbi.dk</title>
+<meta name="description" content="Zoom ind på en dyrecelle og undersøg diffusion, osmose, aktiv transport, exocytose og endocytose i en animeret cellemembran.">
+<link rel="canonical" href="https://smbi.dk/biologi/celletransport/">
+<meta property="og:type" content="website"><meta property="og:locale" content="da_DK"><meta property="og:site_name" content="smbi.dk"><meta property="og:title" content="Cellens transportveje"><meta property="og:description" content="Fra dyrecelle til cellemembran: følg molekyler og vesikler."><meta property="og:url" content="https://smbi.dk/biologi/celletransport/"><meta property="og:image" content="https://smbi.dk/img/og-biologi.png"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Source+Serif+4:opsz,wght@8..60,400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css"><script type="module" src="simulation.js"></script>
+</head>
+<body>
+<header class="site"><a href="/">smbi.dk</a><a href="/biologi.html">← Biologi</a><span>INTERAKTIV BIOLOGI</span></header>
+<main>
+<div class="titel"><div><p class="overlinje">CELLER · TRANSPORT <span class="alfa">Alfa</span></p><h1>Cellens transportveje</h1></div><button id="fokus" aria-pressed="false">Fokusvisning</button></div>
+<nav class="trin" aria-label="Forløbets trin">
+<button data-trin="0" aria-current="step"><span>01</span> Dyrecellen</button><button data-trin="1"><span>02</span> Membranen</button><button data-trin="2"><span>03</span> Diffusion</button><button data-trin="3"><span>04</span> Exocytose</button><button data-trin="4"><span>05</span> Endocytose</button><button data-trin="5"><span>06</span> Undersøg selv</button>
+</nav>
+<section class="arbejde" aria-label="Animeret celletransport">
+<div class="billede"><canvas id="scene" role="img" aria-label="Dyrecelle med cellekerne, mitokondrier, endoplasmatisk retikulum, Golgiapparat og vesikler" aria-describedby="forklaring status">Din browser understøtter ikke canvas. Læs procesforklaringerne ved siden af figuren.</canvas><span class="figur-note">Skematisk illustration · ikke målfast</span></div>
+<aside>
+<p id="kategori" class="overlinje"></p><h2 id="overskrift"></h2><p id="forklaring"></p>
+<div id="valg" hidden>
+<label for="transport">Transportform</label><select id="transport"><optgroup label="Passiv transport"><option value="diffusion">Simpel diffusion · O₂ og CO₂</option><option value="kanal">Faciliteret diffusion · ionkanal</option><option value="baerer">Faciliteret diffusion · glukose</option><option value="osmose">Osmose · vand</option></optgroup><optgroup label="Aktiv transport og vesikler"><option value="pumpe">Aktiv transport · ionpumpe</option><option value="exo">Exocytose · insulin</option><option value="endo">Endocytose · optagelse</option></optgroup></select>
+<div id="gradient-felt"><label for="gradient">Koncentration af <span id="stof">O₂</span></label><select id="gradient"><option value="ind">Højest udenfor cellen</option><option value="ud">Højest inde i cellen</option><option value="lige">Ens på begge sider</option></select></div>
+<label id="energi-felt" class="afkryds" hidden><input id="energi" type="checkbox" checked> Energi til rådighed (ATP)</label>
+<label id="protein-felt" class="afkryds" hidden><input id="protein" type="checkbox" checked> <span id="protein-navn">Transportprotein åbent</span></label>
+</div>
+
+</aside>
+</section>
+<div class="betjening"><div><button id="afspil">Afspil</button><button id="gentag">↺ Gentag</button><button id="deltrin">Ét animationstrin</button></div><div><button id="forrige">← Tilbage</button><button id="naeste" class="primaer">Zoom ind på membranen →</button></div></div>
+<div class="efterfigur"><p id="status" role="status" aria-live="polite"></p><p id="spoergsmaal" class="spoergsmaal"></p></div>
+<details id="transport-teori" class="om" hidden><summary>Forklaring til den valgte transportform</summary><p id="teori-tekst"></p></details>
+<details class="om"><summary>Om modellen, faglige kilder og forslag til afprøvning</summary><p>En animationsmodel med elevstyret tempo. Molekylernes antal, størrelse, hastighed og afstande er illustrative. Koncentrationerne fastholdes, så transportretningen er let at se. Molekyler bevæger sig begge veje ved diffusion; pilen viser nettotransporten. Membranens proteiner og kolesterol er udeladt i introduktionen for at fremhæve fosfolipiderne.</p><p>Små <strong>upolære</strong> molekyler som O₂ og CO₂ passerer let gennem lipidlaget. At et molekyle er uladet er ikke i sig selv nok: størrelse og polaritet spiller også en rolle. Ioners elektriske drivkraft er udeladt; ionkanalen viser et tilfælde uden spændingsforskel. Osmosevisningen antager ens tryk og opløste stoffer, der ikke kan passere membranen. Pumpen er en generel ATP-drevet ionpumpe; sekundær aktiv transport indgår ikke.</p><p>Insulin frigives fra bugspytkirtlens betaceller ved exocytose. Dyrecellen i starten er en generel oversigt, og viser ikke en bestemt celletype. Endocytosen illustrerer optagelse af materiale med omgivende væske. Begge vesikelprocesser kræver energi og flere hjælpeproteiner end vist her. De følger ikke reglen om transport fra høj til lav koncentration.</p><p>Fagligt grundlag: <a href="https://www.ncbi.nlm.nih.gov/books/NBK26815/">Alberts m.fl.: Principles of Membrane Transport</a> og <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/3-1-the-cell-membrane">OpenStax: The Cell Membrane</a>.</p><p><strong>Afprøvning med elever:</strong> Lad eleven finde første handling uden hjælp. Bed derefter eleven forudsige diffusion ved ens koncentration og forklare, hvor insulin er før og efter fusionen. Sluk ATP til pumpen, og spørg, hvad der ændrer sig og hvorfor. Alfaen er endnu ikke elevafprøvet.</p></details>
+</main>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
