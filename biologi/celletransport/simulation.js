@@ -10,7 +10,7 @@ const celleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cellebredde}"
 cellebillede.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(celleSvg);
 await cellebillede.decode();
 let cellemodel=null,celleVinkel=0;
-try{const {skabDyrecelle}=await import('../celle-3d/model.js');cellemodel=skabDyrecelle();}catch(e){console.warn('3D utilgængelig; viser SVG.',e);}
+try{const {skabDyrecelle}=await import('../celle-3d/model.js');cellemodel=await skabDyrecelle();}catch(e){console.warn('3D utilgængelig; viser SVG.',e);}
 const $ = id => document.getElementById(id);
 const lærred = $('scene'), ctx = lærred.getContext('2d');
 const mindreBevægelse = matchMedia('(prefers-reduced-motion: reduce)');

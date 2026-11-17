@@ -2,7 +2,8 @@
 export async function tilføj3D() {
  const svg=document.getElementById('figur');
  let model;
- try{const {skabDyrecelle}=await import('./model.js');model=skabDyrecelle();}
+ let pladser={};
+ try{const mod=await import('./model.js');pladser=mod.fagordspladser||{};model=await mod.skabDyrecelle();}
  catch(e){console.warn('3D er ikke tilgængelig; cellefiguren vises som SVG.',e);return;}
  const NS='http://www.w3.org/2000/svg';
  const værktøjer=document.createElement('div');værktøjer.className='celle-vinkler';værktøjer.setAttribute('aria-label','Drej dyrecellen i 3D');
@@ -10,7 +11,7 @@ export async function tilføj3D() {
  svg.parentElement.prepend(værktøjer);
  let rotation=0,signatur='',senesteBillede='';
  function aktiv(){return window.bygFiguren?.aktiv();}
- function retAnkre(m){const a=model.ankre();for(const p of m.fig.pladser)if(a[p.ord])p.maal=a[p.ord];}
+ function retAnkre(m){const a=model.ankre();for(const p of m.fig.pladser){if(a[p.ord])p.maal=a[p.ord];if(pladser[p.ord])[p.x,p.y]=pladser[p.ord];}}
  function opdater(){const m=aktiv();if(!m)return;const dyr=m.fig.id==='dyr';værktøjer.hidden=!dyr;svg.classList.toggle('celle-i-3d',dyr);if(!dyr){signatur='';return;}
   const s=[m.lag,m.svaer,[...m.loest].sort().join(','),m.hintPlads,rotation].join('|');
   if(s===signatur&&svg.querySelector('.celle-3d-billede'))return;

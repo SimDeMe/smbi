@@ -369,7 +369,7 @@ hentModel(gltf => {
 
 function hentModel(onLoad, onProgress, onError){
   // Modellen ligger som almindelig glTF-binærfil (meshopt-komprimeret) ved siden af siden.
-  loader.load('model.glb', onLoad, onProgress, onError);
+  loader.load('../celle-3d/dyrecelle.glb', onLoad, onProgress, onError);
 }
 function visFejl(t){
   const l = document.getElementById('loading');

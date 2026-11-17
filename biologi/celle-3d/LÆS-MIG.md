@@ -1,15 +1,22 @@
 # Fælles dyrecelle i 3D
 
 Bruges af `biologi/byg-cellen.html` og `biologi/celletransport/`.
-Modellen er et åbent, skematisk 3D-snit; organellernes antal, størrelse og
-membranernes tykkelse er overdrevet for at gøre dem læsbare. ER-områderne
-bruger samme geometri og materialer. Ru ER har ribosomer på overfladen.
-DNA er løst kromatin, og membranpumper, cytoskelet og flere organeller er udeladt.
+Modellen er bygget i Blender og ligger i `dyrecelle.glb` (meshopt-komprimeret glTF).
+Samme fil bruges af den selvstændige side `biologi/byg-cellen-3d/`, så der kun er
+én kopi af cellen. Hver mesh har `struktur` og `del` som egenskaber fra Blender;
+ved en ny eksport skal **Include → Custom Properties** være slået til.
 
-`model.js` ejer geometri, materialer, lys og kamera. Det tegner kun ved ændringer,
-ikke i en konstant animationssløjfe. Rotation er begrænset til ±0,5 radian, så
-snitflader og organeller fortsat kan aflæses. Snitplanet i kernen følger rotationen.
+Cellen er skåret over, så man ser ned i cytoplasmaet. Størrelser og antal er
+forenklede: ribosomer og kerneporer er gjort store, og en rigtig celle har langt
+flere mitokondrier og meget mere ER. Blender-modellen har ingen lysosomer; de to
+små, violette sække lægges ind af `model.js`.
+
+`model.js` indlæser modellen, sorterer delene i Byg cellens 11 fagord og ejer lys
+og kamera. Det tegner kun ved ændringer. Rotation er begrænset til ±0,5 radian.
+Fagordenes mål flyttes ved indlæsning til nærmeste punkt på organellens overflade,
+og `fagordspladser` placerer felterne i 3D-visningen, så pegepindene ikke krydser.
 `projektér()` og `fagordsankre()` holder pegepindene knyttet til 3D-positionerne.
+`skabDyrecelle()` er asynkron, fordi modellen hentes.
 
 `byg-visning.js` observerer den fælles Byg-motors figur. En PNG-rendering af den
 aktuelle 3D-tilstand står under de eksisterende SVG-fagord, uden at ændre motoren.
@@ -17,9 +24,11 @@ Lag, farver og fremhævelse følger opgavens tilstand. Vinkelknapperne kan bruge
 tastatur. På transportsiden kan cellen også drejes ved at trække i figuren.
 De efterfølgende membranprocesser er fortsat de eksisterende 2D-animationer.
 
-Hvis oprettelsen af en WebGL-renderer fejler, bruges den eksisterende lagdelte SVG.
+Hvis WebGL eller modellen fejler, bruges den eksisterende lagdelte SVG.
 Der hentes ingen biblioteker fra et CDN. `vendor/three.module.min.js` er den
 fastlåste Three.js 0.169.0 under MIT-licens; licensen står i `vendor/three.LICENSE`.
+`vendor/addons/` er GLTFLoader, BufferGeometryUtils, meshopt-dekoderen og
+RoomEnvironment fra samme version, med importen af `'three'` rettet til den lokale fil.
 
 ## Kontrol
 
