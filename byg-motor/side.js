@@ -1,11 +1,19 @@
 // Siden bag en «Byg figuren»-side: fanerne, Svær udgave, fokus, links og tastatur.
 //
-//   start({ FIGURER, ORD, NOEGLE })   fra sidens egen figurer.js
+//   start({ FIGURER, ORD, NOEGLE, FUNKTIONER? })   fra sidens egen figurer.js
+//
+// FUNKTIONER (valgfri) slår funktionsopgaven til efter hver figur:
+//   { alle: { ord: tekst }, <figur-id>: { ord: tekst } }   (figurens egen tekst vinder)
+//
+// Snydekode til læreren: skriv «snyd» (uden for et tekstfelt), så er figuren
+// bygget med det samme, og funktionsopgaven begynder. Skrives den igen under
+// funktionsopgaven, er den også klaret. Intet gemmes som bygget. På mobilen:
+// læg ?snyd på adressen (byg-cellen.html?snyd#dyr), så sker det på hver figur.
 import { Byg } from './motor.js';
 
 const $ = (s) => document.querySelector(s);
 
-export function start({ FIGURER, ORD, NOEGLE }) {
+export function start({ FIGURER, ORD, NOEGLE, FUNKTIONER }) {
 
   // ── Hukommelse (kun bekvemmelighed: siden virker uden) ─────
   function hent() {
@@ -34,6 +42,7 @@ export function start({ FIGURER, ORD, NOEGLE }) {
   const intro = $('#fig-intro');
   const svaerKnap = $('#svaer');
 
+  const snydAdresse = new URLSearchParams(location.search).has('snyd');
   let motorer = {};
   let aktiv = null;
 
@@ -64,6 +73,10 @@ export function start({ FIGURER, ORD, NOEGLE }) {
       if (f) vis(f.id, true);
     },
   };
+  if (FUNKTIONER) {
+    hooks.funktionTekst = (fig, ord) => (FUNKTIONER[fig.id] && FUNKTIONER[fig.id][ord]) || (FUNKTIONER.alle && FUNKTIONER.alle[ord]) || null;
+    hooks.funktionFaerdig = () => konfetti();
+  }
 
   function lavMotorer() {
     motorer = {};
@@ -107,7 +120,8 @@ export function start({ FIGURER, ORD, NOEGLE }) {
     aktiv = m;
     intro.textContent = m.fig.intro;
     $('#scene').setAttribute('aria-label', 'Figur: ' + m.fig.navn);
-    m.tegn();
+    if (snydAdresse && !m.lagFaerdig && !m.funk) m.snyd();
+    else m.tegn();
     if (!m.lagFaerdig && !ui.besked.textContent) m.besked('');
     tegnFaner();
     if (opdaterAdresse) history.replaceState(null, '', '#' + m.fig.id);
@@ -141,11 +155,16 @@ export function start({ FIGURER, ORD, NOEGLE }) {
   });
 
   // ── Tastatur ───────────────────────────────────────────────
+  let skrevet = '';
   document.addEventListener('keydown', (e) => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     const t = e.target;
     const skriver = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
     if (skriver) return;
+    if (e.key.length === 1) {
+      skrevet = (skrevet + e.key.toLowerCase()).slice(-4);
+      if (skrevet === 'snyd') { skrevet = ''; aktiv.snyd(); return; }
+    }
     if (e.key === 'Escape') { if (aktiv.annuller()) e.preventDefault(); return; }
     if (/^[1-9]$/.test(e.key) && +e.key <= FIGURER.length) { vis(FIGURER[+e.key - 1].id, true); return; }
     if (e.key === 'Enter' && (t === document.body || !t.closest('button, a, [role="button"], summary'))) {

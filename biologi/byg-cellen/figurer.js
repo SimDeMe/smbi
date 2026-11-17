@@ -7,6 +7,7 @@ import mitokondrie from './fig-mitokondrie.js';
 import kloroplast from './fig-kloroplast.js';
 import { ORD as CELLEORD } from './ordliste.js';
 import { hent, flet } from '../byg-biologi/figurer.js';
+export { FUNKTIONER } from './funktioner.js';
 
 // Bladet står lige før kloroplasten: fra organ til organel.
 const blad = hent('blad');

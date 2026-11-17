@@ -74,7 +74,7 @@ h1{font-family:var(--display);font-variation-settings:var(--wide);font-weight:80
 .rig-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 13px;
   border-bottom:2px solid var(--ink);background:var(--accent-lys)}
 .faner{display:flex;gap:6px;flex-wrap:wrap}
-.faner[hidden]{display:none}
+.faner[hidden],.bakke[hidden]{display:none}
 .fane{font-family:var(--display);font-size:0.82rem;font-weight:700;background:#fff;border:2px solid var(--ink);
   color:var(--ink);padding:5px 12px;border-radius:18px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);
   display:inline-flex;align-items:center;gap:5px;transition:transform .12s,box-shadow .12s,background .16s}
@@ -274,3 +274,21 @@ body.fokus .rig{margin-top:0}
   .knapper .btn-stor{padding:6px 10px}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+
+/* ── Funktionsopgaven (funktion.js): læs, hvad delen gør, og klik på den ── */
+.bakke .funk-tekst{font-family:var(--body);font-size:1.02rem;line-height:1.45;color:var(--ink);margin:0;padding:2px 3px}
+#figur.funk-aktiv{cursor:pointer}
+.omraader.funk .omr > *, .omraader.funk .omr g > *{fill:transparent;stroke:none}
+.omraader.funk .omr [fill="none"], .omraader.funk .omr g[fill="none"] > *{fill:none;stroke:transparent}
+.omraader.funk .omr.over > *, .omraader.funk .omr.over g > *{fill:rgba(255,179,0,.28)}
+.omraader.funk .omr.over [fill="none"], .omraader.funk .omr.over g[fill="none"] > *{fill:none;stroke:rgba(255,179,0,.55)}
+.omraader.funk .omr.hint > *, .omraader.funk .omr.hint g > *{fill:rgba(255,106,61,.38)}
+.omraader.funk .omr.hint [fill="none"], .omraader.funk .omr.hint g[fill="none"] > *{fill:none;stroke:rgba(255,106,61,.6)}
+.funk-prik{outline:none;cursor:pointer}
+.funk-prik circle{fill:#fff;stroke:var(--ink);stroke-width:2.5}
+.funk-prik:hover circle{fill:#FFE38A}
+.funk-prik.hint circle{fill:var(--coral);stroke-width:3;r:12px}
+.funk-prik:focus-visible circle{stroke:var(--grape);stroke-width:5}
+.plads.pop .boks{animation:pop .7s ease}
+.faerdig-kort .spring{margin-top:9px;display:block}
+@media (prefers-reduced-motion: reduce){.plads.pop .boks{animation:none}}

@@ -63,6 +63,19 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 - **Svær udgave:** alle ord på én gang. Fanerne begynder forfra, når den slås
   til eller fra.
 - Peger man på et ord, der sidder rigtigt, kommer hele forklaringen frem.
+- **Hvad gør delene?** Når en figur er bygget, kan eleven gå videre til
+  funktionsopgaven (eller springe den over). Fagordene på figuren skjules, og
+  der kommer én beskrivelse ad gangen af, hvad en del gør. Eleven klikker på
+  delen (eller på dens hvide prik; med tastaturet Tab til prikken og Enter).
+  Et forkert klik siger, hvad man ramte. Hint 1 nævner fagordet, hint 2
+  («Vis delen») lyser delen op. En fundet del får sit ord igen. Teksterne står
+  i `funktioner.js` og må ikke indeholde fagordet. Celletyperne og pilene på
+  bladet er ikke med. På 3D-dyrecellen rammes delen med en stråle ind i
+  modellen (`vælg` i `../celle-3d/model.js`).
+- **Snydekode til læreren:** skriv `snyd` på tastaturet (uden for et tekstfelt),
+  så er figuren bygget, og funktionsopgaven begynder. Skrives den igen, er
+  funktionsopgaven også klaret. På mobilen: `byg-cellen.html?snyd#dyr` gør det
+  på hver figur. Intet gemmes som bygget (ingen ✓ på fanerne).
 - **Fokus** skjuler sidehovedet, topbjælken og bunden.
 - Tastatur: Tab til ordet og Enter, Tab til pladsen og Enter. Delete sender
   ordet tilbage, Esc fjerner valget, og Enter uden for en knap indsender. Tasterne
@@ -81,12 +94,14 @@ Her ligger kun figurerne og ordlisten.
 | `figurer.js` | `FIGURER`, `ORD` og nøglen til browserens hukommelse |
 | `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
+| `funktioner.js` | funktionsopgavens beskrivelser: `alle` og pr. figur (mitokondriens og kloroplastens membraner) |
 | `dyrecelle-tegning.js` | 2D-reservefigur med lag, når WebGL ikke kan starte |
 | `../celle-3d/model.js` | fælles Three.js-model, organeller, lys, snit, rotation og projektion af fagordsankre |
 | `../celle-3d/byg-visning.js` | kobling mellem den fælles Byg-motor og 3D-modellens synlige og farvede lag |
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
 | `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
+| `/byg-motor/funktion.js` | funktionsopgaven efter en bygget figur: beskrivelse, klik på delen, hint, kortet til sidst |
 | `/byg-motor/rejse.js` | rejse-lag: træk noget (fx et blodlegeme) gennem den færdige figur ad den rigtige vej |
 | `/byg-motor/side.js` | fanerne, Svær udgave, fokus, links, tastatur og konfetti |
 | `/byg-motor/tegn.js` | tegnehjælp: bløde kurver, mitokondrier, kloroplaster, ribosomer, bølger, cyklus-pile |

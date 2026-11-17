@@ -9,8 +9,12 @@
 //
 // Et lag med `rejse` i stedet for fagord (se rejse.js) er en opgave, hvor eleven
 // trækker noget gennem den færdige figur. Det springes over i Svær udgave.
+//
+// Funktionsopgaven (funktion.js) kommer efter, når siden giver funktionstekster:
+// eleven læser, hvad en del gør, og klikker på delen.
 
 import { Rejse } from './rejse.js';
+import { Funktion, spoergsmaal } from './funktion.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 export const BOKS = [186, 42];            // alle pladser er lige store; en figur kan vælge sit eget `boks`
@@ -73,6 +77,7 @@ export class Byg {
     this.lagFaerdig = false;         // det grønne kort vises
     this.nyeFarver = new Set();
     this.rejser = new Map();
+    this.funk = null;                // funktionsopgaven, når den er i gang
     this.fig.lag.forEach((l, i) => { if (l.rejse) this.rejser.set(i, new Rejse(this, i)); });
     this.blandBakke();
   }
@@ -134,6 +139,7 @@ export class Byg {
     svg.style.setProperty('--mobil-b', (this.fig.mobilBredde || 680) + 'px');
     // graa: 'let' gør de grå dele kun dæmpede, så fx vand stadig er blåt
     svg.classList.toggle('let-graa', this.fig.graa === 'let');
+    if (svg._funk) svg._funk.ryd();
     svg.innerHTML = '';
 
     const dele = document.createElementNS(NS, 'g');
@@ -149,6 +155,13 @@ export class Byg {
       dele.appendChild(g);
     }
     svg.appendChild(dele);
+
+    if (this.funk) {
+      svg.classList.remove('rejser');
+      this.funk.tegn(svg);
+      this.nyeFarver.clear();
+      return;
+    }
 
     // gule felter om det, pladserne handler om
     const omr = document.createElementNS(NS, 'g');
@@ -180,21 +193,7 @@ export class Byg {
       if (this.valgt && this.valgt.fra === i) cls += ' valgt';
       g.setAttribute('class', cls);
       g.dataset.i = i;
-      const bx = p.x - this.boksB / 2, by = p.y - this.boksH / 2;
-      let inner = '';
-      if (p.maal) {
-        const [mx, my] = p.maal;
-        let sx, sy;
-        if (mx > bx + this.boksB) { sx = bx + this.boksB; sy = p.y; }
-        else if (mx < bx) { sx = bx; sy = p.y; }
-        else { sx = Math.max(bx + 12, Math.min(bx + this.boksB - 12, mx)); sy = my > p.y ? by + this.boksH : by; }
-        inner += `<line class="streg" x1="${sx}" y1="${sy}" x2="${mx}" y2="${my}"/>
-                  <circle class="prik" cx="${mx}" cy="${my}" r="6.5"/>`;
-      }
-      inner += `<rect class="boks" x="${bx}" y="${by}" width="${this.boksB}" height="${this.boksH}" rx="11"/>`;
-      inner += `<text class="ordtekst" x="${p.x}" y="${p.y + 7}" text-anchor="middle">${ord ? this.ORD[ord].ord : ''}</text>`;
-      if (laast) inner += `<title>${this.ORD[p.ord].ord}: ${this.ORD[p.ord].tekst}</title>`;
-      g.innerHTML = inner;
+      g.innerHTML = this.pladsMarkup(p, ord, laast);
       if (!laast) {
         g.setAttribute('tabindex', '0');
         g.setAttribute('role', 'button');
@@ -214,9 +213,29 @@ export class Byg {
     this.bindFigur();
   }
 
+  /** Streg, prik, boks og ord for én plads. */
+  pladsMarkup(p, ord, laast) {
+    const bx = p.x - this.boksB / 2, by = p.y - this.boksH / 2;
+    let inner = '';
+    if (p.maal) {
+      const [mx, my] = p.maal;
+      let sx, sy;
+      if (mx > bx + this.boksB) { sx = bx + this.boksB; sy = p.y; }
+      else if (mx < bx) { sx = bx; sy = p.y; }
+      else { sx = Math.max(bx + 12, Math.min(bx + this.boksB - 12, mx)); sy = my > p.y ? by + this.boksH : by; }
+      inner += `<line class="streg" x1="${sx}" y1="${sy}" x2="${mx}" y2="${my}"/>
+                <circle class="prik" cx="${mx}" cy="${my}" r="6.5"/>`;
+    }
+    inner += `<rect class="boks" x="${bx}" y="${by}" width="${this.boksB}" height="${this.boksH}" rx="11"/>`;
+    inner += `<text class="ordtekst" x="${p.x}" y="${p.y + 7}" text-anchor="middle">${ord ? this.ORD[ord].ord : ''}</text>`;
+    if (laast) inner += `<title>${this.ORD[p.ord].ord}: ${this.ORD[p.ord].tekst}</title>`;
+    return inner;
+  }
+
   tegnPanel() {
     const { bakke, lagliste, opgTitel, opgTekst, hint, indsend, kort: kortEl } = this.ui;
     const f = this.fig;
+    hint.disabled = false;
 
     // opgaven
     if (this.svaer) {
@@ -229,6 +248,12 @@ export class Byg {
     if (rejse) opgTekst.textContent = rejse.d.opgave;
     else opgTekst.textContent = 'Træk fagordene hen på de gule pladser, eller klik på et ord og så på pladsen. Tryk Indsend svar.'
       + (ekstra === 1 ? ' Ét ord er i overskud.' : ekstra > 1 ? ` ${ekstra} ord er i overskud.` : '');
+
+    if (this.funk) {
+      this.funk.tegnPanel();
+      this.tegnLag();
+      return;
+    }
 
     // det grønne kort i stedet for bakken
     kortEl.hidden = !this.lagFaerdig;
@@ -258,7 +283,12 @@ export class Byg {
 
     hint.textContent = rejse ? rejse.hintTekst() : this.hintPlads != null && this.pladsAktiv(this.hintPlads) ? 'Vis svaret' : 'Giv et hint';
 
-    // lagene
+    this.tegnLag();
+  }
+
+  tegnLag() {
+    const { lagliste } = this.ui;
+    const f = this.fig;
     lagliste.innerHTML = '';
     f.lag.forEach((l, i) => {
       const li = el('li');
@@ -270,7 +300,7 @@ export class Byg {
       b.innerHTML = `<span class="nr">${i + 1}</span><span class="lnavn"></span><span class="stjerne" aria-hidden="true">${this.stjerner[i] ? '★' : ''}</span>`;
       b.querySelector('.lnavn').textContent = l.navn;
       b.title = faerdig ? 'Bygget' + (this.stjerner[i] ? ' i første forsøg uden hint' : '') : (i > this.lag ? 'Spring hertil: lagene før bliver bygget færdige' : 'Bygges nu');
-      b.disabled = this.svaer;
+      b.disabled = this.svaer || !!this.funk;
       b.addEventListener('click', () => this.springTil(i));
       li.appendChild(b);
       lagliste.appendChild(li);
@@ -292,20 +322,40 @@ export class Byg {
     }
     if (dl.children.length) k.appendChild(dl);
     for (const i of lagene) if (f.lag[i].rejse && f.lag[i].rejse.opsummering) k.appendChild(el('p', 'opsum', f.lag[i].rejse.opsummering));
-    let tekst = null, handling = null;
-    if (!helt) { tekst = 'Næste lag'; handling = () => this.naesteLag(); }
-    else {
-      tekst = this.hooks.naesteTekst();
-      handling = () => this.hooks.naeste();
+    if (!helt) {
+      this.knap(k, 'Næste lag', () => this.naesteLag());
+      return;
     }
-    if (tekst) {
-      const b = el('button', 'btn-stor', tekst + ' →');
-      b.type = 'button';
-      b.id = 'btn-naeste';
-      b.addEventListener('click', handling);
-      k.appendChild(b);
-      requestAnimationFrame(() => b.focus({ preventScroll: true }));
-    } else {
+    if (this.kanFunktion()) {
+      k.appendChild(el('p', 'opsum', 'Næste opgave: du får at vide, hvad en del gør, og skal finde den på figuren.'));
+      this.knap(k, 'Hvad gør delene?', () => this.startFunktion());
+      const t = this.hooks.naesteTekst();
+      if (t) {
+        const s = el('button', 'btn-mini spring', 'Spring over: ' + t.replace(/^Næste figur: /, ''));
+        s.type = 'button';
+        s.addEventListener('click', () => this.hooks.naeste());
+        k.appendChild(s);
+      }
+      return;
+    }
+    this.tegnVidere(k);
+  }
+
+  knap(k, tekst, handling) {
+    const b = el('button', 'btn-stor', tekst + ' →');
+    b.type = 'button';
+    b.id = 'btn-naeste';
+    b.addEventListener('click', handling);
+    k.appendChild(b);
+    requestAnimationFrame(() => b.focus({ preventScroll: true }));
+  }
+
+  /** Knappen til næste figur, eller en slutbesked, når alle er bygget. */
+  tegnVidere(k) {
+    const tekst = this.hooks.naesteTekst();
+    const handling = () => this.hooks.naeste();
+    if (tekst) this.knap(k, tekst, handling);
+    else {
       const hvad = this.hooks.eneFigur?.() ? 'Figuren er bygget' : 'Alle figurerne er bygget';
       k.appendChild(el('p', 'slut', this.svaer
         ? `${hvad} i den svære udgave. Flot!`
@@ -365,7 +415,7 @@ export class Byg {
   }
 
   indsend() {
-    if (this.lagFaerdig || this.rejseNu()) return;
+    if (this.lagFaerdig || this.funk || this.rejseNu()) return;
     if (!this.paa.size) {
       this.besked('Sæt mindst ét ord på en plads først.', 'info');
       return;
@@ -432,6 +482,7 @@ export class Byg {
   }
 
   hint() {
+    if (this.funk) { this.funk.giv(); return; }
     if (this.lagFaerdig) return;
     if (this.rejseNu()) { this.rejseNu().hint(); return; }
     let i = this.hintPlads;
@@ -460,7 +511,7 @@ export class Byg {
   }
 
   springTil(n) {
-    if (this.svaer || n === this.lag) return;
+    if (this.svaer || this.funk || n === this.lag) return;
     if (n < this.lag) { this.besked('Det lag er allerede bygget.', 'info'); return; }
     for (let i = 0; i < n; i++) {
       this.fig.lag[i].ord.forEach((o) => this.loest.add(o));
@@ -474,6 +525,43 @@ export class Byg {
     this.blandBakke();
     this.besked(`Lagene før er bygget færdige. Nu: ${this.fig.lag[n].navn}.`, 'info');
     this.tegn();
+  }
+
+  // ── Funktionsopgaven ─────────────────────────────────────
+  kanFunktion() { return spoergsmaal(this.fig, this.hooks).length > 0; }
+
+  startFunktion() {
+    this.funk = new Funktion(this);
+    this.valgt = null;
+    this.hintPlads = null;
+    this.besked('');
+    this.tegn();
+    this.ui.sr.textContent = 'Hvad gør delen? ' + this.funk.nu.tekst;
+  }
+
+  /**
+   * Snydekoden til læreren: byg hele figuren med det samme og gå videre til
+   * funktionsopgaven (eller gør den færdig, hvis den er i gang). Gemmes ikke
+   * som bygget.
+   */
+  snyd() {
+    if (this.stopTraek) this.stopTraek();
+    if (this.funk) {
+      if (!this.funk.slut) { this.funk.springOver(); this.tegn(); }
+      return;
+    }
+    this.fig.lag.forEach((l, i) => {
+      l.ord.forEach((o) => this.loest.add(o));
+      if (this.rejser.has(i)) this.rejser.get(i).springOver();
+    });
+    this.lag = this.fig.lag.length - 1;
+    this.paa.clear();
+    this.valgt = null;
+    this.hintPlads = null;
+    this.stjerner = this.fig.lag.map(() => false);
+    this.lagFaerdig = true;
+    if (this.kanFunktion()) this.startFunktion();
+    else this.tegn();
   }
 
   // ── Mus, touch og tastatur ───────────────────────────────

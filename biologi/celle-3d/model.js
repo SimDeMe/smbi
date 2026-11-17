@@ -79,6 +79,14 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
   renderer.render(scene,kamera);return renderer.domElement;
  }
  function projektion(ord){return projektér(verdensankre[ord]||zoomAnker,bredde,højde,vinkel);}
+ // Fagordet for den synlige del under et punkt i figurens koordinater (bredde×højde), eller null.
+ const stråle=new T.Raycaster();
+ function vælg(x,y){
+  stråle.setFromCamera(new T.Vector2(x/bredde*2-1,1-y/højde*2),kamera);
+  const synlige=Object.values(grupper).flat().filter(o=>o.visible);
+  const ramt=stråle.intersectObjects(synlige,false);
+  return ramt.length?ramt[0].object.userData.ord:null;
+ }
  tegn();
- return {lærred:renderer.domElement,tegn,projektion,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
+ return {lærred:renderer.domElement,tegn,projektion,vælg,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
 }

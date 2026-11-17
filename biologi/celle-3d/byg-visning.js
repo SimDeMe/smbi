@@ -28,6 +28,9 @@ export async function tilføj3D() {
  }
  værktøjer.addEventListener('click',e=>{const b=e.target.closest('[data-drej]');if(!b)return;rotation=b.dataset.drej==='0'?0:Math.max(-.5,Math.min(.5,rotation+Number(b.dataset.drej)));model.tegn({rotation});const m=aktiv();retAnkre(m);m.tegnFigur();opdater();});
  new MutationObserver(opdater).observe(svg,{childList:true});
+ // Funktionsopgaven: klik rammer delen i 3D-modellen (motoren spørger figuren).
+ const vaelgVed=(x,y)=>{const m=aktiv();return m&&m.fig.id==='dyr'&&svg.classList.contains('celle-i-3d')?model.vælg(x,y):undefined;};
+ for(const m of Object.values(window.bygFiguren.motorer()))if(m.fig.id==='dyr')m.fig.vaelgVed=vaelgVed;
  const dyremotor=window.bygFiguren.motorer().dyr;retAnkre(dyremotor);if(aktiv()===dyremotor)dyremotor.tegnFigur();opdater();
 }
 function kanWebGL(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch{return false;}}

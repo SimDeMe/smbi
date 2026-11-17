@@ -73,6 +73,16 @@ for (const f of figurer) {
     });
   });
 }
+// funktionsopgaven: teksterne hører til kendte ord og afslører ikke ordet
+if (data.FUNKTIONER) {
+  for (const [hvor, tekster] of Object.entries(data.FUNKTIONER)) {
+    tjek(hvor === 'alle' || figurer.some((f) => f.id === hvor), `funktioner: ukendt figur ${hvor}`);
+    for (const [o, t] of Object.entries(tekster)) {
+      tjek(!!ORD[o], `funktioner: ukendt ord ${o}`);
+      if (ORD[o]) tjek(!t.toLowerCase().includes(ORD[o].ord.toLowerCase()), `funktioner: teksten til ${o} afslører ordet`);
+    }
+  }
+}
 // rejse-lag: alle veje hænger sammen, og den rigtige vej når frem
 for (const f of figurer) for (const l of f.lag.filter((l) => l.rejse)) {
   const r = l.rejse, K = r.knuder, slut = [].concat(r.slut);
@@ -225,9 +235,38 @@ for (const f of figurer) {
     else if (ene) {
       tjek(await naeste.count() === 0, `${f.id}: én figur, men der er en knap til en næste figur`);
       tjek((await side.locator('#faerdig-kort .slut').textContent()).startsWith('Figuren er bygget'), `${f.id}: forkert sluttekst`);
+    } else if (await side.locator('#faerdig-kort .spring').count() || (await naeste.count() && (await naeste.textContent()).startsWith('Hvad gør'))) {
+      await testFunktion(f);
     } else tjek(f === figurer[figurer.length - 1] || (await naeste.textContent()).startsWith('Næste figur'), `${f.id}: ingen knap til næste figur`);
   }
   if (!ene) tjek(await side.locator(`#fane-${f.id} .maerke`).count() === 1, `${f.id}: fanen fik ikke et mærke`);
+}
+
+// Funktionsopgaven: læs, hvad delen gør, og klik på den (forkert, hint, rigtigt)
+async function testFunktion(f) {
+  await side.click('#btn-naeste');
+  const nu = () => side.evaluate(() => { const m = window.bygFiguren.aktiv(); return m.funk && !m.funk.slut ? m.funk.nu.i : null; });
+  tjek(await side.locator('#bakke .funk-tekst').count() === 1, `${f.id}: funktionsopgaven viser ingen beskrivelse`);
+  tjek(await side.locator('#figur .plads.laast').count() < f.pladser.length, `${f.id}: fagordene er ikke skjult i funktionsopgaven`);
+  let i = await nu(), runde = 0;
+  while (i != null && runde++ < 60) {
+    if (runde === 1) {
+      const forkert = side.locator(`#figur .funk-prik:not([data-i="${i}"])`).first();
+      await forkert.click();
+      tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: intet svar på et forkert klik`);
+    }
+    if (runde === 2) {
+      await side.click('#btn-hint');
+      await side.click('#btn-hint');
+      tjek(await side.locator(`#figur .funk-prik.hint[data-i="${i}"]`).count() === 1, `${f.id}: hintet viser ikke delen`);
+    }
+    await side.locator(`#figur .funk-prik[data-i="${i}"]`).click();
+    i = await nu();
+  }
+  tjek((await side.locator('#faerdig-kort h3').textContent()) === 'Alle delene er fundet', `${f.id}: funktionsopgaven blev ikke færdig`);
+  tjek(await side.locator('#figur .funk-prik').count() === 0, `${f.id}: der er prikker tilbage efter funktionsopgaven`);
+  const n = side.locator('#btn-naeste');
+  tjek(f === figurer[figurer.length - 1] || (await n.count() && (await n.textContent()).startsWith('Næste figur')), `${f.id}: ingen knap til næste figur efter funktionsopgaven`);
 }
 
 // Svær udgave: alle ord på én gang, løses med tastaturet
