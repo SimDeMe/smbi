@@ -2,7 +2,8 @@
 
 `biologi/byg-cellen.html`: eleven sætter fagord på dyrecellen, plantecellen og
 bakterien og inde i mitokondrien og kloroplasten. Figuren bygges lag for lag. Lagets dele står grå, de senere lag er
-skjult, og en del får farve, når ordet sidder rigtigt.
+skjult, og en del får farve, når ordet sidder rigtigt. På 3D-dyrecellen og
+3D-plantecellen har delene deres farver fra starten.
 
 Idéen er Niels Kræmmers »Byg figuren« fra kemiformler.dk
 (`animationer/superanimationer/sc1.5_byg_figuren/` i

@@ -60,7 +60,11 @@ export const CELLER={
   pladser:{},            // sættes efter projektionen nedenfor
   zoom:[9.7,-.4,0],
   kamera:{hh:9.4,pos:[.6,18,18.5],mål:[0,-2.6,.2]},
-  farve:{'PC Cell Wall':[.80,.91,.74],'PC Cell Wall Cut':[.72,.86,.63],'C3D Mitokondrie matrix v2':[.42,.74,.71]},
+  farve:{'PC Cell Wall':[.50,.72,.36],'PC Cell Wall Cut':[.40,.62,.28],'C3D Mitokondrie matrix v2':[.42,.74,.71],
+   'PC Vacuole Sap':[.36,.56,.95],'PC Tonoplast':[.30,.30,.82]},
+  // Vakuolen skal kunne ses, også lige forfra: mere dækkende saft og tonoplast.
+  dækning:{'PC Vacuole Sap':.72,'PC Tonoplast':.85},
+  øverst:['vakuole'],
   uigennemsigtig:['PC Cell Wall'],
  },
 };
@@ -106,8 +110,11 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   const ord=C.fagordFor(navne,ex);if(!ord)return;
   const m=o.material.clone();if(C.farve[m.name])m.color.setRGB(...C.farve[m.name]);
   if(C.uigennemsigtig?.includes(m.name)){m.transparent=false;m.opacity=1;}
+  if(C.dækning?.[m.name])m.opacity=C.dækning[m.name];
   m.metalness=0;if(m.transparent){m.depthWrite=false;m.side=T.DoubleSide;}
   m.userData.farve=m.color.clone();o.material=m;o.userData.ord=ord;grupper[ord].push(o);
+  // Vakuolen tegnes efter det gennemsigtige cytoplasma, så snittet ikke bliver blegt.
+  if(C.øverst?.includes(ord))o.renderOrder=2;
  });
  rod.updateMatrixWorld(true);
  const ankre=structuredClone(C.sigte);

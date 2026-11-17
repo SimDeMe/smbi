@@ -23,7 +23,10 @@ kameraer og lys, med **Apply Modifiers** og **Custom Properties**) og komprimere
 fra Blender (`Cell_Wall`, `Chloroplast_…`, `Tonoplast` …), så de må ikke flettes.
 Byg cellen spørger om 13 fagord: dyrecellens 10 plus cellevæg, kloroplast og vakuole.
 Plantecellen hentes først, når fanen åbnes. Cellevæggens og mitokondriematrixens
-procedurale farver sættes i koden, fordi de ikke følger med i glTF.
+procedurale farver sættes i koden, fordi de ikke følger med i glTF. Vakuolen er gjort
+mere dækkende og tegnes efter cytoplasmaet, så snittet kan ses lige forfra.
+Grønkornene og mitokondrierne langs kanten er skaleret lidt ind mod vakuolen i Blender,
+så der er cytoplasma mellem dem og cellemembranen.
 
 Mens en model hentes, er 2D-tegningen skjult, og der står «Henter dyrecellen i 3D …».
 
@@ -37,7 +40,8 @@ og `pladser` i hver celle placerer felterne i 3D-visningen, så pegepindene ikke
 
 `byg-visning.js` observerer den fælles Byg-motors figur. En PNG-rendering af den
 aktuelle 3D-tilstand står under de eksisterende SVG-fagord, uden at ændre motoren.
-Lag, farver og fremhævelse følger opgavens tilstand. Vinkelknapperne kan bruges med
+Lag og fremhævelse følger opgavens tilstand. I 3D har delene deres farver fra
+starten (de er ikke grå, før ordet sidder, som i 2D). Vinkelknapperne kan bruges med
 tastatur. På transportsiden kan cellen også drejes ved at trække i figuren.
 De efterfølgende membranprocesser er fortsat de eksisterende 2D-animationer.
 

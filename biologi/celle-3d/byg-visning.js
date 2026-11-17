@@ -1,4 +1,5 @@
 // Bevar Byg-motorens fagord og lag; tegn dyrecellen og plantecellen med de fælles 3D-modeller.
+// Delene har deres farver fra starten, også før ordet sidder (ikke grå som i 2D).
 const NAVN={dyr:'dyrecellen',plante:'plantecellen'};
 export async function tilføj3D() {
  const svg=document.getElementById('figur');
@@ -50,7 +51,7 @@ export async function tilføj3D() {
   const model=c.model;
   const s=[id,m.lag,m.svaer,[...m.loest].sort().join(','),m.hintPlads,c.rotation,lys].join('|');
   if(s===signatur&&svg.querySelector('.celle-3d-billede'))return;
-  if(s!==signatur){signatur=s;const synlige=new Set(m.fig.lag.flatMap((l,i)=>m.synlig(i)?l.ord:[]));model.tegn({rotation:c.rotation,synlige,farver:m.loest,fremhæv:m.hintPlads===null?null:m.fig.pladser[m.hintPlads]?.ord,lys});senesteBillede=model.lærred.toDataURL();}
+  if(s!==signatur){signatur=s;const synlige=new Set(m.fig.lag.flatMap((l,i)=>m.synlig(i)?l.ord:[]));model.tegn({rotation:c.rotation,synlige,farver:new Set(model.fagord),fremhæv:m.hintPlads===null?null:m.fig.pladser[m.hintPlads]?.ord,lys});senesteBillede=model.lærred.toDataURL();}
   let image=svg.querySelector('.celle-3d-billede');if(!image){image=document.createElementNS(NS,'image');image.setAttribute('class','celle-3d-billede');image.setAttribute('width','1000');image.setAttribute('height','640');image.setAttribute('pointer-events','none');svg.prepend(image);}image.setAttribute('href',senesteBillede);svg.dataset.celle3d='klar';
   // gløden: en lysende kant om den del, musen peger på, lagt oven på billedet
   let glød=svg.querySelector('.celle-3d-glød');
