@@ -18,8 +18,9 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
    og transporten. `transkription.html` ejer proteinsyntesen. `fotosyntese.html`
    ejer processerne. På mitokondrien og kloroplasten står kun, *hvor* respirationens
    og fotosyntesens trin foregår. Her står kun en sætning om funktionen.
-4. **Loftet.** 6 faner med én figur hver og 1–3 lag med 2–5 ord hvert. 45
-   pladser i alt og ord i overskud på fem af fanerne.
+4. **Loftet.** 6 faner med én figur hver og 1–4 lag med 2–5 ord hvert. Ord i
+   overskud på fem af fanerne. Plantecellen har fire lag: først det, dyrecellen
+   ikke har, og så dyrecellens tre lag.
 5. **Layoutet.** Stor figur plus panel: opgaven, bakken med ord, beskeden,
    Giv et hint og Indsend svar, lagene og Byg forfra. På smal skærm ligger
    panelet over figuren og klæber under topbjælken.
@@ -28,9 +29,11 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
 |:--|:--|:--|
 | Dyrecellen `#dyr` | Grundplanen | cellemembran, cytoplasma, cellekerne (+ cellevæg i overskud) |
 | | Fra gen til protein | kernemembran, ribosom, ru ER, Golgi-apparat |
-| | Energi, lager og affald | mitokondrie, glat ER, lysosom, vesikel |
+| | Energi, lipider og transport | mitokondrie, glat ER, vesikel |
 | Plantecellen `#plante` | Det, dyrecellen ikke har | cellevæg, kloroplast, vakuole |
-| | Det, alle eukaryote celler har | cellemembran, cellekerne, mitokondrie, cytoplasma |
+| | Grundplanen | cellemembran, cytoplasma, cellekerne |
+| | Fra gen til protein | kernemembran, ribosom, ru ER, Golgi-apparat |
+| | Energi, lipider og transport | mitokondrie, glat ER, vesikel |
 | Bakterien `#bakterie` | Grundplanen | cellevæg, cellemembran, cytoplasma, kromosom (+ cellekerne i overskud) |
 | | Ekstraudstyret | plasmid, ribosom, flagel, pili, kapsel |
 | Celletyperne `#typer` | To slags celler | eukaryot, prokaryot (+ virus i overskud) |
@@ -81,7 +84,7 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
   (`/byg-motor/lyd.js`, Web Audio uden lydfiler); knappen 🔊 Lyd slår den fra,
   og valget huskes under nøglen `byg-lyd`. En fundet del får sit ord igen. Teksterne står
   i `funktioner.js` og må ikke indeholde fagordet. Celletyperne og pilene på
-  bladet er ikke med. På 3D-dyrecellen slås delen op i et billede, hvor hver
+  bladet er ikke med. På 3D-dyrecellen og 3D-plantecellen slås delen op i et billede, hvor hver
   del er tegnet i sin egen farve (`vælg` i `../celle-3d/model.js`); det tegnes
   kun igen, når vinklen ændres, så opslaget kan følge musen. Ribosomer og
   vesikler tæller et par pixels uden for kanten, fordi de er så små.
@@ -108,8 +111,8 @@ Her ligger kun figurerne og ordlisten.
 | `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
 | `funktioner.js` | funktionsopgavens beskrivelser: `alle` og pr. figur (mitokondriens og kloroplastens membraner) |
-| `dyrecelle-tegning.js` | 2D-reservefigur med lag, når WebGL ikke kan starte |
-| `../celle-3d/model.js` | fælles Three.js-model, organeller, lys, snit, rotation og projektion af fagordsankre |
+| `dyrecelle-tegning.js` | dyrecellens 2D-reservefigur med lag, når WebGL ikke kan starte (plantecellens står i `fig-plante.js`) |
+| `../celle-3d/model.js` | dyrecellen og plantecellen i Three.js: fagord, lys, kamera, rotation, projektion af fagordsankre og opslag af dele |
 | `../celle-3d/byg-visning.js` | kobling mellem den fælles Byg-motor og 3D-modellens synlige og farvede lag |
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |

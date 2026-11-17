@@ -26,7 +26,14 @@ await page.evaluate(()=>{const m=window.bygFiguren.aktiv();for(const l of m.fig.
 assert.notEqual(await page.locator('.celle-3d-billede').getAttribute('href'),første);
 assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),10);
 await page.screenshot({path:'/tmp/celletransport-qa/byg-3d.png'});
-await page.locator('#fane-plante').click();assert.equal(await page.locator('.celle-vinkler').isVisible(),false);
+// Plantecellen hentes, når fanen åbnes, og får sin egen 3D-model med 13 fagord.
+await page.locator('#fane-plante').click();await page.waitForFunction(()=>window.bygFiguren.aktiv().fig.id==='plante'&&document.querySelector('#figur .celle-3d-billede'));
+assert.equal(await page.locator('.celle-vinkler').isVisible(),true);assert.equal(await page.locator('.celle-vinkler').getAttribute('aria-label'),'Drej plantecellen i 3D');
+await page.evaluate(()=>{const m=window.bygFiguren.aktiv();for(const l of m.fig.lag)for(const o of l.ord)m.loest.add(o);m.lag=m.fig.lag.length-1;m.tegn();});
+assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),13);
+assert.deepEqual(await page.evaluate(()=>{const m=window.bygFiguren.aktiv(),f=new Set();for(let x=0;x<1000;x+=6)for(let y=0;y<640;y+=6){const o=m.fig.vaelgVed(x,y);if(o)f.add(o);}return [...f].sort();}),
+ ['cellekerne','cellemembran','cellevaeg','cytoplasma','glatER','golgi','kernemembran','kloroplast','mitokondrie','ribosom','ruER','vakuole','vesikel'],'Alle plantecellens dele skal kunne vælges i 3D');
+await page.screenshot({path:'/tmp/celletransport-qa/byg-3d-plante.png'});
 await page.locator('#fane-dyr').click();assert.equal(await page.locator('.celle-3d-billede').count(),1);
 assert.deepEqual(fejl,[]);await browser.close();
 // Uden WebGL bevares SVG, fagord og transportknapper.

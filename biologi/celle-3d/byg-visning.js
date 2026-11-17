@@ -1,29 +1,56 @@
-// Bevar Byg-motorens fagord og lag; tegn cellen med den fælles 3D-model.
+// Bevar Byg-motorens fagord og lag; tegn dyrecellen og plantecellen med de fælles 3D-modeller.
+const NAVN={dyr:'dyrecellen',plante:'plantecellen'};
 export async function tilføj3D() {
  const svg=document.getElementById('figur');
- let model;
- let pladser={};
- // Mens 3D-modellen hentes, skjules den gamle 2D-tegning, så dyrecellen starter som 3D.
- // Fejler WebGL eller modellen, kommer 2D-tegningen frem igen.
- const henter=document.createElement('p');henter.className='celle-3d-henter';henter.setAttribute('role','status');henter.textContent='Henter 3D-cellen …';
- const vent=()=>{const dyr=window.bygFiguren?.aktiv()?.fig.id==='dyr';svg.classList.toggle('celle-venter',dyr);henter.hidden=!dyr;};
- const venteObs=new MutationObserver(vent);
- if(kanWebGL()){svg.parentElement.append(henter);venteObs.observe(svg,{childList:true});vent();}
- const stopVent=()=>{venteObs.disconnect();svg.classList.remove('celle-venter');henter.remove();};
- try{const mod=await import('./model.js');pladser=mod.fagordspladser||{};model=await mod.skabDyrecelle();}
- catch(e){stopVent();console.warn('3D er ikke tilgængelig; cellefiguren vises som SVG.',e);return;}
- stopVent();
+ if(!kanWebGL())return;
  const NS='http://www.w3.org/2000/svg';
- const værktøjer=document.createElement('div');værktøjer.className='celle-vinkler';værktøjer.setAttribute('aria-label','Drej dyrecellen i 3D');
+ const aktiv=()=>window.bygFiguren?.aktiv();
+ const aktivId=()=>{const id=aktiv()?.fig.id;return id in NAVN?id:null;};
+ // id → {status:'henter'|'klar'|'fejl', model, rotation}
+ const celler={};
+ let modul=null;
+ // Mens en 3D-celle hentes, skjules 2D-tegningen, så cellen starter som 3D.
+ // Fejler WebGL eller modellen, kommer 2D-tegningen frem igen.
+ const henter=document.createElement('p');henter.className='celle-3d-henter';henter.setAttribute('role','status');
+ svg.parentElement.append(henter);
+ const værktøjer=document.createElement('div');værktøjer.className='celle-vinkler';værktøjer.hidden=true;
  værktøjer.innerHTML='<span>3D-cellesnit</span><button type="button" data-drej="-.15" aria-label="Drej cellen mod venstre">↶</button><button type="button" data-drej=".15" aria-label="Drej cellen mod højre">↷</button><button type="button" data-drej="0">Nulstil vinkel</button>';
  svg.parentElement.prepend(værktøjer);
- let rotation=0,signatur='',senesteBillede='',lys=null;
- function aktiv(){return window.bygFiguren?.aktiv();}
- function retAnkre(m){const a=model.ankre();for(const p of m.fig.pladser){if(a[p.ord])p.maal=a[p.ord];if(pladser[p.ord])[p.x,p.y]=pladser[p.ord];}}
- function opdater(){const m=aktiv();if(!m)return;const dyr=m.fig.id==='dyr';værktøjer.hidden=!dyr;svg.classList.toggle('celle-i-3d',dyr);if(!dyr){signatur='';return;}
-  const s=[m.lag,m.svaer,[...m.loest].sort().join(','),m.hintPlads,rotation,lys].join('|');
+ let signatur='',senesteBillede='',lys=null;
+
+ async function hent(id){
+  const c=celler[id]={status:'henter',model:null,rotation:0};
+  try{modul??=await import('./model.js');c.model=await modul.skabCelle(id);c.status='klar';}
+  catch(e){c.status='fejl';console.warn(`3D er ikke tilgængelig; ${NAVN[id]} vises som SVG.`,e);}
+  const m=window.bygFiguren.motorer()[id];
+  if(c.status==='klar'&&m){
+   // Funktionsopgaven: klik rammer delen i 3D-modellen (motoren spørger figuren) …
+   m.fig.vaelgVed=(x,y)=>svg.classList.contains('celle-i-3d')&&aktiv()===m?c.model.vælg(x,y):undefined;
+   // … og den del, musen peger på, lyser op.
+   m.fig.lysOp=ord=>{if(ord===lys)return;lys=ord;opdater();};
+   retAnkre(m,c.model);
+  }
+  signatur='';
+  if(aktiv()===m)m.tegnFigur();
+  opdater();
+ }
+ function retAnkre(m,model){const a=model.ankre();for(const p of m.fig.pladser){if(a[p.ord])p.maal=a[p.ord];if(model.pladser[p.ord])[p.x,p.y]=model.pladser[p.ord];}}
+
+ function opdater(){
+  const m=aktiv();if(!m)return;
+  const id=aktivId(),c=id&&celler[id];
+  if(id&&!c){hent(id);return;}
+  const venter=c?.status==='henter';
+  svg.classList.toggle('celle-venter',!!venter);henter.hidden=!venter;
+  if(venter)henter.textContent=`Henter ${NAVN[id]} i 3D …`;
+  const i3D=c?.status==='klar';
+  værktøjer.hidden=!i3D;svg.classList.toggle('celle-i-3d',!!i3D);
+  if(i3D)værktøjer.setAttribute('aria-label',`Drej ${NAVN[id]} i 3D`);
+  if(!i3D){signatur='';return;}
+  const model=c.model;
+  const s=[id,m.lag,m.svaer,[...m.loest].sort().join(','),m.hintPlads,c.rotation,lys].join('|');
   if(s===signatur&&svg.querySelector('.celle-3d-billede'))return;
-  if(s!==signatur){signatur=s;const synlige=new Set(m.fig.lag.flatMap((l,i)=>m.synlig(i)?l.ord:[]));model.tegn({rotation,synlige,farver:m.loest,fremhæv:m.hintPlads===null?null:m.fig.pladser[m.hintPlads]?.ord,lys});senesteBillede=model.lærred.toDataURL();}
+  if(s!==signatur){signatur=s;const synlige=new Set(m.fig.lag.flatMap((l,i)=>m.synlig(i)?l.ord:[]));model.tegn({rotation:c.rotation,synlige,farver:m.loest,fremhæv:m.hintPlads===null?null:m.fig.pladser[m.hintPlads]?.ord,lys});senesteBillede=model.lærred.toDataURL();}
   let image=svg.querySelector('.celle-3d-billede');if(!image){image=document.createElementNS(NS,'image');image.setAttribute('class','celle-3d-billede');image.setAttribute('width','1000');image.setAttribute('height','640');image.setAttribute('pointer-events','none');svg.prepend(image);}image.setAttribute('href',senesteBillede);svg.dataset.celle3d='klar';
   // gløden: en lysende kant om den del, musen peger på, lagt oven på billedet
   let glød=svg.querySelector('.celle-3d-glød');
@@ -33,14 +60,10 @@ export async function tilføj3D() {
    image.after(glød);}
   else if(glød)glød.remove();
  }
- værktøjer.addEventListener('click',e=>{const b=e.target.closest('[data-drej]');if(!b)return;rotation=b.dataset.drej==='0'?0:Math.max(-.5,Math.min(.5,rotation+Number(b.dataset.drej)));model.tegn({rotation});const m=aktiv();retAnkre(m);m.tegnFigur();opdater();});
+ værktøjer.addEventListener('click',e=>{const b=e.target.closest('[data-drej]');const id=aktivId(),c=id&&celler[id];if(!b||c?.status!=='klar')return;
+  c.rotation=b.dataset.drej==='0'?0:Math.max(-.5,Math.min(.5,c.rotation+Number(b.dataset.drej)));c.model.tegn({rotation:c.rotation});const m=aktiv();retAnkre(m,c.model);m.tegnFigur();opdater();});
  new MutationObserver(opdater).observe(svg,{childList:true});
- // Funktionsopgaven: klik rammer delen i 3D-modellen (motoren spørger figuren).
- const vaelgVed=(x,y)=>{const m=aktiv();return m&&m.fig.id==='dyr'&&svg.classList.contains('celle-i-3d')?model.vælg(x,y):undefined;};
- // …og den del, musen peger på, lyser op.
- const lysOp=ord=>{if(ord===lys)return;lys=ord;opdater();};
- for(const m of Object.values(window.bygFiguren.motorer()))if(m.fig.id==='dyr'){m.fig.vaelgVed=vaelgVed;m.fig.lysOp=lysOp;}
- const dyremotor=window.bygFiguren.motorer().dyr;retAnkre(dyremotor);if(aktiv()===dyremotor)dyremotor.tegnFigur();opdater();
+ opdater();
 }
 // Lysende kant: delen udvides lidt, delen selv skæres fra, og ringen sløres gul.
 const GLØD='<defs><filter id="celle-glød" x="-5%" y="-5%" width="110%" height="110%">'
