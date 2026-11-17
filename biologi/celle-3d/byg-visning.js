@@ -25,6 +25,13 @@ export async function tilføj3D() {
   if(s===signatur&&svg.querySelector('.celle-3d-billede'))return;
   if(s!==signatur){signatur=s;const synlige=new Set(m.fig.lag.flatMap((l,i)=>m.synlig(i)?l.ord:[]));model.tegn({rotation,synlige,farver:m.loest,fremhæv:m.hintPlads===null?null:m.fig.pladser[m.hintPlads]?.ord,lys});senesteBillede=model.lærred.toDataURL();}
   let image=svg.querySelector('.celle-3d-billede');if(!image){image=document.createElementNS(NS,'image');image.setAttribute('class','celle-3d-billede');image.setAttribute('width','1000');image.setAttribute('height','640');image.setAttribute('pointer-events','none');svg.prepend(image);}image.setAttribute('href',senesteBillede);svg.dataset.celle3d='klar';
+  // gløden: en lysende kant om den del, musen peger på, lagt oven på billedet
+  let glød=svg.querySelector('.celle-3d-glød');
+  if(lys){if(!glød){glød=document.createElementNS(NS,'image');glød.setAttribute('class','celle-3d-glød');glød.setAttribute('width','1000');glød.setAttribute('height','640');glød.setAttribute('pointer-events','none');glød.setAttribute('filter','url(#celle-glød)');}
+   if(!svg.querySelector('#celle-glød'))svg.insertAdjacentHTML('afterbegin',GLØD);
+   if(glød.dataset.ord!==lys+'|'+s){glød.dataset.ord=lys+'|'+s;glød.setAttribute('href',model.maske(lys));}
+   image.after(glød);}
+  else if(glød)glød.remove();
  }
  værktøjer.addEventListener('click',e=>{const b=e.target.closest('[data-drej]');if(!b)return;rotation=b.dataset.drej==='0'?0:Math.max(-.5,Math.min(.5,rotation+Number(b.dataset.drej)));model.tegn({rotation});const m=aktiv();retAnkre(m);m.tegnFigur();opdater();});
  new MutationObserver(opdater).observe(svg,{childList:true});
@@ -35,4 +42,11 @@ export async function tilføj3D() {
  for(const m of Object.values(window.bygFiguren.motorer()))if(m.fig.id==='dyr'){m.fig.vaelgVed=vaelgVed;m.fig.lysOp=lysOp;}
  const dyremotor=window.bygFiguren.motorer().dyr;retAnkre(dyremotor);if(aktiv()===dyremotor)dyremotor.tegnFigur();opdater();
 }
+// Lysende kant: delen udvides lidt, delen selv skæres fra, og ringen sløres gul.
+const GLØD='<defs><filter id="celle-glød" x="-5%" y="-5%" width="110%" height="110%">'
+ +'<feMorphology in="SourceAlpha" operator="dilate" radius="3" result="ud"/>'
+ +'<feComposite in="ud" in2="SourceAlpha" operator="out" result="ring"/>'
+ +'<feGaussianBlur in="ring" stdDeviation="2.2" result="sløret"/>'
+ +'<feFlood flood-color="#FFC400"/><feComposite in2="sløret" operator="in" result="gul"/>'
+ +'<feMerge><feMergeNode in="gul"/><feMergeNode in="gul"/><feMergeNode in="gul"/></feMerge></filter></defs>';
 function kanWebGL(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch{return false;}}

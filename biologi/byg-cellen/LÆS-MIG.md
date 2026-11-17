@@ -66,7 +66,8 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 - **Hvad gør delene?** Når en figur er bygget, kan eleven gå videre til
   funktionsopgaven (eller springe den over). Fagordene på figuren skjules, og
   der kommer én beskrivelse ad gangen af, hvad en del gør. Den del, musen
-  peger på, lyser op (resten blegnes), og et klik vælger netop den. Med
+  peger på, får en gul glød (i 3D en lysende kant), og et klik vælger netop
+  den. Alle dele beholder deres farver. Med
   tastaturet: Tab mellem delene (en prik vises ved den valgte) og Enter.
   Et forkert klik siger, hvad man ramte. Hint 1 nævner fagordet, hint 2
   («Vis delen») lyser delen op. En fundet del får sit ord igen. Teksterne står

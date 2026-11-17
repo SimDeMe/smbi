@@ -280,11 +280,11 @@ body.fokus .rig{margin-top:0}
 #figur.funk-aktiv{cursor:pointer}
 .omraader.funk .omr > *, .omraader.funk .omr g > *{fill:transparent;stroke:none}
 .omraader.funk .omr [fill="none"], .omraader.funk .omr g[fill="none"] > *{fill:none;stroke:transparent}
-.omraader.funk .omr.over > *, .omraader.funk .omr.over g > *{fill:rgba(255,179,0,.28)}
-.omraader.funk .omr.over [fill="none"], .omraader.funk .omr.over g[fill="none"] > *{fill:none;stroke:rgba(255,179,0,.55)}
+.omraader.funk .omr.over > *, .omraader.funk .omr.over g > *{fill:rgba(255,196,0,.13)}
+.omraader.funk .omr.over [fill="none"], .omraader.funk .omr.over g[fill="none"] > *{fill:none;stroke:rgba(255,196,0,.4)}
 .omraader.funk .omr.hint > *, .omraader.funk .omr.hint g > *{fill:rgba(255,106,61,.38)}
 .omraader.funk .omr.hint [fill="none"], .omraader.funk .omr.hint g[fill="none"] > *{fill:none;stroke:rgba(255,106,61,.6)}
-.dele .del.lys{filter:drop-shadow(0 0 3px #FFB300) drop-shadow(0 0 7px rgba(255,179,0,.9)) brightness(1.12)}
+.dele .del.lys{filter:drop-shadow(0 0 2px #FFC400) drop-shadow(0 0 6px #FFB300) drop-shadow(0 0 12px rgba(255,170,0,.85)) brightness(1.18) saturate(1.2)}
 .funk-prik{outline:none;pointer-events:none}
 .funk-prik circle{fill:none;stroke:none}
 .funk-prik:focus-visible circle{fill:#fff;stroke:var(--grape);stroke-width:5}
@@ -292,5 +292,4 @@ body.fokus .rig{margin-top:0}
 .faerdig-kort .spring{margin-top:9px;display:block}
 @media (prefers-reduced-motion: reduce){.plads.pop .boks{animation:none}}
 .funk-aktiv .dele .del{transition:filter .12s,opacity .12s}
-/* når en del lyser op, blegnes resten, så delen står klart frem */
-#figur.lyser .dele .del:not(.lys){opacity:.38}
+

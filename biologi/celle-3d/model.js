@@ -68,7 +68,6 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
  zoomAnker=nærmestePunkt(grupper.cellemembran,zoomAnker);
 
  let vinkel=0,viste=new Set(FAGORD),farvede=new Set(FAGORD),markering=null;
- const bleg=new T.Color(.94,.94,.92);
  // fremhæv: hintets orange del. lys: den del, musen peger på (lyser gult op).
  function tegn({rotation=vinkel,synlige=viste,farver=farvede,fremhæv=markering,lys=null}={}){
   vinkel=rotation;viste=synlige;farvede=farver;markering=fremhæv;rod.rotation.y=vinkel;
@@ -76,9 +75,8 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
    o.visible=viste.has(k);const m=o.material,org=m.userData.farve;
    if(farvede.has(k))m.color.copy(org);
    else{const l=org.r*.21+org.g*.72+org.b*.07;m.color.setRGB(l*.65+.27,l*.65+.27,l*.65+.27);}
-   // når en del lyser op, blegnes resten, så delen står klart frem
-   if(lys&&k!==lys)m.color.lerp(bleg,.62);
-   m.emissive.set(k===lys?0xffb000:k===fremhæv?0xc2410c:0x000000);m.emissiveIntensity=k===lys?.3:.6;
+   // den del, musen peger på, gløder gult; resten beholder sine farver
+   m.emissive.set(k===lys?0xffd060:k===fremhæv?0xc2410c:0x000000);m.emissiveIntensity=k===lys?.22:.6;
   }
   renderer.render(scene,kamera);return renderer.domElement;
  }
@@ -110,6 +108,16 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
   x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=bredde||y>=højde)return null;
   return FAGORD[pickBuf[((højde-1-y)*bredde+x)*4]-1]||null;
  }
+ // Et billede af, hvor delen kan ses (ugennemsigtig hvor den er): grundlag for gløden om den.
+ let maskeLærred=null;
+ function maske(ord){
+  pickTegn();
+  if(!maskeLærred){maskeLærred=document.createElement('canvas');maskeLærred.width=bredde;maskeLærred.height=højde;}
+  const ctx=maskeLærred.getContext('2d'),bill=ctx.createImageData(bredde,højde),nr=FAGORD.indexOf(ord)+1;
+  for(let y=0;y<højde;y++){const fra=(højde-1-y)*bredde,til=y*bredde;
+   for(let x=0;x<bredde;x++)if(pickBuf[(fra+x)*4]===nr)bill.data[(til+x)*4+3]=255;}
+  ctx.putImageData(bill,0,0);return maskeLærred.toDataURL();
+ }
  function vælg(x,y){
   pickTegn();
   const midt=ordVed(x,y);
@@ -118,5 +126,5 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
   return midt;
  }
  tegn();
- return {lærred:renderer.domElement,tegn,projektion,vælg,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
+ return {lærred:renderer.domElement,tegn,projektion,vælg,maske,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
 }
