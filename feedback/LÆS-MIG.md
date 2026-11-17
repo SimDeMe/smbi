@@ -1,8 +1,29 @@
 # Feedback-knappen
 
-En knap på hvert kort og på hver side. Eleven skriver en besked, og den lander
-i et Google-ark med besked om, hvilken simulering eller vejledning det drejer
-sig om — uden at eleven skal vælge noget i en liste, og uden login.
+En knap på hvert kort og på hver side. Dialogen spørger først «Jeg er …»
+(underviser, elev, andet) og viser så rollens få enkeltvalg, så man kan give
+feedback uden at skrive noget. Øverst er der en direkte vej, «Meld en fejl
+eller skriv en besked», med kategorierne Fejl, Forslag, Spørgsmål og Ros.
+Svaret lander i et Google-ark med besked om, hvilken simulering eller
+vejledning det drejer sig om — uden login, og uden at navn eller e-mail er
+påkrævet.
+
+## Spørgsmålene
+
+| Rolle | Spørgsmål (enkeltvalg) | Tekst |
+| --- | --- | --- |
+| Underviser | Hvordan har du brugt materialet? · Hvordan fungerede det i undervisningen? (kun når det er brugt i undervisning, ikke ved «Kun afprøvet») · Ville du bruge det igen? | valgfri |
+| Elev | Var det tydeligt, hvad du skulle gøre? · Hjalp materialet dig med at forstå emnet? | valgfri |
+| Andet | — | påkrævet |
+| (direkte besked) | kategori, valgfri | påkrævet |
+
+Der kan sendes, når mindst ét evaluerende spørgsmål er besvaret (eller der er
+skrevet tekst); rollen alene er ikke nok. Kun det, der er synligt, når der
+trykkes Send, kommer med — skifter man rolle eller visning, bliver de skjulte
+svar hjemme. E-mail er valgfri, men tjekkes, hvis den er udfyldt.
+
+Kvitteringen vises kun, når modtageren har svaret `{"ok":true}`. Går noget
+galt, bliver svarene stående i formularen med en forklaring.
 
 ## Delene
 
@@ -10,6 +31,8 @@ sig om — uden at eleven skal vælge noget i en liste, og uden login.
 | --- | --- |
 | `feedback.js` (i roden) | knapperne, dialogen og afsendelsen. Én fil, ingen afhængigheder |
 | `feedback/apps-script.gs` | modtageren. Hører til i Apps Script, ikke på sitet |
+| `feedback/apps-script.test.mjs` | modtageren mod et falsk ark: `node feedback/apps-script.test.mjs` |
+| `værktøj/feedback-test.mjs` | dialogen i browser mod en falsk modtager: `node værktøj/feedback-test.mjs` |
 
 Siderne indlæser den med én linje før `</body>`:
 
@@ -58,7 +81,17 @@ sender ud i det blå — uden at nogen opdager det, fordi afsenderen altid får
 Menupunkterne hedder «Implementer» i den danske udgave og «Deploy» i den
 engelske.
 
+Kontrollér bagefter, at `/exec`-adressen nu svarer «smbi.dk tager imod
+feedback her (skema 2).» Svarer den uden «(skema 2)», kører den gamle kode
+stadig. Den gamle modtager gemmer kun svar med mindst 10 tegns tekst; siden
+opdager det og viser en fejl i stedet for en falsk kvittering, men de rene
+afkrydsningssvar kommer ikke igennem, før den nye version er udrullet.
+
 ## Hvad der havner i arket
+
+Kolonnerne skrives efter overskrift. Har arket allerede de elleve gamle
+kolonner, lægger scriptet de nye til efter «Status» første gang, der kommer et
+svar — de gamle rækker og din statuskolonne bliver, hvor de er.
 
 | Kolonne | Eksempel |
 | --- | --- |
@@ -67,10 +100,21 @@ engelske.
 | Titel | Oliens migration |
 | Kilde | `kort på geografi.html` eller `siden selv` |
 | Tilstand | `trin=3`, `mode=explore` — tom hvor siden ikke har trin |
-| Type | Fejl · Mangler · Idé · Spørgsmål · Ros |
-| Besked, Navn | elevens egne ord; navnet er valgfrit |
+| Type | kategorien i den direkte visning: Fejl · Forslag · Spørgsmål · Ros (gamle rækker: også Mangler · Idé) |
+| Besked | den skrevne tekst — tom, hvis der kun er sat kryds |
+| Navn | kun gamle rækker; feltet findes ikke længere i formularen |
 | Skærm, Browser | til fejl, der kun viser sig på små skærme |
 | Status | tom — din egen kolonne til «set», «rettet» |
+| Visning | `evaluering` eller `besked` (den direkte vej) |
+| Rolle | Underviser · Elev · Andet |
+| Anvendelse, Fungerede, Brug igen | underviserens svar |
+| Tydeligt, Forstået | elevens svar |
+| E-mail | kun hvis afsenderen vil have svar; bruges som svaradresse i mailen |
+| URL | den fulde adresse på materialet |
+| Skema | `2` for den nye formular, `1` for gamle sider i en browsercache |
+
+Celler, der begynder med `=`, `+`, `-` eller `@`, får en apostrof foran, så
+Sheets ikke læser dem som formler.
 
 **Nøglen er mappen, ikke filen.** Feedback fra kortet på `geografi.html` og fra
 selve vejledningen får den samme nøgle, selv om den ene pegede på `.pdf` og den
@@ -79,7 +123,7 @@ anden på `.html`. Ellers skulle du selv sidde og parre dem bagefter.
 ## Spærringerne mod spam
 
 Adressen på webappen står i klartekst i `feedback.js` og kan ikke holdes
-hemmelig. Derfor tre lag:
+hemmelig. Derfor flere lag:
 
 * **Honningkrukken.** Feltet `hjemmeside` er skjult ude til venstre for skærmen,
   har `tabindex="-1"` og `aria-hidden`, så hverken øjne eller skærmlæsere møder
@@ -87,13 +131,15 @@ hemmelig. Derfor tre lag:
 * **Tidsfælden.** Under tre sekunder fra dialogen åbnes til der trykkes send, og
   beskeden afvises med «vent et øjeblik, og tryk så igen». Et menneske kan prøve
   igen; et script, der fyrer løs, plejer ikke at vente.
+* **Kendte værdier.** Modtageren tager kun imod de svarmuligheder, formularen
+  har, og kun de felter, der hører til rollen.
 * **Timegrænsen.** Over 50 rækker på en time, og Apps Script holder op med at
   skrive, indtil det falder til ro — og sender dig én advarsel, ikke femhundrede.
-  Det er den eneste af de tre, der hjælper mod én, der poster direkte til
-  adressen uden om formularen.
+  Afsenderen får at vide, at der er travlt, og kan prøve igen.
 
-Afsenderen får altid det samme svar, uanset hvad der skete. En bot skal ikke
-kunne læse sig til, hvad der virkede.
+Honningkrukken svarer altid «ok», så en bot ikke kan læse sig til, hvad der
+afslørede den. Alle andre afvisninger svarer ærligt, så en rigtig afsender
+aldrig får en falsk kvittering.
 
 ## Hvor knapperne kommer frem
 
