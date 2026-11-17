@@ -10,7 +10,6 @@ export const definitioner=`<defs>
  ${gradient('kerne','#a7b6ed','#5d68a1')}${gradient('kerne-snit','#e0def5','#9eaddb')}
  ${gradient('mito','#3caec3','#086681')}${gradient('mito-indre','#22728e','#123d60')}
  <radialGradient id="dyr-gul" cx=".3" cy=".25"><stop stop-color="#fff3a5"/><stop offset=".55" stop-color="#e8bd3d"/><stop offset="1" stop-color="#a87b15"/></radialGradient>
- <radialGradient id="dyr-lysosom" cx=".3" cy=".25"><stop stop-color="#ded1f2"/><stop offset="1" stop-color="#8769b1"/></radialGradient>
  <mask id="dyr-kantmaske" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="640"><rect width="1000" height="640" fill="white"/><path d="${cellekontur}" fill="black"/></mask>
  <clipPath id="dyr-kernesnit"><path d="M407 184C447 165 499 183 540 217C576 247 594 283 579 311C520 344 443 318 411 281C389 254 392 215 407 184Z"/></clipPath>
  </defs>`;
@@ -48,14 +47,13 @@ const kernemembran=`<path d="M407 184C447 165 499 183 540 217C576 247 594 283 57
  <path d="M410 187C449 170 498 188 537 220C572 249 589 282 575 308" fill="none" stroke="#cad2ee" stroke-width="2"/>
  ${[[510,127],[548,144],[579,174],[595,208],[595,244],[585,274]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="2.8" transform="rotate(45 ${x} ${y})" fill="#455d91" stroke="#a6b5de" stroke-width="1.5"/>`).join('')}`;
 const ribosomer=[[273,301],[263,329],[379,482],[404,455],[438,492],[668,456],[701,436],[737,279],[555,400],[522,419]].map(([x,y])=>`<circle cx="${x+1}" cy="${y+3}" r="4.4" fill="#3e8598" opacity=".35"/><circle cx="${x}" cy="${y}" r="4.2" fill="url(#dyr-gul)"/>`).join('');
-const lysosomer=[[309,466,17],[367,505,13]].map(([x,y,r])=>`<ellipse cx="${x+3}" cy="${y+5}" rx="${r}" ry="${r*.6}" fill="#427b93" opacity=".25"/><circle cx="${x}" cy="${y}" r="${r}" fill="url(#dyr-lysosom)" stroke="#6c5b98" stroke-width="1.6"/>${[[-5,0],[3,-6],[5,5]].map(([a,b])=>`<circle cx="${x+a}" cy="${y+b}" r="2" fill="#6f4f97"/>`).join('')}`).join('');
 const vesikler=[[752,354,12],[748,407,11],[705,458,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#dyr-gul)" stroke="#b27a20" stroke-width="1.8"/><circle cx="${x-3}" cy="${y-3}" r="3" fill="#fff1bb" opacity=".8"/>`).join('');
 export const illustration = [
  {ord:null,svg:definitioner}, {ord:'cytoplasma',svg:cyto},
  {ord:'ruER',svg:ruER}, {ord:'cellekerne',svg:kerne},
  {ord:'kernemembran',svg:kernemembran}, {ord:'glatER',svg:glatER},
  {ord:'golgi',svg:golgi}, {ord:'ribosom',svg:ribosomer},
- {ord:'mitokondrie',svg:mitokondrier}, {ord:'lysosom',svg:lysosomer},
+ {ord:'mitokondrie',svg:mitokondrier},
  {ord:'vesikel',svg:vesikler}, {ord:'cellemembran',svg:kant}
 ];
 // Fælles ankre og zoomudsnit i originalfigurens koordinater.

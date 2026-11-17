@@ -8,10 +8,12 @@ ved en ny eksport skal **Include → Custom Properties** være slået til.
 
 Cellen er skåret over, så man ser ned i cytoplasmaet. Størrelser og antal er
 forenklede: ribosomer og kerneporer er gjort store, og en rigtig celle har langt
-flere mitokondrier og meget mere ER. Blender-modellen har ingen lysosomer; de to
-små, violette sække lægges ind af `model.js`.
+flere mitokondrier og meget mere ER. «Byg cellen» spørger kun om de strukturer,
+der er i Blender-modellen (10 fagord, ingen lysosomer); 2D-reserven følger samme liste.
 
-`model.js` indlæser modellen, sorterer delene i Byg cellens 11 fagord og ejer lys
+Mens modellen hentes, er 2D-tegningen skjult, og der står «Henter 3D-cellen …».
+
+`model.js` indlæser modellen, sorterer delene i Byg cellens 10 fagord og ejer lys
 og kamera. Det tegner kun ved ændringer. Rotation er begrænset til ±0,5 radian.
 Fagordenes mål flyttes ved indlæsning til nærmeste punkt på organellens overflade,
 og `fagordspladser` placerer felterne i 3D-visningen, så pegepindene ikke krydser.

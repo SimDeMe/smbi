@@ -7,7 +7,7 @@ import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from './vendor/addons/libs/meshopt_decoder.module.js';
 import {RoomEnvironment} from './vendor/addons/RoomEnvironment.js';
 
-export const FAGORD=['cellemembran','cytoplasma','cellekerne','kernemembran','ruER','glatER','golgi','ribosom','mitokondrie','lysosom','vesikel'];
+export const FAGORD=['cellemembran','cytoplasma','cellekerne','kernemembran','ruER','glatER','golgi','ribosom','mitokondrie','vesikel'];
 const MODEL_URL=new URL('./dyrecelle.glb',import.meta.url).href;
 const V=(x,y,z)=>new T.Vector3(x,y,z);
 
@@ -20,11 +20,11 @@ function fagordFor(struktur,del){
 }
 // Omtrentlige mål. Ved indlæsning flyttes hvert mål til det nærmeste punkt på
 // organellens egen overflade, så prikken altid sidder på strukturen.
-const sigte={cellemembran:[-4.4,-1,3.5],cytoplasma:[-.84,-.15,2.86],cellekerne:[.5,.2,-.9],kernemembran:[-.6,.9,0],ruER:[2.2,.7,-2.4],glatER:[-1.6,.6,.2],golgi:[3.6,1,1.2],mitokondrie:[-3.6,.05,1.4],lysosom:[-2,.25,3.2],ribosom:[3.7,-.12,-1.6],vesikel:[4.9,0,2.2]};
+const sigte={cellemembran:[-4.4,-1,3.5],cytoplasma:[-.84,-.15,2.86],cellekerne:[.5,.2,-.9],kernemembran:[-.6,.9,0],ruER:[2.2,.7,-2.4],glatER:[-1.6,.6,.2],golgi:[3.6,1,1.2],mitokondrie:[-3.6,.05,1.4],ribosom:[3.7,-.12,-1.6],vesikel:[4.9,0,2.2]};
 const verdensankre=structuredClone(sigte);
 // Fagordenes pladser (midten af feltet, figurkoordinater 1000×640) til 3D-cellen,
 // valgt så pegepindene ikke krydser hinanden ved lige vinkel. SVG-reserven beholder sine egne.
-export const fagordspladser={glatER:[100,52],kernemembran:[100,152],mitokondrie:[100,236],lysosom:[100,330],cellemembran:[100,430],
+export const fagordspladser={glatER:[100,52],kernemembran:[100,160],mitokondrie:[100,268],cellemembran:[100,400],
  cellekerne:[900,52],ruER:[900,152],ribosom:[900,290],vesikel:[900,400],cytoplasma:[400,612],golgi:[630,612]};
 // Punktet på cellemembranen, som membrantransport zoomer ind på.
 export let zoomAnker=[6.2,-.4,1.6];
@@ -62,14 +62,6 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
   m.metalness=0;if(m.transparent){m.depthWrite=false;m.side=T.DoubleSide;}
   m.userData.farve=m.color.clone();o.material=m;o.userData.ord=ord;grupper[ord].push(o);
  });
- // Modellen har ingen lysosomer; to små, violette sække med enzymprikker lægges i cytoplasmaet.
- const lysoMat=new T.MeshStandardMaterial({color:'#ac8ec8',roughness:.45});lysoMat.userData.farve=lysoMat.color.clone();
- const prikMat=new T.MeshStandardMaterial({color:'#6e4f97',roughness:.6});prikMat.userData.farve=prikMat.color.clone();
- const kugle=new T.SphereGeometry(1,28,20);
- for(const [x,z,r] of [[-2,3.2,.3],[-5.3,1.2,.26]]){
-  const s=new T.Mesh(kugle,lysoMat.clone());s.material.userData.farve=lysoMat.color.clone();s.position.set(x,-.12+r*.6,z);s.scale.setScalar(r);rod.add(s);grupper.lysosom.push(s);
-  for(let i=0;i<5;i++){const p=new T.Mesh(kugle,prikMat.clone());p.material.userData.farve=prikMat.color.clone();p.position.set(x+r*.55*Math.cos(i*2.4),-.12+r*1.35,z+r*.55*Math.sin(i*2.4));p.scale.setScalar(r*.13);rod.add(p);grupper.lysosom.push(p);}
- }
  rod.updateMatrixWorld(true);
  // Cytoplasmaets snitflade er flad og har få hjørnepunkter; dens mål ligger allerede på fladen.
  for(const k of FAGORD)if(k!=='cytoplasma')verdensankre[k]=nærmestePunkt(grupper[k],sigte[k]);

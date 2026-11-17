@@ -3,8 +3,16 @@ export async function tilføj3D() {
  const svg=document.getElementById('figur');
  let model;
  let pladser={};
+ // Mens 3D-modellen hentes, skjules den gamle 2D-tegning, så dyrecellen starter som 3D.
+ // Fejler WebGL eller modellen, kommer 2D-tegningen frem igen.
+ const henter=document.createElement('p');henter.className='celle-3d-henter';henter.setAttribute('role','status');henter.textContent='Henter 3D-cellen …';
+ const vent=()=>{const dyr=window.bygFiguren?.aktiv()?.fig.id==='dyr';svg.classList.toggle('celle-venter',dyr);henter.hidden=!dyr;};
+ const venteObs=new MutationObserver(vent);
+ if(kanWebGL()){svg.parentElement.append(henter);venteObs.observe(svg,{childList:true});vent();}
+ const stopVent=()=>{venteObs.disconnect();svg.classList.remove('celle-venter');henter.remove();};
  try{const mod=await import('./model.js');pladser=mod.fagordspladser||{};model=await mod.skabDyrecelle();}
- catch(e){console.warn('3D er ikke tilgængelig; cellefiguren vises som SVG.',e);return;}
+ catch(e){stopVent();console.warn('3D er ikke tilgængelig; cellefiguren vises som SVG.',e);return;}
+ stopVent();
  const NS='http://www.w3.org/2000/svg';
  const værktøjer=document.createElement('div');værktøjer.className='celle-vinkler';værktøjer.setAttribute('aria-label','Drej dyrecellen i 3D');
  værktøjer.innerHTML='<span>3D-cellesnit</span><button type="button" data-drej="-.15" aria-label="Drej cellen mod venstre">↶</button><button type="button" data-drej=".15" aria-label="Drej cellen mod højre">↷</button><button type="button" data-drej="0">Nulstil vinkel</button>';
@@ -22,3 +30,4 @@ export async function tilføj3D() {
  new MutationObserver(opdater).observe(svg,{childList:true});
  const dyremotor=window.bygFiguren.motorer().dyr;retAnkre(dyremotor);if(aktiv()===dyremotor)dyremotor.tegnFigur();opdater();
 }
+function kanWebGL(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch{return false;}}

@@ -24,7 +24,7 @@ assert.equal(await page.locator('.celle-3d-billede').getAttribute('href'),først
 // Afslut figuren for at kontrollere, at alle 3D-organeller og farver kan vises.
 await page.evaluate(()=>{const m=window.bygFiguren.aktiv();for(const l of m.fig.lag)for(const o of l.ord)m.loest.add(o);m.lag=2;m.tegn();});
 assert.notEqual(await page.locator('.celle-3d-billede').getAttribute('href'),første);
-assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),11);
+assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),10);
 await page.screenshot({path:'/tmp/celletransport-qa/byg-3d.png'});
 await page.locator('#fane-plante').click();assert.equal(await page.locator('.celle-vinkler').isVisible(),false);
 await page.locator('#fane-dyr').click();assert.equal(await page.locator('.celle-3d-billede').count(),1);
