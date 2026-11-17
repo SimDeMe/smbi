@@ -54,9 +54,9 @@ export const CELLER={
    if(har('Mitochondrion'))return'mitokondrie';
    return null;
   },
-  sigte:{cellevaeg:[-7,-4.5,7.2],kloroplast:[8.7,0,-.4],vakuole:[3,1.7,-1],cellemembran:[9.7,-.1,5.2],cytoplasma:[-6,-.15,-5],
+  sigte:{cellevaeg:[-7,-4.5,7.2],kloroplast:[8.7,0,-.4],vakuole:[4.2,-.1,-.6],cellemembran:[9.7,-.1,5.2],cytoplasma:[-6,-.15,-5],
    cellekerne:[-5.3,1.2,-.9],kernemembran:[-5.4,0,.8],ruER:[-3,.8,-3.4],glatER:[-8,0,.6],golgi:[-4,1,3.4],ribosom:[-8.4,-.1,-1],mitokondrie:[-7.3,0,4],vesikel:[-2.7,0,4.5]},
-  fast:['cytoplasma'],
+  fast:['cytoplasma','vakuole'],   // vakuolens prik midt på snitfladen
   pladser:{},            // sættes efter projektionen nedenfor
   zoom:[9.7,-.4,0],
   kamera:{hh:9.4,pos:[.6,22,12.5],mål:[0,-2.4,.4]},

@@ -27,10 +27,11 @@ procedurale farver sættes i koden, fordi de ikke følger med i glTF. Vakuolen e
 mere dækkende og tegnes efter cytoplasmaet, så snittet kan ses lige forfra.
 Grønkornene og mitokondrierne langs kanten er skaleret lidt ind mod vakuolen i Blender,
 så der er cytoplasma mellem dem og cellemembranen.
-Vakuolen er i Blender lavet om til en rund «vandballon» i cellens højre halvdel
-(superellipsoide skåret over i snittets højde, tonoplasten som tynd skal uden om), med
-cytoplasma hele vejen rundt, så grønkorn og mitokondrier ligger mellem vakuolen og
-cellemembranen. Cytoplasmaet er bygget om som én fyldt form inden for membranen
+Vakuolen er i Blender lavet om til en «vandballon» i cellens højre halvdel
+(superellipsoide skåret over i snittets højde, tonoplasten som tynd skal uden om). Den går
+ud til grønkornene og mitokondrierne og får bløde buler, hvor de trykker på den, men der
+er mindst 0,6 enheder cytoplasma til cellemembranen. Vakuolens prik sidder fast midt på
+snitfladen. Cytoplasmaet er bygget om som én fyldt form inden for membranen
 (membranens indre flade, skåret over og lukket). Det tegnes før organellerne
 (`cytoplasmaFørst`), så de ikke bliver blege af det.
 Cytoplasmaet er mere dækkende og cellemembranen mørkere blå, så man ikke ser ned på
