@@ -27,6 +27,17 @@ procedurale farver sættes i koden, fordi de ikke følger med i glTF. Vakuolen e
 mere dækkende og tegnes efter cytoplasmaet, så snittet kan ses lige forfra.
 Grønkornene og mitokondrierne langs kanten er skaleret lidt ind mod vakuolen i Blender,
 så der er cytoplasma mellem dem og cellemembranen.
+Vakuolen er i Blender lavet om til en rund «vandballon» i cellens højre halvdel
+(superellipsoide skåret over i snittets højde, tonoplasten som tynd skal uden om), med
+cytoplasma hele vejen rundt, så grønkorn og mitokondrier ligger mellem vakuolen og
+cellemembranen. Cytoplasmaet er bygget om som én fyldt form inden for membranen
+(membranens indre flade, skåret over og lukket). Det tegnes før organellerne
+(`cytoplasmaFørst`), så de ikke bliver blege af det.
+Cytoplasmaet er mere dækkende og cellemembranen mørkere blå, så man ikke ser ned på
+membranen i bunden og forveksler den med cytoplasmaet. Kameraet ser mere ovenfra end
+på dyrecellen. Hele plantecellen ses fra første lag (`alleSynlige`); kun fagordene
+kommer lag for lag. I funktionsopgaven tæller et klik lige ved cellemembranen som
+membranen, ligesom ved ribosomer og vesikler.
 
 Mens en model hentes, er 2D-tegningen skjult, og der står «Henter dyrecellen i 3D …».
 

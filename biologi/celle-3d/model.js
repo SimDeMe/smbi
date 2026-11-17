@@ -54,21 +54,24 @@ export const CELLER={
    if(har('Mitochondrion'))return'mitokondrie';
    return null;
   },
-  sigte:{cellevaeg:[-7,-4.5,7.2],kloroplast:[8.7,0,-.4],vakuole:[3,1.7,-1],cellemembran:[9.7,-.1,5.2],cytoplasma:[-8.7,-.15,-1.6],
-   cellekerne:[-5.3,1.2,-.9],kernemembran:[-5.4,0,.8],ruER:[-3,.8,-3.4],glatER:[-8,0,.6],golgi:[-4,1,3.4],ribosom:[-7.8,-.1,-4.4],mitokondrie:[-7.3,0,4],vesikel:[-2.7,0,4.5]},
+  sigte:{cellevaeg:[-7,-4.5,7.2],kloroplast:[8.7,0,-.4],vakuole:[3,1.7,-1],cellemembran:[9.7,-.1,5.2],cytoplasma:[-6,-.15,-5],
+   cellekerne:[-5.3,1.2,-.9],kernemembran:[-5.4,0,.8],ruER:[-3,.8,-3.4],glatER:[-8,0,.6],golgi:[-4,1,3.4],ribosom:[-8.4,-.1,-1],mitokondrie:[-7.3,0,4],vesikel:[-2.7,0,4.5]},
   fast:['cytoplasma'],
   pladser:{},            // sættes efter projektionen nedenfor
   zoom:[9.7,-.4,0],
-  kamera:{hh:9.4,pos:[.6,18,18.5],mål:[0,-2.6,.2]},
+  kamera:{hh:9.4,pos:[.6,22,12.5],mål:[0,-2.4,.4]},
   farve:{'PC Cell Wall':[.50,.72,.36],'PC Cell Wall Cut':[.40,.62,.28],'C3D Mitokondrie matrix v2':[.42,.74,.71],
-   'PC Vacuole Sap':[.36,.56,.95],'PC Tonoplast':[.30,.30,.82]},
+   'PC Cell Membrane':[.12,.38,.86],'PC Cytoplasm':[.84,.95,.86],'PC Vacuole Sap':[.36,.56,.95],'PC Tonoplast':[.30,.30,.82]},
   // Vakuolen skal kunne ses, også lige forfra: mere dækkende saft og tonoplast.
-  dækning:{'PC Vacuole Sap':.72,'PC Tonoplast':.85},
+  // Cytoplasmaet dækker, så man ikke ser ned på cellemembranen i bunden og forveksler dem.
+  dækning:{'PC Vacuole Sap':.72,'PC Tonoplast':.85,'PC Cytoplasm':.72},
   øverst:['vakuole'],
+  alleSynlige:true,
+  cytoplasmaFørst:true,   // hele plantecellen ses fra første lag; kun fagordene kommer lag for lag
   uigennemsigtig:['PC Cell Wall'],
  },
 };
-CELLER.plante.pladser={ribosom:[100,52],cytoplasma:[100,160],glatER:[100,268],mitokondrie:[100,376],cellevaeg:[100,484],
+CELLER.plante.pladser={cytoplasma:[100,52],ribosom:[100,160],glatER:[100,268],mitokondrie:[100,376],cellevaeg:[100,484],
  cellekerne:[300,26],ruER:[520,26],
  kernemembran:[300,612],golgi:[500,612],vesikel:[700,612],
  vakuole:[900,160],kloroplast:[900,268],cellemembran:[900,376]};
@@ -113,8 +116,13 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   if(C.dækning?.[m.name])m.opacity=C.dækning[m.name];
   m.metalness=0;if(m.transparent){m.depthWrite=false;m.side=T.DoubleSide;}
   m.userData.farve=m.color.clone();o.material=m;o.userData.ord=ord;grupper[ord].push(o);
-  // Vakuolen tegnes efter det gennemsigtige cytoplasma, så snittet ikke bliver blegt.
-  if(C.øverst?.includes(ord))o.renderOrder=2;
+  // Plantecellen: cytoplasmaet tegnes først, og organellerne bagefter oven på det, så de
+  // ikke bliver blege af det dækkende cytoplasma. Vakuolen tegnes til sidst.
+  if(C.cytoplasmaFørst&&!['cellevaeg','cellemembran'].includes(ord)){
+   if(ord==='cytoplasma')o.renderOrder=1;
+   else{if(!m.transparent){m.transparent=true;m.opacity=1;m.depthWrite=true;}o.renderOrder=C.øverst?.includes(ord)?3:2;}
+  }
+  else if(C.øverst?.includes(ord))o.renderOrder=2;
  });
  rod.updateMatrixWorld(true);
  const ankre=structuredClone(C.sigte);
@@ -142,12 +150,16 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
  // fagordet). Det tegnes kun igen, når vinklen eller de synlige dele ændrer sig, så
  // opslaget er hurtigt nok til at følge musen.
  const SMÅ=new Set(['ribosom','vesikel']);  // små dele tæller, når musen er lige ved siden af
+ const NÆR=new Set([...SMÅ,'cellemembran']); // … og den tynde cellemembran ved kanten
  const BAGGRUND=new Set(['cytoplasma','cellevaeg','vakuole']); // store flader: en lille del lige ved siden af vinder
  let pickMål=null,pickBuf=null,pickNøgle='';
  const pickMat=new Map();
  function pickFarve(o){
   const nr=FAG.indexOf(o.userData.ord)+1,nøgle=nr+'|'+o.material.side;
-  if(!pickMat.has(nøgle))pickMat.set(nøgle,new T.MeshBasicMaterial({color:new T.Color().setRGB(nr/255,0,0,T.LinearSRGBColorSpace),side:o.material.side}));
+  // Plantecellen: cytoplasmaet er baggrund i opslaget. Det tegnes først uden at skrive
+  // dybde, så det, man ser gennem det (vakuolens bug, organellerne), vinder.
+  const bag=C.cytoplasmaFørst&&o.userData.ord==='cytoplasma';
+  if(!pickMat.has(nøgle))pickMat.set(nøgle,new T.MeshBasicMaterial({color:new T.Color().setRGB(nr/255,0,0,T.LinearSRGBColorSpace),side:o.material.side,depthWrite:!bag}));
   return pickMat.get(nøgle);
  }
  function pickTegn(){
@@ -179,9 +191,9 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   pickTegn();
   const midt=ordVed(x,y);
   if(SMÅ.has(midt)||(midt&&!BAGGRUND.has(midt)))return midt;
-  for(let r=1;r<=4;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){const o=ordVed(x+dx,y+dy);if(SMÅ.has(o))return o;}
+  for(let r=1;r<=4;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){const o=ordVed(x+dx,y+dy);if(NÆR.has(o))return o;}
   return midt;
  }
  tegn();
- return {id,fagord:FAG,pladser:C.pladser,lærred:renderer.domElement,tegn,projektion,vælg,maske,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
+ return {id,fagord:FAG,pladser:C.pladser,alleSynlige:!!C.alleSynlige,lærred:renderer.domElement,tegn,projektion,vælg,maske,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
 }
