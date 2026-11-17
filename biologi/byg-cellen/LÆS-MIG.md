@@ -20,7 +20,7 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
    og fotosyntesens trin foregår. Her står kun en sætning om funktionen.
 4. **Loftet.** 6 faner med én figur hver og 1–4 lag med 2–5 ord hvert. Ord i
    overskud på fem af fanerne. Plantecellen har fire lag: først det, dyrecellen
-   ikke har, og så dyrecellens tre lag.
+   ikke har, så det, alle eukaryote celler har, og så dyrecellens to sidste lag.
 5. **Layoutet.** Stor figur plus panel: opgaven, bakken med ord, beskeden,
    Giv et hint og Indsend svar, lagene og Byg forfra. På smal skærm ligger
    panelet over figuren og klæber under topbjælken.
@@ -31,7 +31,7 @@ figurerne her er skrevet til smbi.dk og deler intet med hans.
 | | Fra gen til protein | kernemembran, ribosom, ru ER, Golgi-apparat |
 | | Energi, lipider og transport | mitokondrie, glat ER, vesikel |
 | Plantecellen `#plante` | Det, dyrecellen ikke har | cellevæg, kloroplast, vakuole |
-| | Grundplanen | cellemembran, cytoplasma, cellekerne |
+| | Det, alle eukaryote celler har | cellemembran, cytoplasma, cellekerne |
 | | Fra gen til protein | kernemembran, ribosom, ru ER, Golgi-apparat |
 | | Energi, lipider og transport | mitokondrie, glat ER, vesikel |
 | Bakterien `#bakterie` | Grundplanen | cellevæg, cellemembran, cytoplasma, kromosom (+ cellekerne i overskud) |

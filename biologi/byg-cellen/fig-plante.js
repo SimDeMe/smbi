@@ -58,7 +58,7 @@ export default {
   vb: [1000, 640],
   lag: [
     { navn: 'Det, dyrecellen ikke har', ord: ['cellevaeg', 'kloroplast', 'vakuole'] },
-    { navn: 'Grundplanen', ord: ['cellemembran', 'cytoplasma', 'cellekerne'] },
+    { navn: 'Det, alle eukaryote celler har', ord: ['cellemembran', 'cytoplasma', 'cellekerne'] },
     { navn: 'Fra gen til protein', ord: ['kernemembran', 'ribosom', 'ruER', 'golgi'] },
     { navn: 'Energi, lipider og transport', ord: ['mitokondrie', 'glatER', 'vesikel'] },
   ],
