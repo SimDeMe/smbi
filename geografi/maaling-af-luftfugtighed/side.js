@@ -5,6 +5,7 @@ import { lavPsykrometer } from "./psykrometer.js";
 import { lavKurve } from "./kurve.js";
 import { tabelværdi, kapacitet, dugpunktFraKurve } from "./model.js";
 import { fanfare, konfetti } from "./fejring.js";
+import { spil } from "/byg-motor/lyd.js";        // samme «pling» som i Byg cellen
 
 const $ = (id) => document.getElementById(id);
 const komma = (v, d = 1) => v.toFixed(d).replace(".", ",").replace("-", "−");
@@ -21,17 +22,19 @@ const STEDER = {
 };
 const tilfældig = ([a, b]) => a + Math.floor(Math.random() * (b - a + 1));
 
-function nyMåling(stedNøgle) {
+// forrige: den måling, eleven lige har haft — den nye skal altid være en anden
+function nyMåling(stedNøgle, forrige = null) {
   const sted = STEDER[stedNøgle];
   for (let i = 0; i < 200; i++) {
     const tør = tilfældig(sted.tør), d = tilfældig(sted.forskel);
+    if (forrige && forrige.tør === tør && forrige.d === d) continue;
     const rf = tabelværdi(tør, d);
     const mætning = kapacitet(tør);
     const absolut = (rf / 100) * mætning;
     const dug = dugpunktFraKurve(absolut);
     if (dug >= 1.5) return { sted: stedNøgle, tør, våd: tør - d, d, rf, mætning, absolut, dug };
   }
-  return nyMåling("inde");
+  return nyMåling("inde", forrige);
 }
 
 // ── Figurerne ──────────────────────────────────────────────────────
@@ -184,7 +187,7 @@ const TRIN = [
 const trinBoks = $("trin");
 
 function start(stedNøgle) {
-  m = nyMåling(stedNøgle);
+  m = nyMåling(stedNøgle, m);
   nu = 0; forsøg = 0; resultater = [];
   $("sted").innerHTML = `${STEDER[m.sted].navn}`;
   psy.opdater({ tør: m.tør, våd: m.våd });
@@ -278,6 +281,7 @@ function tjek() {
   }
   const r = t.tjek(v);
   if (r.ok) {
+    if (nu < TRIN.length - 1) spil("rigtigt");   // sidste trin får fanfaren i stedet
     t.efter?.();
     nu++; forsøg = 0;
     $("sr-status").textContent = `Rigtigt. ${t.titel}: ${t.resultat()}.`;
