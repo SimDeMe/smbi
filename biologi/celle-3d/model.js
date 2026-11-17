@@ -8,6 +8,9 @@ import {MeshoptDecoder} from './vendor/addons/libs/meshopt_decoder.module.js';
 import {RoomEnvironment} from './vendor/addons/RoomEnvironment.js';
 
 const V=(x,y,z)=>new T.Vector3(x,y,z);
+// Golgi-apparatet og vesiklerne er magenta i begge celler (vesiklerne lysere), så de ikke
+// forveksles med de gule ribosomer og viser, at vesiklerne kommer fra Golgi-apparatet.
+const ORDFARVE={golgi:'#C2185B',vesikel:'#EC6FA0'};
 
 // Hver celle: modelfil, fagord, hvordan Blender-delene sorteres i fagord, omtrentlige
 // mål (flyttes ved indlæsning til nærmeste punkt på organellen), fagordenes felter
@@ -114,6 +117,7 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   const m=o.material.clone();if(C.farve[m.name])m.color.setRGB(...C.farve[m.name]);
   if(C.uigennemsigtig?.includes(m.name)){m.transparent=false;m.opacity=1;}
   if(C.dækning?.[m.name])m.opacity=C.dækning[m.name];
+  if(ORDFARVE[ord])m.color.set(ORDFARVE[ord]);
   m.metalness=0;if(m.transparent){m.depthWrite=false;m.side=T.DoubleSide;}
   m.userData.farve=m.color.clone();o.material=m;o.userData.ord=ord;grupper[ord].push(o);
   // Plantecellen: cytoplasmaet tegnes først, og organellerne bagefter oven på det, så de

@@ -6,9 +6,10 @@ const gradient=(id,a,b)=>`<linearGradient id="dyr-${id}" x1="0" y1="0" x2=".8" y
 export const definitioner=`<defs>
  ${gradient('cyto','#e1f7f4','#91d1dc')}${gradient('kant','#18bed0','#086a89')}
  ${gradient('er','#32c4d0','#087a96')}${gradient('er-side','#07899d','#064c66')}
- ${gradient('golgi','#ffc257','#e77716')}${gradient('golgi-side','#c47a19','#854116')}
+ ${gradient('golgi','#f06a9c','#b0154f')}${gradient('golgi-side','#9c1247','#6b0d31')}
  ${gradient('kerne','#a7b6ed','#5d68a1')}${gradient('kerne-snit','#e0def5','#9eaddb')}
  ${gradient('mito','#3caec3','#086681')}${gradient('mito-indre','#22728e','#123d60')}
+ <radialGradient id="dyr-ves" cx=".3" cy=".25"><stop stop-color="#fde0eb"/><stop offset=".55" stop-color="#ec6fa0"/><stop offset="1" stop-color="#b8336a"/></radialGradient>
  <radialGradient id="dyr-gul" cx=".3" cy=".25"><stop stop-color="#fff3a5"/><stop offset=".55" stop-color="#e8bd3d"/><stop offset="1" stop-color="#a87b15"/></radialGradient>
  <mask id="dyr-kantmaske" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="640"><rect width="1000" height="640" fill="white"/><path d="${cellekontur}" fill="black"/></mask>
  <clipPath id="dyr-kernesnit"><path d="M407 184C447 165 499 183 540 217C576 247 594 283 579 311C520 344 443 318 411 281C389 254 392 215 407 184Z"/></clipPath>
@@ -20,8 +21,8 @@ const kant=`<g mask="url(#dyr-kantmaske)"><path d="${cellekontur}" transform="tr
 const cyto=`<path d="${cellekontur}" transform="translate(0 25)" fill="#0b728a"/>
  <path d="${cellekontur}" fill="url(#dyr-cyto)" stroke="#3fabbc" stroke-width="2"/>
  <path d="M236 302C258 204 341 145 414 123" fill="none" stroke="#effffc" stroke-width="15" opacity=".35"/>`;
-function sæk(d,type='er',dy=22){return `<path d="${d}" transform="translate(0 ${dy})" fill="url(#dyr-${type}-side)" stroke="${type==='er'?'#096c83':'#a65d16'}" stroke-width="2"/>
- <path d="${d}" fill="url(#dyr-${type})" stroke="${type==='er'?'#5cdee0':'#ffda75'}" stroke-width="2.5" stroke-linejoin="round"/>`;}
+function sæk(d,type='er',dy=22){return `<path d="${d}" transform="translate(0 ${dy})" fill="url(#dyr-${type}-side)" stroke="${type==='er'?'#096c83':'#7d0f37'}" stroke-width="2"/>
+ <path d="${d}" fill="url(#dyr-${type})" stroke="${type==='er'?'#5cdee0':'#f7a1c2'}" stroke-width="2.5" stroke-linejoin="round"/>`;}
 // Samme foldede membranform, farver og dybde for begge ER-områder.
 // På ru ER tilføjes ribosomer på membranens synlige overflade.
 function erNet(medRibosomer=false) {
@@ -47,7 +48,7 @@ const kernemembran=`<path d="M407 184C447 165 499 183 540 217C576 247 594 283 57
  <path d="M410 187C449 170 498 188 537 220C572 249 589 282 575 308" fill="none" stroke="#cad2ee" stroke-width="2"/>
  ${[[510,127],[548,144],[579,174],[595,208],[595,244],[585,274]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="4" ry="2.8" transform="rotate(45 ${x} ${y})" fill="#455d91" stroke="#a6b5de" stroke-width="1.5"/>`).join('')}`;
 const ribosomer=[[273,301],[263,329],[379,482],[404,455],[438,492],[668,456],[701,436],[737,279],[555,400],[522,419]].map(([x,y])=>`<circle cx="${x+1}" cy="${y+3}" r="4.4" fill="#3e8598" opacity=".35"/><circle cx="${x}" cy="${y}" r="4.2" fill="url(#dyr-gul)"/>`).join('');
-const vesikler=[[752,354,12],[748,407,11],[705,458,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#dyr-gul)" stroke="#b27a20" stroke-width="1.8"/><circle cx="${x-3}" cy="${y-3}" r="3" fill="#fff1bb" opacity=".8"/>`).join('');
+const vesikler=[[752,354,12],[748,407,11],[705,458,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#dyr-ves)" stroke="#a3214f" stroke-width="1.8"/><circle cx="${x-3}" cy="${y-3}" r="3" fill="#ffe3ee" opacity=".8"/>`).join('');
 export const illustration = [
  {ord:null,svg:definitioner}, {ord:'cytoplasma',svg:cyto},
  {ord:'ruER',svg:ruER}, {ord:'cellekerne',svg:kerne},
