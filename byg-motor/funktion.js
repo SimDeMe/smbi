@@ -6,11 +6,11 @@
 // (se side.js). Kun pladser med en tekst og en prik kommer med, og figuren skal
 // have mindst tre af dem.
 //
-// Klik rammer pladsens `omr` eller den del, der er tegnet øverst. Ligger et
-// felt inde i et andet (kernen i cytoplasmaet, cyklussen i matrix), tæller
-// klikket på det inderste. En figur kan
-// selv sige, hvad der er ramt, med `fig.vaelgVed(x, y)` i figurens koordinater
-// (3D-cellen gør det med en stråle ind i modellen).
+// Den del, man peger på, lyser op, og et klik vælger netop den. Delen er den
+// mindste af pladsernes `omr` og den tegnede del øverst under musen; ligger et
+// felt inde i et andet (kernen i cytoplasmaet), er det store felt baggrund.
+// En figur kan selv sige, hvad der er ramt, med `fig.vaelgVed(x, y)` i figurens
+// koordinater, og lyse det op med `fig.lysOp(ord)` (3D-cellen gør begge dele).
 
 const NS = 'http://www.w3.org/2000/svg';
 const MIN = 3;
@@ -76,7 +76,8 @@ export class Funktion {
     });
     svg.appendChild(omr);
 
-    // fundne dele og dele uden for opgaven har deres ord; resten kun en prik
+    // fundne dele og dele uden for opgaven har deres ord; resten en prik,
+    // der kun ses og bruges med tastaturet (musen peger på selve delen)
     const lag = document.createElementNS(NS, 'g');
     lag.setAttribute('class', 'pladser');
     this.prikker = [];
@@ -144,7 +145,10 @@ export class Funktion {
   }
 
   // ── Klik ─────────────────────────────────────────────────
-  /** Fagordene under et punkt på skærmen, det inderste først. */
+  /**
+   * Fagordet for den del, der er under et punkt på skærmen (eller null).
+   * Det er den del, der lyser op, når man peger, og den, et klik vælger.
+   */
   ramt(cx, cy) {
     const m = this.m, svg = m.ui.svg;
     if (m.fig.vaelgVed) {
@@ -152,35 +156,50 @@ export class Funktion {
       pt.x = cx; pt.y = cy;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
       const ord = m.fig.vaelgVed(p.x, p.y);
-      if (ord !== undefined) return ord ? [ord] : [];
+      if (ord !== undefined) return ord;
     }
+    const skala = svg.getScreenCTM().a;
+    // størrelsen af det, man rammer: en streg måles som længde × bredde, ikke som sin ramme
+    const str = (e) => {
+      const cs = getComputedStyle(e);
+      if (cs.fill === 'none' && e.getTotalLength) {
+        try { return e.getTotalLength() * Math.max(1, parseFloat(cs.strokeWidth) || 1) * skala * skala; } catch (x) { /* fx <g> */ }
+      }
+      const r = e.getBoundingClientRect();
+      return r.width * r.height;
+    };
     const kand = [];
     let tegnet = null;   // den del, der er tegnet øverst under punktet
     for (const e of document.elementsFromPoint(cx, cy)) {
       if (!e.closest || !svg.contains(e)) continue;
       const d = e.closest('.dele .del');
-      if (d) { if (tegnet === null) tegnet = d.dataset.ord || ''; continue; }
+      if (d) {
+        if (tegnet === null) tegnet = d.dataset.ord ? { ord: d.dataset.ord, str: str(e) } : false;
+        continue;
+      }
       const g = e.closest('.omraader.funk .omr');
       if (!g) continue;
       const cs = getComputedStyle(e);
       const streg = cs.fill === 'none';
       const r = e.getBoundingClientRect();
       const b = streg ? (parseFloat(cs.strokeWidth) || 0) / 2 : 0;
-      kand.push({ ord: g.dataset.ord, streg, x0: r.left - b, y0: r.top - b, x1: r.right + b, y1: r.bottom + b });
+      kand.push({ ord: g.dataset.ord, streg, str: str(e), x0: r.left - b, y0: r.top - b, x1: r.right + b, y1: r.bottom + b });
     }
     const areal = (k) => (k.x1 - k.x0) * (k.y1 - k.y0);
-    // en flade, der rummer en meget mindre ramt del, er baggrund for den
+    // et felt, der rummer et meget mindre ramt felt, er baggrund for det
     const inde = (k, h) => k.x0 >= h.x0 - 1 && k.y0 >= h.y0 - 1 && k.x1 <= h.x1 + 1 && k.y1 <= h.y1 + 1 && areal(k) * 2 < areal(h);
     const rest = kand.filter((h) => h.streg || !kand.some((k) => k.ord !== h.ord && inde(k, h)));
-    // det, man kan se øverst, tæller også (fx en lille prik lige uden for det gule felt)
-    return [...new Set((tegnet ? [tegnet] : []).concat(rest.map((k) => k.ord)))];
+    // den mindste af det, der er ramt; ved lige størrelse vinder det, man kan se øverst
+    let bedst = tegnet || null;
+    for (const k of rest) if (!bedst || k.str < bedst.str) bedst = k;
+    return bedst ? bedst.ord : null;
   }
 
-  vaelg(ordene) {
+  vaelg(ord) {
     if (this.slut) return;
     const m = this.m, s = this.nu;
-    if (!ordene.length) { m.besked('Klik på en del af figuren.', 'info'); return; }
-    if (ordene.includes(s.ord)) {
+    if (!ord) { m.besked('Klik på en del af figuren. Den del, du peger på, lyser op.', 'info'); return; }
+    if (ord === s.ord) {
       this.fundet.add(s.i);
       this.nyFundet = s.i;
       m.hintPlads = null;
@@ -199,7 +218,7 @@ export class Funktion {
       return;
     }
     this.fejl++;
-    const navn = m.ORD[ordene[0]] ? m.ORD[ordene[0]].ord : ordene[0];
+    const navn = m.ORD[ord] ? m.ORD[ord].ord : ord;
     m.besked(`Du klikkede på «${navn}». Beskrivelsen passer til noget andet. Prøv igen.`, 'fejl');
     m.ui.sr.textContent = m.ui.besked.textContent;
   }
@@ -232,24 +251,28 @@ export class Funktion {
     // motoren rydder dem, før den tegner (også en anden figur)
     if (svg._funk) svg._funk.ryd();
     if (this.slut) return;
-    let over = null;
+    let over = null, ventende = null, raf = 0;
+    // den del, man peger på, lyser op: feltet, selve tegningen og i 3D modellen
     const marker = (ord) => {
       if (ord === over) return;
       over = ord;
       for (const g of svg.querySelectorAll('.omraader.funk .omr')) g.classList.toggle('over', g.dataset.ord === ord);
+      for (const g of svg.querySelectorAll('.dele .del[data-ord]')) g.classList.toggle('lys', g.dataset.ord === ord);
+      svg.classList.toggle('lyser', !!ord);
+      this.m.fig.lysOp?.(ord);
     };
     const klik = (e) => {
       if (e.button) return;
-      const prik = e.target.closest && e.target.closest('.funk-prik');
-      if (prik) { this.vaelg([this.m.fig.pladser[+prik.dataset.i].ord]); return; }
-      this.vaelg(this.ramt(e.clientX, e.clientY));
+      const ord = this.ramt(e.clientX, e.clientY);
+      marker(ord);
+      this.vaelg(ord);
     };
     const flyt = (e) => {
-      if (e.pointerType !== 'mouse' || this.m.fig.vaelgVed) return;
-      const prik = e.target.closest && e.target.closest('.funk-prik');
-      marker(prik ? this.m.fig.pladser[+prik.dataset.i].ord : this.ramt(e.clientX, e.clientY)[0] || null);
+      if (e.pointerType === 'touch') return;
+      ventende = [e.clientX, e.clientY];
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (ventende) marker(this.ramt(...ventende)); });
     };
-    const ud = () => marker(null);
+    const ud = () => { ventende = null; marker(null); };
     svg.addEventListener('click', klik);
     svg.addEventListener('pointermove', flyt);
     svg.addEventListener('pointerleave', ud);
@@ -259,12 +282,15 @@ export class Funktion {
         svg.removeEventListener('click', klik);
         svg.removeEventListener('pointermove', flyt);
         svg.removeEventListener('pointerleave', ud);
-        svg.classList.remove('funk-aktiv');
+        svg.classList.remove('funk-aktiv', 'lyser');
+        if (raf) cancelAnimationFrame(raf);
+        if (over) this.m.fig.lysOp?.(null);
         svg._funk = null;
       },
     };
     for (const g of this.prikker) {
       const ord = this.m.fig.pladser[+g.dataset.i].ord;
+      // tastaturet: Tab mellem delene; prikken vises kun med fokus
       g.addEventListener('focus', () => marker(ord));
       g.addEventListener('blur', () => marker(null));
       g.addEventListener('keydown', (e) => {
@@ -272,7 +298,7 @@ export class Funktion {
           e.preventDefault();
           e.stopPropagation();
           const n = this.prikker.indexOf(g);
-          this.vaelg([ord]);
+          this.vaelg(ord);
           // fokus videre til samme nummer (eller den sidste prik)
           const p = this.prikker[Math.min(n, this.prikker.length - 1)];
           if (p) p.focus({ preventScroll: true });

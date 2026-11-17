@@ -68,24 +68,54 @@ export async function skabDyrecelle({bredde=1000,højde=640}={}) {
  zoomAnker=nærmestePunkt(grupper.cellemembran,zoomAnker);
 
  let vinkel=0,viste=new Set(FAGORD),farvede=new Set(FAGORD),markering=null;
- function tegn({rotation=vinkel,synlige=viste,farver=farvede,fremhæv=markering}={}){
+ const bleg=new T.Color(.94,.94,.92);
+ // fremhæv: hintets orange del. lys: den del, musen peger på (lyser gult op).
+ function tegn({rotation=vinkel,synlige=viste,farver=farvede,fremhæv=markering,lys=null}={}){
   vinkel=rotation;viste=synlige;farvede=farver;markering=fremhæv;rod.rotation.y=vinkel;
   for(const [k,meshes] of Object.entries(grupper))for(const o of meshes){
    o.visible=viste.has(k);const m=o.material,org=m.userData.farve;
    if(farvede.has(k))m.color.copy(org);
    else{const l=org.r*.21+org.g*.72+org.b*.07;m.color.setRGB(l*.65+.27,l*.65+.27,l*.65+.27);}
-   m.emissive.set(k===fremhæv?0x624b08:0x000000);m.emissiveIntensity=.6;
+   // når en del lyser op, blegnes resten, så delen står klart frem
+   if(lys&&k!==lys)m.color.lerp(bleg,.62);
+   m.emissive.set(k===lys?0xffb000:k===fremhæv?0xc2410c:0x000000);m.emissiveIntensity=k===lys?.3:.6;
   }
   renderer.render(scene,kamera);return renderer.domElement;
  }
  function projektion(ord){return projektér(verdensankre[ord]||zoomAnker,bredde,højde,vinkel);}
  // Fagordet for den synlige del under et punkt i figurens koordinater (bredde×højde), eller null.
- const stråle=new T.Raycaster();
+ // Opslaget bruger et billede, hvor hver del er tegnet i sin egen farve (nummeret på
+ // fagordet). Det tegnes kun igen, når vinklen eller de synlige dele ændrer sig, så
+ // opslaget er hurtigt nok til at følge musen.
+ const SMÅ=new Set(['ribosom','vesikel']);  // små dele tæller, når musen er lige ved siden af
+ let pickMål=null,pickBuf=null,pickNøgle='';
+ const pickMat=new Map();
+ function pickFarve(o){
+  const nr=FAGORD.indexOf(o.userData.ord)+1,nøgle=nr+'|'+o.material.side;
+  if(!pickMat.has(nøgle))pickMat.set(nøgle,new T.MeshBasicMaterial({color:new T.Color().setRGB(nr/255,0,0,T.LinearSRGBColorSpace),side:o.material.side}));
+  return pickMat.get(nøgle);
+ }
+ function pickTegn(){
+  const nøgle=vinkel+'|'+[...viste].sort().join(',');
+  if(nøgle===pickNøgle&&pickBuf)return;
+  pickNøgle=nøgle;
+  if(!pickMål){pickMål=new T.WebGLRenderTarget(bredde,højde);pickBuf=new Uint8Array(bredde*højde*4);}
+  const gemt=[],miljø=scene.environment;scene.environment=null;
+  for(const meshes of Object.values(grupper))for(const o of meshes){gemt.push([o,o.material]);o.material=pickFarve(o);}
+  renderer.setRenderTarget(pickMål);renderer.clear();renderer.render(scene,kamera);
+  renderer.readRenderTargetPixels(pickMål,0,0,bredde,højde,pickBuf);renderer.setRenderTarget(null);
+  for(const [o,m] of gemt)o.material=m;scene.environment=miljø;
+ }
+ function ordVed(x,y){
+  x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=bredde||y>=højde)return null;
+  return FAGORD[pickBuf[((højde-1-y)*bredde+x)*4]-1]||null;
+ }
  function vælg(x,y){
-  stråle.setFromCamera(new T.Vector2(x/bredde*2-1,1-y/højde*2),kamera);
-  const synlige=Object.values(grupper).flat().filter(o=>o.visible);
-  const ramt=stråle.intersectObjects(synlige,false);
-  return ramt.length?ramt[0].object.userData.ord:null;
+  pickTegn();
+  const midt=ordVed(x,y);
+  if(SMÅ.has(midt)||(midt&&midt!=='cytoplasma'))return midt;
+  for(let r=1;r<=4;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){const o=ordVed(x+dx,y+dy);if(SMÅ.has(o))return o;}
+  return midt;
  }
  tegn();
  return {lærred:renderer.domElement,tegn,projektion,vælg,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};

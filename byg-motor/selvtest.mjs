@@ -248,21 +248,40 @@ async function testFunktion(f) {
   const nu = () => side.evaluate(() => { const m = window.bygFiguren.aktiv(); return m.funk && !m.funk.slut ? m.funk.nu.i : null; });
   tjek(await side.locator('#bakke .funk-tekst').count() === 1, `${f.id}: funktionsopgaven viser ingen beskrivelse`);
   tjek(await side.locator('#figur .plads.laast').count() < f.pladser.length, `${f.id}: fagordene er ikke skjult i funktionsopgaven`);
-  let i = await nu(), runde = 0;
+  // tastaturet: Tab til delens (usynlige) prik og Enter
+  const tast = async (sel) => { await side.locator(sel).first().focus(); await side.keyboard.press('Enter'); };
+  // musen: peg på delens prik; vælger figuren den del, klikkes der der
+  const mus = async (i, runde) => {
+    const pkt = await side.evaluate((i) => {
+      const m = window.bygFiguren.aktiv(), svg = document.querySelector('#figur'), p = svg.createSVGPoint();
+      [p.x, p.y] = m.fig.pladser[i].maal;
+      const s = p.matrixTransform(svg.getScreenCTM());
+      const x = Math.round(s.x), y = Math.round(s.y);   // musen klikker på hele pixels
+      return m.funk.ramt(x, y) === m.fig.pladser[i].ord ? [x, y] : null;
+    }, i);
+    if (!pkt) return false;
+    await side.mouse.move(pkt[0], pkt[1]);
+    await side.waitForTimeout(60);
+    tjek(await side.locator('#figur.lyser').count() === 1 || !!f.vaelgVed, `${f.id}: delen lyser ikke op, når musen peger på den`);
+    await side.mouse.click(pkt[0], pkt[1]);
+    return true;
+  };
+  let i = await nu(), runde = 0, medMus = 0;
   while (i != null && runde++ < 60) {
     if (runde === 1) {
-      const forkert = side.locator(`#figur .funk-prik:not([data-i="${i}"])`).first();
-      await forkert.click();
-      tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: intet svar på et forkert klik`);
+      await tast(`#figur .funk-prik:not([data-i="${i}"])`);
+      tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: intet svar på et forkert valg`);
     }
     if (runde === 2) {
       await side.click('#btn-hint');
       await side.click('#btn-hint');
-      tjek(await side.locator(`#figur .funk-prik.hint[data-i="${i}"]`).count() === 1, `${f.id}: hintet viser ikke delen`);
+      tjek(await side.locator(`#figur .omraader.funk .omr.hint[data-i="${i}"]`).count() === 1 || !!f.vaelgVed, `${f.id}: hintet viser ikke delen`);
     }
-    await side.locator(`#figur .funk-prik[data-i="${i}"]`).click();
+    if (await mus(i, runde)) medMus++;
+    else await tast(`#figur .funk-prik[data-i="${i}"]`);
     i = await nu();
   }
+  tjek(medMus > 0, `${f.id}: ingen del kunne vælges med musen`);
   tjek((await side.locator('#faerdig-kort h3').textContent()) === 'Alle delene er fundet', `${f.id}: funktionsopgaven blev ikke færdig`);
   tjek(await side.locator('#figur .funk-prik').count() === 0, `${f.id}: der er prikker tilbage efter funktionsopgaven`);
   const n = side.locator('#btn-naeste');

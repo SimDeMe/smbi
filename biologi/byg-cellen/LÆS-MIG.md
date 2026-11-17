@@ -65,13 +65,16 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 - Peger man på et ord, der sidder rigtigt, kommer hele forklaringen frem.
 - **Hvad gør delene?** Når en figur er bygget, kan eleven gå videre til
   funktionsopgaven (eller springe den over). Fagordene på figuren skjules, og
-  der kommer én beskrivelse ad gangen af, hvad en del gør. Eleven klikker på
-  delen (eller på dens hvide prik; med tastaturet Tab til prikken og Enter).
+  der kommer én beskrivelse ad gangen af, hvad en del gør. Den del, musen
+  peger på, lyser op (resten blegnes), og et klik vælger netop den. Med
+  tastaturet: Tab mellem delene (en prik vises ved den valgte) og Enter.
   Et forkert klik siger, hvad man ramte. Hint 1 nævner fagordet, hint 2
   («Vis delen») lyser delen op. En fundet del får sit ord igen. Teksterne står
   i `funktioner.js` og må ikke indeholde fagordet. Celletyperne og pilene på
-  bladet er ikke med. På 3D-dyrecellen rammes delen med en stråle ind i
-  modellen (`vælg` i `../celle-3d/model.js`).
+  bladet er ikke med. På 3D-dyrecellen slås delen op i et billede, hvor hver
+  del er tegnet i sin egen farve (`vælg` i `../celle-3d/model.js`); det tegnes
+  kun igen, når vinklen ændres, så opslaget kan følge musen. Ribosomer og
+  vesikler tæller et par pixels uden for kanten, fordi de er så små.
 - **Snydekode til læreren:** skriv `snyd` på tastaturet (uden for et tekstfelt),
   så er figuren bygget, og funktionsopgaven begynder. Skrives den igen, er
   funktionsopgaven også klaret. På mobilen: `byg-cellen.html?snyd#dyr` gør det
