@@ -7,6 +7,11 @@
 //
 // Svær udgave: alle lag og alle ord på én gang.
 //
+// Status (status.js): én prik pr. fagord over bakken. Grøn: rigtigt i første
+// forsøg. Gul/rød: efter ét/to forkerte forsøg på pladsen (et hint tæller som
+// et forsøg). Tredje forkerte forsøg på samme plads sætter svaret ind, og
+// prikken bliver rød med × — ligesom «Vis svaret». Indsend giver lyd (lyd.js).
+//
 // Et lag med `rejse` i stedet for fagord (se rejse.js) er en opgave, hvor eleven
 // trækker noget gennem den færdige figur. Det springes over i Svær udgave.
 //
@@ -15,6 +20,8 @@
 
 import { Rejse } from './rejse.js';
 import { Funktion, spoergsmaal } from './funktion.js';
+import { spil } from './lyd.js';
+import { prikRaekke, forsoegFarve } from './status.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 export const BOKS = [186, 42];            // alle pladser er lige store; en figur kan vælge sit eget `boks`
@@ -74,6 +81,8 @@ export class Byg {
     this.hintPlads = null;
     this.forsoeg = this.fig.lag.map(() => ({ fejl: 0, hint: 0 }));
     this.stjerner = this.fig.lag.map(() => false);
+    this.pladsFejl = new Map();      // plads-indeks → antal forkerte forsøg (et hint tæller som ét)
+    this.pladsStatus = new Map();    // plads-indeks → 'groen' | 'gul' | 'roed' | 'givet'
     this.lagFaerdig = false;         // det grønne kort vises
     this.nyeFarver = new Set();
     this.rejser = new Map();
@@ -266,6 +275,7 @@ export class Byg {
 
     // bakken (i en rejse: vejene herfra)
     bakke.innerHTML = '';
+    if (!rejse && !this.lagFaerdig) bakke.appendChild(this.statuslinje(true));
     if (rejse) rejse.tegnValg(bakke);
     const ordene = rejse ? [] : this.bakkeOrd();
     for (const o of ordene) {
@@ -314,6 +324,7 @@ export class Byg {
     const helt = this.faerdig();
     const lagene = this.aktiveLag();
     k.appendChild(el('h3', null, helt ? `${f.navn} er bygget` : `Lag ${this.lag + 1} er bygget`));
+    if (this.prikPladser().length) k.appendChild(this.statuslinje(false));
     if (!this.svaer && this.stjerner[this.lag]) k.appendChild(el('p', 'ros', '★ Rigtigt i første forsøg uden hint.'));
     const dl = el('dl');
     for (const i of lagene) for (const o of f.lag[i].ord) {
@@ -361,6 +372,32 @@ export class Byg {
         ? `${hvad} i den svære udgave. Flot!`
         : `${hvad}. Prøv Svær udgave øverst: alle ord på én gang.`));
     }
+  }
+
+  /** Pladserne, der har en statusprik nu: de aktive lag, undtagen rejser. */
+  prikPladser() {
+    const lag = new Set(this.aktiveLag().filter((i) => !this.rejser.has(i) || this.svaer));
+    return this.fig.pladser.map((_, i) => i).filter((i) => lag.has(this.ordLag[this.fig.pladser[i].ord]));
+  }
+
+  /** Én prik pr. fagord i laget, farvet efter forsøgene på dets plads. */
+  statuslinje(medLyd) {
+    const ord = { groen: 'rigtigt i første forsøg', gul: 'rigtigt efter ét forkert forsøg', roed: 'rigtigt efter to forkerte forsøg', givet: 'svaret blev vist' };
+    const pladser = this.prikPladser();
+    const prikker = pladser.map((i) => {
+      const p = this.fig.pladser[i];
+      const fejl = this.pladsFejl.get(i) || 0;
+      if (this.loest.has(p.ord)) {
+        const st = this.pladsStatus.get(i) || 'groen';
+        return { farve: st, klaret: true, titel: `${this.ORD[p.ord].ord}: ${ord[st]}` };
+      }
+      return {
+        farve: forsoegFarve(fejl), klaret: false, nu: this.hintPlads === i,
+        titel: fejl ? `Ikke placeret endnu, ${fejl} forkert${fejl > 1 ? 'e' : ''} forsøg` : 'Ikke placeret endnu',
+      };
+    });
+    const klaret = pladser.filter((i) => this.loest.has(this.fig.pladser[i].ord)).length;
+    return prikRaekke(prikker, { label: `${klaret} af ${pladser.length} fagord sidder rigtigt`, medLyd });
   }
 
   besked(tekst, slags = '') {
@@ -421,16 +458,28 @@ export class Byg {
       return;
     }
     let rigtige = 0, forkerte = 0, foersteFejl = null;
+    const givne = [];
     for (const [i, ord] of [...this.paa].sort((a, b) => a[0] - b[0])) {
       const p = this.fig.pladser[i];
+      const fejl = this.pladsFejl.get(i) || 0;
       if (ord === p.ord) {
         rigtige++;
         this.loest.add(ord);
         this.nyeFarver.add(ord);
+        this.pladsStatus.set(i, ['groen', 'gul', 'roed'][Math.min(fejl, 2)]);
         if (this.hintPlads === i) this.hintPlads = null;
       } else {
         forkerte++;
         this.forsoeg[this.ordLag[p.ord]].fejl++;
+        this.pladsFejl.set(i, fejl + 1);
+        if (fejl + 1 >= 3 && !this.loest.has(p.ord)) {
+          // tredje forkerte forsøg på samme plads: svaret sættes ind
+          this.loest.add(p.ord);
+          this.nyeFarver.add(p.ord);
+          this.pladsStatus.set(i, 'givet');
+          if (this.hintPlads === i) this.hintPlads = null;
+          givne.push(p.ord);
+        }
         if (!foersteFejl) {
           foersteFejl = (p.fejl && p.fejl[ord]) || this.ekstraFejl(ord)
             || `«${this.ORD[ord].ord}» passer ikke her. ${this.ORD[ord].ord[0].toUpperCase() + this.ORD[ord].ord.slice(1)} er: ${this.kort(ord).replace(/^\w/, (c) => c.toLowerCase())}`;
@@ -439,13 +488,17 @@ export class Byg {
     }
     this.paa.clear();
     this.valgt = null;
+    spil(givne.length ? 'svar' : forkerte ? 'forkert' : 'rigtigt');
 
     if (this.lagLoest()) {
       this.afslutLag();
       return;
     }
     if (forkerte) {
-      this.besked((rigtige ? `${rigtige} rigtig${rigtige > 1 ? 'e' : ''}. ` : '') + foersteFejl, 'fejl');
+      const svar = givne.length
+        ? ` Tredje forkerte forsøg på samme plads, så svaret er sat ind: ${givne.map((o) => `«${this.ORD[o].ord}»`).join(', ')}.`
+        : '';
+      this.besked((rigtige ? `${rigtige} rigtig${rigtige > 1 ? 'e' : ''}. ` : '') + foersteFejl + svar, 'fejl');
     } else {
       this.besked(`${rigtige} rigtig${rigtige > 1 ? 'e' : ''}. Fortsæt med resten.`, 'ok');
     }
@@ -492,7 +545,9 @@ export class Byg {
       for (const [k, v] of this.paa) if (v === ord || k === i) this.paa.delete(k);
       this.loest.add(ord);
       this.nyeFarver.add(ord);
+      this.pladsStatus.set(i, 'givet');
       this.hintPlads = null;
+      spil('svar');
       this.besked(`Svaret er «${this.ORD[ord].ord}». ${this.kort(ord)}`, 'info');
       if (this.lagLoest()) { this.afslutLag(); return; }
       this.tegn();
@@ -505,6 +560,7 @@ export class Byg {
     if (i == null) return;
     this.hintPlads = i;
     this.forsoeg[this.ordLag[this.fig.pladser[i].ord]].hint++;
+    this.pladsFejl.set(i, (this.pladsFejl.get(i) || 0) + 1);
     this.besked(`Hint til den orange plads: ${this.kort(this.fig.pladser[i].ord)}`, 'hint');
     this.ui.sr.textContent = this.ui.besked.textContent;
     this.tegn();

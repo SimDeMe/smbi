@@ -63,6 +63,11 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
 - **Svær udgave:** alle ord på én gang. Fanerne begynder forfra, når den slås
   til eller fra.
 - Peger man på et ord, der sidder rigtigt, kommer hele forklaringen frem.
+- **Statusprikker ved placering:** over bakken står en prik pr. fagord i
+  laget. Grøn: rigtigt i første forsøg; gul/rød: efter ét/to forkerte forsøg
+  på pladsen (et hint tæller som ét). Tredje forkerte forsøg på samme plads
+  sætter svaret ind, og prikken bliver rød med × (ligesom **Vis svaret**).
+  Indsend giver lyd for rigtigt/forkert. Det grønne kort viser prikkerne igen.
 - **Hvad gør delene?** Når en figur er bygget, kan eleven gå videre til
   funktionsopgaven (eller springe den over). Fagordene på figuren skjules, og
   der kommer én beskrivelse ad gangen af, hvad en del gør. Den del, musen

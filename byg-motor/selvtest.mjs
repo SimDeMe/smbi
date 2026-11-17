@@ -185,6 +185,7 @@ async function testRejse(f, l) {
   if (l < f.lag.length - 1) await naeste.click();
 }
 
+let treSlag = 0;
 for (const f of figurer) {
   await vaelg(f);
   for (let l = 0; l < f.lag.length; l++) {
@@ -192,24 +193,41 @@ for (const f of figurer) {
     if (lag.rejse) { await testRejse(f, l); continue; }
     const idx = (o) => f.pladser.findIndex((p) => p.ord === o);
     tjek(await side.locator('#bakke .ord').count() === lag.ord.length + (lag.ekstra || []).length, `${f.id} lag ${l + 1}: forkert antal ord i bakken`);
+    const nPrikker = f.pladser.filter((p) => lag.ord.includes(p.ord)).length;
+    tjek(await side.locator('#bakke .funk-prikker .fp').count() === nPrikker, `${f.id} lag ${l + 1}: forkert antal statusprikker`);
+    const fejlPaa = new Map();   // ord → forkerte forsøg på dets plads
+    const forkertPaa = async (o, paaOrd) => {
+      await klikSaet(o, idx(paaOrd));
+      await side.click('#btn-indsend');
+      fejlPaa.set(paaOrd, (fejlPaa.get(paaOrd) || 0) + 1);
+    };
 
-    // forkert ord først: tilbage i bakken med forklaring
+    // forkert ord først: tilbage i bakken med forklaring, og prikken bliver gul
     if (lag.ord.length > 1) {
       const [a, b] = lag.ord;
-      await klikSaet(b, idx(a));
-      await side.click('#btn-indsend');
+      await forkertPaa(b, a);
       tjek(await ordKnap(b).count() === 1, `${f.id}: forkert ord kom ikke tilbage i bakken`);
       tjek((await side.locator('#besked').textContent()).length > 10, `${f.id}: ingen forklaring ved forkert ord`);
+      tjek(await side.locator('#bakke .fp.gul').count() === 1, `${f.id}: prikken blev ikke gul efter ét forkert forsøg`);
     }
-    // ord i overskud
+    // ord i overskud (på den plads, der har færrest fejl, så intet svar gives af sig selv)
     for (const e of lag.ekstra || []) {
-      await klikSaet(e, idx(lag.ord[0]));
-      await side.click('#btn-indsend');
+      const paa = lag.ord.slice().sort((x, y) => (fejlPaa.get(x) || 0) - (fejlPaa.get(y) || 0))[0];
+      await forkertPaa(e, paa);
       tjek((await side.locator('#besked').textContent()) === lag.ekstraFejl[e], `${f.id}: forkert besked ved ${e}`);
     }
     // første ord med musen (træk), resten med klik — det sidste via hint og Vis svaret
     const [forste, ...resten] = lag.ord;
     const sidste = resten.pop();
+    // tre forkerte forsøg på samme plads: svaret sættes ind, og prikken bliver rød
+    if (resten.length >= 2 && !(fejlPaa.get(resten.at(-1)))) {
+      const c = resten.pop();
+      for (let k = 0; k < 3; k++) await forkertPaa(forste, c);
+      tjek(await side.locator(`#figur .plads.laast[data-i="${idx(c)}"]`).count() === 1, `${f.id}: svaret blev ikke givet efter tre forkerte forsøg`);
+      tjek(await side.locator('#bakke .fp.roed').count() === 1, `${f.id}: prikken blev ikke rød ved tredje forkerte forsøg`);
+      tjek((await side.locator('#besked').textContent()).includes('Tredje forkerte forsøg'), `${f.id}: ingen besked om, at svaret blev givet`);
+      treSlag++;
+    }
     await side.evaluate(() => window.scrollTo(0, document.querySelector('#byg').offsetTop - 68));
     const kilde = await ordKnap(forste).boundingBox();
     const maal = await plads(idx(forste)).locator('.boks').boundingBox();
@@ -229,6 +247,9 @@ for (const f of figurer) {
       await side.click('#btn-hint');
     }
     tjek(await side.locator('#faerdig-kort').isVisible(), `${f.id} lag ${l + 1}: det grønne kort kom ikke`);
+    tjek(await side.locator('#faerdig-kort .fp').count() === nPrikker, `${f.id} lag ${l + 1}: kortet viser ikke prikkerne`);
+    if (sidste) tjek(await side.locator('#faerdig-kort .fp.roed').count() >= 1, `${f.id}: Vis svaret gav ikke en rød prik`);
+    if (!fejlPaa.size && !sidste) tjek(await side.locator('#faerdig-kort .fp.groen').count() === nPrikker, `${f.id}: alle prikker burde være grønne`);
     for (const o of lag.ord) tjek(await side.locator(`#figur .plads.laast[data-i="${idx(o)}"]`).count() === 1, `${f.id}: ${o} er ikke låst`);
     const naeste = side.locator('#btn-naeste');
     if (l < f.lag.length - 1) await naeste.click();
@@ -271,19 +292,19 @@ async function testFunktion(f) {
     if (runde === 1) {
       await tast(`#figur .funk-prik:not([data-i="${i}"])`);
       tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: intet svar på et forkert valg`);
-      tjek(await side.locator('.funk-prikker .fp.nu.gul').count() === 1, `${f.id}: prikken blev ikke gul efter ét forkert valg`);
+      tjek(await side.locator('#bakke .funk-prikker .fp.nu.gul').count() === 1, `${f.id}: prikken blev ikke gul efter ét forkert valg`);
     }
     if (runde === 2) {
       // tre forkerte klik: svaret gives, og prikken bliver rød
       for (let k = 0; k < 3; k++) await tast(`#figur .funk-prik:not([data-i="${i}"])`);
       tjek(await side.locator(`#figur .plads.laast`).count() > 0 && (await nu()) !== i, `${f.id}: tredje forkerte klik gav ikke svaret`);
-      tjek(await side.locator('.funk-prikker .fp.roed').count() === 1, `${f.id}: prikken blev ikke rød, da svaret blev givet`);
+      tjek(await side.locator('#bakke .funk-prikker .fp.roed').count() === 1, `${f.id}: prikken blev ikke rød, da svaret blev givet`);
       i = await nu();
       if (i == null) break;
     }
     if (runde === 3) {
       await side.click('#btn-hint');
-      tjek(await side.locator('.funk-prikker .fp.roed').count() === 2, `${f.id}: «Vis svaret» gjorde ikke prikken rød`);
+      tjek(await side.locator('#bakke .funk-prikker .fp.roed').count() === 2, `${f.id}: «Vis svaret» gjorde ikke prikken rød`);
       i = await nu();
       if (i == null) break;
     }
@@ -335,6 +356,7 @@ await side.goto(`http://localhost:${PORT}/${sti}#${fs.id}`);
 await side.waitForFunction(() => window.bygFiguren);
 if (!ene) tjek(await side.locator(`#fane-${fs.id}[aria-selected="true"]`).count() === 1, `#${fs.id} åbner ikke fanen`);
 
+if (figurer.some((f) => f.lag.some((l) => !l.rejse && l.ord.length >= 4))) tjek(treSlag > 0, 'reglen om tre forkerte forsøg blev ikke afprøvet');
 tjek(sidefejl.length === 0, 'fejl i konsollen: ' + sidefejl.join(' | '));
 await browser.close();
 if (server) server.kill();

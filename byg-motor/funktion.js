@@ -16,7 +16,8 @@
 // ét forkert klik. Rød: efter to forkerte klik, eller svaret blev givet (tredje
 // forkerte klik eller «Vis svaret»). Rigtigt og forkert høres også (lyd.js).
 
-import { spil, lydTil, saetLyd } from './lyd.js';
+import { spil } from './lyd.js';
+import { prikRaekke, forsoegFarve } from './status.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const MIN = 3;
@@ -136,36 +137,20 @@ export class Funktion {
 
   /** Prikkerne: én pr. del, farvet efter hvor mange forsøg den tog. */
   statuslinje(medLyd) {
-    const linje = el('div', 'funk-status');
-    const prikker = el('ol', 'funk-prikker');
-    prikker.setAttribute('aria-label', `Del ${Math.min(this.nr + 1, this.sp.length)} af ${this.sp.length}`);
     const ord = { groen: 'rigtigt i første forsøg', gul: 'rigtigt efter ét forkert klik', roed: 'rigtigt efter to forkerte klik', givet: 'svaret blev vist' };
-    const tegn = { groen: '✓', gul: '✓', roed: '✓', givet: '×' };
-    this.sp.forEach((s, n) => {
+    const prikker = this.sp.map((s, n) => {
       const st = this.status[n];
       const nu = !this.slut && n === this.nr;
       const forsoeg = this.forsoeg[n];
       // den aktuelle del viser allerede sin farve, når der er klikket forkert
-      const farve = st || (nu ? [null, 'gul', 'roed'][Math.min(forsoeg, 2)] : null);
-      const li = el('li', 'fp' + (farve ? ' ' + (farve === 'givet' ? 'roed' : farve) : '') + (nu ? ' nu' : ''), st ? tegn[st] : '');
-      li.title = st ? `${this.m.ORD[s.ord].ord}: ${ord[st]}` : nu ? (forsoeg ? `${forsoeg} forkert${forsoeg > 1 ? 'e' : ''} klik` : 'Nu') : 'Ikke fundet endnu';
-      li.setAttribute('aria-label', li.title);
-      prikker.appendChild(li);
+      return {
+        farve: st || (nu ? forsoegFarve(forsoeg) : null),
+        klaret: !!st,
+        nu,
+        titel: st ? `${this.m.ORD[s.ord].ord}: ${ord[st]}` : nu ? (forsoeg ? `${forsoeg} forkert${forsoeg > 1 ? 'e' : ''} klik` : 'Nu') : 'Ikke fundet endnu',
+      };
     });
-    linje.appendChild(prikker);
-    if (medLyd) {
-      const b = el('button', 'btn-mini lyd', lydTil() ? '🔊 Lyd' : '🔇 Lyd');
-      b.type = 'button';
-      b.setAttribute('aria-pressed', String(lydTil()));
-      b.title = 'Slå lyden til eller fra';
-      b.addEventListener('click', () => {
-        saetLyd(!lydTil());
-        b.textContent = lydTil() ? '🔊 Lyd' : '🔇 Lyd';
-        b.setAttribute('aria-pressed', String(lydTil()));
-      });
-      linje.appendChild(b);
-    }
-    return linje;
+    return prikRaekke(prikker, { label: `Del ${Math.min(this.nr + 1, this.sp.length)} af ${this.sp.length}`, medLyd });
   }
 
   tegnKort() {
