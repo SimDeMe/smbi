@@ -11,10 +11,6 @@ format:
 
 **Dato:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &nbsp;&nbsp;&nbsp;&nbsp; **Gruppe / navne:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-## Om øvelsen
-
-En varm sommerdag ved kysten blæser det ofte ind fra havet om eftermiddagen — en *søbrise*. Om aftenen og natten kan vinden vende og blæse ud mod havet — en *landbrise*. I denne øvelse simulerer I et døgn ved kysten: en skål sand er «land», en skål vand er «hav», og en lampe er «solen». I måler, hvordan de to overflader bliver varmet op om «dagen» og afkølet om «natten», og bruger resultatet til at forklare, hvorfor vinden skifter retning.
-
 ## Baggrund
 
 Land og hav reagerer forskelligt på solens stråling:
