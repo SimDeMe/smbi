@@ -11,6 +11,12 @@
 // felt inde i et andet (kernen i cytoplasmaet), er det store felt baggrund.
 // En figur kan selv sige, hvad der er ramt, med `fig.vaelgVed(x, y)` i figurens
 // koordinater, og lyse det op med `fig.lysOp(ord)` (3D-cellen gør begge dele).
+//
+// Status: én prik pr. del i panelet. Grøn: rigtigt i første forsøg. Gul: efter
+// ét forkert klik. Rød: efter to forkerte klik, eller svaret blev givet (tredje
+// forkerte klik eller «Vis svaret»). Rigtigt og forkert høres også (lyd.js).
+
+import { spil, lydTil, saetLyd } from './lyd.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const MIN = 3;
@@ -47,16 +53,15 @@ export class Funktion {
     this.sp = blandet(spoergsmaal(motor.fig, motor.hooks));
     this.nr = 0;
     this.fundet = new Set();       // plads-indeks
-    this.fejl = 0;
-    this.hint = 0;
-    this.hintTrin = 0;             // 0: intet, 1: ordet er nævnt, 2: delen er vist
+    this.forsoeg = this.sp.map(() => 0);        // forkerte klik pr. spørgsmål
+    this.status = this.sp.map(() => null);      // 'groen' | 'gul' | 'roed' | 'givet'
     this.slut = false;
     this.nyFundet = null;
   }
 
   get nu() { return this.sp[this.nr]; }
   iQuiz(i) { return this.sp.some((s) => s.i === i); }
-  stjerne() { return this.fejl === 0 && this.hint === 0; }
+  stjerne() { return this.status.every((x) => x === 'groen'); }
 
   // ── Tegning ──────────────────────────────────────────────
   tegn(svg) {
@@ -67,8 +72,7 @@ export class Funktion {
     m.fig.pladser.forEach((p, i) => {
       if (!p.omr) return;
       const g = document.createElementNS(NS, 'g');
-      const vist = !this.slut && this.hintTrin === 2 && this.nu && this.nu.i === i;
-      g.setAttribute('class', 'omr' + (vist ? ' hint' : ''));
+      g.setAttribute('class', 'omr');
       g.dataset.i = i;
       g.dataset.ord = p.ord;
       g.innerHTML = p.omr;
@@ -91,8 +95,7 @@ export class Funktion {
         return;
       }
       const g = document.createElementNS(NS, 'g');
-      const vist = this.hintTrin === 2 && this.nu && this.nu.i === i;
-      g.setAttribute('class', 'funk-prik' + (vist ? ' hint' : ''));
+      g.setAttribute('class', 'funk-prik');
       g.setAttribute('tabindex', '0');
       g.setAttribute('role', 'button');
       g.setAttribute('aria-label', `Del ${this.prikker.length + 1}`);
@@ -121,20 +124,56 @@ export class Funktion {
       this.tegnKort();
       return;
     }
-    opgTitel.textContent = `Hvad gør delen? ${this.nr + 1} af ${this.sp.length}`;
-    opgTekst.textContent = 'Læs beskrivelsen, og klik på den del af figuren, den passer til.';
+    opgTitel.textContent = 'Hvad gør delen?';
+    opgTekst.textContent = 'Læs beskrivelsen, og klik på delen. Den del, du peger på, lyser op.';
+    bakke.appendChild(this.statuslinje(true));
     const t = el('p', 'funk-tekst', this.nu.tekst);
     t.setAttribute('aria-live', 'polite');
     bakke.appendChild(t);
-    hint.textContent = this.hintTrin === 0 ? 'Giv et hint' : 'Vis delen';
-    hint.disabled = this.hintTrin === 2;
+    hint.textContent = 'Vis svaret';
+    hint.disabled = false;
+  }
+
+  /** Prikkerne: én pr. del, farvet efter hvor mange forsøg den tog. */
+  statuslinje(medLyd) {
+    const linje = el('div', 'funk-status');
+    const prikker = el('ol', 'funk-prikker');
+    prikker.setAttribute('aria-label', `Del ${Math.min(this.nr + 1, this.sp.length)} af ${this.sp.length}`);
+    const ord = { groen: 'rigtigt i første forsøg', gul: 'rigtigt efter ét forkert klik', roed: 'rigtigt efter to forkerte klik', givet: 'svaret blev vist' };
+    const tegn = { groen: '✓', gul: '✓', roed: '✓', givet: '×' };
+    this.sp.forEach((s, n) => {
+      const st = this.status[n];
+      const nu = !this.slut && n === this.nr;
+      const forsoeg = this.forsoeg[n];
+      // den aktuelle del viser allerede sin farve, når der er klikket forkert
+      const farve = st || (nu ? [null, 'gul', 'roed'][Math.min(forsoeg, 2)] : null);
+      const li = el('li', 'fp' + (farve ? ' ' + (farve === 'givet' ? 'roed' : farve) : '') + (nu ? ' nu' : ''), st ? tegn[st] : '');
+      li.title = st ? `${this.m.ORD[s.ord].ord}: ${ord[st]}` : nu ? (forsoeg ? `${forsoeg} forkert${forsoeg > 1 ? 'e' : ''} klik` : 'Nu') : 'Ikke fundet endnu';
+      li.setAttribute('aria-label', li.title);
+      prikker.appendChild(li);
+    });
+    linje.appendChild(prikker);
+    if (medLyd) {
+      const b = el('button', 'btn-mini lyd', lydTil() ? '🔊 Lyd' : '🔇 Lyd');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(lydTil()));
+      b.title = 'Slå lyden til eller fra';
+      b.addEventListener('click', () => {
+        saetLyd(!lydTil());
+        b.textContent = lydTil() ? '🔊 Lyd' : '🔇 Lyd';
+        b.setAttribute('aria-pressed', String(lydTil()));
+      });
+      linje.appendChild(b);
+    }
+    return linje;
   }
 
   tegnKort() {
     const m = this.m, k = m.ui.kort;
     k.innerHTML = '';
     k.appendChild(el('h3', null, 'Alle delene er fundet'));
-    if (this.stjerne()) k.appendChild(el('p', 'ros', '★ Rigtigt i første forsøg uden hint.'));
+    k.appendChild(this.statuslinje(false));
+    if (this.stjerne()) k.appendChild(el('p', 'ros', '★ Alle rigtige i første forsøg.'));
     const dl = el('dl');
     for (const s of this.sp.slice().sort((a, b) => a.i - b.i)) {
       dl.appendChild(el('dt', null, m.ORD[s.ord].ord));
@@ -200,50 +239,53 @@ export class Funktion {
     const m = this.m, s = this.nu;
     if (!ord) { m.besked('Klik på en del af figuren. Den del, du peger på, lyser op.', 'info'); return; }
     if (ord === s.ord) {
-      this.fundet.add(s.i);
-      this.nyFundet = s.i;
-      m.hintPlads = null;
-      this.hintTrin = 0;
-      this.nr++;
-      if (this.nr >= this.sp.length) {
-        this.slut = true;
-        m.tegn();
-        m.ui.sr.textContent = 'Alle delene er fundet.';
-        m.hooks.funktionFaerdig?.(m.fig, this.stjerne());
-        return;
-      }
-      m.besked(`Rigtigt: ${m.ORD[s.ord].ord}.`, 'ok');
-      m.tegn();
-      m.ui.sr.textContent = `Rigtigt: ${m.ORD[s.ord].ord}. Næste beskrivelse: ${this.nu.tekst}`;
+      spil('rigtigt');
+      this.naeste(['groen', 'gul', 'roed'][Math.min(this.forsoeg[this.nr], 2)]);
       return;
     }
-    this.fejl++;
+    this.forsoeg[this.nr]++;
     const navn = m.ORD[ord] ? m.ORD[ord].ord : ord;
-    m.besked(`Du klikkede på «${navn}». Beskrivelsen passer til noget andet. Prøv igen.`, 'fejl');
+    if (this.forsoeg[this.nr] >= 3) {
+      spil('svar');
+      this.naeste('givet', `Det var «${navn}». Svaret er «${m.ORD[s.ord].ord}».`);
+      return;
+    }
+    spil('forkert');
+    m.besked(`Det var «${navn}». Prøv igen.`, 'fejl');
     m.ui.sr.textContent = m.ui.besked.textContent;
+    m.tegnPanel();
   }
 
-  giv() {
-    if (this.slut || this.hintTrin >= 2) return;
-    const m = this.m;
-    this.hintTrin++;
-    this.hint++;
-    if (this.hintTrin === 1) {
-      m.besked(`Hint: beskrivelsen passer til «${m.ORD[this.nu.ord].ord}». Find den på figuren.`, 'hint');
-    } else {
-      m.hintPlads = this.nu.i;          // 3D-cellen lyser delen op
-      m.besked(`Den orange del er «${m.ORD[this.nu.ord].ord}». Klik på den.`, 'hint');
-    }
-    m.ui.sr.textContent = m.ui.besked.textContent;
+  /** Delen er klaret (fundet eller vist): marker den, og gå videre. */
+  naeste(status, tekst = '') {
+    const m = this.m, s = this.nu;
+    this.status[this.nr] = status;
+    this.fundet.add(s.i);
+    this.nyFundet = s.i;
+    this.nr++;
+    if (this.nr >= this.sp.length) this.slut = true;
+    m.besked(tekst, tekst ? 'info' : '');
     m.tegn();
+    if (this.slut) {
+      m.ui.sr.textContent = 'Alle delene er fundet.';
+      m.hooks.funktionFaerdig?.(m.fig, this.stjerne());
+    } else {
+      m.ui.sr.textContent = (status === 'givet' ? tekst : `Rigtigt: ${m.ORD[s.ord].ord}.`) + ' Næste: ' + this.nu.tekst;
+    }
+  }
+
+  /** «Vis svaret»: delen sættes på, og prikken bliver rød. */
+  giv() {
+    if (this.slut) return;
+    spil('svar');
+    this.naeste('givet', `Svaret er «${this.m.ORD[this.nu.ord].ord}».`);
   }
 
   /** Snydekoden: alle dele fundet. */
   springOver() {
-    for (const s of this.sp) this.fundet.add(s.i);
+    this.sp.forEach((s, n) => { this.fundet.add(s.i); this.status[n] = this.status[n] || 'groen'; });
     this.nr = this.sp.length;
     this.slut = true;
-    this.m.hintPlads = null;
   }
 
   bind(svg) {

@@ -293,3 +293,15 @@ body.fokus .rig{margin-top:0}
 @media (prefers-reduced-motion: reduce){.plads.pop .boks{animation:none}}
 .funk-aktiv .dele .del{transition:filter .12s,opacity .12s}
 
+/* statusprikkerne: én pr. del (grøn / gul / rød) */
+.bakke .funk-status{display:flex;align-items:center;gap:8px;width:100%;justify-content:space-between}
+.funk-prikker{display:flex;flex-wrap:wrap;gap:5px;list-style:none;margin:0;padding:0}
+.funk-prikker .fp{width:18px;height:18px;border-radius:50%;border:2px solid #B9AE97;background:#fff;
+  font:800 11px/14px var(--display);color:#fff;text-align:center;transition:background .2s,border-color .2s}
+.funk-prikker .fp.nu{border-color:var(--ink);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ink)}
+.funk-prikker .fp.groen{background:#2E9E44;border-color:#1F7A31}
+.funk-prikker .fp.gul{background:#F2B705;border-color:#B88A00;color:var(--ink)}
+.funk-prikker .fp.roed{background:#D93A3A;border-color:#A82828}
+.faerdig-kort .funk-status{margin:4px 0 6px}
+.funk-status .lyd{flex:none}
+.funk-status .lyd[aria-pressed]{background:#fff;color:var(--ink);font-size:.72rem;padding:3px 8px}

@@ -271,11 +271,21 @@ async function testFunktion(f) {
     if (runde === 1) {
       await tast(`#figur .funk-prik:not([data-i="${i}"])`);
       tjek(await side.locator('#besked.fejl').count() === 1, `${f.id}: intet svar på et forkert valg`);
+      tjek(await side.locator('.funk-prikker .fp.nu.gul').count() === 1, `${f.id}: prikken blev ikke gul efter ét forkert valg`);
     }
     if (runde === 2) {
+      // tre forkerte klik: svaret gives, og prikken bliver rød
+      for (let k = 0; k < 3; k++) await tast(`#figur .funk-prik:not([data-i="${i}"])`);
+      tjek(await side.locator(`#figur .plads.laast`).count() > 0 && (await nu()) !== i, `${f.id}: tredje forkerte klik gav ikke svaret`);
+      tjek(await side.locator('.funk-prikker .fp.roed').count() === 1, `${f.id}: prikken blev ikke rød, da svaret blev givet`);
+      i = await nu();
+      if (i == null) break;
+    }
+    if (runde === 3) {
       await side.click('#btn-hint');
-      await side.click('#btn-hint');
-      tjek(await side.locator(`#figur .omraader.funk .omr.hint[data-i="${i}"]`).count() === 1 || !!f.vaelgVed, `${f.id}: hintet viser ikke delen`);
+      tjek(await side.locator('.funk-prikker .fp.roed').count() === 2, `${f.id}: «Vis svaret» gjorde ikke prikken rød`);
+      i = await nu();
+      if (i == null) break;
     }
     if (await mus(i, runde)) medMus++;
     else await tast(`#figur .funk-prik[data-i="${i}"]`);
@@ -284,6 +294,7 @@ async function testFunktion(f) {
   tjek(medMus > 0, `${f.id}: ingen del kunne vælges med musen`);
   tjek((await side.locator('#faerdig-kort h3').textContent()) === 'Alle delene er fundet', `${f.id}: funktionsopgaven blev ikke færdig`);
   tjek(await side.locator('#figur .funk-prik').count() === 0, `${f.id}: der er prikker tilbage efter funktionsopgaven`);
+  tjek(await side.locator('#faerdig-kort .funk-prikker .fp.groen').count() > 0, `${f.id}: slutkortet viser ingen grønne prikker`);
   const n = side.locator('#btn-naeste');
   tjek(f === figurer[figurer.length - 1] || (await n.count() && (await n.textContent()).startsWith('Næste figur')), `${f.id}: ingen knap til næste figur efter funktionsopgaven`);
 }

@@ -69,8 +69,12 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
   peger på, får en gul glød (i 3D en lysende kant), og et klik vælger netop
   den. Alle dele beholder deres farver. Med
   tastaturet: Tab mellem delene (en prik vises ved den valgte) og Enter.
-  Et forkert klik siger, hvad man ramte. Hint 1 nævner fagordet, hint 2
-  («Vis delen») lyser delen op. En fundet del får sit ord igen. Teksterne står
+  Et forkert klik siger kort, hvad man ramte. Over beskrivelsen står en prik
+  pr. del: grøn er rigtigt i første forsøg, gul efter ét forkert klik og rød
+  efter to. Tredje forkerte klik (eller **Vis svaret**) giver svaret, og
+  prikken bliver rød med ×. Rigtigt, forkert og svaret har hver sin lille lyd
+  (`/byg-motor/lyd.js`, Web Audio uden lydfiler); knappen 🔊 Lyd slår den fra,
+  og valget huskes under nøglen `byg-lyd`. En fundet del får sit ord igen. Teksterne står
   i `funktioner.js` og må ikke indeholde fagordet. Celletyperne og pilene på
   bladet er ikke med. På 3D-dyrecellen slås delen op i et billede, hvor hver
   del er tegnet i sin egen farve (`vælg` i `../celle-3d/model.js`); det tegnes
