@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Måling af luftfugtighed — smbi.dk</title>
+<meta name="description" content="Aflæs et psykrometer, find den relative luftfugtighed i tabellen, og brug mætningskurven til at finde vanddampen i g/m³ og dugpunktet.">
+<link rel="canonical" href="https://smbi.dk/geografi/maaling-af-luftfugtighed/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/geografi/maaling-af-luftfugtighed/">
+<meta property="og:title" content="Måling af luftfugtighed">
+<meta property="og:description" content="Aflæs et psykrometer, find den relative luftfugtighed i tabellen, og brug mætningskurven til at finde vanddampen i g/m³ og dugpunktet.">
+<meta property="og:image" content="https://smbi.dk/img/og-geografi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — naturgeografi: simuleringer, forsøg og opgaver">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Måling af luftfugtighed",
+      "url": "https://smbi.dk/geografi/maaling-af-luftfugtighed/",
+      "inLanguage": "da-DK",
+      "description": "Aflæs et psykrometer, find den relative luftfugtighed i tabellen, og brug mætningskurven til at finde vanddampen i g/m³ og dugpunktet.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {"@type": "Person", "name": "Simon Messell"},
+      "publisher": {"@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/"},
+      "image": "https://smbi.dk/img/og-geografi.png",
+      "isPartOf": {"@id": "https://smbi.dk/#website"},
+      "about": {"@type": "Thing", "name": "Luftfugtighed, psykrometer og dugpunkt"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/"},
+        {"@type": "ListItem", "position": 2, "name": "Naturgeografi", "item": "https://smbi.dk/geografi.html"},
+        {"@type": "ListItem", "position": 3, "name": "Måling af luftfugtighed", "item": "https://smbi.dk/geografi/maaling-af-luftfugtighed/"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/geografi.html">Naturgeografi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="titel">
+    <h1>Måling af luftfugtighed</h1>
+    <p>Aflæs psykrometeret, og find den relative og den absolutte luftfugtighed og dugpunktet.</p>
+  </div>
+
+  <section class="rig" aria-label="Simulering: måling af luftfugtighed">
+    <div class="rig-bar"></div>
+    <div class="rig-head">
+      <span class="sted" id="sted">Måling i klasselokalet</span>
+      <div class="knapper">
+        <button type="button" class="btn-mini" id="btn-begreber">Fagbegreber</button>
+        <button type="button" class="btn-mini" id="btn-ny">Ny måling</button>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false"
+                title="Skjul sidens overskrift og menu">Fokus</button>
+      </div>
+    </div>
+
+    <div class="arbejd">
+      <div class="psy">
+        <div class="psy-bar">
+          <span class="mono">Psykrometer</span>
+          <div class="zoom" role="group" aria-label="Zoom på psykrometeret">
+            <button type="button" id="zoom-ud" aria-label="Zoom ud">−</button>
+            <span id="zoom-tal" aria-live="polite">100 %</span>
+            <button type="button" id="zoom-ind" aria-label="Zoom ind">+</button>
+          </div>
+        </div>
+        <div class="visning" id="visning" tabindex="0" aria-label="Psykrometeret. Rul for at se andre dele."></div>
+      </div>
+
+      <div class="trin" id="trin" aria-live="off"></div>
+
+      <div class="kurve-felt hvil" id="kurve-felt">
+        <span class="mono">Mætningskurve · bruges i trin 4 og 5</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="sr" id="sr-status" aria-live="polite"></p>
+
+  <details class="om">
+    <summary>Om modellen</summary>
+    <p>Tabellen på psykrometeret er regnet med psykrometerligningen for et psykrometer, der hænger stille
+      (A = 8,0·10⁻⁴ °C⁻¹, lufttryk 1013 hPa) og mættet damptryk efter Magnus-formlen. Den svarer til den trykte
+      tabel på skolens psykrometer inden for 1 procentpoint.</p>
+    <p>Mætningskurven er den samme forenklede kurve som i simuleringen <a href="/geografi/Dugpunkt.html">Dugpunkt</a>:
+      5 · e<sup>0,06·T</sup> g/m³. Den afviger under ca. 5 % fra den rigtige mætningsmængde mellem 0 og 35 °C.
+      Svarene godkendes, når de ligger tæt på det, man kan aflæse på kurven.</p>
+  </details>
+</main>
+
+<dialog class="begreber" id="begreber" aria-labelledby="begreber-titel">
+  <div class="rig-bar"></div>
+  <div class="begreber-in">
+    <h2 id="begreber-titel">Fagbegreber, før du går i gang</h2>
+    <dl>
+      <dt>Vanddamp</dt>
+      <dd>Vand på gasform. Det er usynligt — skyer og tåge er små dråber, ikke damp.</dd>
+
+      <dt>Mætningsmængde</dt>
+      <dd>Den største mængde vanddamp, 1 m³ luft kan rumme ved en bestemt temperatur. Den vokser kraftigt med
+        temperaturen. Mætningskurven viser den.</dd>
+
+      <dt>Absolut luftfugtighed</dt>
+      <dd>Hvor mange gram vanddamp der faktisk er i 1 m³ luft, målt i g/m³.</dd>
+
+      <dt>Relativ luftfugtighed (RF)</dt>
+      <dd>Den faktiske vanddamp i procent af mætningsmængden. Ved 100 % er luften mættet.
+        <br><span class="formel">absolut luftfugtighed = RF/100 · mætningsmængde</span></dd>
+
+      <dt>Dugpunkt</dt>
+      <dd>Den temperatur, luften skal køles ned til, før den er mættet. Køles den mere, kondenserer vanddampen til
+        dug, tåge eller skyer.</dd>
+
+      <dt>Psykrometer</dt>
+      <dd>To termometre. Vådtermometeret har en våd stofstrømpe om kuglen. Vand fordamper fra strømpen, og det
+        bruger energi, så vådtermometeret bliver koldere. Jo tørrere luften er, jo mere fordamper der, og jo større
+        bliver forskellen mellem tør og våd.</dd>
+    </dl>
+    <form method="dialog" class="bund">
+      <button class="btn primaer" value="ok" autofocus>Forstået — start målingen</button>
+    </form>
+  </div>
+</dialog>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Måling af luftfugtighed</div>
+    </div>
+    <nav class="foot-links">
+      <a href="/Øvelser/Geografi/maaling-af-luftfugtighed/maaling-af-luftfugtighed.html">Øvelsesvejledningen</a>
+      <a href="/geografi/Dugpunkt.html">Dugpunkt</a>
+      <a href="/geografi.html">Naturgeografi</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="side.js"></script>
+<script src="/feedback.js" defer></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
