@@ -1,13 +1,17 @@
 /* ═══════════════════════════════════════════════════════════
-   side.js — indgangen.
+   side.js — simuleringen.
 
    Binder DOM'en i fotosyntese.html sammen med modellen og
-   figuren: træk og slip, tastaturbetjening, molekylernes flugt
-   hen over scenen, instrumenterne, adressefeltet og
-   projektortilstanden. Regnestykkerne står i model.js, tegningen
-   i scene.js — her står kun det, der handler om betjening.
+   figuren: klik, træk og tastatur, molekylernes vej gennem
+   planten, aflæsningerne, adressefeltet og fokusvisningen.
+   Regnestykkerne står i model.js, tegningen i scene.js.
+
+   Opgaverne (trin.js) taler med simuleringen gennem `sim`:
+   de lytter på hændelser som 'reaktion' og 'doegn' og bestemmer,
+   hvilke dele af sidepanelet der er fremme.
    ═══════════════════════════════════════════════════════════ */
-import {tegnMolekyle, MOLEKYLER} from './molekyler.js';
+import {tegnMolekyle, MOLEKYLER} from '../faelles/molekyler.js';
+import {plop} from '../faelles/fejring.js';
 import * as S from './scene.js';
 import * as M from './model.js';
 import {nyRing} from './reaktion.js';
@@ -15,25 +19,62 @@ import {nyRing} from './reaktion.js';
 const el = id => document.getElementById(id);
 const svg = el('scene');
 const scene = S.byggScene(svg);
+const roligt = () => !!window.matchMedia?.('(prefers-reduced-motion:reduce)')?.matches;
 
-/* ── Signaturforklaringen nederst ──────────────────────── */
-for (const felt of document.querySelectorAll('.fact svg[data-signatur]')){
-  felt.appendChild(tegnMolekyle(felt.dataset.signatur, {navn:false, skala:0.8}));
+/* ── Hændelser til opgaverne ───────────────────────────── */
+const lyttere = {};
+export const sim = {
+  on(navn, fn){ (lyttere[navn] ??= new Set()).add(fn); return () => lyttere[navn].delete(fn); },
+  udsend(navn, data){ for (const fn of lyttere[navn] ?? []) fn(data); },
+  tilstand:M.tilstand,
+  model:M,
+};
+
+/* ── Baner: en blød kurve gennem en række punkter ──────── */
+function bane(punkter){
+  if (punkter.length === 2){
+    const [a, b] = punkter;
+    punkter = [a, {x:(a.x+b.x)/2 + (Math.random()-0.5)*50, y:(a.y+b.y)/2 - 30 - Math.random()*30}, b];
+  }
+  const P = [punkter[0], ...punkter, punkter[punkter.length-1]];
+  const pts = [];
+  for (let i=1;i<P.length-2;i++){
+    const [p0,p1,p2,p3] = [P[i-1],P[i],P[i+1],P[i+2]];
+    for (let s=0;s<12;s++){
+      const t = s/12, t2 = t*t, t3 = t2*t;
+      pts.push({
+        x:0.5*((2*p1.x) + (-p0.x+p2.x)*t + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+        y:0.5*((2*p1.y) + (-p0.y+p2.y)*t + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3),
+      });
+    }
+  }
+  pts.push(punkter[punkter.length-1]);
+  const laengde = [0];
+  for (let i=1;i<pts.length;i++)
+    laengde.push(laengde[i-1] + Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y));
+  return {pts, laengde, total:laengde[laengde.length-1]};
+}
+function paaBane(b, u){
+  const maal = u * b.total;
+  let i = 1;
+  while (i < b.laengde.length-1 && b.laengde[i] < maal) i++;
+  const a = b.laengde[i-1], d = (b.laengde[i] - a) || 1;
+  const f = (maal - a)/d;
+  return {x:b.pts[i-1].x + (b.pts[i].x - b.pts[i-1].x)*f, y:b.pts[i-1].y + (b.pts[i].y - b.pts[i-1].y)*f};
 }
 
 /* ── Molekyler, der er på vej et sted hen ──────────────── */
 const flyvende = [];
 
-function nyFlugt(node, fra, til, tid, naarFremme){
-  flyt(node, fra.x, fra.y);
-  flyvende.push({
-    node, fra, til, tid, t:0, naarFremme,
-    bue:{x:(fra.x+til.x)/2 + (Math.random()-0.5)*90, y:(fra.y+til.y)/2 - 40 - Math.random()*50},
-  });
+function nyFlugt(node, punkter, {fart=560, min=0.45, maks=2.6, naarFremme} = {}){
+  const b = bane(punkter);
+  const tid = Math.max(min, Math.min(maks, b.total/fart));
+  flyt(node, punkter[0].x, punkter[0].y);
+  flyvende.push({node, b, tid, t:0, naarFremme});
 }
 
 function flyt(node, x, y, skala){
-  node.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+')'+(skala?' scale('+skala+')':''));
+  node.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+')'+(skala ? ' scale('+skala+')' : ''));
 }
 
 function flytFlyvende(dt){
@@ -41,11 +82,9 @@ function flytFlyvende(dt){
     const f = flyvende[i];
     f.t += dt;
     const u = Math.min(1, f.t/f.tid);
-    const e = u<0.5 ? 2*u*u : 1-Math.pow(-2*u+2,2)/2;   /* blød start og slut */
-    const m = 1-e;
-    const x = m*m*f.fra.x + 2*m*e*f.bue.x + e*e*f.til.x;
-    const y = m*m*f.fra.y + 2*m*e*f.bue.y + e*e*f.til.y;
-    flyt(f.node, x, y);
+    const e = u<0.5 ? 2*u*u : 1-Math.pow(-2*u+2,2)/2;
+    const p = paaBane(f.b, e);
+    flyt(f.node, p.x, p.y);
     if (u >= 1){
       flyvende.splice(i,1);
       f.naarFremme?.();
@@ -61,31 +100,42 @@ function nyToken(type, x, y, klasse){
   return g;
 }
 
-/* Et molekyle, der forsvinder ud i luften eller ned i jorden. */
-function sendVaek(type, fra, til){
-  if (flyvende.length > 130) return;
+function udtoning(g){
+  g.animate?.([{opacity:1},{opacity:0}],{duration:380,fill:'forwards'});
+  setTimeout(() => g.remove(), 390);
+}
+
+/* Et molekyle, der forlader cellen gennem spalteåbningerne. */
+function sendUd(type, fra){
+  if (flyvende.length > 150) return;
   const g = nyToken(type, fra.x, fra.y, 'flyver');
-  nyFlugt(g, fra, til, 1.1 + Math.random()*0.5, () => {
-    g.animate?.([{opacity:1},{opacity:0}],{duration:420,fill:'forwards'});
-    setTimeout(() => g.remove(), 430);
-  });
+  nyFlugt(g, S.VEJ.ud(scene.geometri(), fra, S.luftPos()), {fart:480, maks:2.4, naarFremme:() => udtoning(g)});
 }
 
 /* ── Råvarerne i luften og i jorden ────────────────────── */
 const puljen = [];
 
+function etiket(type){
+  return MOLEKYLER[type].navn+' '+MOLEKYLER[type].formel+' '+MOLEKYLER[type].hvor+
+         ' — klik for at sende det ind i bladet, eller træk det derind';
+}
+
+function lavKort(kort){
+  const node = nyToken(kort.type, kort.hjem.x, kort.hjem.y, 'pulje');
+  node.setAttribute('tabindex','0');
+  node.setAttribute('role','button');
+  node.setAttribute('aria-label', etiket(kort.type));
+  kort.node = node; kort.ledig = true;
+  bindGreb(kort);
+}
+
 function byggPulje(){
-  for (const p of puljen) p.node.remove();
+  for (const p of puljen) p.node?.remove();
   puljen.length = 0;
   for (const type of ['co2','h2o']){
     S.PLADSER[type].forEach(([x,y]) => {
-      const node = nyToken(type, x, y);
-      node.setAttribute('tabindex','0');
-      node.setAttribute('role','button');
-      node.setAttribute('aria-label', MOLEKYLER[type].navn+' '+MOLEKYLER[type].formel+' '+MOLEKYLER[type].hvor+
-                        ' — klik for at sende det ind i bladet, eller træk det derind');
-      const kort = {type, node, hjem:{x,y}, ledig:true};
-      bindGreb(kort);
+      const kort = {type, hjem:{x,y}};
+      lavKort(kort);
       puljen.push(kort);
     });
   }
@@ -104,17 +154,12 @@ function visPulje(){
 /* Pladsen fyldes op igen, så der altid ligger seks af hver. */
 function genopfyld(kort){
   kort.ledig = false;
-  kort.node.remove();
   setTimeout(() => {
-    if (M.tilstand.modus !== 'traek'){ kort.ledig = true; return; }
-    const node = nyToken(kort.type, kort.hjem.x, kort.hjem.y);
-    node.setAttribute('tabindex','0');
-    node.setAttribute('role','button');
-    node.setAttribute('aria-label', kort.node.getAttribute('aria-label'));
-    node.animate?.([{opacity:0},{opacity:1}],{duration:300});
-    kort.node = node; kort.ledig = true;
-    bindGreb(kort);
-  }, 520);
+    lavKort(kort);
+    if (M.tilstand.modus !== 'traek') kort.node.style.display = 'none';
+    kort.node.animate?.([{opacity:0, transform:kort.node.getAttribute('transform')+' scale(.4)'},
+                         {opacity:1, transform:kort.node.getAttribute('transform')}],{duration:320});
+  }, 650);
 }
 
 /* ── Træk og slip ──────────────────────────────────────── */
@@ -130,59 +175,51 @@ const iZone = (z,p) => {
 };
 
 let traek = null;
-const SLOER = 6;   /* så mange px må fingeren skride, før det er et træk */
+const SLOER = 6;
 
-/* Molekylerne kan gribes på to måder: et klik sender molekylet ind i
-   bladet af sig selv, og et træk lader eleven selv føre det derind. Det
-   er den samme gestus, der begynder begge dele — først når pegeren har
-   flyttet sig mere end nogle få pixels, bliver det til et træk. */
+/* Et klik sender molekylet ind i bladet af sig selv, et træk lader
+   eleven selv føre det derind. Først når pegeren har flyttet sig mere
+   end nogle få pixels, bliver det til et træk. */
 function bindGreb(kort){
-  kort.node.addEventListener('pointerdown', e => {
+  const node = kort.node;
+  node.addEventListener('pointerdown', e => {
     if (!kort.ledig || M.tilstand.modus !== 'traek') return;
     e.preventDefault();
-    /* er den på vej hjem efter et fejlslag, så stop flugten først */
-    const i = flyvende.findIndex(f => f.node === kort.node);
+    const i = flyvende.findIndex(f => f.node === node);
     if (i >= 0) flyvende.splice(i,1);
-    /* flyt den øverst, FØR pointeren fanges — et flyt i DOM'en
-       ville ellers slippe fangsten igen */
-    scene.lag.molekyler.appendChild(kort.node);
-    kort.node.setPointerCapture(e.pointerId);
+    scene.lag.molekyler.appendChild(node);
+    node.setPointerCapture(e.pointerId);
     traek = {kort, id:e.pointerId, x0:e.clientX, y0:e.clientY, traekker:false};
-    tavsHint();
   });
-  kort.node.addEventListener('pointermove', e => {
+  node.addEventListener('pointermove', e => {
     if (!traek || traek.id !== e.pointerId) return;
     if (!traek.traekker){
       if (Math.hypot(e.clientX-traek.x0, e.clientY-traek.y0) < SLOER) return;
       traek.traekker = true;
-      kort.node.classList.add('traekkes');
+      node.classList.add('traekkes');
       visZoner(true);
     }
     const p = tilScene(e);
-    flyt(kort.node, p.x, p.y);
+    flyt(node, p.x, p.y, 1.15);
     for (const z of Object.values(scene.zoner)) z.classList.toggle('over', iZone(z,p));
   });
   const slip = e => {
     if (!traek || traek.id !== e.pointerId) return;
     const traekker = traek.traekker;
     traek = null;
-    if (!traekker){                     /* et klik: molekylet svæver selv ind */
-      sendInd(kort, kort.hjem);
-      return;
-    }
+    if (!traekker){ sendInd(kort, kort.hjem); return; }
     const p = tilScene(e);
-    kort.node.classList.remove('traekkes');
+    node.classList.remove('traekkes');
     visZoner(false);
-    const ramt = Object.values(scene.zoner).some(z => iZone(z,p));
-    if (ramt) sendInd(kort, p);
-    else nyFlugt(kort.node, p, kort.hjem, 0.4);
+    if (iZone(scene.zoner.celle, p)) sendInd(kort, p, 'celle');
+    else if (iZone(scene.zoner.plante, p)) sendInd(kort, p, 'plante');
+    else nyFlugt(node, [p, kort.hjem], {min:0.3, maks:0.5});
   };
-  kort.node.addEventListener('pointerup', slip);
-  kort.node.addEventListener('pointercancel', slip);
-  kort.node.addEventListener('keydown', e => {
+  node.addEventListener('pointerup', slip);
+  node.addEventListener('pointercancel', slip);
+  node.addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
-    tavsHint();
     sendInd(kort, kort.hjem);
   });
 }
@@ -194,260 +231,296 @@ function visZoner(til){
   }
 }
 
-/* Molekylet er sluppet det rigtige sted: send det ind i kloroplasten. */
-function sendInd(kort, fra){
+function sendInd(kort, fra, hvor){
   const type = kort.type;
   if (!M.erPlads(type)){
-    visHint('Kloroplasten har allerede 6 '+MOLEKYLER[type].formel+' — der mangler '+
-            (type === 'co2' ? MOLEKYLER.h2o.formel : MOLEKYLER.co2.formel), true);
-    nyFlugt(kort.node, fra, kort.hjem, 0.45);
+    const anden = type === 'co2' ? 'h2o' : 'co2';
+    besked(M.tilstand[anden] + M.paaVej[anden] < 6
+      ? 'Kloroplasten har allerede 6 '+MOLEKYLER[type].formel+' — den mangler '+MOLEKYLER[anden].formel+'.'
+      : 'Kloroplasten er fuld. Tryk på «Udfør fotosyntese».', true);
+    nyFlugt(kort.node, [fra, kort.hjem], {min:0.3, maks:0.5});
+    sim.udsend('fuld', type);
     return;
   }
   const node = kort.node;
   node.classList.add('flyver');
+  node.classList.remove('pulje');
   node.removeAttribute('tabindex');
   genopfyld(kort);
-  scene.lag.molekyler.appendChild(node);
-  flyvTilPlads(type, node, fra);
+  flyvTilPlads(type, node, fra, hvor);
 }
 
 /* Fælles vej for elevens molekyler og modellens egne. */
-function flyvTilPlads(type, node, fra){
+function flyvTilPlads(type, node, fra, hvor){
   const i = M.tilstand[type] + M.paaVej[type];
   M.reserver(type);
   const til = S.slotPos(type, Math.min(i,5));
-  nyFlugt(node, fra, til, 0.9 + Math.random()*0.25, () => {
+  const geo = scene.geometri();
+  let vej;
+  if (hvor === 'celle') vej = [fra, til];
+  else if (hvor === 'plante') vej = [fra, geo.anker, S.MAAL[type === 'co2' ? 'portLuft' : 'portVand'], til];
+  else vej = S.VEJ[type](geo, fra, til);
+  /* Modellens egne molekyler flyver på samme tid som i første udgave
+     (0,9–1,15 s). I automatisk tilstand venter modellen på, at de lander,
+     så en længere flyvetid ville sænke fotosyntesens fart. */
+  const tider = hvor === 'auto' ? {fart:620, min:0.9, maks:1.15} : {fart:type === 'h2o' ? 620 : 540, maks:2.3};
+  nyFlugt(node, vej, {...tider, naarFremme:() => {
     M.frigiv(type);
     const svar = M.modtag(type);
     node.remove();
     if (!svar.ok) return;
+    plop();
     scene.saetSlots(M.tilstand.co2, M.tilstand.h2o);
+    sim.udsend('molekyle', type);
     if (svar.reaktion) fotosyntese();
-    else if (M.klarTilReaktion())
-      visHint('6 CO₂ og 6 H₂O er samlet — tryk på «Udfør fotosyntese»', true);
-    else if (M.tilstand.co2 === 6 && M.tilstand.h2o === 6 && !M.erLyst())
-      visHint('6 CO₂ og 6 H₂O er klar — men fotosyntesen mangler lys', true);
-  });
+    else if (M.tilstand.co2 === 6 && M.tilstand.h2o === 6){
+      if (M.klarTilReaktion()) besked('6 CO₂ og 6 H₂O er samlet — tryk på «Udfør fotosyntese».', true);
+      else { besked('6 CO₂ og 6 H₂O er klar — men kloroplasten mangler lys.', true); sim.udsend('fuld-i-moerke'); }
+    }
+  }});
 }
 
 function nytRaastof(type){
-  if (flyvende.length > 130) return;
+  if (flyvende.length > 150) return;
   const fra = type === 'co2' ? S.luftPos() : S.jordPos();
   const node = nyToken(type, fra.x, fra.y, 'flyver');
-  flyvTilPlads(type, node, fra);
+  flyvTilPlads(type, node, fra, 'auto');
 }
 
 /* ── De to processer, når de sker ──────────────────────── */
 let fotoBlink = 0, respBlink = 0;
 let ring = null;
+let ventendeVaekst = 0;
 
-/* Reaktionen vises i to tempi: først lægger de tolv molekyler sig i en
-   ring og bliver til ét glukose, og derefter sendes udbyttet ud —
-   glukosen til lageret og de seks ilt ud i luften. */
 function fotosyntese(){
-  fotoBlink = 2.4;
+  fotoBlink = 3;
+  sim.udsend('reaktion');
   const kl = S.kloroplastPos();
-  if (ring){            /* en ring kører allerede — vis kun udbyttet */
-    udbytte(kl);
-    return;
-  }
-  /* molekylerne stilles skiftevis, så ringen læses CO₂, H₂O, CO₂ … */
+  if (ring){ udbytte(kl, null); return; }
   const start = [];
   for (let i=0;i<6;i++){
     start.push({type:'co2', fra:S.slotPos('co2',i)});
     start.push({type:'h2o', fra:S.slotPos('h2o',i)});
   }
   scene.saetSlots(0,0);
-  ring = nyRing(scene.lag.molekyler, kl, start, () => { ring = null; udbytte(kl); });
+  ring = nyRing(scene.lag.effekter, kl, start, pladser => { ring = null; udbytte(kl, pladser); },
+                {lysFra:{x:S.MAAL.celle.x + 70, y:S.MAAL.celle.y + 4}, grana:S.granaPos()});
 }
 
-function udbytte(kl){
+function udbytte(kl, pladser){
   scene.blink('foto');
-  /* seks ilt ud i luften */
-  for (let i=0;i<6;i++) setTimeout(() => sendVaek('o2', kl, S.luftPos()), i*70);
-  /* og én glukose ned i lageret */
+  const steder = pladser ?? Array.from({length:6}, () => kl);
+  steder.forEach((p, i) => setTimeout(() => sendUd('o2', p), i*80));
   const g = nyToken('glukose', kl.x, kl.y, 'flyver');
-  nyFlugt(g, kl, S.lagerPos(M.tilstand.lager-1), 0.8, () => {
+  nyFlugt(g, [kl, S.lagerPos(M.tilstand.lager-1)], {min:0.7, maks:0.9, naarFremme:() => {
     g.remove();
     scene.saetLager(M.tilstand.lager);
-  });
+  }});
 }
 
 function respiration(fra){
-  respBlink = 1.4;
-  scene.blink('mito');
+  respBlink = 1.6;
+  sim.udsend('respiration', fra);
   const mi = S.mitokondriePos();
-  const start = fra === 'lager' ? S.lagerPos(M.tilstand.lager) : S.plantePos();
+  const geo = scene.geometri();
   scene.saetLager(M.tilstand.lager);
-  const g = nyToken('glukose', start.x, start.y, 'flyver');
-  nyFlugt(g, start, mi, 0.75, () => g.remove());
-  /* ilten hentes ind, og kuldioxid og vand sendes ud igen */
-  for (let i=0;i<6;i++) setTimeout(() => sendVaek('o2', S.luftPos(), mi), i*60);
+  const g = nyToken('glukose', 0, 0, 'flyver');
+  const vej = fra === 'lager' ? [S.lagerPos(M.tilstand.lager), mi] : S.VEJ.fraPlante(geo, mi);
+  nyFlugt(g, vej, {min:0.7, maks:1.6, naarFremme:() => g.remove()});
+  for (let i=0;i<6;i++) setTimeout(() => {
+    const o = nyToken('o2', 0, 0, 'flyver');
+    nyFlugt(o, S.VEJ.iltInd(scene.geometri(), S.luftPos(), mi), {fart:620, maks:1.5, naarFremme:() => o.remove()});
+  }, i*60);
   setTimeout(() => {
+    scene.blink('mito');
+    scene.energi();
     for (let i=0;i<6;i++){
-      setTimeout(() => sendVaek('co2', mi, S.luftPos()), i*60);
-      setTimeout(() => sendVaek('h2o', mi, S.jordPos()), i*60+30);
+      setTimeout(() => sendUd('co2', mi), i*70);
+      setTimeout(() => sendUd('h2o', mi), i*70+35);
     }
-  }, 800);
+  }, 1300);
 }
 
 function vaekst(){
-  const g = nyToken('glukose', S.lagerPos(M.tilstand.lager).x, S.lagerPos(M.tilstand.lager).y, 'flyver');
+  ventendeVaekst++;
+  const fra = S.lagerPos(M.tilstand.lager);
   scene.saetLager(M.tilstand.lager);
-  nyFlugt(g, S.lagerPos(M.tilstand.lager), S.plantePos(), 1.0, () => g.remove());
+  const g = nyToken('glukose', fra.x, fra.y, 'flyver');
+  nyFlugt(g, S.VEJ.vaekst(scene.geometri(), fra), {fart:520, maks:1.8, naarFremme:() => {
+    ventendeVaekst = Math.max(0, ventendeVaekst-1);
+    udtoning(g);
+  }});
 }
 
+let sidsteDoegn = M.tilstand.doegn;
 function haandter(haendelser){
   for (const h of haendelser){
     if (h.type === 'behov')            nytRaastof(h.molekyle);
     else if (h.type === 'reaktion')    fotosyntese();
     else if (h.type === 'respiration') respiration(h.fra);
     else if (h.type === 'vaekst')      vaekst();
-    else if (h.type === 'sult')        visHint('Planten har hverken lager eller biomasse tilbage at forbrænde', true);
+    else if (h.type === 'sult')        besked('Planten har hverken glukose eller biomasse tilbage at forbrænde.', true);
+  }
+  if (M.tilstand.doegn !== sidsteDoegn){
+    sidsteDoegn = M.tilstand.doegn;
+    sim.udsend('doegn', sidsteDoegn);
   }
 }
 
-/* ── Instrumenterne ────────────────────────────────────── */
+/* ── Aflæsningerne ─────────────────────────────────────── */
 const felter = {
-  bpp:el('val-bpp'), r:el('val-r'), npp:el('val-npp'), lager:el('val-lager'),
-  bBpp:el('bar-bpp'), bR:el('bar-r'), bNpp:el('bar-npp'), bLager:el('bar-lager'),
+  bpp:el('val-bpp'), r:el('val-r'), npp:el('val-npp'), lager:el('val-lager'), biomasse:el('val-biomasse'),
+  bBpp:el('bar-bpp'), bR:el('bar-r'), bNpp:el('bar-npp'),
   tid:el('val-tid'), lys:el('val-lys'), temp:el('val-temp'),
-  doegn:el('who-doegn'), biomasse:el('fact-biomasse'),
   standFoto:el('stand-foto'), standResp:el('stand-resp'),
   lignFoto:el('lign-foto'), lignResp:el('lign-resp'),
 };
 const sliderTid = el('slider-tid'), sliderLys = el('slider-lys'), sliderTemp = el('slider-temp');
 const btnFoto = el('btn-foto');
 
-const klokkeslet = t => {
+export const klokkeslet = t => {
   const timer = Math.floor(t) % 24;
   const min = Math.round((t - Math.floor(t))*60);
   return String(timer).padStart(2,'0')+':'+String(min === 60 ? 0 : min).padStart(2,'0');
 };
-const medFortegn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
+export const medFortegn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
 
-let visBiomasse = -1;
+let visBiomasse = M.tilstand.biomasse, tegnetBiomasse = -1, tegnetSulten = null;
+const tekstCache = new Map();
+function saetTekst(node, s){ if (tekstCache.get(node) !== s){ node.textContent = s; tekstCache.set(node, s); } }
 
-function opdaterUdseende(){
+function opdaterUdseende(dt){
   const t = M.tilstand;
   const lys = M.lysNu();
-  scene.saetHimmel(M.solHoejde(), t.lysstyrke, t.klokken);
+  scene.saetHimmel(M.solHoejde(), t.lysstyrke, t.klokken, lys);
+  scene.saetUr('Døgn '+t.doegn+' · '+klokkeslet(t.klokken));
 
-  if (t.biomasse !== visBiomasse){
-    scene.tegnPlante(t.biomasse, t.biomasse === 0);
-    visBiomasse = t.biomasse;
-    felter.biomasse.textContent = t.biomasse;
+  /* planten vokser glidende hen mod biomassen — og venter med det
+     sidste stykke, til glukosen faktisk er nået frem */
+  const maal = Math.max(0, t.biomasse - ventendeVaekst);
+  const fart = roligt() ? 100 : 2.2;
+  visBiomasse += Math.sign(maal - visBiomasse) * Math.min(Math.abs(maal - visBiomasse), fart*dt);
+  const sulten = t.biomasse === 0 && t.lager === 0;
+  if (Math.abs(visBiomasse - tegnetBiomasse) > 0.01 || sulten !== tegnetSulten){
+    scene.tegnPlante(visBiomasse, sulten);
+    tegnetBiomasse = visBiomasse; tegnetSulten = sulten;
   }
 
-  const skala = Math.max(20, Math.ceil(Math.max(t.bpp, t.r)/20)*20);
+  const skala = Math.max(10, Math.ceil(Math.max(t.bpp, t.r)/10)*10);
   const npp = M.npp();
-  felter.bpp.innerHTML = t.bpp + '<small>glukose</small>';
-  felter.r.innerHTML = t.r + '<small>glukose</small>';
-  felter.npp.innerHTML = medFortegn(npp) + '<small>glukose</small>';
-  felter.lager.innerHTML = t.lager + '<small>glukose</small>';
+  saetTekst(felter.bpp, String(t.bpp));
+  saetTekst(felter.r, String(t.r));
+  saetTekst(felter.npp, medFortegn(npp));
+  saetTekst(felter.lager, String(t.lager));
+  saetTekst(felter.biomasse, String(t.biomasse));
   felter.bBpp.style.width = (100*t.bpp/skala).toFixed(1)+'%';
   felter.bR.style.width = (100*t.r/skala).toFixed(1)+'%';
   const halv = Math.min(50, 50*Math.abs(npp)/skala);
   felter.bNpp.style.width = halv.toFixed(1)+'%';
   felter.bNpp.style.left = (npp < 0 ? 50-halv : 50).toFixed(1)+'%';
-  felter.bNpp.style.setProperty('--cc', npp < 0
-    ? 'linear-gradient(90deg,#FF6A3D,#FFB08F)' : 'linear-gradient(90deg,#9BD7F3,#0E86C8)');
-  felter.bLager.style.width = (100*Math.min(1, t.lager/M.K.maksLager)).toFixed(1)+'%';
+  felter.bNpp.classList.toggle('negativ', npp < 0);
 
-  felter.doegn.textContent = 'Døgn '+t.doegn;
-  felter.tid.textContent = klokkeslet(t.klokken);
+  saetTekst(felter.tid, klokkeslet(t.klokken));
   if (document.activeElement !== sliderTid) sliderTid.value = t.klokken.toFixed(2);
 
-  /* Knappen er kun eleven vedkommende, når eleven selv samler molekylerne.
-     I automatisk tilstand bliver dens plads stående tom, så værktøjslinjen
-     ikke hopper, når man skifter tilstand. */
   const manuel = t.modus === 'traek';
   const klar = M.klarTilReaktion();
-  btnFoto.classList.toggle('skjult', !manuel);
-  btnFoto.classList.toggle('klar', manuel && klar);
   btnFoto.disabled = !manuel || !klar;
+  btnFoto.classList.toggle('klar', manuel && klar);
+  saetTekst(btnFoto, manuel ? 'Udfør fotosyntese' : 'Kører automatisk');
 
-  const kørerFoto = fotoBlink > 0 || (t.modus === 'auto' && lys > 0.02);
-  felter.lignFoto.dataset.aktiv = (kørerFoto || (manuel && klar)) ? 'true' : 'false';
-  felter.standFoto.textContent =
-    kørerFoto ? 'Kører' :
-    lys <= 0.02 ? 'Venter på lys' :
-    manuel && klar ? 'Tryk Udfør fotosyntese' : 'Klar';
-
+  const koererFoto = fotoBlink > 0 || (t.modus === 'auto' && lys > 0.02 && t.urKoerer);
+  felter.lignFoto.dataset.aktiv = koererFoto ? 'true' : 'false';
+  saetTekst(felter.standFoto,
+    koererFoto ? 'Kører' : lys <= 0.02 ? 'Venter på lys' : manuel && klar ? 'Klar' : 'Venter på råstoffer');
   const braendstof = t.lager > 0 || t.biomasse > 0;
-  const kørerResp = respBlink > 0 || (t.urKoerer && braendstof);
-  felter.lignResp.dataset.aktiv = kørerResp ? 'true' : 'false';
-  felter.standResp.textContent = !braendstof ? 'Intet at forbrænde' : (kørerResp ? 'Kører' : 'Hviler');
+  const koererResp = respBlink > 0 || (t.urKoerer && braendstof);
+  felter.lignResp.dataset.aktiv = koererResp ? 'true' : 'false';
+  saetTekst(felter.standResp, !braendstof ? 'Intet at forbrænde' : (koererResp ? 'Kører' : 'Hviler'));
 }
 
-/* ── Skjult besked til skærmlæsere ─────────────────────── */
+/* ── Skjult opsummering til skærmlæsere ────────────────── */
 let srUr = 0;
 function fortael(){
   const t = M.tilstand;
   el('sr-status').textContent =
     'Klokken '+klokkeslet(t.klokken)+', '+(M.erLyst() ? 'lyst' : 'mørkt')+'. '+
     'Kloroplasten har '+t.co2+' af 6 kuldioxid og '+t.h2o+' af 6 vand. '+
-    (t.modus === 'traek' && M.klarTilReaktion()
-      ? 'Seks af hver er samlet — tryk på knappen Udfør fotosyntese. ' : '')+
-    'BPP '+t.bpp+', respiration '+t.r+', NPP '+medFortegn(M.npp())+' glukose. '+
-    'Lager '+t.lager+', plantens biomasse '+t.biomasse+'.';
+    (t.modus === 'traek' && M.klarTilReaktion() ? 'Seks af hver er samlet — tryk på knappen Udfør fotosyntese. ' : '')+
+    'Glukose i cellen '+t.lager+', plantens biomasse '+t.biomasse+'.';
 }
 
-/* ── Hint ──────────────────────────────────────────────── */
-const hint = el('hint');
-let hintUr = 0;
-function visHint(tekst, raab){
-  clearTimeout(hintUr);
-  hint.textContent = tekst;
-  hint.classList.toggle('raab', !!raab);
-  hint.classList.remove('gone');
-  hintUr = setTimeout(() => hint.classList.add('gone'), 3800);
+/* ── Figurteksten under figuren ────────────────────────── */
+const figurtekst = el('figurtekst');
+let standardTekst = figurtekst.innerHTML;
+let beskedUr = 0;
+export function besked(tekst, vigtig){
+  clearTimeout(beskedUr);
+  figurtekst.textContent = tekst;
+  figurtekst.classList.toggle('vigtig', !!vigtig);
+  beskedUr = setTimeout(() => {
+    figurtekst.innerHTML = standardTekst;
+    figurtekst.classList.remove('vigtig');
+  }, 5200);
 }
-function tavsHint(){ clearTimeout(hintUr); hint.classList.add('gone'); }
+sim.saetStandardTekst = html => {
+  standardTekst = html;
+  clearTimeout(beskedUr);
+  figurtekst.innerHTML = html;
+  figurtekst.classList.remove('vigtig');
+};
+sim.besked = besked;
 
 /* ── Betjening ─────────────────────────────────────────── */
-function saetModus(modus){
+function saetModus(modus, stille){
   M.tilstand.modus = modus;
   el('btn-traek').setAttribute('aria-pressed', modus === 'traek' ? 'true' : 'false');
   el('btn-auto').setAttribute('aria-pressed', modus === 'auto' ? 'true' : 'false');
   visPulje();
-  /* har eleven samlet de tolv og skifter til automatisk, skal reaktionen
-     ikke vente på et molekyle, der aldrig kommer */
   if (modus === 'auto' && M.tjekReaktion()) fotosyntese();
-  if (modus === 'auto') visHint('Modellen leverer nu selv molekylerne — lys og temperatur bestemmer farten');
-  else visHint('Klik 6 CO₂ og 6 H₂O ind i bladet, og tryk så på «Udfør fotosyntese»');
+  if (!stille) besked(modus === 'auto'
+    ? 'Nu leverer modellen selv CO₂ og H₂O — lys og temperatur bestemmer farten.'
+    : 'Klik 6 CO₂ og 6 H₂O ind i bladet, og tryk så på «Udfør fotosyntese».');
+  sim.udsend('modus', modus);
   gemTilstand();
 }
+sim.saetModus = saetModus;
 
 function saetUr(koerer){
   M.tilstand.urKoerer = koerer;
   const b = el('btn-ur');
   b.setAttribute('aria-pressed', koerer ? 'true' : 'false');
-  b.textContent = koerer ? 'Pause' : 'Start døgnet';
+  b.innerHTML = koerer ? '<span aria-hidden="true">❚❚</span> Pause' : '<span aria-hidden="true">▶</span> Start døgnet';
+  sim.udsend('ur', koerer);
   gemTilstand();
 }
+sim.saetUr = saetUr;
 
 el('btn-traek').addEventListener('click', () => saetModus('traek'));
 el('btn-auto').addEventListener('click', () => saetModus('auto'));
 el('btn-ur').addEventListener('click', () => saetUr(!M.tilstand.urKoerer));
 btnFoto.addEventListener('click', () => {
   if (!M.udfoerReaktion()) return;
-  tavsHint();
   fotosyntese();
 });
-el('btn-nulstil').addEventListener('click', () => {
+
+function nulstil(){
   M.nulstil();
   for (const f of flyvende) f.node.remove();
   flyvende.length = 0;
   ring?.ryd();
   ring = null;
+  ventendeVaekst = 0;
+  visBiomasse = M.tilstand.biomasse;
+  sidsteDoegn = M.tilstand.doegn;
   scene.saetSlots(0,0);
   scene.saetLager(0);
-  visBiomasse = -1;
   byggPulje();
-  visHint('Regnskabet er nulstillet');
+  sim.udsend('nulstil');
   gemTilstand();
-});
+}
+sim.nulstil = nulstil;
+el('btn-nulstil').addEventListener('click', () => { nulstil(); besked('Planten og regnskabet er nulstillet.'); });
 
 sliderTid.addEventListener('input', e => {
   M.tilstand.klokken = parseFloat(e.target.value) % 24;
@@ -463,22 +536,51 @@ sliderTemp.addEventListener('input', e => {
   felter.temp.textContent = M.tilstand.temperatur;
   gemTilstand();
 });
-
-/* Bliver det lyst, mens seks + seks står klar, går fotosyntesen i gang. */
 function efterAendring(){
   if (M.tjekReaktion()) fotosyntese();
+  sim.udsend('lys', M.erLyst());
   gemTilstand();
 }
 
-/* ── Projektortilstand ─────────────────────────────────── */
-const btnProjektor = el('btn-projektor');
-function saetProjektor(til){
-  document.body.setAttribute('data-projektor', til ? '1' : '0');
-  btnProjektor.setAttribute('aria-pressed', til ? 'true' : 'false');
+/* ── Sidepanelets dele ─────────────────────────────────── */
+sim.visDele = navne => {
+  for (const d of document.querySelectorAll('[data-del]'))
+    d.hidden = !(navne === 'alle' || navne.includes(d.dataset.del));
+  tilpas();
+};
+
+/* ── Fokusvisning ──────────────────────────────────────── */
+const btnFokus = el('btn-fokus');
+function saetFokus(til){
+  document.body.classList.toggle('fokus', til);
+  btnFokus.setAttribute('aria-pressed', til ? 'true' : 'false');
+  tilpas();
 }
-btnProjektor.addEventListener('click', () => {
-  saetProjektor(document.body.getAttribute('data-projektor') !== '1');
+btnFokus.addEventListener('click', () => saetFokus(!document.body.classList.contains('fokus')));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.body.classList.contains('fokus') && !document.querySelector('dialog[open]')) saetFokus(false);
 });
+
+/* ── Figurens størrelse ────────────────────────────────────
+   Figuren må fylde, hvad der er tilbage af skærmens højde, når
+   alt over den og figurteksten under den er trukket fra. Siden
+   rulles ikke med i målingen, så tallet er det samme hver gang. */
+const figurFelt = el('figur');
+const tekstLinje = el('figurlinje');
+function tilpas(){
+  const top = figurFelt.getBoundingClientRect().top + scrollY;
+  const rest = innerHeight - top - tekstLinje.offsetHeight - 22;
+  document.documentElement.style.setProperty('--fig-h', Math.max(250, Math.round(rest)) + 'px');
+}
+addEventListener('resize', tilpas);
+document.fonts?.ready.then(tilpas);
+/* Sidepanelet må ikke blive højere end figursøjlen — så ruller det
+   selv, og figuren bliver stående på skærmen. */
+const figurside = document.querySelector('.figurside');
+new ResizeObserver(() => {
+  document.documentElement.style.setProperty('--kol-h', Math.round(figurside.getBoundingClientRect().height) + 'px');
+}).observe(figurside);
+sim.tilpas = tilpas;
 
 /* ── Deling: indstillingerne ligger i adressen ─────────── */
 let hashUr = 0, hashSidste = '';
@@ -492,7 +594,7 @@ function gemTilstand(){
   if (h === hashSidste) return;
   hashSidste = h;
   clearTimeout(hashUr);
-  hashUr = setTimeout(() => { if (location.hash !== h) history.replaceState(null,'',h); }, 500);
+  hashUr = setTimeout(() => { if (location.hash !== h) history.replaceState(null,'',location.pathname+location.search+h); }, 500);
 }
 function laesTilstand(){
   const p = new URLSearchParams(location.search);
@@ -503,21 +605,18 @@ function laesTilstand(){
   };
   const modus = p.get('modus');
   if (modus === 'auto' || modus === 'traek') M.tilstand.modus = modus;
-  const kl = tal(p.get('kl'), 0, 24);
-  const lys = tal(p.get('lys'), 0, 100);
-  const temp = tal(p.get('temp'), 0, 40);
-  if (kl !== null) M.tilstand.klokken = kl;
+  const kl = tal(p.get('kl'), 0, 24), lys = tal(p.get('lys'), 0, 100), temp = tal(p.get('temp'), 0, 40);
+  if (kl !== null) M.tilstand.klokken = kl % 24;
   if (lys !== null) M.tilstand.lysstyrke = Math.round(lys/5)*5;
   if (temp !== null) M.tilstand.temperatur = Math.round(temp);
-
   sliderTid.value = M.tilstand.klokken;
   sliderLys.value = M.tilstand.lysstyrke;
   sliderTemp.value = M.tilstand.temperatur;
   felter.lys.textContent = M.tilstand.lysstyrke;
   felter.temp.textContent = M.tilstand.temperatur;
-  saetModus(M.tilstand.modus);
+  saetModus(M.tilstand.modus, true);
   saetUr(p.get('ur') === '1');
-  if (/mode=teach|projektor=1/.test(location.search)) saetProjektor(true);
+  if (/mode=teach|projektor=1|fokus=1/.test(location.search)) saetFokus(true);
   hashSidste = tilstandStreng();
 }
 
@@ -529,9 +628,10 @@ function loep(nu){
   if (M.tilstand.urKoerer) haandter(M.opdater(dt * M.K.timerPrSekund));
   flytFlyvende(dt);
   ring?.opdater(dt);
+  scene.opdater(dt);
   fotoBlink = Math.max(0, fotoBlink - dt);
   respBlink = Math.max(0, respBlink - dt);
-  opdaterUdseende();
+  opdaterUdseende(dt);
   srUr += dt;
   if (srUr > 4){ srUr = 0; fortael(); }
   requestAnimationFrame(loep);
@@ -543,6 +643,6 @@ scene.saetSlots(0,0);
 scene.saetLager(0);
 byggPulje();
 laesTilstand();
-visHint('Klik 6 CO₂ og 6 H₂O ind i bladet — eller vælg et molekyle med tab og tryk Enter');
+tilpas();
 fortael();
 requestAnimationFrame(loep);
