@@ -1,4 +1,6 @@
-// Bakteriecellen: en prokaryot stavbakterie set i snit.
+// Bakteriecellen: en prokaryot stavbakterie set i snit. Med WebGL vises den gramnegative
+// 3D-bakterie fra ../celle-3d/ (bakteriecelle.glb); denne tegning er reserven. Fejlteksterne
+// nævner derfor ingen farver, kun form og placering, så de passer til begge.
 import { glat, boelge, ribosomer } from '../../byg-motor/tegn.js';
 
 // Stav: rektangel med halvcirkler i enderne
@@ -39,7 +41,7 @@ const spredte = [[380, 226], [330, 360], [690, 256], [520, 360], [560, 384], [69
 export default {
   id: 'bakterie',
   navn: 'Bakterien',
-  intro: 'En stavbakterie skåret igennem. Den er prokaryot og meget mindre end en dyrecelle: typisk 1–5 µm lang.',
+  intro: 'En stavbakterie som E. coli, skåret op. Den er prokaryot og meget mindre end en dyrecelle: typisk 1–5 µm lang.',
   vb: [1000, 640],
   lag: [
     { navn: 'Grundplanen', ord: ['cellevaeg', 'cellemembran', 'cytoplasma', 'kromosom'], ekstra: ['cellekerne'],
@@ -62,30 +64,30 @@ export default {
   pladser: [
     { ord: 'kapsel', x: 100, y: 150, maal: [249, 215],
       omr: `<path d="${KAPSEL} ${VAEG}" fill-rule="evenodd"/>`,
-      fejl: { cellevaeg: 'Cellevæggen er det faste, brune lag. Pladsen peger på det stiplede, slimede lag uden på den.' } },
+      fejl: { cellevaeg: 'Cellevæggen er det faste lag inden for. Pladsen peger på det slimede, gennemsigtige lag yderst.' } },
     { ord: 'plasmid', x: 100, y: 300, maal: [283, 290],
       omr: `<circle cx="300" cy="290" r="24"/><circle cx="640" cy="335" r="22"/>`,
-      fejl: { kromosom: 'Kromosomet er den lange, lilla ring midt i cellen. De små, grønne ringe er ekstra DNA.',
-              ribosom: 'Ribosomerne er de mørke prikker. Pladsen peger på en lille ring.' } },
+      fejl: { kromosom: 'Kromosomet er det store, sammenfiltrede DNA midt i cellen. Pladsen peger på en lille, ekstra ring af DNA.',
+              ribosom: 'Ribosomerne er de mange små korn. Pladsen peger på en lille ring.' } },
     { ord: 'cellevaeg', x: 100, y: 450, maal: [292, 404],
       omr: `<path d="${VAEG} ${MEMBRAN}" fill-rule="evenodd"/>`,
-      fejl: { cellemembran: 'Membranen er den tynde, lyserøde hinde inderst. Pladsen peger på det tykke, brune lag.',
-              kapsel: 'Kapslen er det stiplede lag yderst. Pladsen peger på det faste, brune lag.' } },
+      fejl: { cellemembran: 'Cellemembranen er den inderste hinde lige om cytoplasmaet. Pladsen peger på det faste lag uden for den.',
+              kapsel: 'Kapslen er det slimede lag yderst. Pladsen peger på det faste lag inden for den.' } },
     { ord: 'pili', x: 380, y: 50, maal: [409, 128],
       omr: `<g fill="none" stroke-width="20" stroke-linecap="round">${pili}</g>`,
-      fejl: { flagel: 'Flagellen er den lange tråd i enden, som bakterien svømmer med. Her er det de korte hår.' } },
+      fejl: { flagel: 'Flagellerne er de lange, snoede tråde, som bakterien svømmer med. Her er det de korte hår.' } },
     { ord: 'ribosom', x: 610, y: 50, maal: [598, 214],
       omr: `<circle cx="578" cy="248" r="34"/>`,
-      fejl: { plasmid: 'Plasmiderne er små ringe. De mørke prikker er noget andet.' } },
+      fejl: { plasmid: 'Plasmiderne er små ringe. De mange små korn er noget andet.' } },
     { ord: 'flagel', x: 870, y: 160, maal: [905, 268],
       omr: `<path d="${boelge(758, CY, 985, CY - 26, 18, 2.2, 60)}" fill="none" stroke-width="30" stroke-linecap="round"/>`,
-      fejl: { pili: 'Pili er de korte hår hele vejen rundt. Pladsen peger på den lange tråd i enden.' } },
+      fejl: { pili: 'Pili er de korte hår hele vejen rundt. Pladsen peger på en lang, snoet tråd.' } },
     { ord: 'kromosom', x: 380, y: 600, maal: [418, 356],
       omr: `<ellipse cx="450" cy="${CY}" rx="122" ry="70"/>`,
-      fejl: { plasmid: 'Plasmider er små ringe. Pladsen peger på den store, lilla ring, som indeholder de fleste gener.' } },
+      fejl: { plasmid: 'Plasmider er små ringe. Pladsen peger på det store DNA-molekyle midt i cellen, som har de fleste gener.' } },
     { ord: 'cellemembran', x: 610, y: 600, maal: [604, 406],
       omr: `<path d="${stav(244, 746, CY, 106)}" fill="none" stroke-width="14"/>`,
-      fejl: { cellevaeg: 'Cellevæggen er det tykke, brune lag. Pladsen peger på den tynde, lyserøde hinde inden for den.' } },
+      fejl: { cellevaeg: 'Cellevæggen er det faste lag uden på. Pladsen peger på den inderste hinde lige om cytoplasmaet.' } },
     { ord: 'cytoplasma', x: 860, y: 600, maal: [688, 300],
       omr: `<path d="${MEMBRAN}"/>`,
       fejl: { cellemembran: 'Membranen er hinden. Prikken sidder i væsken inde i cellen.' } },

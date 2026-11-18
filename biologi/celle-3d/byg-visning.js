@@ -1,6 +1,9 @@
-// Bevar Byg-motorens fagord og lag; tegn dyrecellen og plantecellen med de fælles 3D-modeller.
-// Delene har deres farver fra starten, også før ordet sidder (ikke grå som i 2D).
-const NAVN={dyr:'dyrecellen',plante:'plantecellen'};
+// Bevar Byg-motorens fagord og lag; tegn dyrecellen, plantecellen og bakterien med de fælles
+// 3D-modeller. Delene har deres farver fra starten, også før ordet sidder (ikke grå som i 2D).
+// På Celletyperne erstattes de tre små tegninger af billeder af de samme 3D-modeller.
+const NAVN={dyr:'dyrecellen',plante:'plantecellen',bakterie:'bakterien'};
+// Celletyperne: hvor hver celles billede står (figurkoordinater 1000×540, inden for kortene).
+const TYPER={bakterie:[44,148,264,272],dyr:[398,148,250,272],plante:[712,148,232,272]};
 export async function tilføj3D() {
  const svg=document.getElementById('figur');
  if(!kanWebGL())return;
@@ -37,8 +40,33 @@ export async function tilføj3D() {
  }
  function retAnkre(m,model){const a=model.ankre();for(const p of m.fig.pladser){if(a[p.ord])p.maal=a[p.ord];if(model.pladser[p.ord])[p.x,p.y]=model.pladser[p.ord];}}
 
+ // Celletyperne: de tre 3D-celler som billeder i kortene i stedet for de små 2D-tegninger.
+ // Alle tre modeller hentes; fejler én af dem, beholdes 2D-tegningerne.
+ const fotos={};
+ function visTyper(){
+  const ids=Object.keys(TYPER);
+  for(const id of ids)if(!celler[id])hent(id);   // hent() kalder opdater(), når modellen er klar
+  const fejl=ids.some(id=>celler[id].status==='fejl'),venter=!fejl&&ids.some(id=>celler[id].status==='henter');
+  svg.classList.toggle('celle-venter',venter);henter.hidden=!venter;
+  if(venter)henter.textContent='Henter cellerne i 3D …';
+  værktøjer.hidden=true;svg.classList.remove('celle-i-3d');signatur='';
+  const klar=!venter&&!fejl;svg.classList.toggle('typer-i-3d',klar);
+  const dele=svg.querySelector('.dele');
+  if(!klar||!dele||svg.querySelector('.celle-3d-foto'))return;
+  let efter=dele;
+  for(const id of ids){
+   fotos[id]??=celler[id].model.foto();
+   const [x,y,width,height]=TYPER[id],im=document.createElementNS(NS,'image');
+   for(const [k,v] of Object.entries({class:'celle-3d-foto','data-celle':id,x,y,width,height,href:fotos[id],preserveAspectRatio:'xMidYMid meet','pointer-events':'none'}))im.setAttribute(k,v);
+   efter.after(im);efter=im;
+  }
+  svg.dataset.celle3d='klar';
+ }
+
  function opdater(){
   const m=aktiv();if(!m)return;
+  if(m.fig.id==='typer'){visTyper();return;}
+  svg.classList.remove('typer-i-3d');
   const id=aktivId(),c=id&&celler[id];
   if(id&&!c){hent(id);return;}
   const venter=c?.status==='henter';

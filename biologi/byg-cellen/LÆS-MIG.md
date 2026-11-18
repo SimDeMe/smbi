@@ -2,8 +2,9 @@
 
 `biologi/byg-cellen.html`: eleven sætter fagord på dyrecellen, plantecellen og
 bakterien og inde i mitokondrien og kloroplasten. Figuren bygges lag for lag. Lagets dele står grå, de senere lag er
-skjult, og en del får farve, når ordet sidder rigtigt. På 3D-dyrecellen og
-3D-plantecellen har delene deres farver fra starten.
+skjult, og en del får farve, når ordet sidder rigtigt. På 3D-dyrecellen,
+3D-plantecellen og 3D-bakterien har delene deres farver fra starten. På Celletyperne
+står billeder af de tre 3D-modeller i kortene i stedet for de små tegninger.
 
 Idéen er Niels Kræmmers »Byg figuren« fra kemiformler.dk
 (`animationer/superanimationer/sc1.5_byg_figuren/` i
@@ -85,7 +86,7 @@ Forklaringen i `ordliste.js` skal derfor passe til alle de celler, ordet sidder 
   (`/byg-motor/lyd.js`, Web Audio uden lydfiler); knappen 🔊 Lyd slår den fra,
   og valget huskes under nøglen `byg-lyd`. En fundet del får sit ord igen. Teksterne står
   i `funktioner.js` og må ikke indeholde fagordet. Celletyperne og pilene på
-  bladet er ikke med. På 3D-dyrecellen og 3D-plantecellen slås delen op i et billede, hvor hver
+  bladet er ikke med. På 3D-cellerne slås delen op i et billede, hvor hver
   del er tegnet i sin egen farve (`vælg` i `../celle-3d/model.js`); det tegnes
   kun igen, når vinklen ændres, så opslaget kan følge musen. Ribosomer og
   vesikler tæller et par pixels uden for kanten, fordi de er så små.
@@ -112,9 +113,9 @@ Her ligger kun figurerne og ordlisten.
 | `side.js` | starter den fælles side med `figurer.js` |
 | `ordliste.js` | fagordene og forklaringerne |
 | `funktioner.js` | funktionsopgavens beskrivelser: `alle` og pr. figur (mitokondriens og kloroplastens membraner) |
-| `dyrecelle-tegning.js` | dyrecellens 2D-reservefigur med lag, når WebGL ikke kan starte (plantecellens står i `fig-plante.js`) |
-| `../celle-3d/model.js` | dyrecellen og plantecellen i Three.js: fagord, lys, kamera, rotation, projektion af fagordsankre og opslag af dele |
-| `../celle-3d/byg-visning.js` | kobling mellem den fælles Byg-motor og 3D-modellens synlige og farvede lag |
+| `dyrecelle-tegning.js` | dyrecellens 2D-reservefigur med lag, når WebGL ikke kan starte (plantecellens og bakteriens står i `fig-plante.js` og `fig-bakterie.js`) |
+| `../celle-3d/model.js` | dyrecellen, plantecellen og bakterien i Three.js: fagord, lys, kamera, rotation, projektion af fagordsankre, opslag af dele og billeder til Celletyperne |
+| `../celle-3d/byg-visning.js` | kobling mellem den fælles Byg-motor og 3D-modellens synlige og farvede lag; på Celletyperne de tre 3D-billeder |
 | `fig-dyr.js`, `fig-plante.js`, `fig-bakterie.js`, `fig-typer.js`, `fig-mitokondrie.js`, `fig-kloroplast.js` | figurerne, lagene og pladserne |
 | `/byg-motor/stil.css` | alt udseende, også den grå udgave af figuren (`<body class="geo">` giver blå accent) |
 | `/byg-motor/motor.js` | én figur: lag, bakke, træk og klik, Indsend svar, hint, det grønne kort |
@@ -158,6 +159,10 @@ Her ligger kun figurerne og ordlisten.
 
 - Cellerne er ikke i samme målestok. Bakterie 1–5 µm, dyrecelle 10–30 µm,
   plantecelle 10–100 µm.
+- Bakterien er gramnegativ (som *E. coli*). Fagordet cellevæg dækker peptidoglykanlaget,
+  den ydre membran og det periplasmatiske rum imellem (som i Campbell); cellemembran er
+  den indre membran. Fejlteksterne nævner ingen farver, fordi 3D og 2D-reserven har
+  forskellige farver.
 - Der er tegnet få organeller af hver slags.
 - ER er tegnet som buer og rør, ikke som ét net, der hænger sammen med
   kernemembranen.

@@ -74,6 +74,30 @@ export const CELLER={
   uigennemsigtig:['PC Cell Wall'],
  },
 };
+// Bakterien: gramnegativ stavbakterie (E. coli-agtig), bygget med scriptet blender/bakteriecelle.py.
+// Delene har `struktur` som egenskab fra Blender. Cellevæggen er peptidoglykanlaget, den ydre
+// membran og det periplasmatiske rum imellem; cellemembranen er den indre membran.
+CELLER.bakterie={
+ url:'./bakteriecelle.glb',
+ fagord:['cellevaeg','cellemembran','cytoplasma','kromosom','plasmid','ribosom','flagel','pili','kapsel'],
+ fagordFor(navne,ex){
+  return {Kapsel:'kapsel','Cellevæg':'cellevaeg',Cellemembran:'cellemembran',Cytoplasma:'cytoplasma',Kromosom:'kromosom',
+   Plasmid:'plasmid',Ribosom:'ribosom',Pili:'pili',Flagel:'flagel'}[ex.struktur]||null;
+ },
+ // three-koordinater: x langs cellen, y op, z mod beskueren (= -y i Blender)
+ sigte:{cellevaeg:[.6,.45,2.87],cellemembran:[-1.2,.85,2.66],cytoplasma:[-3.1,.95,-1.5],kromosom:[.4,.5,.2],
+  plasmid:[-2.55,.15,1.55],ribosom:[3.1,.6,-1.2],flagel:[-11.5,-1.2,3.5],pili:[8.8,1.6,0],kapsel:[6.2,.9,3.3]},
+ fast:['cytoplasma'],
+ pladser:{cytoplasma:[100,150],plasmid:[100,330],flagel:[100,520],ribosom:[640,40],pili:[900,200],kapsel:[900,480],
+  cellemembran:[330,600],kromosom:[560,600],cellevaeg:[790,600]},
+ zoom:[0,-.2,2.64],
+ kamera:{hh:7.4,pos:[-1.2,23.5,17.5],mål:[-1.8,-.6,0]},
+ foto:{hh:7.2,pos:[-1.2,23.5,17.5],mål:[-1.4,-.6,0]},   // Celletyperne: hele cellen, flagellerne skåret af til venstre
+ øverst:['kapsel'],
+ cytoplasmaFørst:true,
+ // små dele tæller, når musen er lige ved siden af; de tynde lag i hylsteret ligeså
+ små:['ribosom','plasmid','pili','flagel'],nær:['cellemembran','cellevaeg'],baggrund:['cytoplasma','kapsel'],
+};
 CELLER.plante.pladser={cytoplasma:[100,52],ribosom:[100,160],glatER:[100,268],mitokondrie:[100,376],cellevaeg:[100,484],
  cellekerne:[300,26],ruER:[520,26],
  kernemembran:[300,612],golgi:[500,612],vesikel:[700,612],
@@ -86,6 +110,18 @@ export let zoomAnker=CELLER.dyr.zoom;
 
 function kameraTil(b=1000,h=640,k=CELLER.dyr.kamera){const aspect=b/h,hh=k.hh;const c=new T.OrthographicCamera(-hh*aspect,hh*aspect,hh,-hh,.1,120);c.position.set(...k.pos);c.lookAt(...k.mål);c.updateMatrixWorld();return c;}
 export function projektér(anker,b=1000,h=640,vinkel=0,k=CELLER.dyr.kamera){const p=V(...anker);p.applyAxisAngle(V(0,1,0),vinkel);p.project(kameraTil(b,h,k));return[(p.x+1)*b/2,(1-p.y)*h/2];}
+
+// Beskær et lærred til det, der ikke er gennemsigtigt (med lidt luft om).
+function beskær(lærred,luft=6){
+ const c=document.createElement('canvas');c.width=lærred.width;c.height=lærred.height;
+ const ctx=c.getContext('2d');ctx.drawImage(lærred,0,0);
+ const d=ctx.getImageData(0,0,c.width,c.height).data;let x0=c.width,y0=c.height,x1=-1,y1=-1;
+ for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(d[(y*c.width+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+ if(x1<0)return c.toDataURL();
+ x0=Math.max(0,x0-luft);y0=Math.max(0,y0-luft);x1=Math.min(c.width-1,x1+luft);y1=Math.min(c.height-1,y1+luft);
+ const ud=document.createElement('canvas');ud.width=x1-x0+1;ud.height=y1-y0+1;
+ ud.getContext('2d').drawImage(c,x0,y0,ud.width,ud.height,0,0,ud.width,ud.height);return ud.toDataURL();
+}
 
 function nærmestePunkt(meshes,mål){
  const m=V(...mål),p=V(),bedst=V();let d=Infinity;
@@ -110,11 +146,12 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
  const gltf=await loader.loadAsync(new URL(C.url,import.meta.url).href);
  rod.add(gltf.scene);
  const grupper=Object.fromEntries(FAG.map(k=>[k,[]]));
+ const øvrige=[];   // meshes uden fagord: skjules i opslagsbilledet, så de ikke giver et forkert ord
  gltf.scene.traverse(o=>{if(!o.isMesh)return;
   const ex=o.userData.struktur?o.userData:(o.parent?.userData||{});
   const navne=[];for(let p=o;p;p=p.parent)if(p.name)navne.push(p.name);
-  const ord=C.fagordFor(navne,ex);if(!ord)return;
-  const m=o.material.clone();if(C.farve[m.name])m.color.setRGB(...C.farve[m.name]);
+  const ord=C.fagordFor(navne,ex);if(!ord){øvrige.push(o);return;}
+  const m=o.material.clone();if(C.farve?.[m.name])m.color.setRGB(...C.farve[m.name]);
   if(C.uigennemsigtig?.includes(m.name)){m.transparent=false;m.opacity=1;}
   if(C.dækning?.[m.name])m.opacity=C.dækning[m.name];
   if(ORDFARVE[ord])m.color.set(ORDFARVE[ord]);
@@ -153,9 +190,9 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
  // Opslaget bruger et billede, hvor hver del er tegnet i sin egen farve (nummeret på
  // fagordet). Det tegnes kun igen, når vinklen eller de synlige dele ændrer sig, så
  // opslaget er hurtigt nok til at følge musen.
- const SMÅ=new Set(['ribosom','vesikel']);  // små dele tæller, når musen er lige ved siden af
- const NÆR=new Set([...SMÅ,'cellemembran']); // … og den tynde cellemembran ved kanten
- const BAGGRUND=new Set(['cytoplasma','cellevaeg','vakuole']); // store flader: en lille del lige ved siden af vinder
+ const SMÅ=new Set(C.små||['ribosom','vesikel']);  // små dele tæller, når musen er lige ved siden af
+ const NÆR=new Set([...SMÅ,...(C.nær||['cellemembran'])]); // … og den tynde cellemembran ved kanten
+ const BAGGRUND=new Set(C.baggrund||['cytoplasma','cellevaeg','vakuole']); // store flader: en lille del lige ved siden af vinder
  let pickMål=null,pickBuf=null,pickNøgle='';
  const pickMat=new Map();
  function pickFarve(o){
@@ -173,9 +210,10 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   if(!pickMål){pickMål=new T.WebGLRenderTarget(bredde,højde);pickBuf=new Uint8Array(bredde*højde*4);}
   const gemt=[],miljø=scene.environment;scene.environment=null;
   for(const meshes of Object.values(grupper))for(const o of meshes){gemt.push([o,o.material]);o.material=pickFarve(o);}
+  const synligeØvrige=øvrige.filter(o=>o.visible);for(const o of synligeØvrige)o.visible=false;
   renderer.setRenderTarget(pickMål);renderer.clear();renderer.render(scene,kamera);
   renderer.readRenderTargetPixels(pickMål,0,0,bredde,højde,pickBuf);renderer.setRenderTarget(null);
-  for(const [o,m] of gemt)o.material=m;scene.environment=miljø;
+  for(const [o,m] of gemt)o.material=m;for(const o of synligeØvrige)o.visible=true;scene.environment=miljø;
  }
  function ordVed(x,y){
   x=Math.round(x);y=Math.round(y);if(x<0||y<0||x>=bredde||y>=højde)return null;
@@ -198,6 +236,15 @@ export async function skabCelle(id,{bredde=1000,højde=640}={}) {
   for(let r=1;r<=4;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){const o=ordVed(x+dx,y+dy);if(NÆR.has(o))return o;}
   return midt;
  }
+ // Et billede af hele cellen med alle dele i farver (fx til Celletyperne), beskåret til cellen.
+ // Bruger cellens `foto`-kamera, hvis den har et, og tegner bagefter den aktuelle tilstand igen.
+ function foto({b=720,h=540}={}){
+  renderer.setSize(b,h);rod.rotation.y=0;
+  for(const meshes of Object.values(grupper))for(const o of meshes){o.visible=true;o.material.color.copy(o.material.userData.farve);o.material.emissive.set(0x000000);}
+  renderer.render(scene,kameraTil(b,h,C.foto||C.kamera));
+  const url=beskær(renderer.domElement);
+  renderer.setSize(bredde,højde);tegn();return url;
+ }
  tegn();
- return {id,fagord:FAG,pladser:C.pladser,alleSynlige:!!C.alleSynlige,lærred:renderer.domElement,tegn,projektion,vælg,maske,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
+ return {id,fagord:FAG,pladser:C.pladser,alleSynlige:!!C.alleSynlige,lærred:renderer.domElement,tegn,foto,projektion,vælg,maske,ankre:()=>fagordsankre(vinkel),dispose(){renderer.dispose();scene.traverse(o=>{if(o.isMesh)o.geometry.dispose();});}};
 }

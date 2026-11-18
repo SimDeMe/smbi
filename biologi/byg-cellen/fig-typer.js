@@ -1,4 +1,6 @@
 // Celletyperne: de tre celler side om side — hvilke er eukaryote, hvilken er prokaryot?
+// Med WebGL skjules tegningerne (.typer-tegning) og erstattes af billeder af 3D-modellerne
+// (se ../celle-3d/byg-visning.js); tegningerne er reserven.
 import { klat, mitokondrie, kloroplast, ribosomer } from '../../byg-motor/tegn.js';
 
 const kortet = (x, y, w, h, navn) => `
@@ -37,8 +39,8 @@ export default {
   ],
   dele: [
     { ord: 'eukaryot', svg: `<rect x="366" y="96" width="608" height="404" rx="26" fill="#FDEAF1" stroke="#E8336D" stroke-width="3" stroke-dasharray="12 8"/>` },
-    { ord: 'prokaryot', svg: kortet(36, 120, 280, 360, 'Bakterie') + bakterie },
-    { ord: 'eukaryot', svg: kortet(390, 120, 266, 360, 'Dyrecelle') + dyrecelle + kortet(704, 120, 248, 360, 'Plantecelle') + plantecelle },
+    { ord: 'prokaryot', svg: kortet(36, 120, 280, 360, 'Bakterie') + `<g class="typer-tegning">${bakterie}</g>` },
+    { ord: 'eukaryot', svg: kortet(390, 120, 266, 360, 'Dyrecelle') + `<g class="typer-tegning">${dyrecelle}</g>` + kortet(704, 120, 248, 360, 'Plantecelle') + `<g class="typer-tegning">${plantecelle}</g>` },
   ],
   pladser: [
     { ord: 'prokaryot', x: 176, y: 120, maal: null, titel: true,

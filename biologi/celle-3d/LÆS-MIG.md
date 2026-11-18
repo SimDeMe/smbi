@@ -1,7 +1,8 @@
-# Fælles 3D-celler: dyrecellen og plantecellen
+# Fælles 3D-celler: dyrecellen, plantecellen og bakterien
 
 Dyrecellen bruges af `biologi/byg-cellen.html` og `biologi/celletransport/`,
-plantecellen af `biologi/byg-cellen.html`.
+plantecellen og bakterien af `biologi/byg-cellen.html`. På Celletyperne i Byg cellen står
+et billede af hver af de tre modeller (`foto()` i `model.js`).
 Modellerne er bygget i Blender og ligger i `dyrecelle.glb` og `plantecelle.glb`
 (meshopt-komprimeret glTF).
 `dyrecelle.glb` bruges også af den selvstændige side `biologi/byg-cellen-3d/`, så der
@@ -39,6 +40,45 @@ membranen i bunden og forveksler den med cytoplasmaet. Kameraet ser mere ovenfra
 på dyrecellen. Hele plantecellen ses fra første lag (`alleSynlige`); kun fagordene
 kommer lag for lag. I funktionsopgaven tæller et klik lige ved cellemembranen som
 membranen, ligesom ved ribosomer og vesikler.
+
+## Bakterien
+
+`bakteriecelle.glb` er en gramnegativ stavbakterie som *E. coli*. Den er bygget fra bunden
+af scriptet `blender/bakteriecelle.py`, som gemmer `Bakteriecelle.blend` og kan køres igen:
+
+```bash
+B=/Applications/Blender.app/Contents/MacOS/Blender; D=~/Pictures/Blender/bakteriecelle
+$B -b --factory-startup --python biologi/celle-3d/blender/bakteriecelle.py -- $D
+$B -b $D/Bakteriecelle.blend --python biologi/celle-3d/blender/kontrol.py -- $D   # preview + geometritjek
+$B -b $D/Bakteriecelle.blend --python biologi/celle-3d/blender/eksport.py -- $D   # GLB + genimport
+```
+
+og komprimeres med samme `gltf-transform optimize`-kommando som plantecellen. Lys, verden
+og ribosomernes og DNA'ets materialer hentes fra `Plantecelle.blend`, så serien ligner sig selv.
+Objekterne (samlingen `Bacterial_Cell`) har `struktur` og `del` som egenskaber:
+
+| Objekt | struktur → fagord |
+|:--|:--|
+| `Capsule` | Kapsel → kapsel |
+| `Outer_Membrane`, `Periplasm`, `Peptidoglycan` | Cellevæg → cellevaeg |
+| `Inner_Membrane` | Cellemembran → cellemembran |
+| `Cytoplasm` | Cytoplasma → cytoplasma |
+| `Nucleoid_DNA` | Kromosom → kromosom (ét ringformet DNA, uden membran) |
+| `Plasmid_1`–`4` | Plasmid → plasmid |
+| `Ribosomes_70S` | Ribosom → ribosom (1100 stk. i ét mesh, 50S + 30S) |
+| `Pili`, `Pili_F_Pilus` | Pili → pili (96 fimbrier og én kønspilus) |
+| `Flagellum_1`–`4_Basal_Body/Hook/Filament` | Flagel → flagel |
+
+Hylsteret er koncentriske, lukkede skaller med mellemrum (ingen flader oven i hinanden)
+og skåret op med booleske snit i et vindue på toppen. Hvert lag udad er skåret lavere og
+længere, så hvert lag får sin egen synlige stribe at sætte fagord og klikke på. Snitfladerne
+på de to membraner har et dobbeltlag som tekstur (`BC_Bilayer_*.png`, pakket i GLB'en).
+Hylsteret er ca. 5 gange for tykt; flagelfilamentet er en venstreskruet helix, og
+basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget. DNA'et er
+slappet af, så strengen ikke krydser sig selv, og ribosomerne holder sig mest uden for
+nukleoidet. `kontrol.py` melder åbne kanter, løse punkter og indadvendte normaler.
+Kapslen tegnes sidst (`øverst`), og cytoplasmaet først (`cytoplasmaFørst`) som i plantecellen.
+Bakterien vises lag for lag: først hylsteret, cytoplasmaet og kromosomet, så resten.
 
 Mens en model hentes, er 2D-tegningen skjult, og der står «Henter dyrecellen i 3D …».
 

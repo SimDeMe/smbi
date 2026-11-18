@@ -34,6 +34,22 @@ assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),13);
 assert.deepEqual(await page.evaluate(()=>{const m=window.bygFiguren.aktiv(),f=new Set();for(let x=0;x<1000;x+=6)for(let y=0;y<640;y+=6){const o=m.fig.vaelgVed(x,y);if(o)f.add(o);}return [...f].sort();}),
  ['cellekerne','cellemembran','cellevaeg','cytoplasma','glatER','golgi','kernemembran','kloroplast','mitokondrie','ribosom','ruER','vakuole','vesikel'],'Alle plantecellens dele skal kunne vælges i 3D');
 await page.screenshot({path:'/tmp/celletransport-qa/byg-3d-plante.png'});
+// Bakterien: egen 3D-model med 9 fagord, lag for lag; alle dele kan vælges i funktionsopgaven.
+await page.locator('#fane-bakterie').click();await page.waitForFunction(()=>window.bygFiguren.aktiv().fig.id==='bakterie'&&document.querySelector('#figur .celle-3d-billede'));
+assert.equal(await page.locator('.celle-vinkler').getAttribute('aria-label'),'Drej bakterien i 3D');
+const lag1=await page.locator('.celle-3d-billede').getAttribute('href');
+await page.evaluate(()=>{const m=window.bygFiguren.aktiv();for(const l of m.fig.lag)for(const o of l.ord)m.loest.add(o);m.lag=m.fig.lag.length-1;m.tegn();});
+assert.notEqual(await page.locator('.celle-3d-billede').getAttribute('href'),lag1,'Andet lag skal vise flere dele');
+assert.equal(await page.locator('#figur .del.farvet[data-ord]').count(),9);
+assert.deepEqual(await page.evaluate(()=>{const m=window.bygFiguren.aktiv(),f=new Set();for(let x=0;x<1000;x+=5)for(let y=0;y<640;y+=5){const o=m.fig.vaelgVed(x,y);if(o)f.add(o);}return [...f].sort();}),
+ ['cellemembran','cellevaeg','cytoplasma','flagel','kapsel','kromosom','pili','plasmid','ribosom'],'Alle bakteriens dele skal kunne vælges i 3D');
+await page.screenshot({path:'/tmp/celletransport-qa/byg-3d-bakterie.png'});
+// Celletyperne: billeder af de tre 3D-modeller i kortene i stedet for de små tegninger.
+await page.locator('#fane-typer').click();await page.locator('#figur .celle-3d-foto').nth(2).waitFor();
+assert.deepEqual(await page.locator('#figur .celle-3d-foto').evaluateAll(a=>a.map(e=>e.dataset.celle)),['bakterie','dyr','plante']);
+assert.equal(await page.locator('#figur .typer-tegning').first().evaluate(e=>getComputedStyle(e).visibility),'hidden');
+assert.equal(await page.locator('.celle-vinkler').isVisible(),false);
+await page.screenshot({path:'/tmp/celletransport-qa/byg-3d-typer.png'});
 await page.locator('#fane-dyr').click();assert.equal(await page.locator('.celle-3d-billede').count(),1);
 assert.deepEqual(fejl,[]);await browser.close();
 // Uden WebGL bevares SVG, fagord og transportknapper.
