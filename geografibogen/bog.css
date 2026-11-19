@@ -96,7 +96,7 @@ svg .mono{font-family:var(--mono)}
 .sim .ikon{grid-row:span 2;font-size:30px;line-height:1}
 .sim b{font:750 18px var(--display)}
 .sim span{font-size:16px;line-height:1.4}
-.sim b::after{content:" →";color:var(--blaa)}
+.sim b::after{content:" ↗";color:var(--blaa)} /* åbner i ny fane */
 
 /* Det skal du huske */
 .huske{border:2px solid var(--blaek);background:var(--papir-2);padding:16px 22px;margin-top:44px}

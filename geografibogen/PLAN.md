@@ -39,6 +39,10 @@ bygges op kapitel for kapitel, og vi skriver den sammen.
 
 * Vi linker til eksisterende simuleringer på smbi.dk, hvor de passer, og
   fortæller kort, hvad eleven skal prøve i dem.
+* Links til simuleringer **åbner i en ny fane**, så eleven ikke mister
+  sin plads i bogen: `<a class="sim" href="…" target="_blank" rel="noopener">`
+  med `<span class="sr"> (åbner i ny fane)</span>` til skærmlæsere. Pilen ↗
+  viser det visuelt.
 * Mangler der en simulering, designer vi en ny. Små interaktive figurer kan
   ligge direkte i kapitlet; større modeller bygges som selvstændige
   simuleringer under `geografi/` med deres egen stabile adresse, så de også
