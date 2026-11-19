@@ -89,6 +89,7 @@ svg .mono{font-family:var(--mono)}
 .tabel th,.tabel td{padding:6px 16px;text-align:left;border-bottom:1px solid var(--linje)}
 .tabel th{font:700 15px var(--display);background:var(--papir-2);border-bottom:2px solid var(--blaek)}
 .tabel td:last-child{font-family:var(--mono);font-size:15px}
+.tabel.tekst td:last-child{font:inherit}
 
 /* Link til simulering */
 .sim{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center;border:2px solid var(--blaek);background:var(--papir-2);padding:14px 18px;margin:28px auto;text-decoration:none;color:var(--blaek);box-shadow:4px 4px 0 var(--blaek)}
