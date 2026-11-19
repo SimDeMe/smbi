@@ -1,0 +1,136 @@
+/* Geografibogen — fælles udseende for alle kapitler.
+   Sitets identitet: papirfarve, blækrammer, regnbuestribe, Archivo,
+   Source Serif 4 og IBM Plex Mono, blå accent for naturgeografi. */
+:root{
+  --papir:#fff9ee; --papir-2:#fff3dc; --hvid:#fff;
+  --blaek:#172b2b; --daempet:#4f6667; --linje:#172b2b2e;
+  --blaa:#0e86c8; --blaa-lys:#e3f0f5; --roed:#d2463a; --roed-lys:#fbe3dc;
+  --groen:#3f8f22; --groen-lys:#e5f3dc; --gul:#ffb300;
+  --display:Archivo,system-ui,sans-serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --tekst:680px; --bred:900px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--papir);color:var(--blaek);font:19px/1.6 var(--serif);-webkit-font-smoothing:antialiased}
+a{color:var(--blaa);text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--blaa);outline-offset:3px;border-radius:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Sidehoved */
+.regnbue{height:6px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
+header nav{display:flex;align-items:center;gap:20px;padding:8px 24px;border-bottom:2px solid var(--blaek);font:500 12px var(--mono)}
+header nav a{color:var(--blaek)}
+header nav .hoejre{margin-left:auto}
+.brand{font:800 25px var(--display);text-decoration:none}.brand span{font:14px var(--mono)}
+
+/* Spalte */
+main{padding:28px 20px 56px}
+main>*{max-width:var(--tekst);margin-left:auto;margin-right:auto}
+main>.bred{max-width:var(--bred)}
+
+.overlinje{font:500 13px var(--mono);color:var(--daempet);margin:0 auto 6px}
+h1{font:800 clamp(34px,6vw,52px)/1.05 var(--display);letter-spacing:-.035em;margin-top:0;margin-bottom:14px}
+.ingress{font-size:22px;line-height:1.5;margin-bottom:28px}
+h2{font:750 clamp(24px,3.4vw,30px)/1.15 var(--display);letter-spacing:-.02em;margin-top:52px;margin-bottom:10px}
+h2 .nr{display:inline-block;min-width:1.6em;color:var(--blaa)}
+h3{font:700 20px/1.25 var(--display);margin-top:28px;margin-bottom:6px}
+p{margin-top:0;margin-bottom:16px}
+strong{font-weight:650}
+.fagord{font-weight:650;background:linear-gradient(transparent 62%,#ffb30055 62%)}
+
+/* Indhold i kapitlet */
+.indhold{border:2px solid var(--blaek);background:var(--hvid);padding:14px 20px;box-shadow:4px 4px 0 var(--blaek);margin-bottom:12px}
+.indhold h2{font-size:15px;font-family:var(--mono);font-weight:500;margin:0 0 6px;letter-spacing:0;color:var(--daempet)}
+.indhold ol{margin:0;padding-left:22px;font:500 16px/1.7 var(--display);columns:2;column-gap:28px}
+.indhold a{color:var(--blaek)}
+
+/* Figurer */
+figure{margin:24px auto 28px}
+figure svg,figure img{display:block;width:100%;height:auto;border:2px solid var(--blaek);background:var(--hvid)}
+figcaption{font-size:15.5px;line-height:1.45;color:var(--daempet);margin-top:8px}
+figcaption b{font-family:var(--display);color:var(--blaek)}
+svg text{font-family:var(--display)}
+svg .mono{font-family:var(--mono)}
+
+/* Faktaboks / huskeboks */
+.boks{border-left:5px solid var(--blaa);background:var(--blaa-lys);padding:14px 18px;margin-bottom:20px}
+.boks p:last-child,.boks ul:last-child{margin-bottom:0}
+.boks .titel{font:700 15px var(--display);margin-bottom:4px;display:block}
+
+/* Opgaver */
+.opgave{border:2px solid var(--blaek);background:var(--hvid);box-shadow:4px 4px 0 var(--blaek);padding:16px 20px 18px;margin:28px auto 32px}
+.opgave .maerke{display:inline-block;font:600 12px var(--mono);background:var(--blaek);color:var(--papir);padding:2px 8px;border-radius:3px;margin-bottom:8px}
+.opgave .spg{font:600 19px/1.35 var(--display);margin-bottom:12px}
+.valg{display:flex;flex-wrap:wrap;gap:8px}
+.valg button,.knap{font:600 16px var(--display);color:var(--blaek);background:var(--papir);border:1.5px solid var(--blaek);border-radius:6px;padding:9px 16px;min-height:44px;cursor:pointer;box-shadow:2px 2px 0 var(--blaek);text-align:left}
+.valg button:hover,.knap:hover{background:var(--blaa-lys)}
+.valg button:active,.knap:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--blaek)}
+.valg button[data-status=rigtig]{background:var(--groen-lys);border-color:var(--groen)}
+.valg button[data-status=forkert]{background:var(--roed-lys);border-color:var(--roed)}
+.valg button[data-status]::before{font-weight:800;margin-right:8px}
+.valg button[data-status=rigtig]::before{content:"✓";color:var(--groen)}
+.valg button[data-status=forkert]::before{content:"✗";color:var(--roed)}
+.svar{margin-top:12px;font-size:17px;line-height:1.5}
+.svar:empty{display:none}
+.svar.rigtig{border-left:4px solid var(--groen);padding-left:12px}
+.svar.forkert{border-left:4px solid var(--roed);padding-left:12px}
+.opgave details{margin-top:6px}
+.opgave summary{font:600 16px var(--display);cursor:pointer;color:var(--blaa)}
+.opgave details p{margin:8px 0 0}
+
+.opgave ol{margin:0 0 6px;padding-left:22px}
+.opgave li{margin-bottom:4px}
+
+/* Tabel */
+.tabel{border-collapse:collapse;margin:8px auto 24px;font-size:17px;background:var(--hvid);border:2px solid var(--blaek);min-width:min(100%,360px)}
+.tabel th,.tabel td{padding:6px 16px;text-align:left;border-bottom:1px solid var(--linje)}
+.tabel th{font:700 15px var(--display);background:var(--papir-2);border-bottom:2px solid var(--blaek)}
+.tabel td:last-child{font-family:var(--mono);font-size:15px}
+
+/* Link til simulering */
+.sim{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center;border:2px solid var(--blaek);background:var(--papir-2);padding:14px 18px;margin:28px auto;text-decoration:none;color:var(--blaek);box-shadow:4px 4px 0 var(--blaek)}
+.sim:hover{background:#ffeccc}
+.sim .ikon{grid-row:span 2;font-size:30px;line-height:1}
+.sim b{font:750 18px var(--display)}
+.sim span{font-size:16px;line-height:1.4}
+.sim b::after{content:" →";color:var(--blaa)}
+
+/* Det skal du huske */
+.huske{border:2px solid var(--blaek);background:var(--papir-2);padding:16px 22px;margin-top:44px}
+.huske h2{margin-top:0;font-size:24px}
+.huske ul{margin:0;padding-left:22px}
+.huske li{margin-bottom:6px}
+
+/* Kilder og navigation nederst */
+.kilder{font-size:15px;color:var(--daempet);margin-top:40px;border-top:1.5px solid var(--linje);padding-top:12px}
+.kilder h2{font-size:16px;margin:0 0 6px}
+.kilder p{margin-bottom:8px}
+.bladre{display:flex;justify-content:space-between;gap:12px;margin-top:28px;font:600 16px var(--display)}
+.bladre a{color:var(--blaek)}
+
+/* Interaktiv figur */
+.interaktiv{border:2px solid var(--blaek);background:var(--hvid);box-shadow:4px 4px 0 var(--blaek);margin:24px auto 28px}
+.interaktiv svg{display:block;width:100%;height:auto;border:0;border-bottom:2px solid var(--blaek)}
+.styring{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;padding:14px 18px 16px}
+.styring label{font:600 15px var(--display);display:flex;justify-content:space-between;gap:8px}
+.styring output{font-family:var(--mono);font-weight:500}
+.styring input[type=range]{width:100%;accent-color:var(--blaa);height:28px;margin:4px 0 0}
+.status{grid-column:1/-1;margin:0;font-size:17px;min-height:1.6em}
+
+@media (max-width:600px){
+  body{font-size:18px}
+  header nav{padding:7px 14px;gap:12px}
+  header nav .fag{display:none}
+  main{padding:18px 16px 40px}
+  .ingress{font-size:19.5px}
+  .indhold ol{columns:1}
+  .opgave,.huske{padding-left:14px;padding-right:14px}
+  .styring{grid-template-columns:1fr}
+}
+@media print{
+  header,.bladre,.sim{display:none}
+  .opgave,.indhold,.interaktiv{box-shadow:none}
+}
