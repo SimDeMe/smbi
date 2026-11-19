@@ -33,15 +33,21 @@ export function afslutPost(data, slutMs, auto = null) {
 export async function udfoerTimerHandling(uid, { poster, kontrol, ny = null, slutMs = Date.now(), auto = null }) {
   if (!navigator.onLine) throw new Error('Offline: Timeren er uændret. Opret glemt tid, eller prøv igen online.');
   const col = collection(db, `users/${uid}/entries`);
-  const server = await getDocsFromServer(query(col, where('endTime', '==', null)));
-  if (!sammePost(server.docs.map(d => d.id).sort(), poster.map(p => p.id).sort())) konflikt();
+  // Serveropslaget, pauseopslaget og transaktionens læsninger sendes samtidig.
+  // Efter hinanden blev det fire rundture, før et stop var gemt — på mobil
+  // kunne det tage flere sekunder.
+  const serverOpslag = getDocsFromServer(query(col, where('endTime', '==', null)));
+  const pauseOpslag = ny && !poster.length ? findKortMellemrum(uid, ny.startTime.toDate()) : Promise.resolve(null);
+  for (const p of [serverOpslag, pauseOpslag]) p.catch(() => {});
   const nyRef = ny ? doc(col) : null;
-  const pause = ny && !poster.length ? await findKortMellemrum(uid, ny.startTime.toDate()) : null;
-  const pauseRef = pause ? doc(col) : null;
   const kontrolRef = doc(db, timerKontrolSti(uid));
   const token = doc(col).id;
+  const refs = poster.map(p => doc(db, `users/${uid}/entries/${p.id}`));
   return runTransaction(db, async tx => {
-    const k = await tx.get(kontrolRef);
+    const [server, pause, k, ...snaps] = await Promise.all([
+      serverOpslag, pauseOpslag, tx.get(kontrolRef), ...refs.map(ref => tx.get(ref))
+    ]);
+    if (!sammePost(server.docs.map(d => d.id).sort(), poster.map(p => p.id).sort())) konflikt();
     if ((k.data()?.token ?? null) !== kontrol) konflikt();
     if (k.data()?.activeId && !poster.some(p => p.id === k.data().activeId)) {
       // Historikken/backup kan have lukket eller slettet den tidligere timer.
@@ -49,12 +55,12 @@ export async function udfoerTimerHandling(uid, { poster, kontrol, ny = null, slu
       if (gammel.exists() && !gammel.data().endTime) konflikt();
     }
     const foer = [];
-    for (const p of poster) {
-      const ref = doc(db, `users/${uid}/entries/${p.id}`);
-      const snap = await tx.get(ref);
+    poster.forEach((p, i) => {
+      const snap = snaps[i];
       if (!snap.exists() || !sammePost(snap.data(), postData(p))) konflikt();
-      foer.push({ ref, data: snap.data() });
-    }
+      foer.push({ ref: refs[i], data: snap.data() });
+    });
+    const pauseRef = pause ? doc(col) : null;
     const efter = foer.map(p => ({ ref: p.ref, data: afslutPost(p.data, slutMs, auto) }));
     if (nyRef) efter.push({ ref: nyRef, data: ny });
     if (pauseRef) efter.push({ ref: pauseRef, data: pause });

@@ -602,19 +602,30 @@ export async function startTimer(activityId, workType) {
   } catch (err) { timerFejl(err, 'Kunne ikke starte timer'); }
 }
 
+// Stopknapperne svarer med det samme, mens serveren bekræfter stoppet.
+function visStopper(aktiv) {
+  for (const id of ['btn-stop-timer', 'banner-stop']) {
+    const knap = document.getElementById(id);
+    if (!knap) continue;
+    knap.disabled = aktiv;
+    knap.setAttribute('aria-busy', String(aktiv));
+    knap.textContent = aktiv ? 'Stopper…' : '■ Stop';
+  }
+}
 export async function stopActiveTimer() {
   if (timerOptaget) return;
   try {
     klarTilHandling();
     if (!activeEntry) return;
     timerOptaget = true;
+    visStopper(true);
     const resultat = await udfoerTimerHandling(userId, { poster: [...aabnePoster], kontrol: kontrolToken });
     huskTimerHandling(resultat);
     if (resultat.uid !== userId) return;
     const gemt = resultat.efter[0].data;
     showToast(gemt ? `Stoppet · ${fmtMins(gemt.durationMinutes)}` : 'Under ét minut · ikke gemt');
   } catch (err) { timerFejl(err, 'Kunne ikke stoppe timer'); }
-  finally { timerOptaget = false; }
+  finally { timerOptaget = false; visStopper(false); }
 }
 
 // Alle åbne poster vises, også hvis en gammel klient har synkroniseret en

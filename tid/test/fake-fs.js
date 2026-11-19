@@ -172,7 +172,8 @@ export async function runTransaction(db, callback) {
     if (window.__fsRemote) receive(await window.__fsRemote({ type: 'read' }));
     const reads = new Map(), ops = [];
     const result = await callback({
-      get: async ref => { const snap = docSnap(ref); reads.set(ref.path, snap.data() ?? null); return snap; },
+      // txReadDelay: hver læsning i transaktionen er en rundtur til serveren
+      get: async ref => { if (cfg.txReadDelay) await new Promise(r => setTimeout(r, cfg.txReadDelay)); const snap = docSnap(ref); reads.set(ref.path, snap.data() ?? null); return snap; },
       set: (ref, data) => ops.push([ref.path, resolve(data)]),
       update: (ref, data) => ops.push([ref.path, { ...store.get(ref.path), ...resolve(data) }]),
       delete: ref => ops.push([ref.path, null])
