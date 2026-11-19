@@ -138,11 +138,11 @@ M['pg'] = materiale('BC Peptidoglycan', (0.95, 0.70, 0.22), ru=0.55, coat=0.1)
 M['pg_snit'] = materiale('BC Peptidoglycan Cut', (0.99, 0.82, 0.45), ru=0.65)
 M['peri'] = materiale('BC Periplasm', (0.97, 0.93, 0.80), ru=0.2, alfa=0.38)
 M['peri_snit'] = materiale('BC Periplasm Cut', (0.98, 0.94, 0.82), ru=0.3, alfa=0.55)
-M['om'] = materiale('BC Outer Membrane', (0.90, 0.47, 0.45), ru=0.35, coat=0.3)
+M['om'] = materiale('BC Outer Membrane', (0.10, 0.46, 0.17), ru=0.35, coat=0.3)
 M['om_snit'] = materiale('BC Outer Membrane Cut', (1, 1, 1), ru=0.45,
-                         billede=dobbeltlag('BC_Bilayer_Outer', (0.74, 0.26, 0.28), (0.98, 0.90, 0.88)))
-M['kapsel'] = materiale('BC Capsule', (0.98, 0.90, 0.60), ru=0.15, coat=0.6, alfa=0.26)
-M['kapsel_snit'] = materiale('BC Capsule Cut', (0.98, 0.88, 0.55), ru=0.3, alfa=0.45)
+                         billede=dobbeltlag('BC_Bilayer_Outer', (0.08, 0.38, 0.14), (0.90, 0.97, 0.90)))
+M['kapsel'] = materiale('BC Capsule', (0.86, 0.95, 0.84), ru=0.15, coat=0.6, alfa=0.18)
+M['kapsel_snit'] = materiale('BC Capsule Cut', (0.88, 0.94, 0.84), ru=0.3, alfa=0.45)
 M['cyto'] = materiale('BC Cytoplasm', (0.84, 0.95, 0.93), ru=0.05, coat=1.0, alfa=0.32)
 M['cyto_snit'] = materiale('BC Cytoplasm Cut', (0.84, 0.95, 0.93), ru=0.05, coat=1.0, alfa=0.32)
 M['plasmid'] = materiale('BC Plasmid', (0.50, 0.26, 0.86), ru=0.35, coat=0.2)
@@ -322,12 +322,15 @@ def gensample(P, n, cyklisk=False):
 
 
 # ---------------------------------------------------------------- nukleoidet: ét ringformet DNA
-# Nukleoidet afgrænses af tre overlappende lapper (uregelmæssigt, uden membran),
+# Cellens indre er ordnet i tydelige områder, så delene er lette at se og klikke på:
+# nukleoidet samlet midt i cellen, ribosomerne mod polerne (hvor de også er tættest i
+# E. coli) og plasmiderne enkeltvis i det frie cytoplasma langs siderne.
+# Nukleoidet afgrænses af to overlappende lapper (uregelmæssigt, uden membran),
 # og DNA'et slapper af med fjedre, bøjningsstivhed og frastødning, så strengen ikke krydser sig selv.
-LAPPER = [((-2.2, 0.15, -0.30), (1.85, 1.50, 1.10)),
-          ((0.2, -0.10, -0.20), (2.00, 1.62, 1.15)),
-          ((2.55, 0.20, -0.35), (1.60, 1.40, 1.05))]
-DNA_R = 0.046
+LAPPER = [((-0.66, 0.10, -0.35), (1.12, 1.12, 1.02)),
+          ((0.66, -0.06, -0.30), (1.10, 1.15, 1.04))]
+RIBO_X = 2.25                 # ribosomerne starter her (luft af cytoplasma imellem)
+DNA_R = 0.05
 Z_DNA_MAX = SNIT['im'][0] - 0.16
 
 
@@ -349,13 +352,13 @@ def indesluttet(P):
     return P
 
 
-N = 2300
+N = 1450
 t = np.linspace(0, 2 * np.pi, N, endpoint=False)
 P = np.zeros((N, 3))
-for k in range(1, 34):
+for k in range(1, 26):
     a, b = rng.normal(size=3) / k ** 0.75, rng.normal(size=3) / k ** 0.75
     P += np.outer(np.cos(k * t), a) + np.outer(np.sin(k * t), b)
-P = P / P.std(0) * np.array([1.9, 0.8, 0.55]) + np.array([0.15, 0, -0.3])
+P = P / P.std(0) * np.array([0.85, 0.6, 0.5]) + np.array([0, 0, -0.32])
 P = indesluttet(P).astype(np.float32)
 L0, DMIN = 0.066, 2 * DNA_R + 0.10
 ii = np.arange(N)
@@ -390,10 +393,10 @@ dna = placér(kurve('Nucleoid_DNA', P2, DNA_R, M_DNA, cyklisk=True, opløsning=1
 DNA_LÆNGDE = s[-1]
 
 # ---------------------------------------------------------------- plasmider
-PLASMIDER = [((-2.55, -1.55, 0.15), (0.3, 0.5, 1.0), 0.40),
-             ((2.75, 1.45, 0.05), (-0.4, 0.2, 1.0), 0.36),
-             ((3.25, -1.25, -0.75), (0.8, -0.2, 0.6), 0.33),
-             ((-0.65, 1.75, -0.55), (0.1, -0.9, 0.5), 0.30)]
+# Tre plasmider i det frie cytoplasma langs siderne af nukleoidet, vendt mod beskueren.
+PLASMIDER = [((-1.05, 1.80, -0.05), (0.15, -0.45, 0.88), 0.40),
+             ((1.15, 1.72, -0.30), (-0.20, -0.55, 0.81), 0.37),
+             ((0.05, -1.72, 0.30), (0.05, -0.25, 0.97), 0.37)]
 PLASMID_PUNKTER = []
 for i, (c, akse, a) in enumerate(PLASMIDER, 1):
     n = Vector(akse).normalized()
@@ -405,18 +408,19 @@ for i, (c, akse, a) in enumerate(PLASMIDER, 1):
     hh = 0.055 * np.sin(q * tt / 2)
     pts = [Vector(c) + u * (r_ * math.cos(t_)) + v * (r_ * math.sin(t_)) + n * h_ for t_, r_, h_ in zip(tt, rr, hh)]
     PLASMID_PUNKTER.append(np.array([p[:] for p in pts]))
-    placér(kurve(f'Plasmid_{i}', [p[:] for p in pts], 0.03, M['plasmid'], cyklisk=True), C_PLASMID,
+    placér(kurve(f'Plasmid_{i}', [p[:] for p in pts], 0.036, M['plasmid'], cyklisk=True), C_PLASMID,
            'Plasmid', 'Plasmid')
 
 # ---------------------------------------------------------------- flageller
 # Hver flagel: basallegeme (motor) gennem hylsteret, en kort krog og et langt, skrueformet
 # filament. Basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget.
+# To flageller, kortere end i virkeligheden (der er de 5–10 µm, flere gange cellens længde),
+# så figuren kan vise selve cellen stort.
 FLAGELLER = [  # (x, theta), filamentets retning, sideforskydning
-    (dict(pol=(-1, -0.25, -0.35)), (-1, -0.05, -0.12), (0, -1.2, 0.6)),
-    (dict(x=-2.6, th=math.radians(-125)), (-1, -0.35, -0.25), (0, -1.0, -1.2)),
-    (dict(x=-0.8, th=math.radians(-15)), (-1, 0.45, -0.05), (0, 1.5, 0.4)),
-    (dict(x=1.2, th=math.radians(-90)), (-1, 0.0, -0.32), (0, 0.5, -1.0)),
+    (dict(pol=(-1, -0.30, -0.25)), (-1, -0.10, -0.08), (0, -0.9, 0.4)),
+    (dict(x=-3.2, th=math.radians(-35)), (-1, 0.45, -0.10), (0, 1.0, 0.2)),
 ]
+FLAGEL_LÆNGDE = 8.5
 FLAG_PUNKTER, FLAG_FOD = [], []
 
 
@@ -485,16 +489,16 @@ for i, (fod, retning, side) in enumerate(FLAGELLER, 1):
     # filament: en lang skrue om en bøjet midterlinje
     tan = (b3 - b2).normalized()
     P0 = np.array(b3[:])
-    P1 = P0 + np.array(tan[:]) * 3.0
-    mål = P0 + np.array(d[:]) * 17 + np.array(side)
-    P2_ = mål - np.array(d[:]) * 5 + np.array(side) * 0.5
+    P1 = P0 + np.array(tan[:]) * 2.0
+    mål = P0 + np.array(d[:]) * FLAGEL_LÆNGDE + np.array(side)
+    P2_ = mål - np.array(d[:]) * 3 + np.array(side) * 0.5
     tt = np.linspace(0, 1, 1200)[:, None]
     midt = (1 - tt) ** 3 * P0 + 3 * (1 - tt) ** 2 * tt * P1 + 3 * (1 - tt) * tt ** 2 * P2_ + tt ** 3 * mål
     midt, L = gensample(midt, 320)
     T_, N_, B_ = rammer(midt)
     ss = np.linspace(0, L, len(midt))
-    amp = 0.72 * np.clip(ss / 2.5, 0, 1) ** 2 * (3 - 2 * np.clip(ss / 2.5, 0, 1))
-    fase = 2 * np.pi * ss / 7.0
+    amp = 0.62 * np.clip(ss / 2.0, 0, 1) ** 2 * (3 - 2 * np.clip(ss / 2.0, 0, 1))
+    fase = 2 * np.pi * ss / 5.5
     # venstreskruet helix, som E. colis flagelfilament i sin normale form
     fil = midt + amp[:, None] * (np.cos(fase)[:, None] * N_ - np.sin(fase)[:, None] * B_)
     fil = fil - (fil[0] - P0)   # start præcis i krogens ende
@@ -535,26 +539,18 @@ while len(pili) < 96 and forsøg < 20000:
 pili_obj = kurve('Pili', None, 0.026, M['pili'], opløsning=1,
                  splines=[([p[:] for p in pts], [1, 1, 0.95, 0.9, 0.85, 0.8, 0.72]) for pts in pili])
 placér(pili_obj, C_PILI, 'Pili', 'Fimbrie')
-# én lang kønspilus (F-pilus), som bruges ved konjugation, når et plasmid overføres
-n, akse = normal_på_celle(3.6, math.radians(-150))
-base = akse + n * 3.06
-d = (n + Vector((0.5, -0.1, -0.2))).normalized()
-fp = [base + d * (3.4 * k / 16) + Vector((0, 0, -0.25)) * math.sin(math.pi * k / 16) for k in range(17)]
-placér(kurve('Pili_F_Pilus', [p[:] for p in fp], 0.036, M['pili'], opløsning=1,
-             radier=[1] * 16 + [0.8]), C_PILI, 'Pili', 'Kønspilus (F-pilus)')
-SEX_PUNKTER = np.array([p[:] for p in fp])
 
 # ---------------------------------------------------------------- ribosomer (70S)
 # Én skabelon: stor (50S) og lille (30S) underenhed. Kopierne samles i ét mesh.
 bm = bmesh.new()
 bmesh.ops.create_icosphere(bm, subdivisions=2, radius=1.0)
 for v in bm.verts:
-    v.co = Vector((v.co.x * 0.105, v.co.y * 0.095, v.co.z * 0.078))
+    v.co = Vector((v.co.x * 0.13, v.co.y * 0.118, v.co.z * 0.097))
 n_stor = len(bm.verts)
 lille = bmesh.new()
 bmesh.ops.create_icosphere(lille, subdivisions=1, radius=1.0)
 for v in lille.verts:
-    v.co = Vector((v.co.x * 0.085, v.co.y * 0.062, v.co.z * 0.048 + 0.098))
+    v.co = Vector((v.co.x * 0.105, v.co.y * 0.077, v.co.z * 0.06 + 0.122))
 me_l = bpy.data.meshes.new('tmp')
 lille.to_mesh(me_l)
 lille.free()
@@ -571,23 +567,19 @@ dna_pts = DNA_PUNKTER
 plas = np.vstack(PLASMID_PUNKTER)
 motor = np.array([(a + n * 2.36)[:] for a, n in FLAG_FOD])
 forsøg = 0
-while len(ribo) < 1100 and forsøg < 200000:
+# kun i de to polområder (|x| > RIBO_X); midten er nukleoidet og det frie cytoplasma
+while len(ribo) < 900 and forsøg < 200000:
     forsøg += 1
     p = rng.uniform([-H - 2.4, -2.4, -2.4], [H + 2.4, 2.4, 2.4])
-    if akseafstand(p) > R['cyto'] - 0.17:
+    if abs(p[0]) < RIBO_X + rng.uniform(0, 0.25):
         continue
-    if i_vindue(p, 'im', margen=0.16):
+    if akseafstand(p) > R['cyto'] - 0.2:
         continue
-    inde = min(np.linalg.norm((p - c) / s) for c, s in LAPPER)
-    if inde < 0.92 and rng.random() < 0.9:
+    if i_vindue(p, 'im', margen=0.2):
         continue
-    if np.min(np.sum((dna_pts - p) ** 2, 1)) < 0.2 ** 2:
+    if np.min(np.sum((motor - p) ** 2, 1)) < 0.45 ** 2:
         continue
-    if np.min(np.sum((plas - p) ** 2, 1)) < 0.2 ** 2:
-        continue
-    if np.min(np.sum((motor - p) ** 2, 1)) < 0.4 ** 2:
-        continue
-    if ribo and np.min(np.sum((np.array(ribo) - p) ** 2, 1)) < 0.26 ** 2:
+    if ribo and np.min(np.sum((np.array(ribo) - p) ** 2, 1)) < 0.3 ** 2:
         continue
     ribo.append(p)
 verts, faces = [], []

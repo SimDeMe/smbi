@@ -64,10 +64,10 @@ Objekterne (samlingen `Bacterial_Cell`) har `struktur` og `del` som egenskaber:
 | `Inner_Membrane` | Cellemembran → cellemembran |
 | `Cytoplasm` | Cytoplasma → cytoplasma |
 | `Nucleoid_DNA` | Kromosom → kromosom (ét ringformet DNA, uden membran) |
-| `Plasmid_1`–`4` | Plasmid → plasmid |
-| `Ribosomes_70S` | Ribosom → ribosom (1100 stk. i ét mesh, 50S + 30S) |
-| `Pili`, `Pili_F_Pilus` | Pili → pili (96 fimbrier og én kønspilus) |
-| `Flagellum_1`–`4_Basal_Body/Hook/Filament` | Flagel → flagel |
+| `Plasmid_1`–`3` | Plasmid → plasmid |
+| `Ribosomes_70S` | Ribosom → ribosom (900 stk. i ét mesh, 50S + 30S) |
+| `Pili` | Pili → pili (96 fimbrier) |
+| `Flagellum_1`–`2_Basal_Body/Hook/Filament` | Flagel → flagel |
 
 Hylsteret er koncentriske, lukkede skaller med mellemrum (ingen flader oven i hinanden)
 og skåret op med booleske snit i et vindue på toppen. Hvert lag udad er skåret lavere og
@@ -75,8 +75,10 @@ længere, så hvert lag får sin egen synlige stribe at sætte fagord og klikke 
 på de to membraner har et dobbeltlag som tekstur (`BC_Bilayer_*.png`, pakket i GLB'en).
 Hylsteret er ca. 5 gange for tykt; flagelfilamentet er en venstreskruet helix, og
 basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget. DNA'et er
-slappet af, så strengen ikke krydser sig selv, og ribosomerne holder sig mest uden for
-nukleoidet. `kontrol.py` melder åbne kanter, løse punkter og indadvendte normaler.
+slappet af, så strengen ikke krydser sig selv. Det indre er ordnet i områder, så delene er
+lette at se og klikke på: nukleoidet samlet midt i cellen, ribosomerne kun mod polerne (hvor de
+også er tættest i *E. coli*) med frit cytoplasma imellem, og tre plasmider enkeltvis langs
+siderne. Den ydre membran er grøn. De to flageller er gjort kortere end i virkeligheden. `kontrol.py` melder åbne kanter, løse punkter og indadvendte normaler.
 Kapslen tegnes sidst (`øverst`), og cytoplasmaet først (`cytoplasmaFørst`) som i plantecellen.
 Bakterien vises lag for lag: først hylsteret, cytoplasmaet og kromosomet, så resten.
 

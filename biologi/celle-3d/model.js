@@ -85,13 +85,13 @@ CELLER.bakterie={
    Plasmid:'plasmid',Ribosom:'ribosom',Pili:'pili',Flagel:'flagel'}[ex.struktur]||null;
  },
  // three-koordinater: x langs cellen, y op, z mod beskueren (= -y i Blender)
- sigte:{cellevaeg:[.6,.45,2.87],cellemembran:[-1.2,.85,2.66],cytoplasma:[-3.1,.95,-1.5],kromosom:[.4,.5,.2],
-  plasmid:[-2.55,.15,1.55],ribosom:[3.1,.6,-1.2],flagel:[-11.5,-1.2,3.5],pili:[8.8,1.6,0],kapsel:[6.2,.9,3.3]},
+ sigte:{cellevaeg:[.6,.45,2.87],cellemembran:[-1.2,.85,2.66],cytoplasma:[-2,.5,1],kromosom:[-.3,.4,0],
+  plasmid:[-1.05,.1,-1.8],ribosom:[3,.5,-.3],flagel:[-10.5,-.5,1.5],pili:[8.8,1.6,0],kapsel:[6.2,.9,3.3]},
  fast:['cytoplasma'],
- pladser:{cytoplasma:[100,150],plasmid:[100,330],flagel:[100,520],ribosom:[640,40],pili:[900,200],kapsel:[900,480],
+ pladser:{plasmid:[380,40],cytoplasma:[100,330],flagel:[100,520],ribosom:[640,40],pili:[900,200],kapsel:[900,480],
   cellemembran:[330,600],kromosom:[560,600],cellevaeg:[790,600]},
  zoom:[0,-.2,2.64],
- kamera:{hh:7.4,pos:[-1.2,23.5,17.5],mål:[-1.8,-.6,0]},
+ kamera:{hh:6.6,pos:[-1.2,23.5,17.5],mål:[-1.2,-.6,0]},
  foto:{hh:7.2,pos:[-1.2,23.5,17.5],mål:[-1.4,-.6,0]},   // Celletyperne: hele cellen, flagellerne skåret af til venstre
  øverst:['kapsel'],
  cytoplasmaFørst:true,
