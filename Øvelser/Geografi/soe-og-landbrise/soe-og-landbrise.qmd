@@ -12,8 +12,9 @@ format:
 ```{=typst}
 // Ternet diagramfelt til håndtegnede grafer: 5 mm-kasser med kraftigere
 // streg for hver cm. Der er plads til tal ved akserne og linjer til
-// aksernes navn og enhed — eleverne skriver dem selv.
-#let ternet-felt(bredde: 15cm, hoejde: 9.5cm) = {
+// aksernes titler og enheder, som er trykt på forhånd. Eleverne vælger selv
+// skalaen og skriver tallene.
+#let ternet-felt(xtitel: [], ytitel: [], bredde: 15cm, hoejde: 9.5cm) = {
   let lys = 0.4pt + rgb("#C7D0C0")
   let kraftig = 0.6pt + rgb("#8FA085")
   let nx = calc.round(bredde / 5mm)
@@ -28,8 +29,8 @@ format:
         stroke: if calc.rem(j, 2) == 0 { kraftig } else { lys }))
     }
   })
-  let linje(b) = box(width: b, baseline: 2pt, stroke: (bottom: 0.5pt + rgb("#6B7A66")))[#h(b)]
   let hint = (t) => text(size: 8.5pt, fill: rgb("#6B7A66"), t)
+  let akse = (t) => text(size: 10pt, weight: "bold", fill: rgb("#26332B"), t)
   block(breakable: false, width: 100%, above: 1.2em, below: 1.2em, grid(
     columns: (0.7cm, 1.0cm, bredde),
     rows: (hoejde, 0.6cm, 0.7cm),
@@ -37,12 +38,12 @@ format:
     row-gutter: 0pt,
     // y-aksens navn og enhed, drejet 90°
     align(center + horizon, rotate(-90deg, reflow: true, box(width: hoejde)[
-      #align(center)[#hint[y-aksens navn og enhed:] #linje(4.5cm)]
+      #align(center, akse(ytitel))
     ])),
     [],
     felt,
-    [], [], align(left + horizon, hint[tal på x-aksen skrives under stregerne]),
-    [], [], align(center + horizon)[#hint[x-aksens navn og enhed:] #linje(5cm)],
+    [], [], align(left + horizon, hint[skriv tal ud for stregerne]),
+    [], [], align(center + horizon, akse(xtitel)),
   ))
 }
 ```
@@ -138,13 +139,12 @@ Afstand fra lampe til skåle: \_\_\_\_\_\_\_\_ cm
 ::: {.content-visible when-format="typst"}
 1. Tegn et (x,y)-punktdiagram i hånden på det ternede felt herunder — med blyant og lineal, ikke i et regneark. Tiden i minutter står på x-aksen og temperaturen på y-aksen.
 
-   - **Aksernes navne og enheder:** Skriv selv navn og enhed på begge akser (fx «Tid (min)» og «Temperatur (°C)»).
-   - **Skalaen:** Vælg selv, hvor aksen starter, og hvor mange minutter eller grader én kasse svarer til, så punkterne fylder det meste af feltet. Find først den laveste og højeste temperatur i @tbl-1. Y-aksen behøver ikke starte ved 0 °C. Kassernes størrelse skal være ens hele vejen langs en akse. Skriv tallene ud for stregerne.
+   - **Skalaen:** Aksernes titler og enheder står allerede på feltet. Vælg selv, hvor hver akse starter, og hvor mange minutter eller grader én kasse svarer til, så punkterne fylder det meste af feltet. Find først den laveste og højeste temperatur i @tbl-1. Y-aksen behøver ikke starte ved 0 °C. Kassernes størrelse skal være ens hele vejen langs en akse. Skriv tallene ud for stregerne.
    - **To farver:** Tegn sandets målinger med én farve og vandets med en anden, og lav en lille forklaring i diagrammet, så man kan se, hvilken farve der er hvilket. Marker hvert punkt med et lille kryds, og forbind punkterne med en jævn kurve eller rette linjestykker.
    - **Lampen:** Tegn en lodret stiplet linje ved 15 min, og skriv «lampen slukkes» ved den.
 
 ```{=typst}
-#ternet-felt()
+#ternet-felt(xtitel: [Tid (min)], ytitel: [Temperatur (°C)])
 ```
 :::
 
@@ -157,10 +157,10 @@ Afstand fra lampe til skåle: \_\_\_\_\_\_\_\_ cm
 :::
 
 ::: {.content-visible when-format="typst"}
-3. Tegn et nyt diagram i hånden på det andet ternede felt, med $\Delta T_\text{land–hav}$ som funktion af tiden. Skriv navn og enhed på akserne, og vælg selv skalaen, så kurven fylder det meste af feltet. Y-aksen skal række både over og under 0 °C, hvis forskellen skifter fortegn. Tegn en tydelig vandret linje ved 0 °C, og brug samme farve til kurven hele vejen. Hvornår er land varmest, og hvornår er havet varmest?
+3. Tegn et nyt diagram i hånden på det andet ternede felt, med $\Delta T_\text{land–hav}$ som funktion af tiden. Vælg selv skalaen og skriv tallene ud for stregerne, så kurven fylder det meste af feltet. Y-aksen skal række både over og under 0 °C, hvis forskellen skifter fortegn. Tegn en tydelig vandret linje ved 0 °C, og brug samme farve til kurven hele vejen. Hvornår er land varmest, og hvornår er havet varmest?
 
 ```{=typst}
-#ternet-felt()
+#ternet-felt(xtitel: [Tid (min)], ytitel: [$Delta T_text("land–hav")$ (°C)])
 ```
 :::
 
