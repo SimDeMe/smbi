@@ -32,8 +32,14 @@ kan ses). `reserve` laver `reserve.jpg`, som siden viser, hvis WebGL eller model
 * **Tyndtarmen** er en kæde, der slapper af i bughulen: en slangeformet startbane med bølger
   i, holdt inden for en ellipsoide, skubbet væk fra sig selv og fra tyktarmen, mavesækken og
   tolvfingertarmen, til ingen slynger går igennem hinanden (scriptet melder mindste afstand).
-* **Klumper** (lever, tunge, spytkirtler, kroppen): metaballs (ellipsoider, også negative til
-  leverens underside), omsat til mesh og gjort knudret med Perlin-støj, hvor det passer.
+  De sidste ca. 5 cm (ileum) ligger fast og går vandret ind i blindtarmens inderside, så
+  overgangen til tyktarmen er lukket.
+* **Leveren**: et glattet sagittalt kiletværsnit (kuplet overside, skarp forreste nedre kant,
+  underside der hælder op og bagud), fejet fra højre kant til venstre laps spids og skaleret efter
+  et omrids forfra: rund højre lap, skrå nedre kant med hak ved leverbåndet. Leverbåndet er et
+  rør på forsiden med samme `del`.
+* **Klumper** (tunge, spytkirtler, kroppen): metaballs (ellipsoider), omsat til mesh og gjort
+  knudret med Perlin-støj, hvor det passer.
 
 Hvert objekt har egenskaben `del` (fx `mavesaek`, `spytkirtel`), som siden bruger til navn,
 forklaring og fremhævning; spytkirtlerne har også `navn`. `forloeb.json` er madens vej

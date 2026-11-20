@@ -78,7 +78,8 @@ M = dict(
     tyktarm=materiale('FD Tyktarm', '#cf9f7e'),
     vedhaeng=materiale('FD Blindtarmsvedhæng', '#c99579'),
     endetarm=materiale('FD Endetarm', '#b9776a'),
-    lever=materiale('FD Lever', '#7c2b24', ru=0.35, coat=0.45),
+    lever=materiale('FD Lever', '#7c2b24', ru=0.4, coat=0.3),
+    leverbaand=materiale('FD Leverbånd', '#9a4a36', ru=0.45, coat=0.2),
     galdeblaere=materiale('FD Galdeblære', '#5d8f3c', ru=0.3, coat=0.5),
     galdegang=materiale('FD Galdegang', '#76a03c', ru=0.4),
     bugspyt=materiale('FD Bugspytkirtel', '#e8c27c', ru=0.55, coat=0.1),
@@ -388,6 +389,10 @@ placér(o, C_KANAL, 'vedhaeng')
 R_TYND = 1.2
 TYND_START = np.array([4.4, -0.9, 2.4])
 TYND_SLUT = np.array([-9.6, -0.8, -11.2])     # ender inde i blindtarmen (ileocøkalklappen)
+# Det sidste stykke af tyndtarmen (ileum) ligger fast og går vandret ind i blindtarmens
+# inderside; ellers skubber tyktarmen det væk under afslapningen, så der opstår et hul.
+HALE_RET = np.array([1.0, -0.15, -0.25]) / np.linalg.norm([1.0, -0.15, -0.25])
+HALE = TYND_SLUT + np.outer(np.arange(11)[::-1] * 0.45, HALE_RET)
 
 
 def tyndtarm_sti():
@@ -400,6 +405,7 @@ def tyndtarm_sti():
             xs = np.linspace(7.5, -6.5, 5) if (ir * 2 + il) % 2 == 0 else np.linspace(-6.5, 7.5, 5)
             for x in xs:
                 pkt.append(np.array([x, y, z]))
+    pkt.extend(HALE[::3])
     pkt.append(TYND_SLUT)
     C, s = gensample(catmull(np.array(pkt)), 0.45)
     # krøl: langsomme bølger på tværs af slangen, så rækkerne bliver til slynger
@@ -411,6 +417,13 @@ def tyndtarm_sti():
     bølge *= np.clip(np.minimum(s, s[-1] - s) / 4, 0, 1)[:, None]
     P = C + bølge + rng.normal(0, 0.15, C.shape)
     n = len(P)
+    nh = len(HALE)
+
+    def lås():
+        P[0] = TYND_START
+        P[-nh:] = HALE
+
+    lås()
     L = 0.45
     D = 2 * R_TYND + 0.35
     # forhindringer: tyktarmen, tolvfingertarmen, mavesækken og endetarmen
@@ -445,10 +458,10 @@ def tyndtarm_sti():
             k = 0.5 * (sl - L) / sl * seg
             P[:-1] += k
             P[1:] -= k
-            P[0], P[-1] = TYND_START, TYND_SLUT
+            lås()
         if not afslut:
             P[1:-1] += 0.18 * ((P[:-2] + P[2:]) / 2 - P[1:-1])
-        P[0], P[-1] = TYND_START, TYND_SLUT
+        lås()
     d = np.linalg.norm(P[:, None] - P[None], axis=2)
     d[~nabo] = 99
     print('TYNDTARM længde %.0f cm, mindste afstand %.2f (rør %.2f)' % (n * L, d.min(), 2 * R_TYND))
@@ -458,29 +471,128 @@ def tyndtarm_sti():
 P_tynd = tyndtarm_sti()
 u = np.linspace(0, 1, len(P_tynd))
 tynd_pkt = np.c_[P_tynd, R_TYND * (1.06 - 0.12 * u)]
-o, P_tynd2, _ = rør('Tyndtarm', tynd_pkt[::2], M['tyndtarm'], trin=0.3, seg=24, start='flad', slut='flad')
+hver_anden = np.unique(np.r_[np.arange(0, len(tynd_pkt), 2), len(tynd_pkt) - 1])   # husk sidste punkt
+o, P_tynd2, _ = rør('Tyndtarm', tynd_pkt[hver_anden], M['tyndtarm'], trin=0.3, seg=24, start='flad',
+                    slut='flad')
 placér(o, C_KANAL, 'tyndtarm')
 
 
 # ================================================================= ORGANERNE
-# ---- leveren: stor højre lap, tynd venstre lap over mavesækken, hul underside
-def forstør(elementer, k, c, flyt):
-    c = np.array(c)
-    return [(tuple(c + k * (np.array(e[0]) - c) + flyt), tuple(k * np.array(e[1])), *e[2:]) for e in elementer]
+# ---- leveren: kileformet. Forfra en stor, rund højre lap og en skrå nedre kant op til den
+# spidse venstre lap over mavesækken. Fra siden en kile: kuplet overside mod mellemgulvet,
+# skarp forreste nedre kant og en underside, der hælder op og bagud over tarmene.
+def lukket_catmull(P, n_pr):
+    """Lukket Catmull–Rom-kurve gennem punkterne."""
+    P = np.asarray(P, float)
+    k = len(P)
+    t = np.linspace(0, 1, n_pr, endpoint=False)[:, None]
+    return np.vstack([0.5 * (2 * P[i] + (-P[i - 1] + P[(i + 1) % k]) * t
+                             + (2 * P[i - 1] - 5 * P[i] + 4 * P[(i + 1) % k] - P[(i + 2) % k]) * t ** 2
+                             + (-P[i - 1] + 3 * P[i] - 3 * P[(i + 1) % k] + P[(i + 2) % k]) * t ** 3)
+                      for i in range(k)])
 
 
-lever = klump('Lever', forstør([
-    ((-8.5, 0.6, 17.0), (6.8, 7.0, 6.8)),       # højre lap
-    ((-8.0, 4.4, 18.5), (5.0, 3.6, 5.2)),       # bagest (mod mellemgulv og rygsøjle)
-    ((-7.6, -4.6, 12.6), (5.4, 2.6, 2.4)),      # forreste, nedre kant
-    ((-3.4, 0.0, 19.6), (6.4, 6.4, 4.6)),       # midt under kuplen
-    ((2.6, -4.6, 19.8), (6.0, 3.0, 2.6)),       # venstre lap foran mavesækken
-    ((7.2, -4.4, 20.2), (3.4, 2.4, 1.5)),       # venstre laps spids
-    ((-13.2, 1.2, 15.6), (2.8, 4.6, 4.8)),      # højre side
-    ((1.0, -1.0, 12.0), (5.5, 6.0, 3.5), -1),   # underside mod mavesæk og tolvfingertarm
-], 1.12, (-3.0, 0.0, 18.0), (0.0, -0.3, -0.6)), M['lever'], opløsning=0.4, støj=(0.18, 0.25), glat=4)
-anvend_modifikatorer(lever, C_ORGAN)
-lever['del'] = 'lever'
+def glat_lukket(P, n_ud, harmoniske):
+    """Udglat en lukket kurve (kun de laveste Fourier-led) og fordel n_ud punkter jævnt langs den.
+    Catmull–Rom alene giver knæk i krumningen, som ses som striber i den blanke overflade."""
+    def jævn(P, n):
+        Q = np.vstack([P, P[:1]])
+        d = np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+        s = np.linspace(0, d[-1], n, endpoint=False)
+        return np.stack([np.interp(s, d, Q[:, k]) for k in range(P.shape[1])], 1)
+    P = jævn(lukket_catmull(P, 30), 512)
+    f = np.fft.rfft(P, axis=0)
+    f[harmoniske + 1:] = 0
+    return jævn(np.fft.irfft(f, 512, axis=0), n_ud)
+
+
+# tværsnittet (sagittalt) i normaliserede mål: u = forfra (0) → bagud (1), v = nederst (0) → øverst (1)
+LEVER_SNIT = glat_lukket([
+    (0.03, 0.0),                                # den skarpe forreste nedre kant
+    (0.0, 0.22), (0.03, 0.55), (0.12, 0.82),    # forsiden mod bugvæggen
+    (0.32, 0.97), (0.55, 1.0), (0.78, 0.93),    # kuplen under mellemgulvet
+    (0.95, 0.76), (1.0, 0.55), (0.93, 0.40),    # bagsiden
+    (0.70, 0.33), (0.42, 0.20), (0.18, 0.07),   # undersiden, der hælder op og bagud
+], 72, 9)
+LEVER_SNIT = np.roll(LEVER_SNIT, -np.argmin(LEVER_SNIT[:, 1]), axis=0)     # start i den nedre kant
+LEVER_SNIT = (LEVER_SNIT - LEVER_SNIT.min(0)) / np.ptp(LEVER_SNIT, axis=0)
+LEVER_XR, LEVER_XL = -15.8, 9.6     # højre kant og venstre laps spids
+LEVER_BÅND = -1.0                   # leverbåndet (lig. falciforme) mellem højre og venstre lap
+
+
+def blød_interp(x, xs, ys):
+    """Som np.interp, men gennem en Catmull–Rom-kurve, så omridset ikke får knæk."""
+    C = catmull(np.c_[xs, ys])
+    return np.interp(x, C[:, 0], C[:, 1])
+
+
+def lever_profil(x):
+    """Lappernes omrids forfra (z øverst/nederst) og tykkelsen (y forrest/bagest) i snittet x."""
+    xs = [-15.8, -14.0, -11.0, -8.0, -5.0, -2.0, 0.0, 2.0, 4.5, 7.0, 9.6]
+    zt = blød_interp(x, xs, [19.5, 22.8, 25.0, 25.9, 25.3, 24.0, 23.2, 22.9, 22.3, 21.1, 19.6])
+    zb = blød_interp(x, [-15.8, -14.0, -12.0, -10.0, -7.5, -5.0, -2.5, 0.0, 2.0, 4.5, 7.0, 9.6],
+                   [15.0, 12.0, 10.2, 9.6, 9.9, 10.5, 11.6, 13.0, 14.2, 15.9, 17.7, 19.0])
+    zb = zb + 0.9 * np.exp(-((x - LEVER_BÅND) / 0.8) ** 2)     # hak i kanten ved leverbåndet
+    yf = blød_interp(x, [-15.8, -12.0, -8.0, -4.0, 0.0, 4.0, 8.0, 9.6], [-4.5, -6.6, -7.6, -8.0, -8.0, -7.6, -6.6, -6.0])
+    yb = blød_interp(x, [-15.8, -12.0, -8.0, -4.0, -1.0, 2.0, 5.0, 8.0, 9.6],
+                   [3.0, 5.5, 6.5, 6.0, 3.5, 0.0, -2.5, -4.0, -4.5])
+    # afrund højre kant (kvartcirkel) og venstre laps spids
+    tR = np.clip((x - LEVER_XR) / 6.0, 0, 1)
+    env = np.sqrt(1 - (1 - tR) ** 2) * np.sqrt(np.clip((LEVER_XL - x) / 1.2, 0, 1))
+    zm, h = (zt + zb) / 2, (zt - zb) / 2 * env
+    ym, d = (yf + yb) / 2, (yb - yf) / 2 * env
+    return zm - h, 2 * h, ym - d, 2 * d
+
+
+def lever_punkt(x, u, v):
+    z0, H, y0, D = lever_profil(x)
+    return np.array([x, y0 + u * D, z0 + v * H])
+
+
+def lever():
+    nx = 110
+    xs = LEVER_XR + (LEVER_XL - LEVER_XR) * (1 - np.cos(np.linspace(0, np.pi, nx))) / 2
+    m = len(LEVER_SNIT)
+    V = [lever_punkt(x, u, v) for x in xs for u, v in LEVER_SNIT]
+    F = [(i * m + j, i * m + (j + 1) % m, (i + 1) * m + (j + 1) % m, (i + 1) * m + j)
+         for i in range(nx - 1) for j in range(m)]
+    o = mesh_obj('Lever', V, F, M['lever'])
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)     # de sammenfaldne endepunkter
+    bmesh.ops.dissolve_degenerate(bm, edges=bm.edges, dist=1e-4)
+    bm.to_mesh(o.data)
+    bm.free()
+    o.modifiers.new('glat', 'SUBSURF').levels = 1
+    anvend_modifikatorer(o, C_ORGAN)
+    ret_normaler(o)
+    # en svag, blød ujævnhed langs normalen, så de store flader ikke spejler som glas
+    me = o.data
+    for v in me.vertices:
+        v.co += v.normal * 0.07 * noise.noise(v.co * 0.3, noise_basis='PERLIN_ORIGINAL')
+    me.update()
+    o['del'] = 'lever'
+    return o
+
+
+lever = lever()
+
+
+def leverbånd():
+    """Leverbåndet: fra kuplens top ned over forsiden til hakket i den nedre kant."""
+    uv = LEVER_SNIT[:np.argmax(LEVER_SNIT[:, 1]) + 1][::-1]          # fra toppen fremad og ned
+    uv = np.vstack([uv[uv[:, 1] > 0.02], [[0.03, -0.02]]])
+    P = np.array([lever_punkt(LEVER_BÅND, u, v) for u, v in uv])
+    # læg båndet halvt ned i overfladen, så det ses som en lav vulst (udad i snitplanet)
+    T = np.gradient(P[:, 1:], axis=0)
+    N = np.c_[-T[:, 1], T[:, 0]] / np.linalg.norm(T, axis=1)[:, None]
+    P[:, 1:] -= 0.12 * N * np.sign(-N[len(N) // 2, 0])
+    pkt = np.c_[P[::2], np.full(len(P[::2]), 0.42)]
+    o, _, _ = rør('Leverbaand', pkt, M['leverbaand'], trin=0.12, seg=16, start='rund', slut='rund')
+    return placér(o, C_ORGAN, 'lever')
+
+
+leverbånd()
 
 # ---- galdeblæren og galdegangene
 o, _, _ = rør('Galdeblaere', [(-5.7, -7.2, 8.3, 1.35), (-5.6, -5.6, 10.2, 1.5), (-5.3, -3.6, 12.0, 1.15),
