@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fordøjelsessystemet i 3D — smbi.dk</title>
+<meta name="description" content="Drej en 3D-model af fordøjelsessystemet, klik på organerne og følg en mundfuld mad fra munden til blodet — og ud i den anden ende. Se stivelse, protein og fedt blive spaltet af enzymerne, og hvordan pH skifter undervejs.">
+<link rel="canonical" href="https://smbi.dk/biologi/fordoejelse.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/fordoejelse.html">
+<meta property="og:title" content="Fordøjelsessystemet i 3D">
+<meta property="og:description" content="Drej en 3D-model af fordøjelsessystemet, klik på organerne og følg en mundfuld mad fra munden til blodet — og ud i den anden ende.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fordoejelse/side.css">
+<link rel="modulepreload" href="celle-3d/vendor/three.module.min.js">
+</head>
+
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap head">
+    <span class="eyebrow mono"><i></i>Biologi · fordøjelse</span>
+    <h1>Fordøjelses&shy;systemet <span class="hi">i 3D</span></h1>
+    <p class="lead">Drej modellen, og klik på et organ for at se, hvad det gør. Under <b>Madens vej</b> følger du en mundfuld mad fra munden til blodet — og ud i den anden ende.</p>
+  </div>
+
+  <div class="wrap">
+    <section class="rig" id="rig" aria-label="Fordøjelsessystemet i 3D">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <div class="seg" role="tablist" aria-label="Visning">
+          <button type="button" role="tab" id="fane-opbygning" aria-selected="true" aria-controls="panel-opbygning">Opbygning</button>
+          <button type="button" role="tab" id="fane-forloeb" aria-selected="false" aria-controls="panel-forloeb">Madens vej</button>
+        </div>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" id="btn-krop" aria-pressed="true" title="Vis eller skjul kroppens omrids">Krop</button>
+        <button type="button" class="btn-mini" id="btn-dæmp" aria-pressed="true" title="Gør de andre organer gennemsigtige, når et organ er valgt">Fremhæv valgt</button>
+        <button type="button" class="btn-mini" id="btn-nulstil" title="Sæt kameraet tilbage til udgangspunktet">Nulstil</button>
+        <button type="button" class="btn-mini" id="btn-fokus" aria-pressed="false" title="Skjul sidens overskrift og menu">Fokus</button>
+      </div>
+
+      <div class="stage">
+        <div class="view" id="view" data-pladstjek="figur">
+          <canvas id="scene" tabindex="0" role="img"
+            aria-label="3D-model af fordøjelsessystemet inde i et gennemsigtigt omrids af en krop. Øverst mundhulen med tunge, tænder, gane og spytkirtler; bag den svælget og spiserøret, der går ned gennem brystet til den J-formede mavesæk i venstre side af bughulen. Leveren ligger øverst til højre med galdeblæren under sig. Fra mavesækken går tolvfingertarmen i en bue om bugspytkirtlens hoved, og tyndtarmen ligger som et pakket nøgle midt i bughulen. Tyktarmen går som en ramme rundt om tyndtarmen: fra blindtarmen nederst til højre op, på tværs og ned i venstre side til endetarmen og anus. Træk for at dreje; piletasterne drejer også."></canvas>
+          <div class="tip" id="tip" hidden></div>
+          <p class="status" id="status">Henter 3D-modellen …</p>
+          <img class="reserve" id="reserve" src="fordoejelse/reserve.jpg" alt="Fordøjelsessystemet set forfra: mundhulen og spytkirtlerne, spiserøret, mavesækken, leveren med galdeblæren, tyktarmen som en ramme om tyndtarmen, og endetarmen." hidden>
+          <span class="orient mono">Set forfra er personens højre side til venstre i billedet</span>
+          <span class="hint" id="hint">Træk for at dreje · rul eller knib for at zoome</span>
+
+          <div class="afspil" id="afspil" hidden>
+            <ol class="trinliste" id="trinliste" aria-label="Trin på madens vej"></ol>
+            <div class="afspil-række">
+            <button type="button" class="play" id="btn-play" aria-label="Afspil">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path class="ikon-play" d="M6 4l10 6-10 6z"/><path class="ikon-pause" d="M5 4h3.5v12H5zM11.5 4H15v12h-3.5z"/></svg>
+            </button>
+            <label class="sr" for="tidslinje">Madens position i fordøjelseskanalen</label>
+            <input type="range" id="tidslinje" min="0" max="1000" step="1" value="0">
+            <label class="følg"><input type="checkbox" id="følg" checked> Følg maden</label>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side">
+          <div class="panel" id="panel-opbygning" role="tabpanel" aria-labelledby="fane-opbygning">
+            <div class="info" id="info" aria-live="polite">
+              <span class="mono gruppe" id="info-gruppe">Klik på et organ</span>
+              <h2 id="info-navn">Fordøjelsessystemet</h2>
+              <p id="info-tekst">Fordøjelseskanalen er et ca. 8–9 m langt rør fra munden til anus. Maden nedbrydes mekanisk og kemisk undervejs, og næringsstofferne optages i blodet. Lever, galdeblære, bugspytkirtel og spytkirtler sender deres safter ud i kanalen.</p>
+              <dl class="fakta" id="info-fakta"></dl>
+            </div>
+            <div class="liste" id="liste" data-pladstjek="kontrol"></div>
+          </div>
+
+          <div class="panel" id="panel-forloeb" role="tabpanel" aria-labelledby="fane-forloeb" hidden>
+            <div class="trin-h">
+              <h2 id="trin-navn" aria-live="polite">Munden</h2>
+              <span class="tid mono" id="trin-tid">0 min efter måltidet</span>
+            </div>
+            <div class="ph" aria-label="pH i trinnet">
+              <span class="mono">pH</span>
+              <div class="ph-skala"><span class="ph-mærke" id="ph-mærke"></span></div>
+              <b id="ph-tal">7</b>
+            </div>
+            <h3 class="mono mol-titel">Næringsstofferne i maden</h3>
+            <div class="molekyler" id="molekyler"></div>
+            <dl class="proces">
+              <dt>Mekanisk</dt><dd id="trin-mek"></dd>
+              <dt>Kemisk</dt><dd id="trin-kem"></dd>
+              <dt id="trin-optag-dt">Optagelse</dt><dd id="trin-optag"></dd>
+            </dl>
+            <p class="note" id="trin-note"></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <details class="om">
+      <summary>Om modellen og forenklingerne</summary>
+      <p>Modellen er bygget i Blender som en anatomimodel. Organernes form og indbyrdes placering er tegnet efter anatomien hos en voksen, men forenklet:</p>
+      <ul>
+        <li>Tyndtarmen er ca. 2 m lang i modellen; i virkeligheden er den 5–6 m. Tarmkrøset, blodkarrene, bughinden og milten er udeladt.</li>
+        <li>Tiderne er typiske værdier og varierer meget med måltidet og personen. Maden i mavesækken går videre lidt ad gangen, ikke som én klump.</li>
+        <li>pH-værdierne er idealiserede: munden ≈ 7, mavesækken ≈ 1,5–2, tyndtarmen ≈ 7–8 (galde og bikarbonat), tyktarmen ≈ 6–7.</li>
+        <li>Molekylerne er symboler: en rigtig stivelseskæde har tusindvis af glukoseenheder, og fedtet spaltes i virkeligheden mest til fedtsyrer og monoglycerid.</li>
+      </ul>
+      <p>Mere om enzymer: <a href="enzymhastighed.html">Enzymhastighed</a>, <a href="enzymkinetik.html">Enzymkinetik</a> og øvelsen <a href="/Øvelser/Biologi/spytamylase-nedbrydning-af-stivelse/spytamylase-nedbrydning-af-stivelse.html">Spytamylase — nedbrydning af stivelse</a>.</p>
+    </details>
+  </div>
+</main>
+
+<script type="module" src="fordoejelse/side.js"></script>
+<script src="/feedback.js" defer></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
