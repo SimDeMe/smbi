@@ -71,6 +71,13 @@ def materiale(navn, hexfarve, ru=0.45, coat=0.25, alfa=1.0, sss=0.0):
 
 M = dict(
     svaelg=materiale('FD Svælg', '#c7766c'),
+    svaelgmuskel=materiale('FD Svælgsnørere', '#a84a42', ru=0.5, coat=0.2),
+    mandel=materiale('FD Mandler', '#cf8079', ru=0.55, coat=0.15),
+    strubelaag=materiale('FD Strubelåg', '#dc9f96', ru=0.4, coat=0.35),
+    brusk=materiale('FD Brusk', '#d3d6c8', ru=0.45, coat=0.3),
+    luftroer=materiale('FD Luftrør', '#e2cfc2', ru=0.4, coat=0.3),
+    luftslim=materiale('FD Luftvejenes slimhinde', '#d38c86', ru=0.45, coat=0.25),
+    knogle=materiale('FD Tungeben', '#eee2c6', ru=0.5, coat=0.1),
     spiseroer=materiale('FD Spiserør', '#c46e63'),
     mave=materiale('FD Mavesæk', '#d8857a', sss=0.05),
     tolvfinger=materiale('FD Tolvfingertarm', '#dd9a7c'),
@@ -315,11 +322,142 @@ def forløb(del_, P):
     FORLØB.append((del_, np.asarray(P, float)[:, :3]))
 
 
-# ---- svælget: fra næsesvælget ned bag tungeroden til spiserøret
-svaelg_pkt = [(0, 1.5, 58.6, 1.4), (0, 1.9, 57.0, 1.55), (0, 2.3, 54.5, 1.55),
-              (0, 2.5, 51.5, 1.35), (0, 2.6, 48.5, 1.05), (0, 2.6, 46.8, 0.9)]
-o, _, _ = rør('Svaelg', svaelg_pkt, M['svaelg'], seg=28, start='rund', slut='flad')
-placér(o, C_KANAL, 'svaelg')
+def glat_trin(a, b, x):
+    t = np.clip((np.asarray(x, float) - a) / (b - a), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def fjern_dubletter(o, dist=1e-4):
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=dist)
+    bm.to_mesh(o.data)
+    bm.free()
+
+
+def solid(o, coll, tykkelse):
+    """Giv en flade tykkelse (midt om fladen) og anvend det med det samme."""
+    md = o.modifiers.new('tyk', 'SOLIDIFY')
+    md.thickness, md.offset, md.use_even_offset = tykkelse, 0.0, True
+    return anvend_modifikatorer(o, coll)
+
+
+def gitter(nr, nk, lukket=False):
+    """Firkanter i et gitter med nr rækker og nk søjler (lukket: søjlerne går rundt)."""
+    m = nk if lukket else nk - 1
+    return [(i * nk + j, i * nk + (j + 1) % nk, (i + 1) * nk + (j + 1) % nk, (i + 1) * nk + j)
+            for i in range(nr - 1) for j in range(m)]
+
+
+# ---- svælget: næsesvælget bag næsehulen, mundsvælget bag mundhulen og strubesvælget bag
+# strubehovedet. Væggen er en U-formet skal, flad bagtil mod halshvirvlerne og åben fortil, hvor
+# næsehulen, mundhulen og strubehovedet munder ud. Under strubehovedet lukker den sig til et rør,
+# der fortsætter i spiserøret. Udenpå ligger de tre svælgsnørere som overlappende muskelplader
+# («blomsterpotter i hinanden»), hvis fibre mødes i en søm (raphe) midt bagpå.
+# Kolonner: z, midte (y), halv bredde (x), halv dybde (y), åbningen fortil (halv vinkel i grader).
+SV_TAB = np.array([
+    (60.40, 1.75, 0.45, 0.40, 0),
+    (60.20, 1.72, 1.10, 0.95, 0),
+    (59.90, 1.72, 1.55, 1.28, 0),
+    (59.40, 1.78, 1.80, 1.45, 40),     # næsesvælget: åbent mod næsehulen (choanae)
+    (58.00, 1.90, 1.95, 1.50, 62),
+    (56.50, 2.05, 2.00, 1.45, 58),
+    (55.00, 2.20, 2.10, 1.40, 52),     # mundsvælget: åbent mod mundhulen over tungeroden
+    (53.50, 2.30, 2.15, 1.30, 52),
+    (52.20, 2.38, 2.10, 1.20, 60),
+    (51.00, 2.42, 2.05, 1.10, 64),     # strubesvælget: strubehovedet ligger i åbningen,
+    (49.80, 2.48, 1.90, 1.00, 50),     # og pæreformede lommer på hver side af det
+    (48.90, 2.53, 1.50, 0.97, 0),      # bag ringbrusken: lukket rør
+    (48.10, 2.57, 1.15, 0.95, 0),
+    (47.30, 2.60, 0.96, 0.95, 0),      # over i spiserøret
+])
+_svc = catmull(SV_TAB)
+_svc = _svc[np.argsort(_svc[:, 0])]
+SV_SE = 0.77        # superellipse: flad bagvæg og runde hjørner
+
+
+def sv_param(z):
+    z = np.asarray(z, float)
+    yc, a, b, al = (np.interp(z, _svc[:, 0], _svc[:, k]) for k in range(1, 5))
+    return yc, a, b, np.radians(np.where(al < 2, 0, al))
+
+
+def _se(c):
+    return np.sign(c) * np.abs(c) ** SV_SE
+
+
+def sv_punkt(z, phi):
+    """Punkt og udadvendt normal på svælgvæggens midtflade; φ = 0 er midt bagpå, ±π fortil."""
+    z, phi = np.broadcast_arrays(np.asarray(z, float), np.asarray(phi, float))
+    yc, a, b, _ = sv_param(z)
+    P = np.stack([a * _se(np.sin(phi)), yc + b * _se(np.cos(phi)), z], -1)
+    h = 1e-3
+    t = np.stack([a * _se(np.sin(phi + h)), yc + b * _se(np.cos(phi + h))], -1) - P[..., :2]
+    N = np.stack([-t[..., 1], t[..., 0], 0 * phi], -1)
+    return P, N / np.linalg.norm(N, axis=-1, keepdims=True)
+
+
+SV_TYK = 0.2        # væggens tykkelse (slimhinde og bindevæv)
+
+
+def svælgvæg():
+    zs = np.r_[np.linspace(60.40, 59.6, 10)[:-1], np.linspace(59.6, 47.30, 112)]
+    nu = 97
+    V = []
+    for z in zs:
+        al = sv_param(z)[3]
+        V.extend(sv_punkt(z, np.linspace(-(np.pi - al), np.pi - al, nu))[0])
+    F = gitter(len(zs), nu)
+    V.append((0, float(sv_param(60.4)[0]), 60.52))     # toppen (svælgets loft under kraniet)
+    F += [(j + 1, j, len(V) - 1) for j in range(nu - 1)]
+    o = mesh_obj('Svaelg', V, F, M['svaelg'])
+    fjern_dubletter(o)        # lukker sømmen fortil, hvor åbningen er nul
+    ret_normaler(o)
+    return solid(o, C_KANAL, SV_TYK)
+
+
+svælgvæg()['del'] = 'svaelg'
+
+
+def svælgsnører(navn, zb, zt, lag, nfib, phimax=np.pi, nt=121):
+    """En muskelplade udenpå væggen. zb/zt(|t|): pladens nedre/øvre kant, hvor t = −1 … 1 går fra
+    højre forkant om bag svælget til venstre forkant. Fibrene følger linjerne mellem de to kanter
+    (konstant w), så de vifter ud fra forkanten og mødes i en vinkel i sømmen bagpå."""
+    nw = nfib * 5 + 1
+    t = np.linspace(-1, 1, nt)
+    at = np.abs(t)
+    V = []
+    for w in np.linspace(0, 1, nw):
+        z = zb(at) + w * (zt(at) - zb(at))
+        pm = np.minimum(np.pi - sv_param(z)[3] - 0.06, phimax)
+        P, N = sv_punkt(z, t * pm)
+        kant = glat_trin(0, 0.08, w) * glat_trin(0, 0.08, 1 - w) * glat_trin(0, 0.1, 1 - at)
+        fiber = np.abs(np.sin(np.pi * nfib * w)) ** 0.6
+        d = (SV_TYK / 2 + lag * (0.45 + 0.55 * kant) + 0.03 * fiber * kant
+             - 0.045 * np.exp(-(P[:, 0] / 0.22) ** 2))          # sømmen midt bagpå
+        V.extend(P + N * d[:, None])
+    o = mesh_obj(navn, V, gitter(nw, nt), M['svaelgmuskel'])
+    ret_normaler(o)
+    return placér(o, C_KANAL, 'svaelg', 'Svælgsnører')
+
+
+# øvre: næsten vandrette fibre; mellemste: vifte fra tungebenet; nedre: skrå fibre fra skjold-
+# og ringbrusken, nederst vandrette (lukkemusklen øverst i spiserøret)
+svælgsnører('Svaelgsnoerer_oevre', lambda t: 54.0 + 0.4 * t, lambda t: 58.5 - 0.6 * t ** 2, 0.07, 12)
+svælgsnører('Svaelgsnoerer_mellemste', lambda t: 50.9 + 1.3 * t, lambda t: 56.3 - 3.6 * t ** 1.3, 0.15, 14)
+svælgsnører('Svaelgsnoerer_nedre', lambda t: 47.25 + 0.9 * t, lambda t: 53.4 - 2.6 * t, 0.23, 17, phimax=2.4)
+
+# ---- inde i svælget: svælgmandlen (polypper) på loftet og øretrompeternes åbninger på sidevæggene
+placér(klump('Svaelgmandel', [
+    ((0, 2.95, 59.4), (0.95, 0.35, 0.6)),
+    ((0, 2.7, 59.65), (0.7, 0.3, 0.35)),
+], M['mandel'], opløsning=0.07, støj=(0.06, 4.0)), C_KANAL, 'svaelg', 'Svælgmandel')
+for side in (1, -1):
+    pkt = [(side * 1.55, 1.25, 58.35, 0.4), (side * 1.95, 1.55, 58.55, 0.26), (side * 2.7, 1.95, 58.85, 0.2),
+           (side * 3.4, 2.25, 59.1, 0.17)]
+    o, _, _ = rør('Oeretrompet_' + ('V' if side > 0 else 'H'), pkt, M['svaelg'], trin=0.1, seg=18,
+                 start='åben', slut='rund')
+    placér(o, C_KANAL, 'svaelg', 'Øretrompet')
 
 # ---- spiserøret: bag luftrøret ned langs rygsøjlen, gennem mellemgulvet til mavemunden
 spiseroer_pkt = [(0, 2.6, 47.5, 0.95), (0.2, 3.4, 42, 0.95), (0.6, 4.8, 35, 1.0), (1.0, 5.6, 28, 1.0),
@@ -625,6 +763,7 @@ def tungespids():
         ((0, -3.8, 54.7), (1.85, 3.3, 0.95)),
         ((0, -6.4, 54.8), (1.2, 1.1, 0.6)),
         ((0, -0.9, 54.0), (1.8, 1.6, 1.45)),
+        ((0, -0.3, 52.85), (1.45, 0.95, 1.05)),     # tungeroden: mundsvælgets forvæg
     ], M['tunge'], opløsning=0.12, støj=(0.04, 3.0))
 
 
@@ -687,16 +826,16 @@ placér(tænder(), C_MUND, 'taender')
 
 
 def gane():
-    """Den hårde og bløde gane som en hvælvet plade over tungen, plus gummerne langs tandbuerne."""
-    nu, nv = 24, 40
+    """Den hårde gane som en hvælvet plade over tungen (den bløde gane er sin egen del)."""
+    nu, nv = 24, 36
     V, F = [], []
     for iv in range(nv):
         v = iv / (nv - 1)
-        y = -7.4 + v * 7.4
+        y = -7.4 + v * 6.45
         xa = min(2.45, math.sqrt(max(0.0, (y + 7.8) / 0.9))) * 0.9
         for iu in range(nu):
             u = -1 + 2 * iu / (nu - 1)
-            z = 56.2 + 0.75 * (1 - u * u) * min(1, (y + 7.6) / 2.5) - 0.9 * max(0, v - 0.8) ** 1.5 * 5
+            z = 56.2 + 0.75 * (1 - u * u) * min(1, (y + 7.6) / 2.5) * (1 - 0.6 * glat_trin(-3, -0.95, y))
             V.append((u * xa, y, z))
     for iv in range(nv - 1):
         for iu in range(nu - 1):
@@ -746,6 +885,200 @@ for side in (1, -1):
         placér(o, C_MUND, 'spytkirtel', 'Spytgang')
 
 
+# ================================================================= SVÆLGETS NABOER OG SYNKNINGEN
+# Den bløde gane, strubelåget og strubelågets folder har formnøglen «synk»: stillingen, mens vi
+# synker. Den bløde gane løftes og lukker op til næsehulen; strubelåget vipper bagover og ned over
+# indgangen til strubehovedet. Siden blander formnøglen ind, mens madklumpen passerer svælget.
+C_LUFT = samling('Luftveje', C_MODEL)
+
+
+def mærk(o, del_, navn=None):
+    o['del'] = del_
+    if navn:
+        o['navn'] = navn
+    return o
+
+
+def saml(navn, objekter, mat, coll):
+    """Slå flere meshes sammen til ét objekt (de ligger alle i verdenskoordinater)."""
+    bm = bmesh.new()
+    for o in objekter:
+        bm.from_mesh(o.data)
+    me = bpy.data.meshes.new(navn)
+    bm.to_mesh(me)
+    bm.free()
+    for o in objekter:
+        gl = o.data
+        bpy.data.objects.remove(o)
+        bpy.data.meshes.remove(gl)
+    o = bpy.data.objects.new(navn, me)
+    me.materials.append(mat)
+    me.shade_smooth()
+    coll.objects.link(o)
+    return o
+
+
+def drej_x(V, H, a):
+    """Drej punkterne om en vandret akse (x) gennem H; vinklen a må være én pr. punkt."""
+    d = V - H
+    c, s = np.cos(a), np.sin(a)
+    W = V.copy()
+    W[:, 1] = H[1] + d[:, 1] * c - d[:, 2] * s
+    W[:, 2] = H[2] + d[:, 1] * s + d[:, 2] * c
+    return W
+
+
+def med_synk(o, felt):
+    V = np.array([v.co[:] for v in o.data.vertices])
+    o.shape_key_add(name='Basis', from_mix=False)
+    k = o.shape_key_add(name='synk', from_mix=False)
+    k.data.foreach_set('co', felt(V).ravel())
+    return o
+
+
+# ---- den bløde gane med drøbelen og ganebuerne (forreste bue til tungen, bageste ned ad svælget)
+def gane_synk(V):
+    """Ganen løftes bagud-opad til svælgets bagvæg; buerne følger med foroven."""
+    g = glat_trin(-0.75, 0.6, V[:, 1]) * np.where(np.abs(V[:, 0]) < 1.0, 1.0, glat_trin(53.6, 55.0, V[:, 2]))
+    W = drej_x(V, np.array([0, -1.05, 56.2]), 0.75 * g)
+    W[:, 1] += 0.9 * g
+    return W
+
+
+def blød_gane():
+    nu, nv = 25, 26
+    V = []
+    for v in np.linspace(0, 1, nv):
+        hb = 2.05 - 1.0 * v ** 1.2
+        for u in np.linspace(-1, 1, nu):
+            V.append((u * hb, -1.05 + 2.55 * v - 0.35 * u * u * v,
+                      56.18 - 1.1 * v ** 1.4 + 0.18 * (1 - u * u) * (1 - 0.6 * v)))
+    dele = [solid(mesh_obj('Bloed_gane_plade', V, gitter(nv, nu), M['gane']), C_MUND, 0.32)]
+    o, _, _ = rør('Droebel', [(0, 1.3, 55.12, 0.27), (0, 1.52, 54.6, 0.24), (0, 1.66, 54.12, 0.19)],
+                  M['gane'], trin=0.08, seg=16)
+    dele.append(o)
+    for side in (1, -1):
+        for pkt in ([(side * 1.8, -0.5, 56.0, 0.17), (side * 1.78, -0.4, 55.2, 0.17), (side * 1.62, -0.3, 54.35, 0.15)],
+                    [(side * 1.15, 0.85, 55.3, 0.16), (side * 1.6, 1.35, 54.25, 0.17),
+                     (side * 1.78, 1.45, 53.2, 0.15), (side * 1.72, 1.65, 52.2, 0.11)]):
+            o, _, _ = rør('Ganebue', pkt, M['gane'], trin=0.08, seg=14)
+            dele.append(o)
+    return med_synk(saml('Bloed_gane', dele, M['gane'], C_MUND), gane_synk)
+
+
+mærk(blød_gane(), 'gane', 'Den bløde gane')
+
+# ganemandlerne mellem de to ganebuer
+for side in (1, -1):
+    placér(klump('Ganemandel_' + ('V' if side > 0 else 'H'), [((side * 1.6, 0.4, 54.5), (0.3, 0.5, 0.68))],
+                 M['mandel'], opløsning=0.06, støj=(0.05, 4.5)), C_KANAL, 'svaelg', 'Ganemandel')
+
+# ---- strubelåget: et bladformet låg bag tungeroden; kanterne bøjer bagud
+STRUBELÅG_PKT = [(0, -0.15, 50.0), (0, 0.25, 50.8), (0, 0.6, 51.6), (0, 0.98, 52.3), (0, 1.25, 52.85)]
+H_STRUBELÅG = np.array([0, 0.27, 50.85])
+
+
+def strubelåg_synk(V):
+    return drej_x(V, H_STRUBELÅG, -1.1 * glat_trin(50.75, 51.75, V[:, 2]))
+
+
+def strubelåg():
+    C = gensample(catmull(STRUBELÅG_PKT), 0.06)[0]
+    T = np.gradient(C, axis=0)
+    T /= np.linalg.norm(T, axis=1)[:, None]
+    bag = np.stack([0 * T[:, 0], T[:, 2], -T[:, 1]], 1)
+    v = np.linspace(0, 1, len(C))
+    w = np.maximum(0.2 * (1 - v), 1.1 * np.sqrt(np.clip(1 - ((v - 0.58) / 0.42) ** 2, 0, 1)))
+    nu = 23
+    V = [C[i] + (u * w[i], 0, 0) + bag[i] * 0.32 * u * u * w[i] / 1.1
+         for i in range(len(C)) for u in np.linspace(-1, 1, nu)]
+    o = mesh_obj('Strubelaag', V, gitter(len(C), nu), M['strubelaag'])
+    fjern_dubletter(o)
+    return med_synk(solid(o, C_LUFT, 0.13), strubelåg_synk)
+
+
+mærk(strubelåg(), 'strubelaag')
+
+# ---- strubehovedet: skjoldbrusken (adamsæblet), ringbrusken, tudbruskene og folderne fra
+# strubelåget til tudbruskene, som afgrænser indgangen til strubehovedet
+def skjoldbrusk():
+    nu, nv = 26, 22
+    V, F = [], []
+    for k, side in enumerate((1, -1)):
+        for v in np.linspace(0, 1, nv):
+            u = np.linspace(0, 1, nu)
+            # øvre kant: hak fortil (adamsæblet), bue bagud; nedre kant: lille knude midt på
+            zt = 50.55 + 0.75 * glat_trin(0, 0.28, u) - 0.3 * glat_trin(0.55, 1, u) - 0.25 * glat_trin(0.88, 1, u) ** 2
+            zb = 48.95 + 0.12 * np.sin(np.pi * u) - 0.1 * np.exp(-((u - 0.55) / 0.08) ** 2) \
+                + 0.25 * glat_trin(0.88, 1, u) ** 2
+            bule = 0.12 * np.sin(np.pi * u)
+            V.extend(np.c_[side * (1.9 * u + 0.784 * bule), -0.85 + 2.4 * u - 0.62 * bule, zb + v * (zt - zb)])
+        F += [tuple(i + k * nu * nv for i in f) for f in gitter(nv, nu)]
+    o = mesh_obj('Skjoldbrusk', V, F, M['brusk'])
+    fjern_dubletter(o)
+    ret_normaler(o)
+    return solid(o, C_LUFT, 0.16)
+
+
+def ringbrusk():
+    nphi, nv = 72, 12
+    V = []
+    phi = np.linspace(0, 2 * np.pi, nphi, endpoint=False)
+    bag = np.cos(phi)
+    for v in np.linspace(0, 1, nv):
+        zt = 48.2 + 1.35 * glat_trin(0.2, 0.75, bag)       # signetring: høj plade bagtil
+        V.extend(np.c_[1.12 * np.sin(phi), 0.25 + 0.95 * bag, 47.35 + v * (zt - 47.35)])
+    o = mesh_obj('Ringbrusk', V, gitter(nv, nphi, lukket=True), M['brusk'])
+    ret_normaler(o)
+    return solid(o, C_LUFT, 0.22)
+
+
+mærk(skjoldbrusk(), 'luftvej', 'Skjoldbrusk')
+for side in (1, -1):      # skjoldbruskens horn: de øvre mod tungebenet, de nedre ned til ringbrusken
+    for navn, pkt in (('Skjoldbrusk_horn_oevre', [(side * 1.88, 1.5, 50.9, 0.13), (side * 1.98, 1.55, 51.6, 0.11),
+                                                  (side * 2.05, 1.5, 52.3, 0.1)]),
+                      ('Skjoldbrusk_horn_nedre', [(side * 1.88, 1.5, 49.4, 0.13), (side * 1.6, 1.3, 48.6, 0.12),
+                                                  (side * 1.25, 1.0, 48.0, 0.1)])):
+        o, _, _ = rør(navn, pkt, M['brusk'], trin=0.06, seg=12)
+        placér(o, C_LUFT, 'luftvej', 'Skjoldbrusk')
+mærk(ringbrusk(), 'luftvej', 'Ringbrusk')
+for side in (1, -1):
+    S = 'V' if side > 0 else 'H'
+    placér(klump('Tudbrusk_' + S, [((side * 0.4, 1.3, 50.2), (0.27, 0.3, 0.42)),
+                                   ((side * 0.38, 1.4, 50.6), (0.13, 0.13, 0.16))],
+                 M['luftslim'], opløsning=0.05), C_LUFT, 'luftvej', 'Tudbrusk')
+    o, _, _ = rør('Strubelaagsfold_' + S, [(side * 0.95, 0.9, 51.45, 0.12), (side * 0.75, 1.2, 50.95, 0.11),
+                                          (side * 0.42, 1.38, 50.55, 0.1)], M['luftslim'], trin=0.06, seg=12)
+    med_synk(placér(o, C_LUFT, 'luftvej', 'Strubelågsfold'), strubelåg_synk)
+
+# ---- luftrøret fortsætter fra strubehovedet foran spiserøret og deler sig i to bronkier.
+# C-formede bruskringe holder det åbent; bagsiden mod spiserøret er blød og flad.
+LUFT_PKT = [(0, 0.9, 50.4, 0.72), (0, 0.45, 49.6, 0.78), (0, 0.25, 48.6, 0.76), (0, 0.25, 47.6, 0.78),
+            (0, 0.35, 46.0, 0.88), (0, 0.8, 42, 0.92), (0, 1.6, 37.5, 0.92), (0, 2.2, 34.2, 0.9)]
+_C, _s = gensample(catmull(LUFT_PKT), 0.09)
+S_RINGE = _s[np.argmin(np.abs(_C[:, 2] - 47.0))]      # ringene begynder under ringbrusken
+
+
+def luftrør_form(s, th):
+    bag = np.clip(np.sin(th), 0, 1)                  # sin θ > 0 er bagud (rammen starter i −x)
+    ring = (0.5 + 0.5 * np.cos(2 * np.pi * (s - S_RINGE) / 0.58)) ** 1.5 * glat_trin(S_RINGE - 0.1, S_RINGE + 0.2, s)
+    return (1 - 0.14 * bag ** 2) * (1 + 0.055 * ring * (1 - glat_trin(0.25, 0.6, bag)))
+
+
+o, _, _ = rør('Luftroer', LUFT_PKT, M['luftroer'], trin=0.09, seg=32, form=luftrør_form, start='åben', slut='rund')
+placér(o, C_LUFT, 'luftvej', 'Luftrør')
+for navn, pkt in (('Bronkie_H', [(0, 2.2, 34.3, 0.85), (-1.2, 2.5, 32.9, 0.7), (-2.6, 2.9, 31.2, 0.6)]),
+                  ('Bronkie_V', [(0, 2.2, 34.3, 0.85), (1.3, 2.4, 33.4, 0.65), (3.1, 2.9, 32.0, 0.55)])):
+    o, _, _ = rør(navn, pkt, M['luftroer'], trin=0.1, seg=24)
+    placér(o, C_LUFT, 'luftvej', 'Bronkie')
+
+# ---- tungebenet, som strubehovedet hænger i
+o, _, _ = rør('Tungeben', [(-2.1, 1.35, 52.55, 0.11), (-1.8, 0.25, 52.4, 0.15), (-1.2, -0.95, 52.25, 0.18),
+                           (0, -1.45, 52.2, 0.22), (1.2, -0.95, 52.25, 0.18), (1.8, 0.25, 52.4, 0.15),
+                           (2.1, 1.35, 52.55, 0.11)], M['knogle'], trin=0.08, seg=14)
+placér(o, C_LUFT, 'luftvej', 'Tungeben')
+
+
 # ================================================================= KROPPEN (gennemsigtig)
 krop = klump('Krop', [
     ((0, -0.4, 63.5), (7.4, 9.0, 11.0)),       # hoved
@@ -766,8 +1099,8 @@ krop['del'] = 'krop'
 
 
 # ================================================================= madens vej (forloeb.json)
-mund_pkt = np.array([(0, -9.6, 55.0), (0, -7.0, 55.25), (0, -4.0, 55.75), (0, -1.0, 55.3), (0, 1.2, 54.0),
-                     (0, 2.2, 51.5), (0, 2.5, 48.5)])
+mund_pkt = np.array([(0, -9.6, 55.0), (0, -7.0, 55.25), (0, -4.0, 55.75), (0, -1.0, 55.3), (0, 2.2, 53.6),
+                     (0, 2.5, 51.2), (0, 2.5, 48.5)])
 mave_vej = np.array([(5.6, 1.9, 16.8), (7.6, 0.6, 14.0), (8.0, -0.6, 10.6), (6.6, -2.4, 7.8),
                      (4.0, -3.8, 6.3), (1.0, -4.3, 6.9), (-1.4, -3.9, 8.3), (-3.0, -3.3, 9.2)])
 tyk_vej = np.vstack([[TYND_SLUT], [(-11.4, -0.6, -10.6)], P_tyk[np.argmin(np.abs(P_tyk[:, 2] + 9.0)):]])
@@ -834,6 +1167,8 @@ kamera('Skraat', (70, -130, 25), (0, 0, 0), 50)
 kamera('Siden', (150, 0, 0), (0, 0, 0), 50)
 kamera('Helhed', (0, -230, 15), (0, 0, 15), 50)
 kamera('Hoved', (40, -70, 60), (0, -1, 54), 60)
+kamera('Svaelg_bagfra', (-38, 70, 62), (0, 1.5, 53.5), 85)
+kamera('Svaelg_siden', (75, -12, 56), (0, 0.8, 53.5), 85)
 
 sc.render.engine = 'BLENDER_EEVEE'
 sc.render.resolution_x, sc.render.resolution_y = 900, 1100

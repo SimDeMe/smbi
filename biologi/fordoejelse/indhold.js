@@ -12,7 +12,7 @@ export const DELE = {
   },
   gane: {
     navn: 'Ganen og gummerne', gruppe: 'Mundhulen',
-    tekst: 'Ganen er mundhulens loft. Tungen presser maden op mod den, når vi tygger og synker. Den bløde gane bagest lukker op til næsen, når vi synker.',
+    tekst: 'Ganen er mundhulens loft: forrest den hårde gane, bagest den bløde gane med drøbelen og ganebuerne ned mod tungen og svælget. Tungen presser maden op mod ganen, når vi tygger. Når vi synker, løfter den bløde gane sig og lukker op til næsehulen, så maden ikke kommer op i næsen.',
   },
   spytkirtel: {
     navn: 'Spytkirtlerne', gruppe: 'Tilhørende organ',
@@ -21,7 +21,16 @@ export const DELE = {
   },
   svaelg: {
     navn: 'Svælget', gruppe: 'Fordøjelseskanalen',
-    tekst: 'Fælles vej for luft og mad. Når vi synker, lukker strubelåget luftrøret, så maden går ned i spiserøret.',
+    tekst: 'Et ca. 12 cm langt muskelrør bag næsehulen, mundhulen og strubehovedet — fælles vej for luft og mad. Det har tre dele: næsesvælget, mundsvælget og strubesvælget. Når vi synker, lukker den bløde gane op til næsen, strubelåget vipper ned over strubehovedet, og de tre svælgsnørere trækker sig sammen oppefra og ned og presser klumpen ned i spiserøret. Mandlerne i svælget er en del af immunforsvaret, og øretrompeterne fører fra næsesvælget til mellemøret.',
+    fakta: [['Længde', 'ca. 12–14 cm'], ['Dele', 'næse-, mund- og strubesvælg'], ['Muskler', 'tre svælgsnørere'], ['Synkning', 'under 1 s']],
+  },
+  strubelaag: {
+    navn: 'Strubelåget', gruppe: 'Luftvejene',
+    tekst: 'Et bladformet låg af brusk med slimhinde bag tungeroden. Når vi synker, løftes strubehovedet, og strubelåget vipper bagover og ned over indgangen til strubehovedet, så maden glider forbi og ned i spiserøret. Når vi «får noget i den gale hals», er der mad eller væske kommet ned i strubehovedet, og vi hoster det op igen.',
+  },
+  luftvej: {
+    navn: 'Strubehoved og luftrør', gruppe: 'Luftvejene — ikke en del af fordøjelsen',
+    tekst: 'Vist for at se, hvor luftens og madens veje krydser hinanden i svælget. Luften går fra næsen gennem svælget ned i strubehovedet og luftrøret, der ligger foran spiserøret. Skjoldbrusken (adamsæblet) og ringbrusken beskytter strubehovedet. Luftrøret holdes åbent af C-formede bruskringe, som er åbne bagud mod spiserøret, så en madklump kan passere. Tungebenet, som strubehovedet hænger i, er også vist.',
   },
   spiseroer: {
     navn: 'Spiserøret', gruppe: 'Fordøjelseskanalen',
@@ -77,8 +86,9 @@ export const DELE = {
 
 // Rækkefølge i listen under figuren
 export const LISTE = [
-  ['Kanalen', ['tunge', 'taender', 'svaelg', 'spiseroer', 'mavesaek', 'tolvfingertarm', 'tyndtarm', 'tyktarm', 'vedhaeng', 'endetarm']],
+  ['Kanalen', ['tunge', 'taender', 'gane', 'svaelg', 'spiseroer', 'mavesaek', 'tolvfingertarm', 'tyndtarm', 'tyktarm', 'vedhaeng', 'endetarm']],
   ['Tilhørende organer', ['spytkirtel', 'lever', 'galdeblaere', 'galdegang', 'bugspytkirtel']],
+  ['Luftvejene', ['strubelaag', 'luftvej']],
 ];
 
 // Rundturens trin. «dele» er de 3D-dele, der fremhæves; «andel» er trinnets del af afspilningen;
@@ -91,8 +101,8 @@ export const TRIN = [
     note: 'Spyt fra spytkirtlerne fugter maden og bringer amylase med.',
   },
   {
-    id: 'svaelg', navn: 'Svælget', dele: ['svaelg'], andel: 0.04, tid: [1, 1.05], ph: [7, 7],
-    mekanisk: 'Tungen skubber klumpen bagud, og strubelåget lukker luftrøret, mens vi synker.',
+    id: 'svaelg', navn: 'Svælget', dele: ['svaelg', 'strubelaag', 'gane'], andel: 0.04, tid: [1, 1.05], ph: [7, 7],
+    mekanisk: 'Tungen skubber klumpen bagud. Den bløde gane lukker op til næsen, strubelåget vipper ned over strubehovedet, og svælgsnørerne presser klumpen ned i spiserøret. Imens holder vi vejret et øjeblik.',
     kemisk: [['Spytamylase', 'arbejder videre inde i klumpen']],
   },
   {

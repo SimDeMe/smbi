@@ -38,6 +38,17 @@ kan ses). `reserve` laver `reserve.jpg`, som siden viser, hvis WebGL eller model
   underside der hælder op og bagud), fejet fra højre kant til venstre laps spids og skaleret efter
   et omrids forfra: rund højre lap, skrå nedre kant med hak ved leverbåndet. Leverbåndet er et
   rør på forsiden med samme `del`.
+* **Svælget** er en U-formet skal (superellipse-tværsnit, flad bagvæg), åben fortil mod
+  næsehulen, mundhulen og strubehovedet og lukket til et rør bag ringbrusken, hvor spiserøret
+  tager over (`SV_TAB` i scriptet). Udenpå ligger de tre svælgsnørere som overlappende
+  muskelplader med fibre og en søm bagpå; inde i svælget svælgmandlen, ganemandlerne og
+  øretrompeternes åbninger. Den bløde gane med drøbel og ganebuer, strubelåget, strubehovedet
+  (skjold-, ring- og tudbrusk), tungebenet og luftrøret med C-formede bruskringe og bronkier er
+  med for at vise, hvor luftens og madens veje krydser. Luftvejene har `del` `luftvej` og
+  `strubelaag`.
+* **Synkning**: den bløde gane, strubelåget og strubelågets folder har formnøglen `synk`
+  (morph target). Den bløde gane løftes op mod svælgets bagvæg, og strubelåget vipper ned over
+  indgangen til strubehovedet. `side.js` blander den ind, mens klumpen er i svælget.
 * **Klumper** (tunge, spytkirtler, kroppen): metaballs (ellipsoider), omsat til mesh og gjort
   knudret med Perlin-støj, hvor det passer.
 
@@ -58,7 +69,7 @@ gennem kanalen i glTF-koordinater (cm), delt op i trin (`mund`, `svaelg` … `en
 
 ## Forenklinger
 
-Tyndtarmen er ca. 2 m i modellen (5–6 m i virkeligheden). Tarmkrøset, karrene, bughinden og
+Tyndtarmen er ca. 2 m i modellen (5–6 m i virkeligheden). Strubehovedet løftes ikke under synkningen, og næsehulen er udeladt. Tarmkrøset, karrene, bughinden og
 milten er udeladt. Tider og pH er typiske, idealiserede værdier. Molekylerne er symboler.
 
 Enzymernes aktivitet er klokkekurver exp(−((pH − optimum)/b)²) med optimum og bredde b:

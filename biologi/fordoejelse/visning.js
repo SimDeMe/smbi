@@ -33,6 +33,7 @@ export async function skabVisning(canvas, {vedHover, vedKlik} = {}) {
   scene.add(model);
   const dele = new Map();          // del → [mesh]
   const pickbare = [];
+  const synkere = [];              // meshes med formnøglen «synk»
   let krop = null;
   model.traverse((o) => {
     if (!o.isMesh) return;
@@ -46,6 +47,7 @@ export async function skabVisning(canvas, {vedHover, vedKlik} = {}) {
       o.renderOrder = 10;
       return;
     }
+    if (o.morphTargetDictionary?.synk !== undefined) synkere.push(o);
     if (!dele.has(del)) dele.set(del, []);
     dele.get(del).push(o);
     pickbare.push(o);
@@ -286,6 +288,11 @@ export async function skabVisning(canvas, {vedHover, vedKlik} = {}) {
         ønske.mål.copy(kam.mål);
         følg = null;
       }
+      tegn();
+    },
+    // synkestilling 0–1: formnøglen «synk» (blød gane løftet, strubelåget nede)
+    synk(v) {
+      for (const m of synkere) m.morphTargetInfluences[m.morphTargetDictionary.synk] = v;
       tegn();
     },
     animer(v) { animerer = v; if (v) tegn(); },

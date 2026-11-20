@@ -14,7 +14,7 @@ const FARVE_PRIK = {
   tunge: '#c3525a', taender: '#f3ecd9', gane: '#d9848a', spytkirtel: '#e3b48a', svaelg: '#c7766c',
   spiseroer: '#c46e63', mavesaek: '#d8857a', tolvfingertarm: '#dd9a7c', tyndtarm: '#e3907f', tyktarm: '#cf9f7e',
   vedhaeng: '#c99579', endetarm: '#b9776a', lever: '#7c2b24', galdeblaere: '#5d8f3c', galdegang: '#76a03c',
-  bugspytkirtel: '#e8c27c',
+  bugspytkirtel: '#e8c27c', strubelaag: '#dc9f96', luftvej: '#d3d6c8',
 };
 
 let vis = null;            // 3D-visningen (null, hvis WebGL fejler)
@@ -121,6 +121,16 @@ function sætU(ny) {
   const tid = performance.now() / 1000;
   const puls = rolig ? 0 : trin.id === 'mund' ? 0.08 * Math.sin(tid * 9) : trin.id === 'mavesaek' ? 0.06 * Math.sin(tid * 4) : 0;
   vis?.klump(trin.id, f, {farve: FARVER[trin.id], radius: KLUMP_R[trin.id], følgMed: $('følg').checked, puls});
+  vis?.synk(synkestilling(trin.id, f));
+}
+
+// Synkerefleksen: den bløde gane og strubelåget lukker, mens klumpen er i svælget.
+function synkestilling(id, f) {
+  const glat = (a, b, x) => { const t = Math.min(Math.max((x - a) / (b - a), 0), 1); return t * t * (3 - 2 * t); };
+  if (id === 'mund') return glat(0.82, 1, f);
+  if (id === 'svaelg') return 1;
+  if (id === 'spiseroer') return 1 - glat(0, 0.2, f);
+  return 0;
 }
 
 function afspil() {
@@ -273,6 +283,7 @@ function skiftTil(ny) {
   }
   stop();
   vis?.klump(null);
+  vis?.synk(0);
   vis?.glas([]);
   if (ny === 'opbygning') {
     vis?.aktiv([]);
