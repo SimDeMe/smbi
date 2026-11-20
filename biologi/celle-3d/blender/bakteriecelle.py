@@ -136,8 +136,8 @@ M['im_snit'] = materiale('BC Inner Membrane Cut', (1, 1, 1), ru=0.45,
                          billede=dobbeltlag('BC_Bilayer_Inner', (0.16, 0.36, 0.78), (0.86, 0.90, 0.97)))
 M['pg'] = materiale('BC Peptidoglycan', (0.95, 0.70, 0.22), ru=0.55, coat=0.1)
 M['pg_snit'] = materiale('BC Peptidoglycan Cut', (0.99, 0.82, 0.45), ru=0.65)
-M['peri'] = materiale('BC Periplasm', (0.97, 0.93, 0.80), ru=0.2, alfa=0.38)
-M['peri_snit'] = materiale('BC Periplasm Cut', (0.98, 0.94, 0.82), ru=0.3, alfa=0.55)
+M['peri'] = materiale('BC Periplasm', (0.86, 0.95, 0.76), ru=0.2, alfa=0.38)
+M['peri_snit'] = materiale('BC Periplasm Cut', (0.87, 0.95, 0.78), ru=0.3, alfa=0.55)
 M['om'] = materiale('BC Outer Membrane', (0.10, 0.46, 0.17), ru=0.35, coat=0.3)
 M['om_snit'] = materiale('BC Outer Membrane Cut', (1, 1, 1), ru=0.45,
                          billede=dobbeltlag('BC_Bilayer_Outer', (0.08, 0.38, 0.14), (0.90, 0.97, 0.90)))
@@ -146,10 +146,10 @@ M['kapsel_snit'] = materiale('BC Capsule Cut', (0.88, 0.94, 0.84), ru=0.3, alfa=
 M['cyto'] = materiale('BC Cytoplasm', (0.84, 0.95, 0.93), ru=0.05, coat=1.0, alfa=0.32)
 M['cyto_snit'] = materiale('BC Cytoplasm Cut', (0.84, 0.95, 0.93), ru=0.05, coat=1.0, alfa=0.32)
 M['plasmid'] = materiale('BC Plasmid', (0.50, 0.26, 0.86), ru=0.35, coat=0.2)
-M['flagel'] = materiale('BC Flagellin', (0.44, 0.27, 0.14), ru=0.4, coat=0.2)
-M['krog'] = materiale('BC Flagellar Hook', (0.30, 0.17, 0.10), ru=0.4)
+M['flagel'] = materiale('BC Flagellin', (0.28, 0.62, 0.20), ru=0.4, coat=0.2)
+M['krog'] = materiale('BC Flagellar Hook', (0.12, 0.36, 0.14), ru=0.4)
 M['motor'] = materiale('BC Flagellar Motor', (0.30, 0.30, 0.46), ru=0.4, coat=0.2)
-M['pili'] = materiale('BC Pili', (0.72, 0.56, 0.36), ru=0.45)
+M['pili'] = materiale('BC Pili', (0.52, 0.78, 0.42), ru=0.45)
 
 
 def placér(obj, coll, struktur, del_):
@@ -414,13 +414,17 @@ for i, (c, akse, a) in enumerate(PLASMIDER, 1):
 # ---------------------------------------------------------------- flageller
 # Hver flagel: basallegeme (motor) gennem hylsteret, en kort krog og et langt, skrueformet
 # filament. Basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget.
+# Filamentet er en stiv, venstreskruet helix om en ret akse (som en proptrækker) med
+# konstant radius og bølgelængde, der løber ud fra krogen bagud langs cellen.
 # To flageller, kortere end i virkeligheden (der er de 5–10 µm, flere gange cellens længde),
 # så figuren kan vise selve cellen stort.
-FLAGELLER = [  # (x, theta), filamentets retning, sideforskydning
-    (dict(pol=(-1, -0.30, -0.25)), (-1, -0.10, -0.08), (0, -0.9, 0.4)),
-    (dict(x=-3.2, th=math.radians(-35)), (-1, 0.45, -0.10), (0, 1.0, 0.2)),
+FLAGELLER = [  # (x, theta) eller pol, og filamentets retning
+    (dict(pol=(-1, -0.30, -0.25)), (-1, -0.12, -0.10)),
+    (dict(x=-3.2, th=math.radians(-35)), (-1, 0.45, -0.10)),
 ]
-FLAGEL_LÆNGDE = 8.5
+FLAGEL_LÆNGDE = 10.0
+FLAGEL_BØLGE = 4.2            # helixens stigning (længde pr. omgang)
+FLAGEL_RADIUS = 0.62          # helixens radius
 FLAG_PUNKTER, FLAG_FOD = [], []
 
 
@@ -454,7 +458,7 @@ def stang(bm, p0, p1, r_, seg=12):
     bm.faces.new(ringe[1])
 
 
-for i, (fod, retning, side) in enumerate(FLAGELLER, 1):
+for i, (fod, retning) in enumerate(FLAGELLER, 1):
     if 'pol' in fod:
         n = Vector(fod['pol']).normalized()
         akse = Vector((-H, 0, 0))
@@ -486,24 +490,18 @@ for i, (fod, retning, side) in enumerate(FLAGELLER, 1):
     krog = [((1 - t_) ** 3) * b0 + 3 * ((1 - t_) ** 2) * t_ * b1 + 3 * (1 - t_) * t_ ** 2 * b2 + t_ ** 3 * b3 for t_ in tt]
     placér(kurve(f'Flagellum_{i}_Hook', [k[:] for k in krog], 0.085, M['krog'], opløsning=2), C_FLAG,
            'Flagel', 'Krog')
-    # filament: en lang skrue om en bøjet midterlinje
-    tan = (b3 - b2).normalized()
+    # filament: en stiv, venstreskruet helix om en ret akse, der fortsætter krogens retning
     P0 = np.array(b3[:])
-    P1 = P0 + np.array(tan[:]) * 2.0
-    mål = P0 + np.array(d[:]) * FLAGEL_LÆNGDE + np.array(side)
-    P2_ = mål - np.array(d[:]) * 3 + np.array(side) * 0.5
-    tt = np.linspace(0, 1, 1200)[:, None]
-    midt = (1 - tt) ** 3 * P0 + 3 * (1 - tt) ** 2 * tt * P1 + 3 * (1 - tt) * tt ** 2 * P2_ + tt ** 3 * mål
-    midt, L = gensample(midt, 320)
-    T_, N_, B_ = rammer(midt)
-    ss = np.linspace(0, L, len(midt))
-    amp = 0.62 * np.clip(ss / 2.0, 0, 1) ** 2 * (3 - 2 * np.clip(ss / 2.0, 0, 1))
-    fase = 2 * np.pi * ss / 5.5
-    # venstreskruet helix, som E. colis flagelfilament i sin normale form
-    fil = midt + amp[:, None] * (np.cos(fase)[:, None] * N_ - np.sin(fase)[:, None] * B_)
-    fil = fil - (fil[0] - P0)   # start præcis i krogens ende
+    akse_f = np.array(d[:])
+    u_f = np.array(d.orthogonal().normalized()[:])
+    v_f = np.cross(akse_f, u_f)
+    ss = np.linspace(0, FLAGEL_LÆNGDE, 420)
+    ramp = np.clip(ss / 1.6, 0, 1)
+    amp = FLAGEL_RADIUS * ramp * ramp * (3 - 2 * ramp)   # glidende start fra krogens spids
+    fase = 2 * np.pi * ss / FLAGEL_BØLGE
+    fil = (P0 + ss[:, None] * akse_f + amp[:, None] * (np.cos(fase)[:, None] * u_f - np.sin(fase)[:, None] * v_f))
     FLAG_PUNKTER.append(fil)
-    placér(kurve(f'Flagellum_{i}_Filament', fil, 0.085, M['flagel'], opløsning=2), C_FLAG,
+    placér(kurve(f'Flagellum_{i}_Filament', fil, 0.095, M['flagel'], opløsning=2), C_FLAG,
            'Flagel', 'Filament')
 
 # ---------------------------------------------------------------- pili (fimbrier)

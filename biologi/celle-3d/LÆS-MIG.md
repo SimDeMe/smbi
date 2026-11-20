@@ -78,7 +78,7 @@ basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget. D
 slappet af, så strengen ikke krydser sig selv. Det indre er ordnet i områder, så delene er
 lette at se og klikke på: nukleoidet samlet midt i cellen, ribosomerne kun mod polerne (hvor de
 også er tættest i *E. coli*) med frit cytoplasma imellem, og tre plasmider enkeltvis langs
-siderne. Den ydre membran er grøn. De to flageller er gjort kortere end i virkeligheden. `kontrol.py` melder åbne kanter, løse punkter og indadvendte normaler.
+siderne. Hele bakterien er i grønne nuancer (ydre membran, flageller, pili), uden kødfarver. Flagelfilamentet er en stiv, venstreskruet helix om en ret akse (`FLAGEL_BØLGE`, `FLAGEL_RADIUS`, `FLAGEL_LÆNGDE` i scriptet), ikke en slynget streg. De to flageller er gjort kortere end i virkeligheden. `kontrol.py` melder åbne kanter, løse punkter og indadvendte normaler.
 Kapslen tegnes sidst (`øverst`), og cytoplasmaet først (`cytoplasmaFørst`) som i plantecellen.
 Bakterien vises lag for lag: først hylsteret, cytoplasmaet og kromosomet, så resten.
 
