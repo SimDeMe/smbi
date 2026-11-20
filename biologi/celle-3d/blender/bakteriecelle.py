@@ -414,17 +414,17 @@ for i, (c, akse, a) in enumerate(PLASMIDER, 1):
 # ---------------------------------------------------------------- flageller
 # Hver flagel: basallegeme (motor) gennem hylsteret, en kort krog og et langt, skrueformet
 # filament. Basallegemets ringe sidder med vilje inde i membranerne og peptidoglykanlaget.
-# Filamentet er en stiv, venstreskruet helix om en ret akse (som en proptrækker) med
-# konstant radius og bølgelængde, der løber ud fra krogen bagud langs cellen.
-# To flageller, kortere end i virkeligheden (der er de 5–10 µm, flere gange cellens længde),
-# så figuren kan vise selve cellen stort.
+# Filamentet er en stiv, venstreskruet helix om en ret akse (som en proptrækker), der
+# bliver tyndere mod spidsen. Én polær flagel midt for enden af cellen, ud langs cellens
+# akse; kortere end i virkeligheden (5–10 µm, flere gange cellens længde), så figuren kan
+# vise selve cellen stort.
 FLAGELLER = [  # (x, theta) eller pol, og filamentets retning
-    (dict(pol=(-1, -0.30, -0.25)), (-1, -0.12, -0.10)),
-    (dict(x=-3.2, th=math.radians(-35)), (-1, 0.45, -0.10)),
+    (dict(pol=(-1, 0, 0)), (-1, 0, 0)),
 ]
 FLAGEL_LÆNGDE = 10.0
 FLAGEL_BØLGE = 4.2            # helixens stigning (længde pr. omgang)
 FLAGEL_RADIUS = 0.62          # helixens radius
+FLAGEL_TYK = (0.15, 0.015)    # filamentets tykkelse (radius) ved krogen og i spidsen
 FLAG_PUNKTER, FLAG_FOD = [], []
 
 
@@ -488,7 +488,7 @@ for i, (fod, retning) in enumerate(FLAGELLER, 1):
     b1, b2 = b0 + n * 0.35, b3 - d * 0.25
     tt = np.linspace(0, 1, 24)
     krog = [((1 - t_) ** 3) * b0 + 3 * ((1 - t_) ** 2) * t_ * b1 + 3 * (1 - t_) * t_ ** 2 * b2 + t_ ** 3 * b3 for t_ in tt]
-    placér(kurve(f'Flagellum_{i}_Hook', [k[:] for k in krog], 0.085, M['krog'], opløsning=2), C_FLAG,
+    placér(kurve(f'Flagellum_{i}_Hook', [k[:] for k in krog], FLAGEL_TYK[0], M['krog'], opløsning=2), C_FLAG,
            'Flagel', 'Krog')
     # filament: en stiv, venstreskruet helix om en ret akse, der fortsætter krogens retning
     P0 = np.array(b3[:])
@@ -501,8 +501,10 @@ for i, (fod, retning) in enumerate(FLAGELLER, 1):
     fase = 2 * np.pi * ss / FLAGEL_BØLGE
     fil = (P0 + ss[:, None] * akse_f + amp[:, None] * (np.cos(fase)[:, None] * u_f - np.sin(fase)[:, None] * v_f))
     FLAG_PUNKTER.append(fil)
-    placér(kurve(f'Flagellum_{i}_Filament', fil, 0.095, M['flagel'], opløsning=2), C_FLAG,
-           'Flagel', 'Filament')
+    # tilspidset: tykkelsen falder jævnt fra krogen ud mod en spids ende
+    tyk = FLAGEL_TYK[1] + (FLAGEL_TYK[0] - FLAGEL_TYK[1]) * (1 - ss / FLAGEL_LÆNGDE)
+    placér(kurve(f'Flagellum_{i}_Filament', fil, 1.0, M['flagel'], opløsning=2, radier=list(tyk)),
+           C_FLAG, 'Flagel', 'Filament')
 
 # ---------------------------------------------------------------- pili (fimbrier)
 pili = []
