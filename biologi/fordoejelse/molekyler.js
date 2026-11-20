@@ -1,7 +1,7 @@
 // Næringsstofferne som små molekyletegninger, der spaltes undervejs i rundturen.
 // Stivelse → maltose → glukose, protein → peptider → aminosyrer, fedt → fedtsyrer + glycerol,
 // kostfibre (spaltes ikke af kroppens enzymer). Produkterne optages og forsvinder op mod blod/lymfe.
-import {værdi} from './indhold.js';
+import {værdi, forhold} from './indhold.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (navn, attr = {}, forælder) => {
@@ -19,7 +19,8 @@ function sekskant(r) {
   }).join(' ');
 }
 
-// brud: liste af [bindingens nummer, kurve, rang, antal] – bindingen brydes, når kurven er over tærsklen
+// brud: liste af [bindingens nummer, kurve, rang, antal, reserve?] – bindingen brydes, når kurven er over
+// tærsklen; en reservekurve kan bryde den i stedet (fx trypsin, når pepsin ikke har virket)
 function kæde({n, form, farver, brud, optag, optagKun}) {
   const svg = el('svg', {viewBox: `0 0 ${B} ${H}`, 'aria-hidden': 'true'});
   const bånd = [], enheder = [];
@@ -34,8 +35,9 @@ function kæde({n, form, farver, brud, optag, optagKun}) {
     svg,
     opdater(u) {
       const brudt = Array(n - 1).fill(false);
-      for (const [b, kurve, rang, antal] of brud) {
-        if (værdi(kurve, u).v >= (rang + 0.5) / antal) brudt[b] = true;
+      for (const [b, kurve, rang, antal, reserve] of brud) {
+        const t = (rang + 0.5) / antal;
+        if (værdi(kurve, u).v >= t || (reserve && værdi(reserve, u).v >= t)) brudt[b] = true;
       }
       const op = optag ? værdi(optag, u).v : 0;
       const trin = 16.5, mellem = 7;
@@ -91,7 +93,9 @@ function fedt() {
       const x0 = (B - 40) / 2 - afstand;
       mol.forEach(({g, gly, haler}, k) => {
         const x = x0 + k * afstand;
-        const t = Math.min(1, Math.max(0, (op - k * 0.2) / 0.4));
+        // kun et helt spaltet fedtmolekyle kan optages
+        const fri = li >= (k * 3 + 2.5) / 9;
+        const t = fri ? Math.min(1, Math.max(0, (op - k * 0.2) / 0.4)) : 0;
         g.setAttribute('transform', `translate(${x - 12},${MIDT - t * 14})`);
         g.style.opacity = 1 - t;
         haler.forEach((h, j) => {
@@ -139,14 +143,15 @@ export function skabMolekyler(rod) {
     {
       navn: 'Protein', mål: 'blodet',
       tegning: kæde({n: 12, form: 'amino', farver: AMINO, optag: 'protein_optag',
-        brud: [[2, 'protein_pepsin', 0, 3], [8, 'protein_pepsin', 1, 3], [5, 'protein_pepsin', 2, 3],
+        brud: [[2, 'protein_pepsin', 0, 3, 'protein_trypsin'], [8, 'protein_pepsin', 1, 3, 'protein_trypsin'],
+          [5, 'protein_pepsin', 2, 3, 'protein_trypsin'],
           [0, 'protein_trypsin', 0, 3], [6, 'protein_trypsin', 1, 3], [10, 'protein_trypsin', 2, 3],
           ...[1, 3, 4, 7, 9].map((b, r) => [b, 'protein_peptidase', r, 5])]}),
       status(u) {
         if (værdi('protein_optag', u).v > 0.95) return 'aminosyrer optaget i blodet';
         if (værdi('protein_peptidase', u).v > 0.95) return 'aminosyrer';
         if (værdi('protein_peptidase', u).v > 0.05) return 'peptider og aminosyrer';
-        if (værdi('protein_pepsin', u).v > 0.05) return 'peptider';
+        if (værdi('protein_pepsin', u).v > 0.05 || værdi('protein_trypsin', u).v > 0.05) return 'peptider';
         return 'protein';
       },
       enzymer: [['protein_pepsin', 'pepsin'], ['protein_trypsin', 'trypsin'], ['protein_peptidase', 'peptidaser']],
@@ -155,8 +160,10 @@ export function skabMolekyler(rod) {
       navn: 'Fedt', mål: 'lymfen',
       tegning: fedt(),
       status(u) {
-        if (værdi('fedt_optag', u).v > 0.95) return 'optaget i lymfen';
         const li = værdi('fedt_lipase', u).v;
+        if (!forhold.galde && værdi('fedt_optag', u).v > 0.95) return 'kun en del er optaget — resten ender i afføringen';
+        if (!forhold.galde && li > 0.05) return 'lipase spalter langsomt på overfladen af de store dråber';
+        if (værdi('fedt_optag', u).v > 0.95) return 'optaget i lymfen';
         if (li > 0.95) return 'fedtsyrer og glycerol';
         if (li > 0.05) return 'fedt, fedtsyrer og glycerol';
         if (værdi('fedt_galde', u).v > 0.05) return 'små fedtdråber (emulgeret af galde)';

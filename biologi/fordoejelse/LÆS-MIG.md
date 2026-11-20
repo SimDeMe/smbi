@@ -43,8 +43,10 @@ gennem kanalen i glTF-koordinater (cm), delt op i trin (`mund`, `svaelg` … `en
 
 * `visning.js` — Three.js (genbruger `../celle-3d/vendor/`, r169), kamera, klik og hover,
   fremhævning, gennemsigtighed og madklumpen.
-* `indhold.js` — organernes tekster, rundturens trin (pH, tider, enzymer) og nøglepunkterne
-  for nedbrydningen.
+* `indhold.js` — organernes tekster, rundturens trin (pH, tider, enzymer), enzymernes
+  pH-kurver og nøglepunkterne for nedbrydningen. Nøglepunkterne bygges af `bygForløb()` ud
+  fra forholdene i «Hvad nu hvis …?» (pH i mavesækken, galde ja/nej).
+* `opgaver.js` — undersøgelsesopgaverne i opgavekortet; «vis» stiller modellen op til opgaven.
 * `molekyler.js` — stivelse, protein, fedt og kostfibre som små SVG-molekyler, der spaltes.
 * `side.js` — faner, organliste, afspilning, fokus og reserve uden WebGL.
 
@@ -52,4 +54,11 @@ gennem kanalen i glTF-koordinater (cm), delt op i trin (`mund`, `svaelg` … `en
 
 Tyndtarmen er ca. 2 m i modellen (5–6 m i virkeligheden). Tarmkrøset, karrene, bughinden og
 milten er udeladt. Tider og pH er typiske, idealiserede værdier. Molekylerne er symboler.
-Elevafprøvning mangler, og opgaverne fra todo.md er ikke lavet endnu.
+
+Enzymernes aktivitet er klokkekurver exp(−((pH − optimum)/b)²) med optimum og bredde b:
+amylase 6,9/1,4, pepsin 2/1,5, trypsin 8/1,6, lipase 8/1,5, maltase 6,5/1,5. Under 2 %
+regnes som «virker ikke» i rundturen. Uden mavesyre spalter trypsin pepsins bindinger
+(reservekurve i `molekyler.js`); uden galde når lipase kun ca. en tredjedel af fedtet, og kun
+helt spaltede fedtmolekyler optages.
+
+Elevafprøvning mangler.

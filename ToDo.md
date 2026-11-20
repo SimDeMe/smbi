@@ -36,15 +36,12 @@ spørgsmål til afleveringen tog en stor del af næste modul).
   de rette enzymer rammer dem (amylase, pepsin, trypsin, lipase m.fl.).
   Skeln mellem substrat, enzym og produkt, og vis hvor i kanalen hvert
   enzym virker.
-- [ ] **Enzymer og pH.** Delvist: pH vises i hvert trin, og det står, at amylase går
-  i stå i maven, mens pepsin virker. Mangler pH som kontrol, eleven selv kan skrue på. Mundens (≈ 7), mavens (≈ 1,5–2) og tyndtarmens
-  (≈ 7–8, galde og bikarbonat) pH som kontrol/visning; hvert enzym har sit
-  optimum, så eleven kan se pepsin virke i maven og amylase gå i stå i den
-  sure mave. Bind til `biologi/enzymhastighed.html` / `enzymkinetik.html`
-  og spytamylase-øvelsen.
-- [ ] **Opgaver.** Korte undersøgelsesopgaver i simuleringen (fx «Hvorfor
-  virker amylase ikke i maven?», «Hvad sker der, hvis galden mangler?»,
-  «Hvor optages vand og fedt?») og evt. journal-/databehandlingsspørgsmål.
+- [x] **Enzymer og pH.** Fanen «Enzymer og pH» (20/11): pH-skyder 0–14, enzymernes
+  aktivitetskurver med optimum, genveje til mund/mave/tyndtarm/tyktarm, klik på et organ
+  bruger dets pH, og de organer, hvor de aktive enzymer hører til, fremhæves. Under
+  «Madens vej» kan eleven ændre mavens pH og slå galden fra («Hvad nu hvis …?»).
+- [x] **Opgaver.** Opgavekort med syv undersøgelsesopgaver og en knap, der stiller
+  modellen op til hver (20/11). Mangler evt. journal-/databehandlingsspørgsmål.
 - [ ] **Faglig kontrol og design.** Oplys forenklinger (tidsforløb, mængder
   og pH-værdier er idealiserede). Test på 1280×577, 1366×625 og mobil;
   figur og primære kontroller samtidig (`design_rules.md` §3). Hvis 3D

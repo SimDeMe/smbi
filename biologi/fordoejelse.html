@@ -47,7 +47,7 @@
   <div class="wrap head">
     <span class="eyebrow mono"><i></i>Biologi · fordøjelse</span>
     <h1>Fordøjelses&shy;systemet <span class="hi">i 3D</span></h1>
-    <p class="lead">Drej modellen, og klik på et organ for at se, hvad det gør. Under <b>Madens vej</b> følger du en mundfuld mad fra munden til blodet — og ud i den anden ende.</p>
+    <p class="lead">Drej modellen, og klik på et organ for at se, hvad det gør. Under <b>Madens vej</b> følger du en mundfuld mad fra munden til blodet — og ud i den anden ende. Under <b>Enzymer og pH</b> ser du, hvorfor hvert enzym kun virker sit eget sted.</p>
   </div>
 
   <div class="wrap">
@@ -57,7 +57,9 @@
         <div class="seg" role="tablist" aria-label="Visning">
           <button type="button" role="tab" id="fane-opbygning" aria-selected="true" aria-controls="panel-opbygning">Opbygning</button>
           <button type="button" role="tab" id="fane-forloeb" aria-selected="false" aria-controls="panel-forloeb">Madens vej</button>
+          <button type="button" role="tab" id="fane-enzymer" aria-selected="false" aria-controls="panel-enzymer">Enzymer og pH</button>
         </div>
+        <button type="button" class="btn-mini btn-opg" id="btn-opgaver" aria-pressed="false" aria-controls="opgave">Opgaver</button>
         <span class="spacer"></span>
         <button type="button" class="btn-mini" id="btn-krop" aria-pressed="true" title="Vis eller skjul kroppens omrids">Krop</button>
         <button type="button" class="btn-mini" id="btn-dæmp" aria-pressed="true" title="Gør de andre organer gennemsigtige, når et organ er valgt">Fremhæv valgt</button>
@@ -89,6 +91,24 @@
         </div>
 
         <aside class="side">
+          <section class="opgave" id="opgave" aria-label="Opgave" hidden>
+            <div class="opg-top">
+              <span class="mono" id="opg-nr">Opgave 1 af 6</span>
+              <span class="opg-nav">
+                <button type="button" id="opg-forrige" aria-label="Forrige opgave">‹</button>
+                <button type="button" id="opg-næste" aria-label="Næste opgave">›</button>
+                <button type="button" id="opg-luk" aria-label="Luk opgaverne">×</button>
+              </span>
+            </div>
+            <h2 id="opg-spm" aria-live="polite"></h2>
+            <p id="opg-gør"></p>
+            <div class="opg-knapper">
+              <button type="button" class="btn-mini" id="opg-prøv">Vis i modellen</button>
+              <button type="button" class="opg-svar" id="opg-svar" aria-expanded="false" aria-controls="opg-forklaring">Se en forklaring</button>
+            </div>
+            <p class="opg-forklaring" id="opg-forklaring" hidden></p>
+          </section>
+
           <div class="panel" id="panel-opbygning" role="tabpanel" aria-labelledby="fane-opbygning">
             <div class="info" id="info" aria-live="polite">
               <span class="mono gruppe" id="info-gruppe">Klik på et organ</span>
@@ -104,11 +124,23 @@
               <h2 id="trin-navn" aria-live="polite">Munden</h2>
               <span class="tid mono" id="trin-tid">0 min efter måltidet</span>
             </div>
-            <div class="ph" aria-label="pH i trinnet">
+            <div class="ph" role="group" aria-label="pH i trinnet">
               <span class="mono">pH</span>
               <div class="ph-skala"><span class="ph-mærke" id="ph-mærke"></span></div>
               <b id="ph-tal">7</b>
             </div>
+            <details class="hvis" id="hvis">
+              <summary>Hvad nu hvis …? <span class="hvis-mærke" id="hvis-mærke" hidden>ændret</span></summary>
+              <div class="hvis-indhold">
+                <div class="hvis-række">
+                  <label for="ph-mave">pH i mavesækken</label>
+                  <input type="range" id="ph-mave" min="1.5" max="7" step="0.5" value="2">
+                  <output id="ph-mave-ud" for="ph-mave">2,0</output>
+                </div>
+                <label class="hvis-galde"><input type="checkbox" id="galde-mangler"> Galden mangler (fx en galdesten lukker galdegangen)</label>
+                <button type="button" class="btn-mini" id="btn-normale">Normale forhold</button>
+              </div>
+            </details>
             <h3 class="mono mol-titel">Næringsstofferne i maden</h3>
             <div class="molekyler" id="molekyler"></div>
             <dl class="proces">
@@ -117,6 +149,23 @@
               <dt id="trin-optag-dt">Optagelse</dt><dd id="trin-optag"></dd>
             </dl>
             <p class="note" id="trin-note"></p>
+            <p class="note note-ændret" id="trin-ændret"></p>
+          </div>
+
+          <div class="panel" id="panel-enzymer" role="tabpanel" aria-labelledby="fane-enzymer" hidden>
+            <h2 class="p-h">Enzymer og pH</h2>
+            <p class="p-lead">Hvert enzym virker bedst ved sit eget pH — sit <b>optimum</b>. Skru på pH — eller klik på et organ i modellen — og se, hvilke enzymer der kan arbejde.</p>
+            <div class="ph-styr">
+              <label for="ph-skyder">pH</label>
+              <input type="range" id="ph-skyder" min="0" max="14" step="0.1" value="7">
+              <output id="ph-ud" for="ph-skyder">7,0</output>
+            </div>
+            <div class="ph-genveje" id="ph-genveje" role="group" aria-label="Typisk pH i kanalen"></div>
+            <svg class="ph-graf" id="ph-graf" viewBox="0 0 320 176" role="img" aria-label="Graf over enzymernes relative aktivitet fra pH 0 til 14. Pepsin har en top ved pH 2. Amylase og maltase har toppe ved pH 6,5–7, trypsin og lipase ved pH 8. En lodret streg viser det valgte pH."></svg>
+            <p class="ph-resume" id="ph-resume"></p>
+            <p class="sr" id="ph-sr" aria-live="polite"></p>
+            <ul class="enz-liste" id="enz-liste"></ul>
+            <p class="note">Fremhævet i modellen: hvor de enzymer, der virker ved det valgte pH, hører til. Kurverne er idealiserede; prøv selv i <a href="enzymhastighed.html">Enzymhastighed</a> eller øvelsen <a href="/Øvelser/Biologi/spytamylase-nedbrydning-af-stivelse/spytamylase-nedbrydning-af-stivelse.html">Spytamylase</a>.</p>
           </div>
         </aside>
       </div>
@@ -129,6 +178,8 @@
         <li>Tyndtarmen er ca. 2 m lang i modellen; i virkeligheden er den 5–6 m. Tarmkrøset, blodkarrene, bughinden og milten er udeladt.</li>
         <li>Tiderne er typiske værdier og varierer meget med måltidet og personen. Maden i mavesækken går videre lidt ad gangen, ikke som én klump.</li>
         <li>pH-værdierne er idealiserede: munden ≈ 7, mavesækken ≈ 1,5–2, tyndtarmen ≈ 7–8 (galde og bikarbonat), tyktarmen ≈ 6–7.</li>
+        <li>Enzymernes pH-kurver er idealiserede klokkekurver omkring typiske optima (pepsin ≈ 2, amylase ≈ 7, maltase ≈ 6,5, trypsin og lipase ≈ 8). Rigtige kurver er skæve, og optimum afhænger af temperatur, salte og substrat.</li>
+        <li>«Hvad nu hvis»: uden mavesyre spalter trypsin og peptidaserne i tyndtarmen stadig proteinet. Uden galde regner modellen med, at kun ca. en tredjedel af fedtet spaltes og optages; i virkeligheden varierer det meget.</li>
         <li>Molekylerne er symboler: en rigtig stivelseskæde har tusindvis af glukoseenheder, og fedtet spaltes i virkeligheden mest til fedtsyrer og monoglycerid.</li>
       </ul>
       <p>Mere om enzymer: <a href="enzymhastighed.html">Enzymhastighed</a>, <a href="enzymkinetik.html">Enzymkinetik</a> og øvelsen <a href="/Øvelser/Biologi/spytamylase-nedbrydning-af-stivelse/spytamylase-nedbrydning-af-stivelse.html">Spytamylase — nedbrydning af stivelse</a>.</p>

@@ -1,8 +1,11 @@
 // Fordøjelsessystemet: binder 3D-visningen, organlisten og rundturen sammen.
-import {DELE, LISTE, TRIN, FARVER, fraGlobal, tilGlobal} from './indhold.js';
+import {DELE, LISTE, TRIN, FARVER, fraGlobal, tilGlobal, ENZYMER, aktivitet, PH_STEDER,
+  forhold, NORMALE, sætForhold, erNormale, trinPh, trinTekst, forholdNote} from './indhold.js';
 import {skabMolekyler} from './molekyler.js';
+import {OPGAVER} from './opgaver.js';
 
 const $ = (id) => document.getElementById(id);
+const komma = (x, d = 1) => x.toFixed(d).replace('.', ',');
 const rolig = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const KANAL = new Set(['svaelg', 'spiseroer', 'mavesaek', 'tolvfingertarm', 'tyndtarm', 'tyktarm', 'endetarm']);
 const KLUMP_R = {mund: 0.9, svaelg: 0.9, spiseroer: 0.8, mavesaek: 2.3, tolvfingertarm: 1.0, tyndtarm: 0.8,
@@ -87,19 +90,21 @@ function sætU(ny) {
   const {i, trin, f} = fraGlobal(u);
   if (i !== forrigeTrin) {
     forrigeTrin = i;
+    const tt = trinTekst(trin);
     $('trin-navn').textContent = trin.navn;
-    $('trin-mek').textContent = trin.mekanisk;
+    $('trin-mek').textContent = tt.mekanisk;
     const kem = $('trin-kem');
     kem.textContent = '';
-    if (!trin.kemisk.length) kem.textContent = '—';
-    trin.kemisk.forEach(([enzym, hvad], k) => {
+    if (!tt.kemisk.length) kem.textContent = '—';
+    tt.kemisk.forEach(([enzym, hvad], k) => {
       if (k) kem.appendChild(document.createElement('br'));
       const b = document.createElement('b');
       b.textContent = enzym;
       kem.append(b, ': ' + hvad);
     });
-    $('trin-optag').textContent = trin.optag || 'Næsten intet';
-    $('trin-note').textContent = trin.note || '';
+    $('trin-optag').textContent = tt.optag || 'Næsten intet';
+    $('trin-note').textContent = tt.note;
+    $('trin-ændret').textContent = forholdNote(trin);
     [...trinliste.querySelectorAll('button')].forEach((b, k) => {
       if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
       b.classList.toggle('forbi', k < i);
@@ -107,7 +112,7 @@ function sætU(ny) {
     vis?.aktiv(trin.dele);
     vis?.glas(trin.dele.filter((d) => KANAL.has(d)));
   }
-  const [p0, p1] = trin.ph;
+  const [p0, p1] = trinPh(trin);
   const ph = p0 + (p1 - p0) * Math.min(1, f / 0.4);
   $('ph-tal').textContent = ph.toFixed(1).replace('.', ',');
   $('ph-mærke').style.left = `${(ph / 14) * 100}%`;
@@ -145,36 +150,188 @@ $('btn-play').addEventListener('click', () => (spiller ? stop() : afspil()));
 $('tidslinje').addEventListener('input', (e) => { stop(); sætU(e.target.value / 1000); });
 $('følg').addEventListener('change', () => sætU(u));
 
+// ---------------------------------------------------------------- hvad nu hvis …
+function sætForholdUI(nye) {
+  sætForhold(nye);
+  $('ph-mave').value = forhold.phMave;
+  $('ph-mave-ud').textContent = komma(forhold.phMave);
+  $('galde-mangler').checked = !forhold.galde;
+  $('hvis-mærke').hidden = erNormale();
+  forrigeTrin = -1;
+  if (tilstand === 'forloeb') sætU(u);
+}
+$('ph-mave').addEventListener('input', (e) => sætForholdUI({phMave: Number(e.target.value)}));
+$('galde-mangler').addEventListener('change', (e) => sætForholdUI({galde: !e.target.checked}));
+$('btn-normale').addEventListener('click', () => sætForholdUI(NORMALE));
+
+// ---------------------------------------------------------------- enzymer og pH
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (navn, attr, forælder) => {
+  const e = document.createElementNS(SVGNS, navn);
+  for (const [k, v] of Object.entries(attr)) e.setAttribute(k, v);
+  forælder.appendChild(e);
+  return e;
+};
+const STREG = {amylase: '', pepsin: '', trypsin: '7 3', lipase: '2 2.5', maltase: '9 3 2 3'};
+// etiketter ved kurvernes flanker, så de to par med næsten samme optimum kan skelnes
+const ETIKET = {pepsin: [2, 1.06, 'middle'], amylase: [6.9, 1.06, 'middle'], maltase: [5.35, 0.9, 'end'],
+  trypsin: [9.25, 0.9, 'start'], lipase: [9.6, 0.5, 'start']};
+const GX = (ph) => 34 + (ph / 14) * 276, GY = (a) => 146 - a * 118;
+const graf = $('ph-graf');
+for (const a of [0, 0.5, 1]) {
+  svgEl('line', {x1: GX(0), x2: GX(14), y1: GY(a), y2: GY(a), class: a ? 'g-gitter' : 'g-akse'}, graf);
+  svgEl('text', {x: GX(0) - 5, y: GY(a) + 3, class: 'g-tal', 'text-anchor': 'end'}, graf).textContent = `${a * 100} %`;
+}
+for (let ph = 0; ph <= 14; ph += 2) {
+  svgEl('line', {x1: GX(ph), x2: GX(ph), y1: GY(0), y2: GY(0) + 4, class: 'g-akse'}, graf);
+  svgEl('text', {x: GX(ph), y: GY(0) + 14, class: 'g-tal', 'text-anchor': 'middle'}, graf).textContent = ph;
+}
+svgEl('text', {x: GX(14), y: GY(0) + 27, class: 'g-titel', 'text-anchor': 'end'}, graf).textContent = 'pH';
+svgEl('text', {x: GX(0) - 30, y: 8, class: 'g-titel'}, graf).textContent = 'Relativ aktivitet';
+const markør = svgEl('line', {y1: GY(1.1), y2: GY(0), class: 'g-markør'}, graf);
+const prikker = {};
+for (const e of ENZYMER) {
+  const d = Array.from({length: 141}, (_, i) => `${i ? 'L' : 'M'}${GX(i / 10).toFixed(1)},${GY(aktivitet(e.id, i / 10)).toFixed(1)}`).join('');
+  svgEl('path', {d, class: 'g-kurve', stroke: e.farve, 'stroke-dasharray': STREG[e.id]}, graf);
+  const [ph, a, anker] = ETIKET[e.id];
+  svgEl('text', {x: GX(ph), y: GY(a), class: 'g-navn', 'text-anchor': anker}, graf).textContent = e.navn.toLowerCase();
+}
+for (const e of ENZYMER) prikker[e.id] = svgEl('circle', {r: 4, class: 'g-prik', fill: e.farve}, graf);
+
+const enzListe = $('enz-liste');
+const enzRæk = {};
+for (const e of ENZYMER) {
+  const li = document.createElement('li');
+  li.innerHTML = `<svg class="enz-streg" viewBox="0 0 24 8" aria-hidden="true"><line x1="1" y1="4" x2="23" y2="4" stroke="${e.farve}" stroke-dasharray="${STREG[e.id]}"/></svg>`
+    + `<b>${e.navn}</b><span class="enz-bar"><i style="background:${e.farve}"></i></span><span class="enz-pct mono"></span>`
+    + `<span class="enz-hvad">${e.hvad} · ${e.hvor} · optimum ≈ ${komma(e.opt, e.opt % 1 ? 1 : 0)}</span>`;
+  enzListe.appendChild(li);
+  enzRæk[e.id] = li;
+}
+const genveje = $('ph-genveje');
+for (const st of PH_STEDER) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip';
+  b.dataset.ph = st.ph;
+  b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = `${st.navn} <span class="mono">pH ${komma(st.ph, st.ph % 1 ? 1 : 0)}</span>`;
+  b.addEventListener('click', () => sætPh(st.ph, true));
+  genveje.appendChild(b);
+}
+
+let ph = 7;
+function oplist(navne) {
+  return navne.length < 2 ? navne.join('') : `${navne.slice(0, -1).join(', ')} og ${navne.at(-1)}`;
+}
+function sætPh(ny, meld = false) {
+  ph = Math.min(14, Math.max(0, Number(ny)));
+  $('ph-skyder').value = ph;
+  $('ph-ud').textContent = komma(ph);
+  markør.setAttribute('x1', GX(ph)); markør.setAttribute('x2', GX(ph));
+  const godt = [], lidt = [], stille = [];
+  for (const e of ENZYMER) {
+    const a = aktivitet(e.id, ph);
+    prikker[e.id].setAttribute('cx', GX(ph)); prikker[e.id].setAttribute('cy', GY(a));
+    const li = enzRæk[e.id];
+    li.querySelector('.enz-bar i').style.width = `${a * 100}%`;
+    li.querySelector('.enz-pct').textContent = `${Math.round(a * 100)} %`;
+    li.classList.toggle('stille', a < 0.1);
+    (a >= 0.5 ? godt : a >= 0.1 ? lidt : stille).push(e.navn.toLowerCase());
+  }
+  const dele = ENZYMER.filter((e) => aktivitet(e.id, ph) >= 0.5).flatMap((e) => e.dele);
+  if (tilstand === 'enzymer') vis?.aktiv(dele);
+  for (const b of genveje.children) b.setAttribute('aria-pressed', String(Number(b.dataset.ph) === ph));
+  const dele1 = [];
+  if (godt.length) dele1.push(`${oplist(godt)} virker godt`);
+  if (lidt.length) dele1.push(`${oplist(lidt)} virker lidt`);
+  if (stille.length) dele1.push(`${oplist(stille)} står næsten stille`);
+  const tekst = `Ved pH ${komma(ph)}: ${dele1.join('; ')}.`;
+  $('ph-resume').textContent = tekst;
+  if (meld) $('ph-sr').textContent = tekst;
+}
+$('ph-skyder').addEventListener('input', (e) => sætPh(e.target.value));
+$('ph-skyder').addEventListener('change', (e) => sætPh(e.target.value, true));
+sætPh(7);
+
 // ---------------------------------------------------------------- faner og knapper
+const FANER = ['opbygning', 'forloeb', 'enzymer'];
 function skiftTil(ny) {
   tilstand = ny;
-  const forløb = ny === 'forloeb';
-  $('fane-opbygning').setAttribute('aria-selected', String(!forløb));
-  $('fane-forloeb').setAttribute('aria-selected', String(forløb));
-  $('panel-opbygning').hidden = forløb;
-  $('panel-forloeb').hidden = !forløb;
-  $('afspil').hidden = !forløb;
-  $('btn-dæmp').hidden = forløb;
-  if (forløb) {
+  for (const f of FANER) {
+    $('fane-' + f).setAttribute('aria-selected', String(f === ny));
+    $('fane-' + f).tabIndex = f === ny ? 0 : -1;
+    $('panel-' + f).hidden = f !== ny;
+  }
+  $('afspil').hidden = ny !== 'forloeb';
+  $('btn-dæmp').hidden = ny !== 'opbygning';
+  if (ny === 'forloeb') {
     vis?.vælg(null);
     forrigeTrin = -1;
     sætU(u);
-  } else {
-    stop();
-    vis?.klump(null);
+    return;
+  }
+  stop();
+  vis?.klump(null);
+  vis?.glas([]);
+  if (ny === 'opbygning') {
     vis?.aktiv([]);
-    vis?.glas([]);
     vis?.vælg(valgt);
+  } else {
+    vis?.vælg(null);
+    sætPh(ph);
   }
 }
-$('fane-opbygning').addEventListener('click', () => skiftTil('opbygning'));
-$('fane-forloeb').addEventListener('click', () => skiftTil('forloeb'));
+for (const f of FANER) $('fane-' + f).addEventListener('click', () => skiftTil(f));
 document.querySelector('.seg').addEventListener('keydown', (e) => {
   if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-  const ny = tilstand === 'opbygning' ? 'forloeb' : 'opbygning';
+  const i = FANER.indexOf(tilstand) + (e.key === 'ArrowRight' ? 1 : -1);
+  const ny = FANER[(i + FANER.length) % FANER.length];
   skiftTil(ny);
-  $(ny === 'forloeb' ? 'fane-forloeb' : 'fane-opbygning').focus();
+  $('fane-' + ny).focus();
 });
+
+// ---------------------------------------------------------------- opgaver
+let opgNr = 0;
+function visOpgave(n) {
+  opgNr = (n + OPGAVER.length) % OPGAVER.length;
+  const o = OPGAVER[opgNr];
+  $('opg-nr').textContent = `Opgave ${opgNr + 1} af ${OPGAVER.length}`;
+  $('opg-spm').textContent = o.spm;
+  $('opg-gør').textContent = o.gør;
+  $('opg-forklaring').textContent = o.forklaring;
+  visForklaring(false);
+}
+function visOpgaver(v) {
+  $('opgave').hidden = !v;
+  $('btn-opgaver').setAttribute('aria-pressed', String(v));
+  if (v) {
+    document.querySelector('.side').scrollTop = 0;
+    if (matchMedia('(max-width: 760px)').matches) $('opgave').scrollIntoView({block: 'nearest', behavior: rolig ? 'auto' : 'smooth'});
+  }
+}
+function udfør(v) {
+  if (v.normale) sætForholdUI(NORMALE);
+  if (v.phMave !== undefined) {
+    sætForholdUI({phMave: v.phMave, galde: v.galde});
+    $('hvis').open = !erNormale();
+  }
+  skiftTil(v.fane);
+  if (v.del) vælg(v.del, true);
+  if (v.ph !== undefined) sætPh(v.ph, true);
+  if (v.trin) { stop(); sætU(tilGlobal(...v.trin)); }
+}
+$('btn-opgaver').addEventListener('click', () => visOpgaver($('opgave').hidden));
+$('opg-luk').addEventListener('click', () => { visOpgaver(false); $('btn-opgaver').focus(); });
+$('opg-forrige').addEventListener('click', () => visOpgave(opgNr - 1));
+$('opg-næste').addEventListener('click', () => visOpgave(opgNr + 1));
+$('opg-prøv').addEventListener('click', () => udfør(OPGAVER[opgNr].vis));
+function visForklaring(v) {
+  $('opg-forklaring').hidden = !v;
+  $('opg-svar').setAttribute('aria-expanded', String(v));
+}
+$('opg-svar').addEventListener('click', () => visForklaring($('opg-forklaring').hidden));
+visOpgave(0);
 
 function trykknap(id, start, gør) {
   const b = $(id);
@@ -206,9 +363,10 @@ try {
       $('hint').classList.add('væk');
       if (tilstand === 'opbygning') vælg(del && del === valgt ? null : del);
       else if (del && DELE[del]) {
-        // i rundturen: spring til trinnet med den del, man klikker på
+        // i rundturen: spring til trinnet med den del, man klikker på; under pH: brug stedets pH
         const t = TRIN.find((t) => t.dele.includes(del));
-        if (t) { stop(); sætU(tilGlobal(t.id, 0.02)); }
+        if (t && tilstand === 'forloeb') { stop(); sætU(tilGlobal(t.id, 0.02)); }
+        if (t && tilstand === 'enzymer') sætPh(trinPh(t)[1], true);
       }
     },
   });
@@ -224,3 +382,6 @@ try {
   $('følg').closest('label').hidden = true;
 }
 if (location.hash === '#forloeb') skiftTil('forloeb');
+if (location.hash === '#enzymer') skiftTil('enzymer');
+if (location.hash === '#opgaver') visOpgaver(true);
+for (const f of FANER) $('fane-' + f).tabIndex = f === tilstand ? 0 : -1;

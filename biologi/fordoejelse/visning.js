@@ -267,7 +267,7 @@ export async function skabVisning(canvas, {vedHover, vedKlik} = {}) {
       tegn();
     },
     // rundturen: placér klumpen i et trin (0–1 inden for trinnet)
-    klump(del, f, {farve, radius, følgMed, puls = 0}) {
+    klump(del, f, {farve, radius, følgMed, puls = 0} = {}) {
       if (!del) {
         klump.visible = glimt.visible = false;
         if (følg) ønske.mål.copy(kam.mål);

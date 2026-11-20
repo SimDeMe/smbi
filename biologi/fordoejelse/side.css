@@ -136,6 +136,71 @@ h1{font-family:var(--display);font-variation-settings:'wdth' 118;font-weight:800
 .vandbar{height:8px;border:1.5px solid var(--ink);border-radius:6px;overflow:hidden;margin:4px 0 2px;background:#fff}
 .vandbar i{display:block;height:100%;background:#7CC3EA;transition:width .3s}
 
+/* opgavekortet øverst i sidepanelet */
+.btn-opg{background:#FFF3DC}
+.opgave{margin:12px 12px 0;padding:10px 12px 10px;border:2px solid var(--ink);border-radius:14px;background:#FFF9EE;box-shadow:3px 3px 0 var(--ink)}
+.opg-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.opg-top .mono{color:var(--accent);font-weight:600}
+.opg-nav{display:flex;gap:4px}
+.opg-nav button{width:28px;height:28px;border:1.5px solid var(--ink);border-radius:50%;background:#fff;font-family:var(--display);font-weight:700;font-size:1rem;line-height:1;cursor:pointer}
+.opg-nav button:hover{background:#FDEAF1}
+.opgave h2{font-family:var(--display);font-variation-settings:'wdth' 108;font-weight:800;font-size:1.08rem;line-height:1.2;margin:4px 0 3px}
+.opgave p{font-size:0.84rem;color:#3E4E4C;line-height:1.38}
+.opg-knapper{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 0}
+.opg-svar{font-family:var(--display);font-size:0.78rem;font-weight:700;background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.opg-svar::before{content:'▸ ';display:inline-block;width:1em}
+.opg-svar[aria-expanded="true"]::before{content:'▾ '}
+.opgave .opg-forklaring{margin-top:6px;padding-left:10px;border-left:3px solid #F7B9D2;color:var(--ink)}
+
+/* hvad nu hvis */
+.hvis{margin:0 0 8px;border:1.5px dashed #D9CBB0;border-radius:10px;padding:4px 10px}
+.hvis[open]{background:#FFFBF3}
+.hvis summary{font-family:var(--display);font-size:0.82rem;font-weight:700;cursor:pointer}
+.hvis-mærke{font-family:var(--mono);font-size:0.6rem;font-weight:600;letter-spacing:0.06em;color:#fff;background:var(--coral);border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.hvis-indhold{display:flex;flex-direction:column;gap:6px;padding:6px 0 4px;font-size:0.84rem}
+.hvis-række{display:grid;grid-template-columns:auto 1fr 2.4em;align-items:center;gap:8px}
+.hvis-række label{font-family:var(--display);font-weight:600;font-size:0.8rem}
+.hvis-række input{accent-color:var(--accent);min-width:0}
+.hvis-række output{font-family:var(--mono);font-size:0.85rem;text-align:right}
+.hvis-galde{display:flex;gap:7px;align-items:flex-start;cursor:pointer;line-height:1.3}
+.hvis-galde input{accent-color:var(--accent);width:16px;height:16px;margin-top:1px;flex:none}
+.hvis .btn-mini{align-self:flex-start}
+.note-ændret{border-left-color:var(--coral);color:var(--ink)}
+
+/* enzymer og pH */
+.p-h{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:800;font-size:1.45rem;line-height:1.1;letter-spacing:-0.02em;margin:3px 0 4px}
+.p-lead{font-size:0.9rem;color:#3E4E4C;line-height:1.4}
+.ph-styr{display:grid;grid-template-columns:auto 1fr 2.6em;align-items:center;gap:10px;margin:10px 0 6px}
+.ph-styr label{font-family:var(--mono);font-weight:600;font-size:0.9rem}
+.ph-styr input{min-width:0;height:24px;appearance:none;-webkit-appearance:none;background:transparent;cursor:pointer}
+.ph-styr input::-webkit-slider-runnable-track{height:12px;border:1.5px solid var(--ink);border-radius:8px;background:linear-gradient(90deg,#E8336D 0%,#FF6A3D 14%,#FFB300 30%,#F5E04B 42%,#5FB030 52%,#0FA593 64%,#0E86C8 78%,#7A4FD6 100%)}
+.ph-styr input::-moz-range-track{height:12px;border:1.5px solid var(--ink);border-radius:8px;background:linear-gradient(90deg,#E8336D 0%,#FF6A3D 14%,#FFB300 30%,#F5E04B 42%,#5FB030 52%,#0FA593 64%,#0E86C8 78%,#7A4FD6 100%)}
+.ph-styr input::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:24px;margin-top:-7.5px;border-radius:4px;background:#fff;border:2px solid var(--ink);box-shadow:1px 1px 0 var(--ink)}
+.ph-styr input::-moz-range-thumb{width:10px;height:22px;border-radius:4px;background:#fff;border:2px solid var(--ink)}
+.ph-styr output{font-family:var(--mono);font-size:1.05rem;font-weight:600;text-align:right}
+.ph-genveje{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.ph-genveje .chip .mono{font-size:0.6rem;letter-spacing:0.04em;opacity:.8}
+.ph-graf{display:block;width:100%;height:auto;margin:2px 0 0}
+.g-akse{stroke:var(--ink);stroke-width:1.2}
+.g-gitter{stroke:#E8DEC9;stroke-width:1;stroke-dasharray:3 3}
+.g-tal{font-family:var(--mono);font-size:8.5px;fill:var(--slate)}
+.g-titel{font-family:var(--mono);font-size:8.5px;font-weight:600;fill:var(--slate)}
+.g-kurve{fill:none;stroke-width:2.4;stroke-linejoin:round}
+.g-navn{font-family:var(--display);font-size:9.5px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+.g-markør{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:4 2}
+.g-prik{stroke:var(--ink);stroke-width:1.2}
+.ph-resume{font-size:0.86rem;margin:4px 0 6px;line-height:1.35}
+.enz-liste{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.enz-liste li{display:grid;grid-template-columns:24px 4.6em 1fr 3em;align-items:center;gap:2px 8px;font-size:0.86rem;transition:opacity .2s}
+.enz-liste li.stille{opacity:.55}
+.enz-streg{width:24px;height:8px}
+.enz-streg line{stroke-width:2.6}
+.enz-liste b{font-family:var(--display)}
+.enz-bar{height:9px;border:1.5px solid var(--ink);border-radius:6px;overflow:hidden;background:#fff}
+.enz-bar i{display:block;height:100%}
+.enz-pct{text-align:right;font-size:0.72rem;letter-spacing:0;text-transform:none}
+.enz-hvad{grid-column:2 / -1;font-size:0.76rem;color:var(--slate);line-height:1.25}
+
 /* under figuren */
 .om{margin:0 0 40px;max-width:80ch;font-size:0.95rem}
 .om summary{font-family:var(--display);font-weight:700;cursor:pointer}
@@ -164,7 +229,9 @@ body.fokus .stage{height:clamp(400px,calc(100svh - 70px),1100px)}
   .afspil-række{gap:8px}
   .trinliste button{font-size:0.66rem;padding:1px 6px}
   .rig-head{gap:6px}
+  .seg button{padding:5px 10px;font-size:0.78rem}
+  .opgave{margin:10px 10px 0}
 }
 @media (prefers-reduced-motion:reduce){
-  .ph-mærke,.vandbar i,.hint{transition:none}
+  .ph-mærke,.vandbar i,.hint,.enz-liste li{transition:none}
 }
