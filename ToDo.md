@@ -1,3 +1,18 @@
+## Øvelse: Måling af luftfugtighed — laves om før næste brug
+
+`Øvelser/Geografi/maaling-af-luftfugtighed/` (erfaring fra 1p NF, 19/11 2026:
+spørgsmål til afleveringen tog en stor del af næste modul).
+
+- [ ] Fjern tabellen over maksimal luftfugtighed (`@tbl-1`).
+- [ ] Indsæt i stedet en eller flere trykte mætningskurver (fx et overblik
+  −5 til 30 °C og et udsnit omkring stuetemperatur med fint gitter), som
+  eleverne aflæser på.
+- [ ] Eleverne markerer deres målinger og dugpunkterne direkte på kurven
+  (vandret linje fra målepunktet hen til kurven).
+- [ ] Eleverne skal ikke selv tegne en kurve ud fra data — fjern den mulighed i
+  databehandlingens punkt 6.
+- [ ] Gennemgå databehandlingen, så den passer til kurven, og render pdf/docx/html.
+
 - Vands termiske udvidelse-simulering? 
  - Både i en flaske/rør
  - Men også i have af forskellige dybder. Måske med en 3d jordklode?

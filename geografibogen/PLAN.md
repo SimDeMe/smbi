@@ -117,3 +117,21 @@ Ressourcer og mennesker
 5. Links til simuleringer med en kort opgave til hver.
 6. LIX-tjek, faglig gennemlæsning og test på skolelaptop og mobil.
 7. Kapitlet skrives ind i indholdsfortegnelsen og sitemap — og committes.
+
+## Todo: kapitel 1 «Tryk og vind» — før næste brug
+
+Kapitlet er læst af 1p NF 2026/27 (afsnit 1–7 i timen 19/11 2026, afsnit
+8–11 hjemme) og **opgives til eksamen**. Det må derfor ikke ændres i
+skoleåret 2026/27. Udgaven, der er opgivet, er commit `9635f7e`. Gem den på
+en fast adresse (fx `tryk-og-vind-2026.html`), før kapitlet ændres, så
+eksamensopgivelsen stadig peger på den tekst, eleverne har læst.
+
+Ideer til revisionen (erfaring: holdet nåede kun de første afsnit i et modul):
+
+- [ ] Kortere kapitel. Overvej at fjerne afsnit 6 om isobarer — det bruges
+  ikke i NF-forløbet.
+- [ ] Gå de øvrige afsnit igennem for noget, der kan skæres (fx afsnit 2 om
+  hPa og afsnit 7 om vindens navn og fart kan måske samles eller forkortes).
+- [ ] Flere animationer i stedet for tekst: fx sø- og landbrise, der skifter
+  fra dag til nat, stigende luft, der afkøles til dugpunktet, og monsunens
+  vind over Sydasien, der skifter med årstiden.
