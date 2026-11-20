@@ -18,6 +18,42 @@ spørgsmål til afleveringen tog en stor del af næste modul).
  - Men også i have af forskellige dybder. Måske med en 3d jordklode?
 
 
+## Biologi: Fordøjelsessystemet — simulering (ny)
+
+Ny simulering i biologi (`biologi/fordoejelse…`): en hurtig rundtur fra munden
+til blodet — og ud i den anden ende. Findes ikke endnu; i dag er emnet kun i
+`biologi/byg-organsystemerne.html` og øvelsen
+`Øvelser/Biologi/spytamylase-nedbrydning-af-stivelse/`.
+
+- [ ] **Opbygning og funktion.** 3D-model af hele fordøjelseskanalen (mund,
+  spiserør, mave, tolvfingertarm, tyndtarm, tyktarm, endetarm) og de tilhørende
+  organer (spytkirtler, lever, galdeblære, bugspytkirtel). Klik/hold over en
+  del for navn og opgave — kort, ikke et leksikon.
+- [ ] **Forløbet fra mund til blod og til anus.** Maden følger kanalen i
+  tempo, hvor eleven kan spole og pause. Vis både mekanisk (tygning,
+  peristaltik, mavens blanding) og kemisk nedbrydning, og hvor
+  næringsstofferne optages (tyndtarmens villi → blodet/lymfen; vand i
+  tyktarmen) — og hvad der ender som afføring.
+- [ ] **Se maden blive nedbrudt.** Stivelse, protein og fedt som synlige
+  molekyler, der spaltes til glukose, aminosyrer og fedtsyrer/glycerol, når
+  de rette enzymer rammer dem (amylase, pepsin, trypsin, lipase m.fl.).
+  Skeln mellem substrat, enzym og produkt, og vis hvor i kanalen hvert
+  enzym virker.
+- [ ] **Enzymer og pH.** Mundens (≈ 7), mavens (≈ 1,5–2) og tyndtarmens
+  (≈ 7–8, galde og bikarbonat) pH som kontrol/visning; hvert enzym har sit
+  optimum, så eleven kan se pepsin virke i maven og amylase gå i stå i den
+  sure mave. Bind til `biologi/enzymhastighed.html` / `enzymkinetik.html`
+  og spytamylase-øvelsen.
+- [ ] **Opgaver.** Korte undersøgelsesopgaver i simuleringen (fx «Hvorfor
+  virker amylase ikke i maven?», «Hvad sker der, hvis galden mangler?»,
+  «Hvor optages vand og fedt?») og evt. journal-/databehandlingsspørgsmål.
+- [ ] **Faglig kontrol og design.** Oplys forenklinger (tidsforløb, mængder
+  og pH-værdier er idealiserede). Test på 1280×577, 1366×625 og mobil;
+  figur og primære kontroller samtidig (`design_rules.md` §3). Hvis 3D
+  fejler: 2D-fallback. Derefter: kort på `biologi.html` (som alfa), række i
+  biologiskemaet, `sitemap.xml`.
+
+
 ## Motion design — trin der tegnes i årsagsrækkefølge
 
 Som i `drivhuseffektenSimpel.html` (v1.0) og `drivhuseffekten.html` (v2.0):
