@@ -1,4 +1,5 @@
 import { DOEGN, AAR, periodisk, tilstand } from './model.mjs';
+import { lavOpgaver } from './opgaver.js';
 
 const $ = id => document.getElementById(id);
 const laerred = $('luft');
@@ -39,11 +40,13 @@ const trin = [
   { navn: 'Vintermonsun', scene: 'monsun', tid: 12, celle: true, foelg: true, forklar: true, sammenlign: true,
     kaede: 'KOLDT KONTINENT → HØJTRYK → TØR VIND MOD HAVET', spoergsmaal: 'Hvorfor er vinteren tør i Indien?',
     tekst: 'Om vinteren er kontinentet koldere end havet. Over Asien ligger et kraftigt højtryk, og tør luft strømmer fra nordøst ud mod havet. Luften synker over land, så der dannes kun få skyer. Regnen falder i stedet over havet.',
-    naeste: 'Begynd forfra',
+    naeste: 'Til opgaverne',
     beskrivelse: 'Samme snit om vinteren. Kontinentet er koldt, højtryk over land og lavtryk over havet. Tør luft strømmer fra land ud over havet, hvor den stiger og giver skyer og regn.' },
 ];
 
 let aktuelt = 0, tid = 0, loeb = null, pause = reduceret.matches, forklarSelv = false;
+// Opgavetilstand (trin 6): figuren står som et af trinnene; grafHel viser hele kurven.
+let opgaveAktiv = false, grafHel = false;
 let animTid = 0, fase = 0, sidste = null, overgang = 0, sidsteStatus = '';
 let bredde = 1200, hoejde = 500, sx = 1, sy = 1;
 // Lærredet tegnes i skærmpixels; X/Y omregner fra viewBox (1200 × 500), så
@@ -205,6 +208,8 @@ function byggGraf() {
 }
 function opdaterGraf(t) {
   const s = serier[scene()];
+  for (const id of ['g-nu', 'g-p-land', 'g-p-hav']) $(id).style.display = grafHel ? 'none' : '';
+  if (grafHel) t = skala.periode;
   const n = Math.max(1, Math.round(t / skala.periode * 300));
   let dl = '', dh = '';
   for (let i = 0; i <= n; i++) {
@@ -232,7 +237,7 @@ function klokke(t) {
 const fmt = T => T.toFixed(0).replace('-', '−') + ' °C';
 function opdaterVisning() {
   const t = trin[aktuelt], v = tilstand(serier[scene()], tid), vind = v.vind;
-  $('ur').textContent = klokke(tid);
+  $('ur').textContent = grafHel ? (scene() === 'brise' ? 'hele døgnet' : 'hele året') : klokke(tid);
   if (scene() === 'brise') {
     $('t-land').textContent = fmt(v.land); $('t-hav').textContent = fmt(v.hav);
     const d = Math.round(v.forskel);
@@ -241,6 +246,7 @@ function opdaterVisning() {
     $('t-land').textContent = ''; $('t-hav').textContent = '';
     $('forskel').textContent = vind > 0.15 ? 'Land er varmere end havet' : vind < -0.15 ? 'Land er koldere end havet' : 'Land og hav er næsten lige varme';
   }
+  if (grafHel) { $('t-land').textContent = ''; $('t-hav').textContent = ''; $('forskel').textContent = ''; }
   opdaterGraf(tid);
 
   // Himmel: dag/nat for brisen; altid dag i monsunsnittet.
@@ -320,12 +326,12 @@ function blandFarve(a, b, f) {
 
 function opdaterUI() {
   const t = trin[aktuelt];
-  $('trin-navn').textContent = t.navn;
+  $('trin-navn').textContent = opgaveAktiv ? 'Opgaver' : t.navn;
   $('skala').textContent = scene() === 'brise' ? 'Kyst · ét døgn' : 'Sydasien · ét år · skematisk snit';
   $('trin-overlinje').textContent = forklarSelv ? 'FORKLAR MED DINE EGNE ORD' : t.kaede;
   $('spoergsmaal').textContent = forklarSelv ? 'Hvordan opstår brise og monsun?' : t.spoergsmaal;
   $('forklaring').textContent = forklarSelv ? 'Brug figuren og grafen til at forklare hele kæden: fra forskellig opvarmning af land og hav til tryk, vind, skyer og regn.' : t.tekst;
-  $('naeste').innerHTML = `${t.naeste} <span aria-hidden="true">${aktuelt === trin.length - 1 ? '↺' : '→'}</span>`;
+  $('naeste').innerHTML = `${t.naeste} <span aria-hidden="true">→</span>`;
   $('forrige').disabled = aktuelt === 0;
   $('foelg-knap').hidden = !t.foelg;
   const enhed = scene() === 'brise' ? 'døgn' : 'år';
@@ -342,22 +348,33 @@ function opdaterUI() {
   $('graf-titel').textContent = scene() === 'brise' ? 'Overfladetemperatur' : 'Temperatur · skematisk';
   document.body.classList.toggle('forklar-selv', forklarSelv);
   document.body.dataset.scene = scene();
+  document.body.classList.toggle('opgave-tilstand', opgaveAktiv);
   document.querySelectorAll('[data-trin]').forEach((b, i) => {
-    if (i === aktuelt) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    if (i === (opgaveAktiv ? 6 : aktuelt)) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
   });
   opdaterVisning();
 }
 
 function vaelgTrin(n) {
-  const gammelScene = scene();
-  aktuelt = n; forklarSelv = false; overgang = 0;
-  const t = trin[n];
-  tid = t.tid;
-  loeb = t.loeb ? { ...t.loeb } : null;
+  // Trin 6 er opgaverne; de stiller selv figuren via visFigur.
+  if (n === 6) { opgaveAktiv = true; opgaver.aktiver(true); opdaterUI(); return; }
+  opgaveAktiv = false; grafHel = false;
+  opgaver.aktiver(false);
+  stil(n);
+  loeb = trin[n].loeb ? { ...trin[n].loeb } : null;
   // Ved pause/reduceret bevægelse vises sluttilstanden med det samme.
   if (loeb && pause) { tid = loeb.til; loeb = null; }
+  opdaterUI(); tegn();
+}
+function stil(n) {
+  const gammelScene = scene();
+  aktuelt = n; forklarSelv = false; overgang = 0; loeb = null;
+  tid = trin[n].tid;
   if (gammelScene !== scene() || !$('land').getAttribute('d')) { tegnLandskab(); }
   byggGraf();
+}
+function visFigur(n, hel) {
+  stil(n); grafHel = hel; overgang = 2;
   opdaterUI(); tegn();
 }
 
@@ -513,9 +530,9 @@ function billede(nu) {
 }
 
 document.querySelectorAll('[data-trin]').forEach(b => b.addEventListener('click', () => vaelgTrin(+b.dataset.trin)));
-$('naeste').addEventListener('click', () => vaelgTrin((aktuelt + 1) % trin.length));
+$('naeste').addEventListener('click', () => vaelgTrin(aktuelt + 1));
 $('forrige').addEventListener('click', () => vaelgTrin(Math.max(0, aktuelt - 1)));
-$('nulstil').addEventListener('click', () => vaelgTrin(aktuelt));
+$('nulstil').addEventListener('click', () => vaelgTrin(opgaveAktiv ? 6 : aktuelt));
 $('pause').addEventListener('click', () => { pause = !pause; sidste = null; opdaterUI(); });
 $('foelg-knap').addEventListener('click', () => {
   if (loeb) { loeb = null; }
@@ -539,4 +556,14 @@ document.addEventListener('keydown', e => {
 reduceret.addEventListener('change', e => { if (e.matches) { pause = true; opdaterUI(); } });
 if (new URLSearchParams(location.search).has('projektor')) $('fokus').click();
 
-vaelgTrin(0); tilpas(); requestAnimationFrame(billede);
+const opgaver = lavOpgaver({
+  figur: document.querySelector('.scene'),
+  geometri: () => {
+    const v = tilstand(serier[scene()], tid).vind;
+    return { scene: scene(), kyst: kyst(), jordY, vind: v, celle: celleGeometri(v), periode: serier[scene()].cfg.periode, graf: GRAF };
+  },
+  visFigur,
+  tilTrin: vaelgTrin,
+});
+// Direkte link til opgaverne: …/brise-og-monsun/#opgaver
+vaelgTrin(location.hash === '#opgaver' ? 6 : 0); tilpas(); requestAnimationFrame(billede);

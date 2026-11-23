@@ -44,6 +44,20 @@ der tegnes i skærmpixels, så stregerne er lige tykke selvom figuren strækkes.
 Cirkulationen er én lukket bane med glidende streger og pilehoveder; fart og
 tykkelse følger vinden. Etiketter er HTML placeret i viewBox-koordinater.
 
+## Opgaver
+
+Efter de seks trin følger trinnet «Opgaver» (`opgaver.js`, spørgsmål i
+`opgavedata.js`), bygget som drivhuseffektens: 14 opgaver med multiple choice,
+«peg på figuren» (søbrisen, lavtrykket, hvor luften synker/stiger, regnen),
+«klik i grafen» (hvornår land er varmest, hvornår det er landbrise, hvilke
+måneder der er vintermonsun) og til sidst «byg kæden» for søbrisen med falske
+udsagn. Figuren stilles som det trin, opgaven handler om; i grafopgaverne vises
+hele kurven. Etiketter og H/L er skjult, indtil eleven har svaret. Første svar
+tæller; ved forkert pegning eller grafklik vises det rigtige med grønt, og
+eleven skal selv ramme rigtigt, før der kan gås videre. Peg- og grafopgaver har
+fokuserbare punkter til tastaturet. Grafopgavernes facitintervaller kontrolleres
+mod modellen i `test.mjs`. Direkte link: `…/brise-og-monsun/#opgaver`.
+
 ## Afprøvning
 
 `node geografi/brise-og-monsun/test.mjs` (model) og, med serveren på 8777,

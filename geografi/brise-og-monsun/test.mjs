@@ -41,3 +41,14 @@ assert.ok(tilstand(aar, 6.5).vind > 0.7);
 assert.ok(tilstand(aar, 0.5).vind < -0.7);
 assert.ok(tilstand(aar, 12).vind < 0);
 console.log('Model: periodisk løsning, ligevægt, ens middel, søbrise/landbrise og monsunens fortegn OK.');
+
+// Graf-opgavernes facitintervaller skal passe med modellen.
+const { OPGAVER } = await import('./opgavedata.js');
+const [varmest, landbrise, vinter] = OPGAVER.filter(o => o.type === 'tid');
+let topTid = 0, top = -Infinity;
+for (let t = 0; t < 24; t += 0.01) { const v = tilstand(doegn, t).land; if (v > top) { top = v; topTid = t; } }
+assert.ok(varmest.rigtig.some(([a, b]) => topTid >= a && topTid <= b), 'landets maksimum ligger i facit');
+for (const [o, serie, periode] of [[landbrise, doegn, 24], [vinter, aar, 12]])
+  for (const [a, b] of o.rigtig)
+    for (let t = a; t <= b; t += 0.05) assert.ok(tilstand(serie, Math.min(t, periode - 1e-6)).vind < 0, `${o.spm} ved ${t}`);
+console.log('Opgaver: graf-facit passer med modellens maksimum og fortegn OK.');
