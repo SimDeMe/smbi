@@ -47,3 +47,8 @@ assert.ok(efter.modstraaling > foer.modstraaling);
 assert.ok(efter.jordTilRum < foer.jordTilRum);
 assert.ok(udvikl({...med}, 20, true, FORSTAERKET_ABSORPTION).jord > med.jord);
 console.log('Tre temperaturreferencer og øget absorption/modstråling ved uændret soltilførsel OK.');
+{
+  const f=energistroemme({jord:1,luft:.8},.4,0);
+  if(Math.abs(f.solInd-.4)>1e-12)throw new Error('Delvis solindstråling under solnedgang fejler');
+  console.log('Gradvis solindstråling (solnedgang) OK.');
+}

@@ -7,7 +7,7 @@ const pensel = laerred.getContext('2d');
 const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
 const trin = [
   { navn: 'Solens energi', kaede: 'SOLEN → JORDEN', spoergsmaal: 'Hvordan bliver jorden varm?', tekst: 'Solens kortbølgede stråling absorberes ved jordoverfladen. Energien bliver til varme.', naeste: 'Jorden stråler også', beskrivelse: 'Gule strålingsspor bevæger sig fra Solen til jordoverfladen og absorberes. Overfladen opvarmes.' },
-  { navn: 'Jorden stråler', kaede: 'VARM JORD → VARMESTRÅLING', spoergsmaal: 'Stråler jorden også uden sollys?', tekst: 'Den varme jord udsender langbølget varmestråling i alle retninger over overfladen. Jo varmere den er, desto mere udsender den.', naeste: 'Tilføj drivhusgasser', beskrivelse: 'Jordoverfladen udsender røde, bølgede spor i forskellige udadgående retninger. Udsendelsen fortsætter, når sollyset afskærmes; jorden køler da af og stråler mindre.' },
+  { navn: 'Jorden stråler', kaede: 'VARM JORD → VARMESTRÅLING', spoergsmaal: 'Stråler jorden også uden sollys?', tekst: 'Den varme jord udsender langbølget varmestråling i alle retninger over overfladen. Jo varmere den er, desto mere udsender den.', naeste: 'Tilføj drivhusgasser', beskrivelse: 'Jordoverfladen udsender røde, bølgede spor i forskellige udadgående retninger. Når solen går ned, bliver det nat. Udsendelsen fortsætter; jorden køler af og stråler mindre.' },
   { navn: 'Gasser absorberer', kaede: 'JORDENS VARMESTRÅLING → ATMOSFÆREN', spoergsmaal: 'Hvad sker der med jordens varmestråling?', tekst: 'Drivhusgasser absorberer noget af varmestrålingen og overfører energien til luften. Noget af strålingen passerer direkte ud i rummet.', naeste: 'Atmosfæren stråler også', beskrivelse: 'Nogle røde strålingsspor fra jordoverfladen ender ved drivhusgasser i luften. Andre fortsætter ud i rummet. Gasserne er spredt i luften og danner ikke et fast låg.' },
   { navn: 'Atmosfæren stråler', kaede: 'VARM ATMOSFÆRE → STRÅLING I ALLE RETNINGER', spoergsmaal: 'Atmosfæren er også varm. Hvor stråler den hen?', tekst: 'Atmosfæren udsender selv varmestråling i alle retninger. Noget når rummet. Noget når jordoverfladen: atmosfærisk modstråling.', naeste: 'Undersøg drivhuseffekten', beskrivelse: 'Fra hvert drivhusgassymbol vises ny varmestråling både mod jordoverfladen og mod rummet, uafhængigt af den stråling, der absorberes. Nedadgående stråling absorberes ved jordoverfladen.' },
   { navn: 'Drivhuseffekten', kaede: 'SOLSTRÅLING + MODSTRÅLING → VARMERE JORDOVERFLADE', spoergsmaal: 'Hvorfor gør drivhusgasser jordoverfladen varmere?', tekst: 'Jordoverfladen modtager både solstråling og atmosfærisk modstråling. Derfor bliver den varmere end med samme solstråling uden drivhusgassernes virkning.', naeste: 'Forstærket drivhuseffekt', beskrivelse: 'Alle processer vises samlet. Med drivhusgassernes virkning modtager overfladen også modstråling og bliver varmere. Uden virkningen er solstrålingen den samme, men modstrålingen ophører, og overfladen bliver koldere.' },
@@ -15,6 +15,9 @@ const trin = [
 ];
 let aktuelt = 0;
 let sol = true;
+// 1 = solen står højt, 0 = solen er gået ned. Glider mod målet, når solen går ned/op.
+let solHoejde = 1;
+const SOLNEDGANG_SEK = 4.5;
 let gas = true;
 let scenario = 1;
 let pause = reduceret.matches;
@@ -56,7 +59,7 @@ function tilpas() {
   pensel.setTransform(laerred.width / 1200, 0, 0, laerred.height / 500, 0, 0);
   // Kompensér for det brede lærred: sol og molekylsymboler bevarer formen.
   const forhold = (hoejde / 500) / (bredde / 1200);
-  $('sol-tegning').setAttribute('transform', `translate(156 103) scale(${forhold} 1) translate(-156 -103)`);
+  placerSol();
   [...$('molekyler').children].forEach((gruppe, i) => {
     const [x,y,vinkel] = molekyler[i];
     gruppe.setAttribute('transform', `translate(${x} ${y}) scale(${forhold} 1) rotate(${vinkel * 55})`);
@@ -66,6 +69,34 @@ function tilpas() {
   tegn();
 }
 new ResizeObserver(tilpas).observe(laerred);
+
+// ── Solnedgang og nat ───────────────────────────────────────────────
+const klem=v=>Math.max(0,Math.min(1,v));
+const blidt=t=>t*t*(3-2*t);
+function blandFarve(a,b,t){
+  const ca=a.match(/\w\w/g).map(h=>parseInt(h,16)),cb=b.match(/\w\w/g).map(h=>parseInt(h,16));
+  return '#'+ca.map((v,i)=>Math.round(v+(cb[i]-v)*t).toString(16).padStart(2,'0')).join('');
+}
+function straaleSynlighed(){return klem((solHoejde-.55)/.45);}
+function placerSol(){
+  // Solen glider ned bag bakkerne til venstre; formen bevares på det brede lærred.
+  const forhold=(hoejde/500)/(bredde/1200), ned=blidt(1-solHoejde);
+  $('sol-tegning').setAttribute('transform',`translate(${156-70*ned} ${103+330*ned}) scale(${forhold} 1) translate(-156 -103)`);
+}
+function opdaterNat(){
+  placerSol();
+  const nat=1-solHoejde;
+  $('nat-himmel').setAttribute('opacity',blidt(nat).toFixed(3));
+  $('skumring').setAttribute('opacity',(3.2*solHoejde*nat*.85).toFixed(3));
+  $('stjerner').setAttribute('opacity',klem((nat-.4)/.6).toFixed(3));
+  $('nat-slor').setAttribute('opacity',(.6*blidt(nat)).toFixed(3));
+  $('sol-roed').setAttribute('opacity',(.85*klem(nat*1.8)).toFixed(3));
+  $('sol-tegning').setAttribute('opacity',klem(solHoejde*4).toFixed(3));
+  document.querySelector('.sol-label').style.opacity=klem((solHoejde-.7)/.3);
+  $('sol-proces').style.opacity=straaleSynlighed();
+  $('sol-proces').hidden=straaleSynlighed()===0;
+  document.querySelector('.scene').classList.toggle('nat',nat>.5);
+}
 
 function bane(type, x, y, slutX, slutY, absorberes = false, forsinkelse = 0) {
   return { type, x, y, slutX, slutY, absorberes, forsinkelse };
@@ -87,7 +118,7 @@ function solBane(i) {
 function forfyld() {
   baner = [];
   overgang = 0;
-  if (sol) {
+  if (sol || solHoejde > 0) {
     // Parallelle solstråler; ingen vifte af projektiler fra et enkelt punkt.
     for (let i = 0; i < 3; i++) baner.push(solBane(i));
   }
@@ -126,7 +157,7 @@ function opdaterUI() {
   $('naeste').innerHTML=`${t.naeste} <span aria-hidden="true">→</span>`;
   $('forrige').disabled=aktuelt===0;
   $('sol-knap').hidden=aktuelt!==1;
-  $('sol-knap').textContent=sol?'Afskærm sollyset':'Lad sollyset komme ind igen';
+  $('sol-knap').textContent=sol?'Lad solen gå ned':'Lad solen stå op';
   $('sol-knap').setAttribute('aria-pressed',String(!sol));
   $('gas-knap').hidden=aktuelt!==4;
   $('gas-knap').textContent=gas?'Uden drivhusgassernes virkning':'Med drivhusgassernes virkning';
@@ -147,12 +178,10 @@ function opdaterUI() {
   $('ud-proces').hidden=aktuelt<3;
   $('ud-proces').innerHTML=aktuelt===5?'<span>Til rummet</span>':'<span>Varmestråling<br>til rummet</span>';
   document.querySelector('.scene').classList.toggle('forstaerket-trin',aktuelt===5);
-  $('sol-proces').hidden=!sol;
   $('sammenlign-maerke').hidden=aktuelt<4||gas;
   $('atmosfaere-tegning').setAttribute('opacity',gasAktiv()?1:0);
   $('molekyler').setAttribute('opacity',gasAktiv()?'.8':0);
-  $('solskaerm').setAttribute('opacity',sol?0:1);
-  $('sol-tegning').setAttribute('opacity',sol?1:.55);
+  opdaterNat();
   document.body.classList.toggle('forklar-selv',forklarSelv);
   document.body.classList.toggle('opgave-tilstand',opgaveAktiv);
   document.querySelectorAll('[data-trin]').forEach((b,i)=>{
@@ -164,9 +193,9 @@ function opdaterVarme() {
   const varme=Math.max(0,Math.min(1,(tilstand.jord-.82)/.35));
   $('overflade-varme').setAttribute('opacity',String(.08+varme*.8));
   $('varmesloer').setAttribute('opacity',String(.06+varme*.6));
-  $('varmetekst').textContent=aktuelt>=4 ? `globalt gennemsnit i modellen: ca. ${Math.round(temperaturC(tilstand)) > 0 ? '+' : ''}${Math.round(temperaturC(tilstand))} °C` : !sol?'køler af · udsender stadig varmestråling':aktuelt===4?(gas?'bliver varmere med modstråling':'bliver koldere uden modstråling'):'opvarmes af Solen';
+  $('varmetekst').textContent=aktuelt>=4 ? `globalt gennemsnit i modellen: ca. ${Math.round(temperaturC(tilstand)) > 0 ? '+' : ''}${Math.round(temperaturC(tilstand))} °C` : !sol?(solHoejde>0?'solen går ned · udsender stadig varmestråling':'nat · køler af · udsender stadig varmestråling'):aktuelt===4?(gas?'bliver varmere med modstråling':'bliver koldere uden modstråling'):'opvarmes af Solen';
   let status='';
-  if(aktuelt===1)status=sol?'Prøv at afskærme sollyset. Varm jord stråler også uden lys.':'Sollyset er afskærmet. Jorden stråler stadig, men køler af og udsender efterhånden mindre.';
+  if(aktuelt===1)status=sol?'Lad solen gå ned. Stråler jorden også om natten?':solHoejde>0?'Solen går ned. Følg jordens varmestråling, mens det bliver nat.':'Nat: Jorden stråler stadig, men køler af og udsender efterhånden mindre.';
   if(aktuelt===2)status='Atmosfæren udsender også stråling. Det viser vi i næste trin.';
   if(aktuelt===3)status='Følg strålingen fra ét sted i luften: den udsendes i forskellige retninger.';
   if(aktuelt===4)status=gas?'Sammenlign med samme solstråling uden drivhusgassernes virkning.':'Solstrålingen er uændret. Uden modstråling køler overfladen gradvist af.';
@@ -177,7 +206,7 @@ function opdaterVarme() {
 function vaelgTrin(n) {
   // Trin 6 er opgaverne. Figuren står da som i trinnet «Drivhuseffekten».
   opgaveAktiv=n===6;if(opgaveAktiv)n=4;
-  aktuelt=n;sol=true;gas=true;scenario=n===5?2:1;forklarSelv=false;tilstand=starttilstand();tid=0;
+  aktuelt=n;sol=true;solHoejde=1;gas=true;scenario=n===5?2:1;forklarSelv=false;tilstand=starttilstand();tid=0;
   // Start atmosfæretrinnene med en varm overflade, som allerede udsender.
   if(n>=2)tilstand.jord=1;
   if(n>=4)udvikl(tilstand,200,true,SCENARIER[1].absorption);
@@ -189,7 +218,12 @@ $('naeste').addEventListener('click',()=>vaelgTrin(aktuelt+1));
 $('forrige').addEventListener('click',()=>vaelgTrin(Math.max(0,aktuelt-1)));
 $('nulstil').addEventListener('click',()=>vaelgTrin(opgaveAktiv?6:aktuelt));
 $('pause').addEventListener('click',()=>{pause=!pause;sidste=null;opdaterUI();});
-$('sol-knap').addEventListener('click',()=>{sol=!sol;forfyld();opdaterUI();tegn();});
+$('sol-knap').addEventListener('click',()=>{
+  sol=!sol;
+  // Med pause (og reduceret bevægelse) skiftes der straks; ellers går solen langsomt ned/op.
+  if(pause)solHoejde=sol?1:0;
+  forfyld();opdaterUI();tegn();
+});
 $('gas-knap').addEventListener('click',()=>{gas=!gas;scenario=gas?1:0;forfyld();opdaterUI();tegn();});
 document.querySelectorAll('[data-klima]').forEach(b=>b.addEventListener('click',()=>{
   scenario=+b.dataset.klima;gas=scenario!==0;forfyld();opdaterUI();tegn();
@@ -223,7 +257,10 @@ function tegnBane(b, f) {
   if (!synlig) return;
   const frem = 1-(1-synlig)**3;
   const gul=b.type==='sol';
-  const farve=gul?'#ad760b':'#b94737';
+  // Solstrålerne toner ud, mens solen går ned; varmestrålingen lysner mod nattehimlen.
+  const lys=gul?straaleSynlighed():1;
+  if(!lys)return;
+  const farve=gul?'#ad760b':blandFarve('#b94737','#ff9a78',blidt(1-solHoejde));
   const styrke=gul?f.solInd:b.type==='jord'?(b.direkte?f.jordTilRum:f.jordUd):f.modstraaling;
   const fase=tid*1.7;
   const dx=b.slutX-b.x,dy=b.slutY-b.y;
@@ -241,7 +278,7 @@ function tegnBane(b, f) {
     lys.addColorStop(1,farve);
     pensel.strokeStyle=lys;
   }
-  pensel.globalAlpha=Math.min(.9,.65+styrke*.12);
+  pensel.globalAlpha=Math.min(.9,.65+styrke*.12)*lys;
   pensel.lineWidth=(gul?2.3:1.6)+Math.min(1.8,styrke)*.7;
   pensel.beginPath();
   for(let p=0;p<=frem+.002;p+=.003){
@@ -255,7 +292,7 @@ function tegnBane(b, f) {
     if(p>frem)continue;
     const q=punktPaaBane(b,p,fase);
     pensel.save();pensel.translate(q.x,q.y);pensel.rotate(vinkel);
-    pensel.globalAlpha=.9;pensel.lineWidth=2.2;
+    pensel.globalAlpha=.9*lys;pensel.lineWidth=2.2;
     pensel.beginPath();pensel.moveTo(-8,-5);pensel.lineTo(0,0);pensel.lineTo(-8,5);pensel.stroke();
     pensel.restore();
   }
@@ -270,7 +307,7 @@ function tegnBane(b, f) {
 }
 function tegn() {
   pensel.clearRect(0,0,1200,500);
-  const f=energistroemme(tilstand,sol,absorption());
+  const f=energistroemme(tilstand,solHoejde,absorption());
   for(const b of baner)tegnBane(b,f);
 }
 function billede(nu) {
@@ -278,7 +315,12 @@ function billede(nu) {
   const dt=Math.min((nu-sidste)/1000,.05);sidste=nu;
   if(!pause&&!document.hidden){
     tid+=dt;overgang+=dt;
-    udvikl(tilstand,dt,sol,absorption());
+    const maal=sol?1:0;
+    if(solHoejde!==maal){
+      solHoejde=maal>solHoejde?Math.min(1,solHoejde+dt/SOLNEDGANG_SEK):Math.max(0,solHoejde-dt/SOLNEDGANG_SEK);
+      opdaterNat();
+    }
+    udvikl(tilstand,dt,solHoejde,absorption());
     opdaterVarme();tegn();
   }
   requestAnimationFrame(billede);

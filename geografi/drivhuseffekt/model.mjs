@@ -22,7 +22,8 @@ export function energistroemme(tilstand, sol = true, gas = true) {
   const jordUd = tilstand.jord ** 4;
   const luftEnVej = absorption * tilstand.luft ** 4;
   return {
-    solInd: sol ? 1 : 0,
+    // sol kan være sand/falsk eller en andel 0–1 (solen på vej ned eller op).
+    solInd: typeof sol === 'number' ? Math.max(0, Math.min(1, sol)) : sol ? 1 : 0,
     jordUd,
     luftAbsorberet: absorption * jordUd,
     modstraaling: luftEnVej,

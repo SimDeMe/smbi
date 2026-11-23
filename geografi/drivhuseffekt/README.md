@@ -54,7 +54,11 @@ fotoner eller en beregning af temperatur. Molekylsymboler, geometri og tid er
 illustrative. Landskabet har daghimmel og en stiliseret kyst, ikke en bestemt
 geografisk placering.
 
-Solafskærmningen ændrer kun soltilførsel. Sammenligningerne i de sidste to trin
+Solnedgangen i trin 2 ændrer kun soltilførslen: den aftager gradvist til nul over
+få sekunder, mens solen glider ned bag bakkerne, himlen skifter til nat, og
+stjernerne kommer frem. Natten illustrerer, at varm jord også stråler uden
+sollys; den er ikke en beregning af en bestemt nat, og tiden er stærkt
+forkortet. Med pause eller reduceret bevægelse skiftes der straks. Sammenligningerne i de sidste to trin
 ændrer kun drivhusgassernes langbølgede absorption og udsendelse og lader
 soltilførslen være konstant. Temperaturerne udvikler sig løbende og springer
 ikke ved skiftet. Trinskift og nulstilling starter derimod en ny demonstration.

@@ -805,6 +805,22 @@ body.fokus #fokus{
   left: 55%;
   top: 6%;
 }
+/* Nat i trin 2: lyse etiketter på mørk himmel */
+.sted,.proces,.proces small,.jord-label,.jord-label span{
+  transition:color .8s,opacity .6s
+}
+.nat .sted,.nat .rum-label{
+  color:#d8e3ef
+}
+.nat .proces{
+  color:#ffc4ad
+}
+.nat .jord-label{
+  color:#eef4e4
+}
+.nat .jord-label span{
+  color:#cfe0d4
+}
 /* ── Opgaver (trin 7) ─────────────────────────────────────────────────── */
 .opgaver,.opgave-tilstand .forklaring,.opgave-tilstand .temperatur-note,.opgave-tilstand .betjening{
   display:none

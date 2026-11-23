@@ -54,7 +54,7 @@ export const OPGAVER = [
   },
   {
     type: 'valg',
-    spm: 'Hvad sker der med jordoverfladen, hvis sollyset bliver afskærmet?',
+    spm: 'Hvad sker der med jordoverfladen, når solen er gået ned?',
     valg: [
       'Den holder straks op med at udsende varmestråling',
       'Den udsender stadig varmestråling, men køler af og udsender efterhånden mindre',
