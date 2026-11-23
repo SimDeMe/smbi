@@ -1,6 +1,5 @@
 import { DOEGN, AAR, periodisk, tilstand } from './model.mjs';
 import { lavOpgaver } from './opgaver.js';
-import { lavKort } from './kort/kort.js';
 
 const $ = id => document.getElementById(id);
 const laerred = $('luft');
@@ -33,12 +32,12 @@ const trin = [
     tekst: 'Om natten udstråler både land og hav varme. Land har lav specifik varmekapacitet og kun et tyndt varmt lag, så det køler hurtigt af og bliver koldere end havet. Nu er der højtryk ved jorden over land og lavtryk over havet, så det blæser fra land ud mod havet. Landbrisen er svagere, fordi temperaturforskellen er mindre.',
     naeste: 'Samme princip i stor skala',
     beskrivelse: 'Nat ved kysten. Landet er koldere end havet. En lavere og svagere cirkulation går den modsatte vej: ved jorden blæser landbrisen fra land ud over havet.' },
-  { navn: 'Sommermonsun', scene: 'monsun', tid: 6.5, celle: true, foelg: true,
+  { navn: 'Sommermonsun', scene: 'monsun', tid: 6.5, celle: true,
     kaede: 'VARMT KONTINENT → LAVTRYK → FUGTIG VIND FRA HAVET', spoergsmaal: 'Hvorfor regner det så meget i Indien om sommeren?',
     tekst: 'Om sommeren bliver det asiatiske kontinent meget varmere end Det Indiske Ocean. Over land dannes et stort termisk lavtryk, og fugtig luft strømmer ind fra havet fra sydvest. Luften stiger, afkøles og kondenserer til kraftig regn. Kondensationen frigiver varme, så luften stiger endnu mere.',
     naeste: 'Vinterhalvåret',
     beskrivelse: 'Snit fra Det Indiske Ocean i syd over Indien til Himalaya i nord, om sommeren. Fugtig luft strømmer fra havet ind over land, stiger op mod bjergene og danner skyer og kraftig regn. Lavtryk over land, højtryk over havet.' },
-  { navn: 'Vintermonsun', scene: 'monsun', tid: 12, celle: true, foelg: true, forklar: true, sammenlign: true,
+  { navn: 'Vintermonsun', scene: 'monsun', tid: 12, celle: true, forklar: true, sammenlign: true,
     kaede: 'KOLDT KONTINENT → HØJTRYK → TØR VIND MOD HAVET', spoergsmaal: 'Hvorfor er vinteren tør i Indien?',
     tekst: 'Om vinteren er kontinentet koldere end havet. Over Asien ligger et kraftigt højtryk, og tør luft strømmer fra nordøst ud mod havet. Luften synker over land, så der dannes kun få skyer. Regnen falder i stedet over havet.',
     naeste: 'Til opgaverne',
@@ -48,8 +47,6 @@ const trin = [
 let aktuelt = 0, tid = 0, loeb = null, pause = reduceret.matches, forklarSelv = false;
 // Opgavetilstand (trin 6): figuren står som et af trinnene; grafHel viser hele kurven.
 let opgaveAktiv = false, grafHel = false;
-// Kortvisning i monsuntrinene: kortet erstatter snittet.
-let kortVist = false, kort = null, kortDt = 0;
 let animTid = 0, fase = 0, sidste = null, overgang = 0, sidsteStatus = '';
 let bredde = 1200, hoejde = 500, sx = 1, sy = 1;
 // Lærredet tegnes i skærmpixels; X/Y omregner fra viewBox (1200 × 500), så
@@ -312,22 +309,14 @@ function opdaterVisning() {
   let status = '';
   if (aktuelt === 0) status = tid < t.loeb.til - 0.01 ? 'Tiden løber fra solopgang til eftermiddag.' : 'Land er blevet meget varmere end havet. Hvad sker der med luften over land?';
   else if (aktuelt === 1) status = 'Det høje tryk over land i højden er starten på en vind.';
-  else if (t.foelg && loeb) status = scene() === 'brise' ? 'Følg vinden og kurverne gennem døgnet. Hvornår vender vinden?' : 'Følg vinden og kurverne gennem året. Hvornår vender monsunen?';
+  else if (t.foelg && loeb) status = 'Følg vinden og kurverne gennem døgnet. Hvornår vender vinden?';
   else if (aktuelt === 2) status = 'Tryk på »Følg et døgn«, og se, hvornår søbrisen bliver til landbrise.';
   else if (aktuelt === 3) status = 'Sammenlign med søbrisen: cirkulationen er lavere og svagere.';
   else if (aktuelt === 4) status = 'Samme princip som søbrisen, men over et helt kontinent og en hel årstid.';
   else if (aktuelt === 5) status = 'Samme princip som landbrisen, men over et helt kontinent og en hel årstid.';
   if (forklarSelv) status = '';
   if (status !== sidsteStatus) { $('observation').textContent = status; sidsteStatus = status; }
-  if (kortVist) opdaterKort(vind);
-  $('figur-beskrivelse').textContent = kortVist ? `Kort over Sydasien og Det Indiske Ocean, ${klokke(tid)}. ${$('kort-tekst').textContent}` : `${t.beskrivelse} ${klokke(tid)[0].toUpperCase() + klokke(tid).slice(1)}: ${$('forskel').textContent.toLowerCase()}.`;
-}
-function opdaterKort(vind) {
-  if (!kort) kort = lavKort($('kort-flade'));
-  const s = kort.opdater(vind, kortDt); kortDt = 0;
-  const maaned = klokke(tid).replace(/^\S/, c => c.toUpperCase());
-  $('kort-maaned').textContent = `${maaned} · ${s === kort.saesoner.sommer ? 'sommermonsun' : 'vintermonsun'}`;
-  $('kort-tekst').textContent = s.forklaring;
+  $('figur-beskrivelse').textContent = `${t.beskrivelse} ${klokke(tid)[0].toUpperCase() + klokke(tid).slice(1)}: ${$('forskel').textContent.toLowerCase()}.`;
 }
 function blandFarve(a, b, f) {
   const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
@@ -345,17 +334,8 @@ function opdaterUI() {
   $('naeste').innerHTML = `${t.naeste} <span aria-hidden="true">→</span>`;
   $('forrige').disabled = aktuelt === 0;
   $('foelg-knap').hidden = !t.foelg;
-  const enhed = scene() === 'brise' ? 'døgn' : 'år';
-  $('foelg-knap').textContent = loeb && t.foelg ? 'Stop tiden' : `Følg et ${enhed}`;
+  $('foelg-knap').textContent = loeb && t.foelg ? 'Stop tiden' : 'Følg et døgn';
   $('foelg-knap').setAttribute('aria-pressed', String(!!(loeb && t.foelg)));
-  const kortMulig = scene() === 'monsun' && !opgaveAktiv;
-  if (!kortMulig) kortVist = false;
-  $('kort-knap').hidden = !kortMulig;
-  $('kort-knap').textContent = kortVist ? 'Vis som snit' : 'Vis på kort';
-  $('kort-knap').setAttribute('aria-pressed', String(kortVist));
-  $('kort').hidden = !kortVist;
-  document.body.classList.toggle('kort-vist', kortVist);
-  if (kortVist) $('skala').textContent = 'Sydasien · ét år · forenklet kort';
   $('forklar-knap').hidden = !t.forklar;
   $('forklar-knap').textContent = forklarSelv ? 'Vis forklaringer' : 'Forklar selv';
   $('forklar-knap').setAttribute('aria-pressed', String(forklarSelv));
@@ -543,7 +523,7 @@ function billede(nu) {
       tid = Math.min(loeb.til, tid + dt * loeb.fart);
       if (tid >= loeb.til - 1e-9) { loeb = null; opdaterUI(); }
     }
-    kortDt = dt; opdaterVisning(); tegn();
+    opdaterVisning(); tegn();
   }
   requestAnimationFrame(billede);
 }
@@ -563,7 +543,6 @@ $('foelg-knap').addEventListener('click', () => {
   }
   opdaterUI(); tegn();
 });
-$('kort-knap').addEventListener('click', () => { kortVist = !kortVist; opdaterUI(); if (kortVist) kort.tilpas(); });
 $('forklar-knap').addEventListener('click', () => { forklarSelv = !forklarSelv; opdaterUI(); tegn(); });
 $('fokus').addEventListener('click', () => {
   const aktiv = document.body.classList.toggle('fokus');
