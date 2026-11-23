@@ -1,5 +1,6 @@
 import { DOEGN, AAR, periodisk, tilstand } from './model.mjs';
 import { lavOpgaver } from './opgaver.js';
+import { lavKort } from './kort/kort.js';
 
 const $ = id => document.getElementById(id);
 const laerred = $('luft');
@@ -47,6 +48,8 @@ const trin = [
 let aktuelt = 0, tid = 0, loeb = null, pause = reduceret.matches, forklarSelv = false;
 // Opgavetilstand (trin 6): figuren står som et af trinnene; grafHel viser hele kurven.
 let opgaveAktiv = false, grafHel = false;
+// Kortvisning i monsuntrinene: kortet erstatter snittet.
+let kortVist = false, kort = null, kortDt = 0;
 let animTid = 0, fase = 0, sidste = null, overgang = 0, sidsteStatus = '';
 let bredde = 1200, hoejde = 500, sx = 1, sy = 1;
 // Lærredet tegnes i skærmpixels; X/Y omregner fra viewBox (1200 × 500), så
@@ -316,7 +319,15 @@ function opdaterVisning() {
   else if (aktuelt === 5) status = 'Samme princip som landbrisen, men over et helt kontinent og en hel årstid.';
   if (forklarSelv) status = '';
   if (status !== sidsteStatus) { $('observation').textContent = status; sidsteStatus = status; }
-  $('figur-beskrivelse').textContent = `${t.beskrivelse} ${klokke(tid)[0].toUpperCase() + klokke(tid).slice(1)}: ${$('forskel').textContent.toLowerCase()}.`;
+  if (kortVist) opdaterKort(vind);
+  $('figur-beskrivelse').textContent = kortVist ? `Kort over Sydasien og Det Indiske Ocean, ${klokke(tid)}. ${$('kort-tekst').textContent}` : `${t.beskrivelse} ${klokke(tid)[0].toUpperCase() + klokke(tid).slice(1)}: ${$('forskel').textContent.toLowerCase()}.`;
+}
+function opdaterKort(vind) {
+  if (!kort) kort = lavKort($('kort-flade'));
+  const s = kort.opdater(vind, kortDt); kortDt = 0;
+  const maaned = klokke(tid).replace(/^\S/, c => c.toUpperCase());
+  $('kort-maaned').textContent = `${maaned} · ${s === kort.saesoner.sommer ? 'sommermonsun' : 'vintermonsun'}`;
+  $('kort-tekst').textContent = s.forklaring;
 }
 function blandFarve(a, b, f) {
   const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
@@ -337,6 +348,14 @@ function opdaterUI() {
   const enhed = scene() === 'brise' ? 'døgn' : 'år';
   $('foelg-knap').textContent = loeb && t.foelg ? 'Stop tiden' : `Følg et ${enhed}`;
   $('foelg-knap').setAttribute('aria-pressed', String(!!(loeb && t.foelg)));
+  const kortMulig = scene() === 'monsun' && !opgaveAktiv;
+  if (!kortMulig) kortVist = false;
+  $('kort-knap').hidden = !kortMulig;
+  $('kort-knap').textContent = kortVist ? 'Vis som snit' : 'Vis på kort';
+  $('kort-knap').setAttribute('aria-pressed', String(kortVist));
+  $('kort').hidden = !kortVist;
+  document.body.classList.toggle('kort-vist', kortVist);
+  if (kortVist) $('skala').textContent = 'Sydasien · ét år · forenklet kort';
   $('forklar-knap').hidden = !t.forklar;
   $('forklar-knap').textContent = forklarSelv ? 'Vis forklaringer' : 'Forklar selv';
   $('forklar-knap').setAttribute('aria-pressed', String(forklarSelv));
@@ -524,7 +543,7 @@ function billede(nu) {
       tid = Math.min(loeb.til, tid + dt * loeb.fart);
       if (tid >= loeb.til - 1e-9) { loeb = null; opdaterUI(); }
     }
-    opdaterVisning(); tegn();
+    kortDt = dt; opdaterVisning(); tegn();
   }
   requestAnimationFrame(billede);
 }
@@ -544,6 +563,7 @@ $('foelg-knap').addEventListener('click', () => {
   }
   opdaterUI(); tegn();
 });
+$('kort-knap').addEventListener('click', () => { kortVist = !kortVist; opdaterUI(); if (kortVist) kort.tilpas(); });
 $('forklar-knap').addEventListener('click', () => { forklarSelv = !forklarSelv; opdaterUI(); tegn(); });
 $('fokus').addEventListener('click', () => {
   const aktiv = document.body.classList.toggle('fokus');

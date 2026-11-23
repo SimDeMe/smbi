@@ -47,6 +47,23 @@ der tegnes i skærmpixels, så stregerne er lige tykke selvom figuren strækkes.
 Cirkulationen er én lukket bane med glidende streger og pilehoveder; fart og
 tykkelse følger vinden. Etiketter er HTML placeret i viewBox-koordinater.
 
+## Kort over monsunen
+
+I trin 5 og 6 skifter «Vis på kort» snittet ud med et kort over Sydasien og
+Det Indiske Ocean (`kort/kort.js`): højtryk og lavtryk, vind ved jorden,
+ITK og områder med meget regn i juli og januar. Under «Følg et år» glider
+kortet mellem de to mønstre efter modellens fortegn. Mønstrene er forenklede
+klimatologiske gennemsnit med afrundede positioner (termisk lavtryk over
+Pakistan/Nordindien, Maskarenerhøjtrykket, Somalia-strømmen over ækvator,
+Sibirisk højtryk, ITK syd for ækvator i januar), ikke data for en bestemt
+dag. Brisen har intet kort, fordi den er en generel lokal proces.
+
+Kystlinjer og grænser: Natural Earth 1:50m (public domain) fra
+`atlas/data/countries-50m.json`, Mercator 38–118° Ø og 32° S – 47° N,
+forenklet til `kort/kortdata.js` (41 kB). Gendan med
+`node geografi/brise-og-monsun/kort/lav-kort.mjs` (bruger d3 og topojson fra
+`atlas/vendor/`). Kortet vises uden netadgang og uden biblioteker i browseren.
+
 ## Opgaver
 
 Efter de seks trin følger trinnet «Opgaver» (`opgaver.js`, spørgsmål i
@@ -65,5 +82,5 @@ mod modellen i `test.mjs`. Direkte link: `…/brise-og-monsun/#opgaver`.
 
 `node geografi/brise-og-monsun/test.mjs` (model) og, med serveren på 8777,
 `node geografi/brise-og-monsun/browser-test.mjs` (fem skærmstørrelser, alle
-trin, døgnforløb og vindskifte, monsun, forklar selv, pause, fokus, tastatur,
+trin, døgnforløb og vindskifte, monsun, kortvisning, forklar selv, pause, fokus, tastatur,
 reduceret bevægelse). Skærmbilleder i `værktøj/ud/`. Ikke afprøvet med elever.

@@ -71,11 +71,30 @@ try {
   assert.equal(await page.locator('.etiket.vind').isVisible(), false);
   await page.locator('#forklar-knap').click();
 
+  // Kortvisning: januar-mønster, skifter til juli ved forrige trin, forsvinder ved brisen.
+  assert.equal(await page.locator('#kort').isVisible(), false);
+  await page.locator('#kort-knap').click();
+  assert.equal(await page.locator('#kort-knap').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('#kort').isVisible(), true);
+  assert.match(await page.locator('#kort-maaned').innerText(), /^Januar · vintermonsun/);
+  assert.equal(await page.locator('.kort-tryk.hoej[data-saeson="vinter"]').evaluate(e => getComputedStyle(e).opacity), '1');
+  await page.waitForTimeout(400);
+  await page.screenshot(billede('brise-kort-vinter.png'));
+  await page.locator('#forrige').click();
+  assert.equal(await page.locator('#kort').isVisible(), true);
+  assert.match(await page.locator('#kort-maaned').innerText(), /^Juli · sommermonsun/);
+  assert.match(await page.locator('#kort-tekst').innerText(), /sydvestvind/);
+  await page.locator('[data-trin="3"]').click();
+  assert.equal(await page.locator('#kort').isVisible(), false);
+  assert.equal(await page.locator('#kort-knap').isVisible(), false);
+  await page.locator('[data-trin="5"]').click();
+  assert.equal(await page.locator('#kort').isVisible(), false);
+
   // Pause fryser lærredet; fokusvisning og Escape.
   await page.locator('#pause').click();
-  const c = await page.locator('canvas').evaluate(c => c.toDataURL());
+  const c = await page.locator('#luft').evaluate(c => c.toDataURL());
   await page.waitForTimeout(250);
-  assert.equal(await page.locator('canvas').evaluate(c => c.toDataURL()), c);
+  assert.equal(await page.locator('#luft').evaluate(c => c.toDataURL()), c);
   await page.locator('#pause').click();
   await page.locator('#fokus').click();
   assert.equal(await page.locator('body').evaluate(b => b.classList.contains('fokus')), true);
@@ -200,7 +219,7 @@ try {
   await page.locator('[data-trin="3"]').click();
   await page.screenshot(billede('brise-landbrise-1280.png'));
   assert.deepEqual(fejl, []);
-  console.log('Browser: opgaver (valg, peg, graf, kæde, resultat), seks trin på fem skærmstørrelser, døgnforløb, vindskifte, monsun, forklar selv, pause, fokus, tastatur og reduceret bevægelse OK.');
+  console.log('Browser: opgaver (valg, peg, graf, kæde, resultat), seks trin på fem skærmstørrelser, døgnforløb, vindskifte, monsun, kortvisning, forklar selv, pause, fokus, tastatur og reduceret bevægelse OK.');
 } finally {
   await browser.close();
 }
