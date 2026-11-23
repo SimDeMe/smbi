@@ -22,7 +22,10 @@ Grafen ved figuren svarer til forsøget med sand og vand under en lampe
 ## Model
 
 `model.mjs`: for både land og hav `C · dT/dt = F·S(t) − λ(T − Tb)`. Samme
-solindstråling og afkøling; kun tidskonstanten τ = C/λ er forskellig (døgn:
+solindstråling og afkøling; kun tidskonstanten τ = C/λ er forskellig. C er
+den effektive varmekapacitet = specifik varmekapacitet × opvarmet masse;
+siden fremhæver vands høje specifikke varmekapacitet (ca. 4,2 mod ca. 0,8
+kJ/(kg·K) for tørt sand) som hovedforklaring (døgn:
 land 4 t, hav 150 t; år: land 0,7 md., hav 4 md.). Den periodiske løsning
 findes ved at køre 30 perioder. Vinden sættes proportional med T_land − T_hav
 og normaliseres, så den kraftigste søbrise/sommermonsun er 1.
@@ -47,7 +50,7 @@ tykkelse følger vinden. Etiketter er HTML placeret i viewBox-koordinater.
 ## Opgaver
 
 Efter de seks trin følger trinnet «Opgaver» (`opgaver.js`, spørgsmål i
-`opgavedata.js`), bygget som drivhuseffektens: 14 opgaver med multiple choice,
+`opgavedata.js`), bygget som drivhuseffektens: 15 opgaver med multiple choice (bl.a. hvad specifik varmekapacitet betyder),
 «peg på figuren» (søbrisen, lavtrykket, hvor luften synker/stiger, regnen),
 «klik i grafen» (hvornår land er varmest, hvornår det er landbrise, hvilke
 måneder der er vintermonsun) og til sidst «byg kæden» for søbrisen med falske

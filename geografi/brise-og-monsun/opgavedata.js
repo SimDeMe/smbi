@@ -30,11 +30,22 @@ export const OPGAVER = [
     spm: 'Solen tilfører land og hav lige meget energi. Hvorfor bliver land alligevel varmest om dagen?',
     valg: [
       'Land får mere sollys end havet',
-      'På land opvarmes kun et tyndt lag; i havet blandes varmen ned i dybden, og vand skal have meget energi for at blive varmere',
+      'Vand har en meget højere specifik varmekapacitet end sand og jord, og i havet fordeles varmen ned i dybden',
       'Havet kaster næsten alt sollyset tilbage',
     ],
     rigtig: 1,
-    forklaring: 'Jord leder varme dårligt, så energien samles i et tyndt lag ved overfladen. I havet trænger lyset ned, bølger og strømme blander varmen ned, vand har stor varmekapacitet, og fordampning bruger energi.',
+    forklaring: 'Den vigtigste grund er den specifikke varmekapacitet: vand skal have omkring fem gange så meget energi pr. kg for at blive 1 °C varmere som tørt sand. Desuden samles energien på land i et tyndt lag, fordi jord leder varme dårligt, mens lyset trænger ned i havet, bølger og strømme blander varmen ned, og fordampning bruger energi.',
+  },
+  {
+    type: 'valg', figur: 2,
+    spm: 'Vands specifikke varmekapacitet er ca. 4,2 kJ/(kg·K). Tørt sand har ca. 0,8 kJ/(kg·K). Hvad betyder det?',
+    valg: [
+      'Vand bliver ca. fem gange så varmt som sand i solen',
+      'Det kræver ca. fem gange så meget energi at gøre 1 kg vand 1 °C varmere som 1 kg sand',
+      'Sand kan højst blive 0,8 °C varmere, før det holder op med at optage energi',
+    ],
+    rigtig: 1,
+    forklaring: 'Specifik varmekapacitet er den energi, der skal til for at gøre 1 kg af et stof 1 °C (1 K) varmere. Med samme tilførte energi stiger sandets temperatur derfor meget mere end vandets – og om natten falder den også mere, når samme energi afgives. Det er det, I ser i forsøget med sand og vand under lampen.',
   },
   {
     type: 'tid', figur: 2,
@@ -69,11 +80,14 @@ export const OPGAVER = [
   {
     type: 'peg', figur: 2,
     spm: 'Klik der, hvor luften synker om eftermiddagen.',
-    rigtig: ['lodret-hav'],
+    // Hele området over havet tæller – også ned mod havoverfladen.
+    rigtig: ['lodret-hav', 'hav-lavt', 'hav'],
     forkert: {
       'lodret-land': 'Over det varme land stiger luften.',
-      'vind-jord': 'Det er søbrisen ved jorden. Find den lodrette bevægelse nedad.',
-      'vind-top': 'Det er strømmen højt oppe. Find den lodrette bevægelse nedad.',
+      'land-lavt': 'Over det varme land stiger luften.',
+      'land-hoejt': 'Over det varme land stiger luften.',
+      land: 'Over det varme land stiger luften.',
+      'vind-top': 'Det er strømmen højt oppe, før luften synker. Find stedet, hvor den bevæger sig nedad.',
     },
     forklaring: 'Luften, der strømmer ud over havet højt oppe, synker over det kølige hav og strømmer tilbage mod land ved jorden. Det lukker cirkulationen.',
   },
@@ -98,11 +112,14 @@ export const OPGAVER = [
   {
     type: 'peg', figur: 3,
     spm: 'Det er nat. Klik der, hvor luften stiger.',
-    rigtig: ['lodret-hav'],
+    // Hele området over det nu varmeste hav tæller.
+    rigtig: ['lodret-hav', 'hav-lavt', 'hav-hoejt', 'hav'],
     forkert: {
       'lodret-land': 'Om natten er land koldere end havet. Over det kolde land synker luften.',
-      'vind-jord': 'Det er landbrisen ved jorden. Find den lodrette bevægelse opad.',
-      'vind-top': 'Det er strømmen højt oppe. Find den lodrette bevægelse opad.',
+      'land-lavt': 'Om natten er land koldere end havet. Over det kolde land synker luften.',
+      'land-hoejt': 'Om natten er land koldere end havet. Over det kolde land synker luften.',
+      land: 'Om natten er land koldere end havet. Over det kolde land synker luften.',
+      'vind-top': 'Det er strømmen højt oppe, efter at luften er steget. Find stedet, hvor den bevæger sig opad.',
     },
     forklaring: 'Om natten er havet det varmeste sted. Luften stiger over havet, og ved jorden blæser landbrisen fra land ud mod havet.',
   },
@@ -164,18 +181,18 @@ export const OPGAVER = [
     // Rækkefølgen her er facit. Kortene blandes, når opgaven vises.
     led: [
       'Solen opvarmer land og hav',
-      'Land bliver hurtigt varmere end havet',
+      'Land har lav specifik varmekapacitet og bliver hurtigt varmere end havet',
       'Luften over land opvarmes og udvider sig',
       'Højt oppe strømmer luft fra land ud over havet',
       'Ved jorden opstår lavtryk over land og højtryk over havet',
       'Ved jorden blæser det fra havet mod land: søbrise',
     ],
     falske: [
-      'Havet bliver hurtigt varmere end land',
+      'Havet har lav specifik varmekapacitet og bliver hurtigt varmere end land',
       'Den varme luft giver højtryk ved jorden over land',
       'Vinden blæser fra lavtryk mod højtryk',
       'Luften stiger over det kølige hav',
     ],
-    forklaring: 'Land og hav opvarmes forskelligt. Den varme luft over land udvider sig, så trykket højt oppe bliver højest over land, og luft strømmer ud over havet. Derfor falder trykket ved jorden over land og stiger over havet – og ved jorden blæser det fra højtryk mod lavtryk.',
+    forklaring: 'Land har lavere specifik varmekapacitet end vand og bliver derfor hurtigt varmere end havet. Den varme luft over land udvider sig, så trykket højt oppe bliver højest over land, og luft strømmer ud over havet. Derfor falder trykket ved jorden over land og stiger over havet – og ved jorden blæser det fra højtryk mod lavtryk.',
   },
 ];

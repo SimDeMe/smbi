@@ -169,6 +169,13 @@ export function lavOpgaver({ figur, geometri, visFigur, tilTrin }) {
   }
   function visRigtigDel(dele) {
     const g = geometri();
+    // Er hele luften over havet rigtig, vises én samlet markering af den.
+    if (dele.includes('hav-lavt') && dele.includes('lodret-hav')) {
+      const top = g.celle.yt - 25, h = Math.min(g.kyst, g.celle.x1);
+      linje(`M12 ${top}H${h - 8}V470H12Z`);
+      fremhaev.lastChild.classList.add('omraade');
+      dele = dele.filter(d => !['hav-lavt', 'hav-hoejt', 'lodret-hav'].includes(d));
+    }
     for (const del of dele) {
       const gr = grene()[del];
       if (gr) { linje(`M${gr[0]} ${gr[1]}L${gr[2]} ${gr[3]}`); continue; }

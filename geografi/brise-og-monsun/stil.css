@@ -81,7 +81,7 @@ h1{font:700 clamp(21px,2.25vw,32px)/1.15 var(--display);letter-spacing:-.045em;m
 .forklaring{padding:14px 24px 0}
 .trin-overlinje{font:9px var(--mono);color:var(--blaa);letter-spacing:.12em;margin:0 0 4px}
 h2{font:650 23px/1.2 var(--display);letter-spacing:-.035em;margin:0 0 7px}
-.forklaring>p:not(.trin-overlinje){margin:0;font-size:16px;line-height:1.45;max-width:100ch}
+.forklaring>p:not(.trin-overlinje){margin:0;font-size:16px;line-height:1.45;max-width:118ch}
 .forklaring .observation:not(:empty){font-size:13px;margin-top:5px;color:var(--blaa);font-family:var(--display)}
 .sammenlign{margin:7px 24px 0;max-width:110ch;font:12px/1.4 var(--display);color:#53666b}
 .betjening{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 24px 14px}
@@ -176,6 +176,7 @@ body.fokus #fokus{position:fixed;bottom:4px;right:16px;display:block;z-index:5;b
   .om-indhold{grid-template-columns:1fr;gap:12px}
   .fokus .figur-top:before{display:none}
 }
+.opg-lag path.omraade{fill:#2f8a4c;fill-opacity:.18;stroke-width:3;stroke-dasharray:8 6}
 /* Klik i grafen */
 .opgave-graf .graf-panel{background:#f0f6f3;box-shadow:inset 0 0 0 3px #0c659155}
 .opgave-graf #graf{cursor:crosshair}

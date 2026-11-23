@@ -14,7 +14,7 @@ const MAANEDER = ['januar','februar','marts','april','maj','juni','juli','august
 const trin = [
   { navn: 'Land og hav opvarmes', scene: 'brise', tid: 0, loeb: { til: 8, fart: 1.3 },
     kaede: 'SOLEN → LAND OG HAV', spoergsmaal: 'Hvorfor bliver land varmere end hav om dagen?',
-    tekst: 'Solen tilfører land og hav lige meget energi. Land bliver hurtigt varmt, fordi kun et tyndt lag ved overfladen opvarmes. I havet blandes varmen ned i dybden, og vand skal have meget energi for at blive varmere.',
+    tekst: 'Land og hav får lige meget solenergi. Men vand har høj specifik varmekapacitet: 1 kg vand skal have ca. fem gange så meget energi som 1 kg tørt sand for at blive 1 °C varmere. Desuden opvarmes kun et tyndt lag på land, mens havet blander varmen ned i dybden.',
     naeste: 'Luften over land', hint: 'Se, hvilken kurve der stiger hurtigst.',
     beskrivelse: 'En kyst med hav til venstre og land til højre. Solen står op og opvarmer begge. Grafen viser, at landets temperatur stiger hurtigt, mens havets næsten ikke ændrer sig.' },
   { navn: 'Luften udvider sig', scene: 'brise', tid: 8, isobarer: 1, opstigning: true,
@@ -29,7 +29,7 @@ const trin = [
     beskrivelse: 'En lukket cirkulation: ved jorden blæser søbrisen fra havet ind over land, luften stiger over land, strømmer ud over havet højt oppe og synker over havet. Lavtryk ved jorden over land, højtryk over havet.' },
   { navn: 'Landbrise', scene: 'brise', tid: 22, isobarer: 2, celle: true, foelg: true,
     kaede: 'NAT: KOLDT LAND → HØJTRYK OVER LAND → LANDBRISE', spoergsmaal: 'Hvorfor vender vinden om natten?',
-    tekst: 'Om natten udstråler både land og hav varme. Land køler hurtigt af og bliver koldere end havet. Nu er der højtryk ved jorden over land og lavtryk over havet, så det blæser fra land ud mod havet. Landbrisen er svagere, fordi temperaturforskellen er mindre.',
+    tekst: 'Om natten udstråler både land og hav varme. Land har lav specifik varmekapacitet og kun et tyndt varmt lag, så det køler hurtigt af og bliver koldere end havet. Nu er der højtryk ved jorden over land og lavtryk over havet, så det blæser fra land ud mod havet. Landbrisen er svagere, fordi temperaturforskellen er mindre.',
     naeste: 'Samme princip i stor skala',
     beskrivelse: 'Nat ved kysten. Landet er koldere end havet. En lavere og svagere cirkulation går den modsatte vej: ved jorden blæser landbrisen fra land ud over havet.' },
   { navn: 'Sommermonsun', scene: 'monsun', tid: 6.5, celle: true, foelg: true,
@@ -144,8 +144,8 @@ function byggEtiketter() {
     etiket('ned', 112, 235, 'proces valgfri');
     etiket('top', 570, 135, 'proces valgfri');
     etiket('trykflade', 1120, 345, 'proces valgfri lille');
-    etiket('varm', 980, 380, 'proces varm');
-    etiket('havtekst', 420, 440, 'proces lille hav-proces');
+    etiket('varm', 880, 285, 'proces skilt varm');
+    etiket('havtekst', 300, 300, 'proces skilt');
   } else {
     etiket('hav', 220, 455, 'sted');
     etiket('land', 680, 445, 'sted');
@@ -287,8 +287,8 @@ function opdaterVisning() {
     if (etiketter.top) etiketter.top.style.top = (pil ? 135 : 235) / 5 + '%';
     for (const n of ['op', 'ned']) if (etiketter[n]) etiketter[n].style.top = (pil ? 235 : 300) / 5 + '%';
     saetEtiket('trykflade', t.isobarer && !forklarSelv ? 'Trykflader' : '');
-    saetEtiket('varm', aktuelt === 0 && !forklarSelv && vind > -0.5 && tid > 1 ? 'Tyndt lag<br>opvarmes' : aktuelt === 1 && !forklarSelv ? 'Varm luft<br>udvider sig' : '');
-    saetEtiket('havtekst', aktuelt === 0 && !forklarSelv && tid > 1 ? 'Varmen blandes<br>ned i dybden' : '');
+    saetEtiket('varm', aktuelt === 0 && !forklarSelv && vind > -0.5 && tid > 1 ? 'Lav specifik varmekapacitet<br>tyndt lag opvarmes' : aktuelt === 1 && !forklarSelv ? 'Varm luft<br>udvider sig' : '');
+    saetEtiket('havtekst', aktuelt === 0 && !forklarSelv && tid > 1 ? 'Høj specifik varmekapacitet<br>varmen blandes ned' : '');
   } else {
     saetEtiket('hav', 'Det Indiske Ocean'); saetEtiket('land', 'Indien'); saetEtiket('bjerg', 'Himalaya');
     saetEtiket('syd', 'S'); saetEtiket('nord', 'N');
