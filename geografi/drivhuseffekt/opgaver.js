@@ -32,7 +32,9 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
   const svarTekst = $('opg-svar');
   const naeste = $('opg-naeste');
   let nr = 0;
-  let svar = [];          // svar[i] = true/false, når opgaven er besvaret
+  let svar = [];          // svar[i] = true/false efter første forsøg – det er det, der tæller
+  let loest = [];         // loest[i] = true, når eleven må gå videre
+  let venter = false;     // forkert peg: det rigtige vises, og eleven skal prøve igen
   let aktiv = false;
   let kaede = null;       // tilstand for «byg kæden»
 
@@ -137,7 +139,8 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
   }
   function vis() {
     const o = OPGAVER[nr];
-    const besvaret = svar[nr] !== undefined;
+    const besvaret = !!loest[nr];
+    venter = false;
     ryd();
     panel.classList.remove('resultat');
     document.body.classList.toggle('opgave-kaede', o.type === 'kaede');
@@ -148,10 +151,14 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
     $('opg-spm').textContent = o.spm;
     valgBoks.replaceChildren();
     valgBoks.className = `opg-valg opg-${o.type}`;
-    naeste.style.visibility = 'hidden';
-    naeste.innerHTML = `${nr === OPGAVER.length - 1 ? 'Se resultat' : 'Næste opgave'} <span aria-hidden="true">→</span>`;
-    tegnPegepunkter(o.type === 'peg');
-    if (o.type === 'peg') saetSvarTekst('Klik i figuren. <span class="sr">Med tastaturet: brug Tab til pegepunkterne i figuren.</span>', 'hint');
+    naeste.style.visibility = besvaret ? '' : 'hidden';
+    naeste.innerHTML = naesteTekst();
+    tegnPegepunkter(o.type === 'peg' && !besvaret);
+    prikker();
+    if (besvaret) { saetSvarTekst('Du har besvaret denne opgave.', 'hint'); return; }
+    if (o.type === 'peg') saetSvarTekst(svar[nr] === false
+      ? '<strong>Prøv igen:</strong> klik selv det rigtige sted i figuren. <span class="sr">Med tastaturet: brug Tab til pegepunkterne i figuren.</span>'
+      : 'Klik i figuren. <span class="sr">Med tastaturet: brug Tab til pegepunkterne i figuren.</span>', 'hint');
     if (o.type === 'valg') {
       saetSvarTekst('Vælg det rigtige svar.', 'hint');
       o.valg.forEach((tekst, i) => {
@@ -163,32 +170,42 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
       });
     }
     if (o.type === 'kaede') visKaede();
-    prikker();
   }
-  function afslut(rigtigt, tekst) {
-    svar[nr] = rigtigt;
+  function naesteTekst() {
+    return `${nr === OPGAVER.length - 1 ? 'Se resultat' : 'Næste opgave'} <span aria-hidden="true">→</span>`;
+  }
+  // «igen» = eleven skal løse samme opgave igen, før der kan gås videre.
+  function afslut(rigtigt, tekst, { igen = false, overskrift } = {}) {
+    if (svar[nr] === undefined) svar[nr] = rigtigt;
+    if (!igen) loest[nr] = true;
+    venter = igen;
     const o = OPGAVER[nr];
-    saetSvarTekst(`<strong>${rigtigt ? '✓ Rigtigt!' : '✗ Ikke rigtigt.'}</strong> ${tekst ? tekst + ' ' : ''}${o.forklaring}`, rigtigt ? 'rigtig' : 'forkert');
+    overskrift ??= rigtigt ? '✓ Rigtigt!' : '✗ Ikke rigtigt.';
+    saetSvarTekst(`<strong>${overskrift}</strong> ${tekst ? tekst + ' ' : ''}${o.forklaring}`, rigtigt ? 'rigtig' : 'forkert');
     document.body.classList.remove('opgave-skjul');
     figur.classList.remove('opg-peg');
     tegnPegepunkter(false);
+    naeste.innerHTML = igen ? 'Prøv igen <span aria-hidden="true">↺</span>' : naesteTekst();
     naeste.style.visibility = '';
     prikker();
     naeste.focus({ preventScroll: true });
   }
 
   function pegSvar(vx, vy) {
-    if (svar[nr] !== undefined || OPGAVER[nr].type !== 'peg') return;
+    if (loest[nr] || venter || OPGAVER[nr].type !== 'peg') return;
     const o = OPGAVER[nr];
     const del = find(vx, vy);
     const rigtigt = o.rigtig.includes(del);
+    const andetForsoeg = svar[nr] === false;
     maerke(vx, vy, rigtigt);
     if (!rigtigt) visRigtigDel(o.rigtig);
-    const tekst = rigtigt ? '' : `Du pegede på ${DELE[del]}. ${o.forkert?.[del] ?? ''} Det rigtige er markeret med grønt.`;
-    afslut(rigtigt, tekst.trim());
+    const tekst = rigtigt
+      ? (andetForsoeg ? 'Nu fandt du det. Kun første forsøg tæller i pointene.' : '')
+      : `Du pegede på ${DELE[del]}. ${o.forkert?.[del] ?? ''} Det rigtige er markeret med grønt. Se efter, og prøv så selv igen.`;
+    afslut(rigtigt, tekst.trim(), { igen: !rigtigt, overskrift: rigtigt && andetForsoeg ? '✓ Rigtigt.' : undefined });
   }
   function valgSvar(i) {
-    if (svar[nr] !== undefined) return;
+    if (loest[nr]) return;
     const o = OPGAVER[nr];
     [...valgBoks.children].forEach((k, j) => {
       k.disabled = true;
@@ -256,7 +273,7 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
   }
   // Placér et udsagn i felt i (null = tilbage i bunken). Et optaget felt bytter.
   function placer(tekst, i) {
-    if (!tekst || svar[nr] !== undefined) return;
+    if (!tekst || loest[nr]) return;
     const fra = kaede.felter.indexOf(tekst);
     if (i === null) { if (fra >= 0) kaede.felter[fra] = null; }
     else {
@@ -268,7 +285,7 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
     tegnKaede();
   }
   function startTraek(e, tekst) {
-    if (svar[nr] !== undefined || e.button > 0) return;
+    if (loest[nr] || e.button > 0) return;
     const kilde = e.currentTarget;
     const x0 = e.clientX, y0 = e.clientY;
     let spoegelse = null;
@@ -337,7 +354,7 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
       : 'Gå trinene igennem igen, og prøv så opgaverne en gang til. De røde prikker viser, hvor du tog fejl.', rigtige === i_alt ? 'rigtig' : '');
     valgBoks.className = 'opg-valg opg-slut';
     valgBoks.innerHTML = '<button type="button" class="forsoeg-knap" data-igen>↺ Tag opgaverne igen</button><button type="button" class="forsoeg-knap" data-trin1>Gå trinene igennem igen</button>';
-    valgBoks.querySelector('[data-igen]').addEventListener('click', () => { nr = 0; svar = []; vis(); });
+    valgBoks.querySelector('[data-igen]').addEventListener('click', () => { nr = 0; svar = []; loest = []; vis(); });
     valgBoks.querySelector('[data-trin1]').addEventListener('click', () => tilTrin(0));
     naeste.style.visibility = 'hidden';
     nr = OPGAVER.length;
@@ -345,15 +362,16 @@ export function lavOpgaver({ figur, landskab, geometri, tilTrin }) {
   }
 
   naeste.addEventListener('click', () => {
+    if (venter) { vis(); $('opg-spm').focus({ preventScroll: true }); return; }   // samme pegeopgave igen
     if (nr < OPGAVER.length - 1) { nr++; vis(); } else resultat();
     $('opg-spm').focus({ preventScroll: true });
   });
   figur.addEventListener('click', e => {
-    if (!aktiv || OPGAVER[nr]?.type !== 'peg' || svar[nr] !== undefined) return;
+    if (!aktiv || OPGAVER[nr]?.type !== 'peg') return;
     const { r } = maal();
     pegSvar((e.clientX - r.left) / r.width * 1200, (e.clientY - r.top) / r.height * 500);
   });
-  addEventListener('resize', () => { if (aktiv && svar[nr] === false && OPGAVER[nr].type === 'peg') { const m = [...maerker.querySelectorAll('.opg-maerke')]; ryd(); maerker.append(...m); visRigtigDel(OPGAVER[nr].rigtig); } });
+  addEventListener('resize', () => { if (aktiv && venter) { const m = [...maerker.querySelectorAll('.opg-maerke')]; ryd(); maerker.append(...m); visRigtigDel(OPGAVER[nr].rigtig); } });
 
   return {
     aktiver(til) {

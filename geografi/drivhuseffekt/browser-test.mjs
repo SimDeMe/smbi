@@ -105,10 +105,31 @@ await peg(330,60);                        // tom luft – forkert
 assert.equal(await page.locator('.opg-maerke.forkert').count(),1);
 assert.ok(await page.locator('#opg-fremhaev path').count()>0,'rigtigt svar markeres');
 assert.match(await page.locator('#opg-svar').innerText(),/tomt sted i luften/);
-// Resten: tastaturet for pegeopgaver, første valgmulighed for resten.
+// Forkert peg: samme opgave igen, indtil eleven selv rammer rigtigt.
+assert.match(await page.locator('#opg-naeste').innerText(),/Prøv igen/);
+await page.locator('#opg-naeste').click();
+assert.match(await page.locator('#opg-nr').innerText(),/OPGAVE 3 AF 13/);
+assert.equal(await page.locator('.opg-maerke').count(),0);
+assert.equal(await page.locator('#mod-proces').isVisible(),false,'etiketter skjult igen');
+assert.equal(await page.locator('#opg-naeste').isVisible(),false);
+await peg(330,60);
+assert.match(await page.locator('#opg-naeste').innerText(),/Prøv igen/);
+await page.locator('#opg-naeste').click();
+await peg(600,470);                       // jordoverfladen
+assert.match(await page.locator('#opg-svar').innerText(),/Rigtigt\. Nu fandt du det/);
+assert.match(await page.locator('#opg-naeste').innerText(),/Næste opgave/);
+assert.match(await page.locator('#opg-point').innerText(),/1 af 3 rigtige/,'kun første forsøg tæller');
+// Resten: pegeopgaver først forkert med tastaturet, så rigtigt; første valgmulighed for resten.
+const rigtigtSted={4:[650,222],7:[667,292],9:[1087,207]};
 for(let i=3;i<12;i++){
   await page.locator('#opg-naeste').click();
-  if(await page.locator('.opg-punkt').count()){await page.locator('.opg-punkt').first().focus();await page.keyboard.press('Enter');}
+  if(await page.locator('.opg-punkt').count()){
+    await page.locator('.opg-punkt').first().focus();await page.keyboard.press('Enter');   // Solen – forkert
+    assert.match(await page.locator('#opg-naeste').innerText(),/Prøv igen/,`opgave ${i+1} kræver nyt forsøg`);
+    await page.locator('#opg-naeste').click();
+    await peg(...rigtigtSted[i]);
+    assert.match(await page.locator('#opg-svar').innerText(),/Rigtigt/,`opgave ${i+1} rigtigt sted`);
+  }
   else await page.locator('#opg-valg > button').first().click();
   assert.equal(await page.locator('#opg-naeste').isVisible(),true,`opgave ${i+1} besvaret`);
 }

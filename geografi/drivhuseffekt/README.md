@@ -67,10 +67,10 @@ Efter de seks trin følger trinnet «Opgaver» (`opgaver.js`, spørgsmål i
 `opgavedata.js`): multiple choice, «peg på figuren» og til sidst «byg kæden»,
 hvor eleven sætter udsagn – også falske – i rækkefølge mellem pile. Figuren står
 som i trinnet «Drivhuseffekten», og etiketterne er skjult, indtil eleven har
-svaret. Første svar tæller; derefter vises rigtigt/forkert med ✓/✗, farve og
+svaret. Første svar tæller i pointene; derefter vises rigtigt/forkert med ✓/✗, farve og
 forklaring, og det rigtige svar markeres i figuren. Pegeopgaverne har faste,
 fokuserbare pegepunkter til tastaturet, og kæden kan både trækkes og bygges
-med klik/tryk. Pegning afgøres ud fra de samme baner, som tegnes.
+med klik/tryk. Ved forkert pegning skal eleven prøve samme opgave igen og selv ramme rigtigt, før der kan gås videre. Pegning afgøres ud fra de samme baner, som tegnes.
 
 ## Afprøvning
 
