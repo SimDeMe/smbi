@@ -1,0 +1,175 @@
+/* Sø- og landbrise og monsun. Grundstilen følger drivhuseffekt/stil.css. */
+:root{--papir:#fff9ee;--blaek:#172d33;--blaa:#0c6591;--daempet:#53666b;--land:#a5532f;--hav:#1f6f9c;
+  --display:'Archivo',system-ui,sans-serif;--tekst:'Source Serif 4',Georgia,serif;--mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papir);color:var(--blaek);font:17px/1.5 var(--tekst)}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:600 14px var(--display);color:inherit;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
+a{color:inherit}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #af4aca;outline-offset:4px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.regnbue{height:5px;background:linear-gradient(90deg,#e8336d 0 14.3%,#ff6a3d 14.3% 28.6%,#ffb300 28.6% 42.9%,#5fb030 42.9% 57.2%,#0fa593 57.2% 71.5%,#0e86c8 71.5% 85.8%,#7a4fd6 85.8%)}
+.site-linje{max-width:1440px;margin:auto;height:42px;display:flex;align-items:center;gap:28px;padding:0 32px;border-bottom:1px solid #172d331c}
+.brand{font:800 20px var(--display);text-decoration:none;letter-spacing:-1px}
+.brand span{font-weight:400}
+.tilbage{font:500 12px var(--display);text-decoration:none}
+.tilbage:hover{text-decoration:underline}
+.site-emne{margin-left:auto;font:10px var(--mono);letter-spacing:.12em;color:var(--daempet)}
+main{max-width:1440px;margin:auto;padding:0 32px 28px}
+.indledning{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 15px}
+.overlinje{font:10px var(--mono);color:var(--blaa);letter-spacing:.16em;margin:0 0 5px}
+h1{font:700 clamp(21px,2.25vw,32px)/1.15 var(--display);letter-spacing:-.045em;margin:0}
+.diskret{background:none;border:0;padding:9px 10px;white-space:nowrap}
+.diskret:hover{background:#172d330c;border-radius:6px}
+
+.vaerksted{border:1.5px solid var(--blaek);border-radius:13px;overflow:hidden;box-shadow:4px 4px 0 #172d33;background:#fffdf7}
+.figur-top{display:flex;align-items:center;gap:16px;padding:6px 17px;background:#0c2435;color:#d9e7e5;min-height:36px;font:500 12px var(--display)}
+.skala{font:10px var(--mono);letter-spacing:.1em;color:#9fbcc2;text-transform:none}
+.figur-vaerktoej{display:flex;gap:10px;margin-left:auto}
+.figur-knap{border:0;background:transparent;color:#d9e7e5;font-size:11px;padding:5px 7px;border-radius:4px}
+.figur-knap:hover{background:#ffffff18}
+
+/* Figur og graf side om side: figuren er hovedområdet, grafen støtter. */
+.figur-raekke{display:grid;grid-template-columns:minmax(0,1fr) clamp(230px,22vw,290px);height:clamp(250px,calc(100svh - 350px),500px)}
+.scene{position:relative;margin:0;background:#dcebe7;overflow:hidden;isolation:isolate;min-height:0}
+.landskab{position:absolute;inset:0}
+.landskab svg,.landskab canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#etiketter{position:absolute;inset:0;pointer-events:none}
+
+.etiket{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;font:500 13px/1.3 var(--display);color:#1f4655}
+.etiket small{display:block;font:400 11px/1.3 var(--display);color:#395f68}
+.etiket.sted{font:600 14px var(--display);color:#eef6f0;text-shadow:0 1px 4px #16384a99}
+.etiket.sted.lys{color:#2d4450;text-shadow:0 0 6px #fff}
+.etiket.kompas{font:600 11px var(--mono);color:#3e6673;letter-spacing:.1em}
+.etiket.lille{font-size:11px;color:#3e6673}
+.etiket.vind{font-weight:700;font-size:14px}
+.etiket.vind,.etiket.skilt{background:#fffdf7d9;padding:3px 10px;border-radius:20px;border:1px solid #1f5a7040}
+.etiket.varm{color:#8f3b30}
+.etiket.hav-proces{color:#eaf6f6;text-shadow:0 1px 4px #16384a}
+.etiket.tryk{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 17px var(--display);background:#fffdf7e6;color:#a5442e;border:2px solid #a5442e}
+.etiket.tryk.hoej{color:#1f5f86;border-color:#1f5f86}
+
+.graf-panel{border-left:1px solid #dce2d9;background:#fffdf7;padding:10px 14px 10px;display:flex;flex-direction:column;gap:4px;min-height:0}
+.graf-hoved{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.graf-hoved h3{font:600 12px var(--display);margin:0;color:var(--daempet)}
+.ur{margin:0;font:600 17px var(--display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#graf{width:100%;flex:1;min-height:90px;overflow:visible}
+#graf text{font-family:var(--display)}
+.g-net{stroke:#172d3314;stroke-width:1}
+.g-akser{fill:none;stroke:#53666b;stroke-width:1}
+.g-y{font-size:9px;fill:#53666b;text-anchor:end}
+.g-x{font-size:9px;fill:#53666b;text-anchor:middle}
+.g-akse,.g-enhed{font-size:9px;fill:#53666b}
+.g-zone{font-size:8.5px;fill:#53666b;text-anchor:middle;letter-spacing:.05em}
+.g-land{fill:none;stroke:var(--land);stroke-width:2.4;stroke-linejoin:round}
+.g-hav{fill:none;stroke:var(--hav);stroke-width:2.4;stroke-dasharray:5 3;stroke-linejoin:round}
+.g-nu{stroke:#172d33;stroke-opacity:.25;stroke-width:1}
+.g-p-land{fill:var(--land)}
+.g-p-hav{fill:#fff;stroke:var(--hav);stroke-width:2}
+.forklaring-graf{list-style:none;margin:0;padding:0;display:flex;gap:14px;font:500 12px var(--display)}
+.forklaring-graf li{display:flex;align-items:center;gap:6px}
+.forklaring-graf strong{font-variant-numeric:tabular-nums}
+.streg{width:20px;height:0;border-top:2.6px solid var(--land)}
+.l-hav .streg{border-top:2.6px dashed var(--hav)}
+.graf-tekst{display:flex;flex-direction:column;gap:4px}
+.forskel{margin:0;font:500 12px/1.35 var(--display);color:var(--blaa);min-height:1.35em}
+
+.forklaring{padding:14px 24px 0}
+.trin-overlinje{font:9px var(--mono);color:var(--blaa);letter-spacing:.12em;margin:0 0 4px}
+h2{font:650 23px/1.2 var(--display);letter-spacing:-.035em;margin:0 0 7px}
+.forklaring>p:not(.trin-overlinje){margin:0;font-size:16px;line-height:1.45;max-width:100ch}
+.forklaring .observation:not(:empty){font-size:13px;margin-top:5px;color:var(--blaa);font-family:var(--display)}
+.sammenlign{margin:7px 24px 0;max-width:110ch;font:12px/1.4 var(--display);color:#53666b}
+.betjening{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 24px 14px}
+.forsoeg{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.forsoeg-knap{border:1px solid #b4c9c9;border-radius:7px;background:#eaf3ef;padding:10px 13px;font-size:12px}
+.forsoeg-knap:hover{background:#d6e9e3}
+.forsoeg-knap[aria-pressed=true]{background:#173f50;border-color:#173f50;color:#fff9ee}
+#start-hint{font:12px var(--display);color:var(--daempet)}
+.frem-tilbage{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.primaer{border:1px solid var(--blaek);border-radius:7px;background:var(--blaek);color:#fff9ee;padding:11px 16px;font-size:12px;display:flex;gap:22px;align-items:center}
+.primaer:hover{background:#0c6591}
+.trin-nav{display:flex;border-top:1px solid #dce2d9;background:#f4f4e9;padding:0 12px;gap:5px}
+.trin-nav button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 5px;background:none;border:0;font-size:11px;color:#53666b}
+.trin-nav button:hover{color:#0c6591;background:#e5eeea}
+.trin-nav button[aria-current=step]{color:#0b6086}
+.trin-nav button[aria-current=step]:after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:3px;background:#0c759b}
+.trin-nav button[data-trin="4"]{border-left:1px solid #dce2d9}
+.trin-prik{width:7px;height:7px;border:1px solid #8aabae;border-radius:50%;flex-shrink:0}
+.trin-nav button[aria-current=step] .trin-prik{background:#0c759b;border-color:#0c759b;box-shadow:0 0 0 3px #0c759b16}
+
+.om{margin-top:20px;color:var(--daempet);font-size:14px}
+.om summary{cursor:pointer;font:12px var(--display);width:fit-content;padding:5px 0}
+.om-indhold{display:grid;grid-template-columns:1fr 1.5fr;gap:50px;padding:20px 0}
+.om h2{font-size:18px;color:var(--blaek)}
+.om p{margin:8px 0 15px}
+.noscript{padding:20px}
+
+.fokus .site-top,.fokus .indledning>div,.fokus .om{display:none}
+.fokus .indledning:has(#fokus){display:contents}
+.fokus main{max-width:none;padding:12px}
+.fokus .figur-raekke{height:clamp(250px,calc(100svh - 250px),900px)}
+.fokus .figur-top:before{content:'BRISE OG MONSUN';font:10px var(--mono)}
+body.fokus #fokus{position:fixed;bottom:4px;right:16px;display:block;z-index:5;background:var(--papir);font-size:11px;padding:4px 10px}
+.forklar-selv #etiketter .etiket:not(.sted):not(.kompas){visibility:hidden}
+
+@media(min-width:760px) and (max-height:650px){
+  .indledning{padding:10px 0}
+  .overlinje{font-size:9px}
+  .figur-raekke{height:calc(100svh - 345px);min-height:205px}
+  .forklaring{padding-top:10px}
+  .forklaring h2{font-size:20px;margin-bottom:3px}
+  .forklaring>p:not(.trin-overlinje){font-size:15px;line-height:1.4}
+  .betjening{padding-top:8px;padding-bottom:10px}
+  .trin-nav button{padding:9px 4px}
+  .ur{font-size:15px}
+}
+/* Smal visning: grafen lægger sig under figuren. */
+@media(max-width:899px){
+  .figur-raekke{grid-template-columns:1fr;height:auto}
+  .scene{height:clamp(240px,52vw,380px)}
+  .graf-panel{border-left:0;border-top:1px solid #dce2d9;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"hoved hoved" "graf tekst";column-gap:14px}
+  .graf-hoved{grid-area:hoved}
+  #graf{grid-area:graf;height:130px}
+  .graf-tekst{grid-area:tekst}
+  .graf-tekst{align-self:center;display:flex;flex-direction:column;gap:6px}
+  .forklaring-graf{flex-direction:column;gap:4px}
+    .fokus .figur-raekke{height:auto}
+}
+@media(max-width:759px){
+  main{padding:0 14px 20px}
+  .site-linje{padding:0 16px;gap:20px}
+  .site-emne{font-size:8px}
+  .indledning{padding:17px 0 14px;align-items:flex-end}
+  h1{font-size:24px;max-width:24ch}
+  .overlinje{font-size:8px;letter-spacing:.1em}
+  #fokus{font-size:11px;padding:7px 0;white-space:normal;max-width:75px}
+  .figur-top{padding:6px 11px;gap:10px}
+  .skala{display:none}
+  .figur-knap span{display:none}
+  .scene{height:300px}
+  .etiket{font-size:10px}
+  .etiket small{font-size:9px}
+  .etiket.sted{font-size:11px}
+  .etiket.vind{font-size:11px;padding:2px 7px}
+  .etiket.lille{font-size:9px}
+  .etiket.valgfri{display:none}
+  .etiket.tryk{width:22px;height:22px;font-size:13px}
+  .graf-panel{grid-template-columns:1fr;grid-template-areas:"hoved" "graf" "tekst"}
+  .forklaring-graf{flex-direction:row}
+  .forklaring{padding:14px 15px 0}
+  .forklaring h2{font-size:21px}
+  .betjening{padding:12px 15px 15px;flex-wrap:wrap}
+  .forsoeg{width:100%;gap:7px}
+  .forsoeg-knap{font-size:11px;padding:10px}
+  .frem-tilbage{margin-left:auto}
+  .sammenlign{margin:8px 15px 0}
+  .trin-nav{flex-wrap:wrap;padding:7px;gap:0}
+  .trin-nav button{flex:1 1 30%;font-size:10px;padding:10px 3px;gap:6px}
+  .trin-nav button[data-trin="4"]{border-left:0}
+  .om-indhold{grid-template-columns:1fr;gap:12px}
+  .fokus .figur-top:before{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
