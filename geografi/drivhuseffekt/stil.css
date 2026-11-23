@@ -1229,3 +1229,46 @@ body.fokus #fokus{
     animation:none
   }
 }
+
+/* Filmtilstand (?film=styret): kun figuren og trinnets overskrift, til video
+   med speak. Viewporten er 16:9; figuren fylder alt over overskriftsbåndet. */
+body.film{
+  overflow:hidden
+}
+.film .site-top,.film .indledning,.film .figur-top,.film .betjening,.film .trin-nav,
+.film .opgaver,.film .om,.film .temperatur-note,.film #fokus,.film #forklaring,.film #observation{
+  display:none!important
+}
+.film main{
+  max-width:none;
+  padding:0
+}
+.film .vaerksted{
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  height:100vh;
+  display:flex;
+  flex-direction:column
+}
+.film .scene{
+  flex:1;
+  height:auto
+}
+.film .forklaring{
+  padding:16px 40px 20px;
+  border-top:1.5px solid var(--blaek)
+}
+.film .trin-overlinje{
+  font-size:13px
+}
+.film .forklaring h2{
+  font-size:34px;
+  margin:0
+}
+.film .proces{
+  font-size:17px
+}
+.film .sted,.film .jord-label{
+  font-size:15px
+}

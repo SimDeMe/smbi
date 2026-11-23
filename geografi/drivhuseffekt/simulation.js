@@ -310,19 +310,22 @@ function tegn() {
   const f=energistroemme(tilstand,solHoejde,absorption());
   for(const b of baner)tegnBane(b,f);
 }
+// Ét tidsskridt af animationen og modellen. Bruges både af browserens
+// billedløkke og af filmtilstanden, som skridter frem billede for billede.
+function fremad(dt) {
+  tid+=dt;overgang+=dt;
+  const maal=sol?1:0;
+  if(solHoejde!==maal){
+    solHoejde=maal>solHoejde?Math.min(1,solHoejde+dt/SOLNEDGANG_SEK):Math.max(0,solHoejde-dt/SOLNEDGANG_SEK);
+    opdaterNat();
+  }
+  udvikl(tilstand,dt,solHoejde,absorption());
+  opdaterVarme();tegn();
+}
 function billede(nu) {
   if(sidste===null)sidste=nu;
   const dt=Math.min((nu-sidste)/1000,.05);sidste=nu;
-  if(!pause&&!document.hidden){
-    tid+=dt;overgang+=dt;
-    const maal=sol?1:0;
-    if(solHoejde!==maal){
-      solHoejde=maal>solHoejde?Math.min(1,solHoejde+dt/SOLNEDGANG_SEK):Math.max(0,solHoejde-dt/SOLNEDGANG_SEK);
-      opdaterNat();
-    }
-    udvikl(tilstand,dt,solHoejde,absorption());
-    opdaterVarme();tegn();
-  }
+  if(!pause&&!document.hidden)fremad(dt);
   requestAnimationFrame(billede);
 }
 const opgaver=lavOpgaver({
@@ -332,4 +335,20 @@ const opgaver=lavOpgaver({
   tilTrin:vaelgTrin,
 });
 // Direkte link til opgaverne: …/drivhuseffekt/#opgaver
-vaelgTrin(location.hash==='#opgaver'?6:0);tilpas();requestAnimationFrame(billede);
+// Filmtilstand: ?film=styret stopper siden eget ur, så et videoværktøj kan
+// skridte forløbet frem billede for billede (værktøj/film-drivhuseffekt.mjs).
+// Samme handlinger som knapperne; intet andet i modellen ændres.
+const filmStyret=new URLSearchParams(location.search).get('film')==='styret';
+if(filmStyret){
+  document.body.classList.add('film');
+  pause=false;
+  window.dhFilm={
+    trin:n=>vaelgTrin(n),
+    sol:op=>{if(sol!==op)$('sol-knap').click();},
+    gas:med=>{if(gas!==med)$('gas-knap').click();},
+    klima:k=>$('klima-valg').querySelector(`[data-klima="${k}"]`).click(),
+    skridt:dt=>fremad(dt),
+  };
+}
+vaelgTrin(location.hash==='#opgaver'?6:0);tilpas();
+if(!filmStyret)requestAnimationFrame(billede);
