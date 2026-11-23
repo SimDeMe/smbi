@@ -61,6 +61,17 @@ ikke ved skiftet. Trinskift og nulstilling starter derimod en ny demonstration.
 
 Kilder og forenklinger findes også i sidens »Om modellen«.
 
+## Opgaver
+
+Efter de seks trin følger trinnet «Opgaver» (`opgaver.js`, spørgsmål i
+`opgavedata.js`): multiple choice, «peg på figuren» og til sidst «byg kæden»,
+hvor eleven sætter udsagn – også falske – i rækkefølge mellem pile. Figuren står
+som i trinnet «Drivhuseffekten», og etiketterne er skjult, indtil eleven har
+svaret. Første svar tæller; derefter vises rigtigt/forkert med ✓/✗, farve og
+forklaring, og det rigtige svar markeres i figuren. Pegeopgaverne har faste,
+fokuserbare pegepunkter til tastaturet, og kæden kan både trækkes og bygges
+med klik/tryk. Pegning afgøres ud fra de samme baner, som tegnes.
+
 ## Afprøvning
 
 Åbn via en lokal server fra repoets rod. `?projektor=1` starter i fokusvisning.

@@ -805,3 +805,411 @@ body.fokus #fokus{
   left: 55%;
   top: 6%;
 }
+/* ── Opgaver (trin 7) ─────────────────────────────────────────────────── */
+.opgaver,.opgave-tilstand .forklaring,.opgave-tilstand .temperatur-note,.opgave-tilstand .betjening{
+  display:none
+}
+.opgave-tilstand .opgaver{
+  display:block;
+  padding:13px 24px 15px
+}
+.opgave-skjul .proces,.opgave-skjul .jord-label,.opgave-skjul .sammenlign-maerke{
+  visibility:hidden
+}
+.trin-nav .opgave-trin{
+  color:#0b6086;
+  font-weight:700
+}
+.opg-top{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:3px
+}
+.opg-top .trin-overlinje{
+  margin:0
+}
+.opg-prikker{
+  display:flex;
+  gap:4px;
+  list-style:none;
+  margin:0;
+  padding:0
+}
+.opg-prikker li{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  border:1px solid #8aabae;
+  background:#fff
+}
+.opg-prikker li.nu{
+  border:2px solid #0c759b
+}
+.opg-prikker li.rigtig{
+  background:#2f8a4c;
+  border-color:#2f8a4c
+}
+.opg-prikker li.forkert{
+  background:#c2412f;
+  border-color:#c2412f
+}
+.opg-point{
+  margin-left:auto;
+  font:600 12px var(--display);
+  color:var(--daempet)
+}
+.opgaver h2{
+  font-size:20px;
+  margin:0 0 9px;
+  outline:none
+}
+.opg-valg:empty{
+  display:none
+}
+.opg-valg{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap
+}
+.opg-valg.opg-valg>button:not(.kaede-tjek){
+  flex:1 1 220px;
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  text-align:left;
+  border:1.5px solid #b4c9c9;
+  border-radius:8px;
+  background:#f4f8f4;
+  padding:9px 12px;
+  font:500 13px/1.35 var(--display)
+}
+.opg-valg.opg-valg>button b{
+  flex:none;
+  width:21px;
+  height:21px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dbe7e3;
+  font-size:11px
+}
+.opg-valg.opg-valg>button:hover:not(:disabled){
+  background:#e1eee8;
+  border-color:#0c6591
+}
+.opg-valg button:disabled{
+  opacity:1;
+  cursor:default
+}
+.opg-valg>button.rigtig{
+  background:#e2f3e5;
+  border-color:#2f8a4c;
+  color:#174d27
+}
+.opg-valg>button.rigtig b{
+  background:#2f8a4c;
+  color:#fff
+}
+.opg-valg>button.forkert{
+  background:#fbe6e1;
+  border-color:#c2412f;
+  color:#7b2417
+}
+.opg-valg>button.forkert b{
+  background:#c2412f;
+  color:#fff
+}
+.opg-valg>button.daempet{
+  opacity:.5
+}
+.opg-slut>button{
+  flex:0 0 auto!important
+}
+.opg-bund{
+  display:flex;
+  align-items:flex-end;
+  gap:14px;
+  margin-top:10px
+}
+.opg-svar{
+  flex:1;
+  margin:0;
+  font:14px/1.4 var(--tekst);
+  padding:8px 12px;
+  border-radius:8px;
+  border-left:4px solid transparent
+}
+.opg-svar.hint{
+  padding-left:0;
+  font:13px var(--display);
+  color:var(--daempet)
+}
+.opg-svar.rigtig{
+  background:#e2f3e5;
+  border-color:#2f8a4c
+}
+.opg-svar.forkert{
+  background:#fbe6e1;
+  border-color:#c2412f
+}
+.opg-svar strong{
+  font-family:var(--display)
+}
+.opg-svar.rigtig strong{
+  color:#1f6b38
+}
+.opg-svar.forkert strong{
+  color:#a3321f
+}
+.opg-bund .primaer{
+  flex:none
+}
+/* Figurlaget: markeringer og tastaturpunkter */
+.opg-lag{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:2
+}
+.opg-lag svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%
+}
+.opg-lag path{
+  fill:none;
+  stroke:#2f8a4c;
+  stroke-width:12;
+  stroke-opacity:.55;
+  stroke-linecap:round;
+  animation:opg-puls 1.2s ease-in-out 3
+}
+.opg-ring,.opg-maerke,.opg-punkt{
+  position:absolute;
+  transform:translate(-50%,-50%)
+}
+.opg-ring{
+  border:4px solid #2f8a4c;
+  border-radius:50%;
+  box-shadow:0 0 0 3px #ffffffaa;
+  animation:opg-puls 1.2s ease-in-out 3
+}
+.opg-maerke{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font:800 17px var(--display);
+  color:#fff;
+  border:2px solid #fff;
+  box-shadow:0 2px 6px #0004
+}
+.opg-maerke.rigtig{
+  background:#2f8a4c
+}
+.opg-maerke.forkert{
+  background:#c2412f
+}
+.opg-peg{
+  cursor:crosshair
+}
+.opg-punkt{
+  pointer-events:auto;
+  width:22px;
+  height:22px;
+  padding:0;
+  border-radius:50%;
+  border:2px solid transparent;
+  background:transparent;
+  cursor:crosshair
+}
+.opg-punkt:focus-visible{
+  border-color:#af4aca;
+  background:#af4aca33;
+  outline-offset:2px
+}
+@keyframes opg-puls{
+  50%{
+    opacity:.35
+  }
+}
+/* Byg kæden: figuren gemmes, så kæden får pladsen */
+.opgave-kaede .scene{
+  display:none
+}
+.kaede-raekke{
+  display:flex;
+  list-style:none;
+  margin:0;
+  padding:0;
+  gap:26px;
+  width:100%
+}
+.kaede-felt{
+  position:relative;
+  flex:1 1 0;
+  min-width:0;
+  min-height:76px;
+  display:flex;
+  flex-direction:column;
+  border:2px dashed #9fb8b9;
+  border-radius:9px;
+  background:#f7faf6;
+  padding:4px
+}
+.kaede-felt:not(:last-child):after{
+  content:'→';
+  position:absolute;
+  right:-22px;
+  top:50%;
+  transform:translateY(-50%);
+  font:700 18px var(--display);
+  color:#0c6591
+}
+.kaede-felt.fyldt{
+  border-style:solid;
+  border-color:#b4c9c9
+}
+.kaede-felt.over{
+  border-color:#0c6591;
+  background:#e1eef3
+}
+.kaede-felt.rigtig{
+  border:2px solid #2f8a4c;
+  background:#e2f3e5
+}
+.kaede-felt.forkert{
+  border:2px solid #c2412f;
+  background:#fbe6e1
+}
+.kaede-tom{
+  flex:1;
+  border:0;
+  background:none;
+  color:#8aa3a5;
+  font:600 13px var(--display);
+  border-radius:6px
+}
+.kaede-bunke{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  width:100%;
+  min-height:44px;
+  margin-top:12px;
+  padding:9px;
+  border-radius:9px;
+  background:#eef2ea
+}
+.kaede-kort{
+  touch-action:none;
+  user-select:none;
+  border:1px solid #92aeb2;
+  border-radius:7px;
+  background:#fff;
+  padding:8px 10px;
+  font:500 12.5px/1.3 var(--display);
+  text-align:left;
+  box-shadow:0 1px 0 #172d3322;
+  cursor:grab
+}
+.kaede-felt .kaede-kort{
+  flex:1;
+  width:100%
+}
+.kaede-kort:hover:not(:disabled){
+  border-color:#0c6591
+}
+.kaede-kort[aria-pressed=true]{
+  border:2px solid #0c6591;
+  background:#e1eef3;
+  box-shadow:0 0 0 3px #0c659126
+}
+.kaede-kort:disabled{
+  opacity:1;
+  cursor:default
+}
+.kaede-bunke .kaede-kort:disabled{
+  opacity:.45
+}
+.kaede-kort.traekkes{
+  opacity:.3
+}
+.kaede-kort b{
+  font-weight:800
+}
+.kaede-felt.rigtig .kaede-kort{
+  border-color:#2f8a4c
+}
+.kaede-felt.forkert .kaede-kort{
+  border-color:#c2412f;
+  color:#7b2417;
+  text-decoration:line-through;
+  text-decoration-color:#c2412f88
+}
+.kaede-felt.forkert .kaede-kort b{
+  display:inline-block;
+  text-decoration:none
+}
+.kaede-facit{
+  margin:5px 2px 1px;
+  font:600 11.5px/1.3 var(--display);
+  color:#1f6b38
+}
+.kaede-spoegelse{
+  position:fixed;
+  z-index:50;
+  pointer-events:none;
+  transform:translate(-50%,-60%) rotate(-2deg);
+  box-shadow:0 8px 20px #0003;
+  cursor:grabbing
+}
+.kaede-tjek{
+  margin-top:10px;
+  margin-left:auto
+}
+@media(max-width:759px){
+  .opgave-tilstand .opgaver{
+    padding:12px 15px 15px
+  }
+  .opgaver h2{
+    font-size:18px
+  }
+  .opg-top{
+    flex-wrap:wrap;
+    gap:6px 10px
+  }
+  .opg-bund{
+    flex-direction:column;
+    align-items:stretch
+  }
+  .opg-bund .primaer{
+    align-self:flex-end
+  }
+  .kaede-raekke{
+    flex-direction:column;
+    gap:20px
+  }
+  .kaede-felt{
+    min-height:44px
+  }
+  .kaede-felt:not(:last-child):after{
+    content:'↓';
+    right:auto;
+    left:50%;
+    top:auto;
+    bottom:-21px;
+    transform:translateX(-50%)
+  }
+  .trin-nav .opgave-trin{
+    flex-basis:100%
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .opg-lag path,.opg-ring{
+    animation:none
+  }
+}

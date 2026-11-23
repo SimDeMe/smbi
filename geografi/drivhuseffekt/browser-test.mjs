@@ -80,7 +80,66 @@ await page.locator('[data-trin="3"]').click();
 assert.equal(await page.locator('#mod-proces').isVisible(),true);
 await page.setViewportSize({width:390,height:750});
 await page.screenshot({path:fileURLToPath(new URL('drivhuseffekt-mobil.png',billeder)),fullPage:true});
+// Opgaverne: multiple choice, peg på figuren, byg kæden og resultat.
+await page.emulateMedia({reducedMotion:'no-preference'});
+await page.setViewportSize({width:1280,height:577});
+await page.reload();
+await page.locator('[data-trin="5"]').click();
+await page.locator('#naeste').click();
+assert.match(await page.locator('#opg-nr').innerText(),/OPGAVE 1 AF 13/);
+assert.equal(await page.locator('#mod-proces').isVisible(),false,'etiketter skjult under svar');
+await page.locator('#opg-valg > button').nth(1).click();
+assert.equal(await page.locator('#opg-valg > button.forkert').count(),1);
+assert.equal(await page.locator('#opg-valg > button.rigtig').count(),1);
+assert.match(await page.locator('#opg-svar').innerText(),/Ikke rigtigt/);
+assert.equal(await page.locator('#mod-proces').isVisible(),true,'etiketter vises efter svar');
+const knap=await page.locator('#opg-naeste').boundingBox();
+assert.ok(knap.y+knap.height<=577,'næste-knap synlig på 1280×577');
+const peg=async(vx,vy)=>{const r=await page.locator('.landskab').boundingBox();await page.mouse.click(r.x+vx/1200*r.width,r.y+vy/500*r.height);};
+await page.locator('#opg-naeste').click();
+await peg(300,232);                       // på en solstråle
+assert.equal(await page.locator('.opg-maerke.rigtig').count(),1);
+assert.match(await page.locator('#opg-svar').innerText(),/Rigtigt/);
+await page.locator('#opg-naeste').click();
+await peg(330,60);                        // tom luft – forkert
+assert.equal(await page.locator('.opg-maerke.forkert').count(),1);
+assert.ok(await page.locator('#opg-fremhaev path').count()>0,'rigtigt svar markeres');
+assert.match(await page.locator('#opg-svar').innerText(),/tomt sted i luften/);
+// Resten: tastaturet for pegeopgaver, første valgmulighed for resten.
+for(let i=3;i<12;i++){
+  await page.locator('#opg-naeste').click();
+  if(await page.locator('.opg-punkt').count()){await page.locator('.opg-punkt').first().focus();await page.keyboard.press('Enter');}
+  else await page.locator('#opg-valg > button').first().click();
+  assert.equal(await page.locator('#opg-naeste').isVisible(),true,`opgave ${i+1} besvaret`);
+}
+await page.locator('#opg-naeste').click();
+assert.match(await page.locator('#opg-nr').innerText(),/BYG KÆDEN/);
+assert.equal(await page.locator('.scene').isVisible(),false);
+const led=['Solen udsender kortbølget stråling','Solstrålingen absorberes ved jordoverfladen, som bliver varm','Den varme jordoverflade udsender langbølget varmestråling','Drivhusgasser absorberer noget af varmestrålingen, og luften bliver varm','Den varme atmosfære udsender varmestråling i alle retninger','Modstrålingen absorberes ved jordoverfladen, som bliver varmere'];
+// Første led trækkes, resten placeres med klik.
+const kort=page.locator(`.kaede-bunke .kaede-kort[data-tekst="${led[0]}"]`);
+const fra=await kort.boundingBox(), til=await page.locator('.kaede-felt').first().boundingBox();
+await page.mouse.move(fra.x+20,fra.y+10);await page.mouse.down();
+await page.mouse.move(til.x+30,til.y+20,{steps:8});await page.mouse.up();
+assert.equal(await page.locator('.kaede-felt').first().getAttribute('class'),'kaede-felt fyldt');
+for(let i=1;i<6;i++){
+  await page.locator(`.kaede-bunke .kaede-kort[data-tekst="${led[i]}"]`).click();
+  await page.locator('.kaede-felt').nth(i).locator('.kaede-tom').click();
+}
+await page.setViewportSize({width:390,height:750});
+await page.screenshot({path:fileURLToPath(new URL('drivhuseffekt-kaede-mobil.png',billeder)),fullPage:true});
+await page.setViewportSize({width:1280,height:577});
+await page.locator('.kaede-tjek').click();
+assert.equal(await page.locator('.kaede-felt.rigtig').count(),6);
+assert.match(await page.locator('#opg-svar').innerText(),/Rigtigt/);
+await page.locator('#opg-naeste').click();
+assert.match(await page.locator('#opg-spm').innerText(),/Du fik \d+ af 13 rigtige/);
+await page.locator('[data-igen]').click();
+assert.match(await page.locator('#opg-nr').innerText(),/OPGAVE 1 AF 13/);
+await page.locator('[data-trin="0"]').click();
+assert.equal(await page.locator('#opgaver').isVisible(),false);
+assert.equal(await page.locator('.forklaring').isVisible(),true);
 assert.deepEqual(errors,[]);
 await browser.close();
-console.log('Browser: alle seks trin på fem skærmstørrelser, afskærmning, gassammenligning, nulstilling, forklar selv, pause, fokus, reduceret bevægelse og ingen scriptfejl OK.');
+console.log('Browser: alle seks trin på fem skærmstørrelser, afskærmning, gassammenligning, nulstilling, forklar selv, pause, fokus, reduceret bevægelse, opgaver (valg, peg, byg kæden) og ingen scriptfejl OK.');
 })().catch(e=>{console.error(e);process.exit(1)});
