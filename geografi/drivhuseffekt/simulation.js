@@ -289,4 +289,5 @@ const opgaver=lavOpgaver({
   geometri:()=>({baner,molekyler:synligeMolekyler(),overflade}),
   tilTrin:vaelgTrin,
 });
-vaelgTrin(0);tilpas();requestAnimationFrame(billede);
+// Direkte link til opgaverne: …/drivhuseffekt/#opgaver
+vaelgTrin(location.hash==='#opgaver'?6:0);tilpas();requestAnimationFrame(billede);
