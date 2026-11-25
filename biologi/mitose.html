@@ -332,15 +332,15 @@ const FASER = [
       centrosomer: {cA: {x: CX - 97, y: CY}, cB: {x: CX + 97, y: CY}},
       spindel: 0.85,
       kromosomer: {
-        'L-m': krom(202, 104, 62, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 1}}}),
-        'L-f': krom(240, 192, 118, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 0.4}}}),
-        'S-m': krom(182, 176, 100, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}}}),
-        'S-f': krom(254, 116, 76, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 0.55}, b: {pol: 'cB', fast: 1}}})
+        'L-m': krom(188, 180, 116, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 1}}}),
+        'L-f': krom(252, 118, 74, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 0.4}}}),
+        'S-m': krom(204, 104, 58, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}}}),
+        'S-f': krom(242, 190, 104, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 0.55}, b: {pol: 'cB', fast: 1}}})
       }
     },
     etiketter: [
-      {tekst: 'Spindeltråd', x: 112, y: 54, anker: 'end', mod: {mellem: [{centrosom: 'cA'}, {kromatid: 'L-m.a'}], t: 0.5}},
-      {tekst: 'Centromer', x: 104, y: 256, anker: 'middle', mod: {kromosom: 'S-m'}},
+      {tekst: 'Spindeltråd', x: 112, y: 54, anker: 'end', mod: {mellem: [{centrosom: 'cA'}, {kromatid: 'S-m.a'}], t: 0.45}},
+      {tekst: 'Centromer', x: 104, y: 262, anker: 'middle', mod: {kromosom: 'L-m'}},
       {tekst: 'Centrosom (pol)', x: 352, y: 220, anker: 'start', mod: {centrosom: 'cB'}}
     ]
   },
@@ -433,9 +433,75 @@ const FASER = [
   }
 ];
 
+/* ── Koreografi: hvordan hvert skift ind i fasen udspiller sig ─
+   (se forklaringen af kanaler og kurver i faelles/celledeling.js) */
+const KOREOGRAFI = {
+  // G1 → S: DNA'et kopieres kromosom for kromosom; centrosomet kopieres til sidst
+  's-fase': {varighed: 1.6, koreografi: {
+    kopi: {vindue: [.05, .85], kurve: 'lineaer', forskydning: .35},
+    centrosom: {vindue: [.55, 1]}, celle: {kurve: 'lineaer'}, kerne: {kurve: 'lineaer'}
+  }},
+  // S → G2: cellen vokser roligt
+  'g2': {koreografi: {celle: {kurve: 'lineaer'}}},
+  // G2 → profase: kondensering først, så går kernemembranen i stykker,
+  // centrosomerne vandrer, og spindeltrådene vokser til sidst
+  'profase': {varighed: 1.5, koreografi: {
+    kond: {vindue: [0, .75], forskydning: .25},
+    bevaegelse: {vindue: [0, .75], forskydning: .25},
+    kerne: {vindue: [.35, 1], kurve: 'lineaer'},
+    centrosom: {vindue: [.15, 1]},
+    spindel: {vindue: [.45, 1], kurve: 'ud'}
+  }},
+  // profase → prometafase: membranen forsvinder, spindlen vokser ud, og
+  // spindeltrådene fanger kromosomerne ét for ét
+  'prometafase': {varighed: 1.4, koreografi: {
+    kerne: {vindue: [0, .3], kurve: 'lineaer'},
+    centrosom: {vindue: [0, .55]},
+    kond: {vindue: [0, .5]},
+    spindel: {vindue: [.2, .95], kurve: 'ud', forskydning: .3},
+    bevaegelse: {vindue: [.4, 1], forskydning: .3},
+    raekkefoelge: ['S-m', 'L-f', 'L-m', 'S-f']
+  }},
+  // prometafase → metafase: kromosomerne svinger ind i ækvatorialplanet
+  'metafase': {varighed: 1.4, koreografi: {
+    bevaegelse: {vindue: [0, 1], kurve: 'fjeder', forskydning: .3},
+    spindel: {vindue: [0, .6]},
+    ekvator: {vindue: [.6, 1]},
+    raekkefoelge: ['S-f', 'L-m', 'L-f', 'S-m']
+  }},
+  // metafase → anafase: alle søsterkromatider slippes på én gang, trækkes
+  // mod polerne, og polerne glider fra hinanden
+  'anafase': {varighed: 1.3, koreografi: {
+    adskil: {vindue: [0, .03], kurve: 'lineaer'},
+    bevaegelse: {vindue: [.03, 1], kurve: 'traek'},
+    centrosom: {vindue: [.3, 1]},
+    celle: {vindue: [.3, 1]},
+    ekvator: {vindue: [0, .4]}
+  }},
+  // anafase → telofase: kromosomerne når polerne, spindlen nedbrydes, så
+  // dekondensering, ny kernemembran og indsnøring
+  'telofase': {varighed: 1.5, koreografi: {
+    bevaegelse: {vindue: [0, .55], kurve: 'ud'},
+    spindel: {vindue: [0, .6]},
+    kond: {vindue: [.3, 1]},
+    kerne: {vindue: [.4, 1], kurve: 'ud'},
+    celle: {vindue: [.25, 1]},
+    centrosom: {vindue: [0, .6]}
+  }},
+  // telofase → cytokinese: kløvningsfuren snører cellen ind
+  'cytokinese': {varighed: 1.3, koreografi: {
+    celle: {kurve: 'ind'}, kond: {vindue: [0, .8]}, centrosom: {vindue: [.2, 1]}
+  }},
+  // cytokinese → datterceller: furen lukker, og cellerne runder sig
+  'datterceller': {varighed: 1.2, koreografi: {
+    celle: {kurve: 'ud'}, kond: {vindue: [0, .8]}
+  }}
+};
+for (const f of FASER) Object.assign(f, KOREOGRAFI[f.id] || {});
+
 const MODEL = {
   titel: 'Mitose i en modelcelle (2n = 4)',
-  version: '1.0',
+  version: '1.1',   // 1.1: koreograferede faseskift
   bredde: 440, hoejde: 300, skala: SKALA, ekvatorLaengde: 102,
   kromosomer: KROMOSOMER,
   spindelpar: [['cA', 'cB']],

@@ -42,7 +42,6 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const klem = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const rad = g => g * Math.PI / 180;
 const r1 = v => Math.round(v * 10) / 10;
-const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
 /* ── Udseende ────────────────────────────────────────────────── */
 export const FARVER = {
@@ -84,6 +83,80 @@ export function bland(a, b, t){
   }
   // tekst/null (fx hvilken pol et kromatid er fæstnet til)
   return t < .5 ? (a ?? b) : (b ?? a);
+}
+
+/* ── Koreografi: hver proces sin tid og sin kurve ────────────── */
+/* Et faseskift (fra fase i−1 til fase i) består af flere processer, der
+   ikke sker samtidig. Fasen kan angive dem i `koreografi`:
+
+     koreografi: {
+       kond:      {vindue: [0, .8], kurve: 'blød', forskydning: .3},
+       kerne:     {vindue: [.3, 1]},
+       ...
+     }
+
+   vindue      — hvornår i skiftet (0–1) processen foregår
+   kurve       — bevægelsens forløb (se KURVER)
+   forskydning — kromosomerne starter forskudt (0 = samtidig; .3 = det
+                 sidste kromosom starter, når 30 % af skiftet er gået)
+
+   Kanaler: celle, kerne, centrosom, spindel (også spindeltrådenes fæste),
+   ekvator, kond, bevaegelse (kromosomers/kromatiders placering og form),
+   adskil (søsterkromatidernes forbindelse), kopi (DNA-kopieringen).
+   Kanaler, der ikke nævnes, bruger hele skiftet med kurven 'blød'. */
+export const KURVER = {
+  lineaer: u => u,
+  'blød': u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2,
+  ud: u => 1 - Math.pow(1 - u, 3),
+  ind: u => u * u * u,
+  // langsom start, fast fart, blød opbremsning — kromatider, der trækkes
+  traek: u => u < .5 ? 8 * u ** 4 : 1 - 8 * (1 - u) ** 4,
+  // lille overslag — kromosomer, der svinger ind på plads i ækvatorialplanet
+  fjeder: u => { const c1 = 1.35, c3 = c1 + 1; return 1 + c3 * (u - 1) ** 3 + c1 * (u - 1) ** 2; }
+};
+const KANAL_STANDARD = {vindue: [0, 1], kurve: 'blød', forskydning: 0};
+
+function lokalTid(kor, kanal, t, rang = 0){
+  const k = {...KANAL_STANDARD, ...(kor?.[kanal] || {})};
+  const sigma = klem(k.forskydning, 0, 0.9);
+  const tt = klem((t - sigma * rang) / (1 - sigma));
+  const [a, b] = k.vindue;
+  return (KURVER[k.kurve] || KURVER['blød'])(klem((tt - a) / Math.max(1e-6, b - a)));
+}
+
+/* Bland to normaliserede tilstande efter koreografien (t er lineær 0–1). */
+export function blandFase(model, A, B, t, kor = {}){
+  const tid = (kanal, rang) => lokalTid(kor, kanal, t, rang);
+  const ud = {
+    lapper: bland(A.lapper, B.lapper, tid('celle')),
+    kerner: bland(A.kerner, B.kerner, tid('kerne')),
+    centrosomer: bland(A.centrosomer, B.centrosomer, tid('centrosom')),
+    spindel: lerp(A.spindel, B.spindel, tid('spindel')),
+    ekvator: lerp(A.ekvator, B.ekvator, tid('ekvator')),
+    kromosomer: {}
+  };
+  const raekke = kor.raekkefoelge || model.kromosomer.map(k => k.id);
+  const n = raekke.length;
+  for (const kr of model.kromosomer){
+    const rang = n > 1 ? raekke.indexOf(kr.id) / (n - 1) : 0;
+    const KA = A.kromosomer[kr.id], KB = B.kromosomer[kr.id];
+    const tb = tid('bevaegelse', rang), tk = tid('kond', rang), ta = tid('adskil', rang);
+    const tc = tid('kopi', rang), ts = tid('spindel', rang);
+    const K = {
+      x: lerp(KA.x, KB.x, tb), y: lerp(KA.y, KB.y, tb), vinkel: lerp(KA.vinkel, KB.vinkel, tb),
+      kond: lerp(KA.kond, KB.kond, tk), samlet: lerp(KA.samlet, KB.samlet, ta), kromatider: {}
+    };
+    for (const side of ['a', 'b']){
+      const a = KA.kromatider[side], b = KB.kromatider[side];
+      K.kromatider[side] = {
+        x: lerp(a.x, b.x, tb), y: lerp(a.y, b.y, tb), vinkel: lerp(a.vinkel, b.vinkel, tb), boej: lerp(a.boej, b.boej, tb),
+        synlig: lerp(a.synlig, b.synlig, tc), fast: lerp(a.fast, b.fast, ts),
+        pol: ts < .5 ? (a.pol ?? b.pol) : (b.pol ?? a.pol)
+      };
+    }
+    ud.kromosomer[kr.id] = K;
+  }
+  return ud;
 }
 
 /* ── Udfyld en forfattet tilstand ────────────────────────────── */
@@ -535,7 +608,7 @@ export function opretMotor(model){
     const t = p - i;
     if (N === 1 || t < 1e-4) return tilstande[Math.round(p)];
     if (t > 1 - 1e-4) return tilstande[i + 1];
-    return bland(tilstande[i], tilstande[i + 1], ease(t));
+    return blandFase(model, tilstande[i], tilstande[i + 1], t, model.faser[i + 1].koreografi);
   };
   const etiketterVed = p => {
     const i = Math.round(p);
@@ -568,13 +641,15 @@ export function opretMotor(model){
     return svgDokument(model, ind, {bredde: B, hoejde: Hh, titel: model.titel + ' — alle faser'});
   };
 
-  return {model, N, tilstande, tilstand, scene, taelling: p => taelling(model, tilstand(p)), eksporterFase, eksporterAlle};
+  // et skifts længde i forhold til standard (fase i angiver skiftet ind i sig selv)
+  const varighed = i => model.faser[klem(i, 0, N - 1)].varighed ?? 1;
+  return {model, N, tilstande, tilstand, scene, varighed, taelling: p => taelling(model, tilstand(p)), eksporterFase, eksporterAlle};
 }
 
 /* ── Afspiller ───────────────────────────────────────────────── */
 /* Flytter en position p mod et mål. Spring over flere faser animeres
    fase for fase. Ved «afspil» venter den ved hver fase og går videre. */
-export function opretAfspiller({antal, tegn, faerdig, varighed = 1500, ophold = 2600}){
+export function opretAfspiller({antal, tegn, faerdig, varighed = 1500, ophold = 2600, faktor = () => 1}){
   let p = 0, maal = 0, hastighed = 1, spiller = false, sidst = null, venter = 0, rafId = null;
   const reduceret = matchMedia('(prefers-reduced-motion: reduce)');
   const trin = nu => {
@@ -583,7 +658,9 @@ export function opretAfspiller({antal, tegn, faerdig, varighed = 1500, ophold = 
     if (p !== maal){
       if (reduceret.matches) p = maal;
       else {
-        const v = hastighed / varighed;
+        // skiftet, vi er i: fra fase s til s+1
+        const sk = maal > p ? Math.floor(p) : Math.ceil(p) - 1;
+        const v = hastighed / (varighed * faktor(sk + 1));
         p = maal > p ? Math.min(maal, p + v * dt) : Math.max(maal, p - v * dt);
       }
       tegn(p);

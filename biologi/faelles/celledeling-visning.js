@@ -111,6 +111,7 @@ export function startVisning(motor, rod, {filnavn = 'celledeling'} = {}){
 
   const afspiller = opretAfspiller({
     antal: N,
+    faktor: i => motor.varighed(i),
     tegn: p => { vis(p); visFasetekst(Math.round(afspiller?.maal ?? p)); },
     faerdig: (i, slut) => { visFasetekst(i); meld(i); if (slut) opdaterAfspilKnap(); }
   });
