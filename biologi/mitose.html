@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitose — celledeling trin for trin — smbi.dk</title>
+<meta name="description" content="Interaktiv figur af mitosen i en modelcelle med 2n = 4: følg kromosomerne fra interfase og S-fase gennem profase, prometafase, metafase, anafase og telofase til cytokinese og to ens datterceller — og se, hvornår antallet af kromosomer og DNA-mængden ændrer sig.">
+<link rel="canonical" href="https://smbi.dk/biologi/mitose.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="smbi.dk">
+<meta property="og:locale" content="da_DK">
+<meta property="og:url" content="https://smbi.dk/biologi/mitose.html">
+<meta property="og:title" content="Mitose — celledeling trin for trin">
+<meta property="og:description" content="Følg kromosomerne gennem mitosens faser i en modelcelle med 2n = 4, og se hvornår antallet af kromosomer og DNA-mængden ændrer sig.">
+<meta property="og:image" content="https://smbi.dk/img/og-biologi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="smbi.dk — biologi: simuleringer, forløb og spil">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFF9EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="faelles/celledeling.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "Mitose — celledeling trin for trin",
+      "url": "https://smbi.dk/biologi/mitose.html",
+      "inLanguage": "da-DK",
+      "description": "Interaktiv figur af mitosen i en modelcelle med 2n = 4, fra interfase til to genetisk identiske datterceller.",
+      "learningResourceType": "interaktiv simulering",
+      "educationalLevel": "Gymnasialt niveau (stx, hf)",
+      "isAccessibleForFree": true,
+      "author": {"@type": "Person", "name": "Simon Messell"},
+      "publisher": {"@type": "Organization", "name": "smbi.dk", "url": "https://smbi.dk/"},
+      "image": "https://smbi.dk/img/og-biologi.png",
+      "isPartOf": {"@id": "https://smbi.dk/#website"},
+      "about": {"@type": "Thing", "name": "Mitose"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Forside", "item": "https://smbi.dk/"},
+        {"@type": "ListItem", "position": 2, "name": "Biologi", "item": "https://smbi.dk/biologi.html"},
+        {"@type": "ListItem", "position": 3, "name": "Mitose", "item": "https://smbi.dk/biologi/mitose.html"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="top" id="site-top">
+  <div class="rainbow"></div>
+  <div class="top-bar">
+    <div class="top-in">
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <nav class="top-nav" aria-label="Sitet">
+        <a href="/biologi.html">Biologi</a>
+        <a href="/">Forside</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main id="mitose">
+  <div class="wrap head">
+    <span class="eyebrow mono">Biologi C · celledeling</span>
+    <h1>Mitose: én celle bliver til to ens</h1>
+    <p class="lead">Følg de fire kromosomer i en modelcelle gennem mitosen. Hold øje med tællingen: Hvornår kopieres DNA'et — og hvornår bliver der flere kromosomer?</p>
+  </div>
+
+  <div class="wrap">
+    <section class="rig" aria-label="Mitose-simulering">
+      <div class="rig-bar"></div>
+      <div class="rig-head">
+        <span class="who">Modelcelle · dyrecelle · 2n = 4</span>
+        <span class="spacer"></span>
+        <button type="button" class="btn-mini" data-rolle="etiketter" aria-pressed="true"
+                title="Skjul etiketterne og øv dig i at genkende strukturerne (tast E)"><span class="tekst">Etiketter til</span></button>
+        <button type="button" class="btn-mini" data-rolle="fokus" aria-pressed="false"
+                title="Skjul sidens overskrift, menu og fod">Fokus</button>
+      </div>
+
+      <div class="rig-krop">
+        <figure class="figur">
+          <svg data-rolle="figur" viewBox="0 0 440 300" role="img" aria-labelledby="fig-titel fig-beskrivelse">
+            <title id="fig-titel">Mitose i en modelcelle med to par homologe kromosomer</title>
+            <desc id="fig-beskrivelse" data-rolle="beskrivelse"></desc>
+            <g data-rolle="scene"></g>
+          </svg>
+          <figcaption class="signatur">
+            <span><svg viewBox="0 0 30 12" aria-hidden="true"><path d="M3 6H27" stroke="#17211F" stroke-width="8.4" stroke-linecap="round"/><path d="M3 6H27" stroke="#E8336D" stroke-width="6.2" stroke-linecap="round"/><path d="M3 6H27" stroke="#8C1238" stroke-width="6.2" stroke-dasharray="1.9 3.3"/></svg>fra mor (pink, tværbånd)</span>
+            <span><svg viewBox="0 0 30 12" aria-hidden="true"><path d="M3 6H27" stroke="#17211F" stroke-width="8.4" stroke-linecap="round"/><path d="M3 6H27" stroke="#0E86C8" stroke-width="6.2" stroke-linecap="round"/></svg>fra far (blå, ensfarvet)</span>
+            <span>● centromer</span>
+          </figcaption>
+        </figure>
+
+        <div class="betjening" role="group" aria-label="Styring af faserne">
+          <button type="button" class="knap" data-rolle="forrige" aria-label="Forrige fase">◀</button>
+          <button type="button" class="knap hoved" data-rolle="afspil" aria-pressed="false" aria-label="Afspil faserne"><span class="ikon" aria-hidden="true">▶</span><span class="tekst">Afspil</span></button>
+          <button type="button" class="knap" data-rolle="naeste" aria-label="Næste fase">▶</button>
+          <div class="slider-felt">
+            <label for="fase-slider">Fase <span data-rolle="fase-kort-navn" aria-hidden="true"></span></label>
+            <input type="range" id="fase-slider" data-rolle="slider" value="0">
+          </div>
+          <label class="hast">Fart
+            <select data-rolle="hastighed" aria-label="Afspilningshastighed">
+              <option value="0.5">langsom</option>
+              <option value="1" selected>normal</option>
+              <option value="2">hurtig</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="panel">
+          <div>
+            <div class="fase-top"><span class="fase-nr" data-rolle="fase-nr">1 / 10</span></div>
+            <h2 class="fase-navn" data-rolle="fase-navn">Interfase</h2>
+          </div>
+          <p class="fase-tekst" data-rolle="fase-tekst"></p>
+          <dl class="maal" aria-label="Tælling lige nu">
+            <div><dt>Kromosomer</dt><dd><span data-rolle="v-krom">4</span><small data-rolle="h-krom">i cellen</small></dd></div>
+            <div><dt>Kromatider pr. kromosom</dt><dd><span data-rolle="v-kromatid">1</span><small>talt ved centromeren</small></dd></div>
+            <div><dt>DNA-mængde</dt><dd><span data-rolle="v-dna">2c</span><small data-rolle="h-dna">i cellen</small></dd></div>
+          </dl>
+          <div class="forloeb-boks">
+            <table class="forloeb" data-rolle="forloeb">
+              <caption>Gennem hele mitosen (tryk på en fase)</caption>
+            </table>
+          </div>
+          <div class="eksport">Gem som SVG til print og arbejdsark:
+            <button type="button" class="btn-mini" data-rolle="eksport-fase">Denne fase</button>
+            <button type="button" class="btn-mini" data-rolle="eksport-alle">Alle faser på ét ark</button>
+          </div>
+          <p class="tast">Tastatur: <kbd>←</kbd> <kbd>→</kbd> skifter fase, <kbd>mellemrum</kbd> afspiller, <kbd>E</kbd> etiketter.</p>
+        </div>
+      </div>
+      <p class="sr" aria-live="polite" data-rolle="live"></p>
+    </section>
+
+    <details class="mere">
+      <summary>Sådan tæller man kromosomer — og hvad er «c»?</summary>
+      <div class="indhold">
+        <ul>
+          <li><b>Kromosomer tælles ved centromererne.</b> To søsterkromatider, der hænger sammen ved én centromer, er ét kromosom. Når de skilles i anafasen, er hvert kromatid et selvstændigt kromosom.</li>
+          <li><b>Kromatider pr. kromosom</b> er 1 før S-fasen og efter anafasen, og 2 fra S-fasen til metafasen.</li>
+          <li><b>c</b> er DNA-mængden i ét kromosomsæt (n) med ét kromatid pr. kromosom. En diploid celle i G1 har 2c; efter S-fasen har den 4c; hver dattercelle får 2c.</li>
+          <li><b>Homologe kromosomer</b> er de to kromosomer i et par — ét fra mor og ét fra far. De bærer de samme gener, men kan have forskellige alleler. I mitosen opfører de sig hver for sig; de parres ikke (det gør de først i meiosen).</li>
+        </ul>
+      </div>
+    </details>
+    <details class="mere">
+      <summary>Forenklinger i modellen</summary>
+      <div class="indhold">
+        <ul>
+          <li>Modelcellen har kun 2n = 4 kromosomer. En menneskecelle har 2n = 46.</li>
+          <li>Tegningen er et skematisk 2D-snit af en dyrecelle. I virkeligheden ligger kromosomerne i tre dimensioner, og kromatintrådene er langt længere end cellens diameter.</li>
+          <li>Faserne vises ikke i tidstro længde. Interfasen fylder langt det meste af cellecyklussen; selve mitosen tager typisk under en time.</li>
+          <li>Kun nogle få af spindelapparatets mange mikrotubuli (spindeltråde) er tegnet. Spindeltrådene fæstnes i virkeligheden til kinetokoren, et proteinkompleks ved centromeren.</li>
+          <li>Farverne mor/far er kun et hjælpemiddel til at følge kromosomerne. Søsterkromatider er kopier af hinanden og har derfor samme farve.</li>
+          <li>Cellekernens kernelegeme (nukleolus) og cellens øvrige organeller er udeladt.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="brand"><span class="brand-mark"></span>smbi<em>.dk</em></a>
+      <div class="mono">Mitose · celledeling</div>
+    </div>
+    <nav class="foot-links" aria-label="Mere fra smbi.dk">
+      <a href="/biologi.html">Biologi</a>
+      <a href="/">Alle simuleringer</a>
+      <a href="/contact.html">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* skjul side-krom, når siden vises i en iframe */
+(function(){try{if(window.top!==window.self){document.body.dataset.fokus='1';}}catch(x){}})();
+</script>
+
+<script type="module">
+/* ═══════════════════════════════════════════════════════════════
+   MITOSE — data til den fælles motor (faelles/celledeling.js)
+   Model 1.0: modelcelle 2n = 4, dyrecelle, 10 trin.
+   Koordinater i SVG-enheder (440 × 300). Cellens midte: (220, 150).
+   ═══════════════════════════════════════════════════════════════ */
+import {opretMotor} from './faelles/celledeling.js';
+import {startVisning} from './faelles/celledeling-visning.js';
+
+const CX = 220, CY = 150;
+const PINK = '#E8336D', PINK_MOERK = '#8C1238', BLAA = '#0E86C8';
+
+const KROMOSOMER = [
+  {id: 'L-m', navn: 'langt kromosom fra mor',  par: 'L', ophav: 'mor', laengde: 1,   centromer: 0.38, farve: PINK, moerk: PINK_MOERK, baand: true},
+  {id: 'L-f', navn: 'langt kromosom fra far',  par: 'L', ophav: 'far', laengde: 1,   centromer: 0.38, farve: BLAA},
+  {id: 'S-m', navn: 'kort kromosom fra mor',   par: 'S', ophav: 'mor', laengde: 0.6, centromer: 0.3,  farve: PINK, moerk: PINK_MOERK, baand: true},
+  {id: 'S-f', navn: 'kort kromosom fra far',   par: 'S', ophav: 'far', laengde: 0.6, centromer: 0.3,  farve: BLAA}
+];
+const SKALA = 42;
+
+/* ── Hjælpere til at skrive tilstande ──────────────────────── */
+// Cellen er to «lapper» oven i hinanden; trækkes de fra hinanden, deler cellen sig.
+const lapper = (d, r = 90) => ({V: {x: CX - d, y: CY, r}, H: {x: CX + d, y: CY, r}});
+const krom = (x, y, vinkel, kond, ekstra = {}) => ({x, y, vinkel, kond, ...ekstra});
+const kopieres = {kromatider: {b: {synlig: 0}}};         // før S-fasen: kun ét kromatid
+
+// kromosomernes rækkefølge og centromerhøjde i ækvatorialplanet
+const RAEKKE = ['S-m', 'L-f', 'L-m', 'S-f'];   // skiftevis mor/far
+const plan = (() => {
+  const data = Object.fromEntries(KROMOSOMER.map(k => [k.id, k]));
+  const len = id => SKALA * data[id].laengde;
+  const mellem = 11;
+  let y = CY - (RAEKKE.reduce((s, id) => s + len(id), 0) + mellem * (RAEKKE.length - 1)) / 2;
+  const ud = {};
+  for (const id of RAEKKE){ ud[id] = y + data[id].centromer * len(id); y += len(id) + mellem; }
+  return ud;
+})();
+
+// datterkernernes indretning (forskydning fra kernens midte) — ens i begge kerner
+const KERNE_IND = {'L-m': [-17, -5], 'L-f': [0, -3], 'S-m': [17, -19], 'S-f': [17, 15]};
+const datter = (kx, side, kond, boej, ekstra = {}) =>
+  ({x: kx + KERNE_IND[side][0], y: CY + KERNE_IND[side][1], vinkel: 90, boej, ...ekstra});
+
+const adskilt = (fn) => Object.fromEntries(KROMOSOMER.map(k => [k.id, fn(k.id)]));
+
+/* ── De ti trin ────────────────────────────────────────────── */
+const FASER = [
+  {
+    id: 'g1', kort: 'G1', navn: 'Interfase · G1',
+    tekst: 'Cellen vokser og laver sit almindelige arbejde. Kromosomerne ligger udfoldet som tynde <b>kromatintråde</b> i cellekernen. Hvert kromosom er ét <b>kromatid</b> — én lang DNA-dobbeltstreng. Cellen er diploid, <b>2n = 4</b>: et langt og et kort homologt par med ét kromosom fra mor og ét fra far.',
+    tilstand: {
+      lapper: lapper(0, 86),
+      kerner: {k0: {x: CX, y: CY, r: 55}},
+      centrosomer: {cA: {x: CX - 2, y: CY - 78}, cB: {x: CX + 2, y: CY - 78, synlig: 0}},
+      kromosomer: {
+        'L-m': krom(190, 143, 84, 0, kopieres),
+        'L-f': krom(250, 140, 96, 0, kopieres),
+        'S-m': krom(219, 121, 80, 0, kopieres),
+        'S-f': krom(221, 171, 100, 0, kopieres)
+      }
+    },
+    etiketter: [
+      {tekst: 'Kernemembran', x: 352, y: 72, anker: 'start', mod: {kerne: 'k0', vinkel: -35}},
+      {tekst: 'Kromatin\n(udfoldede\nkromosomer)', x: 336, y: 226, anker: 'start', mod: {kromatid: 'L-f.a', arm: 1, t: 0.75}},
+      {tekst: 'Centrosom', x: 112, y: 40, anker: 'end', mod: {centrosom: 'cA'}},
+      {tekst: 'Cellemembran', x: 92, y: 262, anker: 'middle', mod: [CX - 74, CY + 72]}
+    ]
+  },
+  {
+    id: 's-fase', kort: 'S', navn: 'Interfase · S-fase',
+    tekst: 'DNA\'et <b>kopieres</b> (replikation). Hvert kromosom består nu af to ens <b>søsterkromatider</b>, der hænger sammen ved <b>centromeren</b>. DNA-mængden fordobles fra 2c til 4c — men der er stadig 4 kromosomer, for vi tæller centromerer. Centrosomet kopieres også.',
+    tilstand: {
+      lapper: lapper(0, 88),
+      kerner: {k0: {x: CX, y: CY, r: 56}},
+      centrosomer: {cA: {x: CX - 7, y: CY - 79}, cB: {x: CX + 7, y: CY - 79}},
+      kromosomer: {
+        'L-m': krom(190, 143, 84, 0),
+        'L-f': krom(250, 140, 96, 0),
+        'S-m': krom(219, 121, 80, 0),
+        'S-f': krom(221, 171, 100, 0)
+      }
+    },
+    etiketter: [
+      {tekst: 'To søsterkromatider\n(ét kopieret kromosom)', x: 330, y: 262, anker: 'start', mod: {kromatid: 'L-f.b', arm: 1, t: 0.8}},
+      {tekst: 'Centromer', x: 100, y: 120, anker: 'end', mod: {kromosom: 'L-m'}},
+      {tekst: 'To centrosomer', x: 112, y: 40, anker: 'end', mod: {centrosom: 'cA'}}
+    ]
+  },
+  {
+    id: 'g2', kort: 'G2', navn: 'Interfase · G2',
+    tekst: 'Cellen vokser videre og gør klar til delingen, bl.a. ved at danne proteiner til spindelapparatet. Kromosomerne er kopierede, men stadig udfoldede, så de kan ikke ses enkeltvis i mikroskop. De to <b>centrosomer</b> ligger tæt ved kernen.',
+    tilstand: {
+      lapper: lapper(0, 90),
+      kerner: {k0: {x: CX, y: CY, r: 57}},
+      centrosomer: {cA: {x: CX - 11, y: CY - 81}, cB: {x: CX + 11, y: CY - 81}},
+      kromosomer: {
+        'L-m': krom(190, 143, 84, 0.05),
+        'L-f': krom(250, 140, 96, 0.05),
+        'S-m': krom(219, 121, 80, 0.05),
+        'S-f': krom(221, 171, 100, 0.05)
+      }
+    },
+    etiketter: [
+      {tekst: 'Centrosomer', x: 112, y: 40, anker: 'end', mod: {centrosom: 'cA'}},
+      {tekst: 'Kernemembran', x: 352, y: 72, anker: 'start', mod: {kerne: 'k0', vinkel: -35}},
+      {tekst: 'Kopierede kromosomer\n(udfoldede)', x: 330, y: 262, anker: 'start', mod: {kromatid: 'L-f.b', arm: 1, t: 0.8}}
+    ]
+  },
+  {
+    id: 'profase', kort: 'P', navn: 'Profase',
+    tekst: 'Kromosomerne <b>kondenserer</b>: de spiraliseres og bliver korte og tykke, så de kan ses i mikroskop — hvert med to søsterkromatider samlet ved centromeren. <b>Kernemembranen</b> begynder at gå i opløsning. De to <b>centrosomer</b> vandrer mod hver sin pol, og spindeltråde vokser ud fra dem.',
+    tilstand: {
+      lapper: lapper(4),
+      kerner: {k0: {x: CX, y: CY, r: 57, synlig: 0.45}},
+      centrosomer: {cA: {x: CX - 66, y: CY - 70}, cB: {x: CX + 66, y: CY - 70}},
+      spindel: 0.35,
+      kromosomer: {
+        'L-m': krom(192, 146, 78, 0.62, {splay: 0.05}),
+        'L-f': krom(249, 143, 102, 0.62, {splay: 0.05}),
+        'S-m': krom(219, 118, 70, 0.62, {splay: 0.05}),
+        'S-f': krom(222, 176, 110, 0.62, {splay: 0.05})
+      }
+    },
+    etiketter: [
+      {tekst: 'Kondenseret kromosom', x: 330, y: 246, anker: 'start', mod: {kromatid: 'L-f.b', arm: 1, t: 0.8}},
+      {tekst: 'Kernemembranen\nopløses', x: 102, y: 262, anker: 'middle', mod: {kerne: 'k0', vinkel: 128}},
+      {tekst: 'Centrosom', x: 100, y: 46, anker: 'end', mod: {centrosom: 'cA'}},
+      {tekst: 'Spindeltråde', x: 340, y: 40, anker: 'start', mod: {mellem: [{centrosom: 'cB'}, {centrosom: 'cA'}], t: 0.32}}
+    ]
+  },
+  {
+    id: 'prometafase', kort: 'PM', navn: 'Prometafase',
+    tekst: 'Kernemembranen er helt opløst. <b>Spindeltråde</b> fra de to centrosomer fanger kromosomerne ved <b>centromeren</b>. Kromosomerne skubbes og trækkes frem og tilbage, indtil hvert kromosom er fæstnet til <b>begge poler</b>: det ene søsterkromatid til den ene pol, det andet til den anden.',
+    tilstand: {
+      lapper: lapper(8),
+      kerner: {k0: {x: CX, y: CY, r: 57, synlig: 0}},
+      centrosomer: {cA: {x: CX - 97, y: CY}, cB: {x: CX + 97, y: CY}},
+      spindel: 0.85,
+      kromosomer: {
+        'L-m': krom(202, 104, 62, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 1}}}),
+        'L-f': krom(240, 192, 118, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 0.4}}}),
+        'S-m': krom(182, 176, 100, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 1}}}),
+        'S-f': krom(254, 116, 76, 0.92, {splay: 0.1, kromatider: {a: {pol: 'cA', fast: 0.55}, b: {pol: 'cB', fast: 1}}})
+      }
+    },
+    etiketter: [
+      {tekst: 'Spindeltråd', x: 112, y: 54, anker: 'end', mod: {mellem: [{centrosom: 'cA'}, {kromatid: 'L-m.a'}], t: 0.5}},
+      {tekst: 'Centromer', x: 104, y: 256, anker: 'middle', mod: {kromosom: 'S-m'}},
+      {tekst: 'Centrosom (pol)', x: 352, y: 220, anker: 'start', mod: {centrosom: 'cB'}}
+    ]
+  },
+  {
+    id: 'metafase', kort: 'M', navn: 'Metafase',
+    tekst: 'Kromosomerne ligger på række i <b>ækvatorialplanet</b> midt mellem polerne. Hvert kromosom er fæstnet ved centromeren med spindeltråde fra begge poler. Kromosomerne er nu mest kondenserede — det er her, de bedst kan tælles i mikroskop.',
+    tilstand: {
+      lapper: lapper(12),
+      centrosomer: {cA: {x: CX - 98, y: CY}, cB: {x: CX + 98, y: CY}},
+      spindel: 1, ekvator: 1,
+      kromosomer: adskilt(id => krom(CX, plan[id], 90, 1, {splay: 0.12, kromatider: {a: {pol: 'cA', fast: 1}, b: {pol: 'cB', fast: 1}}}))
+    },
+    etiketter: [
+      {tekst: 'Ækvatorialplan', x: CX, y: 22, anker: 'middle', mod: [CX, 52]},
+      {tekst: 'Spindelapparat', x: 108, y: 268, anker: 'middle', mod: {mellem: [{centrosom: 'cA'}, {kromatid: 'L-f.a'}], t: 0.5}},
+      {tekst: 'Centrosom', x: 360, y: 106, anker: 'middle', mod: {centrosom: 'cB'}},
+      {tekst: 'Centromer', x: 320, y: 262, anker: 'start', mod: {kromosom: 'S-f'}}
+    ]
+  },
+  {
+    id: 'anafase', kort: 'A', navn: 'Anafase',
+    tekst: 'Forbindelsen ved centromeren brydes, og <b>søsterkromatiderne trækkes fra hinanden</b> mod hver sin pol, mens spindeltrådene forkortes. Fra nu af er hvert kromatid et selvstændigt kromosom: antallet af kromosomer stiger fra 4 til <b>8</b>, men DNA-mængden er uændret (4c).',
+    tilstand: {
+      lapper: lapper(36),
+      centrosomer: {cA: {x: CX - 112, y: CY}, cB: {x: CX + 112, y: CY}},
+      spindel: 1, ekvator: 0.25,
+      kromosomer: adskilt(id => krom(CX, plan[id], 90, 1, {samlet: 0, kromatider: {
+        a: {x: CX - 66, y: CY + (plan[id] - CY) * 0.8, vinkel: 90, boej: 0.85, pol: 'cA', fast: 1},
+        b: {x: CX + 66, y: CY + (plan[id] - CY) * 0.8, vinkel: 90, boej: -0.85, pol: 'cB', fast: 1}
+      }}))
+    },
+    etiketter: [
+      {tekst: 'Søsterkromatider trækkes\nmod hver sin pol', x: CX, y: 20, anker: 'middle', mod: {kromatid: 'S-f.b', arm: 1, t: 0.9}},
+      {tekst: 'Pol', x: 384, y: 96, anker: 'middle', mod: {centrosom: 'cB'}},
+      {tekst: 'Spindeltråd\nforkortes', x: 66, y: 254, anker: 'middle', mod: {mellem: [{centrosom: 'cA'}, {kromatid: 'L-f.a'}], t: 0.5}}
+    ]
+  },
+  {
+    id: 'telofase', kort: 'T', navn: 'Telofase',
+    tekst: 'Kromosomerne er nået ud til polerne. Der dannes en ny <b>kernemembran</b> om hver gruppe, og kromosomerne <b>dekondenserer</b> igen til kromatin. Spindelapparatet nedbrydes. Cellen har nu to kerner med 4 kromosomer i hver, og cellen begynder at snøres ind.',
+    tilstand: {
+      lapper: lapper(78),
+      kerner: {kA: {x: CX - 84, y: CY, r: 46, synlig: 0.92}, kB: {x: CX + 84, y: CY, r: 46, synlig: 0.92}},
+      centrosomer: {cA: {x: CX - 146, y: CY}, cB: {x: CX + 146, y: CY}},
+      spindel: 0.3,
+      kromosomer: adskilt(id => krom(CX, CY, 90, 0.42, {samlet: 0, kromatider: {
+        a: datter(CX - 84, id, 0.42, 0.2, {pol: 'cA', fast: 0.15}),
+        b: datter(CX + 84, id, 0.42, -0.2, {pol: 'cB', fast: 0.15})
+      }}))
+    },
+    etiketter: [
+      {tekst: 'Ny kernemembran', x: 92, y: 266, anker: 'middle', mod: {kerne: 'kA', vinkel: 115}},
+      {tekst: 'Indsnøringen begynder', x: CX, y: 24, anker: 'middle', mod: [CX, CY - 72]},
+      {tekst: 'Kromosomerne\ndekondenserer', x: 352, y: 266, anker: 'middle', mod: {kromatid: 'L-f.b', arm: 1, t: 0.8}}
+    ]
+  },
+  {
+    id: 'cytokinese', kort: 'C', navn: 'Cytokinese',
+    tekst: '<b>Cytoplasmaen deles.</b> I en dyrecelle trækker en ring af proteintråde (aktin og myosin) cellemembranen ind på midten, så der dannes en <b>kløvningsfure</b>. Furen bliver dybere, til cellen til sidst snøres over i to.',
+    tilstand: {
+      lapper: lapper(103),
+      kerner: {kA: {x: CX - 100, y: CY, r: 46}, kB: {x: CX + 100, y: CY, r: 46}},
+      centrosomer: {cA: {x: CX - 140, y: CY - 58}, cB: {x: CX + 140, y: CY - 58}},
+      kromosomer: adskilt(id => krom(CX, CY, 90, 0.15, {samlet: 0, kromatider: {
+        a: datter(CX - 100, id, 0.15, 0),
+        b: datter(CX + 100, id, 0.15, 0)
+      }}))
+    },
+    etiketter: [
+      {tekst: 'Kløvningsfure', x: CX, y: 24, anker: 'middle', mod: [CX, CY - 30]},
+      {tekst: 'Kløvningsfure', x: CX, y: 284, anker: 'middle', mod: [CX, CY + 30]}
+    ]
+  },
+  {
+    id: 'datterceller', kort: 'D', navn: 'To datterceller',
+    tekst: 'Resultatet er to <b>genetisk identiske, diploide datterceller</b> (2n = 4). Hver har de samme kromosomer som modercellen — et langt og et kort fra både mor og far — og hvert kromosom består igen af ét kromatid (2c). Cellerne er i G1 og kan vokse og begynde en ny cellecyklus.',
+    tilstand: {
+      lapper: lapper(116),
+      kerner: {kA: {x: CX - 116, y: CY, r: 50}, kB: {x: CX + 116, y: CY, r: 50}},
+      centrosomer: {cA: {x: CX - 150, y: CY - 62}, cB: {x: CX + 150, y: CY - 62}},
+      kromosomer: adskilt(id => krom(CX, CY, 90, 0, {samlet: 0, kromatider: {
+        a: datter(CX - 116, id, 0, 0),
+        b: datter(CX + 116, id, 0, 0)
+      }}))
+    },
+    etiketter: [
+      {tekst: 'Dattercelle 1 · 2n = 4', x: 104, y: 28, anker: 'middle', mod: {kerne: 'kA', vinkel: -90}},
+      {tekst: 'Dattercelle 2 · 2n = 4', x: 336, y: 28, anker: 'middle', mod: {kerne: 'kB', vinkel: -90}}
+    ]
+  }
+];
+
+const MODEL = {
+  titel: 'Mitose i en modelcelle (2n = 4)',
+  version: '1.0',
+  bredde: 440, hoejde: 300, skala: SKALA, ekvatorLaengde: 102,
+  kromosomer: KROMOSOMER,
+  spindelpar: [['cA', 'cB']],
+  faser: FASER
+};
+
+const motor = opretMotor(MODEL);
+window.mitose = startVisning(motor, document.getElementById('mitose'), {filnavn: 'mitose'});
+</script>
+<script src="/feedback.js" defer></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f49c99760bf64175af7710d1eb47b1ea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
