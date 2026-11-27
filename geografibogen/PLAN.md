@@ -82,31 +82,34 @@ Vejr og klima
 
 1. **Tryk og vind** — lufttryk, højtryk og lavtryk, vind og isobarer.
    *Simuleringer:* Termiske tryk, Termiske tryksystemer. ✅ første udkast
-2. Jorden drejer — vinden drejer (corioliseffekten, vind omkring høj- og
+2. **Regnbæltet og monsunen** — ITK, regntid og tørtid, monsunen i Sydasien
+   og Somalias to regntider. *Kort:* nedbør i juli og januar
+   (`billeder/byg_monsunkort.py`). ✅ første udkast
+3. Jorden drejer — vinden drejer (corioliseffekten, vind omkring høj- og
    lavtryk).
-3. Varme og fugt i luften (luftfugtighed, dugpunkt, skyer).
+4. Varme og fugt i luften (luftfugtighed, dugpunkt, skyer).
    *Simuleringer:* Dugpunkt, Luftmasser.
-4. Regn (stigningsregn, frontregn, konvektiv regn).
+5. Regn (stigningsregn, frontregn, konvektiv regn).
    *Simuleringer:* Stigningsregn.
-5. Fronter og lavtryk over Danmark.
-6. Den globale cirkulation og klimazoner.
-7. Årstider og solens indstråling. *Simuleringer:* Årstider.
-8. Drivhuseffekten. *Simuleringer:* Drivhuseffekten trin for trin.
-9. Havstrømme og El Niño. *Simuleringer:* ENSO, Grønlandspumpen.
+6. Fronter og lavtryk over Danmark.
+7. Den globale cirkulation og klimazoner.
+8. Årstider og solens indstråling. *Simuleringer:* Årstider.
+9. Drivhuseffekten. *Simuleringer:* Drivhuseffekten trin for trin.
+10. Havstrømme og El Niño. *Simuleringer:* ENSO, Grønlandspumpen.
 
 Jorden og landskabet
 
-10. Jordens indre. *Simuleringer:* Byg jordens indre.
-11. Pladetektonik. *Simuleringer:* Pladegrænser.
-12. Vulkaner og jordskælv. *Simuleringer:* Vulkanudbrud.
-13. Bjergarter og kredsløb. *Simuleringer:* Stensamling.
-14. Grundvand. *Simuleringer:* Porøsitet og permeabilitet.
-15. Bølger, kyster og tidevand. *Simuleringer:* Bølger, Tidevand.
+11. Jordens indre. *Simuleringer:* Byg jordens indre.
+12. Pladetektonik. *Simuleringer:* Pladegrænser.
+13. Vulkaner og jordskælv. *Simuleringer:* Vulkanudbrud.
+14. Bjergarter og kredsløb. *Simuleringer:* Stensamling.
+15. Grundvand. *Simuleringer:* Porøsitet og permeabilitet.
+16. Bølger, kyster og tidevand. *Simuleringer:* Bølger, Tidevand.
 
 Ressourcer og mennesker
 
-16. Råstoffer og energi. *Simuleringer:* Råstoffer.
-17. Kulstofkredsløbet. *Simuleringer:* Byg kulstofkredsløbet.
+17. Råstoffer og energi. *Simuleringer:* Råstoffer.
+18. Kulstofkredsløbet. *Simuleringer:* Byg kulstofkredsløbet.
 
 ## Arbejdsgang for et nyt kapitel
 
