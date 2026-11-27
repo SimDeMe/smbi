@@ -99,6 +99,19 @@ svg .mono{font-family:var(--mono)}
 .sim span{font-size:16px;line-height:1.4}
 .sim b::after{content:" ↗";color:var(--blaa)} /* åbner i ny fane */
 
+/* Se også: henvisning til andet smbi-materiale. Boks i margenen på brede skærme, ellers mellem afsnittene. */
+.side{border:2px solid var(--blaek);background:var(--papir-2);padding:10px 14px 12px;margin:18px auto;font-size:15.5px;line-height:1.4;box-shadow:3px 3px 0 var(--blaek)}
+.side .maerke{display:inline-block;font:600 11px var(--mono);background:var(--blaek);color:var(--papir);padding:2px 7px;border-radius:3px;margin-bottom:4px}
+.side a{display:block;color:var(--blaek);text-decoration:none;padding:7px 0 2px;border-top:1px solid var(--linje)}
+.side .maerke+a{border-top:0}
+.side a b{display:block;font:750 16px var(--display);color:var(--blaa)}
+.side a b::after{content:" ↗"}
+.side a:hover b{text-decoration:underline}
+@media (min-width:1280px){
+  .side{float:right;clear:right;width:250px;margin:4px calc((100% - var(--tekst))/2 - 278px) 16px 20px}
+  main>.bred{clear:right}
+}
+
 /* Det skal du huske */
 .huske{border:2px solid var(--blaek);background:var(--papir-2);padding:16px 22px;margin-top:44px}
 .huske h2{margin-top:0;font-size:24px}
@@ -132,6 +145,6 @@ svg .mono{font-family:var(--mono)}
   .styring{grid-template-columns:1fr}
 }
 @media print{
-  header,.bladre,.sim{display:none}
+  header,.bladre,.sim,.side{display:none}
   .opgave,.indhold,.interaktiv{box-shadow:none}
 }
